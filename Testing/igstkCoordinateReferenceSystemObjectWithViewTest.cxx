@@ -23,8 +23,7 @@
 
 #include <iostream>
 
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-// FIXCS #include "igstkCoordinateReferenceSystemObject.h"
+#include "igstkAxesObject.h"
 #include "igstkAxesObjectRepresentation.h"
 #include "igstkView2D.h"
 #include "igstkFLTKWidget.h"
@@ -55,7 +54,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
@@ -68,80 +67,12 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
   AxesRepresentation->SetLogger( logger );
 
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject WorldReferenceSystemType;
-  WorldReferenceSystemType::Pointer worldReference = WorldReferenceSystemType::New();
-  */
+  typedef igstk::AxesObject       AxesObjectType;
 
-  /* FIXCS
-  typedef igstk::CoordinateReferenceSystemObject  ObjectType;
-  ObjectType::Pointer coordinateSystem = ObjectType::New();
-  coordinateSystem->SetLogger( logger );
-    
-  coordinateSystem->RequestAttachToSpatialObjectParent( worldReference );
+  AxesObjectType::Pointer worldReference = AxesObjectType::New();
 
-  // Test Set/GetRadius()
-  std::cout << "Testing Set/GetSize() : ";
-  coordinateSystem->SetSize(10,20,30);
+  AxesRepresentation->RequestSetAxesObject( worldReference );
 
-  if(coordinateSystem->GetSizeX() != 10.0)
-    {
-    std::cerr << "SizeX error : " << coordinateSystem->GetSizeX() 
-              << " v.s " << 10.0 << std::endl; 
-    return EXIT_FAILURE;
-    }
-   
-  if(coordinateSystem->GetSizeY() != 20.0)
-    {
-    std::cerr << "SizeX error : " << coordinateSystem->GetSizeX()
-              << " v.s " << 20.0 << std::endl; 
-    return EXIT_FAILURE;
-    }
- 
-  if(coordinateSystem->GetSizeZ() != 30.0)
-    {
-    std::cerr << "SizeX error : " << coordinateSystem->GetSizeX() 
-              << " v.s " << 30.0 << std::endl; 
-    return EXIT_FAILURE;
-    }
-  std::cout << "[PASSED]" << std::endl;
-  */
-
-  // Test Property
-  std::cout << "Testing Property : ";
-  AxesRepresentation->SetColor(0.1,0.2,0.3);
-  AxesRepresentation->SetOpacity(0.4);
-  if(fabs(AxesRepresentation->GetRed()-0.1)>0.00001)
-    {
-    std::cerr << "GetRed() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetGreen()-0.2)>0.00001)
-    {
-    std::cerr << "GetGreen()[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetBlue()-0.3)>0.00001)
-    {
-    std::cerr << "GetBlue() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if(fabs(AxesRepresentation->GetOpacity()-0.4)>0.00001)
-    {
-    std::cerr << "GetOpacity() [FAILED]" << std::endl;
-    return EXIT_FAILURE;
-    }
-  std::cout << "[PASSED]" << std::endl;
-
-  // Testing PrintSelf()
-  // FIXCS AxesRepresentation->RequestSetAxesObject( coordinateSystem );
-  AxesRepresentation->Print(std::cout);
-  // FIXCS coordinateSystem->Print(std::cout);
-  // FIXCS coordinateSystem->GetNameOfClass();
-  AxesRepresentation->GetNameOfClass();
-
-  // testing actors
-  std::cout << "Testing actors : ";
 
   typedef igstk::View2D  View2DType;
 
@@ -149,18 +80,16 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->SetLogger( logger );
     
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  typedef igstk::FLTKWidget      WidgetType;
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(301,301,"CoordinateReferenceSystemObjectWithViewTest");
-  FLTKWidgetType * fltkWidget2D = new FLTKWidgetType(0,0,300,300,"View 2D");
+  WidgetType * widget2D = new WidgetType(0,0,300,300,"View 2D");
 
-  fltkWidget2D->RequestSetView( view2D );
+  widget2D->RequestSetView( view2D );
 
   form->end();
   // End of the GUI creation
-
-  std::cout << "[PASSED]" << std::endl;
 
   form->show();
 
@@ -193,13 +122,13 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();
 
-  /* FIXCS 
-  coordinateSystem->AddObserver( ::igstk::TransformModifiedEvent(), 
-                                                          transformObserver );
+  AxesObjectType::Pointer coordinateSystem = AxesObjectType::New();
 
-  coordinateSystem->RequestSetTransformToSpatialObjectParent( transform );
-  coordinateSystem->RequestGetTransformToWorld();
-  */
+  coordinateSystem->AddObserver( 
+    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
+
+  coordinateSystem->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  coordinateSystem->RequestGetTransformToParent();
   
   if( !transformObserver->GotTransform() )
     {
@@ -243,8 +172,10 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view2D->SetCameraViewUp( 0, 0, 1.0 );
 
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
   // this will indirectly call CreateActors() 
-  // FIXCS view2D->RequestAddObject( AxesRepresentation );
+  view2D->RequestAddObject( AxesRepresentation );
   view2D->RequestResetCamera();
   view2D->RequestStart();
 
@@ -261,17 +192,9 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   // and position and rotate them avay from the main 
   // coordinate system.
   //
-  /*
-  FIXCS 
-  ObjectType::Pointer coordinateSystemA = ObjectType::New();
-  coordinateSystemA->RequestAttachToSpatialObjectParent( coordinateSystem );
-
-  ObjectType::Pointer coordinateSystemB = ObjectType::New();
-  coordinateSystemB->RequestAttachToSpatialObjectParent( coordinateSystem );
-
-  ObjectType::Pointer coordinateSystemC = ObjectType::New();
-  coordinateSystemC->RequestAttachToSpatialObjectParent( coordinateSystem );
-  */
+  AxesObjectType::Pointer coordinateSystemA = AxesObjectType::New();
+  AxesObjectType::Pointer coordinateSystemB = AxesObjectType::New();
+  AxesObjectType::Pointer coordinateSystemC = AxesObjectType::New();
 
   igstk::Transform transformA;
   igstk::Transform transformB;
@@ -301,26 +224,21 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   transformC.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  /*
-  FIXCS 
-  coordinateSystemA->RequestSetTransformToSpatialObjectParent( transformA );
-  coordinateSystemB->RequestSetTransformToSpatialObjectParent( transformB );
-  coordinateSystemC->RequestSetTransformToSpatialObjectParent( transformC );
+  coordinateSystemA->RequestSetTransformAndParent( transformA, worldReference.GetPointer() );
+  coordinateSystemB->RequestSetTransformAndParent( transformB, worldReference.GetPointer() );
+  coordinateSystemC->RequestSetTransformAndParent( transformC, worldReference.GetPointer() );
 
   coordinateSystemA->SetSize(10,10,10);
   coordinateSystemB->SetSize(10,10,10);
   coordinateSystemC->SetSize(10,10,10);
-  */
 
   RepresentationType::Pointer AxesRepresentationA = RepresentationType::New();
   RepresentationType::Pointer AxesRepresentationB = RepresentationType::New();
   RepresentationType::Pointer AxesRepresentationC = RepresentationType::New();
 
-  /* FIXCS
   AxesRepresentationA->RequestSetAxesObject( coordinateSystemA );
   AxesRepresentationB->RequestSetAxesObject( coordinateSystemB );
   AxesRepresentationC->RequestSetAxesObject( coordinateSystemC );
-  */
 
   view2D->RequestAddObject( AxesRepresentationA );
   view2D->RequestAddObject( AxesRepresentationB );
@@ -340,7 +258,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
     view2D->RequestSaveScreenShot( ScreenShotFilename );
     }
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
 
   std::cout << "Test [DONE]" << std::endl;
