@@ -141,13 +141,7 @@ int igstkSpatialObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  /* FIXCS
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-  */
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   typedef igstk::SpatialObjectTest::DummySpatialObject ObjectType;
   ObjectType::Pointer dummyObject = ObjectType::New();
@@ -157,7 +151,10 @@ int igstkSpatialObjectTest( int, char * [] )
   typedef igstk::SpatialObjectTest::MyTracker   TrackerType;
   TrackerType::Pointer  tracker = TrackerType::New();
 
-  // FIXCS tracker->RequestAttachToSpatialObjectParent( worldReference );
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
 
   tracker->RequestOpen();
 
@@ -167,10 +164,6 @@ int igstkSpatialObjectTest( int, char * [] )
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
-  TransformType identityTransform;
-  identityTransform.SetToIdentity( 
-                      igstk::TimeStamp::GetLongestPossibleTime() );
-   
   dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
 
   dummyObject->Print( std::cout );
@@ -180,9 +173,7 @@ int igstkSpatialObjectTest( int, char * [] )
   for(unsigned int i=0; i<50; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-    dummyObject->RequestGetTransform();
-#endif
+    dummyObject->RequestGetTransformToParent();
     }
 
   tracker->RequestStopTracking();
@@ -193,11 +184,12 @@ int igstkSpatialObjectTest( int, char * [] )
 
   ObjectType::Pointer dummyObject2 = ObjectType::New();
 
-  // FIXCS dummyObject2->RequestAttachToSpatialObjectParent( worldReference );
 
   igstk::Transform trackerTransform;
-  trackerTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  // FIXCS tracker->RequestSetTransformToSpatialObjectParent( trackerTransform );
+  trackerTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  dummyObject2->RequestSetTransformAndParent( 
+    trackerTransform, worldReference.GetPointer() );
 
 
   std::cout << "Test [DONE]" << std::endl;
