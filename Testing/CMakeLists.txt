@@ -91,6 +91,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
     igstkTrackerToolObserverToSocketRelayTest.cxx
+    igstkPolarisTrackerToolObserverToSocketRelayTest.cxx
     igstkTransformSocketListenerTest.cxx
     )
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -135,6 +136,13 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     igstkTrackerToolObserverToSocketRelayTest
     localhost 16666
     )
+
+  ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest 
+    ${IGSTKSandbox_TESTS} 
+    igstkPolarisTrackerToolObserverToSocketRelayTest
+    localhost 16666
+    )
+
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
