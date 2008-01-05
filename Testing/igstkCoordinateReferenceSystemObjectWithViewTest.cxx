@@ -71,8 +71,6 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
 
   AxesObjectType::Pointer worldReference = AxesObjectType::New();
 
-  AxesRepresentation->RequestSetAxesObject( worldReference );
-
 
   typedef igstk::View2D  View2DType;
 
@@ -97,7 +95,12 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   // geometrical parameters should trigger an update in the representation
   // class.
   std::cout << "Testing UpdateRepresentationFromGeometry() : ";
-  // FIXCS coordinateSystem->SetSize( 20.0, 30.0, 40.0 );
+
+  AxesObjectType::Pointer coordinateSystem = AxesObjectType::New();
+
+  coordinateSystem->SetSize( 20.0, 30.0, 40.0 );
+  AxesRepresentation->RequestSetAxesObject( coordinateSystem );
+
   
   // Test GetTransform()
   std::cout << "Testing Set/GetTransform(): ";
@@ -121,8 +124,6 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
 
   TransformObserverType::Pointer transformObserver 
                                                = TransformObserverType::New();
-
-  AxesObjectType::Pointer coordinateSystem = AxesObjectType::New();
 
   coordinateSystem->AddObserver( 
     igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
@@ -180,7 +181,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->RequestStart();
 
   // Do manual redraws
-  for(unsigned int i=0; i<50; i++)
+  for(unsigned int i=0; i<200; i++)
     {
     Fl::wait(0.01);
     igstk::PulseGenerator::CheckTimeouts();
@@ -244,8 +245,10 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->RequestAddObject( AxesRepresentationB );
   view2D->RequestAddObject( AxesRepresentationC );
 
+  view2D->RequestResetCamera();
+
   // Do manual redraws
-  for(unsigned int i=0; i<50; i++)
+  for(unsigned int i=0; i<200; i++)
     {
     Fl::wait(0.01);
     igstk::PulseGenerator::CheckTimeouts();
