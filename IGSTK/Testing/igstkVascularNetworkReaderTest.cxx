@@ -66,7 +66,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   reader->SetLogger( logger );
 
@@ -109,7 +109,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
                                                      VascularNetworkObserver;
   VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
-  reader->AddObserver(ReaderType::VascularNetworkModifiedEvent(),
+  reader->AddObserver(ReaderType::VascularNetworkObjectModifiedEvent(),
                       vascularNetworkObserver);
 
   reader->RequestGetVascularNetwork();

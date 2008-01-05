@@ -42,7 +42,7 @@
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
 igstkObserverObjectMacro(VascularNetwork,
-    ::igstk::VascularNetworkReader::VascularNetworkModifiedEvent,
+    ::igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent,
     ::igstk::VascularNetworkObject)
 // Software Guide : EndCodeSnippet
 
@@ -113,7 +113,7 @@ int main( int argc, char *argv[] )
 // Software Guide : BeginCodeSnippet
   VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
-  reader->AddObserver(ReaderType::VascularNetworkModifiedEvent(),
+  reader->AddObserver(ReaderType::VascularNetworkObjectModifiedEvent(),
                       vascularNetworkObserver);
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex

@@ -288,7 +288,7 @@ void UltrasoundGuidedRFAImplementation
     VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
     m_VascularNetworkReader->AddObserver(
-                   igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
+                   igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
                         vascularNetworkObserver);
 
     m_VascularNetworkReader->RequestGetVascularNetwork();

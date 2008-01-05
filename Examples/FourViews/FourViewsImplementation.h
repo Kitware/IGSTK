@@ -161,7 +161,7 @@ public:
       VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
       tubeReader->AddObserver(
-                   igstk::VascularNetworkReader::VascularNetworkModifiedEvent(),
+                   igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
                    vascularNetworkObserver);
 
       tubeReader->RequestGetVascularNetwork();

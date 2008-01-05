@@ -79,7 +79,7 @@ void VascularNetworkReader::RequestGetVascularNetwork()
 /** This function reports the vascular network */
 void VascularNetworkReader::ReportVascularNetworkProcessing()
 {
-  VascularNetworkModifiedEvent  event;
+  VascularNetworkObjectModifiedEvent  event;
   event.Set( this->m_VascularNetwork );
   this->InvokeEvent( event );
 }
