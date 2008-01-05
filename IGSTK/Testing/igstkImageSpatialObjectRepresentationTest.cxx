@@ -29,10 +29,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObject.h"
 
 namespace igstk
 {
@@ -165,17 +162,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
-  /* FIXCS
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   worldReference->SetLogger( logger );
-#endif 
-  */
 
   // Instantiate a reader
   //
@@ -224,26 +213,19 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   
   representation->RequestSetSliceNumber( 10 );
 
-  /* FIXCS
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
-  */
-
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
   // Create an FLTK minimal GUI
-  typedef igstk::FLTKWidget      FLTKWidgetType;
+  typedef igstk::FLTKWidget      WidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
 
   // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
-  fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
 
   view2D->SetLogger( logger );
 
@@ -273,15 +255,10 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   imageSpatialObject->SetLogger( logger );
 
-  /* FIXCS
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
-  igstk::Transform                   transform;
-  igstk::Transform::TimePeriodType   validtyTime = 1e20;
-  transform.SetToIdentity( validtyTime );
-  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
-  */
+  igstk::Transform  transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+
 
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
@@ -351,6 +328,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   view2D->RequestAddObject( representation );
 
+  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
   
   // Set and initialize the pulse generator of the view 
   view2D->SetRefreshRate( 30 );
@@ -449,7 +427,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     }
 
 
-  delete fltkWidget2D;
+  delete widget2D;
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
