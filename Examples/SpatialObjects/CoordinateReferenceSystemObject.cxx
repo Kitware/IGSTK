@@ -21,17 +21,15 @@
 
 // Software Guide : BeginLatex
 //
+// First, we include the appropriate header files. In this case, it is enough
+// to use any spatial objects.
 //
-// First, we include the appropriate header file:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-// FIXCS #include "igstkCoordinateReferenceSystemObject.h"
-// FIXCS #include "igstkWorldCoordinateReferenceSystemObject.h"
-// Software Guide : EndCodeSnippet
-
 #include "igstkConeObject.h"
 #include "igstkCylinderObject.h"
+// Software Guide : EndCodeSnippet
 
 int main( int , char *[] )
 {
