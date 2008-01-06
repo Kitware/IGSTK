@@ -153,6 +153,12 @@ WebCameraTracker::DetectBrightestPixels( void )
   int extent[6];
   inputImage->GetWholeExtent( extent );
 
+  double imageCenter[3];
+
+  imageCenter[0] = origin[0] + spacing[0] * ( extent[1] - extent[0] ) / 2.0;
+  imageCenter[1] = origin[1] + spacing[1] * ( extent[3] - extent[2] ) / 2.0;
+  imageCenter[2] = origin[2] + spacing[2] * ( extent[3] - extent[2] ) / 2.0;
+
   const int maxC = inputImage->GetNumberOfScalarComponents();
   int idxC;
 
@@ -161,10 +167,15 @@ WebCameraTracker::DetectBrightestPixels( void )
 
   const PixelType threshold = 250;
 
+  double threshold2 = threshold;
+  threshold2 *= threshold;
+
   unsigned int numberOfPixels = 0;
 
   int posX = 0;
   int posY = 0;
+
+  double pixelValue = 0.0;
 
   PointType point;
 
@@ -175,19 +186,25 @@ WebCameraTracker::DetectBrightestPixels( void )
 
     while( inSI != inSIEnd )
       {
-      // process each component
+
+      // Compute luminosity from components
+      // Note: It should use RGB to Luminance computation instead.
+      pixelValue = 0.0;
       for( idxC=0; idxC < maxC; idxC++ )
         {
-        if( *inSI > threshold )
-          {
-          this->m_BrightestPixelValues.push_back( *inSI );
-          point[0] = origin[0] + posX * spacing[0];
-          point[1] = origin[1] + posY * spacing[1];
-          this->m_BrightestPixelPositions.push_back( point );
-          }
+        pixelValue += ( *inSI ) * ( *inSI );
         ++inSI;
-        ++posX;
         }
+
+      if( pixelValue > threshold2 )
+        {
+        point[0] = origin[0] + posX * spacing[0] - imageCenter[0];
+        point[1] = origin[1] + posY * spacing[1] - imageCenter[1];
+        this->m_BrightestPixelPositions.push_back( point );
+        this->m_BrightestPixelValues.push_back( vcl_sqrt( pixelValue ) );
+        }
+
+      ++posX;
       ++numberOfPixels;
       }
     itr.NextSpan();
