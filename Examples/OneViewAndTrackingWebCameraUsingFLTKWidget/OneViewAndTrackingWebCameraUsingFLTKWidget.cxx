@@ -145,10 +145,10 @@ int main(int , char** )
                                     identity, 
                                     application.GetTracker().GetPointer() );
   view3D->SetCameraFocalPoint( 0.0, 0.0 , 0.0 );
-  view3D->SetCameraPosition( 0.0,0.0 , 600.0 );
-  view3D->SetCameraViewUp( -1.0, 0.0 , 0.0 );
-  view3D->SetCameraClippingRange( 150.0 , 1600.0 );
-  view3D->SetCameraParallelProjection( true );
+  view3D->SetCameraPosition( 0.0, 0.0 , 600.0 );
+  view3D->SetCameraViewUp(  0.0, 1.0 , 0.0 );
+  view3D->SetCameraClippingRange( 50.0 , 9000.0 );
+  view3D->SetCameraParallelProjection( false );
 
   view3D->RequestResetCamera();
 
