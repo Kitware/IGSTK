@@ -327,6 +327,15 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF( WIN32 )
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkWebCameraTracker.h
+      igstkWebCameraTrackerTool.h
+     )
+ENDIF( WIN32 )
+
+
 # The implementation files
 SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
@@ -392,6 +401,15 @@ IF(IGSTKSandbox_USE_MicronTracker)
  
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+IF( WIN32 )
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkWebCameraTracker.cxx
+      igstkWebCameraTrackerTool.cxx
+     )
+ENDIF( WIN32 )
+
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)

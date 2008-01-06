@@ -19,6 +19,7 @@ IF (IGSTK_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingUsingFLTKWidget
     OneViewAndTrackingNewUsingFLTKWidget
+    OneViewAndTrackingWebCameraUsingFLTKWidget
     PivotCalibrationFLTKWidget
     TwoViews
     FourViewsTrackingWithCT

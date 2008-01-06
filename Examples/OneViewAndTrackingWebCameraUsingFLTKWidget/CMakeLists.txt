@@ -1,0 +1,16 @@
+PROJECT(OneViewAndTrackingWebCameraUsingFLTKWidget)
+  
+SET(OneViewAndTrackingWebCameraUsingFLTKWidget_GUI_SRCS
+  OneViewAndTrackingWebCameraUsingFLTKWidgetGUI.fl
+  )
+  
+SET(OneViewAndTrackingWebCameraUsingFLTKWidget_SRCS
+  OneViewAndTrackingWebCameraUsingFLTKWidget.cxx
+  )
+
+FLTK_WRAP_UI(OneViewAndTrackingWebCameraUsingFLTKWidget ${OneViewAndTrackingWebCameraUsingFLTKWidget_GUI_SRCS})
+ADD_EXECUTABLE(OneViewAndTrackingWebCameraUsingFLTKWidget ${OneViewAndTrackingWebCameraUsingFLTKWidget_FLTK_UI_SRCS} ${OneViewAndTrackingWebCameraUsingFLTKWidget_SRCS})
+TARGET_LINK_LIBRARIES(OneViewAndTrackingWebCameraUsingFLTKWidget IGSTKSandbox)
+
+
+
