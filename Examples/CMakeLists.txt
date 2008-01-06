@@ -19,7 +19,6 @@ IF (IGSTK_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingUsingFLTKWidget
     OneViewAndTrackingNewUsingFLTKWidget
-    OneViewAndTrackingWebCameraUsingFLTKWidget
     PivotCalibrationFLTKWidget
     TwoViews
     FourViewsTrackingWithCT
@@ -34,6 +33,9 @@ IF (IGSTK_USE_FLTK)
     SUBDIRS( OneViewAndTrackingUsingMicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
   ENDIF(IGSTKSandbox_USE_MicronTracker) 
+  IF ( WIN32 )
+    SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
+  ENDIF ( WIN32 )
 ENDIF (IGSTK_USE_FLTK)
 
 IF (IGSTKSandbox_USE_Qt)
