@@ -28,6 +28,7 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkImageData.h"
+#include "vtkMath.h"
 
 namespace igstk
 {
@@ -497,10 +498,20 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     
   this->AddActor( m_ImageActor );
 
+  //convert RGB to HSV
+  double hue = 0.0;
+  double saturation = 0.0;
+  double value = 1.0;
+
+  vtkMath::RGBToHSV( this->GetRed(),
+                     this->GetGreen(),
+                     this->GetBlue(),
+                     &hue,&saturation,&value );
+
   m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-  m_LUT->SetSaturationRange (0, 0);
-  m_LUT->SetHueRange (0, 0);
-  m_LUT->SetValueRange (0, 1);
+  m_LUT->SetSaturationRange (saturation, saturation);
+  m_LUT->SetHueRange (hue, hue);
+  m_LUT->SetValueRange (0, value);
   m_LUT->SetRampToLinear();
 
   m_MapColors->SetLookupTable( m_LUT );
