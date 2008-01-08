@@ -134,7 +134,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   ADD_TEST( igstkTrackerToolObserverToSocketRelayTest 
     ${IGSTKSandbox_TESTS} 
     igstkTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000 10
+    localhost 16666 1000 30 10
     )
 
   ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest 
