@@ -92,6 +92,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     ${SandboxTests_SRCS}
     igstkTrackerToolObserverToSocketRelayTest.cxx
     igstkPolarisTrackerToolObserverToSocketRelayTest.cxx
+    igstkVicraTrackerToolObserverToSocketRelayTest.cxx
     igstkTransformSocketListenerTest.cxx
     )
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -138,6 +139,12 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     )
 
   ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest 
+    ${IGSTKSandbox_TESTS} 
+    igstkPolarisTrackerToolObserverToSocketRelayTest
+    localhost 16666 1000
+    )
+
+  ADD_TEST( igstkVicraTrackerToolObserverToSocketRelayTest 
     ${IGSTKSandbox_TESTS} 
     igstkPolarisTrackerToolObserverToSocketRelayTest
     localhost 16666 1000
