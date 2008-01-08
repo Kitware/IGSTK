@@ -34,10 +34,10 @@
 int igstkVicraTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 {
 
-  if( argc < 4 )
+  if( argc < 5 )
     {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend" << std::endl;
+    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend frequency" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -70,8 +70,12 @@ int igstkVicraTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 
   tracker->RequestOpen();
 
+  tracker->RequestSetFrequency(atof( argv[4] ));
+  
   trackerTool->RequestSelectWirelessTrackerTool();
-  trackerTool->RequestSetSROMFileName("C:/Research/NDI/Tool Definition Files/8700338.rom");
+  std::string SROMFile = IGSTKSandbox_DATA_ROOT;
+  SROMFile += "/Input/8700338.rom";
+  trackerTool->RequestSetSROMFileName(SROMFile );
   trackerTool->RequestSetPortNumber( 4 );
   trackerTool->RequestConfigure();
 
