@@ -49,6 +49,7 @@ WebCameraTracker::ResultType WebCameraTracker::InternalOpen( void )
   this->m_VideoSource->SetOutputFormatToRGB();
   this->m_VideoSource->SetFrameRate( 30 );
   this->m_VideoSource->SetFrameSize( 960, 720, 1 );
+//  this->m_VideoSource->SetFrameSize( 320, 240, 1 );
   this->m_VideoSource->Initialize();
   this->m_Position.Fill( 0.0 );
   this->m_ImageViewer->SetInputConnection( this->m_VideoSource->GetOutputPort() );

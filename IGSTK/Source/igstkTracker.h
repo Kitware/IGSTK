@@ -154,6 +154,13 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
+  /** The "RequestSetFrequency" method defines the frequency at which the
+   * Transform information will be queried from the Tracker device. Note that
+   * Tracker devices have their own internal frequency rate, and if you set here
+   * a frequency that is higher than what the Tracker device is capable to
+   * follow, then you will start receiving transforms with repeated values. */
+  void RequestSetFrequency( double frequencyInHz );
+
  /** Set the time period over which a tool transform should be considered
    *  valid. */
   igstkSetMacro( ValidityTime, TimePeriodType );
@@ -314,6 +321,7 @@ private:
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Reset );
   igstkDeclareInputMacro( CloseCommunication );
+  igstkDeclareInputMacro( ValidFrequency );
 
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
@@ -425,11 +433,16 @@ private:
   /** Report invalid request */ 
   void ReportInvalidRequestProcessing( void );
 
+  /** Actually set the frequency of update */ 
+  void SetFrequencyProcessing( void );
+
   /** Define the coordinate system interface 
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
   TrackerToolType   * m_TrackerToolToBeAttached;
+
+  double              m_FrequencyToBeSet;
 };
 
 }

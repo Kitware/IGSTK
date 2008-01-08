@@ -54,6 +54,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   igstkAddInputMacro( CloseCommunication); 
   igstkAddInputMacro( Success); 
   igstkAddInputMacro( Failure); 
+  igstkAddInputMacro( ValidFrequency); 
 
   // Programming the state machine transitions:
 
@@ -86,6 +87,10 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            CloseCommunication,
                            Idle,
                            ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           ValidFrequency,
+                           Idle,
+                           SetFrequency );
 
   // Transitions from the AttemptingToEstablishCommunication
   igstkAddTransitionMacro( AttemptingToEstablishCommunication,
@@ -97,6 +102,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            Idle,
                            CommunicationEstablishmentFailure );
+
+  igstkAddTransitionMacro( AttemptingToEstablishCommunication,
+                           ValidFrequency,
+                           AttemptingToEstablishCommunication,
+                           ReportInvalidRequest );
 
   // Transitions from CommunicationEstablished
   igstkAddTransitionMacro( CommunicationEstablished,
@@ -134,6 +144,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            CommunicationEstablished,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           ValidFrequency,
+                           CommunicationEstablished,
+                           SetFrequency );
+
   // Transitions from AttemptingToAttachTrackerTool
   igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
                            Success,
@@ -144,6 +159,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            CommunicationEstablished,
                            AttachingTrackerToolFailure );
+
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
+                           ValidFrequency,
+                           AttemptingToAttachTrackerTool,
+                           ReportInvalidRequest );
 
   // Transitions from TrackerToolAttached
   igstkAddTransitionMacro( TrackerToolAttached,
@@ -156,6 +176,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            AttemptingToAttachTrackerTool,
                            AttemptToAttachTrackerTool );
 
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           ValidFrequency,
+                           TrackerToolAttached,
+                           SetFrequency );
+
 
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
@@ -167,6 +192,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            CommunicationEstablished,
                            StartTrackingFailure );
+
+  igstkAddTransitionMacro( AttemptingToTrack,
+                           ValidFrequency,
+                           AttemptingToTrack,
+                           ReportInvalidRequest );
 
   // Transitions from Tracking
   igstkAddTransitionMacro( Tracking,
@@ -189,6 +219,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            AttemptingToCloseCommunication,
                            CloseFromTrackingState );
 
+  igstkAddTransitionMacro( Tracking,
+                           ValidFrequency,
+                           Tracking,
+                           ReportInvalidRequest );
+
   // Transitions from AttemptingToUpdate
   igstkAddTransitionMacro( AttemptingToUpdate,
                            Success,
@@ -199,6 +234,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            Tracking,
                            UpdateStatusFailure );
+
+  igstkAddTransitionMacro( AttemptingToUpdate,
+                           ValidFrequency,
+                           AttemptingToUpdate,
+                           ReportInvalidRequest );
 
   // Transitions from AttemptingToStopTracking
   igstkAddTransitionMacro( AttemptingToStopTracking,
@@ -211,6 +251,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Tracking,
                            StopTrackingFailure );
 
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           ValidFrequency,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            Success,
                            Idle,
@@ -220,6 +265,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            CommunicationEstablished,
                            CloseCommunicationFailure );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           ValidFrequency,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -347,6 +397,21 @@ void Tracker::RequestUpdateStatus( void )
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
+
+
+/** The "RequestSetFrequency" method is used for defining the rate at which 
+ * Transforms are queried from the Tracker device */
+void Tracker::RequestSetFrequency( double frequencyInHz )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestSetFrequency called ...\n");
+  if( frequencyInHz > 0.0 )
+    {
+    this->m_FrequencyToBeSet = frequencyInHz;
+    igstkPushInputMacro( ValidFrequency );
+    m_StateMachine.ProcessInputs();
+    }
+}
+
 
 /** The "InternalOpen" method opens communication with a tracking device.
  *  This method is to be overridden by a descendant class 
@@ -940,6 +1005,18 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   os << indent << "ValidityTime: " << this->m_ValidityTime << std::endl;
 }
+
+/** The "SetFrequencyProcessing" passes the frequency value to the Pulse
+ * Generator. Note that it is still possible for the PulseGenerator to reject
+ * the value and stay at its current frequency. */
+void Tracker::SetFrequencyProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::SetFrequencyProcessing called ...\n");
+
+  this->m_PulseGenerator->RequestSetFrequency( this->m_FrequencyToBeSet );
+}
+
 
 /** Request adding a tool to the tracker  */
 void

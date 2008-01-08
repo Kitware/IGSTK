@@ -31,10 +31,10 @@
 int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 {
 
-  if( argc < 4 )
+  if( argc < 5 )
     {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend" << std::endl;
+    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend trackerFrequency" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -49,6 +49,8 @@ int igstkTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   ObserverType::Pointer     toolObserver = ObserverType::New();
 
   tracker->RequestOpen();
+
+  tracker->RequestSetFrequency( atof( argv[4] ) );
 
   trackerTool->RequestSetName("Tool_1");
   trackerTool->RequestConfigure();
