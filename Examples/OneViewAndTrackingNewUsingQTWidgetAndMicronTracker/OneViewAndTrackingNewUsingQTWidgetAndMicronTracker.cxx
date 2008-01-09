@@ -99,11 +99,9 @@ int main(int argc, char** argv)
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
   view3D->SetRefreshRate( 30 );
-  view3D->RequestStart();
   view3D->SetCameraPosition(-225.0,100.00,-1600.0);
   
   mainWindow.SetView( view3D );
-  mainWindow.show();
 
   std::string  CameraCalibrationFileDirectory = argv[1];
   std::string InitializationFile = argv[2];
@@ -112,13 +110,15 @@ int main(int argc, char** argv)
   mainWindow.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
   mainWindow.ConfigureTrackerToolsAndAttachToTheTracker();
 
-
   // Associate the cylinder spatial object to the first tracker tool 
   mainWindow.AttachObjectToTrackerTool ( 1, cylinder );
 
   // Associate the ellispsoid spatial object to the second tracker tool 
   mainWindow.AttachObjectToTrackerTool ( 2, ellipsoid );
 
+  view3D->RequestResetCamera();
+  mainWindow.show();
+  view3D->RequestStart();
 
   igstk::Transform             toolTransform; 
   igstk::Transform::VectorType position;
