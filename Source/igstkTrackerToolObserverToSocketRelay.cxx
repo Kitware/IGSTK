@@ -136,6 +136,9 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
       dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
       }
     }
+  
+  // Hack for demo
+  dataToBeSent[11] += 1000;
 
   if( !this->m_SocketCommunicator->Send( dataToBeSent, numberOfParametersToSend, 1, this->m_Tag ) )
     {
@@ -143,7 +146,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
     }
 
   //this->m_Tag++;
-#ifdef SLICER_DIALOG
+
   this->m_WaitingForNextRequestFromSocket = true;
 
   char confirmation;
@@ -156,7 +159,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
     {
     this->m_WaitingForNextRequestFromSocket = false;
     }
-#endif
+
 }
  
 
