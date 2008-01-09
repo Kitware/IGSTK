@@ -18,6 +18,7 @@
 #include "vtkSocketCommunicator.h"
 #include "vtkSocketController.h"
 
+#include "igstkRealTimeClock.h"
 
 int igstkTransformSocketListenerTest(int argc, char * argv[])
 {
@@ -48,6 +49,8 @@ int igstkTransformSocketListenerTest(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
+  double lastTime = igstk::RealTimeClock::GetTimeStamp();
+
   // Test receiving some supported types of arrays
   double data[scMsgLength];
 
@@ -63,18 +66,24 @@ int igstkTransformSocketListenerTest(int argc, char * argv[])
       contr->Delete();
       return EXIT_FAILURE;
       }
+
     std::cout << i << " : ";
     for(unsigned int k=0; k<scMsgLength; k++)
       {
       std::cout << data[k] << "  ";
       }
-    std::cout << std::endl;
-    char data2 = 1; 
-    if (!comm->Send(&data2, 1, 1, tag))
-    {
-      cerr << "Client error: Error sending message." << endl;
-    }
 
+    char data2 = 1; 
+
+    if (!comm->Send(&data2, 1, 1, tag))
+      {
+      cerr << "Client error: Error sending message." << endl;
+      }
+
+    double now = igstk::RealTimeClock::GetTimeStamp();
+    double interval = now - lastTime;
+    lastTime = now;
+    std::cout << "  Time = " << interval << " ms " << std::endl;
     }
 
     comm->Delete();
