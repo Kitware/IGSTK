@@ -40,6 +40,8 @@ TrackerToolObserverToSocketRelay::TrackerToolObserverToSocketRelay():m_StateMach
   this->m_SocketCommunicator = vtkSocketCommunicator::New();
 
   this->m_Matrix = vtkMatrix4x4::New();
+
+  this->m_WaitingForNextRequestFromSocket = false;
 }
 
 TrackerToolObserverToSocketRelay::~TrackerToolObserverToSocketRelay()
@@ -94,6 +96,8 @@ TrackerToolObserverToSocketRelay::RequestStart()
 
   //this->m_Tag = 0;
   this->m_Tag = 17;
+
+  this->m_WaitingForNextRequestFromSocket = false;
 }
  
 
@@ -101,6 +105,12 @@ void
 TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * caller, const itk::EventObject & event )
 {
   std::cout << "TrackerToolObserverToSocketRelay::ResendTransformThroughSocket() " << std::endl;
+
+  if( this->m_WaitingForNextRequestFromSocket )
+    {
+    return;
+    }
+
   //
   // We send 12 parameters: 3x3 from the rotation matrix plus 3 from the
   // translation vector.
@@ -133,6 +143,20 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
     }
 
   //this->m_Tag++;
+#ifdef SLICER_DIALOG
+  this->m_WaitingForNextRequestFromSocket = true;
+
+  char confirmation;
+
+  if (!this->m_SocketCommunicator->Receive( &confirmation, 1, 1, this->m_Tag))
+    {
+    this->m_WaitingForNextRequestFromSocket = true;
+    }
+  else
+    {
+    this->m_WaitingForNextRequestFromSocket = false;
+    }
+#endif
 }
  
 

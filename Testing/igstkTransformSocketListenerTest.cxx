@@ -69,6 +69,12 @@ int igstkTransformSocketListenerTest(int argc, char * argv[])
       std::cout << data[k] << "  ";
       }
     std::cout << std::endl;
+    char data2 = 1; 
+    if (!comm->Send(&data2, 1, 1, tag))
+    {
+      cerr << "Client error: Error sending message." << endl;
+    }
+
     }
 
     comm->Delete();

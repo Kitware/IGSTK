@@ -77,6 +77,8 @@ private:
   vtkSocketController       * m_SocketController;
 
   vtkSocketCommunicator     * m_SocketCommunicator;
+  
+  bool                        m_WaitingForNextRequestFromSocket;
 
   vtkMatrix4x4              * m_Matrix;
 
