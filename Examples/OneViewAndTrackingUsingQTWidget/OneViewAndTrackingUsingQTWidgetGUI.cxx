@@ -50,7 +50,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracker->SetLogger( m_Logger );
 
   m_Tracker->RequestOpen();
-  m_Tracker->SetScaleFactor( 100.0 );
+  m_Tracker->SetScaleFactor( 2.0 );
 
   m_Tool->RequestSetMouseName("Mouse1");
   m_Tool->RequestConfigure();
@@ -75,6 +75,12 @@ OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracker->RequestReset();
   m_Tracker->RequestStopTracking();
   m_Tracker->RequestClose();
+}
+
+OneViewAndTrackingUsingQTWidgetGUI::TrackerType::Pointer
+OneViewAndTrackingUsingQTWidgetGUI::GetTracker()
+{
+  return m_Tracker;
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
@@ -156,8 +162,8 @@ void OneViewAndTrackingUsingQTWidgetGUI::ParsePickedPoint( const itk::EventObjec
     igstk::TransformModifiedEvent *tmevent = 
                                      ( igstk::TransformModifiedEvent *) & event;
     
-    std::cout << "Translation transform: " << tmevent->Get().GetTranslation()[0]
-                                           << tmevent->Get().GetTranslation()[1]
+    std::cout << "Translation transform: " << tmevent->Get().GetTranslation()[0] << "\t"
+                                           << tmevent->Get().GetTranslation()[1] << "\t"
                                            << tmevent->Get().GetTranslation()[2]
                                            << std::endl;
     }

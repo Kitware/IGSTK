@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   cylinderRepresentation->SetOpacity(1.0);
   cylinderRepresentation->SetLogger( logger );
 
-  double validityTimeInMilliseconds = 1e300; // in seconds
+  double aLongTime = 1e300; // in seconds
   igstk::Transform transform;
   igstk::Transform::VectorType translation;
   translation[0] = 0.0;
@@ -90,8 +90,7 @@ int main(int argc, char** argv)
   igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
 
   transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds );
-
+      translation, rotation, errorValue, aLongTime );
 
 
   translation[1] = -0.25;  // translate the cylinder along Y
@@ -99,7 +98,7 @@ int main(int argc, char** argv)
   rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
 
   transform.SetTranslationAndRotation( 
-  translation, rotation, errorValue, validityTimeInMilliseconds );
+  translation, rotation, errorValue, aLongTime );
 
   // cylinder coordinates are relative to the ellipse
   cylinder->RequestSetTransformAndParent( transform, ellipsoid.GetPointer() );
@@ -109,20 +108,25 @@ int main(int argc, char** argv)
   View3DType::Pointer view3D = View3DType::New();
 
   view3D->SetLogger( logger );
+  mainWindow.SetView( view3D );
+
+  //attach the view to the tracker coordinates
+  igstk::Transform identity;
+  identity.SetToIdentity( aLongTime );
+ 
+  view3D->RequestSetTransformAndParent( identity, mainWindow.GetTracker().GetPointer());
 
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );
-  view3D->SetRefreshRate( 10 );
-  view3D->RequestStart();
-  view3D->RequestResetCamera();
-  
-  mainWindow.SetView( view3D );
 
   //Associate the Spatial Object to the tracker
   mainWindow.AttachObjectToTrack( ellipsoid );
+  view3D->SetRefreshRate( 10 );
 
+  view3D->RequestResetCamera();
   mainWindow.show();
-
+  view3D->RequestStart();
+  
   while(! mainWindow.HasQuitted())
     {
     QTest::qWait(10);

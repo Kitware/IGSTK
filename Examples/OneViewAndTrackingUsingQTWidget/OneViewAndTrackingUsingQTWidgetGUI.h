@@ -49,6 +49,7 @@ public:
   void AttachObjectToTrack( igstk::SpatialObject *objectToTrack);
   void SetView( igstk::View * view );
   bool HasQuitted();
+  TrackerType::Pointer GetTracker();
 
 public slots:
   void OnQuitAction();
