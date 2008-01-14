@@ -31,8 +31,32 @@ public: \
   void RequestSetTransformAndParent( const Transform & transformToParent, \
                                      const TParent * parent ) \
     { \
-    m_CoordinateReferenceSystemDelegator->RequestSetTransformAndParent( \
+    if ( this->IsInternalTransformRequired() == false ) \
+      { \
+      m_CoordinateReferenceSystemDelegator->RequestSetTransformAndParent( \
                                      transformToParent, parent); \
+      } \
+    else \
+      { \
+      Transform internalTransform = this->GetInternalTransform(); \
+      Transform transformToParentWithInternalTransform = \
+                               Transform::TransformCompose( \
+                                              transformToParent, \
+                                              internalTransform ); \
+      m_CoordinateReferenceSystemDelegator->RequestSetTransformAndParent( \
+                          transformToParentWithInternalTransform, parent); \
+      }\
+    } \
+protected: \
+  virtual bool IsInternalTransformRequired() \
+    { \
+    return false; \
+    } \
+  virtual Transform GetInternalTransform() \
+    { \
+    Transform identity; \
+    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() ); \
+    return identity; \
     } \
 private: \
   CoordinateReferenceSystemDelegator::Pointer \
