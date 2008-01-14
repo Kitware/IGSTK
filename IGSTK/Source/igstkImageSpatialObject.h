@@ -118,6 +118,16 @@ public:
 
 protected:
 
+  /** For coordinate systems, this method lets us indicate that 
+   *  we need to provide an additional transform. 
+   */
+  virtual bool IsInternalTransformRequired();
+
+  /** For coordinate systems, allows us to hook in the image transform to
+   *  calls to RequestSetTransformAndParent.
+   */
+  virtual Transform GetInternalTransform();
+
   ImageSpatialObject( void );
   ~ImageSpatialObject( void );
 

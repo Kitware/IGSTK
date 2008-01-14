@@ -377,6 +377,28 @@ ImageSpatialObject< TPixelType, VDimension >
   os << "VTK Importer filter " << m_VtkImporter << std::endl;
 }
 
+/** For coordinate systems, this method lets us indicate that 
+ *  we need to provide an additional transform. 
+ */
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::IsInternalTransformRequired()
+{ 
+  return true;
+} 
+
+/** For coordinate systems, allows us to hook in the image transform to
+ *  calls to RequestSetTransformAndParent.
+ */
+template< class TPixelType, unsigned int VDimension >
+Transform
+ImageSpatialObject< TPixelType, VDimension >
+::GetInternalTransform() 
+{ 
+  return m_ImageTransform;
+}
+
 
 } // end namespace igstk
 
