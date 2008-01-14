@@ -9,6 +9,9 @@
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
+  Made by SINTEF Health Research - Medical technology:
+  http://www.sintef.no/medtech
+
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
@@ -133,6 +136,7 @@ public:
   void RequestGetVideoOutputPadding();
   
   /** Event types */
+   
   igstkLoadedEventMacro( SignedIntEvent, IGSTKEvent, 
                          EventHelperType::SignedIntType );
   igstkLoadedEventMacro( UnsignedLongEvent, IGSTKEvent, 
@@ -141,7 +145,13 @@ public:
                          VideoDimensions );
   igstkLoadedEventMacro( VideoClipRectangleEvent, IGSTKEvent, 
                          VideoClipRectangle );
-
+  
+  itkEventMacro(GrabbingStartedEvent, IGSTKEvent);
+  
+  /** Error events */
+  //itkEventMacro(InvalidRequestErrorEvent, StringEvent);
+  itkEventMacro(VideoGrabberErrorEvent, StringEvent);
+  
 protected:
   VideoGrabber();
   virtual ~VideoGrabber();
@@ -149,18 +159,19 @@ protected:
   typedef enum 
     { 
     FAILURE=0, 
-    SUCCESS
+    SUCCESS,
+    WAIT
     } ResultType;
   
   /** Internal fuction to set and test video buffer size. 
     * This method must be overridden by a decendant class 
     * with testing of the input value */
-  virtual ResultType InternalSetVideoBufferSizeProcessing( void );
+  virtual ResultType InternalSetVideoBufferSizeProcessing( void ) = 0;
   
   /** Internal fuction to set and test video framerate.
     * This method must be overridden by a decendant class 
     * with testing of the input value */
-  virtual ResultType InternalSetWantedFramerateProcessing( void );
+  virtual ResultType InternalSetWantedFramerateProcessing( void ) = 0;
   
   /** Internal fuction to set and test video output format.
     * This method must be overridden by a decendant class 
@@ -206,6 +217,13 @@ protected:
     * Abstract function to make sure it is implemented in a decendant class. */
   virtual ResultType InternalStopGrabbingProcessing( void ) = 0;
   
+  /** Internal fuction to initiate transition to GrabbingState.
+    * Abstract function to make sure it is implemented in a decendant class. */
+  virtual ResultType InternalGrabbingTransition( void ) = 0;
+  
+  /** Fuction to initiate transition to GrabbingState. */
+  void GrabbingTransition();
+  
   /** Internal functions to report from RequestGet methods. 
     * These methods should be overridden by a decentand class */
   /*virtual void InternalRequestVideoBufferSizeProcessing();
@@ -217,6 +235,22 @@ protected:
   virtual void InternalRequestVideoOutputDimensionsProcessing();
   virtual void InternalRequestVideoOutputClipRectangleProcessing();
   virtual void InternalRequestVideoOutputPaddingProcessing();*/
+  
+  /** Temporary input variables for state machine */
+  unsigned long       m_VideoBufferSizeToBeSet;
+  unsigned int        m_FramerateToBeSet;
+  unsigned int        m_VideoOutputFormatToBeSet;
+  VideoDimensions     m_VideoOutputDimensionsToBeSet;
+  VideoClipRectangle  m_VideoOutputClipRectangleToBeSet;
+  unsigned int        m_VideoOutputPaddingToBeSet;
+  
+  /** Variable to save parameter settings */
+  unsigned long       m_VideoBufferSize;
+  unsigned int        m_Framerate;
+  unsigned int        m_VideoOutputFormat;
+  VideoDimensions     m_VideoOutputDimensions;
+  VideoClipRectangle  m_VideoOutputClipRectangle;
+  unsigned int        m_VideoOutputPadding;
   
 private:
     
@@ -268,10 +302,12 @@ private:
   
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
+  igstkDeclareInputMacro( Wait );
   
   
   /** Methods used only by the state machine */
   void NoProcessing();
+  void ReportInvalidRequestProcessing();  
   void ErrorProcessing();
   void SetVideoBufferSizeProcessing();
   void SetWantedFramerateProcessing();
@@ -297,21 +333,6 @@ private:
   void StartGrabbingProcessing();
   void StopGrabbingProcessing();
   
-  /** Temporary input variables for state machine */
-  unsigned long       m_VideoBufferSizeToBeSet;
-  unsigned int        m_FramerateToBeSet;
-  unsigned int        m_VideoOutputFormatToBeSet;
-  VideoDimensions     m_VideoOutputDimensionsToBeSet;
-  VideoClipRectangle  m_VideoOutputClipRectangleToBeSet;
-  unsigned int        m_VideoOutputPaddingToBeSet;
-  
-  /** Variable to save parameter settings */
-  unsigned long       m_VideoBufferSize;
-  unsigned int        m_Framerate;
-  unsigned int        m_VideoOutputFormat;
-  VideoDimensions     m_VideoOutputDimensions;
-  VideoClipRectangle  m_VideoOutputClipRectangle;
-  unsigned int        m_VideoOutputPadding;
 };
 
 } // end namespace igstk
