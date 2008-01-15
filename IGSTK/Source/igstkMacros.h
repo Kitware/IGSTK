@@ -312,9 +312,11 @@ public: \
  *  machine that takes its value */
 #define igstkLoadedEventTransductionMacro( event, input ) \
 private: \
-  typedef std::vector< unsigned long > ReceptorObserverTagContainer; \
+  typedef std::vector< unsigned long >   ReceptorObserverTagContainer; \
+  typedef std::vector< const ::itk::Object * > ObservedObjectsContainer; \
   ReceptorObserverPointer m_Observer##event##input;  \
   ReceptorObserverTagContainer m_TransductionObserversTagList; \
+  ObservedObjectsContainer m_ObservedObjectsList; \
   ::igstk::event##Event::PayloadType m_##input##InputToBeSet; \
   void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
@@ -335,15 +337,18 @@ public: \
                                            & Self::Callback##event##input##Input ); \
     unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     this->m_TransductionObserversTagList.push_back( tag ); \
+    this->m_ObservedObjectsList.push_back( object ); \
     } \
  void DisconnectTransductionObservers() \
     { \
+    ObservedObjectsContainer::iterator objectItr = this->m_ObservedObjectsList.begin(); \
     ReceptorObserverTagContainer::iterator itr = this->m_TransductionObserversTagList.begin(); \
     ReceptorObserverTagContainer::iterator end = this->m_TransductionObserversTagList.end(); \
     while( itr != end ) \
       { \
-      m_SpatialObject->RemoveObserver( *itr ); \
+      (*objectItr)->RemoveObserver( *itr ); \
       ++itr; \
+      ++objectItr; \
       } \
     }
 #define igstkLoadedObjectEventTransductionMacro( event, input ) \
