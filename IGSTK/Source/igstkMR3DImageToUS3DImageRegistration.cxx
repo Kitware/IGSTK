@@ -358,9 +358,8 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
                                     = USImageTransformObserver::New();
   m_USFixedImage->AddObserver( TransformModifiedEvent(),
                                            usTransformObserver );
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  m_USFixedImage->RequestGetTransform();
-#endif
+
+  m_USFixedImage->RequestGetImageTransform();
 
   Transform usTransform;
   if( usTransformObserver->GotUSImageTransform() )
@@ -497,11 +496,9 @@ void MR3DImageToUS3DImageRegistration::RequestCalculateRegistration()
   this->ObserveUSImageTransformInput(this->m_USFixedImage);
   this->ObserveMRImageTransformInput(this->m_MRMovingImage);
 
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetTransform();
+  const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetImageTransform();
   const_cast<MRImageSpatialObject*>(
-                            this->m_MRMovingImage)->RequestGetTransform();
-#endif
+                            this->m_MRMovingImage)->RequestGetImageTransform();
 
   this->m_StateMachine.PushInput( this->m_CalculateRegistrationInput );
   this->m_StateMachine.ProcessInputs();
