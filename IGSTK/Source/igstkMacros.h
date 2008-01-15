@@ -298,12 +298,13 @@ private: \
     m_StateMachine.ProcessInputs(); \
   } \
 public: \
-  void Observe##event##Event(const ::itk::Object * object ) \
+  void Observe##event##Event(const ::igstk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
                                           & Self::Callback##event##input##Input ); \
     unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+    this->RegisterObservedObject( object, tag ); \
     } 
 
 
@@ -312,11 +313,7 @@ public: \
  *  machine that takes its value */
 #define igstkLoadedEventTransductionMacro( event, input ) \
 private: \
-  typedef std::vector< unsigned long >   ReceptorObserverTagContainer; \
-  typedef std::vector< const ::igstk::Object * > ObservedObjectsContainer; \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ReceptorObserverTagContainer  m_TransductionObservers##event##input##TagList; \
-  ObservedObjectsContainer m_ObservedObjects##event##input##List; \
   ::igstk::event##Event::PayloadType m_##input##InputToBeSet; \
   void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
@@ -336,20 +333,7 @@ public: \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input##Input ); \
     unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
-    this->m_TransductionObservers##event##input##TagList.push_back( tag ); \
-    this->m_ObservedObjects##event##input##List.push_back( object ); \
-    } \
- void DisconnectTransductionObservers() \
-    { \
-    ObservedObjectsContainer::iterator objectItr = this->m_ObservedObjects##event##input##List.begin(); \
-    ReceptorObserverTagContainer::iterator itr = this->m_TransductionObservers##event##input##TagList.begin(); \
-    ReceptorObserverTagContainer::iterator end = this->m_TransductionObservers##event##input##TagList.end(); \
-    while( itr != end ) \
-      { \
-      (*objectItr)->RemoveObserver( *itr ); \
-      ++itr; \
-      ++objectItr; \
-      } \
+    this->RegisterObservedObject( object, tag ); \
     }
 #define igstkLoadedObjectEventTransductionMacro( event, input ) \
 private: \
@@ -367,12 +351,13 @@ private: \
       } \
   } \
 public: \
- void Observe##input##Input(const ::itk::Object * object ) \
+ void Observe##input##Input(const ::igstk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input##Input ); \
     unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+    this->RegisterObservedObject( object, tag ); \
     }
 
 

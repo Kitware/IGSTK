@@ -33,6 +33,7 @@ Object::Object()
 
 Object::~Object()
 {
+  this->RemoveFromObservedObjects();
 }
 
 
@@ -57,6 +58,28 @@ Object::RemoveObserver( unsigned long tag ) const
   nonConstObject->Superclass::RemoveObserver( tag );
 }
 
+
+void 
+Object::RegisterObservedObject( const ::igstk::Object * object, unsigned long tag )
+{ 
+  this->m_ObservedObjectsContainer.push_back( object );
+  this->m_ObserverTagsContainer.push_back( tag );
+}
+
+
+void 
+Object::RemoveFromObservedObjects()
+{
+  ObservedObjectsContainer::iterator objectItr = this->m_ObservedObjectsContainer.begin();
+  ObserverTagContainer::iterator itr = this->m_ObserverTagsContainer.begin();
+  ObserverTagContainer::iterator end = this->m_ObserverTagsContainer.end();
+  while( itr != end )
+    {
+    (*objectItr)->RemoveObserver( *itr );
+    ++itr;
+    ++objectItr;
+    }
+}
 
 /** Print Self function */
 void Object::PrintSelf( std::ostream& os, itk::Indent indent ) const

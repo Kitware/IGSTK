@@ -76,10 +76,21 @@ protected:
   /** Print the object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+  /** Register observed objects in an internal array so that they 
+   *  can be disconnected upon destruction */
+  void RegisterObservedObject( const ::igstk::Object * object, unsigned long tag );
+
+  /** Remove observers that this object may have connected to other objects */
+  void RemoveFromObservedObjects();
+
 private: 
   
-  mutable LoggerType::Pointer   m_Logger; 
+  typedef std::vector< unsigned long >           ObserverTagContainer;
+  typedef std::vector< const ::igstk::Object * > ObservedObjectsContainer;
 
+  mutable LoggerType::Pointer   m_Logger; 
+  ObservedObjectsContainer      m_ObservedObjectsContainer;
+  ObserverTagContainer          m_ObserverTagsContainer;
 
 };
 
