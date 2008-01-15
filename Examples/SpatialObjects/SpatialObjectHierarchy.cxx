@@ -144,13 +144,17 @@ int main( int , char *[] )
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  group->RequestAddObject(sphere1);
-#endif
+
+  igstk::Transform transformSphere1ToGroup;
+  transformSphere1ToGroup.SetToIdentity( 
+                  igstk::TimeStamp::GetLongestPossibleTime() );
+  group->RequestAddChild( transformSphere1ToGroup, sphere1 );
   SpatialObjectType::Pointer sphere3 = SpatialObjectType::New();
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-  group->RequestAddObject(sphere3);
-#endif
+
+  igstk::Transform transformSphere3ToGroup;
+  transformSphere3ToGroup.SetToIdentity(
+                  igstk::TimeStamp::GetLongestPossibleTime() );                
+  group->RequestAddChild( transformSphere3ToGroup, sphere3 );
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 // 
@@ -164,9 +168,9 @@ int main( int , char *[] )
   std::cout << "Number of object in my group: " 
             << group->GetNumberOfChildren() << std::endl;
 // Software Guide : EndCodeSnippet
-  if(group->GetNumberOfChildren() != 3)
+  if(group->GetNumberOfChildren() != 2)
     {
-    std::cout << "group should have 3 objects and got: " 
+    std::cout << "group should have 2 objects and got: " 
               << group->GetNumberOfChildren() << std::endl;
     }
   return EXIT_SUCCESS;
