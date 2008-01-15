@@ -1,19 +1,19 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class NeedleBiopsyGUI {open
+class NeedleBiopsyGUI {open selected : {public igstk::Object}
 } {
   Function {NeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
       callback {Quit();} open
-      xywh {675 211 930 732} type Double box PLASTIC_UP_BOX resizable
+      xywh {675 211 930 730} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group ControlGroup {
@@ -182,7 +182,7 @@ else
 if( fileName )
 {
   ReferenceToolSROMFile->value(fileName);
-}} selected
+}}
           xywh {350 370 25 25}
         }
         Fl_Choice ReferenceToolPort {
