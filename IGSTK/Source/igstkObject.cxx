@@ -50,6 +50,14 @@ Object::SetLogger( LoggerType * logger)
 }
 
 
+void 
+Object::RemoveObserver( unsigned long tag ) const
+{ 
+  Object * nonConstObject = const_cast< Object * >( this );
+  nonConstObject->Superclass::RemoveObserver( tag );
+}
+
+
 /** Print Self function */
 void Object::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

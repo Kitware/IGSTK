@@ -58,6 +58,7 @@ public:
   /** Connect the Logger for this class */
   void SetLogger( LoggerType * logger );
 
+  void RemoveObserver(unsigned long tag) const;
 
 protected: 
 
