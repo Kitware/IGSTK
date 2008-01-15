@@ -303,7 +303,7 @@ public: \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
                                           & Self::Callback##event##input##Input ); \
-    object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+    unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     } 
 
 
@@ -315,8 +315,8 @@ private: \
   typedef std::vector< unsigned long >   ReceptorObserverTagContainer; \
   typedef std::vector< const ::igstk::Object * > ObservedObjectsContainer; \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ReceptorObserverTagContainer m_TransductionObserversTagList; \
-  ObservedObjectsContainer m_ObservedObjectsList; \
+  ReceptorObserverTagContainer  m_TransductionObservers##event##input##TagList; \
+  ObservedObjectsContainer m_ObservedObjects##event##input##List; \
   ::igstk::event##Event::PayloadType m_##input##InputToBeSet; \
   void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
@@ -336,14 +336,14 @@ public: \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input##Input ); \
     unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
-    this->m_TransductionObserversTagList.push_back( tag ); \
-    this->m_ObservedObjectsList.push_back( object ); \
+    this->m_TransductionObservers##event##input##TagList.push_back( tag ); \
+    this->m_ObservedObjects##event##input##List.push_back( object ); \
     } \
  void DisconnectTransductionObservers() \
     { \
-    ObservedObjectsContainer::iterator objectItr = this->m_ObservedObjectsList.begin(); \
-    ReceptorObserverTagContainer::iterator itr = this->m_TransductionObserversTagList.begin(); \
-    ReceptorObserverTagContainer::iterator end = this->m_TransductionObserversTagList.end(); \
+    ObservedObjectsContainer::iterator objectItr = this->m_ObservedObjects##event##input##List.begin(); \
+    ReceptorObserverTagContainer::iterator itr = this->m_TransductionObservers##event##input##TagList.begin(); \
+    ReceptorObserverTagContainer::iterator end = this->m_TransductionObservers##event##input##TagList.end(); \
     while( itr != end ) \
       { \
       (*objectItr)->RemoveObserver( *itr ); \
@@ -372,7 +372,7 @@ public: \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
                                            & Self::Callback##event##input##Input ); \
-    object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+    unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
     }
 
 
