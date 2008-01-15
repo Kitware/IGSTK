@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
@@ -16,15 +16,17 @@ else
   }} {}
 } 
 
-class FourViewsTrackingWithCTGUI {open
+class FourViewsTrackingWithCTGUI {open selected : {public igstk::Object}
 } {
-  Function {FourViewsTrackingWithCTGUI()} {} {
+  Function {FourViewsTrackingWithCTGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK: Four Veiws Tracking With CT Images Example} open
-      xywh {102 272 1145 735} type Double box PLASTIC_UP_BOX resizable
-      code0 {\#include "igstkFLTKWidget.h"} 
+      xywh {498 232 1145 735} type Double box PLASTIC_UP_BOX resizable
+      code0 {\#include "igstkFLTKWidget.h"}
       code1 {\#include <igstkView2D.h>}
-      code2 {\#include <igstkView3D.h>} visible
+      code2 {\#include <igstkView3D.h>}
+      code3 {\#include <igstkObject.h>} visible
     } {
       Fl_Group ControlGroup {
         xywh {0 0 375 690} box DOWN_BOX
@@ -87,7 +89,7 @@ else
         }
         Fl_Value_Output NumberOfImageLandmarks {
           label {No.}
-          xywh {175 100 32 25} box DOWN_BOX maximum 100 step 1 textfont 1 textcolor 0
+          xywh {175 100 32 25} box DOWN_BOX maximum 100 step 1 textfont 1
         }
         Fl_Value_Output NumberOfTrackerLandmarks {
           label {No.}
@@ -139,8 +141,7 @@ else
         xywh {0 690 1145 60} box DOWN_BOX
       }
     }
-    code {
-m_DisplayAxial = igstk::View2D::New();
+    code {m_DisplayAxial = igstk::View2D::New();
 m_DisplayCoronal = igstk::View2D::New();
 m_DisplaySagittal = igstk::View2D::New();
 m_Display3D = igstk::View3D::New();
@@ -160,8 +161,7 @@ QuitButton->callback( Quit );} {}
     code {delete m_DisplayAxialWidget;
 delete m_DisplayCoronalWidget;
 delete m_DisplaySagittalWidget;
-delete m_Display3DWidget;} {selected
-    }
+delete m_Display3DWidget;} {}
   }
   Function {RequestSetPatientName()} {open return_type {virtual void}
   } {}
@@ -187,9 +187,8 @@ delete m_Display3DWidget;} {selected
   } {}
   Function {RequestReset()} {open return_type {virtual void}
   } {}
-  decl { protected: igstk::View2D::Pointer m_DisplayAxial;
+  decl {protected: igstk::View2D::Pointer m_DisplayAxial;
   igstk::View2D::Pointer m_DisplayCoronal;
   igstk::View2D::Pointer m_DisplaySagittal;
-  igstk::View3D::Pointer m_Display3D;
-} {}  
+  igstk::View3D::Pointer m_Display3D;} {}
 } 
