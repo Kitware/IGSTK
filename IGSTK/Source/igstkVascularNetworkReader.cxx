@@ -122,9 +122,10 @@ void VascularNetworkReader::AttemptReadObjectProcessing()
         vessel->SetVesselSpatialObject(vesselTube);
 
         // For the moment no hierarchy
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED
-        m_VascularNetwork->RequestAddObject(vessel);
-#endif
+        igstk::Transform identityTransform;
+        identityTransform.SetToIdentity( 
+                           igstk::TimeStamp::GetLongestPossibleTime() );
+        m_VascularNetwork->RequestAddVessel( identityTransform, vessel );
         }
       }
     it++;
