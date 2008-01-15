@@ -1,17 +1,17 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
-class DeckOfCardRobotGUI {open
+class DeckOfCardRobotGUI {open selected : {public igstk::Object}
 } {
   Function {DeckOfCardRobotGUI()} {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Deck of Card Robot}
       callback {Quit();} open
-      xywh {258 34 930 732} type Double box PLASTIC_UP_BOX resizable
+      xywh {522 78 930 730} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group ViewerGroup {open
@@ -55,7 +55,7 @@ class DeckOfCardRobotGUI {open
           xywh {164 675 380 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 1 deactivate
         }
         Fl_Value_Slider NeedleSlider {
-          callback {this->RequestInsertNeedle();} selected
+          callback {this->RequestInsertNeedle();}
           xywh {550 675 350 15} type {Horz Knob} box DOWN_FRAME maximum 3 step 0.1 deactivate
         }
         Fl_Menu_Button SwitchingView {open
