@@ -298,7 +298,7 @@ private: \
     m_StateMachine.ProcessInputs(); \
   } \
 public: \
-  void Observe##event##Event(const ::igstk::Object * object ) \
+  void Observe##event##Event(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
@@ -367,7 +367,7 @@ private: \
       } \
   } \
 public: \
- void Observe##input##Input(const ::igstk::Object * object ) \
+ void Observe##input##Input(const ::itk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
@@ -392,12 +392,12 @@ protected:\
   ~name##Observer() {}\
 public:\
   typedef eventType  EventType;\
-  void Execute(igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
     {\
-    const igstk::Object * constCaller = caller;\
+    const itk::Object * constCaller = caller;\
     this->Execute( constCaller, event );\
     }\
-  void Execute(const igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
     {\
     m_GotObject = false;\
     if( EventType().CheckEvent( &event ) )\
@@ -445,12 +445,12 @@ protected:\
   ~name##Observer() {}\
 public:\
   typedef eventType  EventType;\
-  void Execute(igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
     {\
-    const igstk::Object * constCaller = caller;\
+    const itk::Object * constCaller = caller;\
     this->Execute( constCaller, event );\
     }\
-  void Execute(const igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
     {\
     m_GotObject = false;\
     if( EventType().CheckEvent( &event ) )\
@@ -498,12 +498,12 @@ protected:\
   ~name##Observer() {}\
 public:\
   typedef eventType  EventType;\
-  void Execute(igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(itk::Object *caller, const itk::EventObject & event)\
     {\
-    const igstk::Object * constCaller = caller;\
+    const itk::Object * constCaller = caller;\
     this->Execute( constCaller, event );\
     }\
-  void Execute(const igstk::Object *caller, const itk::EventObject & event)\
+  void Execute(const itk::Object *caller, const itk::EventObject & event)\
     {\
     m_GotObject = false;\
     if( EventType().CheckEvent( &event ) )\
