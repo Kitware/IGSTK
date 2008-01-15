@@ -42,6 +42,7 @@ void RegisterTests()
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
+  REGISTER_TEST(igstkObjectRepresentationRemovalTest);
 
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);

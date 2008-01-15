@@ -85,6 +85,7 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkVascularNetworkObjectTest.cxx
   igstkTransductionMacroTest.cxx
+  igstkObjectRepresentationRemovalTest.cxx
   )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -152,6 +153,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
+ADD_TEST( igstkObjectRepresentationRemovalTest ${IGSTKSandbox_TESTS} igstkObjectRepresentationRemovalTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
 ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)
