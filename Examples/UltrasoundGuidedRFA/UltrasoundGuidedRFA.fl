@@ -2,7 +2,7 @@
 version 1.0107 
 header_name {.h} 
 code_name {.cxx}
-class UltrasoundGuidedRFA {open
+class UltrasoundGuidedRFA {open selected : {public igstk::Object}
 } {
   Function {UltrasoundGuidedRFA()} {open
   } {
@@ -17,7 +17,7 @@ class UltrasoundGuidedRFA {open
         class {igstk::FLTKWidget}
       }
       Fl_Box Display2D {
-        label {Display 2D} selected
+        label {Display 2D}
         xywh {10 10 380 330} box FLAT_BOX color 0 labelcolor 7
         class {igstk::FLTKWidget}
       }
