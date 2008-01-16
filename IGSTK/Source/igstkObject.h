@@ -85,12 +85,46 @@ protected:
 
 private: 
   
-  typedef std::vector< unsigned long >           ObserverTagContainer;
-  typedef std::vector< const ::igstk::Object * > ObservedObjectsContainer;
+  typedef ::igstk::Object                         ObservedObjectType;
+  typedef std::pair< const ObservedObjectType *, 
+                     unsigned long>               ObservedObjectTagPair;
+  typedef std::list< ObservedObjectTagPair >      ObservedObjectPairContainer;
+  typedef ::itk::MemberCommand< Self >            DeleteEventCommandType;
+  typedef ::itk::EventObject                      EventType;
 
-  mutable LoggerType::Pointer   m_Logger; 
-  ObservedObjectsContainer      m_ObservedObjectsContainer;
-  ObserverTagContainer          m_ObserverTagsContainer;
+  mutable LoggerType::Pointer                 m_Logger; 
+  ObservedObjectPairContainer                 m_ObservedObjectPairContainer;
+  DeleteEventCommandType::Pointer             m_ObservedObjectDeleteReceptor;
+
+  /** This method is called when an object we are observing is deleted.
+   *  It removes the object being deleted (caller) from our internal list
+   *  of observed objects. We use the internal list to remove our observers
+   *  when we are deleted.
+   */
+  void ObservedObjectDeleteProcessing(const itk::Object* caller, 
+                                      const EventType& event );
+
+  /** Put this here so we can share typedefs. */
+  class ObservedObjectTagPairObjectMatchPredicate
+    {
+    public:
+      ObservedObjectTagPairObjectMatchPredicate(const itk::Object* obj) : m_TargetObject( obj ) {};
+
+      bool operator() ( const igstk::Object::ObservedObjectTagPair& objTagPair )
+        {
+        if (objTagPair.first == m_TargetObject)
+          {
+          return true;
+          }
+        else
+          {
+          return false;
+          }
+        }
+
+    private:
+      const itk::Object* m_TargetObject;
+    };
 
 };
 
