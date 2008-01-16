@@ -241,6 +241,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
                                   coordSystemAObserver );
 
   //start tracking 
+  std::cout << "Start tracking..." << std::endl;
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -248,7 +249,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   typedef ::itk::Versor<double>       VersorType;
 
 
-  for(unsigned int i=0; i<100; i++)
+  for(unsigned int i=0; i<20; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -278,9 +279,43 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
       }
     }
   
-  std::cout << "RequestStopTracking()" << std::endl;
+  std::cout << "Stop Tracking" << std::endl;
   tracker->RequestStopTracking();
 
+  // restart tracking
+  std::cout << "Restart tracking" << std::endl;
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<20; i++)
+    {
+    tracker->RequestUpdateStatus();
+
+    TransformType             transform;
+    VectorType                position;
+
+
+    //There are two ways of accessing the transform
+    //First option: use GetCalibratedTransform method
+    transform = trackerTool->GetCalibratedTransform();
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    //Second option: use coordinate system convenience method
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotPayload())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "\t\t  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+      }
+    }
+ 
   std::cout << "RequestClose()" << std::endl;
   tracker->RequestClose();
 
