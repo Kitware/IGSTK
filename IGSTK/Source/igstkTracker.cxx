@@ -181,6 +181,15 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            TrackerToolAttached,
                            SetFrequency );
 
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           StopTracking,
+                           TrackerToolAttached,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           CloseFromCommunicatingState );
 
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
@@ -299,7 +308,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   m_ConditionNextTransformReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
-
+  m_TrackingThreadStarted = false;
 }
 
 /** Destructor */
@@ -713,9 +722,10 @@ void Tracker::EnterTrackingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing "
                  "called ...\n");
 
-  if ( this->GetThreadingEnabled() )
+  if ( ! m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
     m_ThreadID = m_Threader->SpawnThread( TrackingThreadFunction, this );
+    m_TrackingThreadStarted= true;
     }
 
   m_PulseGenerator->RequestStart();
@@ -727,12 +737,6 @@ void Tracker::ExitTrackingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing "
                  "called ...\n");
   m_PulseGenerator->RequestStop();
-
-  // Terminating the TrackingThread.
-  if ( this->GetThreadingEnabled() )
-    {
-    m_Threader->TerminateThread( m_ThreadID );
-    }
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status
@@ -923,7 +927,15 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 
   // detach all the tracker tools from the tracker
   this->DetachAllTrackerToolsFromTracker();
-  
+
+  // Terminating the TrackingThread and if it is started
+  if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
+    }
+
+
   if( result == SUCCESS )
     {
     result = this->InternalClose();
@@ -961,6 +973,14 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
 
   // Detach all the tracker tools from the tracker
   this->DetachAllTrackerToolsFromTracker();
+
+  // Terminating the TrackingThread and if it is started
+  if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
+    }
+
   
   ResultType result = this->InternalClose();
 

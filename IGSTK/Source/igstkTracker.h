@@ -287,6 +287,10 @@ private:
       multi-threading, if this flag is set as true */
   bool                            m_ThreadingEnabled;
 
+  /** Boolean value to indicate that the tracking thread 
+    * has started */
+  bool                            m_TrackingThreadStarted;
+
   /** itk::MultiThreader object pointer */
   itk::MultiThreader::Pointer     m_Threader;
 
