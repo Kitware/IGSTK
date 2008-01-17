@@ -469,10 +469,9 @@ IF (IGSTK_DATA_ROOT)
               ${IGSTK_TESTS}
               igstkAuroraTrackerSimulatedTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerSimulatedTestLoggerOutput.txt
-              ${IGSTK_DATA_ROOT}/aurora_stream_multichan_11_11_2005.txt
-              ${IGSTK_DATA_ROOT}/aurora_multichan.rom              )
+              ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
+              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom              )
 
-  ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
 
