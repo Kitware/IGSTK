@@ -166,7 +166,7 @@ const std::string  MicronTracker::GetErrorDescription( unsigned int code )
 void MicronTracker::SetCameraCalibrationFilesDirectory( std::string fileName )
 {
   igstkLogMacro( DEBUG,
-                "MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
+                "igstk::MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
 
   m_CalibrationFilesDirectory = fileName;
 }
@@ -175,7 +175,7 @@ void MicronTracker::SetCameraCalibrationFilesDirectory( std::string fileName )
 void MicronTracker::SetInitializationFile( std::string fileName )
 {
   igstkLogMacro( DEBUG,
-                "MicronTracker::SetInitializationFileDirectoryPath called..\n");
+                "igstk::MicronTracker::SetInitializationFileDirectoryPath called..\n");
 
   m_InitializationFile = fileName;
 }
@@ -185,7 +185,7 @@ void
 MicronTracker::LoadMarkerTemplate( std::string filename )
 {
   igstkLogMacro( DEBUG,
-                "MicronTracker::LoadMarkerTemplate called..\n");
+                "igstk::MicronTracker::LoadMarkerTemplate called..\n");
 
   // clear templates already loaded
   this->m_Markers->clearTemplates();
@@ -212,7 +212,7 @@ MicronTracker::LoadMarkerTemplate( std::string filename )
 
 MicronTracker::ResultType MicronTracker::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalOpen called ...\n");
 
   /* Initialization involves two steps
    * 1) Set algorithm and camera attributes
@@ -237,7 +237,7 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
  *  Frame interleave, template matching tolerance, extrapolate frame etc*/
 bool MicronTracker::Initialize()
 {
-  igstkLogMacro( DEBUG, "MicronTracker::Initialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::Initialize called ...\n");
 
   bool result = true;
   if ( m_InitializationFile == "" || !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
@@ -312,7 +312,7 @@ bool MicronTracker::Initialize()
 
 bool MicronTracker::SetUpCameras()
 {
-  igstkLogMacro( DEBUG, "MicronTracker::SetUpCameras called ...\n");
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::SetUpCameras called ...\n");
 
   bool result = true;
 
@@ -353,7 +353,7 @@ MicronTracker::ResultType
 MicronTracker
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::VerifyTrackerToolInformation called ...\n");  
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");  
 
   // Verify that the template file for the marker is found
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
@@ -390,7 +390,7 @@ MicronTracker
 /** Detach camera . */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalClose called ...\n");  
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");  
   m_Cameras->Detach();
   
   return SUCCESS;
@@ -399,7 +399,7 @@ MicronTracker::ResultType MicronTracker::InternalClose( void )
 /** Put the tracking device into tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalStartTracking called ...\n");  
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -410,7 +410,7 @@ MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 /** Take the tracking device out of tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalStopTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalStopTracking called ...\n");
 
   // Send the command to stop tracking.
 
@@ -423,18 +423,14 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 /** Reset the tracking device to put it back to its original state. */
 MicronTracker::ResultType MicronTracker::InternalReset( void )
 {
-  // Send the command to reset.
-  
-  // Report errors, if any, and return SUCCESS or FAILURE
-  // (the return value will be used by the superclass to
-  //  set the appropriate input to the state machine) 
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalReset called ...\n");
   return SUCCESS;
 }
 
 /** Update the status and the transforms for all TrackerTools. */
 MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Tracking state.  This method is called from
@@ -459,7 +455,7 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     // only report tools that are in view
     if (! m_ToolStatusContainer[inputItr->first])
       {
-      igstkLogMacro( DEBUG, "MicronTracker::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
       // report to the tracker tool that the tracker is not available 
       this->ReportTrackingToolNotAvailable(trackerToolContainer[inputItr->first]);
@@ -514,7 +510,7 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
  *  the tracker is in the Tracking state. */
 MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "MicronTracker::InternalThreadedUpdateStatus "
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalThreadedUpdateStatus "
                  "called ...\n");
 
   // Send the commands to the device that will get the transforms
@@ -628,6 +624,9 @@ MicronTracker::ResultType
 MicronTracker::
 RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
+ igstkLogMacro( DEBUG, "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
+                 "called ...\n");
+
   std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
 
   // remove the tool from the Transform buffer container
