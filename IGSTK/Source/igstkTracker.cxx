@@ -319,7 +319,7 @@ Tracker::~Tracker(void)
 /** This method sets the reference tool. */
 void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::RequestStartTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestSetReferenceTool called ...\n");
   // connect the reference tracker tool the tracker 
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
@@ -339,9 +339,24 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
       m_ApplyingReferenceTool = true;
       m_ReferenceTool = trackerTool;
 
-      // FIXME: Connect the coordinate system of all the other tracker tools to
+      //  Connect the coordinate system of all the other tracker tools to
       //  the reference tracker tool. In other words, make reference tracker tool
       //  the parent of all the other tracker tools.
+      typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+      InputConstIterator inputItr = m_TrackerTools.begin();
+      InputConstIterator inputEnd = m_TrackerTools.end();
+
+      while( inputItr != inputEnd )
+        {
+        // avoid making the reference tracker tool become parent of itself.
+        if ( (inputItr->first) != m_ReferenceTool->GetTrackerToolIdentifier())
+          {
+          (inputItr->second)->RequestSetTransformAndParent( 
+                                      identityTransform, m_ReferenceTool.GetPointer() );
+          }
+        ++inputItr;
+        }
       }
     else
       {
@@ -889,8 +904,12 @@ void Tracker::UpdateStatusSuccessProcessing( void )
       // set transfrom with respect to the reference tool
       if ( m_ApplyingReferenceTool )
         {        
-        (inputItr->second)->RequestSetTransformAndParent( 
-                                      toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool.GetPointer() );
+        // avoid making the reference tracker tool become parent of itself.
+        if ( (inputItr->first) != m_ReferenceTool->GetTrackerToolIdentifier())
+          {
+          (inputItr->second)->RequestSetTransformAndParent( 
+                toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool.GetPointer() );
+          }
         }
       else
         {
@@ -1175,7 +1194,7 @@ Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool )
 void 
 Tracker::SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::SetRawTransform called...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::SetTrackerToolRawTransform called...\n");
   trackerTool->SetRawTransform( transform );
 }
 
