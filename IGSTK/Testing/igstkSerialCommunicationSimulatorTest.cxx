@@ -112,7 +112,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
