@@ -74,7 +74,7 @@ PolarisTracker::CheckError(CommandInterpreterType *interpreter)
   * for use with the Polaris */
 void PolarisTracker::SetCommunication( CommunicationType *communication )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker:: Entered SetCommunication ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
   m_BaudRate = communication->GetBaudRate();
   m_CommandInterpreter->SetCommunication( communication );
@@ -86,13 +86,13 @@ void PolarisTracker::SetCommunication( CommunicationType *communication )
     communication->SetReadTerminationCharacter( '\r' );
     }
 
-  igstkLogMacro( DEBUG, "PolarisTracker:: Exiting SetCommunication ...\n"); 
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker:: Exiting SetCommunication ...\n"); 
 }
 
 /** Open communication with the tracking device. */
 PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalOpen called ...\n");
 
   ResultType result = SUCCESS;
 
@@ -177,7 +177,7 @@ PolarisTracker::ResultType PolarisTracker
   //    == Otherwise, create a port handle     
   //
   //
-  igstkLogMacro( DEBUG, "PolarisTracker::VerifyTrackerToolInformation called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::VerifyTrackerToolInformation called ...\n");
 
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
@@ -196,7 +196,7 @@ PolarisTracker::ResultType PolarisTracker
 
     if (!sromFile.is_open())
       {
-      igstkLogMacro( WARNING, "PolarisTracker::Failing to open"
+      igstkLogMacro( WARNING, "igstk::PolarisTracker::Failing to open"
                      << SROMFileName << " ...\n");
       return FAILURE;
       }
@@ -406,7 +406,7 @@ PolarisTracker::ResultType
 PolarisTracker::
 RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
   // if SROM file has been loaded for this tracker tool, clear it first.
   TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
   PolarisTrackerToolType * polarisTrackerTool = 
@@ -449,7 +449,7 @@ RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
 /** Close communication with the tracking device. */
 PolarisTracker::ResultType PolarisTracker::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalClose called ...\n");
 
   // return the device back to its initial comm setttings
   m_CommandInterpreter->COMM(CommandInterpreterType::NDI_9600,
@@ -462,7 +462,7 @@ PolarisTracker::ResultType PolarisTracker::InternalClose( void )
 /** Put the tracking device into tracking mode. */
 PolarisTracker::ResultType PolarisTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalStartTracking called ...\n");  
 
   m_CommandInterpreter->TSTART();
 
@@ -472,7 +472,7 @@ PolarisTracker::ResultType PolarisTracker::InternalStartTracking( void )
 /** Take the tracking device out of tracking mode. */
 PolarisTracker::ResultType PolarisTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalStopTracking called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalStopTracking called ...\n");
 
   m_CommandInterpreter->TSTOP();
 
@@ -482,6 +482,8 @@ PolarisTracker::ResultType PolarisTracker::InternalStopTracking( void )
 /** Reset the tracking device to put it back to its original state. */
 PolarisTracker::ResultType PolarisTracker::InternalReset( void )
 {
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalReset called ...\n");
+
   m_CommandInterpreter->RESET();
   m_CommandInterpreter->INIT();
 
@@ -501,7 +503,7 @@ PolarisTracker::ResultType PolarisTracker::InternalReset( void )
 /** Update the status and the transforms for all TrackerTools. */
 PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalUpdateStatus called ...\n");
 
   // these flags are set for tools that can be used for tracking
   const unsigned long mflags = (CommandInterpreterType::NDI_TOOL_IN_PORT |
@@ -524,7 +526,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     // only report tools that are enabled
     if ((portStatus & mflags) != mflags) 
       {
-      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not available \n");
       ++inputItr;
       continue;
@@ -534,7 +536,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     if (m_ToolAbsentStatusContainer[inputItr->first])
       {
       // there should be a method to set that the tool is not in view
-      igstkLogMacro( DEBUG, "PolarisTracker::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
 
       // report to the tracker tool that the tracker is not available 
@@ -572,7 +574,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     if (normsquared < 1e-6)
       {
       rotation.Set(0.0, 0.0, 0.0, 1.0);
-      igstkLogMacro( WARNING, "PolarisTracker::InternUpdateStatus: bad "
+      igstkLogMacro( WARNING, "igstk::PolarisTracker::InternUpdateStatus: bad "
                      "quaternion, norm=" << sqrt(normsquared) << "\n");
       }
     else
@@ -607,7 +609,7 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     This function is called by a separate thread. */
 PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "PolarisTracker::InternalThreadedUpdateStatus "
+  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalThreadedUpdateStatus "
                  "called ...\n");
 
   // get the transforms for all tools from the NDI
