@@ -76,7 +76,7 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
                             << "Simulation_filename "
-                            << "Wireless_SROM_filename "
+                            << "MultiChannel_ROM_filename "
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -108,12 +108,14 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
 
   serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
   std::string simulationFile = argv[2];
+  std::cout << "Serial communication simulation file: " 
+           << simulationFile << std::endl;
   serialComm->SetFileName( simulationFile.c_str() );
 
   serialComm->OpenCommunication();
@@ -135,15 +137,34 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   typedef igstk::AuroraTrackerTool      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-  // instantiate and attach wired tracker tool  
+  // instantiate and attach 5DOF tracker tool type 
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
+  //Select 5DOF type
+  trackerTool->RequestSelect5DOFTrackerTool();
   //Set the port number to zero
   trackerTool->RequestSetPortNumber( 0 );
+  trackerTool->RequestSetChannelNumber( 0 );
+  std::string SROMfilename = argv[3];
+  trackerTool->RequestSetSROMFileName( SROMfilename );
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
+
+  // instantiate and attach a second 5DOF tracker tool type 
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  //Select 5DOF type
+  trackerTool2->RequestSelect5DOFTrackerTool();
+  //Set the port number to zero
+  trackerTool2->RequestSetPortNumber( 0 );
+  trackerTool2->RequestSetChannelNumber( 1 );
+  //Configure
+  trackerTool2->RequestConfigure();
+  //Attach to the tracker
+  trackerTool2->RequestAttachToTracker( tracker );
+
 
   //start tracking 
   tracker->RequestStartTracking();
@@ -153,7 +174,7 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   typedef ::itk::Versor<double>       VersorType;
 
 
-  for(unsigned int i=0; i<400; i++)
+  for(unsigned int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -163,6 +184,13 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
     transform = trackerTool->GetCalibratedTransform(); 
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
+    transform = trackerTool2->GetCalibratedTransform(); 
+    position = transform.GetTranslation();
+    std::cout << "Trackertool2:" << trackerTool2->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
