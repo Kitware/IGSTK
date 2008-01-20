@@ -18,7 +18,8 @@
 #include "OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI.moc"
 #include "OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI.h"
 
-OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
 {
   ui.setupUi(this);
   this->CreateActions();
@@ -61,10 +62,11 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OneViewAndTrackingNewUsin
   //Set up an observer for the transform modified event
   m_ViewPickerObserver = ObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
-                                               &OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::ParsePickedPoint );
+     &OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::ParsePickedPoint );
 }
 
-OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::~OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::
+~OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
 {
   m_Tracker->RequestReset();
   m_Tracker->RequestStopTracking();
@@ -72,7 +74,8 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::~OneViewAndTrackingNewUsi
 }
 
 void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
-::AttachObjectToTrackerTool( int trackerToolNumber, igstk::SpatialObject * objectToTrack )
+::AttachObjectToTrackerTool( int trackerToolNumber, 
+                             igstk::SpatialObject * objectToTrack )
 {
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
@@ -81,11 +84,13 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
   // Attach a spatial object to the tracker tool
   if ( trackerToolNumber == 1 )
     {
-    objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
+    objectToTrack->RequestSetTransformAndParent( identityTransform,
+                                                 m_TrackerTool.GetPointer() );
     }
   else if (trackerToolNumber == 2 )
     {
-    objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool2.GetPointer() );
+    objectToTrack->RequestSetTransformAndParent( identityTransform,
+                                                 m_TrackerTool2.GetPointer() );
     }
   else
     {
@@ -134,14 +139,18 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnQuitAction()
     }
 }
 
-void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::SetView( igstk::View * view )
+void 
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
+::SetView( igstk::View * view )
 {
   ui.Display3D->RequestSetView (view);
   ui.Display3D->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
 }
 
-void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnTrackingAction( int state )
+void 
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
+::OnTrackingAction( int state )
 {
   if ( state )
     {
@@ -156,7 +165,9 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnTrackingAction( in
     } 
 }
 
-void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnInteractionAction( int state )
+void
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
+::OnInteractionAction( int state )
 {
   if ( state )
     {
@@ -169,7 +180,9 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::OnInteractionAction(
 }
 
 void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
-::InitializeTracker( std::string InitializationFile, std::string CameraCalibrationFileDirectory, std::string markerTemplateDirectory )
+::InitializeTracker( std::string InitializationFile,
+                     std::string CameraCalibrationFileDirectory,
+                     std::string markerTemplateDirectory )
 {
   m_Tracker->SetCameraCalibrationFilesDirectory( 
                             CameraCalibrationFileDirectory );
@@ -217,7 +230,9 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
   m_Tracker->RequestSetTransformAndParent( identityTransform, view );
 }
 
-void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::ParsePickedPoint( const itk::EventObject & event)
+void 
+OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
+::ParsePickedPoint( const itk::EventObject & event)
 {
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
@@ -230,5 +245,3 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::ParsePickedPoint( co
                                            << std::endl;
     }
 }
-
-

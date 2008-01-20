@@ -14,7 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#
 #ifndef __OneViewAndTrackingUsingQTWidgetGUI_h
 #define __OneViewAndTrackingUsingQTWidgetGUI_h
 
@@ -74,7 +73,8 @@ private:
 
   bool                    m_GUIQuit;
 
-  typedef itk::ReceptorMemberCommand < OneViewAndTrackingUsingQTWidgetGUI > ObserverType;
+  typedef itk::ReceptorMemberCommand < 
+                OneViewAndTrackingUsingQTWidgetGUI > ObserverType;
   ObserverType::Pointer                       m_ViewPickerObserver;
 
 

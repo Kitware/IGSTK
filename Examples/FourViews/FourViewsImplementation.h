@@ -161,8 +161,8 @@ public:
       VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
       tubeReader->AddObserver(
-                   igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
-                   vascularNetworkObserver);
+           igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
+           vascularNetworkObserver);
 
       tubeReader->RequestGetVascularNetwork();
 
@@ -288,12 +288,12 @@ private:
   template <class ParentType>
   void SetDisplayTransformsAndParents( igstk::Transform transform,
                                        ParentType* parent)
-  {
-  this->Display3D->RequestSetTransformAndParent( transform, parent );
-  this->DisplayAxial->RequestSetTransformAndParent( transform, parent );
-  this->DisplayCoronal->RequestSetTransformAndParent( transform, parent );
-  this->DisplaySagittal->RequestSetTransformAndParent( transform, parent );
-  }
+    {
+    this->Display3D->RequestSetTransformAndParent( transform, parent );
+    this->DisplayAxial->RequestSetTransformAndParent( transform, parent );
+    this->DisplayCoronal->RequestSetTransformAndParent( transform, parent );
+    this->DisplaySagittal->RequestSetTransformAndParent( transform, parent );
+    }
 
   igstk::VascularNetworkObject::ConstPointer  m_TubeGroup;
   igstk::Object::LoggerType::Pointer                        m_Logger;

@@ -37,7 +37,7 @@ class OneViewAndTrackingWebCameraUsingFLTKWidgetImplementation :
 public:
 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
 
   typedef igstk::WebCameraTracker             TrackerType;
   typedef igstk::WebCameraTrackerTool         TrackerToolType;
@@ -80,7 +80,7 @@ public:
     m_Tracking = false;
 
     //enable interaction by default
-    InteractionButton->set();    
+    InteractionButton->set();
     }
 
   ~OneViewAndTrackingWebCameraUsingFLTKWidgetImplementation()

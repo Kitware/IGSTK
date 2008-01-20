@@ -14,7 +14,6 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#
 #ifndef __OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI_h
 #define __OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI_h
 
@@ -48,9 +47,12 @@ class OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI : public QMainWindow
 public:
   OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI();
   ~OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI();
-  void AttachObjectToTrackerTool( int trackerToolNumber, igstk::SpatialObject * objectToTrack );
+  void AttachObjectToTrackerTool( int trackerToolNumber,
+                                  igstk::SpatialObject * objectToTrack );
   void GetTrackerToolTransform( int trackerToolNumber, TransformType & transform );
-  void InitializeTracker( std::string InitializationFile, std::string CameraCalibrationFileDirectory, std::string markerTemplateDirectory );
+  void InitializeTracker( std::string InitializationFile,
+                          std::string CameraCalibrationFileDirectory,
+                          std::string markerTemplateDirectory );
   void ConfigureTrackerToolsAndAttachToTheTracker();
   void SetView( igstk::View * view );
   bool IsTrackingTurnedOn()
@@ -87,7 +89,8 @@ private:
 
   bool                    m_GUIQuit;
 
-  typedef itk::ReceptorMemberCommand < OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI > ObserverType;
+  typedef itk::ReceptorMemberCommand < 
+       OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI > ObserverType;
   ObserverType::Pointer                       m_ViewPickerObserver;
 
 

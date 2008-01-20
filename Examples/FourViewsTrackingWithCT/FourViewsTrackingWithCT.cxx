@@ -85,9 +85,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_SerialCommunication->SetLogger( m_Logger );
   m_SerialCommunication->SetPortNumber(igstk::SerialCommunication::PortNumber2);
   m_SerialCommunication->SetParity( igstk::SerialCommunication::NoParity );
-  m_SerialCommunication->SetBaudRate( igstk::SerialCommunication::BaudRate115200);
-  m_SerialCommunication->SetDataBits( igstk::SerialCommunication::DataBits8 );
-  m_SerialCommunication->SetStopBits( igstk::SerialCommunication::StopBits1 );
+  m_SerialCommunication->SetBaudRate(igstk::SerialCommunication::BaudRate115200);
+  m_SerialCommunication->SetDataBits(igstk::SerialCommunication::DataBits8 );
+  m_SerialCommunication->SetStopBits(igstk::SerialCommunication::StopBits1 );
   m_SerialCommunication->SetHardwareHandshake( 
                                       igstk::SerialCommunication::HandshakeOff);
   m_SerialCommunication->OpenCommunication();

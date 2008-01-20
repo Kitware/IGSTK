@@ -37,7 +37,7 @@ int main(int argc, char** argv)
   OneViewAndTrackingUsingQTWidgetGUI   mainWindow;
 
   typedef igstk::Object::LoggerType              LoggerType;
-  typedef itk::StdStreamLogOutput             LogOutputType;
+  typedef itk::StdStreamLogOutput                LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -114,7 +114,8 @@ int main(int argc, char** argv)
   igstk::Transform identity;
   identity.SetToIdentity( aLongTime );
  
-  view3D->RequestSetTransformAndParent( identity, mainWindow.GetTracker().GetPointer());
+  view3D->RequestSetTransformAndParent( 
+            identity, mainWindow.GetTracker().GetPointer());
 
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );

@@ -26,7 +26,7 @@
 int main(int , char** )
 { 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
   
   FourViewsImplementation   application;
   application.Show();

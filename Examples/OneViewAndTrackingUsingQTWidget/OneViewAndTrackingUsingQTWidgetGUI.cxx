@@ -67,7 +67,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   //Set up an observer for the transform modified event
   m_ViewPickerObserver = ObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, 
-                                               &OneViewAndTrackingUsingQTWidgetGUI::ParsePickedPoint );
+                        &OneViewAndTrackingUsingQTWidgetGUI::ParsePickedPoint );
 }
 
 OneViewAndTrackingUsingQTWidgetGUI::~OneViewAndTrackingUsingQTWidgetGUI()
@@ -155,18 +155,18 @@ bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( )
   return m_GUIQuit;
 }
 
-void OneViewAndTrackingUsingQTWidgetGUI::ParsePickedPoint( const itk::EventObject & event)
+void
+OneViewAndTrackingUsingQTWidgetGUI
+::ParsePickedPoint( const itk::EventObject & event)
 {
   if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
     {
     igstk::TransformModifiedEvent *tmevent = 
                                      ( igstk::TransformModifiedEvent *) & event;
     
-    std::cout << "Translation transform: " << tmevent->Get().GetTranslation()[0] << "\t"
-                                           << tmevent->Get().GetTranslation()[1] << "\t"
-                                           << tmevent->Get().GetTranslation()[2]
-                                           << std::endl;
+    std::cout << "Translation transform:" << tmevent->Get().GetTranslation()[0] << "\t"
+                                          << tmevent->Get().GetTranslation()[1] << "\t"
+                                          << tmevent->Get().GetTranslation()[2]
+                                          << std::endl;
     }
 }
-
-

@@ -148,7 +148,7 @@ int main( int argv, char * argc[] )
 
 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
 
   typedef igstk::Landmark3DRegistration
                             Landmark3DRegistrationType;

@@ -620,18 +620,18 @@ void NeedleBiopsy::InitializeTrackerProcessing()
                                                              rotation, 0.1, -1);
 
   // FIXME m_Tracker->SetToolCalibrationTransform( TrackerToolPort->value(), 
-  // FIXME                                                 0, toolCalibrationTransform);
+  // FIXME    0, toolCalibrationTransform);
   m_Tracker->RequestOpen();
   // FIXME m_Tracker->AttachSROMFileNameToPort( TrackerToolPort->value(), 
-  // FIXME                                               TrackerToolSROMFile->value() );
+  // FIXME    TrackerToolSROMFile->value() );
   // FIXME m_Tracker->AttachSROMFileNameToPort( ReferenceToolPort->value(), 
-  // FIXME                                              ReferenceToolSROMFile->value() );
+  // FIXME    ReferenceToolSROMFile->value() );
   // FIXME m_Tracker->SetReferenceTool( UseReferenceTool->value(), 
-  // FIXME                                               ReferenceToolPort->value(), 0);
+  // FIXME    ReferenceToolPort->value(), 0);
   // FIXME m_Tracker->RequestInitialize();
   m_Tracker->RequestStartTracking();
   // FIXME m_StateMachine.PushInputBoolean( m_Tracker->GetNumberOfTools(),
-  // FIXME           m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
+  // FIXME    m_InitializeTrackerSuccessInput, m_InitializeTrackerFailureInput );
 }
 
 void NeedleBiopsy::RequestAddImageLandmark()
@@ -760,7 +760,7 @@ void NeedleBiopsy::GetTrackerTransform()
   igstkLogMacro2( m_Logger, DEBUG, "Tracker::GetToolTransform called...\n" )
   m_Tracker->RequestUpdateStatus();
   // FIXME m_Tracker->GetToolTransform( 
-  // FIXME              TrackerToolPort->value(), 0, m_TrackerLandmarkTransformToBeSet );
+  // FIXME TrackerToolPort->value(), 0, m_TrackerLandmarkTransformToBeSet );
 }
 
 void NeedleBiopsy::RequestClearTrackerLandmarks()
@@ -818,10 +818,11 @@ void NeedleBiopsy::StartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                          "NeedleBiopsy::StartTrackingProcessing called ... \n" )
-  // FIXME m_Tracker->AttachObjectToTrackerTool( TrackerToolPort->value(), 0, m_Needle );
+  // FIXME m_Tracker->AttachObjectToTrackerTool( 
+  //       TrackerToolPort->value(), 0, m_Needle );
 
   // FIXME m_Tracker->AttachObjectToTrackerTool( 
-  // FIXME                                    TrackerToolPort->value(), 0, m_NeedleTip );
+  // FIXME TrackerToolPort->value(), 0, m_NeedleTip );
   m_Tracker->RequestStartTracking();
   m_PulseGenerator->RequestStart();   
   /** We don't have observer for tracker, we are actively reading the 

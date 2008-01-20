@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    PivotCalibrationFLTKWidgetExample.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#
 #include "PivotCalibrationFLTKWidgetExample.h"
 #include <FL/fl_ask.H>
 
@@ -63,10 +80,13 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
 {
               //gather the information from the UI
   igstk::SerialCommunication::PortNumberType comPort = 
-    static_cast<igstk::SerialCommunication::PortNumberType> ( this->m_comPortChoice->value() );
-  unsigned int toolPort = static_cast<unsigned int>( this->m_toolPortSlider->value() );
-  unsigned int delay = static_cast<unsigned int>( this->m_delaySlider->value() );
-  unsigned int numberOfFrames = static_cast<unsigned int>( this->m_numberOfFramesSlider->value() ); 
+   static_cast<igstk::SerialCommunication::PortNumberType> ( this->m_comPortChoice->value() );
+  unsigned int toolPort = 
+            static_cast<unsigned int>( this->m_toolPortSlider->value() );
+  unsigned int delay = 
+            static_cast<unsigned int>( this->m_delaySlider->value() );
+  unsigned int numberOfFrames = 
+            static_cast<unsigned int>( this->m_numberOfFramesSlider->value() ); 
   std::string sromFileName = this->m_SROMFileNameTextField->value();
 
          //if already initialized, shutdown everything and reinitialize
@@ -156,7 +176,7 @@ PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
 {
   std::map<std::string,std::string>::iterator it;
   std::string className = event.GetEventName();
-  it = this->m_ErrorEvent2ErrorMessage.find( className );           
+  it = this->m_ErrorEvent2ErrorMessage.find( className );
   if( it != this->m_ErrorEvent2ErrorMessage.end() ) 
   {
     this->m_ErrorOccured = true;
@@ -177,7 +197,7 @@ PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
 void 
 PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::ClearError() 
 {
-  this->m_ErrorOccured = false;     
+  this->m_ErrorOccured = false;
 }
 
 bool 
@@ -186,16 +206,47 @@ PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Error()
   return this->m_ErrorOccured;
 }
   
-PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::TrackingErrorObserver() 
+PivotCalibrationFLTKWidgetExample
+::TrackingErrorObserver::TrackingErrorObserver() 
 : m_ErrorOccured( false )
-{                              //serial communication errors
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::OpenPortErrorEvent().GetEventName(), "Error opening com port." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::ClosePortErrorEvent().GetEventName(), "Error closing com port." ) );
-                       //tracker errors
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerOpenErrorEvent().GetEventName(), "Error opening tracker communication." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerInitializeErrorEvent().GetEventName(), "Error initializing tracker." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerStartTrackingErrorEvent().GetEventName(), "Error starting tracking." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerStopTrackingErrorEvent().GetEventName(), "Error stopping tracking." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerCloseErrorEvent().GetEventName(), "Error closing tracker communication." ) );
-  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( igstk::TrackerUpdateStatusErrorEvent().GetEventName(), "Error updating transformations from tracker." ) );
+{ 
+  //serial communication errors
+  this->m_ErrorEvent2ErrorMessage.insert( 
+      std::pair<std::string,std::string>( 
+      igstk::OpenPortErrorEvent().GetEventName(), "Error opening com port." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>( 
+      igstk::ClosePortErrorEvent().GetEventName(), "Error closing com port." ) );
+
+  //tracker errors
+  this->m_ErrorEvent2ErrorMessage.insert( 
+      std::pair<std::string,std::string>( 
+      igstk::TrackerOpenErrorEvent().GetEventName(),
+      "Error opening tracker communication." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::TrackerInitializeErrorEvent().GetEventName(),
+     "Error initializing tracker." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::TrackerStartTrackingErrorEvent().GetEventName(),
+     "Error starting tracking." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::TrackerStopTrackingErrorEvent().GetEventName(),
+     "Error stopping tracking." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::TrackerCloseErrorEvent().GetEventName(), 
+     "Error closing tracker communication." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::TrackerUpdateStatusErrorEvent().GetEventName(),
+     "Error updating transformations from tracker." ) );
 }

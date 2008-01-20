@@ -103,7 +103,8 @@ int main(int argc, char** argv )
   std::string InitializationFile = argv[2];
   std::string markerTemplateDirectory = argv[3];
 
-  application.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
+  application.InitializeTracker( 
+     InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
   application.ConfigureTrackerToolsAndAttachToTheTracker();
 
 

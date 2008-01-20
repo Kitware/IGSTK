@@ -42,7 +42,7 @@ igstkObserverConstObjectMacro( ITKImage,
 int main(int argc , char * argv [] )
 {
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput        LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
   
 
   LoggerType::Pointer      logger = LoggerType::New();

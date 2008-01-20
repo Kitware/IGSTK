@@ -36,11 +36,11 @@ class OneViewAndTrackingNewUsingMicronTrackerImplementation :
 public:
 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
 
-  typedef igstk::MicronTracker     TrackerType;
-  typedef igstk::MicronTrackerTool TrackerToolType;
-  typedef TrackerToolType::TransformType    TransformType;
+  typedef igstk::MicronTracker                  TrackerType;
+  typedef igstk::MicronTrackerTool              TrackerToolType;
+  typedef TrackerToolType::TransformType        TransformType;
 
 public:
 
@@ -81,7 +81,9 @@ public:
     Display3D->SetLogger( m_Logger );
     }
 
-  void InitializeTracker( std::string InitializationFile, std::string CameraCalibrationFileDirectory, std::string markerTemplateDirectory )
+  void InitializeTracker( std::string InitializationFile,
+                          std::string CameraCalibrationFileDirectory,
+                          std::string markerTemplateDirectory )
     {
     m_Tracker->SetCameraCalibrationFilesDirectory( 
                               CameraCalibrationFileDirectory );
@@ -112,7 +114,7 @@ public:
     m_TrackerTool2->RequestAttachToTracker( m_Tracker );
 
     //enable interaction by default
-    InteractionButton->set();    
+    InteractionButton->set();
     }
 
   ~OneViewAndTrackingNewUsingMicronTrackerImplementation()
@@ -162,11 +164,13 @@ public:
                       igstk::TimeStamp::GetLongestPossibleTime() );
    
     // Attach a viewer to the tracker 
-    view->RequestSetTransformAndParent( identityTransform, m_Tracker.GetPointer() );
+    view->RequestSetTransformAndParent( identityTransform, 
+                                        m_Tracker.GetPointer() );
     }
 
 
-  void AttachObjectToTrackerTool( int trackerToolNumber, igstk::SpatialObject * objectToTrack )
+  void AttachObjectToTrackerTool( int trackerToolNumber,
+                                  igstk::SpatialObject * objectToTrack )
     {
     TransformType identityTransform;
     identityTransform.SetToIdentity( 
@@ -175,11 +179,13 @@ public:
     // Attach a spatial object to the tracker tool
     if ( trackerToolNumber == 1 )
       {
-      objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
+      objectToTrack->RequestSetTransformAndParent( identityTransform,
+                                         m_TrackerTool.GetPointer() );
       }
     else if (trackerToolNumber == 2 )
       {
-      objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool2.GetPointer() );
+      objectToTrack->RequestSetTransformAndParent( identityTransform,
+                                       m_TrackerTool2.GetPointer() );
       }
     else
       {
@@ -187,7 +193,8 @@ public:
       }
     }
 
-  void GetTrackerToolTransform( int trackerToolNumber, TransformType & transform )
+  void GetTrackerToolTransform( int trackerToolNumber,
+                                TransformType & transform )
     {
     if ( trackerToolNumber == 1 )
       {

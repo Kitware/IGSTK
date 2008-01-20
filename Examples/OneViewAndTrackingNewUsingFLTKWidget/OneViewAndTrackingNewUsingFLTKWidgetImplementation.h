@@ -37,7 +37,7 @@ class OneViewAndTrackingNewUsingFLTKWidgetImplementation :
 public:
 
   typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
 
   typedef igstk::PolarisTracker             TrackerType;
   typedef igstk::PolarisTrackerTool         TrackerToolType;
@@ -94,7 +94,7 @@ public:
     m_Tracking = false;
 
     //enable interaction by default
-    InteractionButton->set();    
+    InteractionButton->set();
     }
 
   ~OneViewAndTrackingNewUsingFLTKWidgetImplementation()

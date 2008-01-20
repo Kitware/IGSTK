@@ -61,7 +61,7 @@ public:
 
   typedef XMLLogger                                   Self;
   typedef itk::SmartPointer<Self>                     Pointer;
-  typedef igstk::Logger                                 Superclass;
+  typedef igstk::Logger                               Superclass;
   
   igstkNewMacro(Self);
 

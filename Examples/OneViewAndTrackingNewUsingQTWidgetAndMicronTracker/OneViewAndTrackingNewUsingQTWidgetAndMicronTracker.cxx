@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI   mainWindow;
 
   typedef igstk::Object::LoggerType              LoggerType;
-  typedef itk::StdStreamLogOutput             LogOutputType;
+  typedef itk::StdStreamLogOutput                LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -107,7 +107,10 @@ int main(int argc, char** argv)
   std::string InitializationFile = argv[2];
   std::string markerTemplateDirectory = argv[3];
 
-  mainWindow.InitializeTracker( InitializationFile, CameraCalibrationFileDirectory, markerTemplateDirectory );
+  mainWindow.InitializeTracker( InitializationFile,
+                                CameraCalibrationFileDirectory,
+                                markerTemplateDirectory );
+
   mainWindow.ConfigureTrackerToolsAndAttachToTheTracker();
 
   // Associate the cylinder spatial object to the first tracker tool 
