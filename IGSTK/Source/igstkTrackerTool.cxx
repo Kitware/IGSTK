@@ -29,10 +29,13 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
   // set all transforms to identity 
-  m_RawTransform.SetToIdentity( 1e300 );  
-  m_CalibratedTransform.SetToIdentity( 1e300 );
-  m_CalibratedTransformWithRespectToReferenceTrackerTool.SetToIdentity( 1e300 );
-  m_CalibrationTransform.SetToIdentity( 1e300 );  
+  TimePeriodType longestPossibleTime = 
+    igstk::TimeStamp::GetLongestPossibleTime();
+
+  m_RawTransform.SetToIdentity( longestPossibleTime );  
+  m_CalibratedTransform.SetToIdentity( longestPossibleTime );
+  m_CalibratedTransformWithRespectToReferenceTrackerTool.SetToIdentity( longestPossibleTime );
+  m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
 
   m_Updated = false; // not yet updated
 
