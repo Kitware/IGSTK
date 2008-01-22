@@ -45,7 +45,8 @@ class CoordinateReferenceSystemHelper
 {
 public:
   template <class T>
-  static const CoordinateReferenceSystem* GetCoordinateReferenceSystem( const T * input )
+  static const CoordinateReferenceSystem* 
+    GetCoordinateReferenceSystem( const T * input )
     {
     return input->GetCoordinateReferenceSystem();  // private
     }
@@ -65,7 +66,8 @@ public:
    *  the transform from this coordinate system to
    *  the parent. 
    */
-  void RequestSetTransformAndParent(Transform t, const CoordinateReferenceSystem* parent);
+  void RequestSetTransformAndParent(Transform t, 
+                                    const CoordinateReferenceSystem* parent);
 
   /** Request the transform to parent. */
   void RequestGetTransformToParent();
@@ -76,10 +78,12 @@ public:
    *     CoordinateReferenceSystemTransformToNullTargetEvent
    *     CoordinateReferenceSystemTransformToDisconnectedEvent
    *
-   *   CoordinateReferenceSystemTransformToEvent is returned if the transform is 
-   *   successfully computed. Otherwise, one of the other events is generated.
+   *   CoordinateReferenceSystemTransformToEvent is returned if the transform 
+   *   is successfully computed. Otherwise, one of the other events is 
+   *   generated.
    */
-  void RequestComputeTransformTo(const CoordinateReferenceSystem* targetCoordSys);
+  void RequestComputeTransformTo(const 
+                                 CoordinateReferenceSystem* targetCoordSys);
 
   /** void RequestDetach(); */
   
@@ -111,9 +115,12 @@ protected:
 
 private: 
 
-  Self::ConstPointer  m_Parent;               // Parent node in the scene graph
-  Transform           m_TransformToParent;    // Transform relating this node to the parent 
-  std::string         m_Name;                 // Name this coordinate system for debugging.
+  // Parent node in the scene graph
+  Self::ConstPointer  m_Parent;
+  // Transform relating this node to the parent 
+  Transform           m_TransformToParent;
+  // Name this coordinate system for debugging.
+  std::string         m_Name;
 
   /** 
    * State machine
@@ -147,10 +154,8 @@ private:
   igstkDeclareInputMacro( AncestorFound                  );
   igstkDeclareInputMacro( Disconnected                   );
 
-
-
   Transform                        m_RequestSetTransformAndParentTransform;
-  Self::ConstPointer                  m_RequestSetTransformAndParentParent;
+  Self::ConstPointer               m_RequestSetTransformAndParentParent;
 
   /** This method modifies the m_Parent and m_TransformToParent ivars */
   void SetTransformAndParentProcessing();
@@ -335,13 +340,17 @@ public:
   CoordinateReferenceSystem::ConstPointer   m_Destination;
 };
 
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent, IGSTKEvent, CoordinateReferenceSystemTransformToErrorResult );
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent, IGSTKEvent, CoordinateReferenceSystemTransformToErrorResult );
-
+igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent,
+                       IGSTKEvent,
+                       CoordinateReferenceSystemTransformToErrorResult );
+igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent,
+                       IGSTKEvent,
+                       CoordinateReferenceSystemTransformToErrorResult );
 
 igstkEventMacro( CoordinateReferenceSystemNullParentEvent, IGSTKEvent );
 igstkEventMacro( CoordinateReferenceSystemThisParentEvent, IGSTKEvent );
-igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent, IGSTKEvent, CoordinateReferenceSystem );
+igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent,
+                                  IGSTKEvent, CoordinateReferenceSystem );
 
 } // end namespace igstk
 

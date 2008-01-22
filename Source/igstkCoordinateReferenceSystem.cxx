@@ -35,7 +35,7 @@ CoordinateReferenceSystem
                                     TimeStamp::GetLongestPossibleTime() );
 
   /**
-    State machine stuff
+   *  State machine stuff
    */ 
 
   // ---------------
@@ -74,56 +74,139 @@ CoordinateReferenceSystem
   // i.e. 4 * 9 = 36
 
   /** Transitions from Initialized */
-  igstkAddTransitionMacro( Initialized, ValidParent, ParentSet  , SetTransformAndParent           );
-  igstkAddTransitionMacro( Initialized, NullParent , Initialized, SetTransformAndParentNullParent );
-  igstkAddTransitionMacro( Initialized, ThisParent , Initialized, SetTransformAndParentThisParent );
-  igstkAddTransitionMacro( Initialized, ParentCausesCycle, Initialized, SetTransformAndParentCycle );
-  igstkAddTransitionMacro( Initialized, NullCoordinateReferenceSystem , Initialized, ComputeTransformToNullTarget );
-  igstkAddTransitionMacro( Initialized, ThisCoordinateReferenceSystem , Initialized, ComputeTransformToThisTarget );
-  igstkAddTransitionMacro( Initialized, ValidCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, ComputeTransformToValidTarget );
+  igstkAddTransitionMacro( Initialized, ValidParent,
+                           ParentSet  , SetTransformAndParent           );
+  igstkAddTransitionMacro( Initialized, NullParent ,
+                           Initialized, SetTransformAndParentNullParent );
+  igstkAddTransitionMacro( Initialized, ThisParent ,
+                           Initialized, SetTransformAndParentThisParent );
+  igstkAddTransitionMacro( Initialized, ParentCausesCycle,
+                           Initialized, SetTransformAndParentCycle );
+  igstkAddTransitionMacro( Initialized, NullCoordinateReferenceSystem ,
+                           Initialized, ComputeTransformToNullTarget );
+  igstkAddTransitionMacro( Initialized, ThisCoordinateReferenceSystem ,
+                           Initialized, ComputeTransformToThisTarget );
+  igstkAddTransitionMacro( Initialized, ValidCoordinateReferenceSystem,
+                           AttemptingComputeTransformToInInitialized,
+                           ComputeTransformToValidTarget );
   /** Invalid inputs to Initialized : AncestorFound and Disconnected inputs */
-  igstkAddTransitionMacro( Initialized, AncestorFound, Initialized, InvalidRequest );
-  igstkAddTransitionMacro( Initialized, Disconnected , Initialized, InvalidRequest );
+  igstkAddTransitionMacro( Initialized, AncestorFound,
+                           Initialized, InvalidRequest );
+  igstkAddTransitionMacro( Initialized, Disconnected ,
+                           Initialized, InvalidRequest );
 
   /** Transitions from ParentSet */
-  igstkAddTransitionMacro( ParentSet  , NullParent , ParentSet  , SetTransformAndParentNullParent );
-  igstkAddTransitionMacro( ParentSet  , ThisParent , ParentSet  , SetTransformAndParentThisParent );
-  igstkAddTransitionMacro( ParentSet  , ValidParent, ParentSet  , SetTransformAndParent           );
-  igstkAddTransitionMacro( ParentSet  , ParentCausesCycle, ParentSet, SetTransformAndParentCycle  );
-  igstkAddTransitionMacro( ParentSet  , NullCoordinateReferenceSystem  , ParentSet  , ComputeTransformToNullTarget );
-  igstkAddTransitionMacro( ParentSet  , ThisCoordinateReferenceSystem  , ParentSet  , ComputeTransformToThisTarget );
-  igstkAddTransitionMacro( ParentSet  , ValidCoordinateReferenceSystem , AttemptingComputeTransformTo  , ComputeTransformToValidTarget);
+  igstkAddTransitionMacro( ParentSet  , NullParent ,
+                           ParentSet  , SetTransformAndParentNullParent );
+  igstkAddTransitionMacro( ParentSet  , ThisParent ,
+                           ParentSet  , SetTransformAndParentThisParent );
+  igstkAddTransitionMacro( ParentSet  , ValidParent,
+                           ParentSet  , SetTransformAndParent           );
+  igstkAddTransitionMacro( ParentSet  , ParentCausesCycle,
+                           ParentSet  , SetTransformAndParentCycle  );
+  igstkAddTransitionMacro( ParentSet  , NullCoordinateReferenceSystem ,
+                           ParentSet  , ComputeTransformToNullTarget );
+  igstkAddTransitionMacro( ParentSet  , ThisCoordinateReferenceSystem ,
+                           ParentSet  , ComputeTransformToThisTarget );
+  igstkAddTransitionMacro( ParentSet  , ValidCoordinateReferenceSystem ,
+                           AttemptingComputeTransformTo, 
+                           ComputeTransformToValidTarget);
   /** Invalid inputs to ParentSet : AncestorFound and Disconnected inputs */
-  igstkAddTransitionMacro( ParentSet  , AncestorFound, ParentSet, InvalidRequest );
-  igstkAddTransitionMacro( ParentSet  , Disconnected , ParentSet, InvalidRequest );
+  igstkAddTransitionMacro( ParentSet  , AncestorFound,
+                           ParentSet, InvalidRequest );
+  igstkAddTransitionMacro( ParentSet  , Disconnected,
+                           ParentSet, InvalidRequest );
 
   /** Transitions from AttemptingComputeTransformToInInitialized */
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, Disconnected, Initialized, ComputeTransformToDisconnected);
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, AncestorFound, Initialized, ComputeTransformToAncestorFound);
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           Disconnected,
+                           Initialized,
+                           ComputeTransformToDisconnected);
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           AncestorFound,
+                           Initialized,
+                           ComputeTransformToAncestorFound);
   /** Invalid inputs to AttemptingComputeTransformToInitialized :
-       NullParent, ThisParent, ValidParent, ParentCausesCycle, NullCoordinateReferenceSystem
-       ThisCoordinateReferenceSystem, ValidCoordinateReferenceSystem */
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, NullParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, ThisParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, ValidParent, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, ParentCausesCycle, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, NullCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, ThisCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, ValidCoordinateReferenceSystem, AttemptingComputeTransformToInInitialized, InvalidRequest );
+   *   NullParent, ThisParent, ValidParent, ParentCausesCycle, 
+   *   NullCoordinateReferenceSystem
+   *   ThisCoordinateReferenceSystem, 
+   *   ValidCoordinateReferenceSystem 
+   */
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           NullParent,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           ThisParent,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           ValidParent,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           ParentCausesCycle,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           NullCoordinateReferenceSystem,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           ThisCoordinateReferenceSystem,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
+                           ValidCoordinateReferenceSystem,
+                           AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
 
   /** Transitions from AttemptingComputeTransformTo */
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, Disconnected  , ParentSet  , ComputeTransformToDisconnected );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, AncestorFound , ParentSet  , ComputeTransformToAncestorFound );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           Disconnected,
+                           ParentSet,
+                           ComputeTransformToDisconnected );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           AncestorFound,
+                           ParentSet,
+                           ComputeTransformToAncestorFound );
   /** Invalid inputs to AttemptingComputeTransformTo :
-       NullParent, ThisParent, ValidParent, ParentCausesCycle, NullCoordinateReferenceSystem
-       ThisCoordinateReferenceSystem, ValidCoordinateReferenceSystem */
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullParent, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisParent, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidParent, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ParentCausesCycle, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, NullCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ThisCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
-  igstkAddTransitionMacro( AttemptingComputeTransformTo, ValidCoordinateReferenceSystem, AttemptingComputeTransformTo, InvalidRequest );
+   *   NullParent, 
+   *   ThisParent, 
+   *   ValidParent, 
+   *   ParentCausesCycle, 
+   *   NullCoordinateReferenceSystem
+   *   ThisCoordinateReferenceSystem, 
+   *   ValidCoordinateReferenceSystem 
+   */
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           NullParent,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           ThisParent,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           ValidParent,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           ParentCausesCycle,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           NullCoordinateReferenceSystem,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           ThisCoordinateReferenceSystem,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo,
+                           ValidCoordinateReferenceSystem,
+                           AttemptingComputeTransformTo,
+                           InvalidRequest );
 
   m_ReportTiming = false;
 
@@ -143,7 +226,7 @@ CoordinateReferenceSystem
 
   if (this->m_ReportTiming == true)
     {
-    std::cout << "============================================" << std::endl;
+    std::cout << "--------------------------------------------" << std::endl;
     std::cout << "Lowest common ancestor timer - ";
     std::cout << this->m_LowestCommonAncestorTimer.GetNumberOfStarts() 
               << " starts ";
@@ -218,21 +301,21 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToNullTargetProcessing()
 {
- // ERROR
- CoordinateReferenceSystemTransformToErrorResult payload;
- payload.Initialize( this, m_ComputeTransformToTarget );
+  // ERROR
+  CoordinateReferenceSystemTransformToErrorResult payload;
+  payload.Initialize( this, m_ComputeTransformToTarget );
 
- CoordinateReferenceSystemTransformToNullTargetEvent event;
- event.Set( payload );
+  CoordinateReferenceSystemTransformToNullTargetEvent event;
+  event.Set( payload );
 
- this->InvokeEvent( event );
+  this->InvokeEvent( event );
 }
 
 void CoordinateReferenceSystem
 ::ComputeTransformToThisTargetProcessing()
 {
- // Should return identity transform
- // What time limit?
+  // Should return identity transform
+  // What time limit?
   igstk::Transform transform;
   transform.SetToIdentity( TimeStamp::GetLongestPossibleTime() );
 
@@ -249,17 +332,18 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToValidTargetProcessing()
 {
-  if (this->m_ComputeTransformToTarget.IsNull()) //( NULL == this->m_ComputeTransformToTarget )
+  if (this->m_ComputeTransformToTarget.IsNull())
     {
     igstkPushInputMacro( Disconnected );
     m_StateMachine.ProcessInputs();
     return;
     }
 
-  if (this->m_ComputeTransformToTarget == this) //( this == this->m_ComputeTransformToTarget )
+  if (this->m_ComputeTransformToTarget == this)
     {
     this->m_ComputedTransform = igstk::Transform();
-    this->m_ComputedTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+    this->m_ComputedTransform.SetToIdentity(
+                    igstk::TimeStamp::GetLongestPossibleTime());
     igstkPushInputMacro( AncestorFound );
     m_StateMachine.ProcessInputs();
     return;
@@ -271,14 +355,14 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToDisconnectedProcessing()
 {
- // ERROR
- CoordinateReferenceSystemTransformToErrorResult payload;
- payload.Initialize(this, this->m_ComputeTransformToTarget);
+  // ERROR
+  CoordinateReferenceSystemTransformToErrorResult payload;
+  payload.Initialize(this, this->m_ComputeTransformToTarget);
 
- CoordinateReferenceSystemTransformToDisconnectedEvent event;
- event.Set( payload );
+  CoordinateReferenceSystemTransformToDisconnectedEvent event;
+  event.Set( payload );
 
- this->InvokeEvent ( event );
+  this->InvokeEvent ( event );
 }
 
 void CoordinateReferenceSystem
@@ -344,7 +428,8 @@ ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const
 }
 
 void CoordinateReferenceSystem
-::RequestSetTransformAndParent(Transform t, const CoordinateReferenceSystem* parent)
+::RequestSetTransformAndParent(Transform t, 
+                               const CoordinateReferenceSystem* parent)
 {
   if (NULL == parent)
     {
@@ -375,7 +460,7 @@ void CoordinateReferenceSystem
 
     // Break reference when we're done with it...
     this->m_RequestSetTransformAndParentParent = NULL;
-    return;    
+    return;
     }
   else
     {
@@ -456,13 +541,13 @@ CoordinateReferenceSystem
   CoordinateReferenceSystemConstPointer aTempPrev = NULL;
   CoordinateReferenceSystemConstPointer bTempPrev = NULL;
 
-  for(bTemp = bSmart; 
-      (bTemp != NULL); // && bTempPrev != bTemp); 
+  for(bTemp = bSmart;
+      bTemp != NULL;
       bTemp = bTemp->m_Parent)
     {
     aTempPrev = NULL;
     for(aTemp = aSmart; 
-        (aTemp != NULL); // && aTempPrev != aTemp); 
+        aTemp != NULL;
         aTemp = aTemp->m_Parent)
       {
       if (aTemp == bTemp)
@@ -502,9 +587,10 @@ CoordinateReferenceSystem
     return false;
     }
   /** If we're not "target", can our parent
-      reach "target"? Note, if parent was 
-      NULL, we'd be executing the branch 
-      above. */
+   *  reach "target"? Note, if parent was 
+   *  NULL, we'd be executing the branch 
+   *  above. 
+   */
   else
     {
     return this->m_Parent->CanReach(target);
@@ -532,9 +618,9 @@ CoordinateReferenceSystem
 void 
 CoordinateReferenceSystem
 ::RequestDetach()
-{
+  {
   // FIXME -- implement
-}
+  }
 */
 
 void 
@@ -545,4 +631,3 @@ CoordinateReferenceSystem
 }
 
 } // end namespace igstk
-
