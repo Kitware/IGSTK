@@ -167,9 +167,14 @@ public:
   void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
 
-  /** Compare two transforms for equivalence */
+  /** Compare two transforms for equivalence, in the sense that these
+    *  are the same objects in memory.
+    */
   bool operator==( const Transform & inputTransform );
   bool operator!=( const Transform & inputTransform );
+
+  /** Compare two transforms for equivalence.
+    */
   bool IsNumericallyEquivalent( const Transform& inputTransform, double tol = vnl_math::eps );
 
 
