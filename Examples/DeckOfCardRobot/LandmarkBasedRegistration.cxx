@@ -147,7 +147,7 @@ bool LandmarkBasedRegistration::Execute()
   TransformObserver::Pointer transformObserver = TransformObserver::New();
   landmarkRegistration->AddObserver( igstk::TransformModifiedEvent(),
                                      transformObserver );
-  landmarkRegistration->RequestGetTransform();
+  landmarkRegistration->RequestGetTransformFromTrackerToImage();
   if ( transformObserver->GotTransform())
     {
     m_Transform = transformObserver->GetTransform();

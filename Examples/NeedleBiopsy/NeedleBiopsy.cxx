@@ -804,7 +804,7 @@ void NeedleBiopsy::RegistrationProcessing()
     }
   m_LandmarkRegistration->RequestComputeTransform();
   m_LandmarkRegistration->RequestGetRMSError();
-  m_LandmarkRegistration->RequestGetTransform();
+  m_LandmarkRegistration->RequestGetTransformFromTrackerToImage();
 }
 
 void NeedleBiopsy::RequestStartTracking()

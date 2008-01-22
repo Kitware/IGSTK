@@ -50,7 +50,8 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
   igstkAddInputMacro( ImageLandmark );
   igstkAddInputMacro( TrackerLandmark );
   igstkAddInputMacro( ComputeTransform );
-  igstkAddInputMacro( GetTransform  );
+  igstkAddInputMacro( GetTransformFromTrackerToImage  );
+  igstkAddInputMacro( GetTransformFromImageToTracker  );
   igstkAddInputMacro( GetRMSError  );
   igstkAddInputMacro( ResetRegistration );
   igstkAddInputMacro( TransformComputationSuccess  );
@@ -138,9 +139,15 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
                            ReportFailureInTransformComputation );
 
   igstkAddTransitionMacro( TransformComputed,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
                            TransformComputed,
-                           GetTransform );
+                           GetTransformFromTrackerToImage );
+
+  igstkAddTransitionMacro( TransformComputed,
+                           GetTransformFromImageToTracker,
+                           TransformComputed,
+                           GetTransformFromImageToTracker );
+
 
   igstkAddTransitionMacro( TransformComputed,
                            GetRMSError,
@@ -179,37 +186,72 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( Idle,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           GetTransformFromImageToTracker,
                            Idle,
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( ImageLandmark1Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           ImageLandmark1Added,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ImageLandmark1Added,
+                           GetTransformFromImageToTracker,
                            ImageLandmark1Added,
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( ImageLandmark2Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           ImageLandmark2Added,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ImageLandmark2Added,
+                           GetTransformFromImageToTracker,
                            ImageLandmark2Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( ImageLandmark3Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           ImageLandmark3Added,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ImageLandmark3Added,
+                           GetTransformFromImageToTracker,
                            ImageLandmark3Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( TrackerLandmark1Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           TrackerLandmark1Added,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( TrackerLandmark1Added,
+                           GetTransformFromImageToTracker,
                            TrackerLandmark1Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( TrackerLandmark2Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           TrackerLandmark2Added,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( TrackerLandmark2Added,
+                           GetTransformFromImageToTracker,
                            TrackerLandmark2Added,
                            ReportInvalidRequest);
 
   igstkAddTransitionMacro( TrackerLandmark3Added,
-                           GetTransform,
+                           GetTransformFromTrackerToImage,
+                           TrackerLandmark3Added,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( TrackerLandmark3Added,
+                           GetTransformFromImageToTracker,
                            TrackerLandmark3Added,
                            ReportInvalidRequest);
 
@@ -537,12 +579,13 @@ Landmark3DRegistration::ComputeRMSError()
 }
   
 
-/** The "GetTransform()" method throws and event containing the transform */
+/** The "GetTransformFromTrackerToImage()" method throws and event 
+ * containing the transform from tracker to image*/
 void
-Landmark3DRegistration::GetTransformProcessing()
+Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::\
-                         GetTransformProcessing called...\n" );
+                         GetTransformFromTrackerToImageProcessing called...\n" );
 
   igstk::Transform  transform;
 
@@ -563,6 +606,36 @@ Landmark3DRegistration::GetTransformProcessing()
   event.Set( transform );
   this->InvokeEvent( event );
 }
+
+/** The "GetTransformFromImageToTrackerProcessing()" method throws and event containing
+ *  the transform from image to tracker */
+void
+Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::\
+                         GetTransformFromImageToTrackerProcessing called...\n" );
+
+  igstk::Transform  transform;
+
+  const igstk::Transform::ErrorType              error = m_RMSError; 
+
+  const igstk::Transform::TimePeriodType         timePeriod = 
+                                             itk::NumericTraits<double>::max();
+
+  typedef TransformType::TranslationType        TranslationType;
+  typedef TransformType::VersorType             VersorType;
+  
+  VersorType       versor      = m_Transform->GetVersor();
+  TranslationType  translation = m_Transform->GetOffset();
+
+  transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
+
+  TransformModifiedEvent event; 
+  event.Set( transform.GetInverse() );
+  this->InvokeEvent( event );
+}
+
+
 
 /** The "GetRMSError()" method throws and event containing the RMS error */
 void
@@ -660,11 +733,20 @@ Landmark3DRegistration::RequestComputeTransform()
 }
 
 void 
-Landmark3DRegistration::RequestGetTransform()
+Landmark3DRegistration::RequestGetTransformFromTrackerToImage()
 {
   igstkLogMacro( DEBUG,
-             "igstk::Landmark3DRegistration::RequestGetTransform called...\n" );
-  igstkPushInputMacro( GetTransform );
+             "igstk::Landmark3DRegistration::RequestGetTransformFromTrackerToImage called...\n" );
+  igstkPushInputMacro( GetTransformFromTrackerToImage );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void 
+Landmark3DRegistration::RequestGetTransformFromImageToTracker()
+{
+  igstkLogMacro( DEBUG,
+             "igstk::Landmark3DRegistration::RequestGetTransformFromImageToTracker called...\n" );
+  igstkPushInputMacro( GetTransformFromImageToTracker );
   this->m_StateMachine.ProcessInputs();
 }
 

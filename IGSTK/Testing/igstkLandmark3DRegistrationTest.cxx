@@ -304,7 +304,7 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
                             Landmark3DRegistrationGetTransformCallback::New();
 
   landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
-  landmarkRegister->RequestGetTransform();
+  landmarkRegister->RequestGetTransformFromTrackerToImage();
 
   if( !lrtcb->GetEventReceived() )
     {

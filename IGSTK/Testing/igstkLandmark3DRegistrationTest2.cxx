@@ -235,7 +235,7 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
   landmarkRegister->RequestAddTrackerLandmarkPoint(trackerPoint);
 
   landmarkRegister->RequestComputeTransform();
-  landmarkRegister->RequestGetTransform();
+  landmarkRegister->RequestGetTransformFromTrackerToImage();
 
   transform = lrtcb->GetTransform();
   std::cout << "Transform " << transform << std::cout;
@@ -296,7 +296,7 @@ int igstkLandmark3DRegistrationTest2( int argv, char * argc[] )
   landmarkRegister2->RequestAddTrackerLandmarkPoint(trackerPoint);
 
   landmarkRegister2->RequestComputeTransform();
-  landmarkRegister2->RequestGetTransform();
+  landmarkRegister2->RequestGetTransformFromTrackerToImage();
 
   TransformType            transform2;
   transform2 = lrtcb2->GetTransform();

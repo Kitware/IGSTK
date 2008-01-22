@@ -398,7 +398,7 @@ int main( int argv, char * argc[] )
   // EndLatex
 
   // BeginCodeSnippet
-  landmarkRegister->RequestGetTransform();
+  landmarkRegister->RequestGetTransformFromTrackerToImage();
   std::cout << "Transform " << transform << std::cout;
   // EndCodeSnippet
     
