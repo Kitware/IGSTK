@@ -26,6 +26,9 @@
 namespace igstk
 {
 
+const Tracker::TimePeriodType Tracker::DEFAULT_VALIDITY_TIME = 400;
+const double Tracker::DEFAULT_REFRESH_RATE = 30.0;
+
 /** Constructor */
 Tracker::Tracker(void) :  m_StateMachine( this ) 
 {
@@ -295,12 +298,12 @@ Tracker::Tracker(void) :  m_StateMachine( this )
 
   // This is update rate for sending tracking information to the
   // spatial objects, it should be set to at least 30 Hz
-  m_PulseGenerator->RequestSetFrequency( 30 );
+  m_PulseGenerator->RequestSetFrequency( DEFAULT_REFRESH_RATE );
 
   // This is the time period for which transformation should be
   // considered valid.  After this time, they expire.  This time
   // is in milliseconds.
-  m_ValidityTime = 400.0;
+  m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;

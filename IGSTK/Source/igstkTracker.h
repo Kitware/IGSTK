@@ -280,8 +280,14 @@ private:
   bool                      m_ApplyingReferenceTool;
   TrackerToolPointer        m_ReferenceTool;
 
-  /** Validity time */
+  /** Validity time, and its default value [milliseconds]*/
   TimePeriodType            m_ValidityTime;
+  static const TimePeriodType DEFAULT_VALIDITY_TIME;
+
+  /** Default update rate for sending tracking information to the
+   *  spatial objects, it should be set to at least 30 [Hz].
+   */ 
+  static const double DEFAULT_REFRESH_RATE;
 
   /** Multi-threading enabled flag : The descendant class will use
       multi-threading, if this flag is set as true */
