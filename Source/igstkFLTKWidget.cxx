@@ -129,7 +129,7 @@ void FLTKWidget::SetRenderer( vtkRenderer * renderer )
   this->m_Renderer = renderer;
 }
 
-/** Set VTK renderw window interactor */
+/** Set VTK render window interactor */
 void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
   this->m_RenderWindowInteractor = interactor;

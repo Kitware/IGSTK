@@ -33,13 +33,7 @@ class vtkRenderWindowInteractor;
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
 
-// ITK headers
-#include "itkCommand.h"
-#include "igstkLogger.h"
-
 // IGSTK headers
-#include "igstkMacros.h"
-#include "igstkStateMachine.h"
 #include "igstkView.h"
 #include "igstkViewProxy.h"
 
@@ -56,9 +50,9 @@ public:
   typedef FLTKWidget          Self;
   typedef Fl_Gl_Window        Superclass;
 
-  typedef View             ViewType;
+  typedef View                ViewType;
 
-  typedef vtkWorldPointPicker  PickerType;
+  typedef vtkWorldPointPicker PickerType;
 
   igstkTypeMacro( FLTKWidget, Fl_Gl_Window );
   
@@ -123,7 +117,7 @@ private:
   /** Set VTK renderer */
   void SetRenderer( vtkRenderer * renderer );
 
-  /** Set VTK renderw window interactor */
+  /** Set VTK render window interactor */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
   /** Set render window ID */
@@ -131,7 +125,7 @@ private:
 
 private:
 
-  bool m_InteractionHandling;
+  bool                            m_InteractionHandling;
   
   ViewType::Pointer               m_View; 
 
