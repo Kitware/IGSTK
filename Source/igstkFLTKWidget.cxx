@@ -135,6 +135,13 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
   this->m_RenderWindowInteractor = interactor;
 }
 
+/** Get VTK render window interactor */
+vtkRenderWindowInteractor * FLTKWidget::GetRenderWindowInteractor() const
+{
+  return this->m_RenderWindowInteractor;
+}
+
+/** Add observer */
 unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {

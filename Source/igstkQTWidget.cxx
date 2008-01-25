@@ -114,6 +114,13 @@ QTWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
   this->m_RenderWindowInteractor = interactor;
 }
 
+/** Get VTK render window interactor */
+vtkRenderWindowInteractor * 
+QTWidget::GetRenderWindowInteractor() const
+{
+  return this->m_RenderWindowInteractor;
+}
+
 /** Add observer */
 unsigned long QTWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )

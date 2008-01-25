@@ -104,6 +104,9 @@ public:
   /** Enable user interactions with the window via mouse and keyboard */
   void RequestEnableInteractions();
 
+  /** Get render window interactor */
+  vtkRenderWindowInteractor * GetRenderWindowInteractor() const;
+
   /** Add observer */
   unsigned long AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer );
