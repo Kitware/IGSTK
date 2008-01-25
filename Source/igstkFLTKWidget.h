@@ -24,8 +24,6 @@
 #pragma warning( disable : 4284 )
 #endif
 
-// VTK 
-#include "vtkWorldPointPicker.h" // needed for typedef
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
@@ -60,8 +58,6 @@ public:
 
   typedef View                ViewType;
 
-  typedef vtkWorldPointPicker PickerType;
-
   igstkTypeMacro( FLTKWidget, Fl_Gl_Window );
   
   /** Declarations needed for the State Machine */
@@ -84,13 +80,6 @@ public:
 
   /** Get render window interactor */
   vtkRenderWindowInteractor * GetRenderWindowInteractor() const;
-
-  /** Add observer */
-  unsigned long AddObserver( const ::itk::EventObject & event, 
-                              ::itk::Command * observer );
-
-  /** Remove observer */
-  void RemoveObserver( unsigned long observerTag );
 
   typedef ViewProxy< FLTKWidget > ProxyType;
 
@@ -150,8 +139,6 @@ private:
 
   vtkRenderWindowInteractor     * m_RenderWindowInteractor; 
 
-  PickerType                    * m_PointPicker;
- 
    /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ViewConnected );

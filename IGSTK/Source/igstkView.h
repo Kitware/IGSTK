@@ -30,6 +30,7 @@ class vtkCamera;
 class vtkProp;
 class vtkInteractorStyle;
 class vtkRenderer;
+class vtkWorldPointPicker;
 
 
 // ITK headers
@@ -152,6 +153,9 @@ protected:
   /** Request initialize the RenderWindow interactor */
   void RequestInitializeRenderWindowInteractor();
 
+  /** Sets the coordinates of the point picked */
+  void SetPickedPointCoordinates( double xPosition, double yPosition );
+
 private:
 
    /** Get renderer */ 
@@ -227,6 +231,7 @@ private:
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
+  vtkWorldPointPicker   * m_PointPicker;
 
   /** Render Window Interactor */
   RenderWindowInteractor  * m_RenderWindowInteractor;

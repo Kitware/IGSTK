@@ -28,7 +28,6 @@ PURPOSE.  See the above copyright notices for more information.
 
 // VTK declarations
 class vtkRenderer;
-class vtkWorldPointPicker;
 class vtkRenderWindowInteractor;
 
 // ITK headers
@@ -65,7 +64,6 @@ public:
   typedef QTWidget                    Self;
   typedef QVTKWidget                  Superclass;
   typedef View                        ViewType; 
-  typedef vtkWorldPointPicker         PickerType;
 
   igstkTypeMacro( QTWidget, QVTKWidget );
   
@@ -107,13 +105,6 @@ public:
   /** Get render window interactor */
   vtkRenderWindowInteractor * GetRenderWindowInteractor() const;
 
-  /** Add observer */
-  unsigned long AddObserver( const ::itk::EventObject & event, 
-                              ::itk::Command * observer );
-
-  /** Remove observer */
-  void RemoveObserver( unsigned long observerTag );
- 
 protected:
   
   /** Print the object information in a stream. */
@@ -154,13 +145,9 @@ private:
     * is used in connect() method in ViewProxy class */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
-  /** Set VTK point picker */ 
-  void SetPointPicker( PickerType * picker );
- 
 private:
 
   ViewType::Pointer             m_View;
-  PickerType                  * m_PointPicker;
   ProxyType                     m_ProxyView;
   vtkRenderer                 * m_Renderer;
   vtkRenderWindowInteractor   * m_RenderWindowInteractor;

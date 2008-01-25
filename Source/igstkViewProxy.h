@@ -79,6 +79,11 @@ public:
 
     }
 
+  void SetPickedPointCoordinates( View * view, double x, double y ) 
+    {
+    ViewProxyBase::SetPickedPointCoordinates( view, x, y );
+    }
+
 
 protected:
 

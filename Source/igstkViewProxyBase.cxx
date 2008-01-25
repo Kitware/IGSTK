@@ -42,4 +42,13 @@ ViewProxyBase::SetRenderWindowSize( View * view, int width, int height )
   view->RequestSetRenderWindowSize( width, height );
 }
 
+void 
+ViewProxyBase
+::SetPickedPointCoordinates( View * view, 
+                             double xPickedPoint,
+                             double yPickedPoint)
+{
+  view->SetPickedPointCoordinates( xPickedPoint, yPickedPoint );
+}
+
 } // end namespace igstk

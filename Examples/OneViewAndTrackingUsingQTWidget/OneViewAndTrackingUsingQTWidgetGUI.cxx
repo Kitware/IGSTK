@@ -109,7 +109,7 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::View * view )
 {
   ui.Display3D->RequestSetView (view);
-  ui.Display3D->AddObserver( igstk::TransformModifiedEvent(), 
+  view->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
 }
 

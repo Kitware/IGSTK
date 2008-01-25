@@ -19,22 +19,27 @@
 #pragma warning ( disable : 4355 )
 #endif
 
-#include "igstkView.h"
-#include <vtkVersion.h>
-#include <vtkCommand.h>
-#include <vtkWindowToImageFilter.h>
-#include <vtkPNGWriter.h>
-#include <igstkEvents.h>
-#include "itksys/SystemTools.hxx"
+// vtk include files
+#include "vtkVersion.h"
+#include "vtkCommand.h"
+#include "vtkWindowToImageFilter.h"
+#include "vtkPNGWriter.h"
 #include "vtkViewport.h"
 #include "vtkRenderWindow.h"
 #include "vtkCamera.h"
 #include "vtkInteractorStyle.h"
 #include "vtkRenderer.h"
+#include "vtkWorldPointPicker.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
 #include "vtkCarbonRenderWindow.h"
 #endif
+
+//igstk include files
+#include "igstkView.h"
+#include "igstkEvents.h"
+
+#include "itksys/SystemTools.hxx"
 
 namespace igstk
 {
@@ -73,6 +78,10 @@ m_StateMachine(this)
   m_Camera->SetPosition ( 0, 0, -1 );
   m_Camera->SetViewUp( 0, -1, 0 );
   m_Renderer->ResetCamera();
+
+  // create a picker
+  m_PointPicker = vtkWorldPointPicker::New(); 
+  m_RenderWindowInteractor->SetPicker( m_PointPicker );
   
   igstkAddInputMacro( ValidAddObject );
   igstkAddInputMacro( NullAddObject  );
@@ -255,10 +264,26 @@ View::~View()
   m_RenderWindowInteractor->SetPicker( NULL );
 
   m_RenderWindow->RemoveRenderer( m_Renderer );
-  m_RenderWindowInteractor->Delete();
-  m_Renderer->Delete();
-  m_RenderWindow->Delete();
 
+  if( m_RenderWindowInteractor != NULL )
+    {
+    m_RenderWindowInteractor->Delete();
+    }
+
+  if( m_Renderer != NULL )
+    {
+    m_Renderer->Delete();
+    }
+
+  if( m_RenderWindow != NULL )
+    {
+    m_RenderWindow->Delete();
+    }
+
+  if( m_PointPicker != NULL )
+    {
+    m_PointPicker->Delete();
+    }
 }
 
 /** Get renderer */ 
@@ -325,6 +350,9 @@ void View::AddActorProcessing()
 {
   igstkLogMacro( DEBUG, "igstkView::AddActorProcessing() called ...\n");
   m_Renderer->AddActor( m_ActorToBeAdded );
+
+  //add the actor to the picker's list
+  m_PointPicker->AddPickList( m_ActorToBeAdded );
 }
 
 
@@ -351,8 +379,37 @@ void View::RemoveActorProcessing()
 {
   igstkLogMacro( DEBUG, "igstkView::RemoveActorProcessing() called ...\n");
   m_Renderer->RemoveActor( m_ActorToBeRemoved );
+
+  //remove the actor from the picker's list
+  m_PointPicker->DeletePickList( m_ActorToBeRemoved );
 }
 
+void View::SetPickedPointCoordinates( double x, double y )
+{
+  igstkLogMacro( DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
+  m_PointPicker->Pick( x, y, 0, m_Renderer );
+
+  double data[3];
+  m_PointPicker->GetPickPosition( data );
+
+  Transform::VectorType pickedPoint;
+  pickedPoint[0] = data[0];
+  pickedPoint[1] = data[1];
+  pickedPoint[2] = data[2];
+  
+  double validityTime = itk::NumericTraits<double>::max();
+  double errorValue = 1.0; // this should be obtained from 
+                           // the picked object.
+
+  igstk::Transform transform;
+  transform.SetTranslation( pickedPoint, errorValue, validityTime );
+
+  igstk::TransformModifiedEvent transformEvent;
+  transformEvent.Set( transform );
+
+  this->InvokeEvent( transformEvent );
+}
+ 
 /** */
 void View::RequestResetCamera()
 {

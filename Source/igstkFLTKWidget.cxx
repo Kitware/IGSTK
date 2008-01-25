@@ -46,8 +46,6 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   
   this->end();
 
-  m_PointPicker = PickerType::New(); 
-
   //Turn on interaction handling
   m_InteractionHandling = true;
 
@@ -116,11 +114,6 @@ FLTKWidget::~FLTKWidget()
     {
     ((Fl_Group*)parent())->remove(*(Fl_Gl_Window*)this);
     }
-
-  if ( m_PointPicker != NULL )
-    {
-    m_PointPicker->Delete();
-    }
 }
 
 /** Set VTK renderer */
@@ -139,31 +132,6 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
 vtkRenderWindowInteractor * FLTKWidget::GetRenderWindowInteractor() const
 {
   return this->m_RenderWindowInteractor;
-}
-
-/** Add observer */
-unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
-                              ::itk::Command * observer )
-{
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::AddObserver() called ...\n");
-  
-  if ( m_View.IsNull() )
-    {
-    return 0; 
-    }
-  return m_View->AddObserver( event, observer );
-}
-
-void FLTKWidget::RemoveObserver( unsigned long observerTag )
-{
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::RemoveObserver() called ...\n");
-  
-  if ( m_View.IsNull() )
-    {
-    return; 
-    }
-
-  m_View->RemoveObserver( observerTag ); 
 }
 
 /** Request set View */
@@ -190,17 +158,6 @@ void FLTKWidget::ConnectViewProcessing( )
   igstkLogMacro( DEBUG, "igstkFLTKWidget::ConnectViewProcessing called ...\n");
 
   this->m_ProxyView.Connect( m_View );
-  
-  m_Renderer->GetRenderWindow()->GetInteractor()->SetPicker( m_PointPicker );
-
-  //Add actors to the point picker list
-  vtkPropCollection * propList = this->m_Renderer->GetViewProps();
-  vtkProp * prop;
-
-  while(prop = propList->GetNextProp())
-    {
-    this->m_PointPicker->AddPickList(prop);
-    }
 }
 
 /** Set render window */
@@ -417,27 +374,9 @@ int FLTKWidget::handle( int event )
           {
           renderWindowInteractor->InvokeEvent(
                                      vtkCommand::LeftButtonReleaseEvent,NULL);
-          m_PointPicker->Pick( Fl::event_x(), 
-                               this->h()-Fl::event_y()-1, 
-                               0, m_Renderer );
-          double data[3];
-          m_PointPicker->GetPickPosition( data );
-          Transform::VectorType pickedPoint;
-          pickedPoint[0] = data[0];
-          pickedPoint[1] = data[1];
-          pickedPoint[2] = data[2];
-          
-          double validityTime = itk::NumericTraits<double>::max();
-          double errorValue = 1.0; // this should be obtained from 
-                                   // the picked object.
-
-          igstk::Transform transform;
-          transform.SetTranslation( pickedPoint, errorValue, validityTime );
-
-          igstk::TransformModifiedEvent transformEvent;
-          transformEvent.Set( transform );
-
-          m_View->InvokeEvent( transformEvent );
+          m_ProxyView.SetPickedPointCoordinates( m_View, Fl::event_x(), 
+                               this->h()-Fl::event_y()-1 
+                               );
           }
           break;
         case FL_MIDDLE_MOUSE:

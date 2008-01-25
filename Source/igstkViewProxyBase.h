@@ -39,9 +39,12 @@ public:
 protected:
   vtkRenderer *               GetRenderer( View * view );
   vtkRenderWindowInteractor * GetRenderWindowInteractor( View * view );
-  void                        InitializeInteractor( View * view );
-  void                        SetRenderWindowSize( View * view, int width, int height );
 
+  void InitializeInteractor( View * view );
+  void SetRenderWindowSize( View * view, int width, int height );
+  void SetPickedPointCoordinates( View * view, 
+                                  double xPickedPoint ,
+                                  double yPickedPoint );
 private:
 
 };
