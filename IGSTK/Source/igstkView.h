@@ -52,10 +52,16 @@ namespace igstk {
 
 /** \class View
  *  
- *  \brief Base class for View2D and View3D.
+ *  \brief Display graphical representations of surgical scenes.
  * 
  *  The functionality of the View class is to aggregate all the graphical
- *  representations of spatial objects into one scene.
+ *  representations of spatial objects into one scene. igstk::View2D and
+ *  igstk::View3D classes are derived from this class for 2D and 3D viewing
+ *  capabilities. The view class encapsulate VTK classes into a restrictive
+ *  API subjected to control of a state machine.
+ *
+ * \image html igstkView.png  "State Machine Diagram"
+ * \image latex igstkView.eps "State Machine Diagram" 
  *
  * \ingroup Object
  */
@@ -136,10 +142,7 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
  
-  /** Default Camera */
-  vtkCamera             * m_Camera;
- 
-  /** Set the interactor style in the derived classes */
+    /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
 
   /** Set the size of the render window */
@@ -150,7 +153,7 @@ protected:
 
 private:
 
-  /** Get renderer */ 
+   /** Get renderer */ 
   vtkRenderer *  GetRenderer() const;
  
   /** Get render window */
@@ -222,6 +225,7 @@ private:
  
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
+  vtkCamera             * m_Camera;
 
   /** Render Window Interactor */
   RenderWindowInteractor  * m_RenderWindowInteractor;
@@ -285,8 +289,7 @@ private:
   View(const View& ); // purposely not implemented
   View& operator=(const View& ); // purposely not implemented
 
-  /** Define the coordinate system interface 
-   */
+  /** Define the coordinate system interface*/
   igstkCoordinateSystemClassInterfaceMacro();
 };
 
