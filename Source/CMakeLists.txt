@@ -270,7 +270,6 @@ SET(IGSTKSandbox_HEADS
   igstkContourVascularNetworkObjectRepresentation.h
   igstkCoordinateReferenceSystem.h
   igstkCoordinateReferenceSystemDelegator.h
-  igstkCrosshairs2D.h
   igstkCircularSimulatedTracker.h
   igstkSimulatedTrackerTool.h
   igstkDICOMGenericImageReader.h
@@ -286,9 +285,6 @@ SET(IGSTKSandbox_HEADS
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
-# vtkImagePlaneWidget2D.h
-# vtkImagePlaneWidget2DInteractionListener.h
-
   igstkLogger.h
 )
 
@@ -305,9 +301,6 @@ IF(IGSTKSandbox_USE_Qt)
       igstkQMouseTracker.h
       igstkQMouseTrackerTool.h
       igstkQTWidget.h
-#      igstkImageSpatialObjectImagePlaneRepresentation.h
-#      igstkCTImageSpatialObjectImagePlaneRepresentation.h
-#      igstkMRImageSpatialObjectImagePlaneRepresentation.h
    )
 ENDIF(IGSTKSandbox_USE_Qt)
 
@@ -344,7 +337,6 @@ SET(IGSTKSandbox_SRCS
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkCoordinateReferenceSystem.cxx
   igstkCoordinateReferenceSystemDelegator.cxx
-  igstkCrosshairs2D.cxx
   igstkCircularSimulatedTracker.cxx
   igstkSimulatedTrackerTool.cxx
   igstkDICOMGenericImageReader.cxx
@@ -360,12 +352,6 @@ SET(IGSTKSandbox_SRCS
   igstkVideoGrabber.cxx
   igstkViewProxyBase.cxx
   igstkImageSliceRepresentation.txx
-#  igstkImageSpatialObjectImagePlaneRepresentation.txx
-#  igstkCTImageSpatialObjectImagePlaneRepresentation.cxx
-#  igstkMRImageSpatialObjectImagePlaneRepresentation.cxx
-#  vtkImagePlaneWidget2D.cxx
-#  vtkImagePlaneWidget2DInteractionListener.cxx
-
   igstkLogger.cxx
   igstkSimulatedTracker.cxx
 )

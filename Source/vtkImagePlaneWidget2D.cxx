@@ -238,6 +238,28 @@ int vtkImagePlaneWidget2D::GetState() const
   }
 }
 
+void vtkImagePlaneWidget2D::GetCurrentWorldCursorPosition(double &x, double &y, 
+                                                          double &z)
+{
+  // Need the depth coordinate to compute correct world coordinate
+  // LastPickPosition is a member of vtk3DWidget and represents the 
+  // last picked point.
+  double focalPoint[4];
+  this->ComputeWorldToDisplay(LastPickPosition[0],
+                              LastPickPosition[1],
+                              LastPickPosition[2], focalPoint);
+  
+  double depthCoordinate = focalPoint[2]; 
+                              
+  double worldCursorPosition[4];
+  this->ComputeDisplayToWorld(double(this->Interactor->GetEventPosition()[0]),
+                              double(this->Interactor->GetEventPosition()[1]),
+                              depthCoordinate, 
+                              worldCursorPosition);
+  x = worldCursorPosition[0];
+  y = worldCursorPosition[1];
+  z = worldCursorPosition[2];
+}
 void vtkImagePlaneWidget2D::
 ConnectWindowLevel(vtkImagePlaneWidget2D *imagePlaneWidget)
 {

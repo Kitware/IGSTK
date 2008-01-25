@@ -57,6 +57,8 @@ public:
 
 
   void ConnectSliceIndex(vtkImagePlaneWidget2D *imagePlaneWidget);
+  
+  void GetCurrentWorldCursorPosition(double &x, double &y, double& z);
 
 protected:
     vtkImagePlaneWidget2D();

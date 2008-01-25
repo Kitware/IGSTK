@@ -1,39 +1,72 @@
-/*=========================================================================
+#ifndef CXIMAGESLICE2DREPRESENTATION_TXX_
+#define CXIMAGESLICE2DREPRESENTATION_TXX_
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImageSpatialObjectImagePlaneRepresentation.txx
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+#include "imageslice2drepresentation.h"
+#include "cxcommon.h"
 
-  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+#include <igstkEvents.h>
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+#include <itkCommand.h>
+#include <itkImage.h>
+#include <itkCastImageFilter.h>
+#include <itkImageFileReader.h>
 
-=========================================================================*/
-#ifndef __igstkImageSpatialObjectImagePlaneRepresentation_txx
-#define __igstkImageSpatialObjectImagePlaneRepresentation_txx
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkImageData.h>
+#include <vtkCallbackCommand.h>
 
-#include "itkCommand.h"
-#include "itkImage.h"
-#include "itkCastImageFilter.h"
-#include "itkImageFileReader.h"
-
-#include "igstkImageSpatialObjectImagePlaneRepresentation.h"
-#include "igstkEvents.h"
-
-#include "vtkPolyDataMapper.h"
-#include "vtkProperty.h"
-#include "vtkImageData.h"
-
-namespace igstk
+namespace cx
 {
+template <class TImageSpatialObject> void 
+ImageSlice2dRepresentation<TImageSpatialObject>
+::CursoringCallback(vtkObject * caller, unsigned long eventId, void *clientData, 
+                    void *callData)
+{
+  ImageSlice2dRepresentation<TImageSpatialObject> *owning =
+    reinterpret_cast<ImageSlice2dRepresentation<TImageSpatialObject> *>(clientData);
+  vtkImagePlaneWidget2D *imagePlane = dynamic_cast<vtkImagePlaneWidget2D *>(caller);
+  if(imagePlane == NULL)
+  {
+    return;
+  }
+  if((eventId == vtkCommand::InteractionEvent) || (eventId == vtkCommand::StartInteractionEvent))
+  {
+    switch(imagePlane->GetState())
+    {
+    case vtkImagePlaneWidget2D::WINDOWLEVELLING:
+    {      
+      double windowLevel[2];
+      imagePlane->GetWindowLevel(windowLevel);
+      
+      WindowLevelType theWindowLevel;
+      theWindowLevel.window = windowLevel[0];
+      theWindowLevel.level = windowLevel[1];
+      WindowLevelEvent event;
+      event.Set(theWindowLevel);
+      owning->InvokeEvent(event);
+      break;
+    }
+    case vtkImagePlaneWidget2D::CURSORING:
+    {
+      double x, y, z;
+      imagePlane->GetCurrentWorldCursorPosition(x, y, z);
+     
+      igstk::EventHelperType::PointType point;
+      point.SetElement(0, x);
+      point.SetElement(1, y);
+      point.SetElement(2, z);
+      CursorEvent event;
+      event.Set(point);
+      owning->InvokeEvent(event);
+      break;
+    }
+    }
+  }
+}
 template < class TImageSpatialObject >
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
-::ImageSpatialObjectImagePlaneRepresentation() : 
+ImageSlice2dRepresentation< TImageSpatialObject >
+::ImageSlice2dRepresentation() : 
     m_StateMachine(this),
     m_ImageSpatialObject(NULL),
     m_ImageSpatialObjectToAdd(NULL),
@@ -43,7 +76,14 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
     m_VTKImageObserver(VTKImageObserver::New())
 {
   this->RequestSetSpatialObject( m_ImageSpatialObject );
-
+  
+  vtkCallbackCommand *cbc = vtkCallbackCommand::New();
+  cbc->SetCallback(ImageSlice2dRepresentation::CursoringCallback);
+  cbc->SetClientData(this);
+  m_ImagePlane->AddObserver(vtkCommand::InteractionEvent, cbc);
+  m_ImagePlane->AddObserver(vtkCommand::StartInteractionEvent, cbc);
+  cbc->Delete();
+  
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( NullImageSpatialObject  );
   igstkAddInputMacro( EmptyImageSpatialObject  );
@@ -158,10 +198,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 /** Destructor */
 template < class TImageSpatialObject >
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
-::~ImageSpatialObjectImagePlaneRepresentation()  
+ImageSlice2dRepresentation< TImageSpatialObject >
+::~ImageSlice2dRepresentation()  
 {
-  
+  std::cout << "ImageSlice2dRepresentation destructor " << m_Orientation << std::endl;
   m_ImagePlane->Delete();
   // This deletes also the m_ImageActor
   this->DeleteActors();
@@ -170,10 +210,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Overloaded DeleteActor function */
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::DeleteActors( )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::DeleteActors called...\n");
   
   this->Superclass::DeleteActors();
@@ -182,10 +222,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Set the Image Spatial Object */
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::RequestSetImageSpatialObject called...\n");
   
   m_ImageSpatialObjectToAdd = image;
@@ -212,10 +252,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::RequestSetOrientation( OrientationType orientation )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::RequestSetOrientation called...\n");
   
   m_OrientationToBeSet = orientation;
@@ -227,20 +267,16 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetOrientationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::SetOrientationProcessing called...\n");
   m_Orientation = m_OrientationToBeSet;
 
   //this->m_ImagePlane->SetMarginSizeX(0.0);
   //this->m_ImagePlane->SetMarginSizeY(0.0);
-  this->m_ImagePlane->RestrictPlaneToVolumeOn();
-  this->m_ImagePlane->DisplayTextOff();
-  this->m_ImagePlane->On();
-  this->m_ImagePlane->InteractionOff();
-  this->m_ImagePlane->InteractionOn();
+  
   switch(m_Orientation)
   {
   case Axial:
@@ -256,16 +292,17 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
       std::cout << "Invalid m_Orientation: " << m_Orientation << std::endl;
       break;
   }
+  std::cout << "Orientation is now " << m_Orientation << std::endl;
 }
   
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::RequestSetSliceNumber( SliceNumberType slice )
 {
 
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::RequestSetSliceNumber called...\n");
 
   m_SliceNumberToBeSet = slice;
@@ -278,11 +315,11 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::AttemptSetSliceNumberProcessing()
 {
 
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::AttemptSetSliceNumberProcessing called...\n");
   if( m_ImagePlane )
     {
@@ -326,10 +363,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetSliceNumberProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::SetSliceNumber called...\n");
 
   m_SliceNumber = m_SliceNumberToBeSet;
@@ -339,10 +376,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetWindowLevel( double window, double level )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::SetWindowLevel called...\n");
 
   m_ImagePlane->SetWindowLevel(window, level);
@@ -351,7 +388,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Null Operation for a State Machine Transition */
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::NoProcessing()
 {
 }
@@ -359,16 +396,16 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Set the Image Spatial Object */
 template < class TImageSpatialObject >
 void 
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetImageSpatialObjectProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::SetImageSpatialObjectProcessing called...\n");
 
   // We create the image spatial object
   m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
 
-  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+  m_ImageSpatialObject->AddObserver( igstk::VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
@@ -397,7 +434,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Print Self function */
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
@@ -408,10 +445,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
  * object */
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
 {
-    //igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation \
+    //igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation \
         //                 ::UpdateRepresentationProcessing called...\n");
   if( m_ImageData )
     {
@@ -423,10 +460,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 /** Create the vtk Actors */
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::CreateActors()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::CreateActors called...\n");
 
   // to avoid duplicates we clean the previous actors
@@ -438,14 +475,14 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 /** Create a copy of the current object representation */
 template < class TImageSpatialObject >
-typename ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >::Pointer
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+typename ImageSlice2dRepresentation< TImageSpatialObject >::Pointer
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::Copy() const
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::Copy called...\n");
 
-  Pointer newOR = ImageSpatialObjectImagePlaneRepresentation::New();
+  Pointer newOR = ImageSlice2dRepresentation::New();
   newOR->SetColor( this->GetRed(), this->GetGreen(), this->GetBlue() );
   newOR->SetOpacity( this->GetOpacity() );
   newOR->RequestSetImageSpatialObject( m_ImageSpatialObject );
@@ -456,10 +493,10 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
  
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetImage( const vtkImageData * image )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectImagePlaneRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageSlice2dRepresentation\
                         ::SetImage called...\n");
 
   // This const_cast<> is needed here due to the lack of 
@@ -470,7 +507,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::ReportSliceNumberBoundsProcessing() 
 {
   int ext[6];
@@ -478,7 +515,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
   m_ImageData->Update();
   m_ImageData->GetExtent( ext );
 
-  EventHelperType::IntegerBoundsType bounds;
+  igstk::EventHelperType::IntegerBoundsType bounds;
 
   switch( m_Orientation )
     {
@@ -486,7 +523,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
       {
       bounds.minimum = ext[4];
       bounds.maximum = ext[5];
-      AxialSliceBoundsEvent event;
+      igstk::AxialSliceBoundsEvent event;
       event.Set( bounds );
       this->InvokeEvent( event );
       break;
@@ -495,7 +532,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
       {
       bounds.minimum = ext[0];
       bounds.maximum = ext[1];
-      SagittalSliceBoundsEvent event;
+      igstk::SagittalSliceBoundsEvent event;
       event.Set( bounds );
       this->InvokeEvent( event );
       break;
@@ -504,7 +541,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
       {
       bounds.minimum = ext[2];
       bounds.maximum = ext[3];
-      CoronalSliceBoundsEvent event;
+      igstk::CoronalSliceBoundsEvent event;
       event.Set( bounds );
       this->InvokeEvent( event );
       break;
@@ -514,7 +551,7 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::RequestGetSliceNumberBounds() 
 {
   m_StateMachine.PushInput( m_RequestSliceNumberBoundsInput );
@@ -523,19 +560,24 @@ ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
+  this->m_ImagePlane->RestrictPlaneToVolumeOn();
+    this->m_ImagePlane->DisplayTextOff();
+    this->m_ImagePlane->On();
+    this->m_ImagePlane->InteractionOff();
+    this->m_ImagePlane->InteractionOn();
 }
 
 /** Set the opacity */
 template < class TImageSpatialObject >
 void
-ImageSpatialObjectImagePlaneRepresentation< TImageSpatialObject >
+ImageSlice2dRepresentation< TImageSpatialObject >
 ::SetOpacity(float alpha)
 {
 }
 
-} // end namespace igstk
+}
 
 #endif

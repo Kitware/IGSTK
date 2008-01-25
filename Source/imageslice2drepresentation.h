@@ -1,60 +1,42 @@
-/*=========================================================================
+#ifndef CXIMAGESLICE2DREPRESENTATION_H_
+#define CXIMAGESLICE2DREPRESENTATION_H_
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImageSpatialObjectImagePlaneRepresentation.h
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+#include <igstkMacros.h>
+#include <igstkObjectRepresentation.h>
+#include <igstkImageSpatialObject.h>
+#include <igstkStateMachine.h>
 
-  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
-#ifndef __igstkImageSpatialObjectImagePlaneRepresentation_h
-#define __igstkImageSpatialObjectImagePlaneRepresentation_h
-
-#include "igstkMacros.h"
-#include "igstkObjectRepresentation.h"
-#include "igstkImageSpatialObject.h"
-#include "igstkStateMachine.h"
-
-#include "vtkImagePlaneWidget2D.h"
-#include "vtkLookupTable.h"
-#include "vtkImageMapToColors.h"
 #include <vtkCommand.h>
 
-namespace igstk
+#include "vtkImagePlaneWidget2D.h"
+
+namespace cx
 {
  
-/** @class ImageSpatialObjectImagePlaneRepresentation
+/** @class ImageSlice2DRepresentation
  * 
  * @brief This class represents an image object as a slice of the image projected
  * onto a plane. 
  * The statemachine and most parts of this class has been copied from 
- * ImageSpatialObjectRepresentation.
+ * (igstk)ImageSpatialObjectRepresentation.
  * 
- * @ingroup ObjectRepresentation
  * @Author Torleif Sandnes, Sintef Health Research
  * @Date 20070823
  */
 
 template < class TImageSpatialObject >
-class ImageSpatialObjectImagePlaneRepresentation : public ObjectRepresentation
+class ImageSlice2dRepresentation : public igstk::ObjectRepresentation
 {
 
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( ImageSpatialObjectImagePlaneRepresentation, \
-                                          ObjectRepresentation )
+  igstkStandardTemplatedClassTraitsMacro(ImageSlice2dRepresentation, \
+                                         igstk::ObjectRepresentation )
 
-  typedef TImageSpatialObject                      ImageSpatialObjectType;
+  typedef TImageSpatialObject ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
-                                           ImageSpatialObjectConstPointer;
+    ImageSpatialObjectConstPointer;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -70,20 +52,20 @@ public:
   OrientationType;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
-                                                ImageSpatialObject );
+  void RequestSetImageSpatialObject(const ImageSpatialObjectType * 
+                                    ImageSpatialObject );
 
   /** Type used for representing the slice number */
   typedef unsigned int SliceNumberType;
 
   /** Request the state machine to attempt to select a slice number */
-  void RequestSetSliceNumber( SliceNumberType slice );
+  void RequestSetSliceNumber(SliceNumberType slice);
 
   /** Request the state machine to attempt to select a slice orientation */
-  void RequestSetOrientation( OrientationType orientation );
+  void RequestSetOrientation(OrientationType orientation);
 
   /** Set the Window Level for the representation */
-  void SetWindowLevel( double window, double level );
+  void SetWindowLevel(double window, double level);
   
   /** Set the opacity */
   void SetOpacity(float alpha);
@@ -98,20 +80,29 @@ public:
   void SetInteractor(vtkRenderWindowInteractor * interactor)
   { m_ImagePlane->SetInteractor(interactor);}
 
+  // Necessary to synch other imageplanewidgets 
   void RequestSetCursorPosition(double x, double y, double z)
-  { m_ImagePlane->SetCursorPosition(x, y, z);}
+    { m_ImagePlane->SetCursorPosition(x, y, z);}
 
-  void ConnectWindowLevel(Self::Pointer representation)
+  void ConnectWindowLevel(typename Self::Pointer representation)
     {
       this->m_ImagePlane->ConnectWindowLevel(representation->m_ImagePlane);
     }
+  void Enable(bool enable) 
+  { 
+    if((m_ImagePlane->GetEnabled()) && !enable)
+      m_ImagePlane->SetEnabled(false);
+    else if( (!m_ImagePlane->GetEnabled()) && enable)
+      m_ImagePlane->SetEnabled(true);
+  }
+  
 protected:
 
   /** Constructor */
-  ImageSpatialObjectImagePlaneRepresentation();
+  ImageSlice2dRepresentation();
   
   /** Destructor */
-  ~ImageSpatialObjectImagePlaneRepresentation();
+  ~ImageSlice2dRepresentation();
 
   /** Overloaded function to delete actors */
   void DeleteActors();
@@ -122,13 +113,13 @@ protected:
   /** Observer macro that will received a event with an image as payload and
    * will store it internally. This will be the receptor of the event sent by
    * the ImageSpatialObject when an image is requested. */
-   igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
-                       EventHelperType::VTKImagePointerType );
+   igstkObserverMacro( VTKImage, igstk::VTKImageModifiedEvent, 
+                       igstk::EventHelperType::VTKImagePointerType );
 
 
 private:
 
-  ImageSpatialObjectImagePlaneRepresentation(const Self&);   //purposely not implemented
+  ImageSlice2dRepresentation(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
 
   /** Update the visual representation with changes in the geometry */
@@ -161,6 +152,8 @@ private:
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
 
+  static void CursoringCallback(vtkObject *, unsigned long eventId, void *clientData, 
+                         void *callData);
 private:
 
   /** Inputs to the State Machine */
@@ -202,11 +195,10 @@ private:
 
 };
 
-} // end namespace igstk
+}
 
 #ifndef IGSTK_MANUAL_INSTANTIATION
-#include "igstkImageSpatialObjectImagePlaneRepresentation.txx"
+#include "cximageslice2drepresentation.txx"
 #endif
 
-
-#endif // __igstkImageSpatialObjectImagePlaneRepresentation_h
+#endif
