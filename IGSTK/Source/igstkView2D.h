@@ -34,6 +34,8 @@ namespace igstk {
  *  \image html  igstkView2D.png  "View2D State Machine Diagram"
  *  \image latex igstkView2D.eps  "View2D State Machine Diagram" 
  *
+ *  \ingroup View
+ *
  */
 class View2D : public View 
 {

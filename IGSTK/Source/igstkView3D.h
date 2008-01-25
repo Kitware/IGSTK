@@ -33,6 +33,8 @@ namespace igstk {
  *  \image html  igstkView3D.png  "View3D State Machine Diagram"
  *  \image latex igstkView3D.eps  "View3D State Machine Diagram" 
  *
+ *  \ingroup View
+ *
  */
 class View3D : public View 
 {

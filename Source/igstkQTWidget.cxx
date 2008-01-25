@@ -19,13 +19,11 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning ( disable : 4355 )
 #endif
 
-#include "vtkVersion.h"
 #include "vtkCommand.h"
-#include "vtkWindowToImageFilter.h"
-#include "vtkPNGWriter.h"
-#include "vtkViewport.h"
+#include "vtkRenderWindowInteractor.h"
 #include "vtkRenderWindow.h"
 #include "vtkPropCollection.h"
+#include "vtkWorldPointPicker.h"
 #include "vtkProp.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
@@ -116,14 +114,6 @@ QTWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
   this->m_RenderWindowInteractor = interactor;
 }
 
-/** Get VTK render window interactor */
-vtkRenderWindowInteractor *
-QTWidget::GetRenderWindowInteractor( )
-{
-  return ( this->m_RenderWindowInteractor );
-}
-
-
 /** Add observer */
 unsigned long QTWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
@@ -137,6 +127,18 @@ unsigned long QTWidget::AddObserver( const ::itk::EventObject & event,
   return m_View->AddObserver( event, observer );
 }
 
+/** Remove observer */
+void QTWidget::RemoveObserver( unsigned long observerTag )
+{
+  igstkLogMacro( DEBUG, "igstkQTWidget::RemoveObserver() called ...\n");
+  
+  if ( m_View.IsNull() )
+    {
+    return; 
+    }
+
+  m_View->RemoveObserver( observerTag ); 
+}
 
 /** Request set view */
 void QTWidget::RequestSetView( const ViewType* view)
@@ -178,7 +180,8 @@ void QTWidget::ConnectViewProcessing( )
 /** Request enable interactions */
 void QTWidget::RequestEnableInteractions()
 {
-  igstkLogMacro( DEBUG, "igstkQTWidget::RequestEnableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, 
+          "igstkQTWidget::RequestEnableInteractions() called ...\n");
   igstkPushInputMacro( EnableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -187,7 +190,8 @@ void QTWidget::RequestEnableInteractions()
 /** Request disable interactions */
 void QTWidget::RequestDisableInteractions()
 {
-  igstkLogMacro( DEBUG, "igstkQTWidget::RequestDisableInteractions() called ...\n");
+  igstkLogMacro( DEBUG, 
+          "igstkQTWidget::RequestDisableInteractions() called ...\n");
   igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -195,7 +199,8 @@ void QTWidget::RequestDisableInteractions()
 /** */
 void QTWidget::EnableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkQTWidget::EnableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+         "igstkQTWidget::EnableInteractionsProcessing() called ...\n");
   m_InteractionHandling = true;
 }
 
@@ -211,25 +216,25 @@ void QTWidget::DisableInteractionsProcessing()
 void QTWidget::mousePressEvent(QMouseEvent* e)
 {
 
-  vtkRenderWindowInteractor* iren = NULL;
+  vtkRenderWindowInteractor* interactor = NULL;
   if(this->mRenWin)
     {
-    iren = this->mRenWin->GetInteractor();
+    interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
 
   // give interactor the event information
 #if QT_VERSION < 0x040000
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                               (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
                               (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0, 0,
                               e->type() == QEvent::MouseButtonDblClick ? 1 : 0);
 #else
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                               (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
                               (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0,
                               0,
@@ -240,15 +245,15 @@ void QTWidget::mousePressEvent(QMouseEvent* e)
   switch(e->button())
     {
     case Qt::LeftButton:
-      iren->InvokeEvent(vtkCommand::LeftButtonPressEvent, e);
+      interactor->InvokeEvent(vtkCommand::LeftButtonPressEvent, e);
       break;
 
     case Qt::MidButton:
-      iren->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
+      interactor->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
       break;
 
     case Qt::RightButton:
-      iren->InvokeEvent(vtkCommand::RightButtonPressEvent, e);
+      interactor->InvokeEvent(vtkCommand::RightButtonPressEvent, e);
       break;
 
     default:
@@ -264,24 +269,24 @@ void
 QTWidget
 ::mouseReleaseEvent(QMouseEvent* e)
 {
-  vtkRenderWindowInteractor* iren = NULL;
+  vtkRenderWindowInteractor* interactor = NULL;
   if(this->mRenWin)
     {
-    iren = this->mRenWin->GetInteractor();
+    interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
   
   // give vtk event information
 #if QT_VERSION < 0x040000
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                                  (e->state() & Qt::ControlButton), 
                                  (e->state() & Qt::ShiftButton ));
 #else
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                                  (e->modifiers() & Qt::ControlModifier), 
                                  (e->modifiers() & Qt::ShiftModifier ));
 #endif
@@ -291,7 +296,7 @@ QTWidget
     {
     case Qt::LeftButton:
       {
-      iren->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
+      interactor->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
 
       m_PointPicker->Pick( e->x(), 
                            this->height() - e->y() - 1, 
@@ -318,11 +323,11 @@ QTWidget
       break;
       }
     case Qt::MidButton:
-      iren->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
+      interactor->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
       break;
 
     case Qt::RightButton:
-      iren->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
+      interactor->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
       break;
 
     default:
@@ -336,29 +341,29 @@ QTWidget
  */
 void QTWidget::mouseMoveEvent(QMouseEvent *e)
 {
-  vtkRenderWindowInteractor* iren = NULL;
+  vtkRenderWindowInteractor* interactor = NULL;
   if(this->mRenWin)
     {
-    iren = this->mRenWin->GetInteractor();
+    interactor = this->mRenWin->GetInteractor();
     }
     
-  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
   
   // give VTK event information
 #if QT_VERSION < 0x040000
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
     (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
     (e->state() & Qt::ShiftButton  ) > 0 ? 1 : 0);
 #else
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
     (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
     (e->modifiers() & Qt::ShiftModifier  ) > 0 ? 1 : 0);
 #endif
 
- iren->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+ interactor->InvokeEvent(vtkCommand::MouseMoveEvent, e);
 
   if(e->buttons() == Qt::LeftButton)
     {
@@ -392,13 +397,13 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
 #ifndef QT_NO_WHEELEVENT
 void QTWidget::wheelEvent(QWheelEvent* e)
 {
-  vtkRenderWindowInteractor* iren = NULL;
+  vtkRenderWindowInteractor* interactor = NULL;
   if(this->mRenWin)
     {
-    iren = this->mRenWin->GetInteractor();
+    interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!iren || !iren->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
     {
     return;
     }
@@ -406,11 +411,11 @@ void QTWidget::wheelEvent(QWheelEvent* e)
 // VTK supports wheel mouse events only in version 4.5 or greater
   // give event information to interactor
 #if QT_VERSION < 0x040000
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                              (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
                              (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
 #else
-  iren->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                              (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
                              (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
 #endif
@@ -419,11 +424,11 @@ void QTWidget::wheelEvent(QWheelEvent* e)
   // if delta is positive, it is a forward wheel event
   if(e->delta() > 0)
     {
-    iren->InvokeEvent(vtkCommand::MouseWheelForwardEvent, e);
+    interactor->InvokeEvent(vtkCommand::MouseWheelForwardEvent, e);
     }
   else
     {
-    iren->InvokeEvent(vtkCommand::MouseWheelBackwardEvent, e);
+    interactor->InvokeEvent(vtkCommand::MouseWheelBackwardEvent, e);
     }
 }
 #endif

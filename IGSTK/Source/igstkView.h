@@ -64,6 +64,7 @@ namespace igstk {
  * \image latex igstkView.eps "State Machine Diagram" 
  *
  * \ingroup Object
+ * \ingroup View
  */
 class View : public Object 
 {

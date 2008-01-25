@@ -26,10 +26,10 @@ PURPOSE.  See the above copyright notices for more information.
 // QT dared to define macro called DEBUG!!
 #define QT_NO_DEBUG 1
 
-// VTK 
-#include "vtkInteractorStyle.h"
-#include "vtkRenderer.h"
-#include "vtkWorldPointPicker.h"
+// VTK declarations
+class vtkRenderer;
+class vtkWorldPointPicker;
+class vtkRenderWindowInteractor;
 
 // ITK headers
 #include "itkCommand.h"
@@ -41,23 +41,31 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkView.h"
 #include "igstkViewProxy.h"
 
+// VTK header
 #include "QVTKWidget.h"
 
 namespace igstk {
 
 /** \class QTWidget
  * 
- * \brief Widget class to develop QT based IGSTK application 
+ * \brief Display IGSTK graphical representation in a Qt Widget.
+ *
+ * This class is useful to develop QT based IGSTK application. Using this
+ * class, graphical represenation of a surgical scene can be displayed in
+ * a Qt widget. QT mouse events are captured and translated into VTK events.
+ *
+ * \ingroup View
+ *
+ * \sa View
  */
 class QTWidget : public QVTKWidget
 {
 public:
     
-  typedef QTWidget          Self;
-  typedef QVTKWidget        Superclass;
-  typedef View           ViewType; 
-
-  typedef vtkWorldPointPicker  PickerType;
+  typedef QTWidget                    Self;
+  typedef QVTKWidget                  Superclass;
+  typedef View                        ViewType; 
+  typedef vtkWorldPointPicker         PickerType;
 
   igstkTypeMacro( QTWidget, QVTKWidget );
   
@@ -73,7 +81,8 @@ public:
   /** Constructor */
 #if QT_VERSION < 0x040000
     //! constructor for Qt 3
-    QTWidget(QWidget* parent = NULL, const char* name = NULL, Qt::WFlags f = 0);
+    QTWidget(QWidget* parent = NULL,
+             const char* name = NULL, Qt::WFlags f = 0);
 #else
     //! constructor for Qt 4
     QTWidget(QWidget* parent = NULL, Qt::WFlags f = 0);
@@ -98,9 +107,9 @@ public:
   /** Add observer */
   unsigned long AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer );
- 
-  /** Get render window interactor */
-  vtkRenderWindowInteractor * GetRenderWindowInteractor();
+
+  /** Remove observer */
+  void RemoveObserver( unsigned long observerTag );
  
 protected:
   
@@ -134,10 +143,12 @@ private:
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
 
-  /** Set VTK renderer */
+  /** Set VTK renderer. This method is used in
+   *  Connect() method in ViewProxy */
   void SetRenderer( vtkRenderer * renderer );
 
-  /** Set VTK render window interactor */
+  /** Set VTK render window interactor. this method
+    * is used in connect() method in ViewProxy class */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
   /** Set VTK point picker */ 

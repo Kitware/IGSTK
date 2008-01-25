@@ -135,13 +135,6 @@ void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interact
   this->m_RenderWindowInteractor = interactor;
 }
 
-/** Get VTK render window interactor */
-vtkRenderWindowInteractor *
-FLTKWidget::GetRenderWindowInteractor( ) const
-{
-  return ( this->m_RenderWindowInteractor );
-}
-
 unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer )
 {
@@ -152,6 +145,18 @@ unsigned long FLTKWidget::AddObserver( const ::itk::EventObject & event,
     return 0; 
     }
   return m_View->AddObserver( event, observer );
+}
+
+void FLTKWidget::RemoveObserver( unsigned long observerTag )
+{
+  igstkLogMacro( DEBUG, "igstkFLTKWidget::RemoveObserver() called ...\n");
+  
+  if ( m_View.IsNull() )
+    {
+    return; 
+    }
+
+  m_View->RemoveObserver( observerTag ); 
 }
 
 /** Request set View */

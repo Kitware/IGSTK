@@ -40,7 +40,15 @@ class vtkRenderWindowInteractor;
 namespace igstk {
 /** \class FLTKWidget
  * 
- * \brief Widget class to develop FLTK based GUI applications.
+ * \brief Display IGSTK graphical representation in a FLTK window.
+ * 
+ * This class is useful to develop FLTK based IGSTK application. Using this
+ * class, graphical represenation of a surgical scene can be displayed in
+ * FLTK window. FLTK mouse events are captured and translated into VTK events.
+ *
+ * \ingroup View
+ *
+ *
  */
 class FLTKWidget : public Fl_Gl_Window
 {
@@ -78,9 +86,9 @@ public:
   unsigned long AddObserver( const ::itk::EventObject & event, 
                               ::itk::Command * observer );
 
-  /** Get render window interactor */
-  vtkRenderWindowInteractor * GetRenderWindowInteractor() const;
-  
+  /** Remove observer */
+  void RemoveObserver( unsigned long observerTag );
+
   typedef ViewProxy< FLTKWidget > ProxyType;
 
   friend class ViewProxy< FLTKWidget >;
@@ -114,10 +122,12 @@ private:
   /** Enable keyboard and mouse interactions */
   void EnableInteractionsProcessing();
 
-  /** Set VTK renderer */
+  /** Set VTK renderer. This method is used in
+   *  Connect() method in ViewProxy */
   void SetRenderer( vtkRenderer * renderer );
 
-  /** Set VTK render window interactor */
+  /** Set VTK render window interactor. this method
+    * is used in connect() method in ViewProxy class */
   void SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor );
 
   /** Set render window ID */
