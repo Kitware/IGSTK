@@ -71,6 +71,14 @@ QMouseTracker::ResultType QMouseTracker::InternalClose( void )
 QMouseTracker::ResultType QMouseTracker
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
+  igstkLogMacro( DEBUG, "QMouseTracker::VerifyTrackerToolInformation called ...\n");
+  return SUCCESS;
+}
+
+QMouseTracker::ResultType QMouseTracker
+::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "QMouseTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
   return SUCCESS;
 }
 
@@ -114,6 +122,12 @@ QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
   return SUCCESS;
 }
  
+QMouseTracker::ResultType QMouseTracker::InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "QMouseTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
+
 /** Print Self function */
 void QMouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

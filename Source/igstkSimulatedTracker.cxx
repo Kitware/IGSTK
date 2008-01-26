@@ -73,10 +73,20 @@ SimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 SimulatedTracker::ResultType 
 SimulatedTracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "SimulatedTracker::InternalUpdateStatus MUST BE OVERLOADED BY DERIVED CLASSES...\n");
   return FAILURE;
 }
 
+SimulatedTracker::ResultType 
+SimulatedTracker::InternalThreadedUpdateStatus( void )
+{
+  return FAILURE;
+}
+
+SimulatedTracker::ResultType 
+SimulatedTracker::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return FAILURE;
+}
 
 /** Print Self function */
 void SimulatedTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const

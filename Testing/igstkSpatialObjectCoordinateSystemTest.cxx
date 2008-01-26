@@ -26,8 +26,137 @@
 #include "igstkCoordinateReferenceSystemDelegator.h"
 #include "igstkTracker.h"
 
+namespace igstk
+{
 namespace SpatialObjectCoordinateSystemTest
 {
+
+class DummyTracker : public Tracker
+{
+public:
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTracker, Tracker )
+
+  typedef Superclass::TransformType           TransformType;
+  typedef Superclass::ResultType              ResultType;
+
+
+protected:
+
+
+DummyTracker():m_StateMachine(this)
+{
+}
+
+~DummyTracker()
+{
+}
+
+ResultType InternalOpen( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalStartTracking( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalReset( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalStopTracking( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalDeactivateTools( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalClose( void )
+{
+  return SUCCESS;
+}
+
+ResultType 
+VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
+InternalUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
+
+  static double x = 0;
+  static double y = 0;
+  static double z = 0;
+
+  typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+
+  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+ 
+  ConstIteratorType inputItr = trackerToolContainer.begin();
+  ConstIteratorType inputEnd = trackerToolContainer.end();
+ 
+  typedef igstk::Transform   TransformType;
+  TransformType transform;
+
+  transform.SetToIdentity( this->GetValidityTime() );
+
+  typedef TransformType::VectorType PositionType;
+  PositionType  position;
+  position[0] = x;
+  position[1] = y;
+  position[2] = z;
+
+  typedef TransformType::ErrorType  ErrorType;
+  ErrorType errorValue = 0.5; // +/- half millimeter Uncertainty
+
+  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+
+  // set the raw transform in all the tracker tools
+  while( inputItr != inputEnd )
+    {
+    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    ++inputItr;
+    }
+ 
+  x += 0.1;
+  y += 0.1;
+  z += 0.1;
+
+  return SUCCESS;
+}
+
+ResultType 
+InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "DummyTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
+
+/** Print Self function */
+void PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+};
+
 class CoordinateSystemObserver : public ::itk::Command
 {
 public:
@@ -112,13 +241,14 @@ protected:
 
 };
 }
+}
 
 
 int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 {
   typedef igstk::EllipsoidObject              EllipsoidObjectType;
   typedef igstk::EllipsoidObject::Pointer     EllipsoidObjectPointer;
-  typedef SpatialObjectCoordinateSystemTest::CoordinateSystemObserver 
+  typedef igstk::SpatialObjectCoordinateSystemTest::CoordinateSystemObserver 
                                                                 ObserverType;
   typedef ObserverType::EventType             CoordinateSystemEventType;
   typedef igstk::Object::LoggerType             LoggerType;
@@ -279,7 +409,8 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2.GetPointer() );
 
   ObserverType::Pointer trackerObserver = ObserverType::New();
-  igstk::Tracker::Pointer tracker = igstk::Tracker::New();
+  typedef igstk::SpatialObjectCoordinateSystemTest::DummyTracker  TrackerType;
+  TrackerType::Pointer tracker = TrackerType::New();
   tracker->AddObserver( CoordinateSystemEventType(), trackerObserver );
 
   igstk::Transform trackerToParent = identity;

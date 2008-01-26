@@ -61,6 +61,8 @@ protected:
 
   virtual ResultType InternalUpdateStatus( void );
 
+  virtual ResultType InternalThreadedUpdateStatus( void );
+
   virtual ResultType InternalReset( void );
 
   virtual ResultType InternalStopTracking( void );
@@ -71,6 +73,9 @@ protected:
 
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
+  /** Remove tracker tool from the data container */
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

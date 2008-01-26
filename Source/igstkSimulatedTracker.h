@@ -71,11 +71,14 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * );
+
   /** This is the most important method of the SimulatedTracker family.
    *  This method must be overloaded in derived classes in order to
    *  provide a particular pattern of movement.
    */
   virtual ResultType InternalUpdateStatus( void );
+  virtual ResultType InternalThreadedUpdateStatus( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
