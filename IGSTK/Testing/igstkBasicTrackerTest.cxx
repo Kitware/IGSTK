@@ -194,6 +194,38 @@ protected:
 
     return SUCCESS;
     }
+  Tracker::ResultType InternalThreadedUpdateStatus( void )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
 
 private:
 
@@ -320,20 +352,6 @@ int igstkBasicTrackerTest( int, char * [] )
   // for testing CloseFromToolsActiveStateProcessing()
   tracker->RequestOpen();
   tracker->RequestClose();
-
-  // covering the base tracker's internal functions
-  igstk::Tracker::Pointer basetracker = igstk::Tracker::New();
-  basetracker->SetLogger( logger );
-
-  basetracker->RequestOpen();
-
-  basetracker->RequestStartTracking();
-
-  basetracker->RequestUpdateStatus();
-  basetracker->RequestReset();
-  basetracker->RequestStartTracking();
-  basetracker->RequestStopTracking();
-  basetracker->RequestClose();
 
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;

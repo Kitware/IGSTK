@@ -116,9 +116,13 @@ protected:
 
       return SUCCESS; 
       }
+
+    virtual ResultType InternalThreadedUpdateStatus( void )  { return SUCCESS; }
     virtual ResultType InternalReset( void ) { return SUCCESS; }
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
     virtual ResultType InternalClose( void ) { return SUCCESS; }
+    virtual ResultType VerifyTrackerToolInformation( TrackerToolType * trackerTool ) { return SUCCESS; }
+    virtual ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) { return SUCCESS; }
 
 private:
 

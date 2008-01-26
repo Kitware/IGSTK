@@ -81,7 +81,93 @@
 
 namespace igstk 
 {
-  
+
+class DummyTracker : public Tracker
+{
+public:
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTracker, Tracker )
+
+  typedef Superclass::TransformType           TransformType;
+  typedef Superclass::ResultType              ResultType;
+
+
+protected:
+
+
+DummyTracker():m_StateMachine(this)
+{
+}
+
+~DummyTracker()
+{
+}
+
+ResultType InternalOpen( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalStartTracking( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalReset( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalStopTracking( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalDeactivateTools( void )
+{
+  return SUCCESS;
+}
+
+ResultType InternalClose( void )
+{
+  return SUCCESS;
+}
+
+ResultType 
+VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
+InternalUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
+  return SUCCESS;
+}
+
+ResultType 
+InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "DummyTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
+
+/** Print Self function */
+void PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+};
+
 template<class ClassType>
 void ExportStateMachineDescription( 
               const ClassType * instance, 
@@ -246,10 +332,9 @@ int main( int argc, char * argv [] )
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, 
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::Tracker, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::DummyTracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
   igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::AuroraTrackerTool, outputDirectory,skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,skipLoops );
  

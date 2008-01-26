@@ -92,6 +92,12 @@ VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 }
 
 ResultType 
+RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
 InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
@@ -138,6 +144,12 @@ InternalUpdateStatus( void )
   return SUCCESS;
 }
 
+ResultType 
+InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "DummyTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
 
 /** Print Self function */
 void PrintSelf( std::ostream& os, itk::Indent indent ) const
