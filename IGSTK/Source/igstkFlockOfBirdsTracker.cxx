@@ -229,6 +229,21 @@ void FlockOfBirdsTracker::DisableToolPorts( void )
     }
 }
 
+/** Verify tracker tool information */
+virtual FlockOfBirdsTracker::ResultType
+FlockOfBirdsTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::VerifyTrackerToolInformation called...\n");
+  return SUCCESS;
+}
+
+/** Remove tracker tool from internal containers */
+virtual FlockOfBirdsTracker::ResultType
+FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers called...\n");
+  return SUCCESS; 
+}
 
 /** Print Self function */
 void FlockOfBirdsTracker::PrintSelf( std::ostream& os, 

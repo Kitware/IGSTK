@@ -439,77 +439,6 @@ void Tracker::RequestSetFrequency( double frequencyInHz )
     }
 }
 
-
-/** The "InternalOpen" method opens communication with a tracking device.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalOpen( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalOpen called ...\n");
-  return SUCCESS;
-}
-
-/** The "InternalClose" method closes communication with a tracking device.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalClose( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalClose called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalReset" method resets tracker to a known configuration. 
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalReset( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalReset called ...\n");
-  return SUCCESS;
-}
-
-/** The "InternalStartTracking" method starts tracking.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalStartTracking( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalStartTracking called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalStopTracking" method stops tracking.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalStopTracking( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalStopTracking called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalUpdateStatus" method updates tracker status.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalThreadedUpdateStatus" method updates tracker status.
- *  This method is called in a separate thread.
- *  This method is to be overridden by a descendant class
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, 
-                 "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
-  return SUCCESS;
-}
-
-
 /** The "AttemptToOpen" method attempts to open communication with a
  *  tracking device. */
 void Tracker::AttemptToOpenProcessing( void )
@@ -1103,31 +1032,10 @@ RequestRemoveTool( TrackerToolType * trackerTool )
   return SUCCESS;
 }
 
-/** This method will be overriden in the derived classes. Different types of trackers
- * contain different internal tool containers */
-Tracker::ResultType 
-Tracker::
-RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
-{
-  return SUCCESS;
-}
-
 Tracker::TrackerToolsContainerType 
 Tracker::GetTrackerToolContainer() const
 {
   return m_TrackerTools;
-}
-
-/** Verify tracker tool information*/
-Tracker::ResultType Tracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::"
-                 "VerifyTrackerToolInformation called ...\n");
-
-  //This method will be overridden in the derived classes.
-  //as the tracker tool information is different for different tracker types
-  return SUCCESS;
 }
 
 /** Thread function for tracking */

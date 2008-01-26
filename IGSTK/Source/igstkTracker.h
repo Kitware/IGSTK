@@ -67,7 +67,7 @@ itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
 class TrackerTool;
 
 /** \class Tracker
- *  \brief Superclass for concrete IGSTK Tracker classes.
+ *  \brief Abstract superclass for concrete IGSTK Tracker classes.
  *
  *  This class presents a generic interface for tracking the
  *  positions of objects in IGSTK.  The various derived
@@ -102,9 +102,8 @@ class Tracker : public Object
 {
 
 public:
-  
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Tracker, Object )
+  igstkStandardAbstractClassTraitsMacro( Tracker, Object ) 
 
 public:
 
@@ -192,38 +191,38 @@ protected:
   /** The "InternalOpen" method opens communication with a tracking device.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalOpen( void );
+  virtual ResultType InternalOpen( void ) = 0;
 
   /** The "InternalClose" method closes communication with a tracking device.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalClose( void );
+  virtual ResultType InternalClose( void ) = 0;
 
   /** The "InternalReset" method resets tracker to a known configuration. 
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalReset( void );
+  virtual ResultType InternalReset( void ) = 0;
 
   /** The "InternalStartTracking" method starts tracking.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStartTracking( void );
+  virtual ResultType InternalStartTracking( void ) = 0;
 
   /** The "InternalStopTracking" method stops tracking.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStopTracking( void );
+  virtual ResultType InternalStopTracking( void ) = 0;
 
   /** The "InternalUpdateStatus" method updates tracker status.
       This method is to be overridden by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalUpdateStatus( void );
+  virtual ResultType InternalUpdateStatus( void ) = 0;
 
   /** The "InternalThreadedUpdateStatus" method updates tracker status.
       This method is called in a separate thread.
       This method is to be overridden by a descendant class
       and responsible for device-specific processing */
-  virtual ResultType InternalThreadedUpdateStatus( void );
+  virtual ResultType InternalThreadedUpdateStatus( void ) = 0;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -239,12 +238,12 @@ protected:
    * PolarisTracker, the method returns failure,  if the toolID specified
    * by the user during the tracker tool configuration step does not
    * match with the tool id read from the SROM file*/
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ); 
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ) = 0; 
 
   /** This method will remove entries of the traceker tool from internal
     * data containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-                                     TrackerToolType * trackerTool ); 
+                                     TrackerToolType * trackerTool ) = 0; 
 
   /** Access method for the tracker tool container. This method 
     * is useful in the derived classes to access the unique identifiers 

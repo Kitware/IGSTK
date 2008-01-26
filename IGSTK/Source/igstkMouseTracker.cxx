@@ -72,6 +72,12 @@ MouseTracker::ResultType MouseTracker
 {
   return SUCCESS;
 }
+
+MouseTracker::ResultType MouseTracker
+::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
    
 MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 {
@@ -115,6 +121,11 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
   return SUCCESS;
 }
  
+MouseTracker::ResultType MouseTracker::InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "MouseTracker::InternalThreadedUpdateStatus called ...\n");
+}
+
 /** Print Self function */
 void MouseTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
