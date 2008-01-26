@@ -44,7 +44,7 @@ itkEventMacro( ToolTrackingStoppedEvent,TrackerToolEvent);
 class Tracker;
 
 /**  \class TrackerTool
-  *  \brief Generic implementation of the Tracker tool.
+  *  \brief Abstract superclass for concrete IGSTK TrackerTool classes.
   *
   *  This class provides a generic implementation of a tool of
   *  a tracker. This may contain hardware specific details of 
@@ -64,7 +64,7 @@ class TrackerTool : public Object
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( TrackerTool, Object )
+  igstkStandardAbstractClassTraitsMacro( TrackerTool, Object )
 
 public:
 
@@ -158,9 +158,9 @@ protected:
   /** Set whether the tool was updated during tracker UpdateStatus() */
   igstkSetMacro( Updated, bool );
 
-  /** Get boolean variable to check if the tracker tool is 
-   * configured or not */
-  virtual bool CheckIfTrackerToolIsConfigured( );
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) = 0;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ConfigureTool );

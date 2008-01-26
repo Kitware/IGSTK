@@ -272,16 +272,6 @@ void TrackerTool::AttemptToDetachTrackerToolFromTrackerProcessing( void )
                                    m_DetachmentFromTrackerFailureInput );
 }
 
-/** The "CheckIfTrackerToolIsConfigured" methods returns a boolean indicating
- * if the tracker tool is configured or not. This method is to be overwritten in
- * the derived classes
- */
-bool TrackerTool::CheckIfTrackerToolIsConfigured()
-{
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::CheckIfTrackerToolIsConfigured called ...\n");
-  return true;
-}
-
 /** Post-processing after a successful configuration attempt . */ 
 void TrackerTool::TrackerToolConfigurationSuccessProcessing( void )
 {

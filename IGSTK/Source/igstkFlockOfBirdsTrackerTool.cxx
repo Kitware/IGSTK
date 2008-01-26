@@ -36,6 +36,12 @@ FlockOfBirdsTrackerTool::~FlockOfBirdsTrackerTool()
 {
 }
 
+/** Check if the tracker tool is configured */
+virtual bool FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured()
+{
+  return true;
+}
+
 /** Print Self function */
 void FlockOfBirdsTrackerTool::PrintSelf( std::ostream& os, 
                                          itk::Indent indent ) const
