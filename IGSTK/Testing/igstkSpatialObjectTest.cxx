@@ -35,6 +35,25 @@ namespace igstk
 namespace SpatialObjectTest
 {
 
+class DummyTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+
+protected:
+  DummyTrackerTool():m_StateMachine(this)
+  {
+  }
+  ~DummyTrackerTool()
+  {
+  }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+};
+ 
 class DummySpatialObject : public SpatialObject
 {
 public:
@@ -162,7 +181,7 @@ int igstkSpatialObjectTest( int, char * [] )
 
   tracker->RequestOpen();
 
-  typedef igstk::TrackerTool                TrackerToolType;
+  typedef igstk::SpatialObjectTest::DummyTrackerTool        TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->RequestConfigure();

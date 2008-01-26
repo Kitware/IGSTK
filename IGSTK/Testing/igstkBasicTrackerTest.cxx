@@ -29,11 +29,30 @@
 #include "igstkCylinderObject.h"
 
 #include "igstkTracker.h"
+#include "igstkTrackerTool.h"
 #include "igstkRealTimeClock.h"
 
 namespace igstk
 {
-  
+class TestingTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TestingTrackerTool, TrackerTool )
+
+protected:
+  TestingTrackerTool():m_StateMachine(this)
+  {
+  }
+  ~TestingTrackerTool()
+  {
+  }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+};
+ 
 class TestingTracker : public igstk::Tracker
 {
 public:
@@ -241,8 +260,10 @@ int igstkBasicTrackerTest( int, char * [] )
 
 
   igstk::TestingTracker::Pointer tracker        = igstk::TestingTracker::New();
-  igstk::TrackerTool::Pointer    tool           = igstk::TrackerTool::New();
-  igstk::TrackerTool::Pointer    referenceTool  = igstk::TrackerTool::New();
+ 
+  typedef igstk::TestingTrackerTool          TrackerToolType;
+  TrackerToolType::Pointer    tool           = TrackerToolType::New();
+  TrackerToolType::Pointer    referenceTool  = TrackerToolType::New();
 
   typedef igstk::Object::LoggerType             LoggerType;
   LoggerType::Pointer logger = LoggerType::New();

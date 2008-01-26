@@ -81,7 +81,25 @@
 
 namespace igstk 
 {
+class DummyTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
 
+protected:
+  DummyTrackerTool():m_StateMachine(this)
+  {
+  }
+  ~DummyTrackerTool()
+  {
+  }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+};
+ 
 class DummyTracker : public Tracker
 {
 public:
@@ -333,7 +351,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, 
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::DummyTracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::TrackerTool, outputDirectory,skipLoops );
+  igstkTestExportStateMachine1( igstk::DummyTrackerTool, outputDirectory,skipLoops );
   igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,skipLoops );

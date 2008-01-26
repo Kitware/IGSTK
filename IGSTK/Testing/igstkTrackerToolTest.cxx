@@ -26,12 +26,33 @@
 
 #include "igstkTrackerTool.h"
 
+namespace igstk
+{
+class TestingTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TestingTrackerTool, TrackerTool )
 
+protected:
+  TestingTrackerTool():m_StateMachine(this)
+  {
+  }
+  ~TestingTrackerTool()
+  {
+  }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+};
+}
+ 
 int igstkTrackerToolTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::TrackerTool                 TrackerToolType;
+  typedef igstk::TestingTrackerTool             TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();

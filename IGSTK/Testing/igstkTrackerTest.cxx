@@ -33,6 +33,25 @@ namespace igstk
 namespace TrackerTest
 {
 
+class DummyTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+
+protected:
+  DummyTrackerTool():m_StateMachine(this)
+  {
+  }
+  ~DummyTrackerTool()
+  {
+  }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+};
+ 
 class DummyTracker : public Tracker
 {
 public:
@@ -168,7 +187,7 @@ int igstkTrackerTest( int, char * [] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::TrackerTest::DummyTracker      TrackerType; 
-  typedef igstk::TrackerTool                    TrackerToolType;
+  typedef igstk::TrackerTest::DummyTrackerTool  TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
     
   TrackerType::Pointer tracker = TrackerType::New();
