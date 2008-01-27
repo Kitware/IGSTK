@@ -136,7 +136,20 @@ WebCameraTracker::InternalUpdateStatus( void )
   return SUCCESS;
 }
 
+ 
+WebCameraTracker::ResultType WebCameraTracker::InternalThreadedUpdateStatus( void )
+{
+  igstkLogMacro( DEBUG, "WebCameraTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
+}
 
+WebCameraTracker::ResultType 
+WebCameraTracker
+::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+ 
 void
 WebCameraTracker::DetectBrightestPixels( void )
 {
