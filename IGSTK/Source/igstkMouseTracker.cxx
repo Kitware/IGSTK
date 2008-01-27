@@ -124,6 +124,7 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 MouseTracker::ResultType MouseTracker::InternalThreadedUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "MouseTracker::InternalThreadedUpdateStatus called ...\n");
+  return SUCCESS;
 }
 
 /** Print Self function */
