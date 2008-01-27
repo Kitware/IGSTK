@@ -182,6 +182,12 @@ PolarisTracker::ResultType PolarisTracker
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
 
+  if ( polarisTrackerTool == NULL )
+    {
+    std::cerr << "Tracker tool is a null pointer" << std::endl;
+    return FAILURE;
+    } 
+
   bool wirelessTool = polarisTrackerTool->IsToolWirelessType();
   bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
 

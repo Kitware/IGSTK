@@ -51,7 +51,7 @@ public:
 public:
 
   /** typedefs for the tool */
-  typedef igstk::PolarisTrackerTool           PolarisTrackerToolType;
+  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
   typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
   typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
 

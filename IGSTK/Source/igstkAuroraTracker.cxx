@@ -174,6 +174,11 @@ AuroraTracker::ResultType AuroraTracker
   AuroraTrackerToolType * auroraTrackerTool = 
              dynamic_cast< AuroraTrackerToolType * > ( trackerTool );   
 
+  if ( auroraTrackerTool == NULL )
+    {
+    return FAILURE;
+    } 
+
   bool SROMFileSpecified  = auroraTrackerTool->IsSROMFileNameSpecified();
 
   // port handle
