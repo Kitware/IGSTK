@@ -25,6 +25,7 @@
 #include "Marker.h"
 #include "Persistence.h"
 #include "Cameras.h"
+#include "MCamera.h"
 #include "Facet.h"
 #include "Xform3D.h"
 #include "MTC.h"

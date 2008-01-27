@@ -23,6 +23,8 @@
 
 #include "igstkMicronTrackerTool.h"
 
+#include "Markers.h"
+
 namespace igstk
 {
 

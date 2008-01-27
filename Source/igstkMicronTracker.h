@@ -33,6 +33,7 @@ class Markers;
 class Marker;
 class Persistence;
 class Cameras;
+class MCamera;
 class Facet;
 class Xform3D;
 

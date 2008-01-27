@@ -20,7 +20,7 @@
 
 #include "igstkTrackerTool.h"
 
-#include "Markers.h"
+class Markers;
 
 namespace igstk
 {
