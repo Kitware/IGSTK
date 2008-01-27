@@ -18,9 +18,6 @@
 #ifndef __igstkCoordinateReferenceSystemDelegator_h
 #define __igstkCoordinateReferenceSystemDelegator_h
 
-#include "igstkObject.h"
-#include "igstkMacros.h"
-#include "igstkStateMachine.h"
 #include "igstkCoordinateReferenceSystem.h"
 
 namespace igstk
@@ -29,11 +26,13 @@ namespace igstk
 /** \class CoordinateReferenceSystemDelegator
  *
  *  \brief Encapsulates common logic for handling coordinate reference system
- *  calls on objects with CoordinateReferenceSystems. Most of
- *  the functionality is delegated to CoordinateReferenceSystem. This class
- *  is intended to be used inside classes like SpatialObject and View. This
- *  class delegates much of the core coordinate system connectivity and
+ *  calls on objects with CoordinateReferenceSystems. 
+ *
+ *  Most of the functionality is delegated to CoordinateReferenceSystem. This
+ *  class is intended to be used inside classes like SpatialObject and View.
+ *  This class delegates much of the core coordinate system connectivity and
  *  transformation work to the CoordinateReferenceSystem class.
+ *
  */
 class CoordinateReferenceSystemDelegator : public Object
 {
@@ -166,8 +165,6 @@ private:
 
 }; // class CoordinateReferenceSystemDelegator
 
-};
+}
 
 #endif
-
-

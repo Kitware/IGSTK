@@ -1,7 +1,24 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkCoordinateReferenceSystemDelegator.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 
 #include "igstkCoordinateReferenceSystemDelegator.h"
 
-/** Methods for new coordinate system stuff */
+/* Methods for new coordinate system classes that support the creation of scene
+ * graphs. */
 
 namespace igstk
 {
@@ -10,7 +27,8 @@ CoordinateReferenceSystemDelegator
 ::CoordinateReferenceSystemDelegator() : m_StateMachine(this)
 {
   m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New();
-  m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, &Self::ObserverCallback);
+  m_CoordinateReferenceSystemObserver->SetCallbackFunction(
+    this, &Self::ObserverCallback);
 
   m_CoordinateReferenceSystem = CoordinateReferenceSystem::New();
  
