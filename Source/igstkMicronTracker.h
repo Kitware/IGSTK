@@ -28,14 +28,13 @@
 #include "igstkMicronTrackerTool.h" 
 #include "igstkTracker.h"
 
-#include "Markers.h"
-#include "Marker.h"
-#include "Persistence.h"
-#include "Cameras.h"
-#include "Facet.h"
-#include "Xform3D.h"
-#include "MTC.h"
-#include <math.h>
+// MicronTracker utilitiy classes declarations
+class Markers;
+class Marker;
+class Persistence;
+class Cameras;
+class Facet;
+class Xform3D;
 
 #include <map>
 
@@ -45,36 +44,37 @@ namespace igstk {
   * \brief Provides support for the Claron MicronTracker.
   *
   * The MicronTracker is a small firewire-based optical tracker
-  * from Claron Technologies in Toronto.
+  * from Claron Technologies in Toronto. This class uses the MTC
+  * library that comes with the Tracker to communicate with the tracker
+  * camera and gather pose information of surgical tools.
 */
 
 class MicronTracker : public Tracker
 {
 public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MicronTracker, Tracker )
+
+public:
 
   /** typedefs for the tool */
-  /** The should be converted to the new Tool class */
-  typedef igstk::MicronTrackerTool           MicronTrackerToolType;
+  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
   typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
   typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
 
   /** Typedef for internal boolean return type. */
   typedef Tracker::ResultType   ResultType;
 
-  /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MicronTracker, Tracker )
-
-  /** Get the number of tools that have been detected. */
+    /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
   /** Set the directory path that contains the camera calibration
-    * files. FIXME: this should be pushed through the state machine
+    * files. 
   */
   void SetCameraCalibrationFilesDirectory( std::string fileName );
 
   /** Set the full path to the persistance file
     * The persistance file contains camera parameters and algorithm parameters 
-     FIXME: this should be pushed through the state machine
   */
   void SetInitializationFile( std::string fileName );
 
@@ -120,13 +120,16 @@ protected:
   static void CreateErrorCodeList();
 
   /** Get Error description given the error code */
-  static const std::string GetErrorDescription( unsigned int ); 
+  static const std::string GetErrorDescription( unsigned int ) ; 
 
   /** Remove tracker tool entry from internal containers */ 
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
                                      TrackerToolType * trackerTool ); 
 
 private:
+
+  MicronTracker(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
 
   /** Initialize camera and algorithm attributes such as Frame interleave
       template matching tolerance, extrapolate frame etc */ 

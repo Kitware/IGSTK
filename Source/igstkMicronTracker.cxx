@@ -21,6 +21,16 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#include "Markers.h"
+#include "Marker.h"
+#include "Persistence.h"
+#include "Cameras.h"
+#include "Facet.h"
+#include "Xform3D.h"
+#include "MTC.h"
+
+#include <math.h>
+
 #include "igstkMicronTracker.h"
 #include <itksys/SystemTools.hxx>
 
@@ -150,7 +160,7 @@ void MicronTracker::CreateErrorCodeList()
   m_ErrorCodeContainer[55] = "Grab frame error";
 }
 
-const std::string  MicronTracker::GetErrorDescription( unsigned int code )
+const std::string  MicronTracker::GetErrorDescription( unsigned int code ) 
 {
   if ( code >= 0 && code <= 55 )
     {
@@ -235,7 +245,7 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
 
 /** Initialize camera and algorithm attributes such as 
  *  Frame interleave, template matching tolerance, extrapolate frame etc*/
-bool MicronTracker::Initialize()
+bool MicronTracker::Initialize( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::Initialize called ...\n");
 
@@ -310,7 +320,7 @@ bool MicronTracker::Initialize()
   return result;
 }
 
-bool MicronTracker::SetUpCameras()
+bool MicronTracker::SetUpCameras( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::SetUpCameras called ...\n");
 
@@ -361,6 +371,11 @@ MicronTracker
 
   MicronTrackerToolType * micronTrackerTool  = 
         dynamic_cast< MicronTrackerToolType *> ( trackerTool );
+
+  if ( micronTrackerTool == NULL )
+    {
+    return FAILURE;
+    }
 
   for (unsigned int idx=1 ; idx < totalNumberOfTemplates ; idx++ )
     {
@@ -598,11 +613,6 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
           {
           m_ToolTransformBuffer[ marker->getName() ] = transform;
           m_ToolStatusContainer[ marker->getName() ] = 1;
-          }
-        else
-          {
-          std::cout << "\tNo TrackerTool is attached to this marker: " 
-                    << marker->getName() << std::endl;
           }
         }
       }
