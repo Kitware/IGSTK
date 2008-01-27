@@ -18,6 +18,10 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef __igstkCoordinateSystemInterfaceMacros_h
 #define __igstkCoordinateSystemInterfaceMacros_h
 
+#include "igstkCoordinateSystemTransformToResult.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
+#include "igstkCoordinateReferenceSystemDelegator.h"
+
 namespace igstk 
 {
 

@@ -19,6 +19,8 @@
 #define __igstkCoordinateReferenceSystemDelegator_h
 
 #include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystemTransformToResult.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
 
 namespace igstk
 {

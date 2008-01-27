@@ -46,7 +46,7 @@ class vtkWorldPointPicker;
 #include "igstkEvents.h"   
 #include "igstkAnnotation2D.h"   
 #include "igstkRenderWindowInteractor.h"   
-#include "igstkCoordinateReferenceSystemDelegator.h"
+
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
 namespace igstk {

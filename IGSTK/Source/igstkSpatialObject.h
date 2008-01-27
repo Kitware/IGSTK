@@ -26,9 +26,7 @@
 #include "igstkTransform.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
-#include "igstkCoordinateReferenceSystem.h"
 
-#include "igstkCoordinateReferenceSystemDelegator.h"
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
 namespace igstk

@@ -33,7 +33,6 @@
 #include "igstkPulseGenerator.h"
 #include "igstkTrackerTool.h"
 
-#include "igstkCoordinateReferenceSystemDelegator.h"
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
 

@@ -17,6 +17,8 @@
 
 #include "igstkTransform.h"
 #include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystemTransformToResult.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkRealTimeClock.h"

@@ -14,7 +14,10 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
 #include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystemTransformToResult.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
 
 namespace igstk
 { 

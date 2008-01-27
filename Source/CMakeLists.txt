@@ -270,6 +270,8 @@ SET(IGSTKSandbox_HEADS
   igstkContourVascularNetworkObjectRepresentation.h
   igstkCoordinateReferenceSystem.h
   igstkCoordinateReferenceSystemDelegator.h
+  igstkCoordinateSystemTransformToResult.h
+  igstkCoordinateSystemTransformToErrorResult.h
   igstkCircularSimulatedTracker.h
   igstkSimulatedTrackerTool.h
   igstkDICOMGenericImageReader.h
@@ -337,6 +339,8 @@ SET(IGSTKSandbox_SRCS
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkCoordinateReferenceSystem.cxx
   igstkCoordinateReferenceSystemDelegator.cxx
+  igstkCoordinateSystemTransformToResult.cxx
+  igstkCoordinateSystemTransformToErrorResult.cxx
   igstkCircularSimulatedTracker.cxx
   igstkSimulatedTrackerTool.cxx
   igstkDICOMGenericImageReader.cxx
