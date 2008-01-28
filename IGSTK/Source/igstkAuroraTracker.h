@@ -50,11 +50,6 @@ public:
 
 public:
 
-  /** typedefs for the tool */
-  typedef igstk::AuroraTrackerTool           AuroraTrackerToolType;
-  typedef AuroraTrackerToolType::Pointer        AuroraTrackerToolPointer;
-  typedef AuroraTrackerToolType::ConstPointer   AuroraTrackerToolConstPointer;
-
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
 
@@ -67,9 +62,6 @@ protected:
   AuroraTracker(void);
 
   virtual ~AuroraTracker(void);
-
-  /** typedef for command interpreter */
-  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
 
   /** typedef for internal boolean return type */
   typedef Tracker::ResultType   ResultType;
@@ -114,6 +106,9 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
 
+  /** typedef for command interpreter */
+  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * );
 
@@ -128,16 +123,21 @@ private:
 
   /** Port handle container indexed by the tracker tool unique 
    * identifier */
-  std::map< std::string, int >     m_PortHandleContainer;
+  typedef std::string                           PortIdentifierType;
+  typedef std::map< PortIdentifierType, int >   PortHandleContainerType;
+  PortHandleContainerType          m_PortHandleContainer;
 
   /** Container holding absent status of tools */
-  std::map< std::string, int >     m_ToolAbsentStatusContainer; 
+  typedef std::map< std::string, int >   ToolAbsentStatusContainerType;
+  ToolAbsentStatusContainerType    m_ToolAbsentStatusContainer; 
 
   /** Container holding status of the tools */
-  std::map< std::string, int >  m_ToolStatusContainer; 
+  typedef std::map< std::string, int >   ToolStatusContainerType;
+  ToolStatusContainerType          m_ToolStatusContainer; 
 
   /** A buffer to hold tool transforms */
-  typedef std::map< std::string , std::vector < double > > 
+  typedef std::vector < double >   InternalTransformType;
+  typedef std::map< std::string , InternalTransformType > 
                                 TrackerToolTransformContainerType; 
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;
