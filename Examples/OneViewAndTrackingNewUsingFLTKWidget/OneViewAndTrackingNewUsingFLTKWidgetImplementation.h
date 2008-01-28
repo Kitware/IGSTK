@@ -73,9 +73,6 @@ public:
     m_Logger->SetPriorityLevel( LoggerType::CRITICAL );
     m_Tracker->SetLogger( m_Logger );
 
-    // set validity time of the tracker transforms
-    m_Tracker->SetValidityTime( 1e20 );
-
     m_Communication = CommunicationType::New();
     m_Communication->SetLogger( m_Logger );
     m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );

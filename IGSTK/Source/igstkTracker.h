@@ -24,12 +24,10 @@
 #include "itkMutexLock.h"
 #include "itkConditionVariable.h"
 #include "itkMultiThreader.h"
-#include "itkVersorTransform.h"
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkTransform.h"
-#include "igstkAxesObject.h"
 #include "igstkPulseGenerator.h"
 #include "igstkTrackerTool.h"
 
@@ -63,7 +61,6 @@ itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
 itkEventMacro( AttachingTrackerToolToTrackerEvent,         TrackerEvent);
 itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
 
-class TrackerTool;
 
 /** \class Tracker
  *  \brief Abstract superclass for concrete IGSTK Tracker classes.
@@ -108,25 +105,9 @@ public:
 
   igstkFriendClassMacro( TrackerTool );
 
-  /** typedef for times used by the tracker */
-  typedef Transform::TimePeriodType      TimePeriodType;
+  /** typedefs from TrackerTool class */
+  typedef TrackerTool       TrackerToolType;
 
-  /** typedefs from igstk::TrackerTool class */
-  typedef Transform                      TransformType;
-  typedef double                         ErrorType;
-
-  /** typedefs for CalibrationTransform */
-  typedef Transform                      CalibrationTransformType;
-
-  /** typedefs from igstk::TrackerTool class */
-  typedef igstk::TrackerTool              TrackerToolType;
-  typedef TrackerToolType::Pointer           TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer      TrackerToolConstPointer;
-  typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
-
-  /** typedefs for the coordinate reference system */
-  typedef AxesObject                        CoordinateReferenceSystemType;
-  
   /** The "RequestOpen" method attempts to open communication with the 
    *  tracking device. It generates a TrackerOpenEvent if successful,
    *  or a TrackerOpenErrorEvent if not successful.  */
@@ -159,19 +140,6 @@ public:
    * follow, then you will start receiving transforms with repeated values. */
   void RequestSetFrequency( double frequencyInHz );
 
- /** Set the time period over which a tool transform should be considered
-   *  valid. */
-  igstkSetMacro( ValidityTime, TimePeriodType );
-
-  /** Get the validity time. */
-  igstkGetMacro( ValidityTime, TimePeriodType );
-
-  typedef enum 
-    { 
-    FAILURE=0, 
-    SUCCESS
-    } ResultType;
-
   /** Set a reference tracker tool */
   void RequestSetReferenceTool( TrackerToolType * trackerTool );
 
@@ -186,6 +154,25 @@ protected:
 
   /** GetThreadingEnabled(bool) : get m_ThreadingEnabled value  */
   igstkGetMacro( ThreadingEnabled, bool );
+
+  /** typedef for times used by the tracker */
+  typedef Transform::TimePeriodType         TimePeriodType;
+
+ /** Set the time period over which a tool transform should be considered
+   *  valid. */
+  igstkSetMacro( ValidityTime, TimePeriodType );
+
+  /** Get the validity time. */
+  igstkGetMacro( ValidityTime, TimePeriodType );
+
+  typedef enum 
+    { 
+    FAILURE=0, 
+    SUCCESS
+    } ResultType;
+
+  /** typedefs from Transform class */
+  typedef Transform                      TransformType;
 
   /** The "InternalOpen" method opens communication with a tracking device.
       This method is to be implemented by a descendant class 
@@ -227,16 +214,17 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** Verify if a tracker tool information is correct before attaching
-   *  it to the tracker. This method is used to verify the information supplied by 
-   * the user about the tracker tool. The information depends on
-   * the tracker type. For example, during the configuration step
-   * of the MicronTracker, location of the directory containing 
-   * marker template files is specified. If the user tries to attach
-   * a tracker tool with a marker type whose template file is not stored in
-   * this directory, this method will return failure. Similarly, for
-   * PolarisTracker, the method returns failure,  if the toolID specified
-   * by the user during the tracker tool configuration step does not
-   * match with the tool id read from the SROM file*/
+   *  it to the tracker. This method is used to verify the information supplied
+   *  by the user about the tracker tool. The information depends on the
+   *  tracker type. For example, during the configuration step of the
+   *  MicronTracker, location of the directory containing marker template files
+   *  is specified. If the user tries to attach a tracker tool with a marker
+   *  type whose template file is not stored in this directory, this method
+   *  will return failure. Similarly, for PolarisTracker, the method returns
+   *  failure,  if the toolID specified by the user during the tracker tool
+   *  configuration step does not match with the tool id read from the SROM
+   *  file.
+   */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ) = 0; 
 
   /** This method will remove entries of the traceker tool from internal
@@ -244,10 +232,14 @@ protected:
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
                                      TrackerToolType * trackerTool ) = 0; 
 
+
+  /** typedefs from TrackerTool class */
+  typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
+
   /** Access method for the tracker tool container. This method 
     * is useful in the derived classes to access the unique identifiers 
     * of the tracker tools */
-  TrackerToolsContainerType GetTrackerToolContainer() const;
+  const TrackerToolsContainerType & GetTrackerToolContainer() const;
 
   /** Report to tracker tool that it is not available for tracking */
   void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool );
@@ -256,12 +248,15 @@ protected:
   void ReportTrackingToolVisible( TrackerToolType * trackerTool );
 
   /** Set tracker tool raw transform */
-  void SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform );
+  void SetTrackerToolRawTransform( TrackerToolType * trackerTool, 
+                                   TransformType transform );
 
   /** Turn on/off update flag of the tracker tool */
   void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag );
 
 private:
+  Tracker(const Self&);           //purposely not implemented
+  void operator=(const Self&);    //purposely not implemented
 
   /** Pulse generator for driving the rate of tracker updates. */
   PulseGenerator::Pointer   m_PulseGenerator;
@@ -274,26 +269,23 @@ private:
   // TrackerTool identifier used as a Key
   TrackerToolsContainerType           m_TrackerTools;
   
+  /** typedefs from TrackerTool class */
+  typedef TrackerToolType::Pointer                   TrackerToolPointer;
+
   /** The reference tool */
-  bool                      m_ApplyingReferenceTool;
-  TrackerToolPointer        m_ReferenceTool;
+  bool                                m_ApplyingReferenceTool;
+  TrackerToolPointer                  m_ReferenceTool;
 
-  /** Validity time, and its default value [milliseconds]*/
-  TimePeriodType            m_ValidityTime;
-  static const TimePeriodType DEFAULT_VALIDITY_TIME;
-
-  /** Default update rate for sending tracking information to the
-   *  spatial objects, it should be set to at least 30 [Hz].
-   */ 
-  static const double DEFAULT_REFRESH_RATE;
+  /** Validity time, and its default value [milliseconds] */
+  TimePeriodType                      m_ValidityTime;
 
   /** Multi-threading enabled flag : The descendant class will use
       multi-threading, if this flag is set as true */
-  bool                            m_ThreadingEnabled;
+  bool                                m_ThreadingEnabled;
 
   /** Boolean value to indicate that the tracking thread 
     * has started */
-  bool                            m_TrackingThreadStarted;
+  bool                                m_TrackingThreadStarted;
 
   /** itk::MultiThreader object pointer */
   itk::MultiThreader::Pointer     m_Threader;

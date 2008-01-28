@@ -26,8 +26,6 @@
 namespace igstk
 {
 
-const Tracker::TimePeriodType Tracker::DEFAULT_VALIDITY_TIME = 400;
-const double Tracker::DEFAULT_REFRESH_RATE = 30.0;
 
 /** Constructor */
 Tracker::Tracker(void) :  m_StateMachine( this ) 
@@ -298,11 +296,13 @@ Tracker::Tracker(void) :  m_StateMachine( this )
 
   // This is update rate for sending tracking information to the
   // spatial objects, it should be set to at least 30 Hz
+  const double DEFAULT_REFRESH_RATE = 30.0;
   m_PulseGenerator->RequestSetFrequency( DEFAULT_REFRESH_RATE );
 
   // This is the time period for which transformation should be
   // considered valid.  After this time, they expire.  This time
   // is in milliseconds.
+  const TimePeriodType DEFAULT_VALIDITY_TIME = 400;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used
@@ -363,8 +363,8 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
       }
     else
       {
-      igstkLogMacro( CRITICAL, "Request to use a tracker tool as a reference has failed."
-                << "The tracker tool is not attached to the tracker ");
+      igstkLogMacro( CRITICAL, "Request to use a tracker tool as a reference"
+      << "has failed. The tracker tool is not attached to the tracker ");
       }
    }
 }
@@ -597,7 +597,8 @@ void Tracker::AttachingTrackerToolSuccessProcessing( void )
   identityTransform.SetToIdentity( 
                   igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_TrackerToolToBeAttached->RequestSetTransformAndParent( identityTransform, this );
+  m_TrackerToolToBeAttached->RequestSetTransformAndParent( 
+    identityTransform, this );
 
   this->InvokeEvent( AttachingTrackerToolToTrackerEvent() );
 }
@@ -744,7 +745,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
     if ( (inputItr->second)->GetUpdated() &&
            ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) ) 
       {
-      TransformType transform = (inputItr->second)->GetRawTransform();
+      const TransformType transform = (inputItr->second)->GetRawTransform();
 
       const double timeToExpiration = transform.GetExpirationTime() - 
                                       transform.GetStartTime();
@@ -762,8 +763,8 @@ void Tracker::UpdateStatusSuccessProcessing( void )
 
       (inputItr->second)->SetRawTransform( toolRawTransform );
  
-      CalibrationTransformType toolCalibrationTransform
-                                    = (inputItr->second)->GetCalibrationTransform();
+      TransformType toolCalibrationTransform
+        = (inputItr->second)->GetCalibrationTransform();
       
       TransformType::VersorType rotationCalibrated;
       TransformType::VectorType translationCalibrated;
@@ -772,14 +773,16 @@ void Tracker::UpdateStatusSuccessProcessing( void )
       translationCalibrated = toolCalibrationTransform.GetTranslation();
 
       // transform by the tracker's tool transform
-      rotationCalibrated = transform.GetRotation()*rotationCalibrated;
-      translationCalibrated = transform.GetRotation().Transform(translationCalibrated);
-      translationCalibrated += transform.GetTranslation();
+      rotationCalibrated = rotationRaw * rotationCalibrated;
+      translationCalibrated = rotationRaw.Transform(translationCalibrated);
+      translationCalibrated += translationRaw;
 
       TransformType toolCalibratedTransform;
-      toolCalibratedTransform.SetTranslationAndRotation( translationCalibrated, rotationCalibrated,
-                        transform.GetError(),
-                        timeToExpiration );
+      toolCalibratedTransform.SetTranslationAndRotation( 
+        translationCalibrated, 
+        rotationCalibrated,
+        transform.GetError(),
+        timeToExpiration );
 
       (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
         
@@ -807,7 +810,8 @@ void Tracker::UpdateStatusSuccessProcessing( void )
                m_ReferenceTool->GetRawTransform().GetTranslation();
 
         translationCalibratedWRTReferenceTrackerTool =
-               inverseRotation.Transform(translationCalibratedWRTReferenceTrackerTool);
+          inverseRotation.Transform(
+            translationCalibratedWRTReferenceTrackerTool);
 
         rotationCalibratedWRTReferenceTrackerTool = 
                        inverseRotation*rotationCalibratedWRTReferenceTrackerTool;
@@ -815,37 +819,44 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         // also include the reference tool's ToolCalibrationTransform
         inverseRotation = m_ReferenceTool->GetCalibrationTransform().
                                            GetRotation().GetReciprocal();
-        translationCalibratedWRTReferenceTrackerTool -= m_ReferenceTool->GetCalibrationTransform().
-                                           GetTranslation();
+
+        translationCalibratedWRTReferenceTrackerTool -= 
+          m_ReferenceTool->GetCalibrationTransform().GetTranslation();
+
         translationCalibratedWRTReferenceTrackerTool = 
-                 inverseRotation.Transform(translationCalibratedWRTReferenceTrackerTool);
+          inverseRotation.Transform(
+            translationCalibratedWRTReferenceTrackerTool);
 
         rotationCalibratedWRTReferenceTrackerTool = 
                  inverseRotation*rotationCalibratedWRTReferenceTrackerTool;
         }
 
       TransformType toolCalibratedTransformWRTReferenceTrackerTool;
+
       toolCalibratedTransformWRTReferenceTrackerTool.SetTranslationAndRotation( 
                         translationCalibratedWRTReferenceTrackerTool,
                         rotationCalibratedWRTReferenceTrackerTool,
                         transform.GetError(),
                         timeToExpiration );
-      (inputItr->second)->SetCalibratedTransformWithRespectToReferenceTrackerTool( 
-                                           toolCalibratedTransformWRTReferenceTrackerTool );
+
+      (inputItr->second)->
+        SetCalibratedTransformWithRespectToReferenceTrackerTool( 
+          toolCalibratedTransformWRTReferenceTrackerTool );
 
       // set transfrom with respect to the reference tool
       if ( m_ApplyingReferenceTool )
-        {        
+        {
         // avoid making the reference tracker tool become parent of itself.
         if ( (inputItr->first) != m_ReferenceTool->GetTrackerToolIdentifier())
           {
           (inputItr->second)->RequestSetTransformAndParent( 
-                toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool );
+            toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool );
           }
         }
       else
         {
-        (inputItr->second)->RequestSetTransformAndParent( toolCalibratedTransform, this );
+        (inputItr->second)->RequestSetTransformAndParent( 
+          toolCalibratedTransform, this );
         }
       }
     ++inputItr;
@@ -1008,14 +1019,15 @@ RequestAttachTool( TrackerToolType * trackerTool )
 void Tracker::AttemptToAttachTrackerToolProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::Tracker::AttemptToAttachTrackerToolProcessing called ...\n");
+    "igstk::Tracker::AttemptToAttachTrackerToolProcessing called ...\n");
 
   // Verify the tracker tool information before adding it to the
   // tracker. The conditions that need be verified depend on 
   // the tracker type. For example, for MicronTracker, the 
   // the tracker should have access to the template file of the
   // Marker that is attached to the tracker tool. 
-  ResultType result = VerifyTrackerToolInformation( m_TrackerToolToBeAttached );
+  ResultType result = 
+    this->VerifyTrackerToolInformation( m_TrackerToolToBeAttached );
  
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
@@ -1032,7 +1044,7 @@ RequestRemoveTool( TrackerToolType * trackerTool )
   return SUCCESS;
 }
 
-Tracker::TrackerToolsContainerType 
+const Tracker::TrackerToolsContainerType &
 Tracker::GetTrackerToolContainer() const
 {
   return m_TrackerTools;
@@ -1089,7 +1101,8 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 void 
 Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ReportTrackingToolNotAvailable called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ReportTrackingToolNotAvailable called...\n");
   trackerTool->ReportTrackingToolNotAvailable();
 }
 
@@ -1103,15 +1116,18 @@ Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool )
 
 /** Set raw transform */
 void 
-Tracker::SetTrackerToolRawTransform( TrackerToolType * trackerTool, TransformType transform )
+Tracker::SetTrackerToolRawTransform( 
+  TrackerToolType * trackerTool, TransformType transform )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::SetTrackerToolRawTransform called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::SetTrackerToolRawTransform called...\n");
   trackerTool->SetRawTransform( transform );
 }
 
 /** Turn on/off update flag of the tracker tool */
 void 
-Tracker::SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag )
+Tracker::SetTrackerToolTransformUpdate( 
+  TrackerToolType * trackerTool, bool flag )
 {
   igstkLogMacro( DEBUG, 
      "igstk::Tracker::SetTrackerToolTransformUpdate called...\n");
@@ -1121,7 +1137,8 @@ Tracker::SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag
 /** Report invalid request */
 void Tracker::ReportInvalidRequestProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ReportInvalidRequestProcessing called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
