@@ -44,23 +44,80 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilitySt
   igstkAddStateMacro( ValidSpatialObject );
   igstkAddStateMacro( AttemptingGetTransform );
 
-  igstkAddTransitionMacro( NullSpatialObject, NullSpatialObject, NullSpatialObject, No );
-  igstkAddTransitionMacro( NullSpatialObject, ValidSpatialObject, ValidSpatialObject, SetSpatialObject );
-  igstkAddTransitionMacro( NullSpatialObject, UpdateRepresentation, NullSpatialObject, No );
-  igstkAddTransitionMacro( NullSpatialObject, SpatialObjectTransform, NullSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( NullSpatialObject, TransformNotAvailable, NullSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject, 
+                           NullSpatialObject,
+                           NullSpatialObject,
+                           No );
 
-  igstkAddTransitionMacro( ValidSpatialObject, NullSpatialObject, NullSpatialObject, No );
-  igstkAddTransitionMacro( ValidSpatialObject, ValidSpatialObject, ValidSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( ValidSpatialObject, UpdateRepresentation, AttemptingGetTransform, RequestGetTransform );
-  igstkAddTransitionMacro( ValidSpatialObject, SpatialObjectTransform, ValidSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( ValidSpatialObject, TransformNotAvailable, ValidSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( NullSpatialObject,
+                           ValidSpatialObject,
+                           ValidSpatialObject,
+                           SetSpatialObject );
 
-  igstkAddTransitionMacro( AttemptingGetTransform, NullSpatialObject, AttemptingGetTransform, ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingGetTransform, ValidSpatialObject, AttemptingGetTransform, ReportInvalidRequest );
-  igstkAddTransitionMacro( AttemptingGetTransform, UpdateRepresentation, AttemptingGetTransform, No );
-  igstkAddTransitionMacro( AttemptingGetTransform, SpatialObjectTransform, ValidSpatialObject, ReceiveSpatialObjectTransform );
-  igstkAddTransitionMacro( AttemptingGetTransform, TransformNotAvailable, ValidSpatialObject, ReceiveSpatialObjectTransform );
+  igstkAddTransitionMacro( NullSpatialObject,
+                           UpdateRepresentation,
+                           NullSpatialObject,
+                           No );
+
+  igstkAddTransitionMacro( NullSpatialObject,
+                           SpatialObjectTransform,
+                           NullSpatialObject,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( NullSpatialObject,
+                           TransformNotAvailable,
+                           NullSpatialObject,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ValidSpatialObject,
+                           NullSpatialObject,
+                           NullSpatialObject,
+                           No );
+
+  igstkAddTransitionMacro( ValidSpatialObject,
+                           ValidSpatialObject,
+                           ValidSpatialObject,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ValidSpatialObject,
+                           UpdateRepresentation,
+                           AttemptingGetTransform, 
+                           RequestGetTransform );
+
+  igstkAddTransitionMacro( ValidSpatialObject,
+                           SpatialObjectTransform,
+                           ValidSpatialObject,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ValidSpatialObject,
+                           TransformNotAvailable,
+                           ValidSpatialObject,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingGetTransform,
+                           NullSpatialObject,
+                           AttemptingGetTransform,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingGetTransform,
+                           ValidSpatialObject,
+                           AttemptingGetTransform,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingGetTransform,
+                           UpdateRepresentation,
+                           AttemptingGetTransform,
+                           No );
+
+  igstkAddTransitionMacro( AttemptingGetTransform,
+                           SpatialObjectTransform,
+                           ValidSpatialObject,
+                           ReceiveSpatialObjectTransform );
+
+  igstkAddTransitionMacro( AttemptingGetTransform,
+                           TransformNotAvailable,
+                           ValidSpatialObject,
+                           ReceiveSpatialObjectTransform );
 
   igstkSetInitialStateMacro( NullSpatialObject );
 
@@ -104,6 +161,23 @@ ObjectRepresentation::~ObjectRepresentation()
 {
   // This must be invoked in order to prevent Memory Leaks.
   this->DeleteActors();
+}
+
+/** Get the red color component */
+float ObjectRepresentation::GetRed() const
+{
+  return m_Color[0];
+}
+
+/** Get the green color component */ 
+float ObjectRepresentation::GetGreen() const
+{
+  return m_Color[1];
+}
+/** Get the blue color component */
+float ObjectRepresentation::GetBlue() const  
+{
+  return m_Color[2];
 }
 
 /** Add an actor to the actors list */
@@ -216,16 +290,6 @@ void ObjectRepresentation::RequestUpdateRepresentation(
   m_StateMachine.ProcessInputs();
   m_TargetCoordinateSystem = NULL; // Break reference.
 }
-
-void ObjectRepresentation::RequestUpdateRepresentation( const TimeStamp & time )
-{
-  igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time"
-                          << time );
-  m_TimeToRender = time;
-  igstkPushInputMacro( UpdateRepresentation );
-  m_StateMachine.ProcessInputs();
-}
-
 
 /** Process the request for updating the transform from the SpatialObject. */
 void ObjectRepresentation::RequestGetTransformProcessing()

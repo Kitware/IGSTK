@@ -37,7 +37,7 @@ namespace igstk
 
 /** \class ObjectRepresentation
  * 
- * \brief Base class for all the igstk representation objects.
+ * \brief An abstract base class for all the igstk representation objects.
  *
  * This class serves as the base class for all the representation objects that
  * will provide a VTK visualization of the Spatial Objects that are composing a
@@ -69,9 +69,9 @@ public:
   void SetColor(float r, float g, float b);
 
   /** Get each color component */
-  float GetRed() const   {return m_Color[0];}
-  float GetGreen() const {return m_Color[1];}
-  float GetBlue() const  {return m_Color[2];}
+  float GetRed() const; 
+  float GetGreen() const;
+  float GetBlue() const;
 
   /** Set/Get the opacity */
   virtual void SetOpacity(float alpha);
@@ -86,19 +86,6 @@ public:
   /** update the visual representation with changes in the geometry */
   virtual void RequestUpdateRepresentation( const TimeStamp & time, 
                                             const CoordinateReferenceSystem* cs );
-
-
-  /** DEPRECATED */
-  virtual void RequestUpdateRepresentation( const TimeStamp & time );
-  /** DEPRECATED */
-
-  /** DEPRECATED !!! DELETE THIS METHOD */
-  void RequestUpdatePosition( const TimeStamp & time ) {};
-  /** DEPRECATED !!! DELETE THIS METHOD */
-
-  /** DEPRECATED !!! DELETE THIS METHOD */
-  void RequestVerifyTimeStamp() {};
-  /** DEPRECATED !!! DELETE THIS METHOD */
 
 protected:
 
@@ -174,6 +161,9 @@ private:
   void RequestGetTransformProcessing();
 
 private:
+
+  ObjectRepresentation(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( NullSpatialObject );

@@ -23,7 +23,6 @@
 
 #include "igstkMacros.h"
 #include "igstkObject.h"
-#include "igstkTransform.h"
 #include "igstkStateMachine.h"
 #include "igstkEvents.h"
 

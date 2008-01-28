@@ -113,7 +113,6 @@ void MeshObjectRepresentation
 void MeshObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
-  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */

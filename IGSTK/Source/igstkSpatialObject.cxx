@@ -16,7 +16,6 @@
 =========================================================================*/
 
 #include "igstkSpatialObject.h"
-#include "igstkEvents.h"
 
 namespace igstk
 { 

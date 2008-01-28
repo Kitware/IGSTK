@@ -113,7 +113,6 @@ void UltrasoundProbeObjectRepresentation
 void UltrasoundProbeObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
-  this->RequestVerifyTimeStamp();
 }
 
 /** Create the vtk Actors */
