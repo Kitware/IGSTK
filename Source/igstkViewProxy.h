@@ -88,7 +88,7 @@ public:
 protected:
 
 private:
-    T  * m_Widget;
+  T  * m_Widget;
 
 };
 
