@@ -52,6 +52,10 @@ protected:
   /** Destructor */
   ~View3D( void );
 
+private:
+  View3D(const View3D& ); // purposely not implemented
+  View3D& operator=(const View3D& ); // purposely not implemented
+
 };
 
 } // end namespace igstk
