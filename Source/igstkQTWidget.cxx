@@ -21,6 +21,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "vtkCommand.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 
 #if defined(__APPLE__) && defined(VTK_USE_CARBON)
