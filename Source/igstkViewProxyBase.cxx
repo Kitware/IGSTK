@@ -16,6 +16,8 @@
 =========================================================================*/
 #include "igstkViewProxyBase.h"
 #include "igstkView.h"
+#include "vtkRenderer.h"
+#include "vtkRenderWindowInteractor.h"
 
 namespace igstk {
 

@@ -17,13 +17,12 @@
 #ifndef __igstkViewProxyBase_h
 #define __igstkViewProxyBase_h
 
-#include "igstkView.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindowInteractor.h"
-
+class vtkRenderer;
+class vtkRenderWindowInteractor;
 
 namespace igstk {
 
+class View;
 
 /** \class ViewProxyBase
  *
