@@ -206,7 +206,7 @@ int igstkViewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
 
     const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
@@ -220,7 +220,7 @@ int igstkViewTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    cylinder->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    cylinder->RequestSetTransformAndParent( transform, worldReference );
 
     cylinderRepresentation->SetLogger( logger );
   
@@ -256,7 +256,7 @@ int igstkViewTest( int, char * [] )
               << std::endl;
 
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    view3D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    view3D->RequestSetTransformAndParent( transform, worldReference );
 
     // Add the ellipsoid and cylinder representations to the view
     view3D->RequestAddObject( AxesRepresentation );
@@ -306,7 +306,7 @@ int igstkViewTest( int, char * [] )
     view2D->RequestSetOrientation( View2DType::Axial );
    
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    view2D->RequestSetTransformAndParent( transform, worldReference );
 
     // Add the ellipsoid and cylinder representations to the view
     view2D->RequestAddObject( AxesRepresentation );

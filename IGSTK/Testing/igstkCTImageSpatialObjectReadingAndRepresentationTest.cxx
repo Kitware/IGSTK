@@ -210,8 +210,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
-  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  ctImage->RequestSetTransformAndParent( transform, worldReference );
+  view2D->RequestSetTransformAndParent( transform, worldReference );
 
   representation->RequestSetImageSpatialObject( ctImage );
                            
@@ -330,7 +330,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
     igstk::Transform transform;
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    ctImage->RequestSetTransformAndParent( transform, worldReference );
 
     representation->RequestSetImageSpatialObject( ctImage );
 

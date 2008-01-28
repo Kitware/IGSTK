@@ -183,7 +183,7 @@ int igstkVascularNetworkObjectTest( int, char * [] )
   network->AddObserver(
     igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-  network->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  network->RequestSetTransformAndParent( transform, worldReference );
 
   network->RequestGetTransformToParent();
   

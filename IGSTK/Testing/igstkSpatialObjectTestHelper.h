@@ -167,7 +167,7 @@ void TestTransform()
   this->m_SpatialObject->AddObserver(
     igstk::CoordinateReferenceSystemTransformToEvent(), this->m_TransformObserver );
 
-  this->m_SpatialObject->RequestSetTransformAndParent( transform, this->m_View.GetPointer() );
+  this->m_SpatialObject->RequestSetTransformAndParent( transform, this->m_View );
 
   this->m_SpatialObject->RequestGetTransformToParent();
 

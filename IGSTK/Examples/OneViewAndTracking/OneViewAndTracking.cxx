@@ -82,7 +82,7 @@ int main(int , char** )
   // Make an identity transform and attach the cylinder to the ellipsoid.
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  cylinder->RequestSetTransformAndParent( identity, ellipsoid.GetPointer() );
+  cylinder->RequestSetTransformAndParent( identity, ellipsoid );
 
   // Add the ellipsoid representations to the view
   application.AddEllipsoid( ellipsoidRepresentation );
@@ -92,7 +92,7 @@ int main(int , char** )
   application.AttachObjectToTrack( cylinder );
 
   // View coordinate system is with respect to the ellipsoid.
-  application.View3D->RequestSetTransformAndParent( identity, ellipsoid.GetPointer() );
+  application.View3D->RequestSetTransformAndParent( identity, ellipsoid );
 
   application.View3D->RequestResetCamera();
   application.View3D->SetRefreshRate( 60 ); // 60 Hz

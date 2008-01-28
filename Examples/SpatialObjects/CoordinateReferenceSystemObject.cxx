@@ -86,7 +86,7 @@ int main( int , char *[] )
   cylinder->SetRadius(10.0);
   cylinder->SetHeight(20.0);
 
-  cylinder->RequestSetTransformAndParent( transform, cone.GetPointer() );
+  cylinder->RequestSetTransformAndParent( transform, cone );
 
   translation[0] = -10.0;
   translation[1] =   0.0;
@@ -96,7 +96,7 @@ int main( int , char *[] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds2 );
 
-  cylinder->RequestSetTransformAndParent( transform, cone.GetPointer() );
+  cylinder->RequestSetTransformAndParent( transform, cone );
 
   std::cout << "Cone " << std::endl;
   cone->Print( std::cout );

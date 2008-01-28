@@ -139,17 +139,10 @@ public:
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
     this->m_SpatialObject->RequestSetTransformAndParent( 
                                           identity,
-                                          this->m_TrackerTool.GetPointer() );
+                                          this->m_TrackerTool );
                                                 
 
     this->m_Tracker->RequestAddTool( this->m_TrackerTool );
-
-    //  PREVIOUS: DEPRECATED METHOD : DELETE FROM HERE : FIXME
-    //  this->m_Tracker->AttachObjectToTrackerTool( 
-    //  toolPort, 
-    //  toolNumber, 
-    //  this->m_SpatialObject );
-    //  PREVIOUS: DEPRECATED METHOD : DELETE FROM HERE : FIXME
 
     this->m_LogFile.open( this->m_LogOutputFilename.c_str() );
     if( !this->m_LogFile.fail() )

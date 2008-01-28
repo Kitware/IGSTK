@@ -244,7 +244,7 @@ void UltrasoundGuidedRFAImplementation
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
  
   // Attach a spatial object to the tracker tool
-  objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool.GetPointer() );
+  objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool );
 }
 
 /** Load a liver surface */

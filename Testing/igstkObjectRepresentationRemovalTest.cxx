@@ -55,7 +55,7 @@ int igstkObjectRepresentationRemovalTest( int argc, char* argv[] )
   //
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  ellipsoidObject1->RequestSetTransformAndParent( identityTransform, view3D.GetPointer() );
+  ellipsoidObject1->RequestSetTransformAndParent( identityTransform, view3D );
 
   // Reset the camera so that it shows the objects in the scene
   view3D->RequestResetCamera();

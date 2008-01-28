@@ -176,7 +176,7 @@ int igstkAnnotation2DTest2( int argc, char* argv[] )
   // Link the coordinate systems of the view and the image
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  view2D->RequestSetTransformAndParent( identityTransform, ctImageObserver->GetCTImage().GetPointer() );
+  view2D->RequestSetTransformAndParent( identityTransform, ctImageObserver->GetCTImage() );
 
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );

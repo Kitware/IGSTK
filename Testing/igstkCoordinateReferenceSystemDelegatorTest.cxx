@@ -54,12 +54,12 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   {
   CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
   temp->SetLogger( logger );
-  temp->RequestSetTransformAndParent(identity, root.GetPointer());
+  temp->RequestSetTransformAndParent(identity, root);
   coordSysBranch1.push_back(temp);
 
   CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
   temp2->SetLogger( logger );
-  temp2->RequestSetTransformAndParent(identity, root.GetPointer());
+  temp2->RequestSetTransformAndParent(identity, root);
   coordSysBranch2.push_back(temp2);
   }
 
@@ -67,12 +67,12 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
     {
     CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
     temp->SetLogger( logger );
-    temp->RequestSetTransformAndParent(identity, coordSysBranch1[i-1].GetPointer());
+    temp->RequestSetTransformAndParent(identity, coordSysBranch1[i-1]);
     coordSysBranch1.push_back(temp);
 
     CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
     temp2->SetLogger( logger );
-    temp2->RequestSetTransformAndParent(identity,coordSysBranch2[i-1].GetPointer());
+    temp2->RequestSetTransformAndParent(identity,coordSysBranch2[i-1]);
     coordSysBranch2.push_back(temp2);
     }
 

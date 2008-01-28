@@ -123,8 +123,8 @@ int main( int , char *[] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  view3D1->RequestSetTransformAndParent( transform, cube.GetPointer() );
-  view3D2->RequestSetTransformAndParent( transform, cube.GetPointer() );
+  view3D1->RequestSetTransformAndParent( transform, cube );
+  view3D2->RequestSetTransformAndParent( transform, cube );
 // Software Guide : EndCodeSnippet
 
 

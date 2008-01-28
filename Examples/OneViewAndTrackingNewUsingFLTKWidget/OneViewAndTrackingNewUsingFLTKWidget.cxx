@@ -120,15 +120,14 @@ int main(int , char** )
  
   trackerAxes->RequestSetTransformAndParent( 
                                      identity, 
-                                     application.GetTracker().GetPointer() );
+                                     application.GetTracker() );
   
   /** Attache axes to the tool coordinates. */
-  toolAxes->RequestSetTransformAndParent( identity, 
-                                          trackerTool.GetPointer() );
+  toolAxes->RequestSetTransformAndParent( identity, trackerTool );
   /** Attach the box representing the tracker tool to the tracker tool 
    *  coordinates.
    */
-  box->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
+  box->RequestSetTransformAndParent( identity, trackerTool );
 
   /** Attach the cylinder coordinates the box. 
    *  The rotation is used to rotate the cylinder so that
@@ -140,13 +139,12 @@ int main(int , char** )
   igstk::Transform::VersorType cylinderVersor;
   cylinderVersor.Set(0, 1, 0, 0); 
   cylinderToBoxTransform.SetRotation( cylinderVersor, err, aLongTime );
-  cylinder->RequestSetTransformAndParent( cylinderToBoxTransform, 
-                                          box.GetPointer() );
+  cylinder->RequestSetTransformAndParent( cylinderToBoxTransform, box );
 
   /** Attach the view to the tracker coordinates */
   view3D->RequestSetTransformAndParent( 
                                     identity, 
-                                    application.GetTracker().GetPointer() );
+                                    application.GetTracker() );
   view3D->SetCameraFocalPoint( 0.0, 0.0 , 0.0 );
   view3D->SetCameraPosition( 0.0,0.0 , 600.0 );
   view3D->SetCameraViewUp( -1.0, 0.0 , 0.0 );

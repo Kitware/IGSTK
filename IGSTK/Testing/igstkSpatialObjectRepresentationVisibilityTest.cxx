@@ -229,7 +229,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  view3D->RequestSetTransformAndParent( identityTransform, worldReference );
 
   double validityTimeInMilliseconds = 1000; // 1 second
   igstk::Transform transform1;
@@ -245,7 +245,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   transform1.SetTranslationAndRotation( 
       translation1, rotation, errorValue, validityTimeInMilliseconds );
 
-  ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference.GetPointer() );
+  ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference );
 
   // This is the transform for the permanent object.
   igstk::Transform transform2;
@@ -258,7 +258,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       translation2, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ellipsoidObject2->RequestSetTransformAndParent( transform2, worldReference.GetPointer() );
+  ellipsoidObject2->RequestSetTransformAndParent( transform2, worldReference );
 
   
   // This is the transform for the permanent object.
@@ -272,7 +272,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
       translation3, rotation, errorValue, 
       ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ellipsoidObject3->RequestSetTransformAndParent( transform3, worldReference.GetPointer() );
+  ellipsoidObject3->RequestSetTransformAndParent( transform3, worldReference );
 
 
   view3D->RequestResetCamera();
@@ -302,7 +302,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     transform1.SetTranslationAndRotation( 
         translation1, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference.GetPointer() );
+    ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference );
 
     std::cout << "Flick " << i <<  "   end flag =  " << bEnd << std::endl;
 
@@ -327,14 +327,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   //
   //  Now visualize the object 3 under tracking
   //
-  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool );
   igstk::Transform calibrationTransform;
   calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
   trackerTool->SetCalibrationTransform( calibrationTransform );
 
   trackerTool->RequestSetName("tool1");
   trackerTool->RequestConfigure();
-  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference );
 
  
   // restart the count of the observer

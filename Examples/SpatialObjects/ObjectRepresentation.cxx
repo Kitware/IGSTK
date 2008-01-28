@@ -154,7 +154,7 @@ int main( int , char *[] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  cube->RequestSetTransformAndParent( transform, view3D.GetPointer() );
+  cube->RequestSetTransformAndParent( transform, view3D );
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginCodeSnippet

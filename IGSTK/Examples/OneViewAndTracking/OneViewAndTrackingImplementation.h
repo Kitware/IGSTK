@@ -135,7 +135,7 @@ public:
     {
     igstk::Transform transform;
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool.GetPointer() );
+    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool );
     }
 
 private:

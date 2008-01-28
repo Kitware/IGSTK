@@ -120,8 +120,8 @@ int main( int argc, char* argv[] )
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  ctImage->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
-  view->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  ctImage->RequestSetTransformAndParent( transform, worldReference );
+  view->RequestSetTransformAndParent( transform, worldReference );
 
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
   RepresentationType::Pointer imageRepresentation = RepresentationType::New();
@@ -135,10 +135,10 @@ int main( int argc, char* argv[] )
   BoxObjectType::Pointer  boxObject = BoxObjectType::New();
 
   boxObject->SetSize( 10, 10, 10 );
-  boxObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  boxObject->RequestSetTransformAndParent( transform, worldReference );
 
   transform.SetToIdentity( 1000 ); // 1 second
-  boxObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  boxObject->RequestSetTransformAndParent( transform, worldReference );
  
   typedef igstk::BoxObjectRepresentation BoxRepresentationType;
   BoxRepresentationType::Pointer boxObjectRepresentation = BoxRepresentationType::New();

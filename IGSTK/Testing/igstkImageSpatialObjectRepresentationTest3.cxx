@@ -147,7 +147,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
 
-  boxObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  boxObject->RequestSetTransformAndParent( transform, worldReference );
 
   boxObjectRepresentation->RequestSetBoxObject( boxObject );
   boxObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
@@ -183,7 +183,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
 
-  boxObject2->RequestSetTransformAndParent( transform2, worldReference.GetPointer() );
+  boxObject2->RequestSetTransformAndParent( transform2, worldReference );
 
   boxObjectRepresentation2->RequestSetBoxObject( boxObject2 );
   boxObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
@@ -219,7 +219,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
-  boxObject3->RequestSetTransformAndParent( transform3, worldReference.GetPointer() );
+  boxObject3->RequestSetTransformAndParent( transform3, worldReference );
 
   boxObjectRepresentation3->RequestSetBoxObject( boxObject3 );
   boxObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
@@ -255,7 +255,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
-  boxObject4->RequestSetTransformAndParent( transform4, worldReference.GetPointer() );
+  boxObject4->RequestSetTransformAndParent( transform4, worldReference );
 
   boxObjectRepresentation4->RequestSetBoxObject( boxObject4 );
   boxObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
@@ -283,7 +283,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( identityTransform, worldReference );
 
   // Add the image object representation to the view
   view2D->RequestAddObject( imageRepresentation );
@@ -309,7 +309,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 
   transform.SetToIdentity( validtyTime );
 
-  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference );
 
   imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 

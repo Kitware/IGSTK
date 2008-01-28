@@ -90,12 +90,12 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
   CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
   // temp->SetLogger( logger );
-  temp->RequestSetTransformAndParent(randomTransform1, root.GetPointer());
+  temp->RequestSetTransformAndParent(randomTransform1, root);
   coordSysBranch1.push_back(temp);
 
   CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
   // temp2->SetLogger( logger );
-  temp2->RequestSetTransformAndParent(randomTransform2, root.GetPointer());
+  temp2->RequestSetTransformAndParent(randomTransform2, root);
   coordSysBranch2.push_back(temp2);
   }
 
@@ -106,12 +106,12 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
     CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
     // temp->SetLogger( logger );
-    temp->RequestSetTransformAndParent(randomTransform1, coordSysBranch1[i-1].GetPointer());
+    temp->RequestSetTransformAndParent(randomTransform1, coordSysBranch1[i-1]);
     coordSysBranch1.push_back(temp);
 
     CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
     // temp2->SetLogger( logger );
-    temp2->RequestSetTransformAndParent(randomTransform2, coordSysBranch2[i-1].GetPointer());
+    temp2->RequestSetTransformAndParent(randomTransform2, coordSysBranch2[i-1]);
     coordSysBranch2.push_back(temp2);
     }
 

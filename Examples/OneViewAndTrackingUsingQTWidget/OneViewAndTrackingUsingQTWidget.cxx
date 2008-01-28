@@ -101,7 +101,7 @@ int main(int argc, char** argv)
   translation, rotation, errorValue, aLongTime );
 
   // cylinder coordinates are relative to the ellipse
-  cylinder->RequestSetTransformAndParent( transform, ellipsoid.GetPointer() );
+  cylinder->RequestSetTransformAndParent( transform, ellipsoid );
 
   // instantiate a 3D view 
   typedef igstk::View3D        View3DType;
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
   identity.SetToIdentity( aLongTime );
  
   view3D->RequestSetTransformAndParent( 
-            identity, mainWindow.GetTracker().GetPointer());
+            identity, mainWindow.GetTracker());
 
   view3D->RequestAddObject( ellipsoidRepresentation );
   view3D->RequestAddObject( cylinderRepresentation );

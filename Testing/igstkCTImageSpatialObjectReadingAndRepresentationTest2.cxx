@@ -165,8 +165,8 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   CTImagePointer image = ctImageObserver->GetCTImage();
-  image->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
-  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  image->RequestSetTransformAndParent( transform, worldReference );
+  view2D->RequestSetTransformAndParent( transform, worldReference );
 
   view2D->SetRefreshRate( 40 );
   view2D->RequestStart();

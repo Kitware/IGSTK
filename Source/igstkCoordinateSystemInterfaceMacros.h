@@ -47,9 +47,9 @@ public: \
     { \
     m_CoordinateReferenceSystemDelegator->RequestGetTransformToParent(); \
     } \
-  template < class TParent > \
+  template < class TParentPointer > \
   void RequestSetTransformAndParent( const Transform & transformToParent, \
-                                     const TParent * parent ) \
+                                     TParentPointer parent ) \
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \

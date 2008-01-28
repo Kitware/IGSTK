@@ -71,7 +71,7 @@ int main( int , char *[] )
 // Software Guide : BeginCodeSnippet
   igstk::Transform transformSphere2ToSphere1;
   transformSphere2ToSphere1.SetTranslation(10,0.001,10);
-  sphere2->RequestSetTransformAndParent( transformSphere2ToSphere1, sphere1.GetPointer() );
+  sphere2->RequestSetTransformAndParent( transformSphere2ToSphere1, sphere1 );
 
 // Software Guide : EndCodeSnippet
 

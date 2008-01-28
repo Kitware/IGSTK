@@ -128,7 +128,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   coordinateSystem->AddObserver( 
     igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-  coordinateSystem->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  coordinateSystem->RequestSetTransformAndParent( transform, worldReference );
   coordinateSystem->RequestGetTransformToParent();
   
   if( !transformObserver->GotTransform() )
@@ -173,7 +173,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );
   view2D->SetCameraViewUp( 0, 0, 1.0 );
 
-  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference );
 
   // this will indirectly call CreateActors() 
   view2D->RequestAddObject( AxesRepresentation );
@@ -225,9 +225,9 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   transformC.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  coordinateSystemA->RequestSetTransformAndParent( transformA, worldReference.GetPointer() );
-  coordinateSystemB->RequestSetTransformAndParent( transformB, worldReference.GetPointer() );
-  coordinateSystemC->RequestSetTransformAndParent( transformC, worldReference.GetPointer() );
+  coordinateSystemA->RequestSetTransformAndParent( transformA, worldReference );
+  coordinateSystemB->RequestSetTransformAndParent( transformB, worldReference );
+  coordinateSystemC->RequestSetTransformAndParent( transformC, worldReference );
 
   coordinateSystemA->SetSize(10,10,10);
   coordinateSystemB->SetSize(10,10,10);

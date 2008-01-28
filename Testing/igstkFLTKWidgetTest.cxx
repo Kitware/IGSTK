@@ -174,7 +174,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
     translation[1] = -0.25;  // translate the cylinder along Y
     translation[2] = -2.00;  // translate the cylinder along Z
@@ -183,7 +183,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    cylinder->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    cylinder->RequestSetTransformAndParent( transform, worldReference );
 
     View2DType::Pointer view2D = View2DType::New();
     view2D->SetLogger( logger );
@@ -194,8 +194,8 @@ int igstkFLTKWidgetTest( int, char * [] )
     igstk::Transform identityTransform;
     identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-    view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
-    view3D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+    view2D->RequestSetTransformAndParent( identityTransform, worldReference );
+    view3D->RequestSetTransformAndParent( identityTransform, worldReference );
 
     // Add the cylinder and ellipsoid to the views
     view2D->RequestAddObject( ellipsoidRepresentation );

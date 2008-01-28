@@ -186,7 +186,7 @@ int main(int , char** )
   // Add the position of the cylinder with respect to the View.
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  cylinder->RequestSetTransformAndParent( transform, m_GUI->View.GetPointer() );
+  cylinder->RequestSetTransformAndParent( transform, m_GUI->View );
 
   igstk::CylinderObjectRepresentation::Pointer 
           cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
@@ -253,10 +253,10 @@ int main(int , char** )
   identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
    
-  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   // Attach a viewer to the tracker 
-  m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker.GetPointer() );
+  m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker );
 
   m_GUI->SetTracker( tracker );
   // EndCodeSnippet

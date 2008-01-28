@@ -174,7 +174,7 @@ int main(int , char** )
   igstk::Transform cylinderTransform;
   cylinderTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
   // cylinder is relative to the ellipsoid.
-  cylinder->RequestSetTransformAndParent( cylinderTransform, ellipsoid.GetPointer() );
+  cylinder->RequestSetTransformAndParent( cylinderTransform, ellipsoid );
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer cylinderRepresentation = 
@@ -212,13 +212,13 @@ int main(int , char** )
   ellipsoidToMeshTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Ellipsoid is relative to the mesh.
-  ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, mesh.GetPointer() );
+  ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, mesh );
   
   igstk::Transform tubeTransform;
   tubeTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Tube is relative to the mesh
-  tube->RequestSetTransformAndParent( tubeTransform, mesh.GetPointer() );
+  tube->RequestSetTransformAndParent( tubeTransform, mesh );
 
   // Create the cylinder representation
   igstk::MeshObjectRepresentation::Pointer meshRepresentation = 
@@ -234,8 +234,8 @@ int main(int , char** )
   igstk::Transform displayTransform;
   displayTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_GUI->m_View3D->RequestSetTransformAndParent( displayTransform, mesh.GetPointer() );
-  m_GUI->m_View3D2->RequestSetTransformAndParent( displayTransform, ellipsoid.GetPointer() );
+  m_GUI->m_View3D->RequestSetTransformAndParent( displayTransform, mesh );
+  m_GUI->m_View3D2->RequestSetTransformAndParent( displayTransform, ellipsoid );
 
   // Add another Object representations to the second display
   m_GUI->m_View3D2->RequestAddObject( ellipsoidRepresentation->Copy() );
@@ -269,10 +269,10 @@ int main(int , char** )
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
  
   // Connect the second ellipsoid to the tracker tool.
-  ellipsoid2->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  ellipsoid2->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   // Set the tracker to the reference system of the mesh.
-  tracker->RequestSetTransformAndParent( identityTransform, mesh.GetPointer() );
+  tracker->RequestSetTransformAndParent( identityTransform, mesh );
 
   m_GUI->SetTracker( tracker );
   
@@ -320,8 +320,7 @@ int main(int , char** )
                                           1e-5,
                                           60 ); 
 
-    ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, 
-                                             mesh.GetPointer()          );
+    ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, mesh );
     
     versor0 = versor1;
     versor1 = versor2;

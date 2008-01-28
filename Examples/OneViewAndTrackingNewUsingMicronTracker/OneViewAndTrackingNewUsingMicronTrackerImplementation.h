@@ -165,7 +165,7 @@ public:
    
     // Attach a viewer to the tracker 
     view->RequestSetTransformAndParent( identityTransform, 
-                                        m_Tracker.GetPointer() );
+                                        m_Tracker );
     }
 
 
@@ -180,12 +180,12 @@ public:
     if ( trackerToolNumber == 1 )
       {
       objectToTrack->RequestSetTransformAndParent( identityTransform,
-                                         m_TrackerTool.GetPointer() );
+                                         m_TrackerTool );
       }
     else if (trackerToolNumber == 2 )
       {
       objectToTrack->RequestSetTransformAndParent( identityTransform,
-                                       m_TrackerTool2.GetPointer() );
+                                       m_TrackerTool2 );
       }
     else
       {

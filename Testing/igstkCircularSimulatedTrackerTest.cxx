@@ -124,10 +124,10 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
     translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Connect the objects in the scene to a coordinate reference system.
-  tracker->RequestSetTransformAndParent( identity, axesObject.GetPointer() );
-  toolObject->RequestSetTransformAndParent( identity, trackerTool.GetPointer() );
-  targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject.GetPointer() );
-  view3D->RequestSetTransformAndParent( identity, axesObject.GetPointer() );
+  tracker->RequestSetTransformAndParent( identity, axesObject );
+  toolObject->RequestSetTransformAndParent( identity, trackerTool );
+  targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject );
+  view3D->RequestSetTransformAndParent( identity, axesObject );
 
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );

@@ -147,7 +147,7 @@ AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  objectToTrack->RequestSetTransformAndParent( transform, m_Tool.GetPointer() );
+  objectToTrack->RequestSetTransformAndParent( transform, m_Tool );
 }
 
 bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( ) 

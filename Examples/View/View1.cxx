@@ -163,7 +163,7 @@ int main( int, char * [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, view3D.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, view3D );
     // EndCodeSnippet
 
 

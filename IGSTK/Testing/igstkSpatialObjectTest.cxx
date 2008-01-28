@@ -177,7 +177,7 @@ int igstkSpatialObjectTest( int, char * [] )
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  tracker->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference );
 
   tracker->RequestOpen();
 
@@ -187,7 +187,7 @@ int igstkSpatialObjectTest( int, char * [] )
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
-  dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool.GetPointer() );
+  dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   dummyObject->Print( std::cout );
   
@@ -212,7 +212,7 @@ int igstkSpatialObjectTest( int, char * [] )
   trackerTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   dummyObject2->RequestSetTransformAndParent( 
-    trackerTransform, worldReference.GetPointer() );
+    trackerTransform, worldReference );
 
 
   std::cout << "Test [DONE]" << std::endl;

@@ -257,7 +257,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   igstk::Transform  transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference );
 
 
   representation->RequestSetImageSpatialObject( imageSpatialObject );
@@ -328,7 +328,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   view2D->RequestAddObject( representation );
 
-  view2D->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  view2D->RequestSetTransformAndParent( transform, worldReference );
   
   // Set and initialize the pulse generator of the view 
   view2D->SetRefreshRate( 30 );

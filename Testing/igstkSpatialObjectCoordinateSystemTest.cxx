@@ -293,7 +293,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
    *  out the template type. 
    */
   ellipsoid2->RequestSetTransformAndParent(transformE2ToE1, 
-                                           ellipsoid1.GetPointer());
+                                           ellipsoid1);
 
   igstk::Transform getTE1ToE2;
 
@@ -359,7 +359,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   ViewType::Pointer view = ViewType::New();
   view->AddObserver( CoordinateSystemEventType(), viewObserver );
   igstk::Transform viewToParent = identity;
-  view->RequestSetTransformAndParent( viewToParent, ellipsoid1.GetPointer() );
+  view->RequestSetTransformAndParent( viewToParent, ellipsoid1 );
 
   std::cout << "Testing view->RequestGetTransformToParent() : ";
   view->RequestGetTransformToParent();
@@ -414,7 +414,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   tracker->AddObserver( CoordinateSystemEventType(), trackerObserver );
 
   igstk::Transform trackerToParent = identity;
-  tracker->RequestSetTransformAndParent( trackerToParent, view.GetPointer() );
+  tracker->RequestSetTransformAndParent( trackerToParent, view );
   tracker->RequestComputeTransformTo( ellipsoid1.GetPointer() );
   std::cout << "Testing tracker->RequestComputeTransformTo( ellipsoid1 ) : ";
   if (trackerObserver->GotPayload() == true )

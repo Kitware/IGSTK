@@ -347,7 +347,7 @@ int igstkBasicTrackerTest( int, char * [] )
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
  
   // Connect the second ellipsoid to the tracker tool.
-  object->RequestSetTransformAndParent( identityTransform, tool.GetPointer() );
+  object->RequestSetTransformAndParent( identityTransform, tool );
 
   tracker->RequestOpen();  // for failure
   tracker->RequestOpen();  // for success

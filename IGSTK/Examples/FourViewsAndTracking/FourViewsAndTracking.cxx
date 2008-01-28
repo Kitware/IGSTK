@@ -60,7 +60,7 @@ int main(int , char** )
   cylinder->SetHeight(300.0);  // about the size of a needle
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  cylinder->RequestSetTransformAndParent( identity, ellipsoid.GetPointer() );
+  cylinder->RequestSetTransformAndParent( identity, ellipsoid );
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -88,7 +88,7 @@ int main(int , char** )
   cylinderRepresentation2->SetColor(1.0,1.0,0.0);
   cylinderRepresentation2->SetOpacity(0.6);
 
-  cylinder2->RequestSetTransformAndParent( cylinder2Transform, ellipsoid.GetPointer() );
+  cylinder2->RequestSetTransformAndParent( cylinder2Transform, ellipsoid );
 
   // Add the ellipsoid representations to the views
   application.AddEllipsoid( ellipsoidRepresentation );

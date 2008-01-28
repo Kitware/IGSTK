@@ -156,7 +156,7 @@ int igstkGroupObjectTest( int, char * [] )
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  group->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+  group->RequestSetTransformAndParent( identityTransform, worldReference );
 
   // Testing PrintSelf()
   group->Print(std::cout);
@@ -188,7 +188,7 @@ int igstkGroupObjectTest( int, char * [] )
   group->AddObserver(
     igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
 
-  group->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+  group->RequestSetTransformAndParent( transform, worldReference );
 
   group->RequestGetTransformToParent();
   

@@ -46,11 +46,11 @@ public:
   /** This method implements the construction of a coordinate system graph by 
    *  defining the parent of this object and the Transforms defining their
    *  relative position and orientation */
-  template < class TParent >
+  template < class TParentPointer >
   void RequestSetTransformAndParent( const Transform & transformToParent, 
-                                     const TParent * parent )
+                                     TParentPointer parent )
     {
-    if (parent == NULL)
+    if( !(parent) ) // This expression must be suitable for both Smart and Raw pointers.
       {
       igstkPushInputMacro( NullParent );
       m_StateMachine.ProcessInputs();

@@ -226,13 +226,13 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
     igstk::Transform identity;
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-    view2D->RequestSetTransformAndParent( identity, worldReference.GetPointer() );
-    view3D->RequestSetTransformAndParent( identity, worldReference.GetPointer() );
+    view2D->RequestSetTransformAndParent( identity, worldReference );
+    view3D->RequestSetTransformAndParent( identity, worldReference );
 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );

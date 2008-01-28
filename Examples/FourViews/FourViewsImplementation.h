@@ -198,7 +198,7 @@ public:
       igstk::Transform identity;
       identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-      this->SetDisplayTransformsAndParents( identity, mesh.GetPointer() );
+      this->SetDisplayTransformsAndParents( identity, mesh );
 
       // Create the object representations for the mesh
       igstk::MeshObjectRepresentation::Pointer meshRepresentation =

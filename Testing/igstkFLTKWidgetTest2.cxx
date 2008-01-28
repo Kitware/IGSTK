@@ -124,14 +124,14 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransformAndParent( transform, worldReference.GetPointer() );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
     View2DType::Pointer view2D = View2DType::New();
 
     igstk::Transform identityTransform;
     identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-    view2D->RequestSetTransformAndParent( identityTransform, worldReference.GetPointer() );
+    view2D->RequestSetTransformAndParent( identityTransform, worldReference );
    
 
     // Create an FLTK minimal GUI
