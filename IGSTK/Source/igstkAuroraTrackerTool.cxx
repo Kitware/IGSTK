@@ -302,7 +302,6 @@ void AuroraTrackerTool::Report5DOFTrackerToolSelectedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::Report5DOFTrackerToolSelectedProcessing called ...\n");
 
-  std::cout << "5DOF Tracker tool selected " << std::endl;
 
   m_5DOFTrackerToolSelected = true;
 }
@@ -313,7 +312,7 @@ void AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing called ...\n");
 
-  std::cout << "6DOF Tracker tool selected " << std::endl;
+  igstkLogMacro( DEBUG, "6DOF Tracker tool selected ");
 }
 
 /** Report Invalid port number specified */ 
@@ -322,7 +321,7 @@ void AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing called ...\n");
 
-  std::cerr << "Invalid port number specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid port numbner specified ");
 }
 
 /** Set valid channel number */ 
@@ -333,8 +332,6 @@ void AuroraTrackerTool::SetChannelNumberProcessing( )
   m_ChannelNumber = m_ChannelNumberToBeSet;
   m_ChannelNumberSpecified = true;
 
-  //FIXME: Generate a unique identifier using the port and channel number
-  //
   std::stringstream identifierStream;
   identifierStream << m_PortNumber << "_" << m_ChannelNumber;
   this->SetTrackerToolIdentifier( identifierStream.str() );
@@ -350,8 +347,8 @@ void AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing called ...\n");
-  std::cerr << "Invalid channel number specified " << std::endl;
 
+  igstkLogMacro( CRITICAL, "Invalid Channel numbner specified ");
 }
 
 /** Set valid SROM filename */ 
@@ -370,7 +367,7 @@ void AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing called ...\n");
 
-  std::cerr << "Invalid  SROM file specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid SROM file name specified ");
 }
 
 /** Set valid ToolId */ 
@@ -389,7 +386,7 @@ void AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing called ...\n");
 
-  std::cerr << "Invalid  Tool id specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid ToolID specified ");
 }
 
 /** Check if the SROM filename is specified */

@@ -261,8 +261,6 @@ void PolarisTrackerTool::ReportWirelessTrackerToolSelectedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::ReportWirelessTrackerToolSelected called ...\n");
 
-  std::cout << "Wireless Tracker tool selected " << std::endl;
-
   m_WirelessTrackerToolSelected = true;
 }
 
@@ -272,7 +270,6 @@ void PolarisTrackerTool::ReportWiredTrackerToolSelectedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::ReportWiredTrackerToolSelected called ...\n");
 
-  std::cout << "Wired Tracker tool selected " << std::endl;
 }
 
 /** Set valid port number */ 
@@ -303,7 +300,7 @@ void PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing called ...\n");
 
-  std::cerr << "Invalid Port Number specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid Port Number specified ");
 }
 
 /** Set valid SROM filename */ 
@@ -337,7 +334,7 @@ void PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing called ...\n");
 
-  std::cerr << "Invalid SROM file specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid SROM filename specified ");
 }
 
 /** Set valid ToolId */ 
@@ -355,7 +352,6 @@ void PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing called ...\n");
-
-  std::cerr << "Invalid tool id specified " << std::endl;
+  igstkLogMacro( CRITICAL, "Invalid tool ID specified" );
 }
 }

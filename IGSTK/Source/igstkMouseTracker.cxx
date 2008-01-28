@@ -99,13 +99,13 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 
     typedef TransformType::VectorType PositionType;
     PositionType  position;
-    std::cout << "FLTK coordinate:" << Fl::event_x() << "," << Fl::event_y() << std::endl;
+    igstkLogMacro( DEBUG, "FLTK coordinate:" << Fl::event_x() << "," << Fl::event_y());
     position[0] = Fl::event_x() / m_ScaleFactor;
     position[1] = Fl::event_y() / m_ScaleFactor;
     position[2] = 0;
 
-    std::cout << "Position: " << "(" << position[0] << "," 
-                              << position[1] << ")" << std::endl;
+    igstkLogMacro( DEBUG, "Position: " << "(" << position[0] << "," 
+                              << position[1] << ")");
 
     typedef TransformType::ErrorType  ErrorType;
     ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty

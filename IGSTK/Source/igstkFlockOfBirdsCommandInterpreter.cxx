@@ -1381,7 +1381,6 @@ void FlockOfBirdsCommandInterpreter::SetErrorAndMessage(
 {
   m_Error = errorcode;
   m_ErrorText = text;
-  /* std::cout << m_ErrorText << std::endl; */
 }
 
 /** These methods are used to check whether an error occured as a result of

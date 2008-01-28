@@ -205,7 +205,7 @@ MicronTracker::LoadMarkerTemplate( std::string filename )
 
   if ( m_MarkerTemplateDirectory == "" )
     {
-    std::cerr << "Marker template directory name is empty string " << std::endl;
+    igstkLogMacro( CRITICAL, "Marker template directory name is empty string ");
     return ;
     }
  
@@ -216,8 +216,8 @@ MicronTracker::LoadMarkerTemplate( std::string filename )
 
   if ( status != 0 )
     {
-    std::cerr << "Error loading the templates: " << MicronTracker::GetErrorDescription( status ) 
-                                                << std::endl; 
+    igstkLogMacro( CRITICAL, "Error loading the templates: " 
+                   << MicronTracker::GetErrorDescription( status ));
     }
 }
 
@@ -232,13 +232,13 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
 
   if ( ! this->Initialize() )
       {
-      std::cerr << "Error initializing" << std::endl;
+      igstkLogMacro( CRITICAL, "Error initializing");
       return FAILURE;
       }
 
   if ( ! this->SetUpCameras() )
       {
-      std::cerr << "Error setting up cameras " << std::endl;
+      igstkLogMacro( CRITICAL, "Error setting up cameras ");
       return FAILURE;
       }
   return SUCCESS;
@@ -253,7 +253,7 @@ bool MicronTracker::Initialize( void )
   bool result = true;
   if ( m_InitializationFile == "" || !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
     {
-    std::cerr << "Initialization file (.ini ) is not properly set" << std::endl;
+    igstkLogMacro( CRITICAL, "Initialization file (.ini ) is not properly set");
     return FAILURE;
     }
   char * initializationFilename = 
@@ -330,7 +330,7 @@ bool MicronTracker::SetUpCameras( void )
   if ( m_CalibrationFilesDirectory == "" || 
        !itksys::SystemTools::FileExists( m_CalibrationFilesDirectory.c_str() ) ) 
     {
-    std::cerr << "Camera calibration directory is not properly set" << std::endl;
+    igstkLogMacro( CRITICAL, "Camera calibration directory is not properly set");
     return FAILURE;
     }
  
@@ -339,9 +339,9 @@ bool MicronTracker::SetUpCameras( void )
 
   if ( success )
     {
-    std::cerr << " No camera available or missing calibration file in:\t " 
-              << this->m_CalibrationFilesDirectory << endl;
-    std::cerr << "Error returned: " << MTLastErrorString() << std::endl; 
+    igstkLogMacro(CRITICAL, " No camera available or missing calibration file in:\t " 
+              << this->m_CalibrationFilesDirectory);
+    igstkLogMacro(CRITICAL, "MTC Error returned: " << MTLastErrorString());
     result = false;
     }
   else
@@ -399,7 +399,7 @@ MicronTracker
       }
     }
 
-  std::cerr << "Tracker tool template NOT FOUND" << std::endl;
+  igstkLogMacro( CRITICAL, "Tracker tool template NOT FOUND");
   return FAILURE;
 }
  
@@ -537,7 +537,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   // Grab frame
   if ( ! m_Cameras->grabFrame( m_SelectedCamera ) )
     {
-    std::cerr << "Error grabbing a frame" << std::endl;
+    igstkLogMacro( CRITICAL, "Error grabbing a frame");
     m_BufferLock->Unlock();
     return FAILURE;
     }
@@ -547,7 +547,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
   if ( completionCode != 0 ) 
     {
-    std::cerr << "Error in processing frame: " << MicronTracker::GetErrorDescription( completionCode ) << std::endl;
+    igstkLogMacro( CRITICAL, "Error processing a frame: " 
+     << MicronTracker::GetErrorDescription( completionCode ));
     m_BufferLock->Unlock();
     return FAILURE;
     }

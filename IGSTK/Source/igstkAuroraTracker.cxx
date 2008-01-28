@@ -244,7 +244,8 @@ AuroraTracker::ResultType AuroraTracker
       
       if (this->CheckError(m_CommandInterpreter) == FAILURE)
         {
-        std::cerr << "Error searching for uninitialized ports"  << std::endl;
+        igstkLogMacro( WARNING, 
+           "igstk::PolarisTracker::Error searching for uninitialized ports ");
         return FAILURE;
         }
 
@@ -265,7 +266,7 @@ AuroraTracker::ResultType AuroraTracker
 
      if( !foundNewTool )
       {
-      std::cerr << "Couldn't find uninitialized port" << std::endl;
+      igstkLogMacro(WARNING, "Uninitialized port not found") ;
       return FAILURE;
       }
     }  
@@ -278,11 +279,11 @@ AuroraTracker::ResultType AuroraTracker
 
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
     {
-    std::cout << "Port handle initialized successfully " << std::endl;
+    igstkLogMacro(INFO, "Port handle initialized successfully ");
     }
   else
     {
-    std::cerr << "Failure initializing the port" << std::endl;
+    igstkLogMacro(CRITICAL, "Failure initializing the port");
     }
 
   m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
@@ -290,7 +291,7 @@ AuroraTracker::ResultType AuroraTracker
   // tool identity and type information
   char identity[512];
   m_CommandInterpreter->GetPHINFToolInfo(identity);
-  std::cout << "Tool Information: " << identity << std::endl; 
+  igstkLogMacro(INFO, "Tool Information: " << identity); 
 
   // use tool type information to figure out mode for enabling
   int mode = CommandInterpreterType::NDI_DYNAMIC;
@@ -318,7 +319,7 @@ AuroraTracker::ResultType AuroraTracker
 
   if (this->CheckError(m_CommandInterpreter) == FAILURE)
     {
-    std::cerr  << "Error while trying to get tool information" << std::endl;
+    igstkLogMacro(CRITICAL, "Failure accessing tool information" );
     return FAILURE;
     }
 
@@ -333,47 +334,42 @@ AuroraTracker::ResultType AuroraTracker
     {
     unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
 
-    //FIXME: checking against the maximum number of ports might not be necessary
     const unsigned int NumberOfPorts = 12;
     if (ndiport > 0 && ndiport <= NumberOfPorts)
       {
       port = ndiport - 1;
-      std::cout << "Port number: " << port << std::endl;
       // Verify port number specified 
       if ( port != auroraTrackerTool->GetPortNumber() )
         {
-        std::cerr << "The tracker tool is probably inserted into the wrong port: " 
-                  << "The port number specified for the tool doesn't match with " 
-                     "what is detected from the hardware" << std::endl;
+        igstkLogMacro(CRITICAL, "The tracker tool is probably inserted into the wrong port: " 
+        << "The port number specified for the tool doesn't match with " 
+        "what is detected from the hardware");
         return FAILURE;
         }
       }
     }
-  else // wireless tool
-    {
-    std::cout<< "Tool is wireless" << std::endl;
-    }
 
   const int status = m_CommandInterpreter->GetPHINFPortStatus();
 
-  std::cout<< "Port status information: " << status << std::endl;
+  // port status
+  igstkLogMacro(INFO, "Port status information: " << status ); 
 
   // tool status
-  std::cout << "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << std::endl;
+  igstkLogMacro(INFO, "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus());
 
   // tool type
-  std::cout<< "Tool type: " << m_CommandInterpreter->GetPHINFToolType() << std::endl;   
+  igstkLogMacro(INFO, "Tool type: " << m_CommandInterpreter->GetPHINFToolType());   
 
   // tool part number
   char partNumber[21];
   m_CommandInterpreter->GetPHINFPartNumber( partNumber ) ;
-  std::cout<< "Part number: " << partNumber << std::endl; 
+  igstkLogMacro(INFO, "Part number: " << partNumber );
 
   // tool accessories
-  std::cout<< "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories() << std::endl;
+  igstkLogMacro(INFO, "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories());
 
   // tool marker type
-  std::cout << "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << std::endl;
+  igstkLogMacro(INFO, "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
 
   std::string trackerToolIdentifier = auroraTrackerTool->GetTrackerToolIdentifier();
 

@@ -691,8 +691,8 @@ void View::AddAnnotation2DProcessing( )
   igstkLogMacro( DEBUG, "igstkView::AddAnnotation2DProcessing called ...\n");
   
   const int * size = m_RenderWindowInteractor->GetSize();
-  std::cout << "RenderWindowInteractor size: " << size[0] <<",";
-  std::cout << size[1] << std::endl;
+  igstkLogMacro( DEBUG, "RenderWindow size: " << size[0] << "," << size[1]);
+
   m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
   m_Annotation2DToBeAdded->RequestAddAnnotations( );
   Annotation2D::ActorsListType actors = m_Annotation2DToBeAdded->GetActors();

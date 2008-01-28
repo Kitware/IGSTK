@@ -363,8 +363,8 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
       }
     else
       {
-      std::cerr << "Request to use a tracker tool as a reference has failed."
-                << "The tracker tool is not attached to the tracker " << std::endl;
+      igstkLogMacro( CRITICAL, "Request to use a tracker tool as a reference has failed."
+                << "The tracker tool is not attached to the tracker ");
       }
    }
 }
