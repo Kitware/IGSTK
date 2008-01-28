@@ -285,9 +285,9 @@ public:
     }
 
 private:
-  template <class ParentType>
+  template <class ParentPointerType>
   void SetDisplayTransformsAndParents( igstk::Transform transform,
-                                       ParentType* parent)
+                                       ParentPointerType parent)
     {
     this->Display3D->RequestSetTransformAndParent( transform, parent );
     this->DisplayAxial->RequestSetTransformAndParent( transform, parent );
