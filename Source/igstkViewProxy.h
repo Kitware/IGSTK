@@ -54,6 +54,7 @@ public:
     this->m_Widget = widget;
     }
 
+  /** Connect the widget with the view */
   void Connect ( View * view )
     {
     vtkRenderer * renderer =
@@ -74,12 +75,14 @@ public:
     ViewProxyBase::InitializeInteractor( view );
     }  
 
+  /** Set the RenderWindow size */
   void SetRenderWindowSize( View * view, int width, int height )
     {
     ViewProxyBase::SetRenderWindowSize( view, width, height );
 
     }
 
+  /** Set the PickedPoint coordinates */
   void SetPickedPointCoordinates( View * view, double x, double y ) 
     {
     ViewProxyBase::SetPickedPointCoordinates( view, x, y );
