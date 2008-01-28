@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkQMouseTrackerTool.h"
+#include "igstkQMouseTracker.h"
 
 namespace igstk
 {
@@ -57,7 +58,8 @@ QMouseTrackerTool::CheckIfTrackerToolIsConfigured( )
 
 /** The "RequestAttachToTracker" method attaches 
  * the tracker tool to a tracker. */
-virtual void RequestAttachToTracker( QMouseTracker *  tracker )
+void 
+QMouseTrackerTool::RequestAttachToTracker( QMouseTracker *  tracker )
 {
   // This delegation is done only to enforce type matching between
   // TrackerTool and Tracker. It prevents the user from accidentally 
