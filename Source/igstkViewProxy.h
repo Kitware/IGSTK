@@ -25,15 +25,16 @@ namespace igstk {
 
 /** \class ViewProxy
  *
- *  A proxy class designed to access private member data 
- *  of the view class and pass the values to widget classes. 
+ *  \Brief Link widget classes with the view class.
  *
- *  This class is templated over widget type.
+ *  This class is a a proxy class designed to access private member
+ *  data of the view class and pass the values to widget classes. This 
+ *  class is templated over widget type.
  *
- *
+ * \ingroup Object
  */
 
-template < class T>
+template < class WidgetType>
 class ViewProxy : public ViewProxyBase 
 {
 public:
@@ -48,9 +49,9 @@ public:
     this->m_Widget = NULL;
     }
 
-  ViewProxy( T * t)
+  ViewProxy( WidgetType * widget )
     {
-    this->m_Widget = t;
+    this->m_Widget = widget;
     }
 
   void Connect ( View * view )
@@ -88,7 +89,7 @@ public:
 protected:
 
 private:
-  T  * m_Widget;
+  WidgetType  * m_Widget;
 
 };
 

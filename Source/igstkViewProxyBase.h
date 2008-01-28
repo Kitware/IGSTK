@@ -27,8 +27,13 @@ namespace igstk {
 
 /** \class ViewProxyBase
  *
- *  A proxy class designed to access private member data 
- *  of the view class.
+ *  \Brief A base class for widget type templated proxy classes. 
+ *
+ *  A proxy class designed to access private member data of 
+ *  the view class. This class is a friend class of the View
+ *  class.
+ *
+ * \ingroup View
  *
  *
  */
