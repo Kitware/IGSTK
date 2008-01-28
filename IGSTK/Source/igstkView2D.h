@@ -73,6 +73,9 @@ private:
   OrientationType      m_OrientationToBeSet;
   OrientationType      m_Orientation;
 
+  View2D(const View2D& ); // purposely not implemented
+  View2D& operator=(const View2D& ); // purposely not implemented
+
 };
 
 } // end namespace igstk
