@@ -38,8 +38,8 @@ namespace igstk
  */
 #define igstkCoordinateSystemClassInterfaceMacro() \
 public: \
-  template <class TTarget> \
-  void RequestComputeTransformTo(const TTarget * target) \
+  template <class TTargetPointer> \
+  void RequestComputeTransformTo(const TTargetPointer & target) \
     { \
     m_CoordinateReferenceSystemDelegator->RequestComputeTransformTo(target);\
     } \

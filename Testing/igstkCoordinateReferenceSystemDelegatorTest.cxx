@@ -88,11 +88,11 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   for (int j = 0; j < numIters; j++)
     {
     probe1.Start();
-    leaf1->RequestComputeTransformTo(leaf2.GetPointer());
+    leaf1->RequestComputeTransformTo( leaf2 );
     probe1.Stop();
 
     probe2.Start();
-    leaf2->RequestComputeTransformTo(leaf1.GetPointer());
+    leaf2->RequestComputeTransformTo( leaf1 );
     probe2.Stop();
     }
 

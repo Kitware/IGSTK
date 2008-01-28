@@ -233,8 +233,7 @@ void ObjectRepresentation::RequestGetTransformProcessing()
   igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ....");
   // The response should be sent back in an event
 
-  m_SpatialObject->RequestComputeTransformTo( 
-                                          this->m_TargetCoordinateSystem.GetPointer() );
+  m_SpatialObject->RequestComputeTransformTo( this->m_TargetCoordinateSystem );
 
 }
 

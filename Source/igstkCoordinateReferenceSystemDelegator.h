@@ -90,9 +90,9 @@ public:
    *     CoordinateReferenceSystemTransformToDisconnectedEvent
    */
   template <class TTarget>
-  void RequestComputeTransformTo(const TTarget * target)
+  void RequestComputeTransformTo(const TTarget & target)
     {
-    if (NULL == target)
+    if( !(target) )
       {
       igstkPushInputMacro( NullTarget );
       m_StateMachine.ProcessInputs();

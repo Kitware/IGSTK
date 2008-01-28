@@ -298,7 +298,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
   igstk::Transform getTE1ToE2;
 
   std::cout << "Testing ellipsoid1->RequestComputeTransformTo(ellipsoid2) : ";
-  ellipsoid1->RequestComputeTransformTo(ellipsoid2.GetPointer());
+  ellipsoid1->RequestComputeTransformTo( ellipsoid2 );
   
   if( ellipsoid1Observer->GotPayload() )
     {
@@ -323,7 +323,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 
   std::cout << "Testing ellipsoid2->RequestComputeTransformTo(ellipsoid1) : ";
   igstk::Transform getTE2ToE1;
-  ellipsoid2->RequestComputeTransformTo(ellipsoid1.GetPointer());
+  ellipsoid2->RequestComputeTransformTo( ellipsoid1 );
 
   if( ellipsoid2Observer->GotPayload() )
     {
@@ -383,7 +383,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     }
 
   std::cout << "Testing view->RequestComputeTransformTo( ellipsoid2 ) : ";
-  view->RequestComputeTransformTo( ellipsoid2.GetPointer() );
+  view->RequestComputeTransformTo( ellipsoid2 );
   if (viewObserver->GotPayload() == true )
     {
     igstk::Transform viewToEllipsoid2Obs = viewObserver->GetTransform();
@@ -406,7 +406,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     testStatus = EXIT_FAILURE;
     std::cout << "FAILED! [No event]" << std::endl;
     }
-  igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2.GetPointer() );
+  igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2 );
 
   ObserverType::Pointer trackerObserver = ObserverType::New();
   typedef igstk::SpatialObjectCoordinateSystemTest::DummyTracker  TrackerType;
@@ -415,7 +415,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 
   igstk::Transform trackerToParent = identity;
   tracker->RequestSetTransformAndParent( trackerToParent, view );
-  tracker->RequestComputeTransformTo( ellipsoid1.GetPointer() );
+  tracker->RequestComputeTransformTo( ellipsoid1 );
   std::cout << "Testing tracker->RequestComputeTransformTo( ellipsoid1 ) : ";
   if (trackerObserver->GotPayload() == true )
     {

@@ -356,7 +356,7 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
         if ( (inputItr->first) != m_ReferenceTool->GetTrackerToolIdentifier())
           {
           (inputItr->second)->RequestSetTransformAndParent( 
-                                      identityTransform, m_ReferenceTool.GetPointer() );
+                                      identityTransform, m_ReferenceTool );
           }
         ++inputItr;
         }
@@ -840,7 +840,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         if ( (inputItr->first) != m_ReferenceTool->GetTrackerToolIdentifier())
           {
           (inputItr->second)->RequestSetTransformAndParent( 
-                toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool.GetPointer() );
+                toolCalibratedTransformWRTReferenceTrackerTool, m_ReferenceTool );
           }
         }
       else
