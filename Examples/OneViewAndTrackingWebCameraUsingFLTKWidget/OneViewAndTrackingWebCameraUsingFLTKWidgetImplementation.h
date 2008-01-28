@@ -72,9 +72,6 @@ public:
     m_Logger->SetPriorityLevel( LoggerType::CRITICAL );
     m_Tracker->SetLogger( m_Logger );
 
-    // set validity time of the tracker transforms
-    m_Tracker->SetValidityTime( 1e20 );
-
     m_Tracker->RequestOpen();
     
     m_Tracking = false;
