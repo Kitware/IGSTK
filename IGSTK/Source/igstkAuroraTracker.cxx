@@ -522,7 +522,7 @@ AuroraTracker::ResultType AuroraTracker::InternalUpdateStatus()
       continue;
       }
 
-    PortIdentifierType portId = inputItr->first;
+    const PortIdentifierType portId = inputItr->first;
 
     // report to the tracker tool that the tracker is Visible 
     this->ReportTrackingToolVisible(trackerToolContainer[portId]);

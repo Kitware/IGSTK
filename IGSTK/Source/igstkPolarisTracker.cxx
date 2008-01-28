@@ -48,7 +48,7 @@ PolarisTracker::~PolarisTracker(void)
 
 /** Helper function for reporting interpreter errors. */
 PolarisTracker::ResultType
-PolarisTracker::CheckError(CommandInterpreterType *interpreter)
+PolarisTracker::CheckError(CommandInterpreterType *interpreter) const
 {
   const int errnum = interpreter->GetError();
 
@@ -74,7 +74,8 @@ PolarisTracker::CheckError(CommandInterpreterType *interpreter)
   * for use with the Polaris */
 void PolarisTracker::SetCommunication( CommunicationType *communication )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker:: Entered SetCommunication ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker:: Entered SetCommunication ...\n");
   m_Communication = communication;
   m_BaudRate = communication->GetBaudRate();
   m_CommandInterpreter->SetCommunication( communication );
@@ -86,7 +87,8 @@ void PolarisTracker::SetCommunication( CommunicationType *communication )
     communication->SetReadTerminationCharacter( '\r' );
     }
 
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker:: Exiting SetCommunication ...\n"); 
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker:: Exiting SetCommunication ...\n"); 
 }
 
 /** Open communication with the tracking device. */
@@ -156,28 +158,31 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
   return result;
 }
 
-/** Verify tracker tool information*/
+/** Verify tracker tool information. */
 PolarisTracker::ResultType PolarisTracker
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  //Verify that 
-  //
-  //1) the tracker tool information provided by the user matches with
-  //the information available in the SROM file.
-  //
-  //2) the tool is actually attached to the correct physical port
-  //for a wired tool.
-  //
-  //To get the tool information
-  // - If it is wireless
-  //    == SROM file has to be loaded and port handle created.
-  // - If it is wired
-  //    == If SROM file is specified
-  //        == Load the SROM file and create a port handle
-  //    == Otherwise, create a port handle     
-  //
-  //
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker::VerifyTrackerToolInformation called ...\n");
+  //  Verify that 
+  //  
+  //  1) the tracker tool information provided by the user matches with
+  //  the information available in the SROM file.
+  //  
+  //  2) the tool is actually attached to the correct physical port
+  //  for a wired tool.
+  //  
+  //  To get the tool information
+  //   - If it is wireless
+  //      == SROM file has to be loaded and port handle created.
+  //   - If it is wired
+  //      == If SROM file is specified
+  //          == Load the SROM file and create a port handle
+  //      == Otherwise, create a port handle
+  //  
+
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::VerifyTrackerToolInformation called ...\n");
+
+  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
 
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
@@ -266,16 +271,16 @@ PolarisTracker::ResultType PolarisTracker
         continue;
         }
 
-        // The toolnumber will be assigned to 0 by default
-        unsigned int toolNumber = 0; 
-        ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
-        foundNewTool = true;
-        break;
+      // The toolnumber will be assigned to 0 by default
+      unsigned int toolNumber = 0; 
+      ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
+      foundNewTool = true;
+      break;
       }
 
-     if( !foundNewTool )
+    if( !foundNewTool )
       {
-      igstkLogMacro(WARNING, "Uninitialized port not found") ;
+      igstkLogMacro(WARNING, "Uninitialized port not found");
       return FAILURE;
       }
     }  
@@ -359,9 +364,10 @@ PolarisTracker::ResultType PolarisTracker
       // Verify port number specified 
       if ( port != polarisTrackerTool->GetPortNumber() )
         {
-        igstkLogMacro(CRITICAL, "The tracker tool is probably inserted into the wrong port: " 
-                  << "The port number specified for the tool doesn't match with " 
-                     "what is detected from the hardware");
+        igstkLogMacro(CRITICAL, 
+          "The tracker tool is probably inserted into the wrong port: "
+          "The port number specified for the tool doesn't match with "
+          "what is detected from the hardware");
         return FAILURE;
         }
       }
@@ -372,23 +378,28 @@ PolarisTracker::ResultType PolarisTracker
   igstkLogMacro(INFO, "Port status information: " << status ); 
 
   // tool status
-  igstkLogMacro(INFO, "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus());
+  igstkLogMacro(INFO, 
+    "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus());
 
   // tool type
-  igstkLogMacro(INFO, "Tool type: " << m_CommandInterpreter->GetPHINFToolType());   
+  igstkLogMacro(INFO, 
+    "Tool type: " << m_CommandInterpreter->GetPHINFToolType());
 
   // tool part number
   char partNumber[21];
-  m_CommandInterpreter->GetPHINFPartNumber( partNumber ) ;
+  m_CommandInterpreter->GetPHINFPartNumber( partNumber );
   igstkLogMacro(INFO, "Part number: " << partNumber );
 
   // tool accessories
-  igstkLogMacro(INFO, "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories());
+  igstkLogMacro(INFO, 
+    "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories());
 
   // tool marker type
-  igstkLogMacro(INFO, "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
+  igstkLogMacro(INFO, 
+    "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
 
-  std::string trackerToolIdentifier = polarisTrackerTool->GetTrackerToolIdentifier();
+  std::string trackerToolIdentifier = 
+    polarisTrackerTool->GetTrackerToolIdentifier();
 
   // add it to the port handle container 
   this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
@@ -406,9 +417,16 @@ PolarisTracker::ResultType
 PolarisTracker::
 RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::RemoveTrackerToolFromInternalDataContainers "
+    "called ...\n");
+
   // if SROM file has been loaded for this tracker tool, clear it first.
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer = 
+    this->GetTrackerToolContainer();
+
+  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
+
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
 
@@ -462,7 +480,8 @@ PolarisTracker::ResultType PolarisTracker::InternalClose( void )
 /** Put the tracking device into tracking mode. */
 PolarisTracker::ResultType PolarisTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::InternalStartTracking called ...\n");  
 
   m_CommandInterpreter->TSTART();
 
@@ -472,7 +491,8 @@ PolarisTracker::ResultType PolarisTracker::InternalStartTracking( void )
 /** Take the tracking device out of tracking mode. */
 PolarisTracker::ResultType PolarisTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalStopTracking called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::InternalStopTracking called ...\n");
 
   m_CommandInterpreter->TSTOP();
 
@@ -503,7 +523,8 @@ PolarisTracker::ResultType PolarisTracker::InternalReset( void )
 /** Update the status and the transforms for all TrackerTools. */
 PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::InternalUpdateStatus called ...\n");
 
   // these flags are set for tools that can be used for tracking
   const unsigned long mflags = (CommandInterpreterType::NDI_TOOL_IN_PORT |
@@ -512,12 +533,13 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
 
   m_BufferLock->Lock();
 
-  typedef std::map< std::string, int >::const_iterator  ConstIteratorType;
+  typedef PortHandleContainerType::const_iterator  ConstIteratorType;
 
   ConstIteratorType inputItr = m_PortHandleContainer.begin();
   ConstIteratorType inputEnd = m_PortHandleContainer.end();
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer = 
+    this->GetTrackerToolContainer();
 
   while( inputItr != inputEnd )
     {
@@ -540,13 +562,17 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
                      "tool " << inputItr->first << " is not in view\n");
 
       // report to the tracker tool that the tracker is not available 
-      this->ReportTrackingToolNotAvailable( trackerToolContainer[inputItr->first] );
+      this->ReportTrackingToolNotAvailable( 
+        trackerToolContainer[inputItr->first] );
+
       ++inputItr;
       continue;
       }
 
+    const PortIdentifierType portId = inputItr->first;
+
     // report to the tracker tool that the tracker is Visible 
-    this->ReportTrackingToolVisible( trackerToolContainer[inputItr->first] );
+    this->ReportTrackingToolVisible( trackerToolContainer[portId] );
  
     // create the transform
     TransformType transform;
@@ -554,17 +580,17 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     typedef TransformType::VectorType TranslationType;
     TranslationType translation;
 
-    translation[0] = (m_ToolTransformBuffer[inputItr->first])[4];
-    translation[1] = (m_ToolTransformBuffer[inputItr->first])[5];
-    translation[2] = (m_ToolTransformBuffer[inputItr->first])[6];
+    translation[0] = (m_ToolTransformBuffer[portId])[4];
+    translation[1] = (m_ToolTransformBuffer[portId])[5];
+    translation[2] = (m_ToolTransformBuffer[portId])[6];
 
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
     const double normsquared = 
-      m_ToolTransformBuffer[inputItr->first][0]*m_ToolTransformBuffer[inputItr->first][0] +
-      m_ToolTransformBuffer[inputItr->first][1]*m_ToolTransformBuffer[inputItr->first][1] +
-      m_ToolTransformBuffer[inputItr->first][2]*m_ToolTransformBuffer[inputItr->first][2] +
-      m_ToolTransformBuffer[inputItr->first][3]*m_ToolTransformBuffer[inputItr->first][3];
+      m_ToolTransformBuffer[portId][0]*m_ToolTransformBuffer[portId][0] +
+      m_ToolTransformBuffer[portId][1]*m_ToolTransformBuffer[portId][1] +
+      m_ToolTransformBuffer[portId][2]*m_ToolTransformBuffer[portId][2] +
+      m_ToolTransformBuffer[portId][3]*m_ToolTransformBuffer[portId][3];
 
     // don't allow null quaternions
     if (normsquared < 1e-6)
@@ -576,23 +602,23 @@ PolarisTracker::ResultType PolarisTracker::InternalUpdateStatus()
     else
       {
       // ITK quaternions are in xyzw order, not wxyz order
-      rotation.Set(m_ToolTransformBuffer[inputItr->first][1],
-                   m_ToolTransformBuffer[inputItr->first][2],
-                   m_ToolTransformBuffer[inputItr->first][3],
-                   m_ToolTransformBuffer[inputItr->first][0]);
+      rotation.Set(m_ToolTransformBuffer[portId][1],
+                   m_ToolTransformBuffer[portId][2],
+                   m_ToolTransformBuffer[portId][3],
+                   m_ToolTransformBuffer[portId][0]);
       }
 
     // retool NDI error value
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = m_ToolTransformBuffer[inputItr->first][7];
+    ErrorType errorValue = m_ToolTransformBuffer[portId][7];
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
   
     // set the raw transform
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform( trackerToolContainer[portId], transform );
+    this->SetTrackerToolTransformUpdate( trackerToolContainer[portId], true );
 
     ++inputItr;
     }
@@ -635,7 +661,7 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
   if (result == SUCCESS)
     {
 
-    typedef std::map< std::string, int >::iterator  IteratorType;
+    typedef PortHandleContainerType::iterator  IteratorType;
 
     IteratorType inputItr = m_PortHandleContainer.begin();
     IteratorType inputEnd = m_PortHandleContainer.end();
@@ -653,7 +679,10 @@ PolarisTracker::ResultType PolarisTracker::InternalThreadedUpdateStatus( void )
         }
 
       double transformRecorded[8];
-      const int tstatus = m_CommandInterpreter->GetTXTransform(ph, transformRecorded);
+
+      const int tstatus = 
+        m_CommandInterpreter->GetTXTransform(ph, transformRecorded);
+
       const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
       const int status = m_CommandInterpreter->GetTXPortStatus(ph);
 

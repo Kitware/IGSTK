@@ -50,11 +50,6 @@ public:
 
 public:
 
-  /** typedefs for the tool */
-  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
-  typedef PolarisTrackerToolType::Pointer        PolarisTrackerToolPointer;
-  typedef PolarisTrackerToolType::ConstPointer   PolarisTrackerToolConstPointer;
-
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
 
@@ -115,7 +110,7 @@ private:
   ::itk::MutexLock::Pointer  m_BufferLock;
 
   /** Helper function for reporting interpreter errors. */
-  ResultType CheckError( CommandInterpreterType * );
+  ResultType CheckError( CommandInterpreterType * ) const;
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
@@ -128,16 +123,21 @@ private:
 
   /** Port handle container indexed by the tracker tool unique 
    * identifier */
-  std::map< std::string, int >     m_PortHandleContainer;
+  typedef std::string                           PortIdentifierType;
+  typedef std::map< PortIdentifierType, int >   PortHandleContainerType;
+  PortHandleContainerType          m_PortHandleContainer;
 
   /** Container holding absent status of tools */
-  std::map< std::string, int >     m_ToolAbsentStatusContainer; 
+  typedef std::map< std::string, int >   ToolAbsentStatusContainerType;
+  ToolAbsentStatusContainerType    m_ToolAbsentStatusContainer; 
 
   /** Container holding status of the tools */
-  std::map< std::string, int >  m_ToolStatusContainer; 
+  typedef std::map< std::string, int >   ToolStatusContainerType;
+  ToolStatusContainerType          m_ToolStatusContainer; 
 
   /** A buffer to hold tool transforms */
-  typedef std::map< std::string , std::vector < double > > 
+  typedef std::vector < double >   InternalTransformType;
+  typedef std::map< std::string , InternalTransformType > 
                                 TrackerToolTransformContainerType; 
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;
