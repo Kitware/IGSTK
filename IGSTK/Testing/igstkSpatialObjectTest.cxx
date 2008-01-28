@@ -36,11 +36,17 @@ namespace igstk
 namespace SpatialObjectTest
 {
 
+class MyTracker;
+
 class DummyTrackerTool : public igstk::TrackerTool
 {
 public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( MyTracker * );
 
 protected:
   DummyTrackerTool():m_StateMachine(this)
@@ -154,6 +160,18 @@ private:
     TimePeriodType                      m_ValidityTime;
     PositionType                        m_Position;
 };
+
+
+/** The "RequestAttachToTracker" method attaches 
+ * the tracker tool to a tracker. */
+void DummyTrackerTool::RequestAttachToTracker( MyTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->Superclass::RequestAttachToTracker( tracker );
+}
+
 
 } // end SpatialObjectTest namespace
 

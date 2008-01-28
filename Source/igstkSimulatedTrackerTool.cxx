@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkSimulatedTrackerTool.h"
+#include "igstkSimulatedTracker.h"
 
 namespace igstk
 {
@@ -53,6 +54,18 @@ SimulatedTrackerTool::CheckIfTrackerToolIsConfigured( )
 {
   igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
+}
+
+
+/** The "RequestAttachToTracker" method attaches 
+ * the tracker tool to a tracker. */
+void 
+SimulatedTrackerTool::RequestAttachToTracker( SimulatedTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
 }
 
 

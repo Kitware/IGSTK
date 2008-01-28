@@ -24,6 +24,9 @@ class Markers;
 
 namespace igstk
 {
+
+class MicronTracker;
+
 /** \class MicronTrackerTool
   * \brief A MicronTracker-specific TrackerTool class.
   *
@@ -48,7 +51,11 @@ public:
 
  /** Set tracker tool marker name
  **/
- void RequestSetMarkerName( std::string markerName); 
+ void RequestSetMarkerName( const std::string & markerName); 
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( MicronTracker * );
 
 protected:
 
@@ -67,9 +74,9 @@ private:
   MicronTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  std::string m_MarkerName;
+  std::string     m_MarkerName;
 
-  bool m_TrackerToolConfigured;
+  bool            m_TrackerToolConfigured;
 
 };  
 

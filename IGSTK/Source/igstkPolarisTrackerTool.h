@@ -22,6 +22,9 @@
 
 namespace igstk
 {
+
+class PolarisTracker;
+
 /** \class PolarisTrackerTool
   * \brief A Polaris-specific TrackerTool class.
   *
@@ -56,6 +59,10 @@ public:
 
   /** Request set the ToolId */
   void RequestSetToolId( std::string toolId );
+
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+   * tracker. */
+  virtual void RequestAttachToTracker( PolarisTracker * );
 
   /** Check if the tracker tool is wireless type */
   bool IsToolWirelessType();

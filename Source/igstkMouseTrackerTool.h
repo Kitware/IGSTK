@@ -22,6 +22,9 @@
 
 namespace igstk
 {
+
+class MouseTracker;
+
 /** \class MouseTrackerTool
   * \brief A MouseTracker-specific TrackerTool class.
   *
@@ -43,6 +46,11 @@ public:
 
   /** Set tracker tool mouse name */
   virtual void RequestSetMouseName( const MouseNameType & MouseName ); 
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( MouseTracker * );
+
 
 protected:
 

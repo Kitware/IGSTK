@@ -22,6 +22,9 @@
 
 namespace igstk
 {
+
+class WebCameraTracker;
+
 /** \class WebCameraTrackerTool
   * \brief A Tracker-specific TrackerTool class.
   *
@@ -44,6 +47,10 @@ public:
   /** Set tracker tool mouse name */
   virtual void RequestSetName( const NameType & Name ); 
 
+  /** The "RequestAttachToTracker" method attaches the 
+   * tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( WebCameraTracker * );
+
 protected:
 
   WebCameraTrackerTool();
@@ -61,7 +68,7 @@ private:
   WebCameraTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
-  NameType   m_Name;
+  NameType        m_Name;
 
   bool            m_TrackerToolConfigured;
 

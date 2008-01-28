@@ -95,10 +95,6 @@ public:
   /** The "RequestConfigure" method attempts to configure the tracker tool */
   virtual void RequestConfigure( void );
 
-  /** The "RequestAttachToTracker" method attaches the tracker tool to a
-   * tracker. */
-  virtual void RequestAttachToTracker( TrackerType * );
-
   /** The "RequestDetach" method detaches the tracker tool from the 
    * tracker. */
   virtual void RequestDetach( );
@@ -117,6 +113,10 @@ protected:
 
   /** Set a unique identifier to the tracker tool */
   void SetTrackerToolIdentifier( std::string identifier );
+
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+   * tracker. */
+  virtual void RequestAttachToTracker( TrackerType * );
 
 private:
 

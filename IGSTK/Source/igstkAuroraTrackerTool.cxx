@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkAuroraTrackerTool.h"
+#include "igstkAuroraTracker.h"
 #include <sstream>
 #include <itksys/SystemTools.hxx>
 
@@ -411,6 +412,16 @@ unsigned int AuroraTrackerTool::GetPortNumber( )
 bool AuroraTrackerTool::IsTrackerTool5DOF( )
 {
   return m_5DOFTrackerToolSelected;
+}
+
+/** The "RequestAttachToTracker" method attaches 
+ * the tracker tool to a tracker. */
+void AuroraTrackerTool::RequestAttachToTracker( AuroraTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
 }
 
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 

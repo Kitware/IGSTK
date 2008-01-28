@@ -34,11 +34,18 @@
 
 namespace igstk
 {
+
+class TestingTracker;
+
 class TestingTrackerTool : public igstk::TrackerTool
 {
 public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( TestingTrackerTool, TrackerTool )
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( TestingTracker *  tracker );
 
 protected:
   TestingTrackerTool():m_StateMachine(this)
@@ -51,6 +58,7 @@ protected:
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
   virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+
 };
  
 class TestingTracker : public igstk::Tracker
@@ -251,6 +259,17 @@ private:
   igstk::Transform::VectorType m_Translation;
  
 };
+
+/** The "RequestAttachToTracker" method attaches 
+* the tracker tool to a tracker. */
+void TestingTrackerTool::RequestAttachToTracker( TestingTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
+}
+
 }   // namespace igstk
 
 int igstkBasicTrackerTest( int, char * [] )

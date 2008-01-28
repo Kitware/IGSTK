@@ -22,13 +22,15 @@
 
 namespace igstk
 {
+
+class AuroraTracker;
+
 /** \class AuroraTrackerTool
   * \brief An Aurora-specific TrackerTool class.
   *
-  * This class is a for providing Aurora-specific functionality
-  * for TrackerTools, and also to allow compile-time type enforcement
-  * for other classes and functions that specifically require
-  * an Aurora tool.
+  * This class provides Aurora-specific functionality for TrackerTools, and
+  * also allows compile-time type enforcement for other classes and functions
+  * that specifically require an Aurora tool.
   *
   * \ingroup Tracker
   *
@@ -59,6 +61,10 @@ public:
 
   /** Request select 6DOF tracker tool */
   void RequestSelect6DOFTrackerTool( );
+
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+   * tracker. */
+  virtual void RequestAttachToTracker( AuroraTracker * );
 
   /** Check if SROM file name specified*/
   bool IsSROMFileNameSpecified();

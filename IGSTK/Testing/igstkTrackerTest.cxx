@@ -33,11 +33,17 @@ namespace igstk
 namespace TrackerTest
 {
 
+class DummyTracker;
+
 class DummyTrackerTool : public igstk::TrackerTool
 {
 public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( DummyTracker * );
 
 protected:
   DummyTrackerTool():m_StateMachine(this)
@@ -177,6 +183,18 @@ void PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 };
+
+
+/** The "RequestAttachToTracker" method attaches 
+ * the tracker tool to a tracker. */
+void DummyTrackerTool::RequestAttachToTracker( DummyTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
+}
+
 
 }
 

@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkMouseTrackerTool.h"
+#include "igstkMouseTracker.h"
 
 namespace igstk
 {
@@ -55,6 +56,16 @@ MouseTrackerTool::CheckIfTrackerToolIsConfigured( )
   return m_TrackerToolConfigured;
 }
 
+/** The "RequestAttachToTracker" method attaches 
+ * the tracker tool to a tracker. */
+void 
+MouseTrackerTool::RequestAttachToTracker( MouseTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
+}
 
 /** Print Self function */
 void MouseTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
