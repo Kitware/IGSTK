@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkWebCameraTrackerTool.h"
+#include "igstkWebCameraTracker.h"
 
 namespace igstk
 {
@@ -57,7 +58,7 @@ WebCameraTrackerTool::CheckIfTrackerToolIsConfigured( )
 
 /** The "RequestAttachToTracker" method attaches 
  * the tracker tool to a tracker. */
-virtual void RequestAttachToTracker( WebCameraTracker *  tracker )
+void WebCameraTrackerTool::RequestAttachToTracker( WebCameraTracker *  tracker )
 {
   // This delegation is done only to enforce type matching between
   // TrackerTool and Tracker. It prevents the user from accidentally 
