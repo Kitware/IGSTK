@@ -34,7 +34,7 @@ class AuroraTracker;
   *
   * \ingroup Tracker
   *
-*/
+  */
 
 class AuroraTrackerTool : public TrackerTool
 {
@@ -51,37 +51,38 @@ public:
   void RequestSetChannelNumber( unsigned int channelNumber );
 
   /** Request set the SROM file name */
-  void RequestSetSROMFileName( std::string filename );
+  void RequestSetSROMFileName( const std::string & filename );
 
   /** Request set the ToolId */
-  void RequestSetToolId( std::string toolId );
+  void RequestSetToolId( const std::string & toolId );
 
-  /** Request select 5DOF tracker tool */
+  /** Request select 5DOF (five degrees of freedom) tracker tool */
   void RequestSelect5DOFTrackerTool( );
 
-  /** Request select 6DOF tracker tool */
+  /** Request select 6DOF (six degrees of freedom) tracker tool */
   void RequestSelect6DOFTrackerTool( );
 
   /** The "RequestAttachToTracker" method attaches the tracker tool to a
    * tracker. */
   virtual void RequestAttachToTracker( AuroraTracker * );
 
-  /** Check if SROM file name specified*/
-  bool IsSROMFileNameSpecified();
+  /** Check if SROM file name specified. */
+  bool IsSROMFileNameSpecified() const;
 
   /** Get SROM file name */
-  std::string GetSROMFileName();
+  igstkGetStringMacro( SROMFileName );
 
   /** Get tracker tool port number */
-  unsigned int GetPortNumber();
+  igstkGetMacro( PortNumber, unsigned int );
 
-  /** Check if the tracker tool selected is 5DOF or 6DOF */
-  bool IsTrackerTool5DOF();
+  /** Check if the tracker tool selected is 5DOF or 6DOF  
+   * (five or six degrees of freedom) */
+  bool IsTrackerTool5DOF() const;
  
 protected:
 
   AuroraTrackerTool();
-  ~AuroraTrackerTool();
+  virtual ~AuroraTrackerTool();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -106,7 +107,7 @@ private:
   /** Report Invalid SROM filename specified */ 
   void ReportInValidSROMFileSpecifiedProcessing( );
 
-  /** Set Tool Id*/ 
+  /** Set Tool Id. */ 
   void SetToolIdProcessing( );
 
   /** Report Invalid Tool Id filename specified */ 
@@ -171,7 +172,7 @@ private:
   bool m_SROMFileNameSpecified;
   bool m_ChannelNumberSpecified;
 
-  bool m_5DOFTrackerToolSelected;
+  bool m_FiveDOFTrackerToolSelected;
 
 };  
 

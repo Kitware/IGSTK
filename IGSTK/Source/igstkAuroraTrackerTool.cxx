@@ -24,7 +24,7 @@
 #include "igstkAuroraTrackerTool.h"
 #include "igstkAuroraTracker.h"
 #include <sstream>
-#include <itksys/SystemTools.hxx>
+#include "itksys/SystemTools.hxx"
 
 namespace igstk
 {
@@ -36,7 +36,7 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
   m_TrackerToolConfigured = false;
 
   //Disable 5DOF tracker tool mode
-  m_5DOFTrackerToolSelected = false;
+  m_FiveDOFTrackerToolSelected = false;
 
   // SROM file flag
   m_SROMFileNameSpecified = false;
@@ -182,7 +182,7 @@ void AuroraTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 }
 
-/** Request to set 5DOF tracker tool*/
+/** Request to set 5DOF tracker tool. */
 void AuroraTrackerTool::RequestSelect5DOFTrackerTool()
 {
   igstkLogMacro( DEBUG, 
@@ -192,7 +192,7 @@ void AuroraTrackerTool::RequestSelect5DOFTrackerTool()
   m_StateMachine.ProcessInputs();
 }
 
-/** Request to set 6DOF tracker tool*/
+/** Request to set 6DOF tracker tool. */
 void AuroraTrackerTool::RequestSelect6DOFTrackerTool()
 {
   igstkLogMacro( DEBUG, 
@@ -240,10 +240,8 @@ void AuroraTrackerTool::RequestSetChannelNumber( unsigned int channelNumber )
     }
 }
 
-
-
 /** Request the state machine to set the SROM file name */
-void AuroraTrackerTool::RequestSetSROMFileName( std::string filename )
+void AuroraTrackerTool::RequestSetSROMFileName( const std::string & filename )
 {
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetSROMFileName called ...\n");
@@ -262,7 +260,7 @@ void AuroraTrackerTool::RequestSetSROMFileName( std::string filename )
 }
 
 /** Request the state machine to set the tool id */
-void AuroraTrackerTool::RequestSetToolId( std::string toolId )
+void AuroraTrackerTool::RequestSetToolId( const std::string & toolId )
 {
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetToolId called ...\n");
@@ -290,7 +288,7 @@ void AuroraTrackerTool::SetPortNumberProcessing( )
   // For 6DOF type tracker tool, once port number is specified, the
   // tracker tool can be marked as configured and can be attached to the
   // tracker. Specification of SROM file and tool ID is optional.
-  if ( ! m_5DOFTrackerToolSelected ) 
+  if ( ! m_FiveDOFTrackerToolSelected ) 
     {
     m_TrackerToolConfigured = true;
     }
@@ -301,17 +299,19 @@ void AuroraTrackerTool::SetPortNumberProcessing( )
 void AuroraTrackerTool::Report5DOFTrackerToolSelectedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::Report5DOFTrackerToolSelectedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::Report5DOFTrackerToolSelectedProcessing "
+    << "called ...\n");
 
 
-  m_5DOFTrackerToolSelected = true;
+  m_FiveDOFTrackerToolSelected = true;
 }
 
 /** Report 6DOF tracker tool selected */ 
 void AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing "
+    << "called ...\n");
 
   igstkLogMacro( DEBUG, "6DOF Tracker tool selected ");
 }
@@ -320,7 +320,8 @@ void AuroraTrackerTool::Report6DOFTrackerToolSelectedProcessing( )
 void AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing "
+    << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid port numbner specified ");
 }
@@ -337,7 +338,7 @@ void AuroraTrackerTool::SetChannelNumberProcessing( )
   identifierStream << m_PortNumber << "_" << m_ChannelNumber;
   this->SetTrackerToolIdentifier( identifierStream.str() );
 
-  // for 5DOF type tracker tool, once port and channel number are specified, the
+  // For 5DOF type tracker tool, once port and channel number are specified, the
   // tracker tool can be marked as configured and can be attached to the
   // tracker. Specification of SROM file and tool ID is optional.
   m_TrackerToolConfigured = true;
@@ -347,7 +348,8 @@ void AuroraTrackerTool::SetChannelNumberProcessing( )
 void AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing "
+    << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid Channel numbner specified ");
 }
@@ -366,7 +368,8 @@ void AuroraTrackerTool::SetSROMFileNameProcessing( )
 void AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing "
+    << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid SROM file name specified ");
 }
@@ -381,37 +384,26 @@ void AuroraTrackerTool::SetToolIdProcessing( )
   m_ToolIdSpecified = true;
 }
 
-/** Report Invalid tool id  specified*/ 
+/** Report Invalid tool id  specified. */ 
 void AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing called ...\n");
+    "igstk::AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing "
+    << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid ToolID specified ");
 }
 
 /** Check if the SROM filename is specified */
-bool AuroraTrackerTool::IsSROMFileNameSpecified( )
+bool AuroraTrackerTool::IsSROMFileNameSpecified( ) const
 {
   return m_SROMFileNameSpecified;
 }
 
-/** Get SROM filename */ 
-std::string AuroraTrackerTool::GetSROMFileName( )
-{
-  return m_SROMFileName;
-}
-
-/** Get Port number */ 
-unsigned int AuroraTrackerTool::GetPortNumber( )
-{
-  return m_PortNumber;
-}
-
 /** Check if the tracker tool is 5DOF or 6DOF */ 
-bool AuroraTrackerTool::IsTrackerTool5DOF( )
+bool AuroraTrackerTool::IsTrackerTool5DOF( ) const
 {
-  return m_5DOFTrackerToolSelected;
+  return m_FiveDOFTrackerToolSelected;
 }
 
 /** The "RequestAttachToTracker" method attaches 
@@ -424,11 +416,14 @@ void AuroraTrackerTool::RequestAttachToTracker( AuroraTracker *  tracker )
   this->TrackerTool::RequestAttachToTracker( tracker );
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method 
+ * returns true if the tracker tool is configured */ 
 bool
 AuroraTrackerTool::CheckIfTrackerToolIsConfigured( )
 {
-  igstkLogMacro( DEBUG, "igstk::AuroraTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTrackerTool::CheckIfTrackerToolIsConfigured "
+    << "called...\n");
   return m_TrackerToolConfigured;
 }
 
