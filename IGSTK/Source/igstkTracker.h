@@ -188,38 +188,38 @@ protected:
   igstkGetMacro( ThreadingEnabled, bool );
 
   /** The "InternalOpen" method opens communication with a tracking device.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalOpen( void ) = 0;
 
   /** The "InternalClose" method closes communication with a tracking device.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalClose( void ) = 0;
 
   /** The "InternalReset" method resets tracker to a known configuration. 
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void ) = 0;
 
   /** The "InternalStartTracking" method starts tracking.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalStartTracking( void ) = 0;
 
   /** The "InternalStopTracking" method stops tracking.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalStopTracking( void ) = 0;
 
   /** The "InternalUpdateStatus" method updates tracker status.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void ) = 0;
 
   /** The "InternalThreadedUpdateStatus" method updates tracker status.
       This method is called in a separate thread.
-      This method is to be overridden by a descendant class
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalThreadedUpdateStatus( void ) = 0;
 
