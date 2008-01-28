@@ -22,7 +22,7 @@
 #include "igstkTransform.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
-#include "igstkAxesObject.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
 
 
 namespace igstk
@@ -70,24 +70,18 @@ public:
 
   igstkFriendClassMacro( Tracker );
 
-  typedef Tracker        TrackerType;
+  typedef Tracker           TrackerType;
   typedef Transform         TransformType;
-  typedef Transform         CalibrationTransformType;
-  typedef double            ErrorType;
-  typedef double            TimePeriodType;
 
-  /** typedefs for the coordinate reference system */
-  typedef AxesObject        CoordinateReferenceSystemType;
-  
   /** Get the tool transform. */
   igstkGetMacro( CalibratedTransformWithRespectToReferenceTrackerTool,
                                    TransformType ); 
 
   /** Get the calibration transform for this tool. */
-  igstkGetMacro( CalibrationTransform, CalibrationTransformType );
+  igstkGetMacro( CalibrationTransform, TransformType );
 
   /**  Set the calibration transform for this tool. */
-  void SetCalibrationTransform( const CalibrationTransformType & );
+  void SetCalibrationTransform( const TransformType & );
 
   /** Get the raw transform for this tool. */
   igstkGetMacro( RawTransform, TransformType );
@@ -102,11 +96,11 @@ public:
   virtual void RequestConfigure( void );
 
   /** The "RequestAttachToTracker" method attaches the tracker tool to a
- * tracker*/
+   * tracker. */
   virtual void RequestAttachToTracker( TrackerType * );
 
   /** The "RequestDetach" method detaches the tracker tool from the 
- * tracker*/
+   * tracker. */
   virtual void RequestDetach( );
 
   /** Access the unique identifier to the tracker tool */
@@ -116,7 +110,7 @@ protected:
 
   TrackerTool(void);
 
-  ~TrackerTool(void);
+  virtual ~TrackerTool(void);
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -124,9 +118,12 @@ protected:
   /** Set a unique identifier to the tracker tool */
   void SetTrackerToolIdentifier( std::string identifier );
 
- private:
+private:
 
- /** Push TrackingStarted input to the tracker tool */
+  TrackerTool(const Self&);       //purposely not implemented
+  void operator=(const Self&);    //purposely not implemented
+
+  /** Push TrackingStarted input to the tracker tool */
   virtual void ReportTrackingStarted( );
 
   /** Push TrackingStopped input to the tracker tool  */
@@ -159,7 +156,7 @@ protected:
   igstkSetMacro( Updated, bool );
 
   /** Check if the tracker tool is configured or not. This method should
-   *  be implemented in the derived classes*/
+   *  be implemented in the derived classes. */
   virtual bool CheckIfTrackerToolIsConfigured( ) = 0;
 
   /** Inputs to the State Machine */
@@ -216,10 +213,10 @@ protected:
   /** Post-processing after a failed detachment attempt . */ 
   void TrackerToolDetachmentFromTrackerFailureProcessing( void );
 
-  /** Report tracker tool is in visible state*/ 
+  /** Report tracker tool is in visible state. */ 
   void ReportTrackerToolVisibleStateProcessing( void );
 
-  /** Report tracker tool not available state*/ 
+  /** Report tracker tool not available state. */ 
   void ReportTrackerToolNotAvailableProcessing( void );
 
   /** Report tracking started */ 
@@ -235,15 +232,14 @@ protected:
   void NoProcessing( void );
 
   /** Calibrated raw transform with respect to reference
-    * tracker tool */
-  TransformType      
-       m_CalibratedTransformWithRespectToReferenceTrackerTool;   
+   * tracker tool. */
+  TransformType   m_CalibratedTransformWithRespectToReferenceTrackerTool;
 
   /** Calibration transform for the tool */
-  CalibrationTransformType      m_CalibrationTransform; 
+  TransformType                 m_CalibrationTransform; 
 
   /** Calibrated raw transform for the tool */
-  CalibrationTransformType      m_CalibratedTransform; 
+  TransformType                 m_CalibratedTransform; 
 
   /** raw transform for the tool */
   TransformType                 m_RawTransform; 
@@ -253,9 +249,6 @@ protected:
 
   /** Unique identifier of the tracker tool */
   std::string        m_TrackerToolIdentifier;
-
-  /** Coordinate Reference System */
-  CoordinateReferenceSystemType::Pointer    m_CoordinateReferenceSystem;
 
   /** Tracker to which the tool will be attached to */
   Tracker        * m_TrackerToAttachTo;

@@ -23,6 +23,7 @@
 
 #include <iostream>
 
+#include "igstkAxesObject.h"
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"

@@ -29,17 +29,18 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
   // set all transforms to identity 
-  TimePeriodType longestPossibleTime = 
+  typedef double            TimePeriodType;
+
+  const TimePeriodType longestPossibleTime = 
     igstk::TimeStamp::GetLongestPossibleTime();
 
   m_RawTransform.SetToIdentity( longestPossibleTime );  
   m_CalibratedTransform.SetToIdentity( longestPossibleTime );
-  m_CalibratedTransformWithRespectToReferenceTrackerTool.SetToIdentity( longestPossibleTime );
+  m_CalibratedTransformWithRespectToReferenceTrackerTool.SetToIdentity( 
+    longestPossibleTime );
   m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
 
   m_Updated = false; // not yet updated
-
-//  m_CoordinateReferenceSystem = CoordinateReferenceSystemType::New();
 
   // States
   igstkAddStateMacro( Idle );
@@ -180,7 +181,8 @@ TrackerTool::RequestConfigure( )
 void 
 TrackerTool::RequestAttachToTracker( Tracker * tracker )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestAttachToTracker called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::RequestAttachToTracker called...\n");
 
   m_TrackerToAttachTo = tracker;
   igstkPushInputMacro( AttachToolToTracker );
@@ -197,29 +199,32 @@ TrackerTool::RequestDetach( )
   this->m_StateMachine.ProcessInputs();
 }
 
-/** The "SetTrackerToolIdentifier" method assigns an identifier to the tracker
- * tool*/
+/** The "SetTrackerToolIdentifier" method assigns an identifier 
+ * to the tracker tool. */
 void 
 TrackerTool::SetTrackerToolIdentifier( std::string identifier )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::SetTrackerToolIdentifier called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::SetTrackerToolIdentifier called...\n");
   m_TrackerToolIdentifier = identifier;
 }
 
-/** The "GetTrackerToolIdentifier" method assigns an identifier to the tracker
- * tool*/
+/** The "GetTrackerToolIdentifier" method assigns an identifier 
+ * to the tracker tool. */
 std::string 
 TrackerTool::GetTrackerToolIdentifier( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::GetTrackerToolIdentifier called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::GetTrackerToolIdentifier called...\n");
   return m_TrackerToolIdentifier;
 }
 
-/** The "AttemptToConfigureProcessing" method attempts to configure the tracker tool */
+/** The "AttemptToConfigureProcessing" method attempts to configure 
+ * the tracker tool. */
 void TrackerTool::AttemptToConfigureProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::TrackerTool::AttemptToConfigureProcessing called ...\n");
+    "igstk::TrackerTool::AttemptToConfigureProcessing called ...\n");
 
   bool  result = this->CheckIfTrackerToolIsConfigured();
   
@@ -228,12 +233,12 @@ void TrackerTool::AttemptToConfigureProcessing( void )
                                    m_ToolConfigurationFailureInput );
 }
 
-/** The "AttemptToAttachTrackerToolToTracker" method attempts to attach the tracker tool
- * to the tracker */
+/** The "AttemptToAttachTrackerToolToTracker" method attempts to attach the
+ * tracker tool to the tracker. */
 void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
+    "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
   m_TrackerToAttachTo->RequestAttachTool( this );
 }
@@ -242,7 +247,7 @@ void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
 void TrackerTool::ReportSuccessfulTrackerToolAttachment() 
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::TrackerTool::ReportSuccessfulTrackerToolAttachment called ...\n");
+    "igstk::TrackerTool::ReportSuccessfulTrackerToolAttachment called ...\n");
 
   igstkPushInputMacro( AttachmentToTrackerSuccess );
   this->m_StateMachine.ProcessInputs();
@@ -252,18 +257,18 @@ void TrackerTool::ReportSuccessfulTrackerToolAttachment()
 void TrackerTool::ReportFailedTrackerToolAttachment()
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::TrackerTool::ReportFailedTrackerToolAttachment called ...\n");
+    "igstk::TrackerTool::ReportFailedTrackerToolAttachment called ...\n");
 
   igstkPushInputMacro( AttachmentToTrackerFailure );
   this->m_StateMachine.ProcessInputs();
 }
 
-/** The "AttemptToDetachTrackerToolFromTracker" method attempts to detach the tracker tool
- * to the tracker */
+/** The "AttemptToDetachTrackerToolFromTracker" method attempts to detach the
+ * tracker tool to the tracker. */
 void TrackerTool::AttemptToDetachTrackerToolFromTrackerProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-                 "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
+    "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
   //implement a method in the tracker class to detach the tool
   bool result = m_TrackerToAttachTo->RequestRemoveTool( this ); 
@@ -276,8 +281,8 @@ void TrackerTool::AttemptToDetachTrackerToolFromTrackerProcessing( void )
 void TrackerTool::TrackerToolConfigurationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolConfigurationSuccessProcessing called ...\n");
-
+    "igstk::TrackerTool::TrackerToolConfigurationSuccessProcessing "
+    << "called ...\n");
 
   this->InvokeEvent( TrackerToolConfigurationEvent() );
 }
@@ -287,16 +292,19 @@ void TrackerTool::TrackerToolConfigurationSuccessProcessing( void )
 void TrackerTool::TrackerToolConfigurationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolConfigurationFailureProcessing called ...\n");
+    "igstk::TrackerTool::TrackerToolConfigurationFailureProcessing "
+    << "called ...\n");
 
   this->InvokeEvent( TrackerToolConfigurationErrorEvent() );
 }
 
-/** Post-processing after a successful tracker tool to tracker attachment attempt . */ 
+/** Post-processing after a successful tracker tool to tracker attachment
+ * attempt. */ 
 void TrackerTool::TrackerToolAttachmentToTrackerSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolAttachmentToTrackerSuccessiProcessing called ...\n");
+    "igstk::TrackerTool::TrackerToolAttachmentToTrackerSuccessiProcessing "
+    << "called ...\n");
 
   this->InvokeEvent( TrackerToolAttachmentToTrackerEvent() );
 }
@@ -305,7 +313,8 @@ void TrackerTool::TrackerToolAttachmentToTrackerSuccessProcessing( void )
 void TrackerTool::TrackerToolAttachmentToTrackerFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolConfigurationFailureProcessing called ...\n");
+    "igstk::TrackerTool::TrackerToolConfigurationFailureProcessing "
+    << "called ...\n");
 
   this->InvokeEvent( TrackerToolAttachmentToTrackerErrorEvent() );
 }
@@ -315,7 +324,8 @@ void TrackerTool::TrackerToolAttachmentToTrackerFailureProcessing( void )
 void TrackerTool::TrackerToolDetachmentFromTrackerSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolDetachmentFromTrackerSuccessProcessing called ...\n");
+    "igstk::TrackerTool::TrackerToolDetachmentFromTrackerSuccessProcessing "
+    << "called ...\n");
 
   this->InvokeEvent( TrackerToolDetachmentFromTrackerEvent() );
 }
@@ -324,7 +334,8 @@ void TrackerTool::TrackerToolDetachmentFromTrackerSuccessProcessing( void )
 void TrackerTool::TrackerToolDetachmentFromTrackerFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::TrackerTool::TrackerToolDetachmentFromTrackerFailureProcessing called ...\n");
+    "igstk::TrackerTool::TrackerToolDetachmentFromTrackerFailureProcessing "
+    << "called ...\n");
 
 
   this->InvokeEvent( TrackerToolDetachmentFromTrackerErrorEvent() );
@@ -339,7 +350,7 @@ void TrackerTool::ReportTrackerToolVisibleStateProcessing( void )
   this->InvokeEvent( TrackerToolMadeTransitionToTrackedStateEvent() );
 }
 
-/** Report tracker tool not available state*/ 
+/** Report tracker tool not available state. */ 
 void TrackerTool::ReportTrackerToolNotAvailableProcessing( void )
 {
   igstkLogMacro( DEBUG, 
@@ -387,7 +398,8 @@ void TrackerTool::ReportTrackingStopped( )
 /** Push TrackerToolNotAvailable input to the tracker tool */
 void TrackerTool::ReportTrackingToolNotAvailable( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolNotAvailable called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolNotAvailable "
+  << "called...\n");
 
   igstkPushInputMacro( TrackerToolNotAvailable );
   this->m_StateMachine.ProcessInputs();
@@ -396,7 +408,8 @@ void TrackerTool::ReportTrackingToolNotAvailable( )
 /** Push TrackerToolVisible input to the tracker tool  */
 void TrackerTool::ReportTrackingToolVisible( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolVisible called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolVisible "
+  << "called...\n");
 
   igstkPushInputMacro( TrackerToolVisible );
   this->m_StateMachine.ProcessInputs();
@@ -405,12 +418,13 @@ void TrackerTool::ReportTrackingToolVisible( )
 /** Report invalid request */
 void TrackerTool::ReportInvalidRequestProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportInvalidRequestProcessing called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
-/** No Processing for this state machine transition*/
+/** No Processing for this state machine transition. */
 void TrackerTool::NoProcessing( void )
 {
 
@@ -421,7 +435,8 @@ void TrackerTool::NoProcessing( void )
  * This method should only be called by the Tracker */
 void 
 TrackerTool
-::SetCalibratedTransformWithRespectToReferenceTrackerTool( const TransformType & transform )
+::SetCalibratedTransformWithRespectToReferenceTrackerTool( 
+  const TransformType & transform )
 {
   m_CalibratedTransformWithRespectToReferenceTrackerTool = transform;
   TransformModifiedEvent transformEvent;
@@ -431,7 +446,7 @@ TrackerTool
 
 /** Method to set the calibration transform for the tracker tool */ 
 void 
-TrackerTool::SetCalibrationTransform( const CalibrationTransformType & transform )
+TrackerTool::SetCalibrationTransform( const TransformType & transform )
 {
   m_CalibrationTransform = transform;
 }
@@ -457,8 +472,9 @@ void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Transform: "    
-     << this->m_CalibratedTransformWithRespectToReferenceTrackerTool << std::endl;
+  os << indent << "Transform: "
+     << this->m_CalibratedTransformWithRespectToReferenceTrackerTool 
+     << std::endl;
   os << indent << "Raw transform: " << this->m_RawTransform << std::endl;
   os << indent << "CalibrationTransform: "
                << this->m_CalibrationTransform << std::endl;
