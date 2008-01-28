@@ -42,11 +42,19 @@ class ViewProxyBase
 public:
 
 protected:
+  /** Get the VTK renderer */ 
   vtkRenderer *               GetRenderer( View * view );
+
+  /** Get the VTK RenderWindow interactor */
   vtkRenderWindowInteractor * GetRenderWindowInteractor( View * view );
 
+  /** Initialize VTK RenderWindow interactor */
   void InitializeInteractor( View * view );
+
+  /** Set VTK RenderWindow Size */
   void SetRenderWindowSize( View * view, int width, int height );
+
+  /** Set PickedPoint coordinates */
   void SetPickedPointCoordinates( View * view, 
                                   double xPickedPoint ,
                                   double yPickedPoint );
