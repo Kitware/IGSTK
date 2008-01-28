@@ -70,6 +70,11 @@ protected:
    */
   virtual ResultType InternalUpdateStatus( void );
 
+  /** This method provide the update of tracker information inside the Tracker
+   * internal thread.
+   **/
+  virtual ResultType InternalThreadedUpdateStatus( void );
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
