@@ -49,7 +49,8 @@ public:
   ~OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI();
   void AttachObjectToTrackerTool( int trackerToolNumber,
                                   igstk::SpatialObject * objectToTrack );
-  void GetTrackerToolTransform( int trackerToolNumber, TransformType & transform );
+  void GetTrackerToolTransform( int trackerToolNumber, 
+    TransformType & transform );
   void InitializeTracker( std::string InitializationFile,
                           std::string CameraCalibrationFileDirectory,
                           std::string markerTemplateDirectory );
@@ -72,7 +73,7 @@ public slots:
 private:
   void CreateActions();
 
-  Ui::MainWindow ui;
+  Ui::MainWindow          m_GUI;
 
   LoggerType::Pointer     m_Logger;
   LogOutputType::Pointer  m_LogOutput;

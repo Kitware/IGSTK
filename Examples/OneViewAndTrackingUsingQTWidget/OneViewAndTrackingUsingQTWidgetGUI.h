@@ -58,7 +58,7 @@ public slots:
 private:
   void CreateActions();
 
-  Ui::MainWindow ui;
+  Ui::MainWindow              m_GUI;
 
   LoggerType::Pointer         m_Logger;
   LogOutputType::Pointer      m_LogOutput;

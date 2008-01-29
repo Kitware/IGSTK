@@ -21,7 +21,7 @@
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
 {
-  ui.setupUi(this);
+  m_GUI.setupUi(this);
   this->CreateActions();
 
   m_Tracker = TrackerType::New();
@@ -54,10 +54,10 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
   m_Tracking = false;
   m_GUIQuit  = false;
 
-  ui.Display3D->SetLogger( m_Logger );
+  m_GUI.Display3D->SetLogger( m_Logger );
 
   //By default turn on interaction
-  ui.InteractionCheckBox->setCheckState( Qt::Checked );
+  m_GUI.InteractionCheckBox->setCheckState( Qt::Checked );
 
   //Set up an observer for the transform modified event
   m_ViewPickerObserver = ObserverType::New();
@@ -118,10 +118,10 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 
 void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::CreateActions()
 {
-  connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
-  connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
+  connect(m_GUI.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
+  connect(m_GUI.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
           SLOT(OnTrackingAction(int)));
-  connect(ui.InteractionCheckBox, SIGNAL(stateChanged(int )), this,
+  connect(m_GUI.InteractionCheckBox, SIGNAL(stateChanged(int )), this,
           SLOT(OnInteractionAction(int)));
 }
 
@@ -143,7 +143,7 @@ void
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 ::SetView( igstk::View * view )
 {
-  ui.Display3D->RequestSetView (view);
+  m_GUI.Display3D->RequestSetView (view);
   view->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
 }
@@ -171,11 +171,11 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 {
   if ( state )
     {
-    ui.Display3D->RequestEnableInteractions();
+    m_GUI.Display3D->RequestEnableInteractions();
     }
   else
     {
-    ui.Display3D->RequestDisableInteractions();
+    m_GUI.Display3D->RequestDisableInteractions();
     } 
 }
 

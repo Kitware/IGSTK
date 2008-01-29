@@ -20,7 +20,7 @@
 
 OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
 {
-  ui.setupUi(this);
+  m_GUI.setupUi(this);
   this->CreateActions();
 
   m_Tracker = TrackerType::New();
@@ -35,7 +35,7 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
     }
   else
     {
-    std::cerr << "Problem opening Log file, using cerr instead " 
+    std::cerr << "Problem opening Log file, using cerr instead "
       << std::endl;
     m_LogOutput->SetStream( std::cerr );
     }
@@ -59,14 +59,14 @@ OneViewAndTrackingUsingQTWidgetGUI::OneViewAndTrackingUsingQTWidgetGUI()
   m_Tracking = false;
   m_GUIQuit  = false;
 
-  ui.Display3D->SetLogger( m_Logger );
+  m_GUI.Display3D->SetLogger( m_Logger );
 
   //By default turn on interaction
-  ui.InteractionCheckBox->setCheckState( Qt::Checked );
+  m_GUI.InteractionCheckBox->setCheckState( Qt::Checked );
 
   //Set up an observer for the transform modified event
   m_ViewPickerObserver = ObserverType::New();
-  m_ViewPickerObserver->SetCallbackFunction( this, 
+  m_ViewPickerObserver->SetCallbackFunction( this,
                         &OneViewAndTrackingUsingQTWidgetGUI::ParsePickedPoint );
 }
 
@@ -85,16 +85,16 @@ OneViewAndTrackingUsingQTWidgetGUI::GetTracker()
 
 void OneViewAndTrackingUsingQTWidgetGUI::CreateActions()
 {
-  connect(ui.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
-  connect(ui.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
+  connect(m_GUI.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
+  connect(m_GUI.TrackingCheckBox, SIGNAL(stateChanged(int )), this,
           SLOT(OnTrackingAction(int)));
-  connect(ui.InteractionCheckBox, SIGNAL(stateChanged(int )), this,
+  connect(m_GUI.InteractionCheckBox, SIGNAL(stateChanged(int )), this,
           SLOT(OnInteractionAction(int)));
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 {
-  QMessageBox::StandardButton value = 
+  QMessageBox::StandardButton value =
     QMessageBox::information(this,
     "Tracking application", "Are you sure you want to quit ?",
     QMessageBox::Yes | QMessageBox::No );
@@ -108,8 +108,8 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnQuitAction()
 
 void OneViewAndTrackingUsingQTWidgetGUI::SetView( igstk::View * view )
 {
-  ui.Display3D->RequestSetView (view);
-  view->AddObserver( igstk::TransformModifiedEvent(), 
+  m_GUI.Display3D->RequestSetView (view);
+  view->AddObserver( igstk::TransformModifiedEvent(),
                                    m_ViewPickerObserver );
 }
 
@@ -125,23 +125,23 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
     m_Tracker->RequestReset();
     m_Tracker->RequestStopTracking();
     m_Tracking = false;
-    } 
+    }
 }
 
 void OneViewAndTrackingUsingQTWidgetGUI::OnInteractionAction( int state )
 {
   if ( state )
     {
-    ui.Display3D->RequestEnableInteractions();
+    m_GUI.Display3D->RequestEnableInteractions();
     }
   else
     {
-    ui.Display3D->RequestDisableInteractions();
-    } 
+    m_GUI.Display3D->RequestDisableInteractions();
+    }
 }
 
 
-void 
+void
 OneViewAndTrackingUsingQTWidgetGUI::
 AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
@@ -150,7 +150,7 @@ AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
   objectToTrack->RequestSetTransformAndParent( transform, m_Tool );
 }
 
-bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( ) 
+bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( )
 {
   return m_GUIQuit;
 }
@@ -159,14 +159,16 @@ void
 OneViewAndTrackingUsingQTWidgetGUI
 ::ParsePickedPoint( const itk::EventObject & event)
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  typedef igstk::TransformModifiedEvent  ExpectedEvent;
+  if ( ExpectedEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = 
-                                     ( igstk::TransformModifiedEvent *) & event;
-    
-    std::cout << "Translation transform:" << tmevent->Get().GetTranslation()[0] << "\t"
-                                          << tmevent->Get().GetTranslation()[1] << "\t"
-                                          << tmevent->Get().GetTranslation()[2]
-                                          << std::endl;
+    const ExpectedEvent * tmevent =
+      dynamic_cast< const ExpectedEvent *>( & event );
+
+    std::cout << "Translation transform:"
+              << tmevent->Get().GetTranslation()[0] << "\t"
+              << tmevent->Get().GetTranslation()[1] << "\t"
+              << tmevent->Get().GetTranslation()[2]
+              << std::endl;
     }
 }
