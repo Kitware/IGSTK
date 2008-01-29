@@ -21,6 +21,9 @@
 #pragma warning( disable : 4786 )
 #endif
 
+//
+// These header files can be found in the Utilities/MicronTracker subdirectory.
+// 
 #include "Markers.h"
 #include "Marker.h"
 #include "Persistence.h"
@@ -30,9 +33,11 @@
 #include "Xform3D.h"
 #include "MTC.h"
 
+
 #include <math.h>
 
 #include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
 #include <itksys/SystemTools.hxx>
 
 #include <sstream>
@@ -47,7 +52,7 @@ bool MicronTracker::m_ErrorCodeListCreated = false;
 /** Constructor: Initializes all internal variables. */
 MicronTracker::MicronTracker(void):m_StateMachine(this)
 {
-  m_NumberOfTools = 0;
+  this->m_NumberOfTools = 0;
 
   this->SetThreadingEnabled( true );
 
@@ -103,65 +108,69 @@ MicronTracker::~MicronTracker(void)
 /** Create a map data structure containing MTC error code and description */
 void MicronTracker::CreateErrorCodeList()
 {
-  m_ErrorCodeContainer[0]  = "OK"; 
-  m_ErrorCodeContainer[1]  = "Invalid object handle";
-  m_ErrorCodeContainer[2]  = "Reentrant access - library is not thread-safe";
-  m_ErrorCodeContainer[3]  = "Internal MicronTracker software error";
-  m_ErrorCodeContainer[4]  = "Null pointer parameter";
-  m_ErrorCodeContainer[5]  = "Out of memory";
-  m_ErrorCodeContainer[6]  = "Parameter out of range";
-  m_ErrorCodeContainer[7]  = "String parameter too long";
-  m_ErrorCodeContainer[8]  = "Insufficient space allocated by the client to the output buffer";
-  m_ErrorCodeContainer[9]  = "Camera not initialized";
-  m_ErrorCodeContainer[10] = "Camera already initialized - cannot be initialized twice";
-  m_ErrorCodeContainer[11] = "Camera initialization failed";
-  m_ErrorCodeContainer[12] = "MTC is incompatible with a software module it calls";
-  m_ErrorCodeContainer[13] = "Calibration file error: unrecognized camera model";
-  m_ErrorCodeContainer[14] = "Path not set";
-  m_ErrorCodeContainer[15] = "Cannot access the directory specified";
-  m_ErrorCodeContainer[16] = "Write to file failed";
-  m_ErrorCodeContainer[17] = "Invalid Index parameter";
-  m_ErrorCodeContainer[18] = "Invalid SideI parameter";
-  m_ErrorCodeContainer[19] = "Invalid Divisor parameter";
-  m_ErrorCodeContainer[20] = "Attempting to access an item of an empty IntCollection";
-  m_ErrorCodeContainer[21] = "Insufficient samples";
-  m_ErrorCodeContainer[22] = "Insufficient samples that fit within the acceptance tolerance";
-  m_ErrorCodeContainer[23] = "Odd number of vector samples";
-  m_ErrorCodeContainer[24] = "Less than 2 vectors";
-  m_ErrorCodeContainer[25] = "More than maximum vectors per facet";
-  m_ErrorCodeContainer[26] = "Error exceeds tolerance";
-  m_ErrorCodeContainer[27] = "Insufficient angle between vectors";
-  m_ErrorCodeContainer[28] = "First vector is shorter than the second";
-  m_ErrorCodeContainer[29] = "Vector lengths are too similar";
-  m_ErrorCodeContainer[30] = "Template vector has 0 length";
-  m_ErrorCodeContainer[31] = "The template has not been created or loaded";
-  m_ErrorCodeContainer[32] = "Template file is corrupt";
-  m_ErrorCodeContainer[33] = "Maximum number of marker templates allowed exceeded";
-  m_ErrorCodeContainer[34] = "Geometries of different facets are too similar";
-  m_ErrorCodeContainer[35] = "Noncompliant facet definition";
-  m_ErrorCodeContainer[36] = "The SampledVectorPairsCollection contains non-Vector handles";
-  m_ErrorCodeContainer[37] = "Empty pixels buffer";
-  m_ErrorCodeContainer[38] = "Dimensions do not match";
-  m_ErrorCodeContainer[39] = "File open failed";
-  m_ErrorCodeContainer[40] = "File read failed";
-  m_ErrorCodeContainer[41] = "File write failed";
-  m_ErrorCodeContainer[42] = "Cannot open calibration file (typically named [driver]_[ser num].calib";
-  m_ErrorCodeContainer[43] = "Not a calibration file";
-  m_ErrorCodeContainer[44] = "Calibration file contents corrupt";
-  m_ErrorCodeContainer[45] = "Calibration file was not generated from this camera";
-  m_ErrorCodeContainer[46] = "Calibration file not loaded";
-  m_ErrorCodeContainer[47] = "Incorrect file version";
-  m_ErrorCodeContainer[48] = "Input image location is out of bounds of the measurement volume";
-  m_ErrorCodeContainer[49] = "Input image locations do not triangulate to a valid 3-D point";
-  m_ErrorCodeContainer[50] = "Transform between coordinate spaces is unknown";
-  m_ErrorCodeContainer[51] = "The given camera object was not found in the cameras array";
-  m_ErrorCodeContainer[52] = "Feature Data unavailable for the current frame";
-  m_ErrorCodeContainer[53] = "Feature Data is corrupt or incompatible with the current version";
-  m_ErrorCodeContainer[54] = "XYZ position is outside of calibrated field of view";
-  m_ErrorCodeContainer[55] = "Grab frame error";
+  ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
+  
+  ecc[0]  = "OK"; 
+  ecc[1]  = "Invalid object handle";
+  ecc[2]  = "Reentrant access - library is not thread-safe";
+  ecc[3]  = "Internal MicronTracker software error";
+  ecc[4]  = "Null pointer parameter";
+  ecc[5]  = "Out of memory";
+  ecc[6]  = "Parameter out of range";
+  ecc[7]  = "String parameter too long";
+  ecc[8]  = "Insufficient space allocated by the client to the output buffer";
+  ecc[9]  = "Camera not initialized";
+  ecc[10] = "Camera already initialized - cannot be initialized twice";
+  ecc[11] = "Camera initialization failed";
+  ecc[12] = "MTC is incompatible with a software module it calls";
+  ecc[13] = "Calibration file error: unrecognized camera model";
+  ecc[14] = "Path not set";
+  ecc[15] = "Cannot access the directory specified";
+  ecc[16] = "Write to file failed";
+  ecc[17] = "Invalid Index parameter";
+  ecc[18] = "Invalid SideI parameter";
+  ecc[19] = "Invalid Divisor parameter";
+  ecc[20] = "Attempting to access an item of an empty IntCollection";
+  ecc[21] = "Insufficient samples";
+  ecc[22] = "Insufficient samples that fit within the acceptance tolerance";
+  ecc[23] = "Odd number of vector samples";
+  ecc[24] = "Less than 2 vectors";
+  ecc[25] = "More than maximum vectors per facet";
+  ecc[26] = "Error exceeds tolerance";
+  ecc[27] = "Insufficient angle between vectors";
+  ecc[28] = "First vector is shorter than the second";
+  ecc[29] = "Vector lengths are too similar";
+  ecc[30] = "Template vector has 0 length";
+  ecc[31] = "The template has not been created or loaded";
+  ecc[32] = "Template file is corrupt";
+  ecc[33] = "Maximum number of marker templates allowed exceeded";
+  ecc[34] = "Geometries of different facets are too similar";
+  ecc[35] = "Noncompliant facet definition";
+  ecc[36] = "The SampledVectorPairsCollection contains non-Vector handles";
+  ecc[37] = "Empty pixels buffer";
+  ecc[38] = "Dimensions do not match";
+  ecc[39] = "File open failed";
+  ecc[40] = "File read failed";
+  ecc[41] = "File write failed";
+  ecc[42] = "Cannot open calibration file "
+            "(typically named [driver]_[ser num].calib";
+  ecc[43] = "Not a calibration file";
+  ecc[44] = "Calibration file contents corrupt";
+  ecc[45] = "Calibration file was not generated from this camera";
+  ecc[46] = "Calibration file not loaded";
+  ecc[47] = "Incorrect file version";
+  ecc[48] = "Input image location is out of bounds of the measurement volume";
+  ecc[49] = "Input image locations do not triangulate to a valid 3-D point";
+  ecc[50] = "Transform between coordinate spaces is unknown";
+  ecc[51] = "The given camera object was not found in the cameras array";
+  ecc[52] = "Feature Data unavailable for the current frame";
+  ecc[53] = "Feature Data is corrupt or incompatible with the current version";
+  ecc[54] = "XYZ position is outside of calibrated field of view";
+  ecc[55] = "Grab frame error";
 }
 
-const std::string  MicronTracker::GetErrorDescription( unsigned int code ) 
+std::string  
+MicronTracker::GetErrorDescription( unsigned int code )
 {
   if ( code >= 0 && code <= 55 )
     {
@@ -174,26 +183,28 @@ const std::string  MicronTracker::GetErrorDescription( unsigned int code )
 }
 
 /** Specify camera calibration directory */
-void MicronTracker::SetCameraCalibrationFilesDirectory( std::string fileName )
+void 
+MicronTracker
+::SetCameraCalibrationFilesDirectory( const std::string & fileName )
 {
   igstkLogMacro( DEBUG,
-                "igstk::MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
+    "igstk::MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
 
   m_CalibrationFilesDirectory = fileName;
 }
 
 /** Specify the initialization filename */
-void MicronTracker::SetInitializationFile( std::string fileName )
+void MicronTracker::SetInitializationFile( const std::string & fileName )
 {
   igstkLogMacro( DEBUG,
-                "igstk::MicronTracker::SetInitializationFileDirectoryPath called..\n");
+    "igstk::MicronTracker::SetInitializationFileDirectoryPath called..\n");
 
   m_InitializationFile = fileName;
 }
 
 /** Load marker template  */
 void
-MicronTracker::LoadMarkerTemplate( std::string filename )
+MicronTracker::LoadMarkerTemplate( const std::string & filename )
 {
   igstkLogMacro( DEBUG,
                 "igstk::MicronTracker::LoadMarkerTemplate called..\n");
@@ -206,7 +217,7 @@ MicronTracker::LoadMarkerTemplate( std::string filename )
   if ( m_MarkerTemplateDirectory == "" )
     {
     igstkLogMacro( CRITICAL, "Marker template directory name is empty string ");
-    return ;
+    return;
     }
  
   char * markerTemplateDirectory = 
@@ -230,28 +241,30 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
    * 2) Attach the cameras
    */
 
-  if ( ! this->Initialize() )
-      {
-      igstkLogMacro( CRITICAL, "Error initializing");
-      return FAILURE;
-      }
+  if( ! this->Initialize() )
+    {
+    igstkLogMacro( CRITICAL, "Error initializing");
+    return FAILURE;
+    }
 
-  if ( ! this->SetUpCameras() )
-      {
-      igstkLogMacro( CRITICAL, "Error setting up cameras ");
-      return FAILURE;
-      }
+  if( ! this->SetUpCameras() )
+    {
+    igstkLogMacro( CRITICAL, "Error setting up cameras ");
+    return FAILURE;
+    }
+
   return SUCCESS;
 }
 
-/** Initialize camera and algorithm attributes such as 
- *  Frame interleave, template matching tolerance, extrapolate frame etc*/
+/** Initialize camera and algorithm attributes such as Frame interleave,
+ * template matching tolerance, extrapolate frame, etc. */
 bool MicronTracker::Initialize( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::Initialize called ...\n");
 
   bool result = true;
-  if ( m_InitializationFile == "" || !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
+  if( m_InitializationFile == "" || 
+      !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, "Initialization file (.ini ) is not properly set");
     return FAILURE;
@@ -261,63 +274,66 @@ bool MicronTracker::Initialize( void )
   this->m_Persistence->setPath( initializationFilename );
   this->m_Persistence->setSection ("General");
 
-  /* The LightCoolness property provides an indication to the camera of how the
-  illumination spectrum is distributed, allowing it to correct for the difference
-  between the calibration light spectrum and the measurement light spectrum.
-  The LightCoolness value indicates the balance between reds (warm) and blue (cool)
-  colors in the lighting.*/ 
-  double defaultLightCoolness = 0.1;
+  // The LightCoolness property provides an indication to the camera of how the
+  // illumination spectrum is distributed, allowing it to correct for the
+  // difference between the calibration light spectrum and the measurement
+  // light spectrum.  The LightCoolness value indicates the balance between
+  // reds (warm) and blue (cool) colors in the lighting.
+  const double defaultLightCoolness = 0.1;
+
   // light coolness value will be set on the camera after it is attached. 
   m_CameraLightCoolness = 
       this->m_Persistence->retrieveDouble(
          "LightCoolness", defaultLightCoolness);
  
+  // PredictiveFramesInterleave controls the number of predictive-only matching
+  // frames inserted between each subsequent full-matching frames. A valued of 0
+  // means that all frames are full-matching (require more computing resource). 
+  // A value of 3, for example, means that 3 out of every 4 frames would be 
+  // predictive-only.
+  //
 
-  /* PredictiveFramesInterleave controls the number of predictive-only matching
-  *frames inserted between each subsequent full-matching frames. A valued of 0
-  *means that all frames are full-matching (require more computing resource). 
-  *A value of 3, for example, means that 3 out of every 4 frames would be 
-  *predictive-only */
-  int defaultFrameInterleave = 0;
+  const int defaultFrameInterleave = 0;
   this->m_Markers->setPredictiveFramesInterleave(
-  this->m_Persistence->retrieveInt("PredictiveFramesInterleave",
-       defaultFrameInterleave) ); 
+    this->m_Persistence->retrieveInt("PredictiveFramesInterleave",
+      defaultFrameInterleave) ); 
   
-  //Sets the template match tolerance (in millimeters).
-  //This tolerance determines the sensitivity of the MicronTracker to deviations
-  //between the measured relative positions of XPoints and their relative positions
-  //as described in the facet templates . The lower the tolerance, the more 
-  //likely it is tracking would be momentarily lost under some
-  //circumstances (poor lighting, large distance), but the more closely the geometry
-  //of different markers can be without the possibility of accidentally confusing
-  //them.
-  double defaultTempMatchToleranceMM = 1.0;
+  // Sets the template match tolerance (in millimeters).  This tolerance
+  // determines the sensitivity of the MicronTracker to deviations between the
+  // measured relative positions of XPoints and their relative positions as
+  // described in the facet templates . The lower the tolerance, the more
+  // likely it is tracking would be momentarily lost under some circumstances
+  // (poor lighting, large distance), but the more closely the geometry of
+  // different markers can be without the possibility of accidentally confusing
+  // them.
+  //
+
+  const double defaultTempMatchToleranceMM = 1.0;
   this->m_Markers->setTemplateMatchToleranceMM( 
       this->m_Persistence->retrieveDouble(
          "TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
   
-  //Selects which image footprint size to use for the XPoint detection algorithm.
-  //Smaller XPoint footprint is 9 pixels in diameter, while the regular size is 11.
-  //Using the smaller footprint allows to detect smaller markers at larger distances
-  //from the camera, at the expense of reduced accuracy near the far end of the FOM.
-  bool defaultSmallerXPFootprint = true;
-  bool SmallerXPFootprint = 
+  // Selects which image footprint size to use for the XPoint detection
+  // algorithm.  Smaller XPoint footprint is 9 pixels in diameter, while the
+  // regular size is 11.  Using the smaller footprint allows to detect smaller
+  // markers at larger distances from the camera, at the expense of reduced
+  // accuracy near the far end of the FOM.
+  const bool defaultSmallerXPFootprint = true;
+  const bool SmallerXPFootprint = 
             (bool)(this->m_Persistence->retrieveInt(
                        "DetectSmallMarkers", defaultSmallerXPFootprint));
   this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
-
 
   // ExtrapolatedFrames controls the number of future frames for which the
   // markers, which have been identified in the current frame, are remembered.
   // The predicted locations of the remembered markers can then be reported if
   // not found in the future frames. Setting this property to 0 disables
   // extrapolation.
-  int  defaultExtrapolatedFrames = 5;
-  int ExtrapolatedFrames = this->m_Persistence->retrieveInt(
+  const int defaultExtrapolatedFrames = 5;
+  const int ExtrapolatedFrames = this->m_Persistence->retrieveInt(
                         "ExtrapolatedFrames", defaultExtrapolatedFrames);
   this->m_Markers->setExtrapolatedFrames(ExtrapolatedFrames);
 
-  
   return result;
 }
 
@@ -330,18 +346,24 @@ bool MicronTracker::SetUpCameras( void )
   if ( m_CalibrationFilesDirectory == "" || 
        !itksys::SystemTools::FileExists( m_CalibrationFilesDirectory.c_str() ) ) 
     {
-    igstkLogMacro( CRITICAL, "Camera calibration directory is not properly set");
+    igstkLogMacro( CRITICAL, 
+      "Camera calibration directory is not properly set");
     return FAILURE;
     }
  
-  this->m_Cameras->SetCameraCalibrationFilesDirectory( this->m_CalibrationFilesDirectory );
+  this->m_Cameras->SetCameraCalibrationFilesDirectory( 
+    this->m_CalibrationFilesDirectory );
+
   int success = this->m_Cameras->AttachAvailableCameras();
 
   if ( success )
     {
-    igstkLogMacro(CRITICAL, " No camera available or missing calibration file in:\t " 
-              << this->m_CalibrationFilesDirectory);
+    igstkLogMacro(CRITICAL, 
+      " No camera available or missing calibration file in:\t " 
+      << this->m_CalibrationFilesDirectory);
+
     igstkLogMacro(CRITICAL, "MTC Error returned: " << MTLastErrorString());
+
     result = false;
     }
   else
@@ -359,16 +381,19 @@ bool MicronTracker::SetUpCameras( void )
   return result;
 }
 
-/** Verify tracker tool information*/
+/** Verify tracker tool information. */
 MicronTracker::ResultType
 MicronTracker
 ::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");  
+  igstkLogMacro( DEBUG, 
+    "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");  
 
   // Verify that the template file for the marker is found
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
 
+
+  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
 
   MicronTrackerToolType * micronTrackerTool  = 
         dynamic_cast< MicronTrackerToolType *> ( trackerTool );
@@ -378,7 +403,7 @@ MicronTracker
     return FAILURE;
     }
 
-  for (unsigned int idx=1 ; idx < totalNumberOfTemplates ; idx++ )
+  for (unsigned int idx=1; idx < totalNumberOfTemplates; idx++ )
     {
     std::string templateName;
     this->m_Markers->getTemplateItemName(idx, templateName );
@@ -403,7 +428,7 @@ MicronTracker
   return FAILURE;
 }
  
-/** Detach camera . */
+/** Detach camera. */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");  
@@ -415,7 +440,8 @@ MicronTracker::ResultType MicronTracker::InternalClose( void )
 /** Put the tracking device into tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG, 
+    "igstk::MicronTracker::InternalStartTracking called ...\n");  
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -426,7 +452,8 @@ MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 /** Take the tracking device out of tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalStopTracking called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::MicronTracker::InternalStopTracking called ...\n");
 
   // Send the command to stop tracking.
 
@@ -446,7 +473,8 @@ MicronTracker::ResultType MicronTracker::InternalReset( void )
 /** Update the status and the transforms for all TrackerTools. */
 MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::MicronTracker::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Tracking state.  This method is called from
@@ -462,7 +490,8 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   InputConstIterator inputItr = m_ToolTransformBuffer.begin();
   InputConstIterator inputEnd = m_ToolTransformBuffer.end();
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer = 
+    this->GetTrackerToolContainer();
 
   unsigned int toolId = 0;
 
@@ -474,7 +503,9 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
       igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
       // report to the tracker tool that the tracker is not available 
-      this->ReportTrackingToolNotAvailable(trackerToolContainer[inputItr->first]);
+      this->ReportTrackingToolNotAvailable( 
+        trackerToolContainer[inputItr->first]);
+
       ++inputItr;
       continue;
       }
@@ -509,8 +540,11 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
                                         this->GetValidityTime());
 
     // set the raw transform
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform( 
+      trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate( 
+      trackerToolContainer[inputItr->first], true );
 
     ++inputItr;
     ++toolId;
@@ -554,7 +588,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     }
 
   // process identified markers
-  Collection* markersCollection = new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
+  Collection* markersCollection = 
+    new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
  
   if (markersCollection->count() == 0) 
     {
@@ -563,14 +598,16 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     return FAILURE;
     }
 
-  for (unsigned int markerNum = 1; markerNum <= markersCollection->count(); markerNum++)
+  for(unsigned int markerNum = 1; 
+      markerNum <= markersCollection->count(); markerNum++)
     {
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
       //Get postion and pose information 
       Xform3D* Marker2CurrCameraXf = NULL;
-      Marker2CurrCameraXf = marker->marker2CameraXf(this->m_SelectedCamera->Handle());
+      Marker2CurrCameraXf = 
+        marker->marker2CameraXf(this->m_SelectedCamera->Handle());
 
       if(Marker2CurrCameraXf != NULL)
         {
@@ -606,10 +643,13 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
         transform.push_back( quaternion[2] ); 
         transform.push_back( quaternion[3] ); 
 
-        //Check if a Tracker tool is added with this marker type 
+        //
+        // Check if a Tracker tool is added with this marker type 
         //
         typedef TrackerToolTransformContainerType::iterator InputIterator;
-        InputIterator markerItr = m_ToolTransformBuffer.find( marker->getName() );
+
+        InputIterator markerItr = 
+          m_ToolTransformBuffer.find( marker->getName() );
   
         if( markerItr != m_ToolTransformBuffer.end() )
           {
@@ -621,7 +661,9 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     // DO NOT delete marker. This is a possible bug in Marker class.
     // Invoking the marker class destructor causes misidentification of the
     // markers in the subsequent frames. 
-    //delete marker;
+    //
+    //             "delete marker;"
+    //
     }
 
   delete markersCollection; 
@@ -636,7 +678,8 @@ MicronTracker::ResultType
 MicronTracker::
 RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
 {
- igstkLogMacro( DEBUG, "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
+  igstkLogMacro( DEBUG,
+    "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
   std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();

@@ -25,10 +25,13 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "igstkMicronTrackerTool.h" 
 #include "igstkTracker.h"
 
-// MicronTracker utilitiy classes declarations
+//
+// MicronTracker utilitiy classes declarations.
+// These classes are part of the MTC library
+// and can be found in the Utilities directory.
+//
 class Markers;
 class Marker;
 class Persistence;
@@ -42,13 +45,17 @@ class Xform3D;
 namespace igstk {
 
 /** \class MicronTracker
-  * \brief Provides support for the Claron MicronTracker.
-  *
-  * The MicronTracker is a small firewire-based optical tracker
-  * from Claron Technologies in Toronto. This class uses the MTC
-  * library that comes with the Tracker to communicate with the tracker
-  * camera and gather pose information of surgical tools.
-*/
+ * \brief Provides support for the Claron MicronTracker.
+ *
+ * The MicronTracker is a small firewire-based optical tracker from Claron
+ * Technologies in Toronto, Canada. This class uses the MTC library that comes
+ * with the Tracker to communicate with the tracker camera and gather pose
+ * information of surgical tools.
+ *
+ * \sa http://www.clarontech.com/
+ * 
+ * \ingroup Tracker
+ */
 
 class MicronTracker : public Tracker
 {
@@ -58,35 +65,30 @@ public:
 
 public:
 
-  /** typedefs for the tool */
-  typedef igstk::MicronTrackerTool              MicronTrackerToolType;
-  typedef MicronTrackerToolType::Pointer        MicronTrackerToolPointer;
-  typedef MicronTrackerToolType::ConstPointer   MicronTrackerToolConstPointer;
-
-  /** Typedef for internal boolean return type. */
-  typedef Tracker::ResultType   ResultType;
-
-    /** Get the number of tools that have been detected. */
+  /** Get the number of tools that have been detected. */
   igstkGetMacro( NumberOfTools, unsigned int );
 
   /** Set the directory path that contains the camera calibration
-    * files. 
-  */
-  void SetCameraCalibrationFilesDirectory( std::string fileName );
+   * files.
+   */
+  void SetCameraCalibrationFilesDirectory( const std::string & fileName );
 
-  /** Set the full path to the persistance file
-    * The persistance file contains camera parameters and algorithm parameters 
-  */
-  void SetInitializationFile( std::string fileName );
+  /** Set the full path to the persistance file.
+   *  The persistance file contains camera parameters and algorithm parameters
+   */
+  void SetInitializationFile( const std::string & fileName );
 
   /** Load markers template */
-  void LoadMarkerTemplate( std::string filename );
+  void LoadMarkerTemplate( const std::string & filename );
 
 protected:
 
   MicronTracker(void);
 
   virtual ~MicronTracker(void);
+
+  /** Typedef for internal boolean return type. */
+  typedef Tracker::ResultType   ResultType;
 
   /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
@@ -103,7 +105,7 @@ protected:
   /** Update the status and the transforms for all TrackerTools. */
   virtual ResultType InternalUpdateStatus( void );
 
-  /** Update the status and the transforms. 
+  /** Update the status and the transforms.
       This function is called by a separate thread. */
   virtual ResultType InternalThreadedUpdateStatus( void );
 
@@ -114,18 +116,18 @@ protected:
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Create an associative container that maps error code to error
     * descritpion */
   static void CreateErrorCodeList();
 
   /** Get Error description given the error code */
-  static const std::string GetErrorDescription( unsigned int ) ; 
+  static std::string GetErrorDescription( unsigned int );
 
-  /** Remove tracker tool entry from internal containers */ 
+  /** Remove tracker tool entry from internal containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-                                     TrackerToolType * trackerTool ); 
+                                     TrackerToolType * trackerTool );
 
 private:
 
@@ -133,7 +135,7 @@ private:
   void operator=(const Self&);   //purposely not implemented
 
   /** Initialize camera and algorithm attributes such as Frame interleave
-      template matching tolerance, extrapolate frame etc */ 
+      template matching tolerance, extrapolate frame etc */
   bool Initialize();
 
   /** Setup cameras */
@@ -150,7 +152,7 @@ private:
 
   /** Initialization file directory */
   std::string m_InitializationFile;
-  
+
   /** marker template directory */
   std::string m_MarkerTemplateDirectory;
 
@@ -163,19 +165,20 @@ private:
   double        m_CameraLightCoolness;
 
   /** A buffer to hold tool transforms */
-  typedef std::map< std::string, std::vector < double > > 
-                                TrackerToolTransformContainerType; 
+  typedef std::map< std::string, std::vector < double > >
+                                TrackerToolTransformContainerType;
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;
 
   /** Error map container */
-  static std::map< unsigned int, std::string>     m_ErrorCodeContainer;
+  typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
+  static ErrorCodeContainerType   m_ErrorCodeContainer;
 
   /** boolean to indicate if error code list is created */
   static bool m_ErrorCodeListCreated;
 
   /** Container holding status of the tools */
-  std::map< std::string, int >  m_ToolStatusContainer; 
+  std::map< std::string, int >  m_ToolStatusContainer;
 
 };
 
