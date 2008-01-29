@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkMicronTrackerTool.h"
+#include "igstkMicronTracker.h"
 
 #include "Markers.h"
 
@@ -40,7 +41,7 @@ MicronTrackerTool::~MicronTrackerTool()
 }
 
 /** Request set marker name */
-void MicronTrackerTool::RequestSetMarkerName( std::string markerName )
+void MicronTrackerTool::RequestSetMarkerName( const std::string& markerName )
 {
   this->m_MarkerName = markerName;
   m_TrackerToolConfigured = true;
@@ -59,7 +60,7 @@ MicronTrackerTool::CheckIfTrackerToolIsConfigured( )
 
 /** The "RequestAttachToTracker" method attaches 
  * the tracker tool to a tracker. */
-virtual void RequestAttachToTracker( MicronTracker *  tracker )
+void MicronTrackerTool::RequestAttachToTracker( MicronTracker *  tracker )
 {
   // This delegation is done only to enforce type matching between
   // TrackerTool and Tracker. It prevents the user from accidentally 
