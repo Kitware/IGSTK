@@ -24,8 +24,6 @@
 #include "igstkMicronTrackerTool.h"
 #include "igstkMicronTracker.h"
 
-#include "Markers.h"
-
 namespace igstk
 {
 
@@ -50,11 +48,13 @@ void MicronTrackerTool::RequestSetMarkerName( const std::string& markerName )
   this->SetTrackerToolIdentifier( m_MarkerName ); 
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
+ * tool is configured */ 
 bool
-MicronTrackerTool::CheckIfTrackerToolIsConfigured( )
+MicronTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
@@ -73,5 +73,3 @@ void MicronTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }
-
-} //igstk namespace

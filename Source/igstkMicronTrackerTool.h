@@ -20,7 +20,6 @@
 
 #include "igstkTrackerTool.h"
 
-class Markers;
 
 namespace igstk
 {
@@ -47,11 +46,10 @@ public:
   igstkStandardClassTraitsMacro( MicronTrackerTool, TrackerTool )
 
   /** Get Tracker tool marker name */
-  igstkGetMacro( MarkerName, std::string );
+  igstkGetStringMacro( MarkerName );
 
- /** Set tracker tool marker name
- **/
- void RequestSetMarkerName( const std::string & markerName); 
+  /** Set tracker tool marker name */
+  void RequestSetMarkerName( const std::string & markerName); 
 
   /** The "RequestAttachToTracker" method attaches 
    * the tracker tool to a tracker. */
@@ -60,16 +58,16 @@ public:
 protected:
 
   MicronTrackerTool();
-  ~MicronTrackerTool();
+  virtual ~MicronTrackerTool();
 
- /** Print object information */
-  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
 private:
 
   /** Get boolean variable to check if the tracker tool is 
    * configured or not */
-  virtual bool CheckIfTrackerToolIsConfigured(); 
+  virtual bool CheckIfTrackerToolIsConfigured() const;
 
   MicronTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
