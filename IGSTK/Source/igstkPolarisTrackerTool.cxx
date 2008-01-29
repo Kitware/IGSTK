@@ -227,7 +227,7 @@ bool PolarisTrackerTool::IsSROMFileNameSpecified( ) const
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
  * tool is configured. */ 
 bool
-PolarisTrackerTool::CheckIfTrackerToolIsConfigured( )
+PolarisTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");

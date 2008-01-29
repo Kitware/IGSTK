@@ -24,6 +24,7 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
 #include "igstkView.h"
 #include "igstkTransform.h"
 #include "igstkSerialCommunication.h"

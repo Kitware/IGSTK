@@ -47,7 +47,7 @@ protected:
   ~FlockOfBirdsTrackerTool();
 
 
-  virtual bool CheckIfTrackerToolIsConfigured();
+  virtual bool CheckIfTrackerToolIsConfigured() const;
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

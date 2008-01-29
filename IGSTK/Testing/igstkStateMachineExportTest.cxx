@@ -97,7 +97,7 @@ protected:
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
-  virtual bool CheckIfTrackerToolIsConfigured( ) { return true; } ;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
 };
  
 class DummyTracker : public Tracker

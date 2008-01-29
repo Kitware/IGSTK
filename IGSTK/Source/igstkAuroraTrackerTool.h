@@ -124,7 +124,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * configured or not */
-  virtual bool CheckIfTrackerToolIsConfigured(); 
+  virtual bool CheckIfTrackerToolIsConfigured() const; 
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );

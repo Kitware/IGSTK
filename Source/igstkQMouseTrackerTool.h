@@ -63,7 +63,7 @@ private:
 
   /** Get boolean variable to check if the tracker tool is 
    * configured or not */
-  virtual bool CheckIfTrackerToolIsConfigured(); 
+  virtual bool CheckIfTrackerToolIsConfigured() const; 
 
   QMouseTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented

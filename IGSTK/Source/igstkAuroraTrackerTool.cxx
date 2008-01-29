@@ -419,7 +419,7 @@ void AuroraTrackerTool::RequestAttachToTracker( AuroraTracker *  tracker )
 /** The "CheckIfTrackerToolIsConfigured" method 
  * returns true if the tracker tool is configured */ 
 bool
-AuroraTrackerTool::CheckIfTrackerToolIsConfigured( )
+AuroraTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::CheckIfTrackerToolIsConfigured "

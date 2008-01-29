@@ -26,6 +26,7 @@
 
 #include "OneViewAndTrackingNewUsingMicronTrackerGUI.h"
 #include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
 #include "igstkLogger.h"
 #include "igstkView.h"
 #include "itkStdStreamLogOutput.h"

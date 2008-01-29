@@ -157,7 +157,7 @@ private:
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes. */
-  virtual bool CheckIfTrackerToolIsConfigured( ) = 0;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const = 0;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ConfigureTool );
