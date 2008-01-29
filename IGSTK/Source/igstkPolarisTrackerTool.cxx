@@ -155,7 +155,7 @@ void PolarisTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 }
 
-/** Request the state machine to select wired tracker tool model*/
+/** Request the state machine to select wired tracker tool model. */
 void PolarisTrackerTool::RequestSelectWiredTrackerTool( )
 {
   igstkLogMacro( DEBUG, 
@@ -165,7 +165,7 @@ void PolarisTrackerTool::RequestSelectWiredTrackerTool( )
   m_StateMachine.ProcessInputs();
 }
 
-/** Request the state machine to select wireless tracker tool model*/
+/** Request the state machine to select wireless tracker tool model. */
 void PolarisTrackerTool::RequestSelectWirelessTrackerTool( )
 {
   igstkLogMacro( DEBUG, 
@@ -175,7 +175,7 @@ void PolarisTrackerTool::RequestSelectWirelessTrackerTool( )
   m_StateMachine.ProcessInputs();
 }
  
-/** Request the state machine to set the port number */
+/** Request the state machine to set the port number.  */
 void PolarisTrackerTool::RequestSetPortNumber( unsigned int portNumber )
 {
   igstkLogMacro( DEBUG, 
@@ -194,8 +194,8 @@ void PolarisTrackerTool::RequestSetPortNumber( unsigned int portNumber )
     }
 }
 
-/** Request the state machine to set the SROM file name */
-void PolarisTrackerTool::RequestSetSROMFileName( std::string filename )
+/** Request the state machine to set the SROM file name.  */
+void PolarisTrackerTool::RequestSetSROMFileName( const std::string & filename )
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::RequestSetSROMFileName called ...\n");
@@ -212,40 +212,30 @@ void PolarisTrackerTool::RequestSetSROMFileName( std::string filename )
     }
 }
 
-/** Check if the tool is wireless type*/
-bool PolarisTrackerTool::IsToolWirelessType( )
+/** Check if the tool is wireless type. */
+bool PolarisTrackerTool::IsToolWirelessType( ) const
 {
   return m_WirelessTrackerToolSelected;
 }
 
-/** Check if the SROM filename is specified */
-bool PolarisTrackerTool::IsSROMFileNameSpecified( )
+/** Check if the SROM filename is specified.  */
+bool PolarisTrackerTool::IsSROMFileNameSpecified( ) const
 {
   return m_SROMFileNameSpecified;
 }
 
-/** Get SROM filename */ 
-std::string PolarisTrackerTool::GetSROMFileName( )
-{
-  return m_SROMFileName;
-}
-
-/** Get Port number */ 
-unsigned int PolarisTrackerTool::GetPortNumber( )
-{
-  return m_PortNumber;
-}
-
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
+ * tool is configured. */ 
 bool
 PolarisTrackerTool::CheckIfTrackerToolIsConfigured( )
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
 /** Request the state machine to set the tool id */
-void PolarisTrackerTool::RequestSetToolId( std::string toolId )
+void PolarisTrackerTool::RequestSetToolId( const std::string & toolId )
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::RequestSetToolId called ...\n");
@@ -299,7 +289,8 @@ void PolarisTrackerTool::SetPortNumberProcessing( )
 void PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing called ...\n");
+    "igstk::PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing "
+    "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid Port Number specified ");
 }
@@ -333,7 +324,8 @@ void PolarisTrackerTool::SetSROMFileNameProcessing( )
 void PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing called ...\n");
+    "igstk::PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing "
+    "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid SROM filename specified ");
 }
@@ -348,11 +340,12 @@ void PolarisTrackerTool::SetToolIdProcessing( )
   m_ToolIdSpecified = true;
 }
 
-/** Report Invalid tool id  specified*/ 
+/** Report Invalid tool id  specified. */
 void PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing called ...\n");
+    "igstk::PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing "
+    "called ...\n");
   igstkLogMacro( CRITICAL, "Invalid tool ID specified" );
 }
 
