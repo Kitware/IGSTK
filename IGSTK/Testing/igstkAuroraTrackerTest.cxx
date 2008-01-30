@@ -163,7 +163,8 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
     transform = trackerTool->GetCalibratedTransform();
 
     position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+    std::string toolString = trackerTool->GetTrackerToolIdentifier() ;
+    std::cout << "Trackertool:" << toolString
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
