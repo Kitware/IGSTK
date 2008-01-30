@@ -182,29 +182,9 @@ MicronTracker::GetErrorDescription( unsigned int code )
     }
 }
 
-/** Specify camera calibration directory */
-void 
-MicronTracker
-::SetCameraCalibrationFilesDirectory( const std::string & fileName )
-{
-  igstkLogMacro( DEBUG,
-    "igstk::MicronTracker::SetCameraCalibrationFilesDirectory called..\n");
-
-  m_CalibrationFilesDirectory = fileName;
-}
-
-/** Specify the initialization filename */
-void MicronTracker::SetInitializationFile( const std::string & fileName )
-{
-  igstkLogMacro( DEBUG,
-    "igstk::MicronTracker::SetInitializationFileDirectoryPath called..\n");
-
-  m_InitializationFile = fileName;
-}
-
-/** Load marker template  */
-void
-MicronTracker::LoadMarkerTemplate( const std::string & filename )
+/** Load marker templates  */
+bool
+MicronTracker::LoadMarkerTemplates( void )
 {
   igstkLogMacro( DEBUG,
                 "igstk::MicronTracker::LoadMarkerTemplate called..\n");
@@ -212,24 +192,26 @@ MicronTracker::LoadMarkerTemplate( const std::string & filename )
   // clear templates already loaded
   this->m_Markers->clearTemplates();
 
-  this->m_MarkerTemplateDirectory = filename;
-
-  if ( m_MarkerTemplateDirectory == "" )
+  if( m_MarkerTemplatesDirectory == "" || 
+      !itksys::SystemTools::FileExists( m_MarkerTemplatesDirectory.c_str() ) ) 
     {
-    igstkLogMacro( CRITICAL, "Marker template directory name is empty string ");
-    return;
+    igstkLogMacro( CRITICAL, "Marker templates directory is not properly set");
+    return FAILURE;
     }
- 
+
   char * markerTemplateDirectory = 
-            const_cast< char *> ( m_MarkerTemplateDirectory.c_str() );
+            const_cast< char *> ( m_MarkerTemplatesDirectory.c_str() );
  
   unsigned int  status = Markers_LoadTemplates( markerTemplateDirectory );
 
   if ( status != 0 )
     {
-    igstkLogMacro( CRITICAL, "Error loading the templates: " 
+    igstkLogMacro( CRITICAL, "Error loading the marker templates: " 
                    << MicronTracker::GetErrorDescription( status ));
+    return FAILURE;
     }
+
+  return SUCCESS;
 }
 
 MicronTracker::ResultType MicronTracker::InternalOpen( void )
@@ -237,9 +219,16 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalOpen called ...\n");
 
   /* Initialization involves two steps
-   * 1) Set algorithm and camera attributes
-   * 2) Attach the cameras
+   * 1) Loading marker templates
+   * 2) Setting algorithm and camera attributes
+   * 3) Attaching the cameras
    */
+
+  if( ! this->LoadMarkerTemplates() )
+    {
+    igstkLogMacro( CRITICAL, "Error loading marker templates");
+    return FAILURE;
+    }
 
   if( ! this->Initialize() )
     {
@@ -343,8 +332,8 @@ bool MicronTracker::SetUpCameras( void )
 
   bool result = true;
 
-  if ( m_CalibrationFilesDirectory == "" || 
-       !itksys::SystemTools::FileExists( m_CalibrationFilesDirectory.c_str() ) ) 
+  if ( m_CameraCalibrationFilesDirectory == "" || 
+       !itksys::SystemTools::FileExists( m_CameraCalibrationFilesDirectory.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, 
       "Camera calibration directory is not properly set");
@@ -352,7 +341,7 @@ bool MicronTracker::SetUpCameras( void )
     }
  
   this->m_Cameras->SetCameraCalibrationFilesDirectory( 
-    this->m_CalibrationFilesDirectory );
+    this->m_CameraCalibrationFilesDirectory );
 
   int success = this->m_Cameras->AttachAvailableCameras();
 
@@ -360,7 +349,7 @@ bool MicronTracker::SetUpCameras( void )
     {
     igstkLogMacro(CRITICAL, 
       " No camera available or missing calibration file in:\t " 
-      << this->m_CalibrationFilesDirectory);
+      << this->m_CameraCalibrationFilesDirectory);
 
     igstkLogMacro(CRITICAL, "MTC Error returned: " << MTLastErrorString());
 
@@ -676,13 +665,13 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
 MicronTracker::ResultType 
 MicronTracker::
-RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
+RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+  const std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
@@ -697,6 +686,10 @@ void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
+  os << indent << "Camera calibration files directory: " << m_CameraCalibrationFilesDirectory << std::endl;
+  os << indent << "Initialization file: " << m_InitializationFile << std::endl;
+  os << indent << "Markers template directory: " << m_MarkerTemplatesDirectory << std::endl;
+  os << indent << "Camera Light coolness value : " << m_CameraLightCoolness << std::endl;
 }
 
 } // end of namespace igstk

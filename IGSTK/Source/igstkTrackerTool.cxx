@@ -212,7 +212,7 @@ TrackerTool::SetTrackerToolIdentifier( std::string identifier )
 /** The "GetTrackerToolIdentifier" method assigns an identifier 
  * to the tracker tool. */
 std::string 
-TrackerTool::GetTrackerToolIdentifier( )
+TrackerTool::GetTrackerToolIdentifier( ) const
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::GetTrackerToolIdentifier called...\n");

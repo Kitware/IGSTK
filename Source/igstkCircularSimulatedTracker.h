@@ -57,14 +57,33 @@ protected:
 
   virtual ~CircularSimulatedTracker();
 
-  typedef Superclass::ResultType         ResultType;
+  typedef Tracker::ResultType         ResultType;
   typedef RealTimeClock::TimeStampType   TimeType;
+
+  virtual ResultType InternalOpen( void );
+
+  virtual ResultType InternalStartTracking( void );
+
+  virtual ResultType InternalReset( void );
+
+  virtual ResultType InternalStopTracking( void );
+
+  virtual ResultType InternalDeactivateTools( void );
+
+  virtual ResultType InternalClose( void );
+
+  /** Verify tracker tool information */
+  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+
 
   /** This is the most important method of this class. It computes the
    * transform that will be passed to the TrackerTool. 
    */
   virtual ResultType InternalUpdateStatus( void );
 
+  virtual ResultType InternalThreadedUpdateStatus( void );
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 

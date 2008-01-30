@@ -397,7 +397,7 @@ AuroraTracker::ResultType AuroraTracker
  
 AuroraTracker::ResultType 
 AuroraTracker::
-RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) 
+RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
 {
   std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
   // disable the port handle

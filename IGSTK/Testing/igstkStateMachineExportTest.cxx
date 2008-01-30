@@ -159,7 +159,7 @@ VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 }
 
 ResultType 
-RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }

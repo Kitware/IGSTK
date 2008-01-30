@@ -39,6 +39,43 @@ CircularSimulatedTracker::~CircularSimulatedTracker()
 {
 }
 
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalOpen( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStartTracking( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalReset( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStopTracking( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalDeactivateTools( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalClose( void )
+{
+  return SUCCESS;
+}
+
+CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+
 CircularSimulatedTracker::ResultType 
 CircularSimulatedTracker::InternalUpdateStatus( void )
 {
@@ -89,7 +126,21 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
 
   return SUCCESS;
 }
- 
+
+SimulatedTracker::ResultType 
+CircularSimulatedTracker::InternalThreadedUpdateStatus( void )
+{
+  return FAILURE;
+}
+
+CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker
+::RemoveTrackerToolFromInternalDataContainers
+( const TrackerToolType * trackerTool )
+{
+  return FAILURE;
+}
+
 /** Print Self function */
 void CircularSimulatedTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

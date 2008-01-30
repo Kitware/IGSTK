@@ -74,7 +74,7 @@ MouseTracker::ResultType MouseTracker
 }
 
 MouseTracker::ResultType MouseTracker
-::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }

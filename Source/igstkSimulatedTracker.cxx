@@ -83,7 +83,9 @@ SimulatedTracker::InternalThreadedUpdateStatus( void )
 }
 
 SimulatedTracker::ResultType 
-SimulatedTracker::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+SimulatedTracker
+::RemoveTrackerToolFromInternalDataContainers
+( const TrackerToolType * trackerTool )
 {
   return FAILURE;
 }

@@ -100,7 +100,7 @@ public:
   virtual void RequestDetach( );
 
   /** Access the unique identifier to the tracker tool */
-  std::string GetTrackerToolIdentifier( );
+  std::string GetTrackerToolIdentifier( ) const;
 
 protected:
 

@@ -243,7 +243,7 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )

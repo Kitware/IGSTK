@@ -230,7 +230,7 @@ protected:
   /** This method will remove entries of the traceker tool from internal
     * data containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-                                     TrackerToolType * trackerTool ) = 0; 
+                                     const TrackerToolType * trackerTool ) = 0; 
 
 
   /** typedefs from TrackerTool class */

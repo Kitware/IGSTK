@@ -76,7 +76,7 @@ QMouseTracker::ResultType QMouseTracker
 }
 
 QMouseTracker::ResultType QMouseTracker
-::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "QMouseTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
   return SUCCESS;

@@ -30,7 +30,7 @@
 //
 // MicronTracker utilitiy classes declarations.
 // These classes are part of the MTC library
-// and can be found in the Utilities directory.
+// and can be found in the Utilities subdirectory.
 //
 class Markers;
 class Marker;
@@ -71,15 +71,15 @@ public:
   /** Set the directory path that contains the camera calibration
    * files.
    */
-  void SetCameraCalibrationFilesDirectory( const std::string & fileName );
+  igstkSetStringMacro( CameraCalibrationFilesDirectory );
 
   /** Set the full path to the persistance file.
-   *  The persistance file contains camera parameters and algorithm parameters
+   *  The persistance file contains camera and marker detection algorithm parameters
    */
-  void SetInitializationFile( const std::string & fileName );
+  igstkSetStringMacro( InitializationFile );
 
-  /** Load markers template */
-  void LoadMarkerTemplate( const std::string & filename );
+  /** Set marker templates directory */
+  igstkSetStringMacro( MarkerTemplatesDirectory );
 
 protected:
 
@@ -126,7 +126,7 @@ protected:
   static std::string GetErrorDescription( unsigned int );
 
   /** Remove tracker tool entry from internal containers */
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const
                                      TrackerToolType * trackerTool );
 
 private:
@@ -138,6 +138,9 @@ private:
       template matching tolerance, extrapolate frame etc */
   bool Initialize();
 
+  /** load marker templates */
+  bool LoadMarkerTemplates();
+
   /** Setup cameras */
   bool SetUpCameras();
 
@@ -148,13 +151,13 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** Calibration files directory */
-  std::string m_CalibrationFilesDirectory;
+  std::string m_CameraCalibrationFilesDirectory;
 
   /** Initialization file directory */
   std::string m_InitializationFile;
 
   /** marker template directory */
-  std::string m_MarkerTemplateDirectory;
+  std::string m_MarkerTemplatesDirectory;
 
   Persistence * m_Persistence;
   Markers     * m_Markers;

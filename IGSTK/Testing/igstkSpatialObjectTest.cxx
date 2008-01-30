@@ -148,7 +148,7 @@ protected:
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
     virtual ResultType InternalClose( void ) { return SUCCESS; }
     virtual ResultType VerifyTrackerToolInformation( TrackerToolType * trackerTool ) { return SUCCESS; }
-    virtual ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool ) { return SUCCESS; }
+    virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) { return SUCCESS; }
 
 private:
 

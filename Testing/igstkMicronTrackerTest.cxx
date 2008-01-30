@@ -112,7 +112,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   tracker->SetInitializationFile( initializationFile );
 
   std::string markerTemplateDirectory = argv[3];
-  tracker->LoadMarkerTemplate( markerTemplateDirectory );
+  tracker->SetMarkerTemplatesDirectory( markerTemplateDirectory );
 
 
   // Start communication

@@ -87,7 +87,7 @@ public:
                               CameraCalibrationFileDirectory );
 
     m_Tracker->SetInitializationFile( InitializationFile );
-    m_Tracker->LoadMarkerTemplate( markerTemplateDirectory );
+    m_Tracker->SetMarkerTemplatesDirectory( markerTemplateDirectory );
     m_Tracker->RequestOpen();
     }
 
