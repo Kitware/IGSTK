@@ -128,6 +128,7 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilitySt
   // objects.
   m_VisibilityStateMachine.AddInput( this->m_ValidTimeStampInput, "ValidTimeStampInput" );
   m_VisibilityStateMachine.AddInput( this->m_InvalidTimeStampInput, "InvalidTimeStampInput" );
+  m_VisibilityStateMachine.AddInput( this->m_SetActorVisibilityInput, "SetActorVisibilityInput" );
 
   m_VisibilityStateMachine.AddState( this->m_InvisibleState, "InvisibleState" );
   m_VisibilityStateMachine.AddState( this->m_VisibleState, "VisibleState" );
@@ -151,6 +152,18 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilitySt
                                           this->m_ValidTimeStampInput,
                                           this->m_VisibleState,
                                         & Self::NoProcessing );
+
+  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
+                                          this->m_SetActorVisibilityInput,
+                                          this->m_VisibleState,
+                                        & Self::SetActorVisibleProcessing );
+
+  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
+                                          this->m_SetActorVisibilityInput,
+                                          this->m_InvisibleState,
+                                        & Self::SetActorInvisibleProcessing );
+
+  m_VisibilitySetActor = NULL;
 
   m_VisibilityStateMachine.SelectInitialState( this->m_InvisibleState );
   m_VisibilityStateMachine.SetReadyToRun();
@@ -183,8 +196,8 @@ float ObjectRepresentation::GetBlue() const
 /** Add an actor to the actors list */
 void ObjectRepresentation::AddActor( vtkProp * actor )
 {
-  // Initialize objects as invisible until we learn from their Transform time stamp.
-  actor->VisibilityOff();
+  // Initialize objects based on the visibility state machine.
+  this->RequestSetActorVisibility( actor );
   m_Actors.push_back( actor );
 }
 
@@ -307,6 +320,8 @@ void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
   m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet.GetTransform();
 
+  igstkLogMacro( DEBUG, "Received SpatialObject Transform " << m_SpatialObjectTransform );
+
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
   m_SpatialObjectTransform.ExportTransform( *vtkMatrix );
@@ -407,6 +422,27 @@ void ObjectRepresentation
   os << indent << "Color: " << m_Color[0] << " : ";
   os << m_Color[1] << " : " << m_Color[2] << std::endl;
   os << indent << "Opacity: " << m_Opacity << std::endl;
+}
+
+void ObjectRepresentation
+::RequestSetActorVisibility( vtkProp* p )
+{
+  m_VisibilitySetActor = p;
+
+  m_VisibilityStateMachine.PushInput( m_SetActorVisibilityInput );
+  m_VisibilityStateMachine.ProcessInputs();
+}
+
+void ObjectRepresentation
+::SetActorVisibleProcessing()
+{
+  m_VisibilitySetActor->VisibilityOn();
+}
+
+void ObjectRepresentation
+::SetActorInvisibleProcessing()
+{
+  m_VisibilitySetActor->VisibilityOff();
 }
 
 } // end namespace igstk

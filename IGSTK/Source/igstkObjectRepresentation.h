@@ -203,12 +203,27 @@ private:
   /** Inputs to the Visibility State Machine */
   igstkDeclareInputMacro( ValidTimeStamp );
   igstkDeclareInputMacro( InvalidTimeStamp );
-  
+  igstkDeclareInputMacro( SetActorVisibility );
+
   /** States for the Visibility State Machine */
   igstkDeclareStateMacro( Visible );
   igstkDeclareStateMacro( Invisible );
 
   CoordinateReferenceSystem::ConstPointer m_TargetCoordinateSystem;
+
+  /** Used to store an actor for visibility state machine processing. */
+  vtkProp* m_VisibilitySetActor;
+
+  /** Internal method to set an actor's visibility based on the 
+   *  visibility state machine.
+   */
+  void RequestSetActorVisibility( vtkProp * );
+
+  /** These two methods are used by the visibility state machine 
+   *  to set an actor's visibility.
+   */ 
+  void SetActorVisibleProcessing();
+  void SetActorInvisibleProcessing();
 };
 
 } // end namespace igstk
