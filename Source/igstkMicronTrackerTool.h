@@ -64,15 +64,32 @@ protected:
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
 private:
+  MicronTrackerTool(const Self&);   //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
+
+  /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( MarkerNameSpecified );
+
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( ValidMarkerName );
+  igstkDeclareInputMacro( InValidMarkerName );
 
   /** Get boolean variable to check if the tracker tool is 
    * configured or not */
   virtual bool CheckIfTrackerToolIsConfigured() const;
 
-  MicronTrackerTool(const Self&);   //purposely not implemented
-  void operator=(const Self&);       //purposely not implemented
+  /** Report Invalid marker name specified*/ 
+  void ReportInvalidMarkerNameSpecifiedProcessing( );
+
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequestProcessing();
+
+  /** Set marker name */
+  void SetMarkerNameProcessing();
 
   std::string     m_MarkerName;
+  std::string     m_MarkerNameToBeSet;
 
   bool            m_TrackerToolConfigured;
 
