@@ -50,7 +50,7 @@ void WebCameraTrackerTool::RequestSetName( const NameType & name )
 
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
 bool
-WebCameraTrackerTool::CheckIfTrackerToolIsConfigured( )
+WebCameraTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
