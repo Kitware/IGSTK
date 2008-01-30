@@ -554,7 +554,7 @@ void Tracker::StartTrackingSuccessProcessing( void )
 
   while( inputItr != inputEnd )
     {
-    (inputItr->second)->ReportTrackingStarted();
+    (inputItr->second)->RequestReportTrackingStarted();
     ++inputItr;
     }
 
@@ -586,7 +586,7 @@ void Tracker::AttachingTrackerToolSuccessProcessing( void )
 
   // report to the tracker tool that the attachment has been 
   // successful
-  m_TrackerToolToBeAttached->ReportSuccessfulTrackerToolAttachment();
+  m_TrackerToolToBeAttached->RequestReportSuccessfulTrackerToolAttachment();
 
   //connect the tracker tool coordinate system to the tracker
   //system. By default, make the tracker coordinate system to 
@@ -611,7 +611,7 @@ void Tracker::AttachingTrackerToolFailureProcessing( void )
                  "called ...\n");
 
   // report to the tracker tool that the attachment has failed
-  m_TrackerToolToBeAttached->ReportFailedTrackerToolAttachment();
+  m_TrackerToolToBeAttached->RequestReportFailedTrackerToolAttachment();
 
   this->InvokeEvent( AttachingTrackerToolToTrackerErrorEvent() );
 }
@@ -646,7 +646,7 @@ void Tracker::StopTrackingSuccessProcessing( void )
 
   while( inputItr != inputEnd )
     {
-    (inputItr->second)->ReportTrackingStopped();
+    (inputItr->second)->RequestReportTrackingStopped();
     ++inputItr;
     }
 
@@ -1103,7 +1103,7 @@ Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
     "igstk::Tracker::ReportTrackingToolNotAvailable called...\n");
-  trackerTool->ReportTrackingToolNotAvailable();
+  trackerTool->RequestReportTrackingToolNotAvailable();
 }
 
 /** Report to the tracker tool that the tool is Visible */
@@ -1111,7 +1111,7 @@ void
 Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ReportTrackingToolVisible called...\n");
-  trackerTool->ReportTrackingToolVisible();
+  trackerTool->RequestReportTrackingToolVisible();
 }
 
 /** Set raw transform */

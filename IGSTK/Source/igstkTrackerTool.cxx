@@ -191,9 +191,9 @@ TrackerTool::RequestAttachToTracker( Tracker * tracker )
 }
 
 void 
-TrackerTool::RequestDetach( )
+TrackerTool::RequestDetachFromTracker( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestDetach called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestDetachFromTracker called...\n");
 
   igstkPushInputMacro( DetachTrackerToolFromTracker );
   this->m_StateMachine.ProcessInputs();
@@ -202,7 +202,7 @@ TrackerTool::RequestDetach( )
 /** The "SetTrackerToolIdentifier" method assigns an identifier 
  * to the tracker tool. */
 void 
-TrackerTool::SetTrackerToolIdentifier( std::string identifier )
+TrackerTool::SetTrackerToolIdentifier( const std::string identifier )
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::SetTrackerToolIdentifier called...\n");
@@ -211,7 +211,7 @@ TrackerTool::SetTrackerToolIdentifier( std::string identifier )
 
 /** The "GetTrackerToolIdentifier" method assigns an identifier 
  * to the tracker tool. */
-std::string 
+const std::string 
 TrackerTool::GetTrackerToolIdentifier( ) const
 {
   igstkLogMacro( DEBUG, 
@@ -243,8 +243,8 @@ void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
   m_TrackerToAttachTo->RequestAttachTool( this );
 }
 
-/** Report successful tracker tool attachment */ 
-void TrackerTool::ReportSuccessfulTrackerToolAttachment() 
+/** Push AttachmentToTrackerSuccess input to the tracker tool*/ 
+void TrackerTool::RequestReportSuccessfulTrackerToolAttachment() 
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportSuccessfulTrackerToolAttachment called ...\n");
@@ -253,8 +253,8 @@ void TrackerTool::ReportSuccessfulTrackerToolAttachment()
   this->m_StateMachine.ProcessInputs();
 }
 
-/** Report failure in tracker tool attachment attempt */ 
-void TrackerTool::ReportFailedTrackerToolAttachment()
+/** Push AttachmentToTrackerFailure input to the tracker tool*/ 
+void TrackerTool::RequestReportFailedTrackerToolAttachment()
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportFailedTrackerToolAttachment called ...\n");
@@ -360,7 +360,7 @@ void TrackerTool::ReportTrackerToolNotAvailableProcessing( void )
 }
 
 /** Report tracking started */ 
-void TrackerTool::ReportTrackingStartedProcessing( void )
+void TrackerTool::ReportTrackingStartedProcessing( void ) 
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportTrackingStarted called ...\n");
@@ -369,7 +369,7 @@ void TrackerTool::ReportTrackingStartedProcessing( void )
 }
 
 /** Report tracking stopped */ 
-void TrackerTool::ReportTrackingStoppedProcessing( void )
+void TrackerTool::ReportTrackingStoppedProcessing( void ) 
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportTrackingStopped called ...\n");
@@ -378,27 +378,27 @@ void TrackerTool::ReportTrackingStoppedProcessing( void )
 }
 
 /** Push TrackingStarted state input to the tracker tool */
-void TrackerTool::ReportTrackingStarted( )
+void TrackerTool::RequestReportTrackingStarted( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingStarted called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingStarted called...\n");
 
   igstkPushInputMacro( TrackingStarted );
   this->m_StateMachine.ProcessInputs();
 }
 
-/** Push TrackingStarted state input to the tracker tool */
-void TrackerTool::ReportTrackingStopped( )
+/** Push TrackingStopped state input to the tracker tool */
+void TrackerTool::RequestReportTrackingStopped( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingStopped called...\n");
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingStopped called...\n");
 
   igstkPushInputMacro( TrackingStopped );
   this->m_StateMachine.ProcessInputs();
 }
 
 /** Push TrackerToolNotAvailable input to the tracker tool */
-void TrackerTool::ReportTrackingToolNotAvailable( )
+void TrackerTool::RequestReportTrackingToolNotAvailable( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolNotAvailable "
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingToolNotAvailable "
   << "called...\n");
 
   igstkPushInputMacro( TrackerToolNotAvailable );
@@ -406,9 +406,9 @@ void TrackerTool::ReportTrackingToolNotAvailable( )
 }
 
 /** Push TrackerToolVisible input to the tracker tool  */
-void TrackerTool::ReportTrackingToolVisible( )
+void TrackerTool::RequestReportTrackingToolVisible( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::ReportTrackingToolVisible "
+  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingToolVisible "
   << "called...\n");
 
   igstkPushInputMacro( TrackerToolVisible );
@@ -416,7 +416,7 @@ void TrackerTool::ReportTrackingToolVisible( )
 }
 
 /** Report invalid request */
-void TrackerTool::ReportInvalidRequestProcessing( void )
+void TrackerTool::ReportInvalidRequestProcessing( void ) 
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportInvalidRequestProcessing called...\n");

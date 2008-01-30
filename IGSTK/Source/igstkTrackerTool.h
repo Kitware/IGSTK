@@ -95,12 +95,12 @@ public:
   /** The "RequestConfigure" method attempts to configure the tracker tool */
   virtual void RequestConfigure( void );
 
-  /** The "RequestDetach" method detaches the tracker tool from the 
+  /** The "RequestDetachFromTracker" method detaches the tracker tool from the 
    * tracker. */
-  virtual void RequestDetach( );
+  virtual void RequestDetachFromTracker( );
 
   /** Access the unique identifier to the tracker tool */
-  std::string GetTrackerToolIdentifier( ) const;
+  const std::string GetTrackerToolIdentifier( ) const;
 
 protected:
 
@@ -112,7 +112,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** Set a unique identifier to the tracker tool */
-  void SetTrackerToolIdentifier( std::string identifier );
+  void SetTrackerToolIdentifier( const std::string identifier );
 
   /** The "RequestAttachToTracker" method attaches the tracker tool to a
    * tracker. */
@@ -124,22 +124,22 @@ private:
   void operator=(const Self&);    //purposely not implemented
 
   /** Push TrackingStarted input to the tracker tool */
-  virtual void ReportTrackingStarted( );
+  virtual void RequestReportTrackingStarted( );
 
   /** Push TrackingStopped input to the tracker tool  */
-  virtual void ReportTrackingStopped( );
+  virtual void RequestReportTrackingStopped( );
 
   /** Push TrackerToolNotAvailable input to the tracker tool */
-  virtual void ReportTrackingToolNotAvailable( );
+  virtual void RequestReportTrackingToolNotAvailable( );
 
   /** Push TrackerToolVisible input to the tracker tool */
-  virtual void ReportTrackingToolVisible( );
+  virtual void RequestReportTrackingToolVisible( );
 
-  /** Report successful tracker tool attachment */ 
-  void ReportSuccessfulTrackerToolAttachment();
+  /** Push AttachmentToTrackerSuccess input to the tracker tool*/ 
+  void RequestReportSuccessfulTrackerToolAttachment();
 
-  /** Report failure in tracker tool attachment attempt */ 
-  void ReportFailedTrackerToolAttachment();
+  /** Push AttachmentToTrackerFailure input to the tracker tool*/ 
+  void RequestReportFailedTrackerToolAttachment();
 
   /** Set calibrated raw transform with respect to a reference
     * tracker tool */

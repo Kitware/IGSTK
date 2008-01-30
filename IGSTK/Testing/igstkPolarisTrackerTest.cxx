@@ -202,7 +202,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   //Remove one of the tracker tools and restart tracking
   std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool2->RequestDetach( );
+  trackerTool2->RequestDetachFromTracker( );
 
   // restart tracking
 

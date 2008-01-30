@@ -190,7 +190,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   //Remove one of the tracker tools and restart tracking
   std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool->RequestDetach( );
+  trackerTool->RequestDetachFromTracker( );
 
   // restart tracking
 
