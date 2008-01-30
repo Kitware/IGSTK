@@ -74,7 +74,8 @@ public:
   igstkSetStringMacro( CameraCalibrationFilesDirectory );
 
   /** Set the full path to the persistance file.
-   *  The persistance file contains camera and marker detection algorithm parameters
+   *  The persistance file contains camera and marker 
+   *  detection algorithm parameters
    */
   igstkSetStringMacro( InitializationFile );
 

@@ -139,7 +139,7 @@ private:
 
   vtkRenderWindowInteractor     * m_RenderWindowInteractor; 
 
-   /** States for the State Machine */
+  /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( ViewConnected );
 

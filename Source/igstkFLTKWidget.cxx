@@ -87,7 +87,8 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 /** Destructor */
 FLTKWidget::~FLTKWidget()
 {
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::igstkFLTKWidgeti::Destructor() called ...\n");
+  igstkLogMacro( DEBUG,
+                "igstkFLTKWidget::igstkFLTKWidgeti::Destructor() called ...\n");
 
   if ( ! m_View.IsNull() ) 
     {
@@ -123,7 +124,8 @@ void FLTKWidget::SetRenderer( vtkRenderer * renderer )
 }
 
 /** Set VTK render window interactor */
-void FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
+void 
+FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
   this->m_RenderWindowInteractor = interactor;
 }
@@ -147,7 +149,7 @@ void FLTKWidget::RequestSetView( const ViewType* view )
     {
     m_View = const_cast< ViewType*  >( view );
     igstkPushInputMacro( ValidView );
-    }    
+    }
 
   m_StateMachine.ProcessInputs();
 }
@@ -182,7 +184,7 @@ void FLTKWidget::SetRenderWindowID(void)
     // FLTK 1.x does not support HiView
     ((vtkCarbonRenderWindow *)renderWindow)->SetRootWindow( fl_xid( this ) );
   #else
-    renderWindow->SetWindowId( (void *)fl_xid( this ) );
+  renderWindow->SetWindowId( (void *)fl_xid( this ) );
   #endif
   #if !defined(WIN32) && !defined(_WIN32) && !defined(__APPLE__)
     renderWindow->SetDisplayId( fl_display );
@@ -193,7 +195,8 @@ void FLTKWidget::SetRenderWindowID(void)
 /** Request enable interactions */
 void FLTKWidget::RequestEnableInteractions()
 {
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestEnableInteractions() called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkFLTKWidget::RequestEnableInteractions() called ...\n");
   igstkPushInputMacro( EnableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -202,7 +205,8 @@ void FLTKWidget::RequestEnableInteractions()
 /** Request disable interactions */
 void FLTKWidget::RequestDisableInteractions()
 {
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestDisableInteractions() called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkFLTKWidget::RequestDisableInteractions() called ...\n");
   igstkPushInputMacro( DisableInteractions );
   m_StateMachine.ProcessInputs();
 }
@@ -210,14 +214,16 @@ void FLTKWidget::RequestDisableInteractions()
 /** */
 void FLTKWidget::EnableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+                "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
   m_InteractionHandling = true;
 }
 
 /** */
 void FLTKWidget::DisableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+                "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
   m_InteractionHandling = false;
 }
 

@@ -144,7 +144,7 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
  
-    /** Set the interactor style in the derived classes */
+  /** Set the interactor style in the derived classes */
   void SetInteractorStyle( vtkInteractorStyle * style );
 
   /** Set the size of the render window */
@@ -158,7 +158,7 @@ protected:
 
 private:
 
-   /** Get renderer */ 
+  /** Get renderer */ 
   vtkRenderer *  GetRenderer() const;
  
   /** Get render window */
@@ -197,7 +197,8 @@ private:
   /** Save a screenshot of the current rendered scene while in Idle state */
   void SaveScreenShotWhileIdleProcessing();
   
-  /** Save a screenshot of the current rendered scene while in InteractorInitialized state */
+  /** Save a screenshot of the current rendered scene while
+   *  in InteractorInitialized state */
   void SaveScreenShotWhileInteractorInitializedProcessing();
   
   /** Save a screenshot of the current rendered scene while in Refreshing

@@ -333,7 +333,8 @@ bool MicronTracker::SetUpCameras( void )
   bool result = true;
 
   if ( m_CameraCalibrationFilesDirectory == "" || 
-       !itksys::SystemTools::FileExists( m_CameraCalibrationFilesDirectory.c_str() ) ) 
+       !itksys::SystemTools::FileExists( 
+       m_CameraCalibrationFilesDirectory.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, 
       "Camera calibration directory is not properly set");
@@ -668,7 +669,8 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     return FAILURE;
     }
 
-  const std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+  const std::string trackerToolIdentifier = 
+                    trackerTool->GetTrackerToolIdentifier();
 
   std::vector< double > transform;
   transform.push_back( 0.0 );
@@ -688,13 +690,15 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 
 MicronTracker::ResultType 
 MicronTracker::
-RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
+RemoveTrackerToolFromInternalDataContainers
+( const TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  const std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+  const std::string trackerToolIdentifier = 
+                      trackerTool->GetTrackerToolIdentifier();
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
@@ -710,10 +714,13 @@ void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
-  os << indent << "Camera calibration files directory: " << m_CameraCalibrationFilesDirectory << std::endl;
+  os << indent << "Camera calibration files directory: " 
+               << m_CameraCalibrationFilesDirectory << std::endl;
   os << indent << "Initialization file: " << m_InitializationFile << std::endl;
-  os << indent << "Markers template directory: " << m_MarkerTemplatesDirectory << std::endl;
-  os << indent << "Camera Light coolness value : " << m_CameraLightCoolness << std::endl;
+  os << indent << "Markers template directory: " 
+               << m_MarkerTemplatesDirectory << std::endl;
+  os << indent << "Camera Light coolness value : " 
+               << m_CameraLightCoolness << std::endl;
 }
 
 } // end of namespace igstk

@@ -193,7 +193,8 @@ TrackerTool::RequestAttachToTracker( Tracker * tracker )
 void 
 TrackerTool::RequestDetachFromTracker( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestDetachFromTracker called...\n");
+  igstkLogMacro( DEBUG,
+                 "igstk::TrackerTool::RequestDetachFromTracker called...\n");
 
   igstkPushInputMacro( DetachTrackerToolFromTracker );
   this->m_StateMachine.ProcessInputs();
@@ -380,7 +381,8 @@ void TrackerTool::ReportTrackingStoppedProcessing( void )
 /** Push TrackingStarted state input to the tracker tool */
 void TrackerTool::RequestReportTrackingStarted( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingStarted called...\n");
+  igstkLogMacro( DEBUG, 
+          "igstk::TrackerTool::RequestReportTrackingStarted called...\n");
 
   igstkPushInputMacro( TrackingStarted );
   this->m_StateMachine.ProcessInputs();
@@ -389,7 +391,8 @@ void TrackerTool::RequestReportTrackingStarted( )
 /** Push TrackingStopped state input to the tracker tool */
 void TrackerTool::RequestReportTrackingStopped( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingStopped called...\n");
+  igstkLogMacro( DEBUG,
+                "igstk::TrackerTool::RequestReportTrackingStopped called...\n");
 
   igstkPushInputMacro( TrackingStopped );
   this->m_StateMachine.ProcessInputs();
@@ -398,8 +401,8 @@ void TrackerTool::RequestReportTrackingStopped( )
 /** Push TrackerToolNotAvailable input to the tracker tool */
 void TrackerTool::RequestReportTrackingToolNotAvailable( )
 {
-  igstkLogMacro( DEBUG, "igstk::TrackerTool::RequestReportTrackingToolNotAvailable "
-  << "called...\n");
+  igstkLogMacro( DEBUG, 
+  "igstk::TrackerTool::RequestReportTrackingToolNotAvailable called ");
 
   igstkPushInputMacro( TrackerToolNotAvailable );
   this->m_StateMachine.ProcessInputs();

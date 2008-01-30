@@ -175,7 +175,8 @@ AuroraTracker::ResultType AuroraTracker
   /** typedefs for the tool */
   typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
 
-  TrackerToolType * trackerToolNonConst = const_cast<TrackerToolType*>(trackerTool);
+  TrackerToolType * trackerToolNonConst = 
+                    const_cast<TrackerToolType*>(trackerTool);
 
   AuroraTrackerToolType * auroraTrackerTool = 
              dynamic_cast< AuroraTrackerToolType * > ( trackerToolNonConst );   
@@ -426,7 +427,8 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 
 AuroraTracker::ResultType 
 AuroraTracker::
-RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
+RemoveTrackerToolFromInternalDataContainers( 
+const TrackerToolType * trackerTool ) 
 {
   std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
   // disable the port handle

@@ -184,7 +184,8 @@ PolarisTracker::ResultType PolarisTracker
 
   typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
 
-  TrackerToolType * trackerToolNonConst = const_cast<TrackerToolType*>(trackerTool);
+  TrackerToolType * trackerToolNonConst = 
+                  const_cast<TrackerToolType*>(trackerTool);
 
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * >( trackerToolNonConst );   
@@ -443,7 +444,8 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 
 PolarisTracker::ResultType 
 PolarisTracker::
-RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
+RemoveTrackerToolFromInternalDataContainers
+( const TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTracker::RemoveTrackerToolFromInternalDataContainers "
@@ -455,7 +457,8 @@ RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool
 
   typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
 
-  TrackerToolType * trackerToolNonConst = const_cast<TrackerToolType*>(trackerTool);
+  TrackerToolType * trackerToolNonConst =  
+                    const_cast<TrackerToolType*>(trackerTool);
 
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * > ( trackerToolNonConst );   

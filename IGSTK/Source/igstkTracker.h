@@ -225,7 +225,8 @@ protected:
    *  configuration step does not match with the tool id read from the SROM
    *  file.
    */
-  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 
+  virtual ResultType 
+        VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 
 
   /** This method will remove entries of the traceker tool from internal
     * data containers */
@@ -255,7 +256,8 @@ protected:
                                    const TransformType transform );
 
   /** Turn on/off update flag of the tracker tool */
-  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag ) const;
+  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool,
+                                      bool flag ) const;
 
 private:
   Tracker(const Self&);           //purposely not implemented

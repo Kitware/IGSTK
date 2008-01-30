@@ -179,7 +179,8 @@ m_StateMachine(this)
                            InteractorInitialized,  
                             SaveScreenShotWhileInteractorInitialized );
   igstkAddTransitionMacro( InteractorInitialized, InvalidScreenShotFileName,
-                           InteractorInitialized,  ReportInvalidScreenShotFileName );
+                           InteractorInitialized,  
+                           ReportInvalidScreenShotFileName );
 
   igstkAddTransitionMacro( Idle, ValidScreenShotFileName,
                            Idle, SaveScreenShotWhileIdle )
@@ -289,19 +290,19 @@ View::~View()
 /** Get renderer */ 
 vtkRenderer *  View::GetRenderer() const
 {
-return this->m_Renderer; 
+  return this->m_Renderer; 
 }
  
 /** Get render window */
 vtkRenderWindow * View::GetRenderWindow() const
 {
-return this->m_RenderWindow; 
+  return this->m_RenderWindow; 
 } 
 
 /** Get render window interactor */
 RenderWindowInteractor *  View::GetRenderWindowInteractor() const
 {
-return this->m_RenderWindowInteractor; 
+  return this->m_RenderWindowInteractor; 
 }
 
 /** Request initialize render window interactor */
@@ -312,7 +313,6 @@ void View::RequestInitializeRenderWindowInteractor()
 
   igstkPushInputMacro( InitializeInteractor );
   m_StateMachine.ProcessInputs();
-
 } 
 
 /** Initialize render window interactor */
@@ -445,7 +445,11 @@ void View::ResetCameraProcessing()
    *  scene will be rendered. */
   ObjectListType::iterator itr    = m_Objects.begin();
   ObjectListType::iterator endItr = m_Objects.end();
-  const CoordinateReferenceSystem* thisCS = igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( this );
+
+  typedef igstk::Friends::CoordinateReferenceSystemHelper 
+                          CoordinateReferenceSystemHelperType;
+  const CoordinateReferenceSystem* thisCS = 
+    CoordinateReferenceSystemHelperType::GetCoordinateReferenceSystem( this );
   while( itr != endItr )
     {
     (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
@@ -475,7 +479,8 @@ void View::StopProcessing()
 /** Set RenderWindow size */
 void View::SetRenderWindowSizeProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkView::SetRenderWindowSizeProcessing(...) called ...\n");
+  igstkLogMacro( DEBUG, 
+                "igstkView::SetRenderWindowSizeProcessing(...) called ...\n");
 
   m_RenderWindowInteractor->UpdateSize( m_RenderWindowWidthToBeSet,
                                         m_RenderWindowHeightToBeSet);
@@ -485,12 +490,12 @@ void View::SetRenderWindowSizeProcessing()
  
   // update the viewport size of the annotations if annotations have been
   // added
-  if ( m_Annotation2DToBeAdded ) 
-      {
-      m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( 
-                                                m_RenderWindowWidthToBeSet,
-                                                m_RenderWindowHeightToBeSet );
-      }
+  if( m_Annotation2DToBeAdded ) 
+    {
+    m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( 
+                                              m_RenderWindowWidthToBeSet,
+                                              m_RenderWindowHeightToBeSet );
+    }
 
   m_RenderWindowInteractor->Modified();
   m_RenderWindow->Modified();
@@ -499,7 +504,8 @@ void View::SetRenderWindowSizeProcessing()
 /** Set camera position */
 void View::RequestSetRenderWindowSize( int width , int height )
 {
-  igstkLogMacro( DEBUG, "igstkView::RequestSetRenderWindowSize(...) called ...\n");
+  igstkLogMacro( DEBUG, 
+                 "igstkView::RequestSetRenderWindowSize(...) called ...\n");
 
   const int * size = m_RenderWindowInteractor->GetSize();
     
@@ -554,7 +560,8 @@ void View::SetCameraClippingRange( double dNear, double dFar)
 /** Turn on/off parallel projection */
 void View::SetCameraParallelProjection( bool flag )
 {
-  igstkLogMacro( DEBUG, "igstkView::SetCameraParallelProjection(...) called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkView::SetCameraParallelProjection(...) called ...\n");
   m_Camera->SetParallelProjection( flag );
 }
 
@@ -562,7 +569,8 @@ void View::SetCameraParallelProjection( bool flag )
 void View::
 SetRendererBackgroundColor( double red, double green, double blue)
 {
-  igstkLogMacro( DEBUG, "igstkView::SetRendererBackgroundColor(...) called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkView::SetRendererBackgroundColor(...) called ...\n");
   m_Renderer->SetBackground( red, green, blue );
 }
 
@@ -599,7 +607,13 @@ void View::RefreshRender()
   // scene will be rendered.
   ObjectListType::iterator itr    = m_Objects.begin();
   ObjectListType::iterator endItr = m_Objects.end();
-  const CoordinateReferenceSystem* thisCS = igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( this );  
+
+  typedef igstk::Friends::CoordinateReferenceSystemHelper 
+                          CoordinateReferenceSystemHelperType;
+ 
+  const CoordinateReferenceSystem* thisCS = 
+     CoordinateReferenceSystemHelperType::GetCoordinateReferenceSystem( this );  
+
   while( itr != endItr )
     {
     (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
@@ -848,7 +862,8 @@ void View::SaveScreenShotWhileRefreshingProcessing()
 /** Save current screenshot in idle state */
 void View::SaveScreenShotWhileIdleProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkView::SaveScreenShotWhileIdleProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkView::SaveScreenShotWhileIdleProcessing() called ...\n");
   
   this->SaveScreenShot();
 }
@@ -856,7 +871,9 @@ void View::SaveScreenShotWhileIdleProcessing()
 /** Save current screenshot in InteractorInitialized state */
 void View::SaveScreenShotWhileInteractorInitializedProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkView::SaveScreenShotWhileInteractorInitializedProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+         "igstkView::SaveScreenShotWhileInteractorInitializedProcessing()" 
+         << " called" );
   
   this->SaveScreenShot();
 }

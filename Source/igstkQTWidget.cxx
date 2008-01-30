@@ -170,7 +170,8 @@ void QTWidget::EnableInteractionsProcessing()
 /** */
 void QTWidget::DisableInteractionsProcessing()
 {
-  igstkLogMacro( DEBUG, "igstkQTWidget::DisableInteractionsProcessing() called ...\n");
+  igstkLogMacro( DEBUG,
+                 "igstkQTWidget::DisableInteractionsProcessing() called ...\n");
   m_InteractionHandling = false;
 }
 
@@ -198,7 +199,7 @@ void QTWidget::mousePressEvent(QMouseEvent* e)
                               e->type() == QEvent::MouseButtonDblClick ? 1 : 0);
 #else
   interactor->SetEventInformationFlipY(e->x(), e->y(), 
-                              (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
+                (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
                               (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0,
                               0,
                               e->type() == QEvent::MouseButtonDblClick ? 1 : 0);
@@ -263,9 +264,10 @@ QTWidget
 
       double position[2];
       position[0] = e->x();
-      position[1] = this->height()-e->y()-1;      
+      position[1] = this->height()-e->y()-1;
 
-      this->m_ProxyView.SetPickedPointCoordinates( this->m_View, position[0], position[1] );  
+      this->m_ProxyView.SetPickedPointCoordinates(
+                     this->m_View, position[0], position[1] );  
       break;
       }
     case Qt::MidButton:
@@ -335,18 +337,18 @@ void QTWidget::wheelEvent(QWheelEvent* e)
     return;
     }
 
-// VTK supports wheel mouse events only in version 4.5 or greater
-  // give event information to interactor
-#if QT_VERSION < 0x040000
-  interactor->SetEventInformationFlipY(e->x(), e->y(), 
-                             (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
-                             (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
-#else
-  interactor->SetEventInformationFlipY(e->x(), e->y(), 
-                             (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
-                             (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
-#endif
-  
+  //VTK supports wheel mouse events only in version 4.5 or greater
+  //give event information to interactor
+  #if QT_VERSION < 0x040000
+    interactor->SetEventInformationFlipY(e->x(), e->y(), 
+                          (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
+                          (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
+  #else
+    interactor->SetEventInformationFlipY(e->x(), e->y(), 
+                          (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
+                          (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
+  #endif
+    
   // invoke vtk event
   // if delta is positive, it is a forward wheel event
   if(e->delta() > 0)
