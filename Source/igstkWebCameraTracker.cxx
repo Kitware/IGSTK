@@ -84,7 +84,7 @@ WebCameraTracker::ResultType WebCameraTracker::InternalClose( void )
 }
 
 WebCameraTracker::ResultType
-WebCameraTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+WebCameraTracker::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
@@ -146,6 +146,13 @@ WebCameraTracker::ResultType WebCameraTracker::InternalThreadedUpdateStatus( voi
 WebCameraTracker::ResultType 
 WebCameraTracker
 ::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+WebCameraTracker::ResultType 
+WebCameraTracker
+::AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
