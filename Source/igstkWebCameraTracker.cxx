@@ -145,7 +145,7 @@ WebCameraTracker::ResultType WebCameraTracker::InternalThreadedUpdateStatus( voi
 
 WebCameraTracker::ResultType 
 WebCameraTracker
-::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }

@@ -64,7 +64,7 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( TrackerToolType * );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
 
   /** This is the most important method of the WebCameraTracker family.
    *  This method must be overloaded in derived classes in order to
