@@ -588,6 +588,9 @@ void Tracker::AttachingTrackerToolSuccessProcessing( void )
   // successful
   m_TrackerToolToBeAttached->RequestReportSuccessfulTrackerToolAttachment();
 
+  // Add the tracker tool to the internal data containers
+  this->AddTrackerToolToInternalDataContainers( m_TrackerToolToBeAttached );
+
   //connect the tracker tool coordinate system to the tracker
   //system. By default, make the tracker coordinate system to 
   //be a parent of the tracker tool coordinate system
@@ -1099,7 +1102,7 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 
 /** Report to the tracker tool that the tool is not available */
 void 
-Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool )
+Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool ) const
 {
   igstkLogMacro( DEBUG, 
     "igstk::Tracker::ReportTrackingToolNotAvailable called...\n");
@@ -1108,7 +1111,7 @@ Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool )
 
 /** Report to the tracker tool that the tool is Visible */
 void 
-Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool )
+Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool ) const
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ReportTrackingToolVisible called...\n");
   trackerTool->RequestReportTrackingToolVisible();
@@ -1117,7 +1120,7 @@ Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool )
 /** Set raw transform */
 void 
 Tracker::SetTrackerToolRawTransform( 
-  TrackerToolType * trackerTool, TransformType transform )
+  TrackerToolType * trackerTool, const TransformType transform )
 {
   igstkLogMacro( DEBUG, 
     "igstk::Tracker::SetTrackerToolRawTransform called...\n");
@@ -1127,7 +1130,7 @@ Tracker::SetTrackerToolRawTransform(
 /** Turn on/off update flag of the tracker tool */
 void 
 Tracker::SetTrackerToolTransformUpdate( 
-  TrackerToolType * trackerTool, bool flag )
+  TrackerToolType * trackerTool, bool flag ) const
 {
   igstkLogMacro( DEBUG, 
      "igstk::Tracker::SetTrackerToolTransformUpdate called...\n");

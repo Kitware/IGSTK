@@ -113,7 +113,7 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -127,6 +127,10 @@ protected:
 
   /** Remove tracker tool entry from internal containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers( const
+                                     TrackerToolType * trackerTool );
+
+  /** Add tracker tool entry from internal containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( const
                                      TrackerToolType * trackerTool );
 
 private:

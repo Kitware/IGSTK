@@ -232,7 +232,7 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+  Tracker::ResultType VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )
@@ -244,6 +244,17 @@ protected:
     }
 
   Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )

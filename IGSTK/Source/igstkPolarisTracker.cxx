@@ -160,7 +160,7 @@ PolarisTracker::ResultType PolarisTracker::InternalOpen( void )
 
 /** Verify tracker tool information. */
 PolarisTracker::ResultType PolarisTracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   //  Verify that 
   //  
@@ -184,8 +184,10 @@ PolarisTracker::ResultType PolarisTracker
 
   typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
 
+  TrackerToolType * trackerToolNonConst = const_cast<TrackerToolType*>(trackerTool);
+
   PolarisTrackerToolType * polarisTrackerTool = 
-             dynamic_cast< PolarisTrackerToolType * > ( trackerTool );   
+             dynamic_cast< PolarisTrackerToolType * >( trackerToolNonConst );   
 
   if ( polarisTrackerTool == NULL )
     {
@@ -398,11 +400,37 @@ PolarisTracker::ResultType PolarisTracker
   igstkLogMacro(INFO, 
     "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
 
+  // Set the port handle to be added
+  m_PortHandleToBeAdded = ph;
+
+  return SUCCESS;
+}
+
+PolarisTracker::ResultType 
+PolarisTracker::
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) 
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::PolarisTracker::VerifyTrackerToolInformation called ...\n");
+
+  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
+
+  TrackerToolType * trackerToolNonConst = 
+            const_cast<TrackerToolType *>(trackerTool); 
+
+  PolarisTrackerToolType * polarisTrackerTool = 
+             dynamic_cast< PolarisTrackerToolType * > ( trackerToolNonConst );   
+
+  if ( polarisTrackerTool == NULL )
+    {
+    return FAILURE;
+    } 
+
   std::string trackerToolIdentifier = 
     polarisTrackerTool->GetTrackerToolIdentifier();
 
   // add it to the port handle container 
-  this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
+  this->m_PortHandleContainer[ trackerToolIdentifier ] = m_PortHandleToBeAdded;
 
   // add it to the tool absent status 
   this->m_ToolAbsentStatusContainer[ trackerToolIdentifier ] = 0;
@@ -412,7 +440,7 @@ PolarisTracker::ResultType PolarisTracker
 
   return SUCCESS;
 }
- 
+
 PolarisTracker::ResultType 
 PolarisTracker::
 RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 

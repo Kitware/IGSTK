@@ -144,7 +144,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<40; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -196,7 +196,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<40; i++)
     {
     tracker->RequestUpdateStatus();
 

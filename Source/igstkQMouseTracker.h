@@ -72,10 +72,13 @@ protected:
   virtual ResultType InternalClose( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
   /** Remove tracker tool from the data container */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+
+  /** Add tracker tool to internal data containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

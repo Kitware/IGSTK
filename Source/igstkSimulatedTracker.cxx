@@ -65,7 +65,7 @@ SimulatedTracker::ResultType SimulatedTracker::InternalClose( void )
 }
 
 SimulatedTracker::ResultType 
-SimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+SimulatedTracker::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
@@ -89,6 +89,16 @@ SimulatedTracker
 {
   return FAILURE;
 }
+
+SimulatedTracker::ResultType 
+SimulatedTracker
+::AddTrackerToolToInternalDataContainers
+( const TrackerToolType * trackerTool )
+{
+  return FAILURE;
+}
+
+
 
 /** Print Self function */
 void SimulatedTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const

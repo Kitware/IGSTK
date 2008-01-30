@@ -111,7 +111,13 @@ ResultType InternalClose( void )
 }
 
 ResultType 
-VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+{
+  return SUCCESS;
+}
+
+ResultType 
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }

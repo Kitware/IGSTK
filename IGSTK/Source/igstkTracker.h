@@ -225,13 +225,16 @@ protected:
    *  configuration step does not match with the tool id read from the SROM
    *  file.
    */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * ) = 0; 
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 
 
   /** This method will remove entries of the traceker tool from internal
     * data containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
                                      const TrackerToolType * trackerTool ) = 0; 
 
+  /** Add tracker tool entry to internal containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+                                    const TrackerToolType * trackerTool ) = 0;
 
   /** typedefs from TrackerTool class */
   typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
@@ -242,17 +245,17 @@ protected:
   const TrackerToolsContainerType & GetTrackerToolContainer() const;
 
   /** Report to tracker tool that it is not available for tracking */
-  void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool );
+  void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool ) const;
 
   /** Report to tracker tool that it is visible */
-  void ReportTrackingToolVisible( TrackerToolType * trackerTool );
+  void ReportTrackingToolVisible( TrackerToolType * trackerTool ) const;
 
   /** Set tracker tool raw transform */
   void SetTrackerToolRawTransform( TrackerToolType * trackerTool, 
-                                   TransformType transform );
+                                   const TransformType transform );
 
   /** Turn on/off update flag of the tracker tool */
-  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag );
+  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool, bool flag ) const;
 
 private:
   Tracker(const Self&);           //purposely not implemented

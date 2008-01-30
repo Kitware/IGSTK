@@ -147,8 +147,9 @@ protected:
     virtual ResultType InternalReset( void ) { return SUCCESS; }
     virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
     virtual ResultType InternalClose( void ) { return SUCCESS; }
-    virtual ResultType VerifyTrackerToolInformation( TrackerToolType * trackerTool ) { return SUCCESS; }
+    virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * trackerTool ) { return SUCCESS; }
     virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) { return SUCCESS; }
+    virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) { return SUCCESS; }
 
 private:
 

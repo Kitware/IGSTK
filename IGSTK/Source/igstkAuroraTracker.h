@@ -89,11 +89,15 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
   /** Remove tracker tool entry from internal containers */ 
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
                                      const TrackerToolType * trackerTool ); 
+
+  /** Add tracker tool entry to internal containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+                                    const TrackerToolType * trackerTool );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
@@ -110,7 +114,7 @@ private:
   typedef igstk::NDICommandInterpreter   CommandInterpreterType;
 
   /** Helper function for reporting interpreter errors. */
-  ResultType CheckError( CommandInterpreterType * );
+  ResultType CheckError( CommandInterpreterType * ) const;
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
@@ -141,6 +145,9 @@ private:
                                 TrackerToolTransformContainerType; 
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
+  /** Port handle of tracker tool to be added */
+  int m_PortHandleToBeAdded;
 
 };
 

@@ -69,9 +69,11 @@ protected:
   virtual ResultType InternalClose( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
   virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+
+  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * );
 
   /** This is the most important method of the SimulatedTracker family.
    *  This method must be overloaded in derived classes in order to

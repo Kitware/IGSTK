@@ -373,7 +373,7 @@ bool MicronTracker::SetUpCameras( void )
 /** Verify tracker tool information. */
 MicronTracker::ResultType
 MicronTracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
     "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");  
@@ -384,8 +384,11 @@ MicronTracker
 
   typedef igstk::MicronTrackerTool              MicronTrackerToolType;
 
+  TrackerToolType * trackerToolNonConst = 
+          const_cast<TrackerToolType *>( trackerTool );
+
   MicronTrackerToolType * micronTrackerTool  = 
-        dynamic_cast< MicronTrackerToolType *> ( trackerTool );
+        dynamic_cast< MicronTrackerToolType *> ( trackerToolNonConst );
 
   if ( micronTrackerTool == NULL )
     {
@@ -398,17 +401,6 @@ MicronTracker
     this->m_Markers->getTemplateItemName(idx, templateName );
     if( micronTrackerTool->GetMarkerName() == templateName )
       {
-      std::vector< double > transform;
-      transform.push_back( 0.0 );
-      transform.push_back( 0.0 );
-      transform.push_back( 0.0 );
-      transform.push_back( 0.0 );
-      transform.push_back( 0.0 );
-      transform.push_back( 0.0 );
-      transform.push_back( 1.0 );
-
-      m_ToolTransformBuffer[ micronTrackerTool->GetMarkerName() ] = transform;
-      m_ToolStatusContainer[micronTrackerTool->GetMarkerName()] = 0;
       return SUCCESS;
       }
     }
@@ -665,6 +657,37 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
 MicronTracker::ResultType 
 MicronTracker::
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) 
+{
+  igstkLogMacro( DEBUG,
+    "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
+                 "called ...\n");
+
+  if ( trackerTool == NULL )
+    {
+    return FAILURE;
+    }
+
+  const std::string trackerToolIdentifier = trackerTool->GetTrackerToolIdentifier();
+
+  std::vector< double > transform;
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 1.0 );
+
+  m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
+  m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+
+  return SUCCESS;
+}
+
+
+MicronTracker::ResultType 
+MicronTracker::
 RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG,
@@ -675,6 +698,7 @@ RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+  this->m_ToolStatusContainer.erase( trackerToolIdentifier );
 
   return SUCCESS;
 }

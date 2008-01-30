@@ -48,7 +48,7 @@ AuroraTracker::~AuroraTracker(void)
 
 /** Helper function for reporting interpreter errors. */
 AuroraTracker::ResultType
-AuroraTracker::CheckError(CommandInterpreterType *interpreter)
+AuroraTracker::CheckError(CommandInterpreterType *interpreter) const
 {
   const int errnum = interpreter->GetError();
 
@@ -158,7 +158,7 @@ AuroraTracker::ResultType AuroraTracker::InternalOpen( void )
 
 /** Verify tracker tool information. */
 AuroraTracker::ResultType AuroraTracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( const TrackerToolType * trackerTool ) 
 {
   //   Verify that 
   //   
@@ -175,8 +175,10 @@ AuroraTracker::ResultType AuroraTracker
   /** typedefs for the tool */
   typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
 
+  TrackerToolType * trackerToolNonConst = const_cast<TrackerToolType*>(trackerTool);
+
   AuroraTrackerToolType * auroraTrackerTool = 
-             dynamic_cast< AuroraTrackerToolType * > ( trackerTool );   
+             dynamic_cast< AuroraTrackerToolType * > ( trackerToolNonConst );   
 
   if ( auroraTrackerTool == NULL )
     {
@@ -380,11 +382,37 @@ AuroraTracker::ResultType AuroraTracker
   igstkLogMacro(INFO, 
     "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
 
+  // Set the port handle to be added
+  m_PortHandleToBeAdded = ph;
+
+  return SUCCESS;
+}
+
+AuroraTracker::ResultType 
+AuroraTracker::
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) 
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTracker::VerifyTrackerToolInformation called ...\n");
+
+  typedef igstk::AuroraTrackerTool              AuroraTrackerToolType;
+
+  TrackerToolType * trackerToolNonConst = 
+            const_cast<TrackerToolType *>(trackerTool); 
+
+  AuroraTrackerToolType * auroraTrackerTool = 
+             dynamic_cast< AuroraTrackerToolType *> ( trackerToolNonConst );   
+
+  if ( auroraTrackerTool == NULL )
+    {
+    return FAILURE;
+    } 
+
   std::string trackerToolIdentifier = 
     auroraTrackerTool->GetTrackerToolIdentifier();
 
   // add it to the port handle container 
-  this->m_PortHandleContainer[ trackerToolIdentifier ] = ph;
+  this->m_PortHandleContainer[ trackerToolIdentifier ] = m_PortHandleToBeAdded;
 
   // add it to the tool absent status 
   this->m_ToolAbsentStatusContainer[ trackerToolIdentifier ] = 0;
@@ -394,7 +422,8 @@ AuroraTracker::ResultType AuroraTracker
 
   return SUCCESS;
 }
- 
+
+
 AuroraTracker::ResultType 
 AuroraTracker::
 RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) 
