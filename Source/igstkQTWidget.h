@@ -54,10 +54,13 @@ namespace igstk {
  * This class is useful to develop QT based IGSTK application. Using this
  * class, graphical represenation of a surgical scene can be displayed in
  * a Qt widget. QT mouse events are captured and translated into VTK events.
+ * \image html igstkQTWidget.png  "State Machine Diagram"
+ * \image latex igstkQTWidget.eps "State Machine Diagram" 
+ *
+ * \sa QTWidget
+ * \sa View
  *
  * \ingroup View
- *
- * \sa View
  */
 class QTWidget : public QVTKWidget
 {

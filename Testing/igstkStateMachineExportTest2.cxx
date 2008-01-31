@@ -43,6 +43,17 @@
 #include "igstkMicronTrackerTool.h"
 #endif
 
+#ifdef IGSTKSandbox_USE_FLTK
+#include "igstkFLTKWidget.h"
+#endif
+
+#ifdef IGSTKSandbox_USE_Qt
+#include "igstkQTWidget.h"
+#include <QApplication>
+#include <QMainWindow>
+#include <QtTest/QTest>
+#endif
+
 namespace igstk 
 {
   
@@ -190,6 +201,21 @@ int main( int argc, char * argv [] )
                                                    outputDirectory, skipLoops );
 
   igstkTestExportStateMachine1( igstk::CoordinateReferenceSystem, outputDirectory, skipLoops );
+
+#ifdef IGSTKSandbox_USE_FLTK
+  igstk::FLTKWidget fltkWidget(0,0, 100, 100, "Dummy FLTKWidget for testing");
+  igstk::ExportStateMachineDescription( &fltkWidget, outputDirectory, skipLoops ); 
+#endif /* IGSTKSandbox_USE_FLTK */
+
+#ifdef IGSTKSandbox_USE_Qt
+  QApplication app(argc, argv);
+  QMainWindow  * qtMainWindow = new QMainWindow();
+  qtMainWindow->setFixedSize(601,301);
+  typedef igstk::QTWidget      QTWidgetType;
+  QTWidgetType * qtWidget2D = new QTWidgetType();
+  igstk::ExportStateMachineDescription( qtWidget2D, outputDirectory, skipLoops ); 
+  delete qtWidget2D;
+#endif /* IGSTKSandbox_USE_QT */
 
   return EXIT_SUCCESS;
 }

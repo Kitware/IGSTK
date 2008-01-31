@@ -43,6 +43,11 @@ namespace igstk {
  * This class is useful to develop FLTK based IGSTK application. Using this
  * class, graphical represenation of a surgical scene can be displayed in
  * FLTK window. FLTK mouse events are captured and translated into VTK events.
+ * \image html igstkFLTKWidget.png  "State Machine Diagram"
+ * \image latex igstkFLTKWidget.eps "State Machine Diagram" 
+ *
+ * \sa QTWidget
+ * \sa View
  *
  * \ingroup View
  *
