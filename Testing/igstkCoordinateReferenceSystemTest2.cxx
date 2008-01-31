@@ -423,8 +423,6 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   // Break references in the observer.
   rootObserver->ClearPayload();
 
-  root->SetReportTiming( true );
-
   CoordinateReferenceSystemObserver::Pointer FObserver = 
                                     CoordinateReferenceSystemObserver::New();
   F->AddObserver( CoordinateSystemEventType(), FObserver );

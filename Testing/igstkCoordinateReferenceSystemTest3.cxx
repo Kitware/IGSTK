@@ -78,9 +78,6 @@ int igstkCoordinateReferenceSystemTest3(int argc, char* argv[])
   CoordinateSystemPointer leaf1 = coordSysBranch1[depth-1];
   CoordinateSystemPointer leaf2 = coordSysBranch2[depth-1];
 
-  leaf1->SetReportTiming(true);
-  leaf2->SetReportTiming(true);
-
   itk::TimeProbe probe1;
   itk::TimeProbe probe2;
 
