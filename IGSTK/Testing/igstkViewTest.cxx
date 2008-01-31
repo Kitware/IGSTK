@@ -234,9 +234,6 @@ int igstkViewTest( int, char * [] )
     igstk::DefaultWidget dummyWidget2(300,300);
     dummyWidget2.RequestSetView( view3D );
 
-    // Provide code coverage for the Proxy
-    dummyWidget2.TestProxy();
-
     ObserverType::Pointer viewObserver2 = ObserverType::New();
     
     bEnd = false;
@@ -275,8 +272,11 @@ int igstkViewTest( int, char * [] )
       igstk::PulseGenerator::CheckTimeouts();
       }
     view3D->RequestStop();
+
+    // Provide code coverage for the Proxy
+    dummyWidget2.TestProxy();
+
     // Exercise the screenshot option with a valid filename
-    view3D->RequestStop();
     view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
    
     } // end of view3D scope
