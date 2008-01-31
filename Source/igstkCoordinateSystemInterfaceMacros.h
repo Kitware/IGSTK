@@ -72,7 +72,7 @@ protected: \
     { \
     return false; \
     } \
-  virtual Transform GetInternalTransform() \
+  virtual Transform GetInternalTransform() const \
     { \
     Transform identity; \
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() ); \

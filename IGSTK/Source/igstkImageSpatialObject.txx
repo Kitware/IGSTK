@@ -394,7 +394,7 @@ ImageSpatialObject< TPixelType, VDimension >
 template< class TPixelType, unsigned int VDimension >
 Transform
 ImageSpatialObject< TPixelType, VDimension >
-::GetInternalTransform() 
+::GetInternalTransform() const
 { 
   return m_ImageTransform;
 }

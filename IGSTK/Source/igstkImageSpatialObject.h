@@ -126,7 +126,7 @@ protected:
   /** For coordinate systems, allows us to hook in the image transform to
    *  calls to RequestSetTransformAndParent.
    */
-  virtual Transform GetInternalTransform();
+  virtual Transform GetInternalTransform() const;
 
   ImageSpatialObject( void );
   ~ImageSpatialObject( void );
