@@ -205,8 +205,8 @@ private:
   RegistrationType::Pointer m_Registration;
 
   igstkObserverObjectMacro(VascularNetwork,
-                     igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent,
-                                                   igstk::VascularNetworkObject)
+    igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent,
+    igstk::VascularNetworkObject)
 };
 
 

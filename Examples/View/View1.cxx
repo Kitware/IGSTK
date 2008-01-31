@@ -120,7 +120,7 @@ int main( int, char * [] )
 
     // BeginCodeSnippet
     Fl_Window * form = new Fl_Window(301,301,"View Test");
-    WindowWidgetType * fltkWidget = new WindowWidgetType(10,10,280,280,"3D View");
+    WindowWidgetType * widget = new WindowWidgetType(10,10,280,280,"3D View");
     form->end();
     // EndCodeSnippet
 
@@ -135,7 +135,7 @@ int main( int, char * [] )
 
     // BeginCodeSnippet
     View3DType::Pointer view3D = View3DType::New();
-    fltkWidget->RequestSetView( view3D );
+    widget->RequestSetView( view3D );
     form->show();
     // EndCodeSnippet
     
@@ -237,7 +237,7 @@ int main( int, char * [] )
     view3D->RequestStop();
     // EndCodeSnippet
 
-    delete fltkWidget;
+    delete widget;
     delete form;
     }
   catch(...)

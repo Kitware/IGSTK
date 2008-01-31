@@ -235,7 +235,7 @@ int main(int , char** )
   tracker->RequestOpen();
   tracker->SetScaleFactor( 100.0 );
 
-  typedef igstk::MouseTrackerTool      TrackerToolType;
+  typedef igstk::MouseTrackerTool           TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  

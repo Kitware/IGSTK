@@ -85,7 +85,6 @@ Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
                             ViewPortSet, ChangeFontSize );  
 
 
-
   igstkAddTransitionMacro ( AnnotationsAdded, ValidViewPort, AnnotationsAdded
                                              , SetViewPort );
 
@@ -149,7 +148,7 @@ void Annotation2D::SetAnnotationTextProcessing( )
 
   m_AnnotationText[m_IndexForAnnotationToBeAdded] = m_AnnotationTextToBeAdded;
   this->m_AnnotationActor[m_IndexForAnnotationToBeAdded]->
-                  SetInput( m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
+    SetInput( m_AnnotationText[m_IndexForAnnotationToBeAdded].c_str() );
 }
 
 /** Request set annotation view port */
@@ -199,11 +198,12 @@ void Annotation2D::ChangeTextColorProcessing( )
 {
   igstkLogMacro( DEBUG, "ChangeTextColorProcessing() called ....\n"  );
 
-  m_TextProperty[m_AnnotationIndexFontColorToBeChanged]->SetColor(
-                                  m_FontColor[0], m_FontColor[1], m_FontColor[2]); 
+  this->m_TextProperty[this->m_AnnotationIndexFontColorToBeChanged]->SetColor(
+    m_FontColor[0], m_FontColor[1], m_FontColor[2]); 
 
-  this->m_AnnotationActor[m_AnnotationIndexFontColorToBeChanged]->SetTextProperty(
-                       m_TextProperty[m_AnnotationIndexFontColorToBeChanged]);
+  this->m_AnnotationActor[this->m_AnnotationIndexFontColorToBeChanged]->
+    SetTextProperty( 
+      this->m_TextProperty[m_AnnotationIndexFontColorToBeChanged]);
 }
  
 /** Change the font size */ 

@@ -244,7 +244,8 @@ void UltrasoundGuidedRFAImplementation
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
  
   // Attach a spatial object to the tracker tool
-  objectToTrack->RequestSetTransformAndParent( identityTransform, m_TrackerTool );
+  objectToTrack->RequestSetTransformAndParent( 
+    identityTransform, m_TrackerTool );
 }
 
 /** Load a liver surface */
@@ -288,8 +289,8 @@ void UltrasoundGuidedRFAImplementation
     VascularNetworkObserver::Pointer vascularNetworkObserver 
                                             = VascularNetworkObserver::New();
     m_VascularNetworkReader->AddObserver(
-                   igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
-                        vascularNetworkObserver);
+      igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent(),
+      vascularNetworkObserver);
 
     m_VascularNetworkReader->RequestGetVascularNetwork();
 

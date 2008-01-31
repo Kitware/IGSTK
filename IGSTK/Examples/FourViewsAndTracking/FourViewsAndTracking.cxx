@@ -79,7 +79,8 @@ int main(int , char** )
   igstk::Transform::VersorType rotation2;
   rotation2.Set( 0.0, 1.0, 0.0, 1.0 );
 
-  cylinder2Transform.SetRotation( rotation2, errorValue, igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder2Transform.SetRotation( 
+    rotation2, errorValue, igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Create another cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 

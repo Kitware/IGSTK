@@ -58,9 +58,10 @@ igstk::Transform::VersorType GetRandomVersor()
 /** This method creates a random versor whose values are "near" a
  *  supplied versor.
  */
-igstk::Transform::VersorType GetRandomVersorNear( 
-                                     const igstk::Transform::VersorType& versorIn,
-                                     double lambda)
+igstk::Transform::VersorType 
+GetRandomVersorNear( 
+  const igstk::Transform::VersorType& versorIn,
+  double lambda)
 {
 
   igstk::Transform::VersorType rotation;
@@ -81,10 +82,11 @@ igstk::Transform::VersorType GetRandomVersorNear(
 /** This method creates a random versor whose change from versorIn1 is about
  *  the same as the change from versorIn0 to versorIn1.
  */
-igstk::Transform::VersorType GetRandomVersorNear( 
-                                     const igstk::Transform::VersorType& versorIn0,
-                                     const igstk::Transform::VersorType& versorIn1,
-                                     double lambda)
+igstk::Transform::VersorType 
+GetRandomVersorNear( 
+  const igstk::Transform::VersorType& versorIn0,
+  const igstk::Transform::VersorType& versorIn1,
+  double lambda)
 {
 
   double x = lambda * static_cast<double>(rand())/static_cast<double>(RAND_MAX) +
@@ -116,7 +118,7 @@ int main(int , char** )
 
   /**
    *  Coordinate systems:
-   *       
+   *
    *                        Mesh
    *                          | 
    *              --------------------------------------
@@ -209,7 +211,8 @@ int main(int , char** )
   mesh->AddTetrahedronCell(0,0,1,2,3);
 
   igstk::Transform ellipsoidToMeshTransform;
-  ellipsoidToMeshTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  ellipsoidToMeshTransform.SetToIdentity( 
+    igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Ellipsoid is relative to the mesh.
   ellipsoid->RequestSetTransformAndParent( ellipsoidToMeshTransform, mesh );

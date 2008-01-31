@@ -44,7 +44,6 @@ int main( int , char *[] )
 {
 
 // Software Guide : BeginLatex
-//
 // First, we create two spheres using the \doxygen{EllipsoidObject} class.
 // They are created using smart pointers, as follows:
 // Software Guide : EndLatex 
@@ -62,9 +61,10 @@ int main( int , char *[] )
 // relative to sphere1.
 //
 // We first create a transformation and set the translation vector to be $10mm$
-// in each direction, with an error value of $0.001mm$ and a validity time
-// of $10ms$. Second, we assign the transform to the object via the 
-// \code{RequestSetTransformAndParent()} function. The commands appear as follows:
+// in each direction, with an error value of $0.001mm$ and a validity time of
+// $10ms$. Second, we assign the transform to the object via the
+// \code{RequestSetTransformAndParent()} function. The commands appear as
+// follows:
 //
 // Software Guide : EndLatex 
 
@@ -153,7 +153,7 @@ int main( int , char *[] )
 
   igstk::Transform transformSphere3ToGroup;
   transformSphere3ToGroup.SetToIdentity(
-                  igstk::TimeStamp::GetLongestPossibleTime() );                
+                  igstk::TimeStamp::GetLongestPossibleTime() );
   group->RequestAddChild( transformSphere3ToGroup, sphere3 );
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
