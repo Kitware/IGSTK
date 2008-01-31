@@ -57,7 +57,7 @@ int main( int , char *[] )
 // Software Guide : BeginCodeSnippet
   Fl_Window * form = new Fl_Window(600,300,"Sharing Object Representations");
 
-  typedef igstk::View3D  View3DType;
+  typedef igstk::View3D          View3DType;
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
   View3DType::Pointer view3D1 = View3DType::New();

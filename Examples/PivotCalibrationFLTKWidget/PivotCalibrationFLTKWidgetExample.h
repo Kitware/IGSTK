@@ -76,7 +76,8 @@ private:
 
     private:
 
-      /** Member variables */
+      /**
+       *  member variables */
       bool m_ErrorOccured;
       std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
 

@@ -68,12 +68,12 @@ int main( int argc, char * argv[] )
 // EndLatex
 
 // BeginCodeSnippet
-  typedef igstk::PrincipalAxisCalibration   PrincipalAxisCalibrationType;
+  typedef igstk::PrincipalAxisCalibration        CalibrationType;
 
-  typedef PrincipalAxisCalibrationType::VectorType          VectorType;
-  typedef PrincipalAxisCalibrationType::CovariantVectorType CovariantVectorType;
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput                           LogOutputType;
+  typedef CalibrationType::VectorType            VectorType;
+  typedef CalibrationType::CovariantVectorType   CovariantVectorType;
+  typedef igstk::Object::LoggerType              LoggerType;
+  typedef itk::StdStreamLogOutput                LogOutputType;
 // EndCodeSnippet
 
 // BeginLatex
@@ -84,8 +84,7 @@ int main( int argc, char * argv[] )
 // EndLatex
 
 // BeginCodeSnippet
-  PrincipalAxisCalibrationType::Pointer principal
-                                        = PrincipalAxisCalibrationType::New();
+  CalibrationType::Pointer principal = CalibrationType::New();
 // EndCodeSnippet
 
 // BeginLatex
@@ -183,7 +182,7 @@ int main( int argc, char * argv[] )
 
 
 // BeginCodeSnippet
-  if ( !principal->GetValidRotation())
+  if( !principal->GetValidRotation() )
     {
     std::cout << "No valid calibration!" << std::endl;
 

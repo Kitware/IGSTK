@@ -85,7 +85,7 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType         LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
 
 // BeginLatex
