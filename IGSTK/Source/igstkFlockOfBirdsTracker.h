@@ -99,13 +99,16 @@ protected:
   virtual ResultType InternalThreadedUpdateStatus( void );
 
   /** Verify tracker tool information */
-  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * trackerTool );
+  virtual ResultType VerifyTrackerToolInformation( 
+    const TrackerToolType * trackerTool );
 
   /** Add tracker tool to internal containers */
-  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool );
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+    const TrackerToolType * trackerTool );
 
   /** Remove tracker tool from internal containers */
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * trackerTool );
 
   /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );

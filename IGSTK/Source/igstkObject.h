@@ -78,7 +78,8 @@ protected:
 
   /** Register observed objects in an internal array so that they 
    *  can be disconnected upon destruction */
-  void RegisterObservedObject( const ::igstk::Object * object, unsigned long tag );
+  void RegisterObservedObject( 
+    const ::igstk::Object * object, unsigned long tag );
 
   /** Remove observers that this object may have connected to other objects */
   void RemoveFromObservedObjects();
@@ -104,23 +105,25 @@ private:
   void ObservedObjectDeleteProcessing(const itk::Object* caller, 
                                       const EventType& event );
 
-  /** Put this here so we can share typedefs. */
+  // Put this here so we can share typedefs.
   class ObservedObjectTagPairObjectMatchPredicate
     {
     public:
-      ObservedObjectTagPairObjectMatchPredicate(const itk::Object* obj) : m_TargetObject( obj ) {};
+      ObservedObjectTagPairObjectMatchPredicate(
+        const itk::Object* obj) : m_TargetObject( obj ) {};
 
-      bool operator() ( const igstk::Object::ObservedObjectTagPair& objTagPair )
+      bool operator() (
+        const igstk::Object::ObservedObjectTagPair& objTagPair )
+      {
+      if (objTagPair.first == m_TargetObject)
         {
-        if (objTagPair.first == m_TargetObject)
-          {
-          return true;
-          }
-        else
-          {
-          return false;
-          }
+        return true;
         }
+      else
+        {
+        return false;
+        }
+      }
 
     private:
       const itk::Object* m_TargetObject;

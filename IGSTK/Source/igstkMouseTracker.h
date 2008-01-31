@@ -74,9 +74,11 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * );
 
-  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * );
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+    const TrackerToolType * );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

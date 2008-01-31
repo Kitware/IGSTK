@@ -580,7 +580,7 @@ Landmark3DRegistration::ComputeRMSError()
   
 
 /** The "GetTransformFromTrackerToImage()" method throws and event 
- * containing the transform from tracker to image*/
+ * containing the transform from tracker to image. */
 void
 Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
 {
@@ -607,13 +607,14 @@ Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
   this->InvokeEvent( event );
 }
 
-/** The "GetTransformFromImageToTrackerProcessing()" method throws and event containing
- *  the transform from image to tracker */
+/** The "GetTransformFromImageToTrackerProcessing()" method throws and event
+ * containing the transform from image to tracker */
 void
 Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::\
-                         GetTransformFromImageToTrackerProcessing called...\n" );
+  igstkLogMacro( DEBUG, 
+    "igstk::Landmark3DRegistration::"
+    "GetTransformFromImageToTrackerProcessing called...\n" );
 
   igstk::Transform  transform;
 
@@ -634,7 +635,6 @@ Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
   event.Set( transform.GetInverse() );
   this->InvokeEvent( event );
 }
-
 
 
 /** The "GetRMSError()" method throws and event containing the RMS error */
@@ -736,7 +736,8 @@ void
 Landmark3DRegistration::RequestGetTransformFromTrackerToImage()
 {
   igstkLogMacro( DEBUG,
-             "igstk::Landmark3DRegistration::RequestGetTransformFromTrackerToImage called...\n" );
+    "igstk::Landmark3DRegistration::RequestGetTransformFromTrackerToImage"
+    " called...\n" );
   igstkPushInputMacro( GetTransformFromTrackerToImage );
   this->m_StateMachine.ProcessInputs();
 }
@@ -745,7 +746,8 @@ void
 Landmark3DRegistration::RequestGetTransformFromImageToTracker()
 {
   igstkLogMacro( DEBUG,
-             "igstk::Landmark3DRegistration::RequestGetTransformFromImageToTracker called...\n" );
+    "igstk::Landmark3DRegistration::RequestGetTransformFromImageToTracker"
+    " called...\n" );
   igstkPushInputMacro( GetTransformFromImageToTracker );
   this->m_StateMachine.ProcessInputs();
 }

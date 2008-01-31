@@ -74,7 +74,8 @@ MouseTracker::ResultType MouseTracker
 }
 
 MouseTracker::ResultType MouseTracker
-::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( 
+  const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
@@ -91,7 +92,8 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 
   typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer = 
+    this->GetTrackerToolContainer();
  
   ConstIteratorType inputItr = trackerToolContainer.begin();
   ConstIteratorType inputEnd = trackerToolContainer.end();
@@ -105,13 +107,17 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
 
     typedef TransformType::VectorType PositionType;
     PositionType  position;
-    igstkLogMacro( DEBUG, "FLTK coordinate:" << Fl::event_x() << "," << Fl::event_y());
+
+    igstkLogMacro( DEBUG, 
+      "FLTK coordinate:" << Fl::event_x() << "," << Fl::event_y());
+
     position[0] = Fl::event_x() / m_ScaleFactor;
     position[1] = Fl::event_y() / m_ScaleFactor;
     position[2] = 0;
 
-    igstkLogMacro( DEBUG, "Position: " << "(" << position[0] << "," 
-                              << position[1] << ")");
+    igstkLogMacro( DEBUG, 
+      "Position: " << "(" << position[0] << "," 
+                          << position[1] << ")");
 
     typedef TransformType::ErrorType  ErrorType;
     ErrorType errorValue = 0.5; // +/- half Pixel Uncertainty
@@ -119,8 +125,12 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
     transform.SetTranslation( position, errorValue, this->GetValidityTime() );
 
     // set the raw transform
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform( 
+      trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate( 
+      trackerToolContainer[inputItr->first], true );
+
     ++inputItr;
     }
 
@@ -129,7 +139,8 @@ MouseTracker::ResultType MouseTracker::InternalUpdateStatus( void )
  
 MouseTracker::ResultType MouseTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "MouseTracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, 
+    "MouseTracker::InternalThreadedUpdateStatus called ...\n");
   return SUCCESS;
 }
 

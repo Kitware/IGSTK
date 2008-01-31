@@ -302,8 +302,9 @@ public: \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
-                                          & Self::Callback##event##input##Input ); \
-    unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
     this->RegisterObservedObject( object, tag ); \
     } 
 
@@ -331,8 +332,9 @@ public: \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input##Input ); \
-    unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
     this->RegisterObservedObject( object, tag ); \
     }
 #define igstkLoadedObjectEventTransductionMacro( event, input ) \
@@ -355,8 +357,9 @@ public: \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input##Input ); \
-    unsigned long tag = object->AddObserver( ::igstk::event##Event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
     this->RegisterObservedObject( object, tag ); \
     }
 

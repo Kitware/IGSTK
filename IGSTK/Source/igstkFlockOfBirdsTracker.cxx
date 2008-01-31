@@ -231,17 +231,22 @@ void FlockOfBirdsTracker::DisableToolPorts( void )
 
 /** Verify tracker tool information */
 virtual FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+FlockOfBirdsTracker
+::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::VerifyTrackerToolInformation called...\n");
+  igstkLogMacro( DEBUG, 
+    "FlockOfBirdsTracker::VerifyTrackerToolInformation called...\n");
   return SUCCESS;
 }
 
 /** Remove tracker tool from internal containers */
 virtual FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+FlockOfBirdsTracker
+::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers called...\n");
+  igstkLogMacro( DEBUG, 
+    "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers"
+    " called...\n");
   return SUCCESS; 
 }
 

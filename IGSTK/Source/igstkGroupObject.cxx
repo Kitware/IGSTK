@@ -36,15 +36,37 @@ GroupObject::GroupObject():m_StateMachine(this)
   igstkAddStateMacro( EmptyGroup );
   igstkAddStateMacro( NonEmptyGroup );
 
-  igstkAddTransitionMacro( EmptyGroup, AddChildValid, NonEmptyGroup,  AddChild );
-  igstkAddTransitionMacro( EmptyGroup, AddChildInvalid, EmptyGroup,  ReportInvalidRequest );
-  igstkAddTransitionMacro( EmptyGroup, GetChildValid, EmptyGroup,  ReportNoChildAvailable );
-  igstkAddTransitionMacro( EmptyGroup, GetChildInvalid, EmptyGroup,  ReportNoChildAvailable );
+  igstkAddTransitionMacro( EmptyGroup, 
+                           AddChildValid, 
+                           NonEmptyGroup,  AddChild );
 
-  igstkAddTransitionMacro( NonEmptyGroup, AddChildValid, NonEmptyGroup,  AddChild );
-  igstkAddTransitionMacro( NonEmptyGroup, AddChildInvalid, NonEmptyGroup,  ReportInvalidRequest );
-  igstkAddTransitionMacro( NonEmptyGroup, GetChildValid, NonEmptyGroup,  GetChild );
-  igstkAddTransitionMacro( NonEmptyGroup, GetChildInvalid, NonEmptyGroup,  ReportNoChildAvailable );
+  igstkAddTransitionMacro( EmptyGroup, 
+                           AddChildInvalid, 
+                           EmptyGroup,  ReportInvalidRequest );
+
+  igstkAddTransitionMacro( EmptyGroup, 
+                           GetChildValid, 
+                           EmptyGroup,  ReportNoChildAvailable );
+
+  igstkAddTransitionMacro( EmptyGroup, 
+                           GetChildInvalid,
+                           EmptyGroup,  ReportNoChildAvailable );
+
+  igstkAddTransitionMacro( NonEmptyGroup, 
+                           AddChildValid, 
+                           NonEmptyGroup,  AddChild );
+
+  igstkAddTransitionMacro( NonEmptyGroup, 
+                           AddChildInvalid, 
+                           NonEmptyGroup,  ReportInvalidRequest );
+
+  igstkAddTransitionMacro( NonEmptyGroup, 
+                           GetChildValid, 
+                           NonEmptyGroup,  GetChild );
+
+  igstkAddTransitionMacro( NonEmptyGroup, 
+                           GetChildInvalid, 
+                           NonEmptyGroup,  ReportNoChildAvailable );
 
   igstkSetInitialStateMacro( EmptyGroup );
 
@@ -64,7 +86,8 @@ unsigned long GroupObject::GetNumberOfChildren() const
 }
 
 /** Request adding a child to the group */
-void GroupObject::RequestAddChild( const Transform & transform, SpatialObject * child )
+void GroupObject::RequestAddChild( 
+  const Transform & transform, SpatialObject * child )
 {
   m_ChildToAdd = child;
   m_TransformToAdd = transform;
