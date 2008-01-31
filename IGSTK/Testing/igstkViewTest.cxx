@@ -234,6 +234,9 @@ int igstkViewTest( int, char * [] )
     igstk::DefaultWidget dummyWidget2(300,300);
     dummyWidget2.RequestSetView( view3D );
 
+    // Provide code coverage for the Proxy
+    dummyWidget2.TestProxy();
+
     ObserverType::Pointer viewObserver2 = ObserverType::New();
     
     bEnd = false;

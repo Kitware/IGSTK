@@ -32,8 +32,8 @@ class View;
  *  the view class. This class is a friend class of the View
  *  class.
  *
+ * \sa ViewProxy
  * \ingroup View
- *
  *
  */
 class ViewProxyBase 

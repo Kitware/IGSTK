@@ -25,12 +25,15 @@ namespace igstk {
 
 /** \class ViewProxy
  *
- *  \Brief Link widget classes with the view class.
+ *  \brief Link widget classes with the view class.
  *
  *  This class is a a proxy class designed to access private member
  *  data of the view class and pass the values to widget classes. This 
  *  class is templated over widget type.
  *
+ * \sa View
+ *
+ * \ingroup View
  * \ingroup Object
  */
 

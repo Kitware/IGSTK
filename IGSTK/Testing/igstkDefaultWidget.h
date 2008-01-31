@@ -54,6 +54,15 @@ public:
       this->m_View, this->m_Width, this->m_Height );
     }
 
+  // This method provides code coverage to the ProxyView
+  void TestProxy()
+    {
+    std::cout << this->m_ProxyView.GetNameOfClass() << std::endl;
+    const double px = 1.3;
+    const double py = 1.8;
+    this->m_ProxyView.SetPickedPointCoordinates( this->m_View, px, py );
+    }
+
 private:
   ProxyType           m_ProxyView;
   ViewType::Pointer   m_View; 
