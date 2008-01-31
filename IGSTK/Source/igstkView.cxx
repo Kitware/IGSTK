@@ -37,7 +37,6 @@
 
 //igstk include files
 #include "igstkView.h"
-#include "igstkEvents.h"
 
 #include "itksys/SystemTools.hxx"
 

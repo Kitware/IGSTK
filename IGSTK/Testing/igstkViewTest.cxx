@@ -255,6 +255,9 @@ int igstkViewTest( int, char * [] )
     std::cout << view3D->View3DType::Superclass::GetNameOfClass() 
               << std::endl;
 
+    // Exercise Print() and PrintSelf() method.
+    view3D->Print( std::cout );
+
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
     view3D->RequestSetTransformAndParent( transform, worldReference );
 

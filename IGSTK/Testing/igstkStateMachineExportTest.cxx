@@ -28,6 +28,7 @@
 
 #include <fstream>
 
+#include "igstkSandboxConfigure.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -69,9 +70,13 @@
 #include "igstkToolCalibrationReader.h"
 #include "igstkRealTimeClock.h"
 #include "igstkMR3DImageToUS3DImageRegistration.h"
-
+#include "igstkView.h"
 #include "igstkView2D.h"
 #include "igstkView3D.h"
+
+#if defined(IGSTK_USE_FLTK)
+#include "igstkFLTKWidget.h"
+#endif
 
 #if defined(WIN32) || defined(_WIN32)
 #include "igstkSerialCommunicationForWindows.h"
@@ -393,14 +398,15 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration, 
                                                    outputDirectory, skipLoops );
 
-#if IGSTK_USE_FLTK
-  // The View classes don't use SmartPointer and don't have a 
-  // default constructor.
-  igstk::View2D view2D(0,0, 100, 100, "dummy view for testing");
-  igstk::ExportStateMachineDescription( &view2D, outputDirectory, skipLoops ); 
+  igstkTestExportStateMachine1( igstk::View, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::View2D, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::View3D, outputDirectory, skipLoops );
 
-  igstk::View3D view3D(0,0, 100, 100, "dummy view for testing");
-  igstk::ExportStateMachineDescription( &view3D, outputDirectory, skipLoops ); 
+#if defined(IGSTK_USE_FLTK)
+  // The Widget classes don't use SmartPointer and don't have a 
+  // default constructor.
+  igstk::FLTKWidget widget(0,0, 100, 100, "dummy view for testing");
+  igstk::ExportStateMachineDescription( &widget, outputDirectory, skipLoops ); 
 #endif
 
   // Exporting Abstract classes by creating derived surrogates for them.

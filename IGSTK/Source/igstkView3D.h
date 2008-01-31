@@ -34,6 +34,9 @@ namespace igstk {
  *  \image html  igstkView3D.png  "View3D State Machine Diagram"
  *  \image latex igstkView3D.eps  "View3D State Machine Diagram" 
  *
+ *  \sa View
+ *  \sa View2D
+ *
  *  \ingroup View
  *
  */
@@ -51,7 +54,7 @@ protected:
   View3D( );
 
   /** Destructor */
-  ~View3D( void );
+  virtual ~View3D( void );
 
 private:
   View3D(const View3D& ); // purposely not implemented

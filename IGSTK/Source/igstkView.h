@@ -64,6 +64,9 @@ namespace igstk {
  * \image html igstkView.png  "State Machine Diagram"
  * \image latex igstkView.eps "State Machine Diagram" 
  *
+ * \sa View2D
+ * \sa View3D
+ *
  * \ingroup Object
  * \ingroup View
  */
@@ -176,7 +179,7 @@ private:
   void RemoveActorProcessing();
 
   /** Add annotation */
-  void AddAnnotation2DProcessing(  );
+  void AddAnnotation2DProcessing();
 
   /** Add and remove RepresentationObject classes */
   void AddObjectProcessing();
@@ -217,7 +220,7 @@ private:
   /** Set render window size */
   void SetRenderWindowSizeProcessing(); 
 
-  /** Report invalid render window size*/
+  /** Report invalid render window size. */
   void ReportInvalidRenderWindowSizeProcessing();
  
   /** This should be called by the state machine */
