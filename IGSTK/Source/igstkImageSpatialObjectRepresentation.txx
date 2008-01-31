@@ -510,6 +510,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
   m_LUT->SetSaturationRange (saturation, saturation);
+  m_LUT->SetAlphaRange (m_Opacity, m_Opacity);
   m_LUT->SetHueRange (hue, hue);
   m_LUT->SetValueRange (0, value);
   m_LUT->SetRampToLinear();
