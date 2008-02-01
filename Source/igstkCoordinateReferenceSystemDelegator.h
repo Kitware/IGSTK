@@ -106,6 +106,9 @@ public:
                                                              targetCoordSys);
     }
 
+  /** Print out object information. */
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
+
 protected:
   CoordinateReferenceSystemDelegator();
   ~CoordinateReferenceSystemDelegator();
