@@ -272,7 +272,7 @@ void CoordinateReferenceSystem::PrintSelf(
   else
     {
     os << " NULL" << std::endl;
-    }     
+    }
 
   os << indent << "COORDINATE SYSTEM PARENT = ";
   if ( this->m_Parent.IsNotNull() )
