@@ -231,24 +231,14 @@ CoordinateReferenceSystem
 void CoordinateReferenceSystem::PrintSelf( 
   std::ostream& os, itk::Indent indent ) const
 {
+  os << indent << "COORDINATE SYSTEM NAME = " << this->m_Name << std::endl;
   Superclass::PrintSelf(os, indent);
-  os << indent << "Name = " << this->m_Name << std::endl;
-
-  os << indent << "Parent = ";
-  if ( this->m_Parent.IsNotNull() )
-    {
-    os << std::endl;
-    this->m_Parent->PrintSelf( os, indent.GetNextIndent() );
-    }
-  else
-    {
-    os << indent << "NULL" << std::endl;
-    }
 
   os << indent << "Transform to parent = " << std::endl;
   this->m_TransformToParent.Print( os, indent );
 
-  os << indent << "Transform from RequestSetTransformAndParent (temporary) = "; 
+  os << indent << "Transform from RequestSetTransformAndParent (temporary) = ";
+  os << std::endl; 
   this->m_TransformFromRequestSetTransformAndParent.Print( os, indent );
 
   os << indent << "Parent from RequestSetTransformAndParent (temporary) = ";
@@ -283,6 +273,19 @@ void CoordinateReferenceSystem::PrintSelf(
     {
     os << " NULL" << std::endl;
     }     
+
+  os << indent << "COORDINATE SYSTEM PARENT = ";
+  if ( this->m_Parent.IsNotNull() )
+    {
+    os << std::endl;
+    this->m_Parent->PrintSelf( os, indent.GetNextIndent() );
+    // os << indent.GetNextIndent() << this->m_Parent;
+    }
+  else
+    {
+    os << "NULL" << std::endl;
+    }
+
 }
 
 void CoordinateReferenceSystem
