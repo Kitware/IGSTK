@@ -29,7 +29,7 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
 
   typedef igstk::Object::LoggerType               LoggerType;
   typedef itk::StdStreamLogOutput                 LogOutputType;
-  typedef igstk::CoordinateReferenceSystemDelegator        
+  typedef igstk::CoordinateReferenceSystemDelegator
                                                   CoordinateReferenceSystem;
   typedef CoordinateReferenceSystem::Pointer      CoordinateSystemPointer;
 
@@ -39,7 +39,8 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( LoggerType::CRITICAL );
 
-  std::cout << "Running igstkCoordinateReferenceSystemDelegatorTest" << std::endl;
+  std::cout << "Running igstkCoordinateReferenceSystemDelegatorTest" 
+            << std::endl;
 
   CoordinateSystemPointer root = CoordinateReferenceSystem::New();
   root->SetLogger( logger );
@@ -79,9 +80,6 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   CoordinateSystemPointer leaf1 = coordSysBranch1[depth-1];
   CoordinateSystemPointer leaf2 = coordSysBranch2[depth-1];
 
-  // leaf1->SetReportTiming(true);
-  // leaf2->SetReportTiming(true);
-
   itk::TimeProbe probe1;
   itk::TimeProbe probe2;
 
@@ -110,7 +108,9 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
             << " Mean time = "
             << probe2.GetMeanTime() << std::endl;
 
+  leaf1->RequestSetTransformAndParent( identity, NULL ); // coverage
+  leaf1->RequestComputeTransformTo( NULL ); // coverage
+
   return EXIT_SUCCESS;
 
 }
-
