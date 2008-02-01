@@ -117,6 +117,11 @@ public:
   /** Print out object information. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+  /** Set/Get the name of the coordinate system. */
+  void SetName( const char* name );
+  void SetName( const std::string& name );
+  const char* GetName() const;
+
 protected:
   CoordinateReferenceSystemDelegator();
   ~CoordinateReferenceSystemDelegator();

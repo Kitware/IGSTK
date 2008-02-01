@@ -57,6 +57,12 @@ CoordinateReferenceSystemDelegator
     CoordinateReferenceSystemTransformToEvent()
     , m_CoordinateReferenceSystemObserver );
 
+  std::stringstream tempStream ;
+  tempStream << this->GetNameOfClass() << " 0x";
+  tempStream << static_cast<void*>(this);
+  std::string name = tempStream.str();
+  m_CoordinateReferenceSystem->SetName( name.c_str() );
+
   igstkAddStateMacro( Idle );
 
   igstkAddInputMacro( NullParent );
@@ -124,5 +130,27 @@ CoordinateReferenceSystemDelegator
   os << indent << "Coordinate system observer : " 
      << m_CoordinateReferenceSystemObserver << std::endl;
 }
+
+void 
+CoordinateReferenceSystemDelegator
+::SetName (const char* _arg)
+{ 
+  this->m_CoordinateReferenceSystem->SetName( _arg );
+} 
+  
+void
+CoordinateReferenceSystemDelegator
+::SetName (const std::string & _arg) 
+{
+  this->SetName( _arg.c_str() );
+}
+
+const char* 
+CoordinateReferenceSystemDelegator
+::GetName () const
+{
+  return this->m_CoordinateReferenceSystem->GetName();
+}
+
 
 } // end igstk namespace
