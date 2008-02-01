@@ -32,9 +32,9 @@ namespace igstk
  *
  * The class is intended to be used as an anchor relative to which you can 
  * position Spatial Objects in the graph scene. The class is not exposed to 
- * the API of IGSTK, instead it is used internally in the SpatialObject, Tracker,
- * TrackerTool and View classes in order to provide a scaffolding in which 
- * each one of these classes can be attached as nodes of a scene graph.
+ * the API of IGSTK, instead it is used internally in the SpatialObject, 
+ * Tracker, TrackerTool and View classes in order to provide a scaffolding in 
+ * which each one of these classes can be attached as nodes of a scene graph.
  *
  * http://en.wikipedia.org/wiki/Scene_graph
  *
@@ -60,8 +60,9 @@ namespace Friends
  * \brief A proxy that ensures the encapsulation of the
  * CoordinateReferenceSystem.
  *
- * This class is used to extract the internal CoordinateReferenceSystem instance 
- * from holder classes such as the SpatialObject, Tracker, TrackerTool, and View.
+ * This class is used to extract the internal CoordinateReferenceSystem 
+ * instance from holder classes such as the SpatialObject, Tracker, 
+ * TrackerTool, and View.
  *
  */ 
 class CoordinateReferenceSystemHelper

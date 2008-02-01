@@ -130,11 +130,11 @@ CoordinateReferenceSystem
                            Initialized,
                            ComputeTransformToAncestorFound);
   /* Invalid inputs to AttemptingComputeTransformToInitialized :
-   *   NullParent, ThisParent, ValidParent, ParentCausesCycle, 
-   *   NullCoordinateReferenceSystem
-   *   ThisCoordinateReferenceSystem, 
-   *   ValidCoordinateReferenceSystem 
-   */
+  *   NullParent, ThisParent, ValidParent, ParentCausesCycle, 
+  *   NullCoordinateReferenceSystem
+  *   ThisCoordinateReferenceSystem, 
+  *   ValidCoordinateReferenceSystem 
+  */
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
                            NullParent,
                            AttemptingComputeTransformToInInitialized,
@@ -174,14 +174,14 @@ CoordinateReferenceSystem
                            ParentSet,
                            ComputeTransformToAncestorFound );
   /* Invalid inputs to AttemptingComputeTransformTo :
-   *   NullParent, 
-   *   ThisParent, 
-   *   ValidParent, 
-   *   ParentCausesCycle, 
-   *   NullCoordinateReferenceSystem
-   *   ThisCoordinateReferenceSystem, 
-   *   ValidCoordinateReferenceSystem 
-   */
+  *   NullParent, 
+  *   ThisParent, 
+  *   ValidParent, 
+  *   ParentCausesCycle, 
+  *   NullCoordinateReferenceSystem
+  *   ThisCoordinateReferenceSystem, 
+  *   ValidCoordinateReferenceSystem 
+  */
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
                            NullParent,
                            AttemptingComputeTransformTo,
@@ -339,11 +339,13 @@ void CoordinateReferenceSystem
                         << " [" << this->GetName() 
                         << "] " 
                         << " and "
-                        "0x" << m_TargetFromRequestComputeTransformTo.GetPointer()
-                        << " [" << m_TargetFromRequestComputeTransformTo->GetName()
+                        << "0x" 
+                        << m_TargetFromRequestComputeTransformTo.GetPointer()
+                        << " [" 
+                        << m_TargetFromRequestComputeTransformTo->GetName()
                         << "] " 
                         << " have lowest common ancestor : "
-                        "0x" << this->m_LowestCommonAncestor.GetPointer()
+                        << "0x" << this->m_LowestCommonAncestor.GetPointer()
                         << " [" << this->m_LowestCommonAncestor->GetName()
                         << "] "
                         << "\n" );
@@ -352,7 +354,8 @@ void CoordinateReferenceSystem
             this->ComputeTransformTo( m_LowestCommonAncestor );
 
   Transform targetToAncestor = 
-    m_TargetFromRequestComputeTransformTo->ComputeTransformTo( m_LowestCommonAncestor );
+    m_TargetFromRequestComputeTransformTo
+                              ->ComputeTransformTo( m_LowestCommonAncestor );
 
   Transform result = Transform::TransformCompose(
                                               targetToAncestor.GetInverse(),
