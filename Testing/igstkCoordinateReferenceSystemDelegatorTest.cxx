@@ -108,8 +108,10 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
             << " Mean time = "
             << probe2.GetMeanTime() << std::endl;
 
-  leaf1->RequestSetTransformAndParent( identity, NULL ); // coverage
-  leaf1->RequestComputeTransformTo( NULL ); // coverage
+  CoordinateReferenceSystem* nullCS = NULL;
+  leaf1->RequestSetTransformAndParent( identity, nullCS ); // coverage
+  leaf1->RequestComputeTransformTo( nullCS ); // coverage
+  leaf1->Print( std::cout ); // coverage
 
   return EXIT_SUCCESS;
 
