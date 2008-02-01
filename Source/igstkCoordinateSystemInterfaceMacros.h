@@ -104,7 +104,8 @@ private: \
  */
 #define igstkCoordinateSystemClassInterfaceConstructorMacro() \
   m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New(); \
-  m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, &Self::ObserverCallback); \
+  m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, \
+                                                   &Self::ObserverCallback); \
   m_CoordinateReferenceSystemDelegator = \
                           CoordinateReferenceSystemDelegator::New(); \
   m_CoordinateReferenceSystemDelegator->AddObserver( \
