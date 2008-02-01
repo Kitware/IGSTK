@@ -32,16 +32,16 @@ public:
   typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
 
   /** Standard class typedefs. */
-  typedef CoordinateReferenceSystemObserver         Self;
-  typedef ::itk::Command                            Superclass;
-  typedef ::itk::SmartPointer<Self>        Pointer;
-  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  typedef CoordinateReferenceSystemObserver                 Self;
+  typedef ::itk::Command                                    Superclass;
+  typedef ::itk::SmartPointer<Self>                         Pointer;
+  typedef ::itk::SmartPointer<const Self>                   ConstPointer;
   
   /** Run-time type information (and related methods). */
   itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
   itkNewMacro(CoordinateReferenceSystemObserver);
 
-  typedef ::igstk::Transform       TransformType;
+  typedef ::igstk::Transform                                TransformType;
 
   CoordinateReferenceSystemObserver()
     {
@@ -136,7 +136,8 @@ igstk::Transform GetRandomTransform()
   result.SetTranslationAndRotation( translation, 
                                     rotation,
                                     1e-5, // error tol
-                                    igstk::TimeStamp::GetLongestPossibleTime() );
+                                    igstk::TimeStamp::GetLongestPossibleTime()
+                                    );
   return result;
 }
 }
@@ -150,10 +151,10 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   typedef igstk::Transform                    TransformType;
   typedef igstk::TimeStamp                    TimeStampType;
   typedef TimeStampType::TimePeriodType       TimePeriodType;
-  typedef CoordSysType::Pointer       CoordinateSystemPointer;
-  typedef CoordSysType::ConstPointer  ConstCoordinateSystemPointer;
+  typedef CoordSysType::Pointer               CoordinateSystemPointer;
+  typedef CoordSysType::ConstPointer          ConstCoordinateSystemPointer;
   typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
-                                         CoordinateReferenceSystemObserver;
+                                              CoordinateReferenceSystemObserver;
 
   typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
                                        ::EventType CoordinateSystemEventType;
@@ -188,10 +189,11 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   //                            F
   CoordinateSystemPointer root = CoordSysType::New();
   root->SetName( "root" );
+  root->GetName(); // coverage
   root->SetLogger( logger );
 
-
-  CoordinateReferenceSystemObserver::Pointer rootObserver = CoordinateReferenceSystemObserver::New();
+  CoordinateReferenceSystemObserver::Pointer rootObserver = 
+                                    CoordinateReferenceSystemObserver::New();
   root->AddObserver( CoordinateSystemEventType(), rootObserver );
 
   CoordinateSystemPointer A = CoordSysType::New();
@@ -500,4 +502,3 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   return testPassed;
 }
-

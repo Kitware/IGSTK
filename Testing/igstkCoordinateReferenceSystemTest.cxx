@@ -40,10 +40,10 @@ public:
   typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
 
   /** Standard class typedefs. */
-  typedef CoordinateReferenceSystemObserver         Self;
-  typedef ::itk::Command                            Superclass;
-  typedef ::itk::SmartPointer<Self>        Pointer;
-  typedef ::itk::SmartPointer<const Self>  ConstPointer;
+  typedef CoordinateReferenceSystemObserver                 Self;
+  typedef ::itk::Command                                    Superclass;
+  typedef ::itk::SmartPointer<Self>                         Pointer;
+  typedef ::itk::SmartPointer<const Self>                   ConstPointer;
   
   /** Run-time type information (and related methods). */
   itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
@@ -128,11 +128,12 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType     LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  typedef CoordinateReferenceSystemTest::CoordinateReferenceSystemObserver
-                                                                ObserverType;
-  typedef ObserverType::EventType CoordinateSystemEventType;
+  typedef igstk::Object::LoggerType                  LoggerType;
+  typedef itk::StdStreamLogOutput                    LogOutputType;
+  typedef CoordinateReferenceSystemTest::
+                CoordinateReferenceSystemObserver
+                                                     ObserverType;
+  typedef ObserverType::EventType                    CoordinateSystemEventType;
 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
