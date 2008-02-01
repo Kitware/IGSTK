@@ -126,7 +126,7 @@ private: \
   m_CoordinateReferenceSystemDelegator->AddObserver( \
     CoordinateReferenceSystemTransformToEvent() \
     , m_CoordinateReferenceSystemObserver ); \
-  std::stringstream tempStream ; \
+  std::stringstream tempStream; \
   tempStream << this->GetNameOfClass() << " 0x"; \
   tempStream << static_cast<void*>(this); \
   std::string name = tempStream.str(); \
