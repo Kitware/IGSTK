@@ -309,7 +309,7 @@ void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
-  os << indent << this->m_TimeStamp << std::endl;
+  this->m_TimeStamp.Print( os, indent ); // Get the right indenting.
   os << indent << this->m_Translation << std::endl;
   os << indent << this->m_Rotation << std::endl;
   os << indent << this->m_Error << std::endl;
