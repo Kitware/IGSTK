@@ -105,4 +105,12 @@ CoordinateReferenceSystemDelegator
   igstkLogMacro( WARNING, "Null parent!" );
 }
 
+void 
+CoordinateReferenceSystemDelegator
+::RequestGetTransformToParent()
+{
+  /** Handle returns with event observer */
+  this->m_CoordinateReferenceSystem->RequestGetTransformToParent();
+}
+
 } // end igstk namespace

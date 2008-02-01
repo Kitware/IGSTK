@@ -50,7 +50,8 @@ public:
   void RequestSetTransformAndParent( const Transform & transformToParent, 
                                      TParentPointer parent )
     {
-    if( !(parent) ) // This expression must be suitable for both Smart and Raw pointers.
+    if( !(parent) ) // This expression must be suitable for both 
+                    // Smart and Raw pointers.
       {
       igstkPushInputMacro( NullParent );
       m_StateMachine.ProcessInputs();
@@ -72,11 +73,7 @@ public:
     }
 
   /** Returns the transform to the parent if available. */
-  void RequestGetTransformToParent()
-    {
-    /** Handle returns with event observer */
-    this->m_CoordinateReferenceSystem->RequestGetTransformToParent();
-    }
+  void RequestGetTransformToParent();
 
   /**
    * Tries to compute the transformation from this coordinate system
