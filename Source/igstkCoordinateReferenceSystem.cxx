@@ -233,19 +233,56 @@ void CoordinateReferenceSystem::PrintSelf(
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Name = " << this->m_Name << std::endl;
-  os << indent << "Parent = " << this->m_Parent.GetPointer() << std::endl;
-  os << indent << "Transform to parent = " 
-     << this->m_TransformToParent << std::endl;
-  os << indent << "Transform from RequestSetTransformAndParent (temporary) = "
-     << this->m_TransformFromRequestSetTransformAndParent << std::endl;
-  os << indent << "Parent from RequestSetTransformAndParent (temporary) = "
-     << this->m_ParentFromRequestSetTransformAndParent.GetPointer()
-     << std::endl;
-  os << indent << "Target from RequestComputeTransformTo (temporary) = "
-     << this->m_TargetFromRequestComputeTransformTo.GetPointer()
-     << std::endl;
-  os << indent << "Lowest common ancestor (temporary) = " 
-     << this->m_LowestCommonAncestor.GetPointer() << std::endl;
+
+  os << indent << "Parent = ";
+  if ( this->m_Parent.IsNotNull() )
+    {
+    os << std::endl;
+    this->m_Parent->PrintSelf( os, indent.GetNextIndent() );
+    }
+  else
+    {
+    os << indent << "NULL" << std::endl;
+    }
+
+  os << indent << "Transform to parent = " << std::endl;
+  this->m_TransformToParent.Print( os, indent );
+
+  os << indent << "Transform from RequestSetTransformAndParent (temporary) = "; 
+  this->m_TransformFromRequestSetTransformAndParent.Print( os, indent );
+
+  os << indent << "Parent from RequestSetTransformAndParent (temporary) = ";
+  if ( this->m_ParentFromRequestSetTransformAndParent.IsNotNull() )
+    {
+    os << std::endl;
+    this->m_ParentFromRequestSetTransformAndParent->PrintSelf( os, indent );
+    }
+  else
+    {
+    os << " NULL " << std::endl;
+    }
+
+  os << indent << "Target from RequestComputeTransformTo (temporary) = ";
+  if ( this->m_TargetFromRequestComputeTransformTo.IsNotNull() )
+    {
+    os << std::endl;
+    this->m_TargetFromRequestComputeTransformTo->PrintSelf( os, indent );
+    }
+  else
+    {
+    os << " NULL" << std::endl;
+    }
+
+  os << indent << "Lowest common ancestor (temporary) = ";
+  if ( this->m_LowestCommonAncestor.IsNotNull() )
+    {
+    os << std::endl;
+    this->m_LowestCommonAncestor->PrintSelf( os, indent );
+    }
+  else
+    {
+    os << " NULL" << std::endl;
+    }     
 }
 
 void CoordinateReferenceSystem
