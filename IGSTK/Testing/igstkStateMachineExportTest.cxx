@@ -73,6 +73,7 @@
 #include "igstkView.h"
 #include "igstkView2D.h"
 #include "igstkView3D.h"
+#include "igstkCoordinateReferenceSystemDelegator.h"
 
 #if defined(IGSTK_USE_FLTK)
 #include "igstkFLTKWidget.h"
@@ -401,6 +402,8 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::View, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View2D, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View3D, outputDirectory, skipLoops );
+  
+  igstkTestExportStateMachine1( igstk::CoordinateReferenceSystemDelegator, outputDirectory, skipLoops );
 
 #if defined(IGSTK_USE_FLTK)
   // The Widget classes don't use SmartPointer and don't have a 
