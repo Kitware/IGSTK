@@ -125,7 +125,12 @@ private: \
     , m_CoordinateReferenceSystemObserver ); \
   m_CoordinateReferenceSystemDelegator->AddObserver( \
     CoordinateReferenceSystemTransformToEvent() \
-    , m_CoordinateReferenceSystemObserver ); 
+    , m_CoordinateReferenceSystemObserver ); \
+  std::stringstream tempStream ; \
+  tempStream << this->GetNameOfClass() << " 0x"; \
+  tempStream << static_cast<void*>(this); \
+  std::string name = tempStream.str(); \
+  m_CoordinateReferenceSystemDelegator->SetName( name.c_str() );
 
 } // end namespace igstk
 
