@@ -33,7 +33,7 @@ namespace igstk
  * The class is intended to be used as an anchor relative to which you can 
  * position Spatial Objects in the graph scene. The class is not exposed to 
  * the API of IGSTK, instead it is used internally in the SpatialObject, Tracker,
- * TrackerTool and View classes in order to provide an scaffolding in which 
+ * TrackerTool and View classes in order to provide a scaffolding in which 
  * each one of these classes can be attached as nodes of a scene graph.
  *
  * http://en.wikipedia.org/wiki/Scene_graph
@@ -114,120 +114,169 @@ public:
 
   /** void RequestDetach(); */
   
-  /**  Development only */
+  /**  Coordinate systems have a name to facilitate
+   *   future export of the scene graph as a diagram.
+   *   These macros get and set the name.
+   */
   igstkSetStringMacro( Name );
   igstkGetStringMacro( Name );
 
 protected:
 
+  /** Constructor */
   CoordinateReferenceSystem( void );
+
+  /** Destructor */
   ~CoordinateReferenceSystem( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private: 
-  CoordinateReferenceSystem(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  /** Copy constructor -- purposely not implemented. */
+  CoordinateReferenceSystem(const Self&);
 
-  // Parent node in the scene graph
+  /** Assignment operator -- purposely not implemented. */
+  void operator=(const Self&);
+
+  /** Parent node in the scene graph */
   Self::ConstPointer  m_Parent;
 
-  // Transform relating this node to the parent 
+  /** Transform relating this node to the parent. This transform
+   *  takes a point in the current coordinate system and transforms
+   *  that point into the parent coordinate system.
+   */
   Transform           m_TransformToParent;
 
-  // Name this coordinate system for debugging.
+  /** Coordinate system name for diagram export. */
   std::string         m_Name;
 
   /** 
-   * State machine
+   * State machine declarations
    */
 
-  // Initial state
+  /** Initial state. */
   igstkDeclareStateMacro( Initialized );
 
-  // State for when parent & transform have been set
+  /** State that signifies parent & transform have been set. */
   igstkDeclareStateMacro( ParentSet );
 
-  // State for RequestComputeTransformTo
+  /** Temporary states used for RequestComputeTransformTo. */
   igstkDeclareStateMacro( AttemptingComputeTransformTo );
   igstkDeclareStateMacro( AttemptingComputeTransformToInInitialized );
 
-  //
-  // Inputs
-  //
+  /**
+   *  State machine inputs
+   */
 
-  // RequestComputeTransformTo
+  /** Inputs for RequestComputeTransformTo */
   igstkDeclareInputMacro( NullCoordinateReferenceSystem  );
   igstkDeclareInputMacro( ThisCoordinateReferenceSystem  );
   igstkDeclareInputMacro( ValidCoordinateReferenceSystem );
 
-  // RequestSetTransformAndParent
+  /** Inputs for RequestSetTransformAndParent */
   igstkDeclareInputMacro( NullParent                     ); 
   igstkDeclareInputMacro( ThisParent                     );
   igstkDeclareInputMacro( ValidParent                    );
   igstkDeclareInputMacro( ParentCausesCycle              );
   
+  /** Inputs used when attempting to compute a transform to another
+   *  coordinate system.
+   */
   igstkDeclareInputMacro( AncestorFound                  );
   igstkDeclareInputMacro( Disconnected                   );
 
-  Transform                        m_RequestSetTransformAndParentTransform;
-  Self::ConstPointer               m_RequestSetTransformAndParentParent;
+  /** These variables hold the inputs from RequestSetTransformAndParent
+   *  for later use by methods invoked from the state machine.
+   */
+  Transform                        m_TransformFromRequestSetTransformAndParent;
+  Self::ConstPointer               m_ParentFromRequestSetTransformAndParent;
 
-  /** This method modifies the m_Parent and m_TransformToParent ivars */
-  void SetTransformAndParentProcessing();
+  /** Processing for RequestSetTransformAndParent called with a NULL parent. */
   void SetTransformAndParentNullParentProcessing();
+
+  /** Processing for RequestSetTransformAndParent called with this as parent. */
   void SetTransformAndParentThisParentProcessing();
+
+  /** Processing for RequestSetTransformAndParent when the parent causes a 
+   *  cycle in the scene graph.
+   */
   void SetTransformAndParentCycleProcessing(); 
 
-  Self::ConstPointer               m_ComputeTransformToTarget;
+  /** Default processing for RequestSetTransformAndParent. */
+  void SetTransformAndParentProcessing();
 
+  /** This variable holds the target coordinate system passed to 
+   *  RequestComputeTransformTo so that later methods invoked by 
+   *  the state machine can reference the target coordinate system.
+   */
+  Self::ConstPointer               m_TargetFromRequestComputeTransformTo;
+
+  /** Processing for RequestComputeTransformTo called with this as 
+   *  the target coordinate system.
+   */
   void ComputeTransformToThisTargetProcessing();
+
+  /** Processing for RequestComputeTransformTo called with NULL as 
+   *  the target coordinate system.
+   */
   void ComputeTransformToNullTargetProcessing();
+
+  /** Processing for RequestComputeTransformTo called with a valid 
+   *  target coordinate system.
+   */
   void ComputeTransformToValidTargetProcessing();
 
-  void FindLowestCommonAncestor(const Self* targetCoordinateSystem);
-
+  /** Processing for RequestComputeTransformTo when this and the
+   *  target coordinate system are disconnected.
+   */
   void ComputeTransformToDisconnectedProcessing();
+
+  /** Processing for RequestComputeTransformTo when this and the
+   *  target coordinate system are connected, i.e. a lowest 
+   *  common ancestor has been found.
+   */
   void ComputeTransformToAncestorFoundProcessing();
 
-  Transform                         m_ComputedTransform;
+  /** Finds the lowest common ancestor between two nodes in the
+   *  coordinate system graph. The lowest common ancestor is used
+   *  to find the transform between two nodes in the coordinate
+   *  system graph.
+   */
+  void FindLowestCommonAncestor(const Self* targetCoordinateSystem);
 
-
+  /** Holds a pointer to the lowest common ancestor in the coordinate
+   *  system graph. The lowest common ancestor is found by 
+   *  FindLowestCommonAncestor and used to compute the transform 
+   *  between two coordinate systems by composing each coordinate
+   *  systems transform to the lowest common ancestor.
+   */
   Self::ConstPointer                m_LowestCommonAncestor;
 
+  /** This method is used internally to compute the transform to 
+   *  the lowest common ancestor. The argument should be the 
+   *  ancestor found by FindLowestCommonAncestor.
+   */
   Transform ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const;
 
-
-  mutable itk::TimeProbe                    m_LowestCommonAncestorTimer;
-  mutable itk::TimeProbe                    m_ComputeTransformToTimer;
-  mutable itk::TimeProbe                    m_RequestComputeTransformToTimer;
-  bool                                      m_ReportTiming;
-
+  /** This method is used to ensure that we do not set a parent that 
+   *  causes a cycle in the scene graph. CanReach returns true if 
+   *  the target is currently reachable in the scene graph.
+   */
   bool CanReach(const CoordinateReferenceSystem* target) const;
 
+  /** This method is called when the state machine receives an 
+   *  invalid request. 
+   */
   void InvalidRequestProcessing();
 
-  /** So we can behave like higher-level objects with coordinate systems. */
-  const CoordinateReferenceSystem* GetCoordinateReferenceSystem() const
-    {
-    return this;
-    }
+  /** This method is here so we can behave like higher-level objects with 
+   *  coordinate systems.
+   */
+  const CoordinateReferenceSystem* GetCoordinateReferenceSystem() const;
 
+  /** Make the CoordinateReferenceSystemHelper a friend. */
   igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper ); 
-
-public:
-  /** Development only */
-  void SetReportTiming(bool val)
-    {
-    m_ReportTiming = val;
-    }
-
-  /** Development only */
-  bool GetReportTiming()
-    {
-    return m_ReportTiming;
-    }
 
 }; // class CoordinateReferenceSystem
 

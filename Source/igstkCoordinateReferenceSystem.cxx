@@ -22,14 +22,15 @@
 namespace igstk
 { 
 
-/** Constructor */
+// Constructor
 CoordinateReferenceSystem
 ::CoordinateReferenceSystem():m_StateMachine(this)
 {
 
-  // Self loop for FindLowestCommonAncestor 
-  // Will prevent destructor from being called if
-  // m_Parent is never set.
+  // Using a self loop for FindLowestCommonAncestor 
+  // will prevent the destructor from being called if
+  // m_Parent is never set. Instead, we set the 
+  // parent to be NULL.
   this->m_Parent = NULL; 
 
   // Default transform is identity.
@@ -210,92 +211,66 @@ CoordinateReferenceSystem
                            AttemptingComputeTransformTo,
                            InvalidRequest );
 
-  m_ReportTiming = false;
-
   igstkSetInitialStateMacro( Initialized );
   m_StateMachine.SetReadyToRun();
 } 
 
-/** Destructor */
+// Destructor
 CoordinateReferenceSystem
 ::~CoordinateReferenceSystem()  
 {
   // Break references
   m_Parent = NULL;
-  m_RequestSetTransformAndParentParent = NULL;
-  m_ComputeTransformToTarget = NULL;
+  m_ParentFromRequestSetTransformAndParent = NULL;
+  m_TargetFromRequestComputeTransformTo = NULL;
   m_LowestCommonAncestor = NULL;
-
-  if (this->m_ReportTiming == true)
-    {
-    std::cout << "--------------------------------------------" << std::endl;
-    std::cout << "Lowest common ancestor timer - ";
-    std::cout << this->m_LowestCommonAncestorTimer.GetNumberOfStarts() 
-              << " starts ";
-    std::cout << this->m_LowestCommonAncestorTimer.GetNumberOfStops() 
-              << " stops ";
-    std::cout << this->m_LowestCommonAncestorTimer.GetMeanTime() * 1000.0 
-              << " msec." << std::endl;
-
-    std::cout << "Compute transform to timer - ";
-    std::cout << this->m_ComputeTransformToTimer.GetNumberOfStarts() 
-              << " starts ";
-    std::cout << this->m_ComputeTransformToTimer.GetNumberOfStops() 
-              << " stops ";
-    std::cout << this->m_ComputeTransformToTimer.GetMeanTime() * 1000.0 
-              << " msec." << std::endl;
-
-    std::cout << "Request compute transform to timer - ";
-    std::cout << this->m_RequestComputeTransformToTimer.GetNumberOfStarts() 
-              << " starts ";
-    std::cout << this->m_RequestComputeTransformToTimer.GetNumberOfStops() 
-              << " stops ";
-    std::cout << this->m_RequestComputeTransformToTimer.GetMeanTime() * 1000.0 
-              << " msec." << std::endl;
-
-    std::cout << "--------------------------------------------" << std::endl;
-    }
 }
 
 
-/** Print object information */
+// Print object information
 void CoordinateReferenceSystem::PrintSelf( 
   std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Name = " << this->m_Name << std::endl;
   os << indent << "Parent = " << this->m_Parent.GetPointer() << std::endl;
   os << indent << "Transform to parent = " 
      << this->m_TransformToParent << std::endl;
+  os << indent << "Transform from RequestSetTransformAndParent (temporary) = "
+     << this->m_TransformFromRequestSetTransformAndParent << std::endl;
+  os << indent << "Parent from RequestSetTransformAndParent (temporary) = "
+     << this->m_ParentFromRequestSetTransformAndParent.GetPointer()
+     << std::endl;
+  os << indent << "Target from RequestComputeTransformTo (temporary) = "
+     << this->m_TargetFromRequestComputeTransformTo.GetPointer()
+     << std::endl;
+  os << indent << "Lowest common ancestor (temporary) = " 
+     << this->m_LowestCommonAncestor.GetPointer() << std::endl;
 }
 
 void CoordinateReferenceSystem
 ::RequestComputeTransformTo(const CoordinateReferenceSystem* target)
 {
-  this->m_RequestComputeTransformToTimer.Start();
-
   if (NULL == target)
     {
     igstkPushInputMacro( NullCoordinateReferenceSystem );
     m_StateMachine.ProcessInputs();
-    this->m_RequestComputeTransformToTimer.Stop();
     return;
     }
   if (target == this)
     {
     igstkPushInputMacro( ThisCoordinateReferenceSystem );
     m_StateMachine.ProcessInputs();
-    this->m_RequestComputeTransformToTimer.Stop();
     return;
     }
 
-  this->m_ComputeTransformToTarget = target;
+  this->m_TargetFromRequestComputeTransformTo = target;
 
   igstkPushInputMacro( ValidCoordinateReferenceSystem );
   m_StateMachine.ProcessInputs();
-  this->m_RequestComputeTransformToTimer.Stop();
 
   // Break the reference once we're done with it...
-  this->m_ComputeTransformToTarget = NULL;
+  this->m_TargetFromRequestComputeTransformTo = NULL;
 
   return;
 }
@@ -303,9 +278,9 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToNullTargetProcessing()
 {
-  // ERROR
+  // ERROR - Can't compute transform to a NULL target.
   CoordinateReferenceSystemTransformToErrorResult payload;
-  payload.Initialize( this, m_ComputeTransformToTarget );
+  payload.Initialize( this, m_TargetFromRequestComputeTransformTo );
 
   CoordinateReferenceSystemTransformToNullTargetEvent event;
   event.Set( payload );
@@ -316,8 +291,8 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToThisTargetProcessing()
 {
-  // Should return identity transform
-  // What time limit?
+  // We have been asked for the transform to ourself --
+  // return identity.
   igstk::Transform transform;
   transform.SetToIdentity( TimeStamp::GetLongestPossibleTime() );
 
@@ -334,32 +309,22 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToValidTargetProcessing()
 {
-  if (this->m_ComputeTransformToTarget.IsNull())
+  if (this->m_TargetFromRequestComputeTransformTo.IsNull())
     {
     igstkPushInputMacro( Disconnected );
     m_StateMachine.ProcessInputs();
     return;
     }
 
-  if (this->m_ComputeTransformToTarget == this)
-    {
-    this->m_ComputedTransform = igstk::Transform();
-    this->m_ComputedTransform.SetToIdentity(
-                    igstk::TimeStamp::GetLongestPossibleTime());
-    igstkPushInputMacro( AncestorFound );
-    m_StateMachine.ProcessInputs();
-    return;
-    }
-
-  this->FindLowestCommonAncestor( this->m_ComputeTransformToTarget );
+  this->FindLowestCommonAncestor( this->m_TargetFromRequestComputeTransformTo );
 }
 
 void CoordinateReferenceSystem
 ::ComputeTransformToDisconnectedProcessing()
 {
-  // ERROR
+  // ERROR - Disconnected from the target of ComputeTransformTo
   CoordinateReferenceSystemTransformToErrorResult payload;
-  payload.Initialize(this, this->m_ComputeTransformToTarget);
+  payload.Initialize(this, this->m_TargetFromRequestComputeTransformTo);
 
   CoordinateReferenceSystemTransformToDisconnectedEvent event;
   event.Set( payload );
@@ -370,14 +335,12 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::ComputeTransformToAncestorFoundProcessing()
 {
-  this->m_ComputeTransformToTimer.Start();
-
   igstkLogMacro(DEBUG, "0x" << this
                         << " [" << this->GetName() 
                         << "] " 
                         << " and "
-                        "0x" << m_ComputeTransformToTarget.GetPointer()
-                        << " [" << m_ComputeTransformToTarget->GetName()
+                        "0x" << m_TargetFromRequestComputeTransformTo.GetPointer()
+                        << " [" << m_TargetFromRequestComputeTransformTo->GetName()
                         << "] " 
                         << " have lowest common ancestor : "
                         "0x" << this->m_LowestCommonAncestor.GetPointer()
@@ -389,17 +352,15 @@ void CoordinateReferenceSystem
             this->ComputeTransformTo( m_LowestCommonAncestor );
 
   Transform targetToAncestor = 
-    m_ComputeTransformToTarget->ComputeTransformTo( m_LowestCommonAncestor );
+    m_TargetFromRequestComputeTransformTo->ComputeTransformTo( m_LowestCommonAncestor );
 
   Transform result = Transform::TransformCompose(
                                               targetToAncestor.GetInverse(),
                                               thisToAncestor);
 
-  this->m_ComputeTransformToTimer.Stop();
-
   // Create event
   CoordinateReferenceSystemTransformToResult payload;
-  payload.Initialize(result, this, m_ComputeTransformToTarget);
+  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo);
 
   CoordinateReferenceSystemTransformToEvent event;
   event.Set( payload );
@@ -419,9 +380,6 @@ ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const
     }
   else
     {
-    //
-    // Check order of composition - switched order 10/30/07
-    //
     Transform result = Transform::TransformCompose( 
       this->m_Parent->ComputeTransformTo(ancestor),
       this->m_TransformToParent);
@@ -453,27 +411,28 @@ void CoordinateReferenceSystem
   if (parent->CanReach( this ) == true)
     {
     // 
-    // Do something smart -- i.e. push an error input...
+    // Setting this parent will cause a cycle in the coordinate
+    // system graph -- push an error input...
     // 
-    this->m_RequestSetTransformAndParentParent = parent;
+    this->m_ParentFromRequestSetTransformAndParent = parent;
 
     igstkPushInputMacro( ParentCausesCycle );
     m_StateMachine.ProcessInputs();
 
     // Break reference when we're done with it...
-    this->m_RequestSetTransformAndParentParent = NULL;
+    this->m_ParentFromRequestSetTransformAndParent = NULL;
     return;
     }
   else
     {
-    this->m_RequestSetTransformAndParentTransform = transform;
-    this->m_RequestSetTransformAndParentParent = parent;
+    this->m_TransformFromRequestSetTransformAndParent = transform;
+    this->m_ParentFromRequestSetTransformAndParent = parent;
 
     igstkPushInputMacro( ValidParent );
     m_StateMachine.ProcessInputs();
 
     // Break reference when we're done with it...
-    this->m_RequestSetTransformAndParentParent = NULL;
+    this->m_ParentFromRequestSetTransformAndParent = NULL;
     return;
     }
 }
@@ -481,14 +440,14 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::SetTransformAndParentProcessing()
 {
-  this->m_Parent = this->m_RequestSetTransformAndParentParent;
-  this->m_TransformToParent = this->m_RequestSetTransformAndParentTransform;
+  this->m_Parent = this->m_ParentFromRequestSetTransformAndParent;
+  this->m_TransformToParent = this->m_TransformFromRequestSetTransformAndParent;
 }
 
 void CoordinateReferenceSystem
 ::SetTransformAndParentNullParentProcessing()
 {
-  // ERROR
+  // ERROR - Can't set parent to NULL.
   CoordinateReferenceSystemNullParentEvent event;
   this->InvokeEvent( event );
 }
@@ -496,7 +455,7 @@ void CoordinateReferenceSystem
 void CoordinateReferenceSystem
 ::SetTransformAndParentThisParentProcessing()
 {
-  // ERROR
+  // ERROR - Can't set our parent to this.
   CoordinateReferenceSystemThisParentEvent event;
   this->InvokeEvent( event );
 }
@@ -514,15 +473,12 @@ CoordinateReferenceSystem
   typedef const CoordinateReferenceSystem* 
                                       CoordinateReferenceSystemConstPointer;
 
-  this->m_LowestCommonAncestorTimer.Start();
-
   CoordinateReferenceSystemConstPointer aSmart = this;
   CoordinateReferenceSystemConstPointer bSmart = B;
 
   if( aSmart == bSmart )
     {
     this->m_LowestCommonAncestor = aSmart;
-    this->m_LowestCommonAncestorTimer.Stop();
     igstkPushInputMacro( AncestorFound );
     m_StateMachine.ProcessInputs();
     // Break reference when we're done with it.
@@ -532,8 +488,7 @@ CoordinateReferenceSystem
 
   if( NULL == bSmart )
     {
-    // Error 
-    this->m_LowestCommonAncestorTimer.Stop();
+    // Error - target for FindLowestCommonAncestor is NULL.
     igstkPushInputMacro( Disconnected );
     m_StateMachine.ProcessInputs();
     return;
@@ -556,7 +511,6 @@ CoordinateReferenceSystem
       if (aTemp == bTemp)
         {
         this->m_LowestCommonAncestor = aTemp;
-        this->m_LowestCommonAncestorTimer.Stop();
         igstkPushInputMacro( AncestorFound );
         m_StateMachine.ProcessInputs();
         // Break reference when we're done with it.
@@ -568,8 +522,8 @@ CoordinateReferenceSystem
       }
     }
 
-  // Error 
-  this->m_LowestCommonAncestorTimer.Stop();
+  // Error - can't find a lowest common ancestor. Must
+  // be disconnected.
   igstkPushInputMacro( Disconnected );
   m_StateMachine.ProcessInputs();
   return;
@@ -605,7 +559,7 @@ CoordinateReferenceSystem
 ::SetTransformAndParentCycleProcessing()
 {
   CoordinateReferenceSystemParentCycleEvent event;
-  event.Set( this->m_RequestSetTransformAndParentParent );
+  event.Set( this->m_ParentFromRequestSetTransformAndParent );
 
   this->InvokeEvent( event );
 }
@@ -617,20 +571,27 @@ CoordinateReferenceSystem
   igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
 
-/**
-void 
-CoordinateReferenceSystem
-::RequestDetach()
-  {
-  // FIXME -- implement
-  }
-*/
-
 void 
 CoordinateReferenceSystem
 ::RequestGetTransformToParent()
 {
   this->RequestComputeTransformTo(this->m_Parent);
 }
+
+const CoordinateReferenceSystem* 
+CoordinateReferenceSystem
+::GetCoordinateReferenceSystem() const
+{
+  return this;
+}
+
+/*
+void 
+CoordinateReferenceSystem
+::RequestDetach()
+{
+}
+*/
+
 
 } // end namespace igstk
