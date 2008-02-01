@@ -965,6 +965,9 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
     {
     os << indent << *itr << std::endl;
     }
+
+  os << indent << "CoordinateSystemDelegator: ";
+  this->m_CoordinateReferenceSystemDelegator->PrintSelf( os, indent );
 }
 
 } // end namespace igstk

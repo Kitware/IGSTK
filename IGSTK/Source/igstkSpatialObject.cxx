@@ -58,6 +58,8 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
     os << indent << "Internal Spatial Object = ";
     os << this->m_SpatialObject.GetPointer() << std::endl;
     }
+  os << indent << "CoordinateSystemDelegator: ";
+  this->m_CoordinateReferenceSystemDelegator->PrintSelf( os, indent );
 }
 
 /** Request setting the ITK spatial object that provide internal 

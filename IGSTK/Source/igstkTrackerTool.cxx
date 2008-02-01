@@ -483,6 +483,9 @@ void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
                << this->m_CalibrationTransform << std::endl;
   os << indent << "Calibrated raw transform: "
                << this->m_CalibratedTransform << std::endl;
+  os << indent << "CoordinateSystemDelegator: ";
+  this->m_CoordinateReferenceSystemDelegator->PrintSelf( os, indent );
+
 }
 
 std::ostream& operator<<(std::ostream& os, const TrackerTool& o)
