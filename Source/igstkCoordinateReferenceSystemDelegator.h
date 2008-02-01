@@ -35,6 +35,14 @@ namespace igstk
  *  This class delegates much of the core coordinate system connectivity and
  *  transformation work to the CoordinateReferenceSystem class.
  *
+ *  The following diagram illustrates the state machine of 
+ *  the CoordinateReferenceSystemDelegator class
+ *
+ *  \image html  igstkCoordinateReferenceSystemDelegator.png  
+ *  "CoordinateReferenceSystemDelegator State Machine Diagram" 
+ *
+ *  \image latex igstkCoordinateReferenceSystemDelegator.eps 
+ *  "CoordinateReferenceSystemDelegator State Machine Diagram" 
  */
 class CoordinateReferenceSystemDelegator : public Object
 {
@@ -134,7 +142,7 @@ private:
    */
   igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper );
 
-  /** Private method for getting the CoordinateReferenceSystem. This method 
+  /** Private method for getting the CoordinateReferenceSystem. This method
    *  is mainly intended to be called from the 
    *  CoordinateReferenceSystemHelper as a secure way of passing the
    *  CoordinateReferenceSystem without breaking its encapsulation. 
