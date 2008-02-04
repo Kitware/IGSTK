@@ -34,11 +34,19 @@ namespace igstk
 
 /** \class SpatialObject
  * 
- * \brief This class encapsulates an ITK spatial object with the goal of
- * restricting access to functionalities that are not essential for IGS
- * applications, or to functionalities thay may present risks and unnecessary
- * flexibility.  This is an abstract class, you should use the derived classes
- * that represent specific shapes.
+ * \brief Geometrical abstraction of physical objects present in the surgical
+ * scene.
+ *
+ * This class is intended to describe objects in the surgical scenario.
+ * Subclasses of this class will be used for representing, for example,
+ * surgical instruments such as needles, catheters and guide wires; as well as
+ * pre-operative and intra-operative images.
+ *
+ * This class encapsulates an ITK spatial object with the goal of restricting
+ * access to functionalities that are not essential for IGS applications, or to
+ * functionalities thay may present risks and unnecessary flexibility.  This is
+ * an abstract class, you should use the derived classes that represent
+ * specific shapes.
  *
  *
  *  \image html  igstkSpatialObject.png  "SpatialObject State Machine Diagram"
@@ -61,12 +69,18 @@ public:
 
 protected:
 
+  /** The constructor of this class is declared protected to enforce the use of
+   * SmartPointers syntax when instantiating objects of this class. This
+   * constructor will be called indirectly by the ::New() method. It will
+   * initialize the internal state machine of this class. */
   SpatialObject( void );
+
+  /** The destructor should be overriden in derived classes that allocate
+   * memory for member variables. */
   ~SpatialObject( void );
 
-
-  /** Replacement for RequestSetSpatialObject(). Internal is added to the
-   *  name to clarify that this is used with the ITK spatial object as argument */
+  /** Replacement for RequestSetSpatialObject(). Internal is added to the name
+   * to clarify that this is used with the ITK spatial object as argument */
   void RequestSetInternalSpatialObject( SpatialObjectType * object );
 
   /** Print the object information in a stream. */
@@ -89,12 +103,10 @@ private:
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( Ready );
 
   /** Action methods to be invoked only by the state machine */
   void SetInternalSpatialObjectProcessing();
-
-  /** Null operation for a State Machine transition */
-  void NoProcessing();
 
   /** Report when a request has been made at an incorrect time. */
   void ReportInvalidRequestProcessing();
@@ -109,7 +121,14 @@ private:
 
 };
 
-igstkLoadedObjectEventMacro( SpatialObjectModifiedEvent, IGSTKEvent, SpatialObject );
+/** Event to be invoked when the state of the SpatialObject changes.
+ *  For example, if the radius of a cylinder changes. */
+igstkLoadedObjectEventMacro( 
+  SpatialObjectModifiedEvent, IGSTKEvent, SpatialObject );
+
+/** Event to be send to observers that request a SpatialObject, when the
+ * spatial object is not yet ready at the provider.  For example, when a reader
+ * is recovering a spatial object from a file. */
 igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKEvent );
 
 } // end namespace igstk

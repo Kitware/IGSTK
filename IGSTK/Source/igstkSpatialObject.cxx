@@ -26,20 +26,21 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
-  m_SpatialObject = NULL;
+  this->m_SpatialObject = NULL;
 
   igstkAddInputMacro( InternalSpatialObjectNull );
   igstkAddInputMacro( InternalSpatialObjectValid );
 
   igstkAddStateMacro( Initial  );
+  igstkAddStateMacro( Ready  );
 
   igstkAddTransitionMacro( Initial, InternalSpatialObjectNull, 
                            Initial,  ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, InternalSpatialObjectValid, 
-                           Initial,  SetInternalSpatialObject );
+                           Ready,  SetInternalSpatialObject );
 
   igstkSetInitialStateMacro( Initial );
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
 
 } 
 
@@ -67,38 +68,33 @@ void SpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
 void SpatialObject
 ::RequestSetInternalSpatialObject( SpatialObjectType * spatialObject )
 {  
-  m_SpatialObjectToBeSet = spatialObject;
+  this->m_SpatialObjectToBeSet = spatialObject;
 
-  if( m_SpatialObjectToBeSet.IsNull() )
+  if( this->m_SpatialObjectToBeSet.IsNull() )
     {
     igstkPushInputMacro( InternalSpatialObjectNull );
-    m_StateMachine.ProcessInputs();
+    this->m_StateMachine.ProcessInputs();
     }
   else 
     {
     igstkPushInputMacro( InternalSpatialObjectValid );
-    m_StateMachine.ProcessInputs();
+    this->m_StateMachine.ProcessInputs();
     }
 }
  
-/** Null operation for a State Machine transition */
-void SpatialObject::NoProcessing()
-{
-}
-
 
 /** Set the ITK spatial object that provide internal functionalities.
  * This method should only be called from the StateMachine */
 void SpatialObject::SetInternalSpatialObjectProcessing()
 {
-  m_SpatialObject = m_SpatialObjectToBeSet;
+  this->m_SpatialObject = this->m_SpatialObjectToBeSet;
 }
 
 /** Return the internal pointer to the SpatialObject */
 SpatialObject::SpatialObjectType * 
 SpatialObject::GetInternalSpatialObject() const
 {
-  return m_SpatialObject;
+  return this->m_SpatialObject;
 }
 
 /** Report that an invalid or suspicious operation has been requested.
@@ -114,7 +110,8 @@ void
 SpatialObject
 ::InternalSpatialObjectNullProcessing()
 {
-  igstkLogMacro( WARNING, "Spatial object was NULL when trying to SetInternalSpatialObject." );
+  igstkLogMacro( WARNING, 
+    "Spatial object was NULL when trying to SetInternalSpatialObject." );
 }
 
 } // end namespace igstk
