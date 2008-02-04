@@ -48,7 +48,13 @@ int TrackerInitializer::RequestInitializeTracker()
   }
   else if (m_TrackerType == TrackerConfiguration::Micron)
   {
+    #ifdef IGSTKSandbox_USE_MicronTracker
     return InitializeMicronTracker();
+    #else
+    m_ErrorMessage = "Please comfigure IGSTKSandbox to use MicronTrakcer first\n";
+    return 0;
+    #endif /* IGSTKSandbox_USE_MicronTracker */
+    
   }
   else
     {
@@ -189,6 +195,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 
 }
 
+#ifdef IGSTKSandbox_USE_MicronTracker
 int TrackerInitializer::InitializeMicronTracker()
 {
   MicronTrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetMicronTrackerConfiguration();
@@ -231,6 +238,8 @@ int TrackerInitializer::InitializeMicronTracker()
   return EXIT_SUCCESS;
 
 }
+
+#endif /* IGSTKSandbox_USE_MicronTracker */
 
 /** Destructor */
 TrackerInitializer::~TrackerInitializer()

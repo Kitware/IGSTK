@@ -17,6 +17,12 @@ SET(NeedleBiopsy_SRCS
   TrackerConfigurationGUI.h
   TrackerConfigurationGUI.cxx
   )
+  
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(NeedleBiopsy_SRCS ${NeedleBiopsy_SRCS}
+  # MicronTracker related classes
+  )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 INCLUDE_DIRECTORIES(
   ${NeedleBiopsy_SOURCE_DIR}

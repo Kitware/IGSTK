@@ -23,8 +23,11 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTracker.h"
 #include "igstkAuroraTrackerTool.h"
+
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
+#endif /* IGSTKSandbox_USE_MicronTracker */
 
 namespace igstk
 {
@@ -59,16 +62,20 @@ private:
   
   TrackerType            m_TrackerType;
 
-  igstk::Tracker::Pointer                      m_Tracker;
+  Tracker::Pointer                             m_Tracker;
   std::list< igstk::TrackerTool::Pointer >     m_TrackerToolList;
 
-  igstk::PolarisTracker::Pointer               m_PolarisTracker;
-  igstk::AuroraTracker::Pointer                m_AuroraTracker;
-  igstk::MicronTracker::Pointer                m_MicronTracker;
-
+  PolarisTracker::Pointer               m_PolarisTracker;
+  AuroraTracker::Pointer                m_AuroraTracker;
+  
   int InitializePolarisTracker();
   int InitializeAuroraTracker();
+
+#ifdef IGSTKSandbox_USE_MicronTracker
+  MicronTracker::Pointer                m_MicronTracker;
   int InitializeMicronTracker();
+#endif /* IGSTKSandbox_USE_MicronTracker */
+  
 
   TrackerConfiguration * m_TrackerConfiguration;
   
