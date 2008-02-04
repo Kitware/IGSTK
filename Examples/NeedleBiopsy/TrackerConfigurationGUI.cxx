@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   Image Guided Surgery Software Toolkit
-Module:    TrackerCondigurationGUI.cxx
+Module:    TrackerConfigurationGUI.cxx
 Language:  C++
 Date:      $Date$
 Version:   $Revision$

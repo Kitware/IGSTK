@@ -14,8 +14,8 @@ SET(NeedleBiopsy_SRCS
   TrackerInitializer.cxx
   TrackerConfiguration.h
   TrackerConfiguration.cxx
-  TrackerCondigurationGUI.h
-  TrackerCondigurationGUI.cxx
+  TrackerConfigurationGUI.h
+  TrackerConfigurationGUI.cxx
   )
 
 INCLUDE_DIRECTORIES(
