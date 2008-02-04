@@ -21,14 +21,14 @@ PURPOSE.  See the above copyright notices for more information.
 TrackerInitializer::TrackerInitializer( TrackerConfiguration * config)
 { 
     m_TrackerConfiguration = config;
-    m_Error  = "";
+    m_ErrorMessage  = "";
 }
 
 int TrackerInitializer::RequestInitializeTracker()
 {
   if ( m_TrackerConfiguration == NULL )
   {
-    m_Error = "Invalid configuration file";
+    m_ErrorMessage = "Invalid configuration file";
     return EXIT_FAILURE;
   }
 
@@ -36,32 +36,45 @@ int TrackerInitializer::RequestInitializeTracker()
 
   if ( m_TrackerType == TrackerConfiguration::Polaris )
     {
-    m_Error = "Initialization success";
+    m_ErrorMessage = "Initialization success";
     return EXIT_SUCCESS;
     }
   else if (m_TrackerType == TrackerConfiguration::Aurora)
     {
-    m_Error = "Initialization success";
+    m_ErrorMessage = "Initialization success";
     return EXIT_SUCCESS;
     }
   else if (m_TrackerType == TrackerConfiguration::Micron)
     {
-    m_Error = "Initialization success";
+    m_ErrorMessage = "Initialization success";
     return EXIT_SUCCESS;
     }
   else
     {
-    m_Error = "Invalid tracker type";
+    m_ErrorMessage = "Invalid tracker type";
     return EXIT_FAILURE;
     }
 
 }
 
-std::string TrackerInitializer::GetErrorMessage()
+int TrackerInitializer::InitializePolarisTracker()
 {
-  return m_Error;
+
+  return EXIT_SUCCESS;
+
 }
 
+int TrackerInitializer::InitializeAuroraTracker()
+{
+  return EXIT_SUCCESS;
+
+}
+
+int TrackerInitializer::InitializeMicronTracker()
+{
+  return EXIT_SUCCESS;
+
+}
 
 /** Destructor */
 TrackerInitializer::~TrackerInitializer()

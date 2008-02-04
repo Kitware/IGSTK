@@ -37,7 +37,7 @@ public:
 
   int RequestInitializeTracker();
   
-  std::string GetErrorMessage();
+  itkGetStringMacro( ErrorMessage );
   
   igstk::Tracker::Pointer GetTracker()
   {
@@ -62,9 +62,13 @@ private:
   igstk::AuroraTracker::Pointer                m_AuroraTracker;
   igstk::MicronTracker::Pointer                m_MicronTracker;
 
+  int InitializePolarisTracker();
+  int InitializeAuroraTracker();
+  int InitializeMicronTracker();
+
   TrackerConfiguration * m_TrackerConfiguration;
   
-  std::string            m_Error;
+  std::string            m_ErrorMessage;
 
 };
 
