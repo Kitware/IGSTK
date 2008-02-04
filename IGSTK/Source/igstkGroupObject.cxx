@@ -156,8 +156,8 @@ void GroupObject::NoProcessing()
 }
 
 /** Report that an invalid or suspicious operation has been requested.
- * This may mean that an error condition has arised in one of the
- * componenta that interact with this SpatialObject. */
+ * This may mean that an error condition has arisen in one of the
+ * components that interact with this SpatialObject. */
 void
 GroupObject::ReportInvalidRequestProcessing()
 {
