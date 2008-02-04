@@ -44,6 +44,24 @@ namespace igstk
  * will provide a VTK visualization of the Spatial Objects that are composing a
  * given scene.
  *
+ * Due to the critical nature of IGSTK applications, it is important to ensure
+ * that when we display objects in the surgical scene, we have confidence on
+ * the validity of their current location and orientation in space. In IGSTK we
+ * do this by managing Transforms with a finite validity time. In this way,
+ * when an object stops receiving fresh updated transforms, its old transforms
+ * are going to expire and the ObjectRepresentation class will then know that
+ * at this moment we can not trust the information of the transform. Objects
+ * whose transforms have expired are not displayed in the Views. This
+ * functionality is implemented in this current class by providing states of
+ * Visibility and Invisibility in an auxiliary state machine.
+ *
+ * The validity of the SpatialObject transform is checked at every call of the
+ * RequestUpdateRepresentation() method. If the transform turns out to be
+ * invalid, then this class goes into the Invisible state, and remains there
+ * until subsequent calls to RequestUpdateRepresentation() reveal that a valid
+ * transform has been provided to the SpatialObject.
+ *
+ *
  * \image html  igstkObjectRepresentation.png 
  *                  "Object Representation State Machine Diagram"
  * \image latex igstkObjectRepresentation.eps
@@ -62,21 +80,25 @@ public:
 
 public:
 
-  typedef double                             ScalarType;
-  typedef SpatialObject                      SpatialObjectType;
   typedef std::vector< vtkProp* >            ActorsListType; 
 
+  /** Type for representing the color components */
+  typedef     double          ColorScalarType;
+
   /** Set the color */
-  void SetColor(float r, float g, float b);
+  void SetColor(ColorScalarType r, ColorScalarType g, ColorScalarType b);
 
   /** Get each color component */
-  float GetRed() const; 
-  float GetGreen() const;
-  float GetBlue() const;
+  ColorScalarType GetRed() const; 
+  ColorScalarType GetGreen() const;
+  ColorScalarType GetBlue() const;
+
+  /** Type for representing the opacity of the object. */
+  typedef   double            OpacityType;
 
   /** Set/Get the opacity */
-  virtual void SetOpacity(float alpha);
-  igstkGetMacro( Opacity, float );
+  virtual void SetOpacity(OpacityType alpha);
+  igstkGetMacro( Opacity, OpacityType );
 
   /** Create the vtkActors */
   virtual void CreateActors()= 0;
@@ -95,7 +117,8 @@ protected:
   ~ObjectRepresentation( void );
 
   ActorsListType              m_Actors;
-  float                       m_Opacity;
+
+  OpacityType                 m_Opacity;
 
   /** Add an actor to the list */
   void AddActor( vtkProp * );
@@ -107,17 +130,17 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Request the state machine to set a Spatial Object */
-  void RequestSetSpatialObject( const SpatialObjectType * spatialObject );
+  void RequestSetSpatialObject( const SpatialObject * spatialObject );
   
   
 private:
 
-  float                       m_Color[3];
+  ColorScalarType             m_Color[3];
 
   /** The associated SpatialObject is non-const because we invoke requests
    * methods that indirectly will modify the state of its internal StateMachine
    * */
-  SpatialObjectType::Pointer  m_SpatialObject;
+  SpatialObject::Pointer  m_SpatialObject;
 
   /** Update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
@@ -189,7 +212,7 @@ private:
                                                 , SpatialObjectTransform );
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
-  SpatialObjectType::Pointer    m_SpatialObjectToAdd;
+  SpatialObject::Pointer        m_SpatialObjectToAdd;
 
   /** Time stamp for the time at which the next rendering will take place */
   TimeStamp                     m_TimeToRender;

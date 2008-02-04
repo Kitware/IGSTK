@@ -189,18 +189,21 @@ ObjectRepresentation::~ObjectRepresentation()
 }
 
 /** Get the red color component */
-float ObjectRepresentation::GetRed() const
+ObjectRepresentation::ColorScalarType
+ObjectRepresentation::GetRed() const
 {
   return this->m_Color[0];
 }
 
 /** Get the green color component */ 
-float ObjectRepresentation::GetGreen() const
+ObjectRepresentation::ColorScalarType
+ObjectRepresentation::GetGreen() const
 {
   return this->m_Color[1];
 }
 /** Get the blue color component */
-float ObjectRepresentation::GetBlue() const  
+ObjectRepresentation::ColorScalarType
+ObjectRepresentation::GetBlue() const  
 {
   return this->m_Color[2];
 }
@@ -230,13 +233,13 @@ void ObjectRepresentation::DeleteActors()
 
 /** Set the Spatial Object */
 void ObjectRepresentation
-::RequestSetSpatialObject( const SpatialObjectType * spatialObject )
+::RequestSetSpatialObject( const SpatialObject * spatialObject )
 {
   // This const_cast is done because the ObjectRepresentation class invoke
   // Request methods in the SpatialObject, and those methods modify the state
   // of its internal StateMachine. It is however desirable to keep the outside
   // API of this class refering to a const object.
-  this->m_SpatialObjectToAdd = const_cast< SpatialObjectType *>( spatialObject );
+  this->m_SpatialObjectToAdd = const_cast< SpatialObject *>( spatialObject );
   if( !this->m_SpatialObjectToAdd )
     {
     igstkPushInputMacro( NullSpatialObject );
@@ -259,7 +262,8 @@ void ObjectRepresentation::SetSpatialObjectProcessing()
 }
 
 /** Set the color */
-void ObjectRepresentation::SetColor(float r, float g, float b)
+void ObjectRepresentation::SetColor(
+  ColorScalarType r, ColorScalarType g, ColorScalarType b)
 {
   if( this->m_Color[0] == r && 
       this->m_Color[1] == g && 
@@ -286,7 +290,7 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 }
 
 /** Set the opacity */
-void ObjectRepresentation::SetOpacity(float alpha)
+void ObjectRepresentation::SetOpacity(OpacityType alpha)
 {
   if( this->m_Opacity == alpha )
     {
