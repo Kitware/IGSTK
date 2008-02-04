@@ -35,7 +35,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   igstkAddStateMacro( Ready  );
 
   igstkAddTransitionMacro( Initial, InternalSpatialObjectNull, 
-                           Initial,  ReportInvalidRequest );
+                           Initial,  ReportSpatialObjectNull );
   igstkAddTransitionMacro( Initial, InternalSpatialObjectValid, 
                            Ready,  SetInternalSpatialObject );
 
@@ -97,18 +97,9 @@ SpatialObject::GetInternalSpatialObject() const
   return this->m_SpatialObject;
 }
 
-/** Report that an invalid or suspicious operation has been requested.
- * This may mean that an error condition has arised in one of the
- * componenta that interact with this SpatialObject. */
-void
-SpatialObject::ReportInvalidRequestProcessing()
-{
-  igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
-}
-
 void
 SpatialObject
-::InternalSpatialObjectNullProcessing()
+::ReportSpatialObjectNullProcessing()
 {
   igstkLogMacro( WARNING, 
     "Spatial object was NULL when trying to SetInternalSpatialObject." );

@@ -78,6 +78,14 @@ public:
 
     sibling->RequestSetInternalSpatialObject( so );
 
+    SpatialObject::SpatialObjectType * spatialObject =
+      this->GetInternalSpatialObject();
+
+    if( spatialObject != so.GetPointer() )
+      {
+      return false;
+      }
+
     return true;
   }
 

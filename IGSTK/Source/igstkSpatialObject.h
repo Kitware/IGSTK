@@ -108,12 +108,9 @@ private:
   /** Action methods to be invoked only by the state machine */
   void SetInternalSpatialObjectProcessing();
 
-  /** Report when a request has been made at an incorrect time. */
-  void ReportInvalidRequestProcessing();
-
   /** Invoked by the state machine after a call to 
    *  RequestSetInternalSpatialObject with a null object. */
-  void InternalSpatialObjectNullProcessing();
+  void ReportSpatialObjectNullProcessing();
 
   /** Define the coordinate system interface 
    */
