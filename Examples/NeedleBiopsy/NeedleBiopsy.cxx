@@ -25,15 +25,6 @@ PURPOSE.  See the above copyright notices for more information.
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
 {  
-  this->Display3D = ViewType3D::New();
-  this->DisplayAxial = ViewType2D::New();
-  this->DisplayCoronal = ViewType2D::New();
-  this->DisplaySagittal = ViewType2D::New();
-
-  this->Display3DWidget->RequestSetView( this->Display3D );
-  this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
-  this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
-  this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
 
   /** Setup logger, for all other igstk components. */
   m_Logger   = LoggerType::New();
@@ -190,9 +181,9 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                                &NeedleBiopsy::DrawPickedPoint );
 
-  this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
-  this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
-  this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
+  ViewerGroup->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
+  ViewerGroup->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
+  ViewerGroup->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );
 
   m_ImageRepresentationAxial    = ImageRepresentationType::New();
   m_ImageRepresentationSagittal = ImageRepresentationType::New();
@@ -208,10 +199,10 @@ NeedleBiopsy::NeedleBiopsy():m_StateMachine(this)
     m_Tracker->SetLogger( m_Logger );
     m_LandmarkRegistration->SetLogger( m_Logger );
     m_SerialCommunication->SetLogger( m_Logger );  
-    this->DisplayAxial->SetLogger( m_Logger );
-    this->DisplaySagittal->SetLogger( m_Logger );
-    this->DisplayCoronal->SetLogger( m_Logger );
-    this->Display3D->SetLogger( m_Logger );
+    ViewerGroup->DisplayAxial->SetLogger( m_Logger );
+    ViewerGroup->DisplaySagittal->SetLogger( m_Logger );
+    ViewerGroup->DisplayCoronal->SetLogger( m_Logger );
+    ViewerGroup->Display3D->SetLogger( m_Logger );
     m_ImageRepresentationAxial->SetLogger( m_Logger );
     m_ImageRepresentationSagittal->SetLogger( m_Logger );
     m_ImageRepresentationCoronal->SetLogger( m_Logger );
@@ -890,18 +881,18 @@ void NeedleBiopsy::RequestResliceImage()
 void NeedleBiopsy::ResliceImage()
 {
   m_ImageRepresentationAxial->RequestSetSliceNumber( 
-                    static_cast< unsigned int >( this->AxialSlider->value() ) );
+                    static_cast< unsigned int >( ViewerGroup->AxialSlider->value() ) );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( 
-                 static_cast< unsigned int >( this->SagittalSlider->value() ) );
+                 static_cast< unsigned int >( ViewerGroup->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( 
-                  static_cast< unsigned int >( this->CoronalSlider->value() ) );
+                  static_cast< unsigned int >( ViewerGroup->CoronalSlider->value() ) );
 
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( 
-                    static_cast< unsigned int >( this->AxialSlider->value() ) );
+                    static_cast< unsigned int >( ViewerGroup->AxialSlider->value() ) );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( 
-                 static_cast< unsigned int >( this->SagittalSlider->value() ) );
+                 static_cast< unsigned int >( ViewerGroup->SagittalSlider->value() ) );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( 
-                  static_cast< unsigned int >( this->CoronalSlider->value() ) );
+                  static_cast< unsigned int >( ViewerGroup->CoronalSlider->value() ) );
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -917,9 +908,9 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( index[0] );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( index[1] );
 
-  this->AxialSlider->value( index[2] );
-  this->SagittalSlider->value( index[0] );
-  this->CoronalSlider->value( index[1] );
+  ViewerGroup->AxialSlider->value( index[2] );
+  ViewerGroup->SagittalSlider->value( index[0] );
+  ViewerGroup->CoronalSlider->value( index[1] );
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -962,76 +953,76 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   m_ImageRepresentationCoronal3D->RequestSetOrientation( 
                                              ImageRepresentationType::Coronal );
 
-  this->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
-  this->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
-  this->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
+  ViewerGroup->DisplayAxial->RequestRemoveObject( m_ImageRepresentationAxial );
+  ViewerGroup->DisplaySagittal->RequestRemoveObject( m_ImageRepresentationSagittal );
+  ViewerGroup->DisplayCoronal->RequestRemoveObject( m_ImageRepresentationCoronal );
+  ViewerGroup->Display3D->RequestRemoveObject( m_ImageRepresentationAxial3D );
+  ViewerGroup->Display3D->RequestRemoveObject( m_ImageRepresentationSagittal3D );
+  ViewerGroup->Display3D->RequestRemoveObject( m_ImageRepresentationCoronal3D );
 
-  this->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
-  this->DisplayAxial->RequestAddObject( m_PickedPointRepresentation );
-  this->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-  this->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
-  this->DisplayAxial->RequestAddAnnotation2D( m_Annotation2D );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_ImageRepresentationAxial );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_PickedPointRepresentation );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_NeedleRepresentation->Copy() );
+  ViewerGroup->DisplayAxial->RequestAddAnnotation2D( m_Annotation2D );
 
 
-  this->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
-  this->DisplaySagittal->RequestAddObject(
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_ImageRepresentationSagittal );
+  ViewerGroup->DisplaySagittal->RequestAddObject(
                                           m_PickedPointRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddAnnotation2D( m_Annotation2D );
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_NeedleRepresentation->Copy() );
+  ViewerGroup->DisplaySagittal->RequestAddAnnotation2D( m_Annotation2D );
 
   
-  this->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
-  this->DisplayCoronal->RequestAddObject( m_PickedPointRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_ImageRepresentationCoronal );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_NeedleRepresentation->Copy() );
+  ViewerGroup->DisplayCoronal->RequestAddAnnotation2D( m_Annotation2D );
 
-  this->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
-  this->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
-  this->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
-  this->Display3D->RequestAddAnnotation2D( m_Annotation2D );
+  ViewerGroup->Display3D->RequestAddObject( m_ImageRepresentationAxial3D );
+  ViewerGroup->Display3D->RequestAddObject( m_ImageRepresentationSagittal3D );
+  ViewerGroup->Display3D->RequestAddObject( m_ImageRepresentationCoronal3D );
+  ViewerGroup->Display3D->RequestAddObject( m_PickedPointRepresentation->Copy() );
+  ViewerGroup->Display3D->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+  ViewerGroup->Display3D->RequestAddObject( m_NeedleRepresentation->Copy() );
+  ViewerGroup->Display3D->RequestAddAnnotation2D( m_Annotation2D );
 
 
-  this->DisplayAxial->RequestAddObject( m_TargetRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_TargetRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_TargetRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_TargetRepresentation->Copy() );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_TargetRepresentation->Copy() );
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_TargetRepresentation->Copy() );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_TargetRepresentation->Copy() );
+  ViewerGroup->Display3D->RequestAddObject( m_TargetRepresentation->Copy() );
 
-  this->DisplayAxial->RequestAddObject( m_EntryRepresentation->Copy() );
-  this->DisplaySagittal->RequestAddObject( m_EntryRepresentation->Copy() );
-  this->DisplayCoronal->RequestAddObject( m_EntryRepresentation->Copy() );
-  this->Display3D->RequestAddObject( m_EntryRepresentation->Copy() );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_EntryRepresentation->Copy() );
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_EntryRepresentation->Copy() );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_EntryRepresentation->Copy() );
+  ViewerGroup->Display3D->RequestAddObject( m_EntryRepresentation->Copy() );
 
-  this->Display3D->RequestResetCamera();
-  // this->Display3D->Update();
-  this->Display3DWidget->RequestEnableInteractions();
-  this->Display3D->SetRefreshRate( 30 ); // 30 Hz
-  this->Display3D->RequestStart();
+  ViewerGroup->Display3D->RequestResetCamera();
+  // ViewerGroup->Display3D->Update();
+  ViewerGroup->Display3DWidget->RequestEnableInteractions();
+  ViewerGroup->Display3D->SetRefreshRate( 30 ); // 30 Hz
+  ViewerGroup->Display3D->RequestStart();
   
-  this->DisplaySagittal->RequestResetCamera();
-  // this->DisplaySagittal->Update();
-  this->DisplaySagittalWidget->RequestEnableInteractions();
-  this->DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplaySagittal->RequestStart();
+  ViewerGroup->DisplaySagittal->RequestResetCamera();
+  // ViewerGroup->DisplaySagittal->Update();
+  ViewerGroup->DisplaySagittalWidget->RequestEnableInteractions();
+  ViewerGroup->DisplaySagittal->SetRefreshRate( 30 ); // 30 Hz
+  ViewerGroup->DisplaySagittal->RequestStart();
 
-  this->DisplayCoronal->RequestResetCamera();
-  // this->DisplayCoronal->Update();
-  this->DisplayCoronalWidget->RequestEnableInteractions();
-  this->DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplayCoronal->RequestStart();  
+  ViewerGroup->DisplayCoronal->RequestResetCamera();
+  // ViewerGroup->DisplayCoronal->Update();
+  ViewerGroup->DisplayCoronalWidget->RequestEnableInteractions();
+  ViewerGroup->DisplayCoronal->SetRefreshRate( 30 ); // 30 Hz
+  ViewerGroup->DisplayCoronal->RequestStart();  
 
-  this->DisplayAxial->RequestResetCamera();
-  // this->DisplayAxial->Update();
-  this->DisplayAxialWidget->RequestEnableInteractions();
-  this->DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
-  this->DisplayAxial->RequestStart();
+  ViewerGroup->DisplayAxial->RequestResetCamera();
+  // ViewerGroup->DisplayAxial->Update();
+  ViewerGroup->DisplayAxialWidget->RequestEnableInteractions();
+  ViewerGroup->DisplayAxial->SetRefreshRate( 30 ); // 30 Hz
+  ViewerGroup->DisplayAxial->RequestStart();
   
   // Request information about the slices. The answers will be 
   // received in the form of events.
@@ -1039,11 +1030,11 @@ void NeedleBiopsy::ConnectImageRepresentationProcessing()
   this->m_ImageRepresentationSagittal->RequestGetSliceNumberBounds();
   this->m_ImageRepresentationCoronal->RequestGetSliceNumberBounds();
 
-  this->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
+  ViewerGroup->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
+  ViewerGroup->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
+  ViewerGroup->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
                                    m_ViewPickerObserver );
 
 }
@@ -1057,10 +1048,10 @@ void NeedleBiopsy::SetAxialSliderBoundsProcessing()
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationAxial->RequestSetSliceNumber( slice );
   m_ImageRepresentationAxial3D->RequestSetSliceNumber( slice );
-  this->AxialSlider->minimum( min );
-  this->AxialSlider->maximum( max );
-  this->AxialSlider->value( slice );  
-  this->AxialSlider->activate();
+  ViewerGroup->AxialSlider->minimum( min );
+  ViewerGroup->AxialSlider->maximum( max );
+  ViewerGroup->AxialSlider->value( slice );  
+  ViewerGroup->AxialSlider->activate();
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -1076,10 +1067,10 @@ void NeedleBiopsy::SetSagittalSliderBoundsProcessing()
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationSagittal->RequestSetSliceNumber( slice );
   m_ImageRepresentationSagittal3D->RequestSetSliceNumber( slice );
-  this->SagittalSlider->minimum( min );
-  this->SagittalSlider->maximum( max );
-  this->SagittalSlider->value( slice );  
-  this->SagittalSlider->activate();
+  ViewerGroup->SagittalSlider->minimum( min );
+  ViewerGroup->SagittalSlider->maximum( max );
+  ViewerGroup->SagittalSlider->value( slice );  
+  ViewerGroup->SagittalSlider->activate();
 
 
   this->ViewerGroup->redraw();
@@ -1095,10 +1086,10 @@ void NeedleBiopsy::SetCoronalSliderBoundsProcessing()
   const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
   m_ImageRepresentationCoronal->RequestSetSliceNumber( slice );
   m_ImageRepresentationCoronal3D->RequestSetSliceNumber( slice );
-  this->CoronalSlider->minimum( min );
-  this->CoronalSlider->maximum( max );
-  this->CoronalSlider->value( slice );  
-  this->CoronalSlider->activate();
+  ViewerGroup->CoronalSlider->minimum( min );
+  ViewerGroup->CoronalSlider->maximum( max );
+  ViewerGroup->CoronalSlider->value( slice );  
+  ViewerGroup->CoronalSlider->activate();
 
 
   this->ViewerGroup->redraw();
@@ -1257,10 +1248,10 @@ void NeedleBiopsy::DrawPathProcessing()
   m_Path->RequestSetTransform( transform );
 #endif
 
-  this->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
-  this->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
-  this->DisplayCoronal->RequestRemoveObject( m_PathRepresentationCoronal );
-  this->Display3D->RequestRemoveObject( m_PathRepresentation3D );
+  ViewerGroup->DisplayAxial->RequestRemoveObject( m_PathRepresentationAxial );
+  ViewerGroup->DisplaySagittal->RequestRemoveObject( m_PathRepresentationSagittal );
+  ViewerGroup->DisplayCoronal->RequestRemoveObject( m_PathRepresentationCoronal );
+  ViewerGroup->Display3D->RequestRemoveObject( m_PathRepresentation3D );
 
   m_PathRepresentationAxial->RequestSetTubeObject( NULL );
   m_PathRepresentationAxial->RequestSetTubeObject( m_Path );
@@ -1279,10 +1270,10 @@ void NeedleBiopsy::DrawPathProcessing()
   m_PathRepresentation3D->SetColor( 0.0, 1.0, 0.0 );
   m_PathRepresentation3D->SetOpacity( 0.5 );
 
-  this->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
-  this->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
-  this->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
-  this->Display3D->RequestAddObject( m_PathRepresentation3D );
+  ViewerGroup->DisplayAxial->RequestAddObject( m_PathRepresentationAxial );
+  ViewerGroup->DisplaySagittal->RequestAddObject( m_PathRepresentationSagittal );
+  ViewerGroup->DisplayCoronal->RequestAddObject( m_PathRepresentationCoronal );
+  ViewerGroup->Display3D->RequestAddObject( m_PathRepresentation3D );
   
 }
 

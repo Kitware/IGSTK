@@ -6,7 +6,16 @@ SET(NeedleBiopsy_GUI_SRCS
   
 SET(NeedleBiopsy_SRCS
   main.cxx
+  NeedleBiopsy.h
   NeedleBiopsy.cxx
+  igstkQuadrantViews.h
+  igstkQuadrantViews.cxx
+  TrackerInitializer.h
+  TrackerInitializer.cxx
+  TrackerConfiguration.h
+  TrackerConfiguration.cxx
+  TrackerCondigurationGUI.h
+  TrackerCondigurationGUI.cxx
   )
 
 INCLUDE_DIRECTORIES(
