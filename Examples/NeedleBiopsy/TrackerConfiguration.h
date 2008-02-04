@@ -79,6 +79,7 @@ public:
   bool               WiredTool;
   bool               Is5DOF;
   bool               IsReference;
+  bool               HasSROM;
   int                PortNumber;
   int                ChannelNumber;
   std::string        SROMFile;
@@ -94,11 +95,15 @@ class MicronTrackerConfiguration
 public:
   std::string     CameraCalibrationFileDirectory;
   std::string     InitializationFile;
-  std::string     TemplateDirectory;
+  std::string     TemplatesDirectory;
+  double          Frequency;
 
-  std::list< MicronTrackerToolConfiguration * > TrackerToolList;
+  std::vector< MicronTrackerToolConfiguration * > TrackerToolList;
 
-  MicronTrackerConfiguration(){};
+  MicronTrackerConfiguration()
+  {
+    Frequency = 30;
+  }
   virtual ~MicronTrackerConfiguration(){};
 
 };
@@ -107,10 +112,14 @@ class NDITrackerConfiguration
 {
 public:
   igstk::SerialCommunication::PortNumberType     COMPort;
+  double                                         Frequency;
 
-  std::list< NDITrackerToolConfiguration * >     TrackerToolList;
+  std::vector< NDITrackerToolConfiguration * >     TrackerToolList;
 
-  NDITrackerConfiguration(){};
+  NDITrackerConfiguration()
+  {
+    Frequency = 30;
+  }
   virtual ~NDITrackerConfiguration(){};
 };
 #endif

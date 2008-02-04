@@ -26,6 +26,10 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
 
+namespace igstk
+{
+
+
 class TrackerInitializer
 {
 
@@ -72,4 +76,5 @@ private:
 
 };
 
+} // end of namespace
 #endif
