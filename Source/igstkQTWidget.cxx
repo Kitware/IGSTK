@@ -53,11 +53,11 @@ QTWidget(QWidget* parent, Qt::WFlags f):
 QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
 #endif
 { 
-  m_Logger = NULL;
-  m_View = ViewType::New();
+  this->m_Logger = NULL;
+  this->m_View = ViewType::New();
 
-  m_Renderer = NULL;
-  m_RenderWindowInteractor = NULL;
+  this->m_Renderer = NULL;
+  this->m_RenderWindowInteractor = NULL;
 
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
@@ -82,7 +82,7 @@ QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
   igstkSetInitialStateMacro( Idle );
   m_StateMachine.SetReadyToRun();
 
-  m_InteractionHandling  = true;
+  this->m_InteractionHandling  = true;
 
 }
 
@@ -124,7 +124,7 @@ void QTWidget::RequestSetView( const ViewType* view)
     }
   else
     {
-    m_View = const_cast< ViewType*  >( view );
+    this->m_View = const_cast< ViewType*  >( view );
     igstkPushInputMacro( ValidView );
     }
 
@@ -136,7 +136,7 @@ void QTWidget::ConnectViewProcessing( )
 {
   igstkLogMacro( DEBUG, "igstkQTWidget::ConnectViewProcessing called ...\n");
 
-  this->m_ProxyView.Connect( m_View );
+  this->m_ProxyView.Connect( this->m_View );
   this->SetRenderWindow( this->m_Renderer->GetRenderWindow());
 }
 
@@ -164,7 +164,7 @@ void QTWidget::EnableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
          "igstkQTWidget::EnableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = true;
+  this->m_InteractionHandling = true;
 }
 
 /** */
@@ -172,7 +172,7 @@ void QTWidget::DisableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
                  "igstkQTWidget::DisableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = false;
+  this->m_InteractionHandling = false;
 }
 
 /** This method is overridden to be able to enable/disable interaction 
@@ -186,7 +186,7 @@ void QTWidget::mousePressEvent(QMouseEvent* e)
     interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !this->m_InteractionHandling)
     {
     return;
     }
@@ -239,7 +239,7 @@ QTWidget
     interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !this->m_InteractionHandling)
     {
     return;
     }
@@ -295,7 +295,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     interactor = this->mRenWin->GetInteractor();
     }
     
-  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !this->m_InteractionHandling)
     {
     return;
     }
@@ -316,7 +316,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
   if(e->buttons() == Qt::LeftButton)
     {
     // Get x,y,z in world coordinates from the clicked point
-    m_ProxyView.SetPickedPointCoordinates( this->m_View, e->x(), 
+    this->m_ProxyView.SetPickedPointCoordinates( this->m_View, e->x(), 
                            this->height() - e->y() - 1); 
     }
 }
@@ -332,7 +332,7 @@ void QTWidget::wheelEvent(QWheelEvent* e)
     interactor = this->mRenWin->GetInteractor();
     }
   
-  if(!interactor || !interactor->GetEnabled() || !m_InteractionHandling)
+  if(!interactor || !interactor->GetEnabled() || !this->m_InteractionHandling)
     {
     return;
     }

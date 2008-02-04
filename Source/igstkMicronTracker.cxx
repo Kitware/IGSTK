@@ -62,19 +62,19 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
   m_BufferLock = itk::MutexLock::New();
 
   //instantiate Persistance object
-  m_Persistence = new Persistence();
+  this->m_Persistence = new Persistence();
 
   //instantiate Markers object
-  m_Markers = new Markers();
+  this->m_Markers = new Markers();
 
   //instantiate cameras
-  m_Cameras = new Cameras();
+  this->m_Cameras = new Cameras();
 
   // initialize selected camera
-  m_SelectedCamera = NULL;
+  this->m_SelectedCamera = NULL;
 
   // Camera light coolness
-  m_CameraLightCoolness = 0.1;
+  this->m_CameraLightCoolness = 0.1;
 
   // Create error code list if it hasn't been
   // created.
@@ -89,19 +89,19 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 /** Destructor */
 MicronTracker::~MicronTracker(void)
 {
-  if ( m_Cameras != NULL )
+  if ( this->m_Cameras != NULL )
     {
-    delete m_Cameras;
+    delete this->m_Cameras;
     }
 
-  if ( m_Markers != NULL )
+  if ( this->m_Markers != NULL )
     {
-    delete m_Markers;
+    delete this->m_Markers;
     }
 
-  if ( m_Persistence != NULL )
+  if ( this->m_Persistence != NULL )
     {
-    delete m_Persistence;
+    delete this->m_Persistence;
     }
 }
 
@@ -192,15 +192,15 @@ MicronTracker::LoadMarkerTemplates( void )
   // clear templates already loaded
   this->m_Markers->clearTemplates();
 
-  if( m_MarkerTemplatesDirectory == "" || 
-      !itksys::SystemTools::FileExists( m_MarkerTemplatesDirectory.c_str() ) ) 
+  if( this->m_MarkerTemplatesDirectory == "" || 
+      !itksys::SystemTools::FileExists( this->m_MarkerTemplatesDirectory.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, "Marker templates directory is not properly set");
     return FAILURE;
     }
 
   char * markerTemplateDirectory = 
-            const_cast< char *> ( m_MarkerTemplatesDirectory.c_str() );
+            const_cast< char *> ( this->m_MarkerTemplatesDirectory.c_str() );
  
   unsigned int  status = Markers_LoadTemplates( markerTemplateDirectory );
 
@@ -252,14 +252,14 @@ bool MicronTracker::Initialize( void )
   igstkLogMacro( DEBUG, "igstk::MicronTracker::Initialize called ...\n");
 
   bool result = true;
-  if( m_InitializationFile == "" || 
-      !itksys::SystemTools::FileExists( m_InitializationFile.c_str() ) ) 
+  if( this->m_InitializationFile == "" || 
+      !itksys::SystemTools::FileExists( this->m_InitializationFile.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, "Initialization file (.ini ) is not properly set");
     return FAILURE;
     }
   char * initializationFilename = 
-            const_cast< char *> ( m_InitializationFile.c_str() );
+            const_cast< char *> ( this->m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
   this->m_Persistence->setSection ("General");
 
@@ -271,7 +271,7 @@ bool MicronTracker::Initialize( void )
   const double defaultLightCoolness = 0.1;
 
   // light coolness value will be set on the camera after it is attached. 
-  m_CameraLightCoolness = 
+  this->m_CameraLightCoolness = 
       this->m_Persistence->retrieveDouble(
          "LightCoolness", defaultLightCoolness);
  
@@ -332,9 +332,9 @@ bool MicronTracker::SetUpCameras( void )
 
   bool result = true;
 
-  if ( m_CameraCalibrationFilesDirectory == "" || 
+  if ( this->m_CameraCalibrationFilesDirectory == "" || 
        !itksys::SystemTools::FileExists( 
-       m_CameraCalibrationFilesDirectory.c_str() ) ) 
+       this->m_CameraCalibrationFilesDirectory.c_str() ) ) 
     {
     igstkLogMacro( CRITICAL, 
       "Camera calibration directory is not properly set");
@@ -364,7 +364,7 @@ bool MicronTracker::SetUpCameras( void )
       {
       this->m_SelectedCamera = this->m_Cameras->m_vCameras[0];
       // set the camera Light coolness parameter
-      this->m_SelectedCamera->setLightCoolness( m_CameraLightCoolness );
+      this->m_SelectedCamera->setLightCoolness( this->m_CameraLightCoolness );
       } 
     }
 
@@ -414,7 +414,7 @@ MicronTracker
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");  
-  m_Cameras->Detach();
+  this->m_Cameras->Detach();
   
   return SUCCESS;
 }
@@ -469,8 +469,8 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
 
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ToolTransformBuffer.begin();
-  InputConstIterator inputEnd = m_ToolTransformBuffer.end();
+  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
 
   TrackerToolsContainerType trackerToolContainer = 
     this->GetTrackerToolContainer();
@@ -480,7 +480,7 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   while( inputItr != inputEnd )
     {
     // only report tools that are in view
-    if (! m_ToolStatusContainer[inputItr->first])
+    if (! this->m_ToolStatusContainer[inputItr->first])
       {
       igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
@@ -551,7 +551,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   m_BufferLock->Lock();
 
   // Grab frame
-  if ( ! m_Cameras->grabFrame( m_SelectedCamera ) )
+  if ( ! this->m_Cameras->grabFrame( this->m_SelectedCamera ) )
     {
     igstkLogMacro( CRITICAL, "Error grabbing a frame");
     m_BufferLock->Unlock();
@@ -559,7 +559,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     }
 
   // process frame
-  unsigned int completionCode = m_Markers->processFrame( m_SelectedCamera ); 
+  unsigned int completionCode = this->m_Markers->processFrame( m_SelectedCamera ); 
 
   if ( completionCode != 0 ) 
     {
@@ -633,10 +633,10 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
         InputIterator markerItr = 
           m_ToolTransformBuffer.find( marker->getName() );
   
-        if( markerItr != m_ToolTransformBuffer.end() )
+        if( markerItr != this->m_ToolTransformBuffer.end() )
           {
-          m_ToolTransformBuffer[ marker->getName() ] = transform;
-          m_ToolStatusContainer[ marker->getName() ] = 1;
+          this->m_ToolTransformBuffer[ marker->getName() ] = transform;
+          this->m_ToolStatusContainer[ marker->getName() ] = 1;
           }
         }
       }
@@ -681,8 +681,8 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
   transform.push_back( 0.0 );
   transform.push_back( 1.0 );
 
-  m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
-  m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+  this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
+  this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
 
   return SUCCESS;
 }
@@ -713,14 +713,14 @@ void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Number of tools: " << m_NumberOfTools << std::endl;
+  os << indent << "Number of tools: " << this->m_NumberOfTools << std::endl;
   os << indent << "Camera calibration files directory: " 
-               << m_CameraCalibrationFilesDirectory << std::endl;
-  os << indent << "Initialization file: " << m_InitializationFile << std::endl;
+               << this->m_CameraCalibrationFilesDirectory << std::endl;
+  os << indent << "Initialization file: " << this->m_InitializationFile << std::endl;
   os << indent << "Markers template directory: " 
-               << m_MarkerTemplatesDirectory << std::endl;
+               << this->m_MarkerTemplatesDirectory << std::endl;
   os << indent << "Camera Light coolness value : " 
-               << m_CameraLightCoolness << std::endl;
+               << this->m_CameraLightCoolness << std::endl;
 }
 
 } // end of namespace igstk

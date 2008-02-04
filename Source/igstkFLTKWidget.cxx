@@ -42,21 +42,21 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
 { 
   igstkLogMacro( DEBUG, "igstkFLTKWidget::Constructor() called ...\n");
   
-  m_Logger = NULL;
+  this->m_Logger = NULL;
   
   this->end();
 
   //Turn on interaction handling
-  m_InteractionHandling = true;
+  this->m_InteractionHandling = true;
 
 
-  m_RenderWindowIDSet = false;
+  this->m_RenderWindowIDSet = false;
 
-  m_Renderer = NULL;
-  m_RenderWindowInteractor = NULL;
+  this->m_Renderer = NULL;
+  this->m_RenderWindowInteractor = NULL;
 
   // instantiate the view object 
-  m_View = ViewType::New(); 
+  this->m_View = ViewType::New(); 
 
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
@@ -90,14 +90,14 @@ FLTKWidget::~FLTKWidget()
   igstkLogMacro( DEBUG,
                 "igstkFLTKWidget::igstkFLTKWidgeti::Destructor() called ...\n");
 
-  if ( ! m_View.IsNull() ) 
+  if ( ! this->m_View.IsNull() ) 
     {
     this->m_View->RequestStop();
 
 
-    if ( m_Renderer != NULL )
+    if ( this->m_Renderer != NULL )
       {
-      vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+      vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
 
       if ( renderWindow != NULL )
         {
@@ -147,7 +147,7 @@ void FLTKWidget::RequestSetView( const ViewType* view )
     }
   else
     {
-    m_View = const_cast< ViewType*  >( view );
+    this->m_View = const_cast< ViewType*  >( view );
     igstkPushInputMacro( ValidView );
     }
 
@@ -159,26 +159,26 @@ void FLTKWidget::ConnectViewProcessing( )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::ConnectViewProcessing called ...\n");
 
-  this->m_ProxyView.Connect( m_View );
+  this->m_ProxyView.Connect( this->m_View );
 }
 
 /** Set render window */
 void FLTKWidget::SetRenderWindowID(void)
 {
 
-  if ( m_Renderer == NULL ) 
+  if ( this->m_Renderer == NULL ) 
     {
     return;
     }
 
-  vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+  vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
 
   if ( renderWindow == NULL ) 
     {
     return;
     }
 
-  m_RenderWindowIDSet = true;
+  this->m_RenderWindowIDSet = true;
 
   #if defined(__APPLE__) && defined(VTK_USE_CARBON)
     // FLTK 1.x does not support HiView
@@ -216,7 +216,7 @@ void FLTKWidget::EnableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
                 "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = true;
+  this->m_InteractionHandling = true;
 }
 
 /** */
@@ -224,7 +224,7 @@ void FLTKWidget::DisableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
                 "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
-  m_InteractionHandling = false;
+  this->m_InteractionHandling = false;
 }
 
 
@@ -245,9 +245,9 @@ void FLTKWidget::draw(void)
 
   // make sure the vtk part knows where and how large we are
   //
-  if ( ! m_View.IsNull() )
+  if ( ! this->m_View.IsNull() )
     {
-    m_ProxyView.SetRenderWindowSize( m_View, this->w(), this->h() );
+    this->m_ProxyView.SetRenderWindowSize( this->m_View, this->w(), this->h() );
     }
 
   // make sure the GL context exists and is current:
@@ -256,12 +256,12 @@ void FLTKWidget::draw(void)
   // see Fl_Gl_Window::show()
   this->make_current();
 
-  if ( ! m_RenderWindowIDSet )
+  if ( ! this->m_RenderWindowIDSet )
     {
     this->SetRenderWindowID();
     }
 
-  vtkRenderWindowInteractor * interactor = m_RenderWindowInteractor; 
+  vtkRenderWindowInteractor * interactor = this->m_RenderWindowInteractor; 
 
   if ( interactor != NULL )
     {
@@ -271,7 +271,7 @@ void FLTKWidget::draw(void)
 
 void FLTKWidget::hide()
 {
-  vtkRenderWindow * renderWindow = m_Renderer->GetRenderWindow();
+  vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
   renderWindow->Finalize();
   this->Superclass::hide();
 }
@@ -282,9 +282,9 @@ void FLTKWidget::resize( int x, int y, int w, int h )
   igstkLogMacro( DEBUG, "igstkFLTKWidget::resize() called ...\n");
 
   // make sure VTK knows about the new situation
-  if ( ! m_View.IsNull() )
+  if ( ! this->m_View.IsNull() )
     {
-    m_ProxyView.SetRenderWindowSize( m_View, w, h );
+    this->m_ProxyView.SetRenderWindowSize( this->m_View, w, h );
     }
 
   // resize the FLTK window by calling ancestor method
@@ -298,14 +298,14 @@ int FLTKWidget::handle( int event )
   igstkLogMacro( DEBUG, "igstkFLTKWidget::handle() called ...\n");
 
   vtkRenderWindowInteractor * renderWindowInteractor = 
-                                                   m_RenderWindowInteractor;
+                                                   this->m_RenderWindowInteractor;
 
   if ( renderWindowInteractor == NULL )
     {
     return 0;
     }
 
-  if( !renderWindowInteractor->GetEnabled() || !m_InteractionHandling) 
+  if( !renderWindowInteractor->GetEnabled() || !this->m_InteractionHandling) 
     {
     return 0;
     }
@@ -380,9 +380,8 @@ int FLTKWidget::handle( int event )
           {
           renderWindowInteractor->InvokeEvent(
                                      vtkCommand::LeftButtonReleaseEvent,NULL);
-          m_ProxyView.SetPickedPointCoordinates( m_View, Fl::event_x(), 
-                               this->h()-Fl::event_y()-1 
-                               );
+          this->m_ProxyView.SetPickedPointCoordinates( this->m_View,
+                 Fl::event_x(),this->h()-Fl::event_y()-1 );
           }
           break;
         case FL_MIDDLE_MOUSE:

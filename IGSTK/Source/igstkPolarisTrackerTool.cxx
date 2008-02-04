@@ -153,6 +153,19 @@ PolarisTrackerTool::~PolarisTrackerTool()
 void PolarisTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "PortNumber: "   << this->m_PortNumber << std::endl;
+  os << indent << "SROMFileName: " << this->m_SROMFileName << std::endl;
+  os << indent << "ToolId: "       << this->m_ToolId << std::endl;
+
+  if( this->m_WirelessTrackerToolSelected )
+    {
+    os << indent << " Tracker tool is wireless type"  << std::endl;
+    }
+  else
+    {
+    os << indent << " Tracker tool is wired/active type"  << std::endl;
+    }
 }
 
 /** Request the state machine to select wired tracker tool model. */
