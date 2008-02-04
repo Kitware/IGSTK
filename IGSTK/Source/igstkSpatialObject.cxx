@@ -103,6 +103,7 @@ SpatialObject
 {
   igstkLogMacro( WARNING, 
     "Spatial object was NULL when trying to SetInternalSpatialObject." );
+  this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
 } // end namespace igstk

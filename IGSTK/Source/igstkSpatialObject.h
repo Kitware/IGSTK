@@ -62,6 +62,8 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( SpatialObject, Object )
 
+  // this next "public: is necessary since the Macro above
+  // introduces a private section.
 public:
 
   /** Typedefs */
@@ -124,8 +126,9 @@ igstkLoadedObjectEventMacro(
   SpatialObjectModifiedEvent, IGSTKEvent, SpatialObject );
 
 /** Event to be send to observers that request a SpatialObject, when the
- * spatial object is not yet ready at the provider.  For example, when a reader
- * is recovering a spatial object from a file. */
+ * spatial object is not yet ready at the provider.  For example, when a
+ * GroupObject is queried for a child or when a VascularNetwork is queried for
+ * a Vessel using an Id. */
 igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKEvent );
 
 } // end namespace igstk
