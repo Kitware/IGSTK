@@ -22,17 +22,35 @@
 #include "vtkProp3D.h"
 #include "vtkProperty.h"
 
+
+/** Convenience macro for adding Inputs to the State Machine */
+#define igstkAddInputMacro2( statemachine, inputname ) \
+    this->m_##statemachine.AddInput( this->m_##inputname##Input,  \
+                                   #inputname"Input" );
+/** Convenience macro for adding States to the State Machine */
+#define igstkAddStateMacro2( statemachine, statename ) \
+    this->m_##statemachine.AddState( this->m_##statename##State,\
+                                   #statename"State" );
+
+/** Convenience macro for adding Transitions to the State Machine */
+#define igstkAddTransitionMacro2(statemachine,state1,input,state2,action )\
+    this->m_##statemachine.AddTransition( this->m_##state1##State,   \
+                                        this->m_##input##Input,    \
+                                        this->m_##state2##State,   \
+                                      & Self::action##Processing );
+
 namespace igstk
 {
 
 /** Constructor */
-ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilityStateMachine(this)
+ObjectRepresentation::ObjectRepresentation():
+  m_StateMachine(this),m_VisibilityStateMachine(this)
 {
-  m_Color[0] = 1.0;
-  m_Color[1] = 1.0;
-  m_Color[2] = 1.0;
-  m_Opacity = 1.0;
-  m_SpatialObject = NULL;
+  this->m_Color[0] = 1.0;
+  this->m_Color[1] = 1.0;
+  this->m_Color[2] = 1.0;
+  this->m_Opacity = 1.0;
+  this->m_SpatialObject = NULL;
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
@@ -121,52 +139,46 @@ ObjectRepresentation::ObjectRepresentation():m_StateMachine(this),m_VisibilitySt
 
   igstkSetInitialStateMacro( NullSpatialObject );
 
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
 
 
   // Configure the auxiliary State Machine that controls the Visibility of the
   // objects.
-  m_VisibilityStateMachine.AddInput( this->m_ValidTimeStampInput, "ValidTimeStampInput" );
-  m_VisibilityStateMachine.AddInput( this->m_InvalidTimeStampInput, "InvalidTimeStampInput" );
-  m_VisibilityStateMachine.AddInput( this->m_SetActorVisibilityInput, "SetActorVisibilityInput" );
+  igstkAddInputMacro2( VisibilityStateMachine, ValidTimeStamp );
+  igstkAddInputMacro2( VisibilityStateMachine, InvalidTimeStamp );
+  igstkAddInputMacro2( VisibilityStateMachine, SetActorVisibility );
 
-  m_VisibilityStateMachine.AddState( this->m_InvisibleState, "InvisibleState" );
-  m_VisibilityStateMachine.AddState( this->m_VisibleState, "VisibleState" );
+  igstkAddStateMacro2( VisibilityStateMachine, Invisible );
+  igstkAddStateMacro2( VisibilityStateMachine, Visible );
 
-  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
-                                          this->m_InvalidTimeStampInput,
-                                          this->m_InvisibleState,
-                                        & Self::NoProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Invisible, InvalidTimeStamp,
+                            Invisible, No);
 
-  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
-                                          this->m_ValidTimeStampInput,
-                                          this->m_VisibleState,
-                                        & Self::MakeObjectsVisibleProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Invisible, ValidTimeStamp,
+                            Visible, MakeObjectsVisible);
 
-  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
-                                          this->m_InvalidTimeStampInput,
-                                          this->m_InvisibleState,
-                                        & Self::MakeObjectsInvisibleProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Visible, InvalidTimeStamp,
+                            Invisible, MakeObjectsInvisible );
 
-  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
-                                          this->m_ValidTimeStampInput,
-                                          this->m_VisibleState,
-                                        & Self::NoProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Visible, ValidTimeStamp,
+                            Visible, No );
 
-  m_VisibilityStateMachine.AddTransition( this->m_VisibleState,
-                                          this->m_SetActorVisibilityInput,
-                                          this->m_VisibleState,
-                                        & Self::SetActorVisibleProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Visible, SetActorVisibility,
+                            Visible, SetActorVisible );
 
-  m_VisibilityStateMachine.AddTransition( this->m_InvisibleState,
-                                          this->m_SetActorVisibilityInput,
-                                          this->m_InvisibleState,
-                                        & Self::SetActorInvisibleProcessing );
+  igstkAddTransitionMacro2( VisibilityStateMachine,
+                            Invisible, SetActorVisibility,
+                            Invisible, SetActorInvisible );
 
-  m_VisibilitySetActor = NULL;
+  this->m_VisibilitySetActor = NULL;
 
-  m_VisibilityStateMachine.SelectInitialState( this->m_InvisibleState );
-  m_VisibilityStateMachine.SetReadyToRun();
+  this->m_VisibilityStateMachine.SelectInitialState( this->m_InvisibleState );
+  this->m_VisibilityStateMachine.SetReadyToRun();
 }
 
 /** Destructor */
@@ -179,18 +191,18 @@ ObjectRepresentation::~ObjectRepresentation()
 /** Get the red color component */
 float ObjectRepresentation::GetRed() const
 {
-  return m_Color[0];
+  return this->m_Color[0];
 }
 
 /** Get the green color component */ 
 float ObjectRepresentation::GetGreen() const
 {
-  return m_Color[1];
+  return this->m_Color[1];
 }
 /** Get the blue color component */
 float ObjectRepresentation::GetBlue() const  
 {
-  return m_Color[2];
+  return this->m_Color[2];
 }
 
 /** Add an actor to the actors list */
@@ -198,21 +210,21 @@ void ObjectRepresentation::AddActor( vtkProp * actor )
 {
   // Initialize objects based on the visibility state machine.
   this->RequestSetActorVisibility( actor );
-  m_Actors.push_back( actor );
+  this->m_Actors.push_back( actor );
 }
 
 /** Empty the list of actors */
 void ObjectRepresentation::DeleteActors()
 {
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
     {
     (*it)->Delete();
     it++;
     }
 
   // Reset the list of actors
-  m_Actors.clear();
+  this->m_Actors.clear();
 }
 
 
@@ -224,16 +236,16 @@ void ObjectRepresentation
   // Request methods in the SpatialObject, and those methods modify the state
   // of its internal StateMachine. It is however desirable to keep the outside
   // API of this class refering to a const object.
-  m_SpatialObjectToAdd = const_cast< SpatialObjectType *>( spatialObject );
-  if( !m_SpatialObjectToAdd )
+  this->m_SpatialObjectToAdd = const_cast< SpatialObjectType *>( spatialObject );
+  if( !this->m_SpatialObjectToAdd )
     {
     igstkPushInputMacro( NullSpatialObject );
-    m_StateMachine.ProcessInputs();
+    this->m_StateMachine.ProcessInputs();
     }
   else
     {
     igstkPushInputMacro( ValidSpatialObject );
-    m_StateMachine.ProcessInputs();
+    this->m_StateMachine.ProcessInputs();
     }
 
 }
@@ -242,29 +254,32 @@ void ObjectRepresentation
 /** Set the Spatial Object */
 void ObjectRepresentation::SetSpatialObjectProcessing()
 {
-  m_SpatialObject = m_SpatialObjectToAdd;
-  this->ObserveSpatialObjectTransformInput( m_SpatialObject );
+  this->m_SpatialObject = this->m_SpatialObjectToAdd;
+  this->ObserveSpatialObjectTransformInput( this->m_SpatialObject );
 }
 
 /** Set the color */
 void ObjectRepresentation::SetColor(float r, float g, float b)
 {
-  if(m_Color[0] == r && m_Color[1] == g && m_Color[2] == b)
+  if( this->m_Color[0] == r && 
+      this->m_Color[1] == g && 
+      this->m_Color[2] == b    )
     {
     return;
     }
-  m_Color[0] = r;
-  m_Color[1] = g;
-  m_Color[2] = b;
+  this->m_Color[0] = r;
+  this->m_Color[1] = g;
+  this->m_Color[2] = b;
 
   // Update all the actors
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
     {
     vtkActor * va = dynamic_cast< vtkActor * >( *it );
     if( va != NULL )
       {
-      va->GetProperty()->SetColor(m_Color[0], m_Color[1], m_Color[2]);
+      va->GetProperty()->SetColor(
+        this->m_Color[0], this->m_Color[1], this->m_Color[2] );
       }
     it++;
     }
@@ -273,18 +288,18 @@ void ObjectRepresentation::SetColor(float r, float g, float b)
 /** Set the opacity */
 void ObjectRepresentation::SetOpacity(float alpha)
 {
-  if(m_Opacity == alpha)
+  if( this->m_Opacity == alpha )
     {
     return;
     }
-  m_Opacity = alpha;
+  this->m_Opacity = alpha;
 
   // Update all the actors
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
     {
     vtkActor * va = static_cast<vtkActor*>(*it);
-    va->GetProperty()->SetOpacity(m_Opacity);
+    va->GetProperty()->SetOpacity(this->m_Opacity);
     it++;
     }
 }
@@ -297,20 +312,22 @@ void ObjectRepresentation::RequestUpdateRepresentation(
 {
   igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time"
                           << time );
-  m_TimeToRender = time;
-  m_TargetCoordinateSystem = cs;
+  this->m_TimeToRender = time;
+  this->m_TargetCoordinateSystem = cs;
   igstkPushInputMacro( UpdateRepresentation );
-  m_StateMachine.ProcessInputs();
-  m_TargetCoordinateSystem = NULL; // Break reference.
+  this->m_StateMachine.ProcessInputs();
+  this->m_TargetCoordinateSystem = NULL; // Break reference.
 }
 
 /** Process the request for updating the transform from the SpatialObject. */
 void ObjectRepresentation::RequestGetTransformProcessing()
 {
   igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ....");
-  // The response should be sent back in an event
 
-  m_SpatialObject->RequestComputeTransformTo( this->m_TargetCoordinateSystem );
+  // The response to this request is part of the internal dialog between the
+  // ObjectRepresentation and the SpatialObject. There is no need to report the
+  // answer outside of the ObjectRepresentation.
+  this->m_SpatialObject->RequestComputeTransformTo( this->m_TargetCoordinateSystem );
 
 }
 
@@ -318,17 +335,19 @@ void ObjectRepresentation::RequestGetTransformProcessing()
 /** Receive the Transform from the SpatialObject via a transduction macro. */
 void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
 {
-  m_SpatialObjectTransform = m_SpatialObjectTransformInputToBeSet.GetTransform();
+  this->m_SpatialObjectTransform = 
+    this->m_SpatialObjectTransformInputToBeSet.GetTransform();
 
-  igstkLogMacro( DEBUG, "Received SpatialObject Transform " << m_SpatialObjectTransform );
+  igstkLogMacro( DEBUG, 
+    "Received SpatialObject Transform " << this->m_SpatialObjectTransform );
 
   vtkMatrix4x4* vtkMatrix = vtkMatrix4x4::New();
 
-  m_SpatialObjectTransform.ExportTransform( *vtkMatrix );
+  this->m_SpatialObjectTransform.ExportTransform( *vtkMatrix );
 
   // Update all the actors
-  ActorsListType::iterator it = m_Actors.begin();
-  while( it != m_Actors.end() )
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while( it != this->m_Actors.end() )
     {
     vtkProp3D::SafeDownCast(*it)->SetUserMatrix(vtkMatrix);
     it++;
@@ -339,7 +358,8 @@ void ObjectRepresentation::ReceiveSpatialObjectTransformProcessing()
   this->RequestVerifyTimeStampAndUpdateVisibility();
 }
 
-/** Receive No Transform Availabe message from the SpatialObject via a transduction macro. */
+/** Receive No Transform Available message from the SpatialObject via a
+ * transduction macro. */
 void ObjectRepresentation::ReceiveTransformNotAvailableProcessing()
 {
   // No new transform for us to use.
@@ -349,21 +369,22 @@ void ObjectRepresentation::ReceiveTransformNotAvailableProcessing()
   this->RequestVerifyTimeStampAndUpdateVisibility();
 }
 
-/** Receive No Transform Availabe message from the SpatialObject via a transduction macro. */
+/** Receive No Transform Available message from the SpatialObject via a
+ * transduction macro. */
 void ObjectRepresentation::RequestVerifyTimeStampAndUpdateVisibility()
 {
-  if( m_TimeToRender.GetExpirationTime() <
-    m_SpatialObjectTransform.GetStartTime() ||
-    m_TimeToRender.GetStartTime() >
-    m_SpatialObjectTransform.GetExpirationTime() )
+  if( this->m_TimeToRender.GetExpirationTime() <
+    this->m_SpatialObjectTransform.GetStartTime() ||
+    this->m_TimeToRender.GetStartTime() >
+    this->m_SpatialObjectTransform.GetExpirationTime() )
     {
-    m_VisibilityStateMachine.PushInput( m_InvalidTimeStampInput );
-    m_VisibilityStateMachine.ProcessInputs();
+    this->m_VisibilityStateMachine.PushInput( this->m_InvalidTimeStampInput );
+    this->m_VisibilityStateMachine.ProcessInputs();
     }
   else
     {
-    m_VisibilityStateMachine.PushInput( m_ValidTimeStampInput );
-    m_VisibilityStateMachine.ProcessInputs();
+    this->m_VisibilityStateMachine.PushInput( this->m_ValidTimeStampInput );
+    this->m_VisibilityStateMachine.ProcessInputs();
     }
 
   this->UpdateRepresentationProcessing();
@@ -376,15 +397,15 @@ void ObjectRepresentation::NoProcessing()
 }
 
 
-
 /** Make Objects Invisible. This method is called when the Transform time stamp
  * has expired with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsInvisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsInvisibleProcessing at " << m_TimeToRender );
+  igstkLogMacro( WARNING, 
+    "MakeObjectsInvisibleProcessing at " << this->m_TimeToRender );
 
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
     {
     (*it)->VisibilityOff();
     it++;
@@ -396,10 +417,10 @@ void ObjectRepresentation::MakeObjectsInvisibleProcessing()
  * is valid with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsVisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << m_TimeToRender );
+  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << this->m_TimeToRender );
   
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
     {
     (*it)->VisibilityOn();
     it++;
@@ -419,30 +440,30 @@ void ObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Color: " << m_Color[0] << " : ";
-  os << m_Color[1] << " : " << m_Color[2] << std::endl;
-  os << indent << "Opacity: " << m_Opacity << std::endl;
+  os << indent << "Color: " << this->m_Color[0] << " : ";
+  os << this->m_Color[1] << " : " << this->m_Color[2] << std::endl;
+  os << indent << "Opacity: " << this->m_Opacity << std::endl;
 }
 
 void ObjectRepresentation
 ::RequestSetActorVisibility( vtkProp* p )
 {
-  m_VisibilitySetActor = p;
+  this->m_VisibilitySetActor = p;
 
-  m_VisibilityStateMachine.PushInput( m_SetActorVisibilityInput );
-  m_VisibilityStateMachine.ProcessInputs();
+  this->m_VisibilityStateMachine.PushInput( this->m_SetActorVisibilityInput );
+  this->m_VisibilityStateMachine.ProcessInputs();
 }
 
 void ObjectRepresentation
 ::SetActorVisibleProcessing()
 {
-  m_VisibilitySetActor->VisibilityOn();
+  this->m_VisibilitySetActor->VisibilityOn();
 }
 
 void ObjectRepresentation
 ::SetActorInvisibleProcessing()
 {
-  m_VisibilitySetActor->VisibilityOff();
+  this->m_VisibilitySetActor->VisibilityOff();
 }
 
 } // end namespace igstk

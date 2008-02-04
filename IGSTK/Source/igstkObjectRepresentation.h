@@ -25,12 +25,13 @@
 #include <vector>
 #include "itkCommand.h"
 #include "igstkLogger.h"
-#include "vtkProp.h"
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
 #include "igstkCoordinateReferenceSystem.h"
+
+class vtkProp;
 
 namespace igstk
 {
@@ -83,9 +84,10 @@ public:
   /** Get the VTK actors */
   igstkGetMacro( Actors, ActorsListType );
 
-  /** update the visual representation with changes in the geometry */
-  virtual void RequestUpdateRepresentation( const TimeStamp & time, 
-                                            const CoordinateReferenceSystem* cs );
+  /** Update the visual representation with changes in the geometry */
+  virtual void RequestUpdateRepresentation( 
+    const TimeStamp & time, 
+    const CoordinateReferenceSystem* cs );
 
 protected:
 
@@ -117,7 +119,7 @@ private:
    * */
   SpatialObjectType::Pointer  m_SpatialObject;
 
-  /** update the visual representation with changes in the geometry. Only to be
+  /** Update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
    * overloaded in every derived class. */
   virtual void UpdateRepresentationProcessing() = 0;
@@ -149,10 +151,10 @@ private:
    *  Once the transform is received, the validity time is verified. */
   void ReceiveSpatialObjectTransformProcessing();
 
-  /** Receive TransformNotAvailable message from the SpatialObject via a transduction macro.
-   *  Since no new transform is available, it checks whether the validity time
-   *  of the previously existing transform has not expired and updates the
-   *  visibility of the object accordingly. */
+  /** Receive TransformNotAvailable message from the SpatialObject via a
+   * transduction macro.  Since no new transform is available, it checks
+   * whether the validity time of the previously existing transform has not
+   * expired and updates the visibility of the object accordingly. */
   void ReceiveTransformNotAvailableProcessing();
 
   /** This action calls the RequestGetTransform() method in the spatial
