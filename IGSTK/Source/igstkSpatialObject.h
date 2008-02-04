@@ -62,9 +62,9 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( SpatialObject, Object )
 
-  // this next "public: is necessary since the Macro above
-  // introduces a private section.
-public:
+public: // this "public: is necessary because the 
+        // Macro above introduces a private section.
+
 
   /** Typedefs */
   typedef itk::SpatialObject<3>          SpatialObjectType;
