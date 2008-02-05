@@ -596,3 +596,10 @@
    fun:_save_Vertex3fv
    fun:glVertex3fv
 }
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:__pthread_manager
+}
+
