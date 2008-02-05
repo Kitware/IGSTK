@@ -17,6 +17,8 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef __TrackerInitializer_h
 #define __TrackerInitializer_h
 
+#include "igstkSandboxConfigure.h"
+
 #include "TrackerConfiguration.h"
 
 #include "igstkPolarisTracker.h"
