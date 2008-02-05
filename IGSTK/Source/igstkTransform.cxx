@@ -173,43 +173,36 @@ Transform
 
 bool 
 Transform
-::IsNumericallyEquivalent( const Transform& inputTransform, double tol )
+::IsNumericallyEquivalent( const Transform& inputTransform, double tol ) const
 {
-  /** Dimension hardcoded into typedefs in the class */
-  static const int translationDimension = VectorType::Dimension;
-
-  VersorType thisVersor = GetRotation();
-  VersorType inputVersor = inputTransform.GetRotation();
-
-  /** Evaluate the quaternion ratio between the versors
-   *  ...similar to itkVersor::operator== */
-  VersorType ratio = thisVersor * inputVersor.GetReciprocal();
-  
-  const itk::NumericTraits< double >::AccumulateType 
-                                        square = ratio.GetW() * ratio.GetW();
-  
-  double versorErr = vcl_fabs(1.0f - square );
-
-  /** Perhaps this tolerance should reflect the fact that 
-   *  we're squaring W */
-  if( versorErr > tol )
-    {
-    return false;
-    }
-
-  /** Compare the translation components */
-  for (int i = 0; i < translationDimension; i++)
-    {
-    double componentErr = vcl_fabs(m_Translation[i] 
-                                          - inputTransform.m_Translation[i]);
-    if (componentErr > tol)
-      {
-      return false;
-      }
-    }
-
-  return true;
+  Transform shouldBeIdentity = TransformCompose( *this, this->GetInverse() );
+  bool isEquivalent = shouldBeIdentity.IsIdentity( tol );
+  return isEquivalent;
 }
+
+bool 
+Transform
+::IsIdentity( double tol ) const
+{
+  bool isIdentity = true;
+
+  // If the cosinus of half the angle is not 1.0 (up to a tolerance) 
+  // then this Transform is not an identity.
+  if( vnl_math_abs( this->m_Rotation.GetW() - 1.0 ) > tol )
+    {
+    isIdentity = false;
+    }
+
+  // If the norm of the translation vector is not 0.0 (up to a tolerance)
+  // then this Transform is not an identity.
+  if( vnl_math_abs( this->m_Translation.GetNorm() ) > tol )
+    {
+    isIdentity = false;
+    }
+
+  return isIdentity;
+}
+
 
 bool
 Transform
