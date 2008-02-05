@@ -1,0 +1,13 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class PolarisTrackerConfigurationGUI {open
+} {
+  Function {PolarisTrackerConfigurationGUI()} {return_type {public TrackerConfigurationGUI}
+  } {}
+  Function {~PolarisTrackerConfigurationGUI()} {open selected return_type virtual
+  } {}
+} 
