@@ -15,8 +15,8 @@ SET(NeedleBiopsy_SRCS
   igstkTrackerInitializer.cxx
   igstkTrackerConfiguration.h
   igstkTrackerConfiguration.cxx
-  igstkTrackerConfigurationGUI.h
-  igstkTrackerConfigurationGUI.cxx
+  igstkTrackerConfigurationGUIBase.h
+  igstkTrackerConfigurationGUIBase.cxx
   igstkTreatmentPlan.h
   igstkTreatmentPlan.cxx
   igstkTreatmentPlanIO.h
