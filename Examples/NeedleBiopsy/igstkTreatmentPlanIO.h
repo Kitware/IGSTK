@@ -28,14 +28,30 @@ class TreatmentPlanIO
 
 public:
   
-  int RequestRead(  std::string fileName );
-  int RequestWrite( std::string fileName );
+  std::string GetFileName()
+  {
+    return m_FileName;
+  }
+
+  void SetFileName( std::string fileName)
+  {
+    m_FileName = fileName;
+  }
+
+  int RequestRead();
+  int RequestWrite();
+
+  TreatmentPlan * GetTreatmentPlan()
+  {
+    return m_TreatmentPlan;
+  }
 
   TreatmentPlanIO();
   virtual ~TreatmentPlanIO();
 
 private:
   TreatmentPlan         * m_TreatmentPlan;
+  std::string             m_FileName;
 
 };
 

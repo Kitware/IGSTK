@@ -154,7 +154,7 @@ int NeedleBiopsy::RequestLoadImage()
     {
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
-      this->ConnectImageRepresentationProcessing();
+      this->ConnectImageRepresentation();
       return EXIT_SUCCESS;
     }
     else
@@ -171,6 +171,114 @@ int NeedleBiopsy::RequestLoadImage()
 
 }
 
+/** This method should be invoked by the State Machine 
+*  only when the Image has been loaded and the Patient
+*  name has been verified */
+void NeedleBiopsy::ConnectImageRepresentation()
+{
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
+  ViewerGroup->Views[3]->RequestAddAnnotation2D( m_Annotation2D );
+
+  for ( int i=0; i<6; i++)
+  {
+    m_ImageRepresentation[i]->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  }
+
+  m_ImageRepresentation[0]->RequestSetOrientation( 
+    ImageRepresentationType::Axial );
+  m_ImageRepresentation[1]->RequestSetOrientation( 
+    ImageRepresentationType::Sagittal );
+  m_ImageRepresentation[2]->RequestSetOrientation( 
+    ImageRepresentationType::Coronal );
+
+  m_ImageRepresentation[3]->RequestSetOrientation( 
+    ImageRepresentationType::Axial );
+  m_ImageRepresentation[4]->RequestSetOrientation( 
+    ImageRepresentationType::Sagittal );
+  m_ImageRepresentation[5]->RequestSetOrientation( 
+    ImageRepresentationType::Coronal );
+
+  for ( int i=0; i<3; i++)
+  {
+    ViewerGroup->Views[i]->RequestRemoveObject( m_ImageRepresentation[i] );
+    ViewerGroup->Views[3]->RequestRemoveObject( m_ImageRepresentation[i+3] );
+    ViewerGroup->Views[i]->RequestAddObject( m_ImageRepresentation[i] );
+    ViewerGroup->Views[3]->RequestAddObject( m_ImageRepresentation[i+3] );
+  }
+
+  for ( int i=0; i<4; i++)
+  {
+    ViewerGroup->Views[i]->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+    ViewerGroup->Views[i]->RequestAddObject( m_NeedleRepresentation->Copy() );
+    ViewerGroup->Views[i]->RequestAddObject( m_TargetRepresentation->Copy() );
+    ViewerGroup->Views[i]->RequestAddObject( m_EntryRepresentation->Copy() );
+    ViewerGroup->Views[i]->RequestAddObject( m_PathRepresentation[i] );
+    ViewerGroup->Views[i]->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
+  }
+
+  m_EntryPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
+  m_TargetPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
+  m_Path->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
+
+  for ( int i=0; i<4; i++)
+  {
+    ViewerGroup->Views[i]->RequestResetCamera();
+    ViewerGroup->Views[i]->SetRefreshRate( 30 );
+    ViewerGroup->Views[i]->RequestStart();
+    ViewerGroup->Displays[i]->RequestEnableInteractions();
+  }
+
+  // Request information about the slices. The answers will be 
+  // received in the form of events.
+  SliceBoundsObserver::Pointer boundsObs = SliceBoundsObserver::New(); 
+  for ( int i=0; i<3; i++)
+  {
+    m_ImageRepresentation[i]->AddObserver(igstk::IntegerBoundsEvent(), boundsObs);
+    m_ImageRepresentation[i]->RequestGetSliceNumberBounds();
+    if (boundsObs->GotSliceBounds())
+    {
+      const unsigned int min = boundsObs->GetSliceBounds().minimum;
+      const unsigned int max = boundsObs->GetSliceBounds().maximum; 
+      const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
+      m_ImageRepresentation[i]->RequestSetSliceNumber( slice );
+      m_ImageRepresentation[i+3]->RequestSetSliceNumber( slice );
+      ViewerGroup->Sliders[i]->minimum( min );
+      ViewerGroup->Sliders[i]->maximum( max );
+      ViewerGroup->Sliders[i]->value( slice );  
+      ViewerGroup->Sliders[i]->activate();
+      boundsObs->Reset();
+    }
+  }
+
+  for ( int i=0; i<3; i++)
+  {
+    ViewerGroup->Views[i]->AddObserver( igstk::TransformModifiedEvent(), 
+      m_ViewPickerObserver );
+  }
+
+  ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(), 
+    m_ViewResliceObserver );
+}
+
+void NeedleBiopsy::ReadTreatmentPlan()
+{
+  igstk::TreatmentPlanIO * reader = new igstk::TreatmentPlanIO;
+  //FIXME
+  // construct file name, same level as ~/DICOMDIR
+  // ~/DICOMDIR_TreatmentPlan.igstk
+  if ( reader->RequestRead( ) )
+  {
+    m_Plan = reader->GetTreatmentPlan();
+  }
+  else
+  {
+    m_Plan = new igstk::TreatmentPlan;
+  }
+  
+}
 
 void NeedleBiopsy::RequestInitializeTracker()
 {
@@ -233,101 +341,6 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
   this->ViewerGroup->redraw();
   Fl::check();
 }
-
-/** This method should be invoked by the State Machine 
- *  only when the Image has been loaded and the Patient
- *  name has been verified */
-void NeedleBiopsy::ConnectImageRepresentationProcessing()
-{
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-
-  m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
-  ViewerGroup->Views[3]->RequestAddAnnotation2D( m_Annotation2D );
-
-  for ( int i=0; i<6; i++)
-  {
-    m_ImageRepresentation[i]->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  }
- 
-  m_ImageRepresentation[0]->RequestSetOrientation( 
-                                               ImageRepresentationType::Axial );
-  m_ImageRepresentation[1]->RequestSetOrientation( 
-                                            ImageRepresentationType::Sagittal );
-  m_ImageRepresentation[2]->RequestSetOrientation( 
-                                             ImageRepresentationType::Coronal );
-
-  m_ImageRepresentation[3]->RequestSetOrientation( 
-                                               ImageRepresentationType::Axial );
-  m_ImageRepresentation[4]->RequestSetOrientation( 
-                                            ImageRepresentationType::Sagittal );
-  m_ImageRepresentation[5]->RequestSetOrientation( 
-                                             ImageRepresentationType::Coronal );
-
-  for ( int i=0; i<3; i++)
-  {
-    ViewerGroup->Views[i]->RequestRemoveObject( m_ImageRepresentation[i] );
-    ViewerGroup->Views[3]->RequestRemoveObject( m_ImageRepresentation[i+3] );
-    ViewerGroup->Views[i]->RequestAddObject( m_ImageRepresentation[i] );
-    ViewerGroup->Views[3]->RequestAddObject( m_ImageRepresentation[i+3] );
-  }
-
-  for ( int i=0; i<4; i++)
-  {
-    ViewerGroup->Views[i]->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_NeedleRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_TargetRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_EntryRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_PathRepresentation[i] );
-    ViewerGroup->Views[i]->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-  }
-
-  m_EntryPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-  m_TargetPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-  m_Path->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-
-  for ( int i=0; i<4; i++)
-  {
-    ViewerGroup->Views[i]->RequestResetCamera();
-    ViewerGroup->Views[i]->SetRefreshRate( 30 );
-    ViewerGroup->Views[i]->RequestStart();
-    ViewerGroup->Displays[i]->RequestEnableInteractions();
-  }
-  
-  // Request information about the slices. The answers will be 
-  // received in the form of events.
-  SliceBoundsObserver::Pointer boundsObs = SliceBoundsObserver::New(); 
-  for ( int i=0; i<3; i++)
-  {
-    m_ImageRepresentation[i]->AddObserver(igstk::IntegerBoundsEvent(), boundsObs);
-    m_ImageRepresentation[i]->RequestGetSliceNumberBounds();
-    if (boundsObs->GotSliceBounds())
-    {
-      const unsigned int min = boundsObs->GetSliceBounds().minimum;
-      const unsigned int max = boundsObs->GetSliceBounds().maximum; 
-      const unsigned int slice = static_cast< unsigned int > ( (min + max) / 2.0 );
-      m_ImageRepresentation[i]->RequestSetSliceNumber( slice );
-      m_ImageRepresentation[i+3]->RequestSetSliceNumber( slice );
-      ViewerGroup->Sliders[i]->minimum( min );
-      ViewerGroup->Sliders[i]->maximum( max );
-      ViewerGroup->Sliders[i]->value( slice );  
-      ViewerGroup->Sliders[i]->activate();
-      boundsObs->Reset();
-    }
-  }
-  
-  for ( int i=0; i<3; i++)
-  {
-    ViewerGroup->Views[i]->AddObserver( igstk::TransformModifiedEvent(), 
-                                                        m_ViewPickerObserver );
-  }
-
-  ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(), 
-                                                       m_ViewResliceObserver );
-}
-
-
-
 
 
 

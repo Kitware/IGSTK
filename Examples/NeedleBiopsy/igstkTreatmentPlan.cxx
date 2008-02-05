@@ -23,16 +23,16 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TreatmentPlan::TreatmentPlan()
 {
-  m_EntryPoint.Fill( 0.0 );
-  m_TargetPoint.Fill( 0.0 );
+  EntryPoint.Fill( 0.0 );
+  TargetPoint.Fill( 10.0 );
   PointType p;
   p.Fill( 0.0 );
   for (int i=0; i<3; i++)
   {
-    m_FiducialPoints.push_back( p );
+    FiducialPoints.push_back( p );
   }
 
-  m_TrackerCofigurations.clear();
+  TrackerCofigurations.clear();
 }
 
 /** Destructor */

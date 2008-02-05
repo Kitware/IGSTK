@@ -35,7 +35,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkAnnotation2D.h"
 
 #include "itkStdStreamLogOutput.h"
-#include "igstkAxesObject.h"
+
+#include "igstkTreatmentPlanIO.h"
 
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
@@ -93,6 +94,7 @@ private:
   
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
+  igstk::TreatmentPlan              * m_Plan;
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer     m_ImageSpatialObject;
@@ -147,7 +149,8 @@ private:
   igstk::Annotation2D::Pointer                    m_Annotation2D;
 
 
-  void ConnectImageRepresentationProcessing();
+  void ReadTreatmentPlan();
+  void ConnectImageRepresentation();
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );

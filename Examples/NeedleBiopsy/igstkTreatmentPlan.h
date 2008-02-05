@@ -31,11 +31,13 @@ public:
   typedef Landmark3DRegistration::LandmarkImagePointType      PointType;
   typedef Landmark3DRegistration::LandmarkPointContainerType  PointListType;
 
-  PointType            m_EntryPoint;
-  PointType            m_TargetPoint;
-  PointListType        m_FiducialPoints;
+  PointType            EntryPoint;
+  PointType            TargetPoint;
+  PointListType        FiducialPoints;
 
-  std::vector< TrackerConfiguration * >             m_TrackerCofigurations;
+  // To be added
+  // Add the capability to save tracker configuration in plan
+  std::vector< TrackerConfiguration * >             TrackerCofigurations;
 
   TreatmentPlan();
   virtual ~TreatmentPlan();

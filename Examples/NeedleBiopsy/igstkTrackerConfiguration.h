@@ -37,10 +37,11 @@ public:
                      Aurora,
                      Micron};
     
-  TrackerConfiguration( TrackerType trackerType);
+  TrackerConfiguration();
 
   TrackerType GetTrackerType() { return m_TrackerType; };
 
+  void SetTrackerType( TrackerType trackerType );
   std::string GetTrackerTypeAsString();
 
   MicronTrackerConfiguration * GetMicronTrackerConfiguration()

@@ -21,7 +21,11 @@ namespace igstk
 {
 
 /** Constructor: Initializes all internal variables. */
-TrackerConfiguration::TrackerConfiguration( TrackerType trackerType)
+TrackerConfiguration::TrackerConfiguration()
+{
+}
+
+void TrackerConfiguration::SetTrackerType( TrackerType trackerType )
 {
   m_TrackerType = trackerType;
   switch( m_TrackerType )
@@ -32,9 +36,8 @@ TrackerConfiguration::TrackerConfiguration( TrackerType trackerType)
     break;
   case Micron:
     m_MicronTrackerConfiguration = new MicronTrackerConfiguration;
-      break;
+    break;
   }
-    
 }
 
 std::string TrackerConfiguration::GetTrackerTypeAsString()

@@ -24,17 +24,18 @@ namespace igstk
 TreatmentPlanIO::TreatmentPlanIO()
 {
   m_TreatmentPlan = new TreatmentPlan;
+  m_FileName      = "";
 }
 
-int TreatmentPlanIO::RequestRead( std::string fileName )
+int TreatmentPlanIO::RequestRead()
 {
 
-  return EXIT_SUCCESS;
+  return EXIT_FAILURE;
 }
 
-int TreatmentPlanIO::RequestWrite( std::string fileName )
+int TreatmentPlanIO::RequestWrite()
 {
-  return EXIT_SUCCESS;
+  return EXIT_FAILURE;
 }
 /** Destructor */
 TreatmentPlanIO::~TreatmentPlanIO()
