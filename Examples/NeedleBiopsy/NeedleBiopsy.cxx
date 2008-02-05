@@ -353,6 +353,37 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
 
 }
 
+void NeedleBiopsy::RequestConnectToTracker()
+{
+  switch( ConnectToTrackerBtn->value() )
+  {
+  case 0:
+    {
+    igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
+    config.SetTrackerType( igstk::TrackerConfiguration::Polaris );
+    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
+    gui->SetConfiguration( config );
+    }
+    break;
+  case 1:
+    {
+    igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
+    config.SetTrackerType( igstk::TrackerConfiguration::Aurora );
+    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
+    gui->SetConfiguration( config );
+    }
+    break;
+  case 2:
+    {
+    igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
+    config.SetTrackerType( igstk::TrackerConfiguration::Micron );
+    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
+    gui->SetConfiguration( config );
+    }
+    break;
+  }
+}
+
 void NeedleBiopsy::RequestInitializeTracker()
 {
 }

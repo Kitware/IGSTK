@@ -38,6 +38,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkAxesObject.h"
 #include "igstkTreatmentPlanIO.h"
 
+#include "PolarisTrackerConfigurationGUI.h"
+
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
 public:
@@ -63,11 +65,11 @@ public:
 
   /** Public request methods from the GUI. */
   int RequestLoadImage();
-
   void ChangeSelectedTPlanPoint();
+  void RequestConnectToTracker();
+
 
   virtual void RequestInitializeTracker();
-
   virtual void RequestRegistration();
 
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
@@ -185,6 +187,7 @@ private:
   void UpdatePath();
   void ResliceImage( const itk::EventObject & event );
   void ResliceImage( IndexType index );  
+  void NullAction(const itk::EventObject & event ){};
 
 };
 

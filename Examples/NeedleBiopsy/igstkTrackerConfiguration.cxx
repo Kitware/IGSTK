@@ -58,7 +58,7 @@ std::string TrackerConfiguration::GetTrackerTypeAsString()
 /** Destructor */
 TrackerConfiguration::~TrackerConfiguration()
 {
-
+  /*
   if (m_NDITrackerConfiguration)
   {
     delete m_NDITrackerConfiguration;
@@ -68,7 +68,7 @@ TrackerConfiguration::~TrackerConfiguration()
   {
     delete m_MicronTrackerConfiguration;
   }
-
+  */
 }
 
 } // end of name space

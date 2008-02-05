@@ -33,6 +33,8 @@ TreatmentPlan::TreatmentPlan()
   }
 
   TrackerCofigurations.clear();
+  TrackerConfiguration * config = new TrackerConfiguration;
+  TrackerCofigurations.push_back( config );
 }
 
 /** Destructor */

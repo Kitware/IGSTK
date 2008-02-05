@@ -36,8 +36,9 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
           label {@2->} open
           xywh {20 218 130 180} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
-          Fl_Menu_Button {} {
+          Fl_Menu_Button ConnectToTrackerBtn {
             label Connect
+            callback {RequestConnectToTracker();} open
             xywh {45 240 80 20} align 20
           } {
             MenuItem {} {
@@ -74,7 +75,7 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             xywh {48 546 75 20} down_box BORDER_BOX align 1
           } {}
         }
-        Fl_Box {} {selected
+        Fl_Box {} {
           image {IGSTK.jpg} xywh {0 614 165 76} align 18
         }
       }
@@ -112,5 +113,7 @@ else
     code {return 0;} {}
   }
   Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
+  } {}
+  Function {RequestConnectToTracker()} {open selected return_type {virtual void}
   } {}
 } 
