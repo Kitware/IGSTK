@@ -112,6 +112,15 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   leaf1->RequestSetTransformAndParent( identity, nullCS ); // coverage
   leaf1->RequestComputeTransformTo( nullCS ); // coverage
   leaf1->Print( std::cout ); // coverage
+  leaf1->SetName( "leaf1" ); // coverage;
+  std::string leaf1Name = "leaf1";
+  if (leaf1->GetName() != leaf1Name) // coverage
+    {
+    std::cerr << "leaf1->GetName() returned the wrong name." << std::endl;
+    std::cerr << "Got : " << leaf1->GetName() << std::endl;
+    std::cerr << "Expected : " << leaf1Name << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 
