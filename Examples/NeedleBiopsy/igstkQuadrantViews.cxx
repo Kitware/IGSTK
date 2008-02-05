@@ -30,10 +30,13 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
   Views.clear();
   ViewType::Pointer v;
   v = DisplayAxial    = ViewType2D::New();
+  DisplayAxial->RequestSetOrientation( View2D::Axial );
   Views.push_back( v );    // Views[0];
   v = DisplaySagittal = ViewType2D::New();
+  DisplaySagittal->RequestSetOrientation( View2D::Sagittal);
   Views.push_back( v );    // Views[1];
   v = DisplayCoronal  = ViewType2D::New();
+  DisplayCoronal->RequestSetOrientation( View2D::Coronal );
   Views.push_back( v );    // Views[2];
   v = Display3D       = ViewType3D::New();
   Views.push_back( v );    // Views[3];
@@ -44,6 +47,7 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
     Displays[i]->RequestSetView( Views[i] );
   }
   
+
   // Create slider bars
   Sliders.clear();
 { Fl_Value_Slider* o = AxialSlider = new Fl_Value_Slider(X, Y+HH, WW, N);
