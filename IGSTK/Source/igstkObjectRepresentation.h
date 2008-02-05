@@ -135,12 +135,8 @@ protected:
   
 private:
 
-  ColorScalarType             m_Color[3];
-
-  /** The associated SpatialObject is non-const because we invoke requests
-   * methods that indirectly will modify the state of its internal StateMachine
-   * */
-  SpatialObject::Pointer  m_SpatialObject;
+  ObjectRepresentation(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
 
   /** Update the visual representation with changes in the geometry. Only to be
    * called by the State Machine. This is an abstract method that MUST be
@@ -185,10 +181,45 @@ private:
    *  created in the transduction macro */
   void RequestGetTransformProcessing();
 
-private:
+  /** Internal method to set an actor's visibility based on the 
+   *  visibility state machine. */
+  void RequestSetActorVisibility( vtkProp * );
 
-  ObjectRepresentation(const Self&);   //purposely not implemented
-  void operator=(const Self&);   //purposely not implemented
+  /** These two methods are used by the visibility state machine 
+   *  to set an actor's visibility. */ 
+  void SetActorVisibleProcessing();
+  void SetActorInvisibleProcessing();
+
+  /** Main color of the representation. This should be RGB components, each one
+   * in the range 0.0 to 1.0 */
+  ColorScalarType                         m_Color[3];
+
+  /** The associated SpatialObject is non-const because we invoke requests
+   * methods that indirectly will modify the state of its internal StateMachine
+   * */
+  SpatialObject::Pointer                  m_SpatialObject;
+
+  /** Internal temporary variable to use when connecting to a SpatialObject */
+  SpatialObject::Pointer                  m_SpatialObjectToAdd;
+
+  /** Time stamp for the time at which the next rendering will take place */
+  TimeStamp                               m_TimeToRender;
+
+  /** Transform returned from the Spatial Object */
+  Transform                               m_SpatialObjectTransform;
+    
+  /** Auxiliary State Machine that manages the states of Visibility and
+   * Invisibility of the objects. This State Machine is driven by the inputs of
+   * the time stamp validity check. */
+  StateMachineType                        m_VisibilityStateMachine;
+
+  /** Coordinate system with respect to which Transforms will be computed.
+   *  This is typically the coordinate system of a View class, since the
+   *  View is the one requesting update representations to this class. */
+  CoordinateReferenceSystem::ConstPointer m_TargetCoordinateSystem;
+
+  /** Used to store an actor for visibility state machine processing. */
+  vtkProp *                               m_VisibilitySetActor;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( NullSpatialObject );
@@ -220,20 +251,6 @@ private:
      CoordinateReferenceSystemTransformTo,
      SpatialObjectTransform );
 
-  /** Internal temporary variable to use when connecting to a SpatialObject */
-  SpatialObject::Pointer        m_SpatialObjectToAdd;
-
-  /** Time stamp for the time at which the next rendering will take place */
-  TimeStamp                     m_TimeToRender;
-
-  /** Transform returned from the Spatial Object */
-  Transform                     m_SpatialObjectTransform;
-    
-  /** Auxiliary State Machine that manages the states of Visibility and
-   * Invisibility of the objects. This State Machine is driven by the inputs of
-   * the time stamp validity check. */
-  StateMachineType     m_VisibilityStateMachine;
-
   /** Inputs to the Visibility State Machine */
   igstkDeclareInputMacro( ValidTimeStamp );
   igstkDeclareInputMacro( InvalidTimeStamp );
@@ -243,21 +260,6 @@ private:
   igstkDeclareStateMacro( Visible );
   igstkDeclareStateMacro( Invisible );
 
-  CoordinateReferenceSystem::ConstPointer m_TargetCoordinateSystem;
-
-  /** Used to store an actor for visibility state machine processing. */
-  vtkProp* m_VisibilitySetActor;
-
-  /** Internal method to set an actor's visibility based on the 
-   *  visibility state machine.
-   */
-  void RequestSetActorVisibility( vtkProp * );
-
-  /** These two methods are used by the visibility state machine 
-   *  to set an actor's visibility.
-   */ 
-  void SetActorVisibleProcessing();
-  void SetActorInvisibleProcessing();
 };
 
 } // end namespace igstk

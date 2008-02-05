@@ -302,8 +302,11 @@ void ObjectRepresentation::SetOpacity(OpacityType alpha)
   ActorsListType::iterator it = this->m_Actors.begin();
   while(it != this->m_Actors.end())
     {
-    vtkActor * va = static_cast<vtkActor*>(*it);
-    va->GetProperty()->SetOpacity(this->m_Opacity);
+    vtkActor * va = dynamic_cast< vtkActor * >( *it );
+    if( va )
+      {
+      va->GetProperty()->SetOpacity(this->m_Opacity);
+      }
     it++;
     }
 }
@@ -436,6 +439,8 @@ void ObjectRepresentation::MakeObjectsVisibleProcessing()
 void ObjectRepresentation::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( WARNING, "Invalid request in ObjectRepresentation");
+  InvalidRequestErrorEvent event;
+  this->InvokeEvent( event );
 }
 
 
