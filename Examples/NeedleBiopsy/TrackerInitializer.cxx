@@ -114,7 +114,7 @@ int TrackerInitializer::InitializePolarisTracker()
     }
     else
     {
-      TrackerTool::Pointer t = tool;
+      TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
 
@@ -182,7 +182,7 @@ int TrackerInitializer::InitializeAuroraTracker()
     }
     else
     {
-      TrackerTool::Pointer t = tool;
+      TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
 
@@ -226,7 +226,7 @@ int TrackerInitializer::InitializeMicronTracker()
     }
     else
     {
-      TrackerTool::Pointer t = tool;
+      TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
 
