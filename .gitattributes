@@ -2,6 +2,7 @@
 
 *.dsp           -crlf
 *.dsw           -crlf
+*.jpg           -crlf
 *.png           -crlf
 configure        crlf=input
 install-sh       crlf=input
