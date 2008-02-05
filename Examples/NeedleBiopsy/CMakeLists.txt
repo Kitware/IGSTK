@@ -2,6 +2,7 @@ PROJECT(NeedleBiopsy)
   
 SET(NeedleBiopsy_GUI_SRCS
   NeedleBiopsyGUI.fl
+  PolarisTrackerConfigurationGUI.fl
   )
   
 SET(NeedleBiopsy_SRCS
@@ -16,6 +17,8 @@ SET(NeedleBiopsy_SRCS
   TrackerConfiguration.cxx
   TrackerConfigurationGUI.h
   TrackerConfigurationGUI.cxx
+  IPlanIO.h
+  IPlanIO.cxx
   )
   
 IF(IGSTKSandbox_USE_MicronTracker)
