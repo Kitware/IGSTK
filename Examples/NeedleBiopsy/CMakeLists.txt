@@ -11,14 +11,16 @@ SET(NeedleBiopsy_SRCS
   NeedleBiopsy.cxx
   igstkQuadrantViews.h
   igstkQuadrantViews.cxx
-  TrackerInitializer.h
-  TrackerInitializer.cxx
-  TrackerConfiguration.h
-  TrackerConfiguration.cxx
-  TrackerConfigurationGUI.h
-  TrackerConfigurationGUI.cxx
-  IPlanIO.h
-  IPlanIO.cxx
+  igstkTrackerInitializer.h
+  igstkTrackerInitializer.cxx
+  igstkTrackerConfiguration.h
+  igstkTrackerConfiguration.cxx
+  igstkTrackerConfigurationGUI.h
+  igstkTrackerConfigurationGUI.cxx
+  igstkTreatmentPlan.h
+  igstkTreatmentPlan.cxx
+  igstkTreatmentPlanIO.h
+  igstkTreatmentPlanIO.cxx
   )
   
 IF(IGSTKSandbox_USE_MicronTracker)
