@@ -285,10 +285,25 @@ private:
 //  
 //   Macros defining events related to the CoordinateReferenceSystem.
 //
-igstkEventMacro( CoordinateReferenceSystemNullParentEvent, TransformNotAvailableEvent );
-igstkEventMacro( CoordinateReferenceSystemThisParentEvent, TransformNotAvailableEvent );
+igstkEventMacro( CoordinateReferenceSystemSetParentError, IGSTKEvent );
+/** This event should be invoked when RequestSetTransformAndParent is called 
+ *  with a NULL parent.
+ */
+igstkEventMacro( CoordinateReferenceSystemNullParentEvent, 
+                 CoordinateReferenceSystemSetParentError );
+
+/** This event should be invoked when RequestSetTransformAndParent is called
+ *  with the parent == this.
+ */
+igstkEventMacro( CoordinateReferenceSystemThisParentEvent, 
+                 CoordinateReferenceSystemSetParentError );
+
+/** This event should be invoked when RequestSetTransformAndParent is called
+ *  with a parent that causes a cycle in the coordinate system graph.
+ */
 igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent,
-                                  TransformNotAvailableEvent, CoordinateReferenceSystem );
+                                  CoordinateReferenceSystemSetParentError, 
+                                  CoordinateReferenceSystem );
 
 } // end namespace igstk
 
