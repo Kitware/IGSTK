@@ -500,5 +500,10 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   // Break references in the observer.
   DObserver->ClearPayload();
 
+  E->RequestDetach(); // coverage
+  F->RequestDetach(); // coverage
+
+  std::cout << F << std::endl;
+
   return testPassed;
 }
