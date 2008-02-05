@@ -203,13 +203,38 @@ private:
   igstkDeclareStateMacro( AttemptingGetTransform );
 
   /** Transduction macros that will convert received events 
-   *  into StateMachine inputs */
-  igstkEventTransductionMacro( TransformNotAvailable, 
-                                     TransformNotAvailable); 
+   *  into StateMachine inputs.
+   *  These events are defined in the file
+   *  igstkCoordinateSystemInterfaceMacros.h
+   *  Most of them map to the input "TransformNotAvailable",
+   *  while only the event "CoordinateReferenceSystemTransformTo"
+   *  maps to the input "SpatialObjectTransform".
+   *
+   */
+  igstkEventTransductionMacro( 
+    CoordinateReferenceSystemTransformToNullTarget,
+    TransformNotAvailable); 
 
-  igstkLoadedEventTransductionMacro( 
-                            CoordinateReferenceSystemTransformTo
-                                                , SpatialObjectTransform );
+  igstkEventTransductionMacro( 
+    CoordinateReferenceSystemTransformToDisconnected,
+    TransformNotAvailable); 
+
+  igstkEventTransductionMacro( 
+    CoordinateReferenceSystemNullParent,
+    TransformNotAvailable); 
+
+  igstkEventTransductionMacro( 
+    CoordinateReferenceSystemThisParent,
+    TransformNotAvailable); 
+
+  igstkEventTransductionMacro( 
+    CoordinateReferenceSystemParentCycle,
+    TransformNotAvailable); 
+
+  // The only event that brings a valid transform.
+  igstkLoadedEventTransductionMacro(  
+     CoordinateReferenceSystemTransformTo,
+     SpatialObjectTransform );
 
   /** Internal temporary variable to use when connecting to a SpatialObject */
   SpatialObject::Pointer        m_SpatialObjectToAdd;

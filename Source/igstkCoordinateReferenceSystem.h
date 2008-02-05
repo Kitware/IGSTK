@@ -285,10 +285,10 @@ private:
 //  
 //   Macros defining events related to the CoordinateReferenceSystem.
 //
-igstkEventMacro( CoordinateReferenceSystemNullParentEvent, IGSTKEvent );
-igstkEventMacro( CoordinateReferenceSystemThisParentEvent, IGSTKEvent );
+igstkEventMacro( CoordinateReferenceSystemNullParentEvent, TransformNotAvailableEvent );
+igstkEventMacro( CoordinateReferenceSystemThisParentEvent, TransformNotAvailableEvent );
 igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent,
-                                  IGSTKEvent, CoordinateReferenceSystem );
+                                  TransformNotAvailableEvent, CoordinateReferenceSystem );
 
 } // end namespace igstk
 

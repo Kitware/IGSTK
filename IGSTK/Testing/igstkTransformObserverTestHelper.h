@@ -43,8 +43,8 @@ protected:
   ~TransformObserverTestHelper() {}
 public:
     
-  typedef ::igstk::CoordinateReferenceSystemTransformToEvent   PositiveEventType;
-  typedef ::igstk::TransformNotAvailableEvent   NegativeEventType;
+  typedef ::igstk::CoordinateReferenceSystemTransformToEvent              PositiveEventType;
+  typedef ::igstk::TransformNotAvailableEvent                             NegativeEventType;
         
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {

@@ -135,7 +135,7 @@ ObjectRepresentation::ObjectRepresentation():
   igstkAddTransitionMacro( AttemptingGetTransform,
                            TransformNotAvailable,
                            ValidSpatialObject,
-                           ReceiveSpatialObjectTransform );
+                           ReceiveTransformNotAvailable );
 
   igstkSetInitialStateMacro( NullSpatialObject );
 

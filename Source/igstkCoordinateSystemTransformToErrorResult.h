@@ -72,10 +72,10 @@ public:
 //   CoordinateReferenceSystemTransformToErrorResult.
 //
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent,
-                       IGSTKEvent,
+                       TransformNotAvailableEvent,
                        CoordinateReferenceSystemTransformToErrorResult );
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent,
-                       IGSTKEvent,
+                       TransformNotAvailableEvent,
                        CoordinateReferenceSystemTransformToErrorResult );
 
 
