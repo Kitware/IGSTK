@@ -113,7 +113,9 @@ public:
   void RequestComputeTransformTo(const 
                                  CoordinateReferenceSystem* targetCoordSys);
 
-  /** void RequestDetach(); */
+  /** Request that the coordinate system be detached from its parent. 
+   */
+  void RequestDetach();
   
   /**  Coordinate systems have a name to facilitate
    *   future export of the scene graph as a diagram.
@@ -186,6 +188,10 @@ private:
    */
   igstkDeclareInputMacro( AncestorFound                  );
   igstkDeclareInputMacro( Disconnected                   );
+
+  /** Input for detaching from parent.
+   */
+  igstkDeclareInputMacro( DetachFromParent               );
 
   /** These variables hold the inputs from RequestSetTransformAndParent
    *  for later use by methods invoked from the state machine.
@@ -270,6 +276,12 @@ private:
    *  invalid request. 
    */
   void InvalidRequestProcessing();
+
+  /** This method does nothing. Useful for some state-machine transitions. */
+  void DoNothingProcessing();
+
+  /** This method is called when we get a valid DetachFromParent request. */
+  void DetachFromParentProcessing();
 
   /** This method is here so we can behave like higher-level objects with 
    *  coordinate systems.
