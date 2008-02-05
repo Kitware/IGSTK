@@ -10,6 +10,7 @@
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkEvents.h"
+#include "igstkCTImageSpatialObject.h"
 
 namespace igstk {
 
@@ -43,13 +44,9 @@ public:
   std::vector< Fl_Value_Slider   * >   Sliders;
 
   /** Event for reslicing from slider bar */
-  typedef struct {
-    unsigned int AxialSlice;
-    unsigned int SagittalSlice;
-    unsigned int CoronalSlice;
-  }                                     SliceNumberType;
+  typedef CTImageSpatialObject::IndexType                      IndexType;
 
-  igstkLoadedEventMacro( ReslicingEvent, IGSTKEvent, SliceNumberType );
+  igstkLoadedEventMacro( ReslicingEvent, IGSTKEvent, IndexType );
 
   unsigned long AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
   void  RemoveObserver( unsigned long tag );

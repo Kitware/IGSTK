@@ -35,7 +35,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkAnnotation2D.h"
 
 #include "itkStdStreamLogOutput.h"
-
+#include "igstkAxesObject.h"
 #include "igstkTreatmentPlanIO.h"
 
 class NeedleBiopsy : public NeedleBiopsyGUI
@@ -63,6 +63,8 @@ public:
 
   /** Public request methods from the GUI. */
   int RequestLoadImage();
+
+  void ChangeSelectedTPlanPoint();
 
   virtual void RequestInitializeTracker();
 
@@ -99,6 +101,9 @@ private:
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer     m_ImageSpatialObject;
 
+  /** Define a initial world coordinate system */
+  igstk::AxesObject::Pointer          m_WorldReference;
+
   /** Slice representations of the image in View2D and View3D */
   std::vector< ImageRepresentationType::Pointer > m_ImageRepresentation;
 
@@ -128,12 +133,11 @@ private:
   /** Objects for path planning */
   EllipsoidType::Pointer                          m_TargetPoint;
   EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  igstk::Transform                                m_TargetTransform;
-
   EllipsoidType::Pointer                          m_EntryPoint;
   EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
-  igstk::Transform                                m_EntryTransform;
-  
+  EllipsoidType::Pointer                          m_FiducialPoint;
+  EllipsoidRepresentationType::Pointer            m_FiducialRepresentation;  
+    
   typedef igstk::TubeObject                       PathType;
   typedef igstk::TubeObjectRepresentation         PathRepresentationType;
   typedef igstk::TubeObject::PointType            TubePointType;
@@ -149,6 +153,29 @@ private:
   igstk::Annotation2D::Pointer                    m_Annotation2D;
 
 
+  /** Utility functions */
+  inline igstk::Transform PointToTransform( ImageSpatialObjectType::PointType point)
+  {
+    igstk::Transform transform;
+    igstk::Transform::VectorType translation;
+    for (int i=0; i<3; i++)
+    {
+      translation[i] = point[i];
+    }
+    transform.SetTranslation( translation, 0.1, igstk::TimeStamp::GetLongestPossibleTime() );
+    return transform;
+  }
+
+  inline ImageSpatialObjectType::PointType TransformToPoint( igstk::Transform transform)
+  {
+    ImageSpatialObjectType::PointType point;
+    for (int i=0; i<3; i++)
+    {
+      point[i] = transform.GetTranslation()[i];
+    }
+    return point;
+  }
+
   void ReadTreatmentPlan();
   void ConnectImageRepresentation();
 
@@ -157,10 +184,6 @@ private:
   void UpdateFiducialPoint();
   void UpdatePath();
   void ResliceImage( const itk::EventObject & event );
-
-  
-  /** Methods for reslicing the image */
-  void ResliceImage();
   void ResliceImage( IndexType index );  
 
 };

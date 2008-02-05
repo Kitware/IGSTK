@@ -95,13 +95,14 @@ QuadrantViews::~QuadrantViews()
 }
 void QuadrantViews::RequestResliceImage(void) 
 {
-  SliceNumberType slices;
-  slices.AxialSlice    = (int ) AxialSlider->value();
-  slices.SagittalSlice = (int ) SagittalSlider->value();
-  slices.CoronalSlice  = (int ) CoronalSlider->value();
-  
+  IndexType index;
+
+  index[2]  = (int ) AxialSlider->value();
+  index[0]  = (int ) SagittalSlider->value();
+  index[1]  = (int ) CoronalSlider->value();
+
   ReslicingEvent reslicingEvent;
-  reslicingEvent.Set( slices );
+  reslicingEvent.Set( index );
   m_Reporter->InvokeEvent( reslicingEvent );
 
 }

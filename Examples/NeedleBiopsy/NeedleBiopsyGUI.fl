@@ -8,14 +8,15 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 class NeedleBiopsyGUI {open : {public igstk::Object}
 } {
-  Function {NeedleBiopsyGUI()} {} {
+  Function {NeedleBiopsyGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK: Needle Biopsy Demo Application}
       callback {Quit();} open
       xywh {437 61 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
-      Fl_Group ControlGroup {
+      Fl_Group ControlGroup {open
         xywh {0 0 165 690} box DOWN_BOX
       } {
         Fl_Group {} {open
@@ -26,8 +27,9 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             callback {RequestLoadImage();}
             xywh {45 56 64 20} align 16
           }
-          Fl_Choice {} {open
-            xywh {45 108 65 20} down_box BORDER_BOX labeltype NO_LABEL
+          Fl_Choice TPlanPointList {
+            callback {ChangeSelectedTPlanPoint();} open
+            xywh {34 108 100 20} down_box BORDER_BOX labeltype NO_LABEL
           } {}
         }
         Fl_Group {} {
@@ -72,8 +74,8 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             xywh {48 546 75 20} down_box BORDER_BOX align 1
           } {}
         }
-        Fl_Box {} {
-          image {IGSTK.jpg} xywh {0 614 165 76} align 26
+        Fl_Box {} {selected
+          image {IGSTK.jpg} xywh {0 614 165 76} align 18
         }
       }
       Fl_Group ViewerGroup {
@@ -105,8 +107,10 @@ else
   } {
     code {return this->hasQuitted;} {}
   }
-  Function {RequestLoadImage()} {selected return_type {virtual int}
+  Function {RequestLoadImage()} {return_type {virtual int}
   } {
     code {return 0;} {}
   }
+  Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
+  } {}
 } 

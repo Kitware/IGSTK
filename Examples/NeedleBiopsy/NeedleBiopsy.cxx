@@ -34,16 +34,18 @@ NeedleBiopsy::NeedleBiopsy()
 
   /** Direct the application log message to the std::cout 
     * and FLTK text display */
-  itk::StdStreamLogOutput::Pointer m_LogCoutOutput = itk::StdStreamLogOutput::New(); 
+  itk::StdStreamLogOutput::Pointer m_LogCoutOutput 
+                                           = itk::StdStreamLogOutput::New(); 
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
 
   /** Direct the igstk components log message to the file. */
-  itk::StdStreamLogOutput::Pointer m_LogFileOutput = itk::StdStreamLogOutput::New(); 
+  itk::StdStreamLogOutput::Pointer m_LogFileOutput 
+                                           = itk::StdStreamLogOutput::New(); 
   std::ofstream m_LogFile; 
   std::string   logFileName;
   logFileName = "logNeedleBiopsy"
-    + itksys::SystemTools::GetCurrentDateTime( "_%Y_%m_%d_%H_%M_%S" ) + ".txt";
+  + itksys::SystemTools::GetCurrentDateTime( "_%Y_%m_%d_%H_%M_%S" ) + ".txt";
   m_LogFile.open( logFileName.c_str() );
   if( !m_LogFile.fail() )
     {
@@ -53,14 +55,16 @@ NeedleBiopsy::NeedleBiopsy()
   else
     {
     //FIXME. should we return or not
-    igstkLogMacro( DEBUG, "Problem opening Log file: " << logFileName << "\n" );
+    igstkLogMacro( DEBUG, "Problem opening Log file:"
+                                                    << logFileName << "\n" );
     return;
     }
 
   /** Initialize all member variables and set logger */
-  m_ImageReader = ImageReaderType::New();
-  m_LandmarkRegistration = RegistrationType::New(); 
-  m_Annotation2D = igstk::Annotation2D::New();
+  m_ImageReader           = ImageReaderType::New();
+  m_LandmarkRegistration  = RegistrationType::New(); 
+  m_Annotation2D          = igstk::Annotation2D::New();
+  m_WorldReference        = igstk::AxesObject::New();
   
 
   m_NeedleTip                   = EllipsoidType::New();
@@ -92,6 +96,14 @@ NeedleBiopsy::NeedleBiopsy()
   m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
   m_EntryRepresentation->SetOpacity( 0.6 );
 
+  m_FiducialPoint                 = EllipsoidType::New();
+  m_FiducialRepresentation        = EllipsoidRepresentationType::New();
+  m_FiducialPoint->SetRadius( 6, 6, 6 );
+  m_FiducialRepresentation->RequestSetEllipsoidObject( m_FiducialPoint );
+  m_FiducialRepresentation->SetColor( 0.0, 1.0, 0.0);
+  m_FiducialRepresentation->SetOpacity( 0.6 );
+
+
   m_Path                       = PathType::New();
   TubePointType p;
   p.SetPosition( 0, 0, 0);
@@ -111,8 +123,7 @@ NeedleBiopsy::NeedleBiopsy()
 
 
   m_ViewPickerObserver = LoadedObserverType::New();
-  m_ViewPickerObserver->SetCallbackFunction( this, 
-                                               &NeedleBiopsy::Picking );
+  m_ViewPickerObserver->SetCallbackFunction( this, &NeedleBiopsy::Picking );
 
   m_ViewResliceObserver = LoadedObserverType::New();
   m_ViewResliceObserver->SetCallbackFunction( this, &NeedleBiopsy::ResliceImage);
@@ -155,6 +166,7 @@ int NeedleBiopsy::RequestLoadImage()
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       this->ConnectImageRepresentation();
+      this->ReadTreatmentPlan();
       return EXIT_SUCCESS;
     }
     else
@@ -176,9 +188,6 @@ int NeedleBiopsy::RequestLoadImage()
 *  name has been verified */
 void NeedleBiopsy::ConnectImageRepresentation()
 {
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-
   m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
   ViewerGroup->Views[3]->RequestAddAnnotation2D( m_Annotation2D );
 
@@ -215,14 +224,24 @@ void NeedleBiopsy::ConnectImageRepresentation()
     ViewerGroup->Views[i]->RequestAddObject( m_NeedleRepresentation->Copy() );
     ViewerGroup->Views[i]->RequestAddObject( m_TargetRepresentation->Copy() );
     ViewerGroup->Views[i]->RequestAddObject( m_EntryRepresentation->Copy() );
+    ViewerGroup->Views[i]->RequestAddObject( m_FiducialRepresentation->Copy() );
     ViewerGroup->Views[i]->RequestAddObject( m_PathRepresentation[i] );
-    ViewerGroup->Views[i]->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
   }
 
-  m_EntryPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-  m_TargetPoint->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
-  m_Path->RequestSetTransformAndParent( transform, m_ImageSpatialObject );
+  /** Setting up the sence graph */
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  for ( int i=0; i<4; i++)
+  {
+    ViewerGroup->Views[i]->RequestSetTransformAndParent( transform, m_WorldReference );
+  }
+  m_ImageSpatialObject->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_EntryPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_TargetPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_FiducialPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_Path->RequestSetTransformAndParent( transform, m_WorldReference );
 
+  /** Reset and enable the view */
   for ( int i=0; i<4; i++)
   {
     ViewerGroup->Views[i]->RequestResetCamera();
@@ -253,12 +272,14 @@ void NeedleBiopsy::ConnectImageRepresentation()
     }
   }
 
+  /** Adding observer for picking event */
   for ( int i=0; i<3; i++)
   {
     ViewerGroup->Views[i]->AddObserver( igstk::TransformModifiedEvent(), 
       m_ViewPickerObserver );
   }
 
+  /** Adding observer for slider bar reslicing event*/
   ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(), 
     m_ViewResliceObserver );
 }
@@ -269,6 +290,7 @@ void NeedleBiopsy::ReadTreatmentPlan()
   //FIXME
   // construct file name, same level as ~/DICOMDIR
   // ~/DICOMDIR_TreatmentPlan.igstk
+  //reader->SetFileName( "./NeedAName" );
   if ( reader->RequestRead( ) )
   {
     m_Plan = reader->GetTreatmentPlan();
@@ -277,7 +299,58 @@ void NeedleBiopsy::ReadTreatmentPlan()
   {
     m_Plan = new igstk::TreatmentPlan;
   }
-  
+
+  // Populate the choice box
+  TPlanPointList->clear();
+  TPlanPointList->add( "Entry" );
+  TPlanPointList->add( "Target" );  
+  char buf[10];
+  for( int i = 0; i < m_Plan->FiducialPoints.size(); i++ )
+  {
+    sprintf( buf, "Fiducial%i", i+1 );
+    TPlanPointList->add( buf );
+  }
+
+  // Setting object position according to treatment plan
+  m_EntryPoint->RequestSetTransformAndParent( PointToTransform( m_Plan->EntryPoint ), m_WorldReference);
+  m_TargetPoint->RequestSetTransformAndParent( PointToTransform( m_Plan->EntryPoint ), m_WorldReference);
+
+  this->UpdatePath();
+
+  TPlanPointList->value(0);
+  ChangeSelectedTPlanPoint();
+}
+
+void NeedleBiopsy::ChangeSelectedTPlanPoint()
+{
+  ImageSpatialObjectType::PointType    p; 
+  int choice = TPlanPointList->value();
+  if( choice == 0 )
+  {    
+    p = m_Plan->EntryPoint;
+  }
+  else if ( choice == 1 )
+  {
+    p = m_Plan->TargetPoint;
+  }
+  else
+  {
+    p = m_Plan->FiducialPoints[ choice-2];
+    m_FiducialPoint->RequestSetTransformAndParent( PointToTransform(p), m_WorldReference );
+  }
+
+  if( m_ImageSpatialObject->IsInside( p ) )
+  {    
+    ImageSpatialObjectType::IndexType index;
+    m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+    igstkLogMacro( DEBUG, index <<"\n");
+    ResliceImage( index );
+  }
+  else
+  {
+    igstkLogMacro( DEBUG,  "This point is not defined in the image...\n" )
+  }
+
 }
 
 void NeedleBiopsy::RequestInitializeTracker()
@@ -308,20 +381,13 @@ void NeedleBiopsy::RequestRegistration()
 void NeedleBiopsy::ResliceImage( const itk::EventObject & event )
 {
 
-}
-
-void NeedleBiopsy::ResliceImage()
-{
-  for (int i=0; i<3; i++)
+  if ( igstk::QuadrantViews::ReslicingEvent().CheckEvent( &event ) )
   {
-    m_ImageRepresentation[i]->RequestSetSliceNumber( 
-      static_cast< unsigned int >( ViewerGroup->Sliders[i]->value() ) );
-    m_ImageRepresentation[i+3]->RequestSetSliceNumber( 
-      static_cast< unsigned int >( ViewerGroup->Sliders[i]->value() ) );
+    igstk::QuadrantViews::ReslicingEvent *resliceEvent = 
+      ( igstk::QuadrantViews::ReslicingEvent *) & event;
+    this->ResliceImage( resliceEvent->Get() );
+
   }
- 
-  this->ViewerGroup->redraw();
-  Fl::check();
 }
 
 void NeedleBiopsy::ResliceImage ( IndexType index )
@@ -352,20 +418,30 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
     igstk::TransformModifiedEvent *tmevent = 
                                      ( igstk::TransformModifiedEvent *) & event;
     
-    ImageSpatialObjectType::PointType    p;
-    p[0] = tmevent->Get().GetTranslation()[0];
-    p[1] = tmevent->Get().GetTranslation()[1];
-    p[2] = tmevent->Get().GetTranslation()[2];
-    
+    igstk::Transform  t = tmevent->Get();
+    ImageSpatialObjectType::PointType    p = TransformToPoint( t );
+        
     if( m_ImageSpatialObject->IsInside( p ) )
       {
-      //m_ImageLandmarkTransformToBeSet = tmevent->Get();
+        int choice = TPlanPointList->value();
+        if( choice == 0 )
+        {          
+          m_EntryPoint->RequestSetTransformAndParent( t , m_WorldReference );
+          m_Plan->EntryPoint = p;          
+          this->UpdatePath();
+        }
+        else if ( choice == 1 )
+        {
+          m_TargetPoint->RequestSetTransformAndParent( t, m_WorldReference );
+          m_Plan->TargetPoint = p;
+          this->UpdatePath();
+        }
+        else
+        {
+          m_FiducialPoint->RequestSetTransformAndParent( t, m_WorldReference );
+          m_Plan->FiducialPoints[ choice-2] = p;
+        }
 
-    //std::cout<< m_ImageLandmarkTransformToBeSet << std::endl;
-      
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-      m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
-#endif
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
       igstkLogMacro( DEBUG, index <<"\n")
@@ -381,31 +457,21 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
 
 void NeedleBiopsy::UpdatePath()
 {
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  m_TargetPoint->RequestSetTransform( m_TargetTransform );
-  m_EntryPoint->RequestSetTransform( m_EntryTransform );
-#endif
-
   m_Path->Clear();
   
   TubePointType p;
   igstk::Transform::VectorType v;
     
-  v = m_EntryTransform.GetTranslation();
+  v = ( PointToTransform( m_Plan->EntryPoint) ).GetTranslation();
   p.SetPosition( v[0], v[1], v[2]);
   p.SetRadius( 2 );
   m_Path->AddPoint( p );
 
-  v = m_TargetTransform.GetTranslation();
+  v = ( PointToTransform( m_Plan->TargetPoint) ).GetTranslation();
   p.SetPosition( v[0], v[1], v[2]);
-  p.SetRadius( 2.1 ); //FIXME
+  p.SetRadius( 2.1 ); 
   m_Path->AddPoint( p );
 
-  igstk::Transform transform;
-  transform.SetToIdentity( 1e300 );
-#ifdef USE_SPATIAL_OBJECT_DEPRECATED  
-  m_Path->RequestSetTransform( transform );
-#endif
 
   for (int i=0; i<4; i++)
   {
