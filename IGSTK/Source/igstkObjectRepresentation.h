@@ -212,23 +212,7 @@ private:
    *
    */
   igstkEventTransductionMacro( 
-    CoordinateReferenceSystemTransformToNullTarget,
-    TransformNotAvailable); 
-
-  igstkEventTransductionMacro( 
-    CoordinateReferenceSystemTransformToDisconnected,
-    TransformNotAvailable); 
-
-  igstkEventTransductionMacro( 
-    CoordinateReferenceSystemNullParent,
-    TransformNotAvailable); 
-
-  igstkEventTransductionMacro( 
-    CoordinateReferenceSystemThisParent,
-    TransformNotAvailable); 
-
-  igstkEventTransductionMacro( 
-    CoordinateReferenceSystemParentCycle,
+    TransformNotAvailable,
     TransformNotAvailable); 
 
   // The only event that brings a valid transform.
