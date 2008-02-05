@@ -20,5 +20,62 @@
 
 namespace igstk
 {
+CoordinateReferenceSystemTransformToErrorResult
+::CoordinateReferenceSystemTransformToErrorResult()
+{
+
+}
+
+CoordinateReferenceSystemTransformToErrorResult
+::CoordinateReferenceSystemTransformToErrorResult(
+      const CoordinateReferenceSystemTransformToErrorResult& in)
+{
+  m_Source = in.m_Source;
+  m_Destination = in.m_Destination;
+}
+
+CoordinateReferenceSystemTransformToErrorResult&
+CoordinateReferenceSystemTransformToErrorResult
+::operator = ( 
+      const CoordinateReferenceSystemTransformToErrorResult& in)
+{
+  if (this != &in)
+    {
+    m_Source = in.m_Source;
+    m_Destination = in.m_Destination;
+    }
+  return *this;
+}
+
+void
+CoordinateReferenceSystemTransformToErrorResult
+::Initialize(const CoordinateReferenceSystem* src,
+             const CoordinateReferenceSystem* dst)
+{
+  m_Source = src;
+  m_Destination = dst;
+}
+
+const CoordinateReferenceSystem * 
+CoordinateReferenceSystemTransformToErrorResult
+::GetSource() const
+{
+  return this->m_Source;
+}
+
+const CoordinateReferenceSystem *
+CoordinateReferenceSystemTransformToErrorResult
+::GetDestination() const
+{
+  return this->m_Destination;
+}
+
+void
+CoordinateReferenceSystemTransformToErrorResult
+::Clear()
+{
+  m_Source = NULL;
+  m_Destination = NULL;
+}
 
 } // end namespace igstk

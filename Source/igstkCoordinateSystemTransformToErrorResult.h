@@ -25,59 +25,64 @@ namespace igstk
 
 /** \class CoordinateReferenceSystemTransformToErrorResult
  *
- * \brief
+ * \brief This class is used a result of RequestComputeTransformTo
+ * when there is an error. It encapsulates information about the 
+ * source and destination coordinate systems.
+ *
+ * It is meant to be used as payload in an event that is created after a
+ * error during a call to RequestTransformTo(). 
+ *
+ *  \ingroup CoordinateReferenceSystem
  *
  */
 class CoordinateReferenceSystemTransformToErrorResult
 {
 public:
 
-  CoordinateReferenceSystemTransformToErrorResult()
-    {
-
-    }
+  CoordinateReferenceSystemTransformToErrorResult();
 
   CoordinateReferenceSystemTransformToErrorResult(
-      const CoordinateReferenceSystemTransformToErrorResult& in)
-    {
-    m_Source = in.m_Source;
-    m_Destination = in.m_Destination;
-    }
+      const CoordinateReferenceSystemTransformToErrorResult& in);
 
   CoordinateReferenceSystemTransformToErrorResult &operator = ( 
-      const CoordinateReferenceSystemTransformToErrorResult& in)
-    {
-    if (this != &in)
-      {
-      m_Source = in.m_Source;
-      m_Destination = in.m_Destination;
-      }
-    return *this;
-    }
+      const CoordinateReferenceSystemTransformToErrorResult& in);
 
-  inline void Initialize(const CoordinateReferenceSystem* src,
-                  const CoordinateReferenceSystem* dst)
-    {
-    m_Source = src;
-    m_Destination = dst;
-    }
+  void Initialize(const CoordinateReferenceSystem* src,
+                  const CoordinateReferenceSystem* dst);
+
+  /** Clears the pointers that the event is holding. This 
+   *  should be called after the event is received to
+   *  remove unnecessary smart pointer references to 
+   *  coordinate systems.
+   */
+  void Clear();
+
+  /** Returns the source coordinate system. */
+  const CoordinateReferenceSystem * GetSource() const;
+
+  /** Returns the destination coordinate system. */
+  const CoordinateReferenceSystem * GetDestination() const;
+
+private:
 
   CoordinateReferenceSystem::ConstPointer   m_Source;
   CoordinateReferenceSystem::ConstPointer   m_Destination;
 };
 
-
-//  
-//   Macros defining events related to the 
-//   CoordinateReferenceSystemTransformToErrorResult.
-//
+/** This event is invoked when RequestComputeTransformTo is called with
+ *  a NULL target coordinate system.
+ */
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent,
                        TransformNotAvailableEvent,
                        CoordinateReferenceSystemTransformToErrorResult );
+
+/** This event is invoked when RequestComputeTransformTo is called with
+ *  a destination coordinate system that is not reachable, i.e. not connected,
+ *  to the source coordinate system.
+ */
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent,
                        TransformNotAvailableEvent,
                        CoordinateReferenceSystemTransformToErrorResult );
-
 
 } // end namespace igstk
 

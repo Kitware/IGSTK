@@ -39,60 +39,37 @@ class CoordinateReferenceSystemTransformToResult
 {
 public:
 
-  CoordinateReferenceSystemTransformToResult()
-    {
-    m_Source = NULL;
-    m_Destination = NULL;
-    }
+  /** Constructor */
+  CoordinateReferenceSystemTransformToResult();
 
+  /** Copy constructor */
   CoordinateReferenceSystemTransformToResult(
-      const CoordinateReferenceSystemTransformToResult& in)
-    {
-    m_Transform = in.m_Transform;
-    m_Source = in.m_Source;
-    m_Destination = in.m_Destination;
-    }
+      const CoordinateReferenceSystemTransformToResult& in);
 
+  /** Assignment operator */
   const CoordinateReferenceSystemTransformToResult &operator = ( 
-      const CoordinateReferenceSystemTransformToResult& in)
-    {
-    if (this != &in)
-      {
-      m_Transform = in.m_Transform;
-      m_Source = in.m_Source;
-      m_Destination = in.m_Destination;
-      }
-    return *this;
-    }
+      const CoordinateReferenceSystemTransformToResult& in);
 
-  inline void Clear()
-    {
-    m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-    m_Source = NULL;
-    m_Destination = NULL;
-    }
+  /** Clears the pointers that the event is holding. This 
+   *  should be called after the event is received to
+   *  remove unnecessary smart pointer references to 
+   *  coordinate systems.
+   */
+  void Clear();
 
-  inline void Initialize(const Transform& trans, 
+  /** Sets the transform, source, and destination coordinate systems. */
+  void Initialize(const Transform& trans, 
                   const CoordinateReferenceSystem* src,
-                  const CoordinateReferenceSystem* dst)
-    {
-    m_Transform = trans;
-    m_Source = src;
-    m_Destination = dst;
-    }
+                  const CoordinateReferenceSystem* dst);
 
-  const Transform & GetTransform() const
-    {
-    return this->m_Transform;
-    }
-  const CoordinateReferenceSystem * GetSource() const
-    {
-    return this->m_Source;
-    }
-  const CoordinateReferenceSystem * GetDestination() const
-    {
-    return this->m_Destination;
-    }
+  /** Returns the computed transform. */
+  const Transform & GetTransform() const;
+
+  /** Returns the source coordinate system. */
+  const CoordinateReferenceSystem * GetSource() const;
+
+  /** Returns the destination coordinate system. */
+  const CoordinateReferenceSystem * GetDestination() const;
 
 private:
 
@@ -102,6 +79,9 @@ private:
 
 };
 
+/** This event is invoked when RequestComputeTransformTo is called
+ *  successfully.
+ */
 igstkLoadedEventMacro( CoordinateReferenceSystemTransformToEvent, 
                   IGSTKEvent, CoordinateReferenceSystemTransformToResult );
 
