@@ -51,7 +51,7 @@ int TrackerInitializer::RequestInitializeTracker()
     #ifdef IGSTKSandbox_USE_MicronTracker
     return InitializeMicronTracker();
     #else
-    m_ErrorMessage = "Please comfigure IGSTKSandbox to use MicronTrakcer first\n";
+    m_ErrorMessage = "Please configure IGSTKSandbox to use MicronTrakcer first\n";
     return 0;
     #endif /* IGSTKSandbox_USE_MicronTracker */
     
