@@ -34,34 +34,79 @@ int TreatmentPlanIO::RequestRead()
   std::ifstream planFile( m_FileName.c_str() );
   if ( planFile.is_open())
   {
-    std::cout << "Read file\n";
     std::string line;
-    TreatmentPlan::PointType p;
+    float p[3];
 
-    std::getline( planFile, line ); // First line, description
+    std::getline( planFile, line ); // First line, description, starts with #
+    if ( line[0] != '#')
+    {
+      std::cerr << "Incorrect file format!\n";
+      planFile.close();
+      return FALSE;
+    }
     std::getline( planFile, line ); // Second line, entry point
-    sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] );
-    m_TreatmentPlan->EntryPoint = p;
+    if ( sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] ) != 3 )
+    {
+      std::cerr << "Incorrect file format!\n";
+      planFile.close();
+      return FALSE;
+    }
+    m_TreatmentPlan->EntryPoint[0] = p[0];
+    m_TreatmentPlan->EntryPoint[1] = p[1];
+    m_TreatmentPlan->EntryPoint[2] = p[2];
 
-    std::getline( planFile, line ); // Third line, description
+    std::getline( planFile, line ); // Third line, description, starts with #
+    if ( line[0] != '#')
+    {
+      std::cerr << "Incorrect file format!\n";
+      planFile.close();
+      return FALSE;
+    }
     std::getline( planFile, line ); // Fourth line, target point
-    sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] );
-    m_TreatmentPlan->TargetPoint = p;
+    if ( sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] ) != 3 )
+    {
+      std::cerr << "Incorrect file format!\n";
+      planFile.close();
+      return FALSE;
+    }
+    m_TreatmentPlan->TargetPoint[0] = p[0];
+    m_TreatmentPlan->TargetPoint[1] = p[1];
+    m_TreatmentPlan->TargetPoint[2] = p[2];
 
-    std::getline( planFile, line ); // Fifth line, description
-    unsigned int count = 0;
+    std::getline( planFile, line ); // Fifth line, description, starts with #
+    if ( line[0] != '#')
+    {
+      std::cerr << "Incorrect file format!\n";
+      planFile.close();
+      return FALSE;
+    }
     m_TreatmentPlan->FiducialPoints.clear();
     while ( std::getline( planFile, line ) )
     {
-      sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2]);
-      m_TreatmentPlan->FiducialPoints.push_back( p );
+      if (sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2]) !=3 )
+      {
+        std::cerr << "Incorrect file format!\n";
+        planFile.close();
+        return FALSE;
+      }
+      TreatmentPlan::PointType fp;
+      fp[0] = p[0];
+      fp[1] = p[1];
+      fp[2] = p[2];
+      m_TreatmentPlan->FiducialPoints.push_back( fp );
+    }
+    if (m_TreatmentPlan->FiducialPoints.size()<3)
+    {
+      std::cerr << "At least 3 fiducial points needed!\n";
+      planFile.close();
+      return FALSE;
     }
     planFile.close();
-    return EXIT_SUCCESS;
+    return TRUE;
   }
   else
   {
-    return EXIT_FAILURE;
+    return FALSE;
   }  
 }
 
@@ -71,7 +116,6 @@ int TreatmentPlanIO::RequestWrite()
   planFile.open( m_FileName.c_str(), ios::trunc );
   if ( planFile.is_open())
   {
-    std::cout << "Write file: Open\n";
     std::string line;
     TreatmentPlan::PointType p;
     planFile << "# Entry point\n"; // First line, description
@@ -89,11 +133,11 @@ int TreatmentPlanIO::RequestWrite()
       planFile << p[0] << "\t" << p[1] << "\t" << p[2] << "\n";
     }
     planFile.close();
-    return EXIT_SUCCESS;
+    return TRUE;
   }
   else
   {
-    return EXIT_FAILURE;
+    return FALSE;
   }  
 }
 /** Destructor */

@@ -35,16 +35,6 @@ public:
   PointType            TargetPoint;
   PointListType        FiducialPoints;
 
-  TreatmentPlan * operator=(const TreatmentPlan * rhs)
-  {
-    TreatmentPlan * plan = new TreatmentPlan;
-    plan->EntryPoint  = rhs->EntryPoint;
-    plan->TargetPoint = rhs->TargetPoint;
-    plan->FiducialPoints = rhs->FiducialPoints;
-    return plan;
-  }
-
-
   // To be added
   // Add the capability to save tracker configuration in plan
   std::vector< TrackerConfiguration * >             TrackerCofigurations;
