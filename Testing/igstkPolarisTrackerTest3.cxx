@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerTest2.cxx
+  Module:    igstkPolarisTrackerTest3.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -147,9 +147,8 @@ public:
     }
 };
 
-
-/** This program tests using a wireless tracker tool */
-int igstkPolarisTrackerTest2( int argc, char * argv[] )
+/** This program tests using a wired tracker tool with SROM file */
+int igstkPolarisTrackerTest3( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
@@ -161,7 +160,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
-                            << "Wireless_SROM_filename "
+                            << "Wired_SROM_filename "
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -228,8 +227,13 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
-  //Select wireless tracker tool
-  trackerTool->RequestSelectWirelessTrackerTool();
+  //Select wired tracker tool
+  trackerTool->RequestSelectWiredTrackerTool();
+  //Set the port number to zero
+  trackerTool->RequestSetPortNumber( 0 );
+  //Set the SROM filename
+  std::string SROMFileName = argv[2];
+  trackerTool->RequestSetSROMFileName(SROMFileName);
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
