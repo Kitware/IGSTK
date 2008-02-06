@@ -224,12 +224,25 @@ PolarisTracker::ResultType PolarisTracker
     sromFile.read( data, SROM_FILE_DATA_SIZE );
     sromFile.close();
 
-    // the "port" must be set to "**" to support the Vicra
-    m_CommandInterpreter->PHRQ("********", // device number
+    // request port handle using PHRQ
+    // the "port" parameter must be set to "**" to support the Vicra
+    // for wireless
+    if( wirelessTool )
+      {      
+      m_CommandInterpreter->PHRQ("********", // device number
                                "*",        // TIU or SCU
-                               "1",        // wired or wireless
+                               "1",        // wireless
                                "**",       // port
                                "**");      // channel
+      }
+    else
+      {
+      m_CommandInterpreter->PHRQ("********", // device number
+                               "*",        // TIU or SCU
+                               "0",        // wired 
+                               "**",       // port
+                               "**");      // channel
+      }
 
     if (this->CheckError(m_CommandInterpreter) == FAILURE)
       {
