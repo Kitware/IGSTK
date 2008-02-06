@@ -230,6 +230,9 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   trackerTool->SetLogger( logger );
   //Select wireless tracker tool
   trackerTool->RequestSelectWirelessTrackerTool();
+  //Set the SROM file
+  std::string SROMfileName = argv[2];
+  trackerTool->RequestSetSROMFileName(SROMfileName); 
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
