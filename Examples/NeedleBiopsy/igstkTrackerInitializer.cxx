@@ -33,7 +33,7 @@ int TrackerInitializer::RequestInitializeTracker()
   if ( m_TrackerConfiguration == NULL )
   {
     m_ErrorMessage = "Invalid configuration file";
-    return EXIT_FAILURE;
+    return FALSE;
   }
 
   m_TrackerType = m_TrackerConfiguration->GetTrackerType();
@@ -52,14 +52,14 @@ int TrackerInitializer::RequestInitializeTracker()
     return InitializeMicronTracker();
     #else
     m_ErrorMessage = "Please configure IGSTKSandbox to use MicronTrakcer first\n";
-    return 0;
+    return FALSE;
     #endif /* IGSTKSandbox_USE_MicronTracker */
     
   }
   else
     {
     m_ErrorMessage = "Invalid tracker type";
-    return EXIT_FAILURE;
+    return FALSE;
     }
 
 }
@@ -123,7 +123,7 @@ int TrackerInitializer::InitializePolarisTracker()
     
   }
 
-  return EXIT_SUCCESS;
+  return TRUE;
 
 }
 
@@ -191,7 +191,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 
   }
 
-  return EXIT_SUCCESS;
+  return TRUE;
 
 }
 
@@ -235,7 +235,7 @@ int TrackerInitializer::InitializeMicronTracker()
 
   }
 
-  return EXIT_SUCCESS;
+  return TRUE;
 
 }
 
