@@ -267,7 +267,6 @@ PolarisTracker::ResultType PolarisTracker
     // if the tool is not wireless and if no SROM file is specified
     // search ports with uninitialized handles
     // initialize ports waiting to be initialized,  
-    // repeat as necessary (in case multi-channel tools are used) 
 
     bool foundNewTool = false;
 
