@@ -169,18 +169,18 @@ int NeedleBiopsy::RequestLoadImage()
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       this->ConnectImageRepresentation();
       this->ReadTreatmentPlan();
-      return TRUE;
+      return 1;
     }
     else
     {
       igstkLogMacro(          DEBUG, "Reading image failure...\n" )
-      return FALSE;      
+      return 0;      
     }
   }
   else
   {
     igstkLogMacro(          DEBUG, "No directory is selected\n" )
-    return FALSE;
+    return 0;
   }
 
 }

@@ -42,14 +42,14 @@ int TreatmentPlanIO::RequestRead()
     {
       std::cerr << "Incorrect file format!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     std::getline( planFile, line ); // Second line, entry point
     if ( sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] ) != 3 )
     {
       std::cerr << "Incorrect file format!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     m_TreatmentPlan->EntryPoint[0] = p[0];
     m_TreatmentPlan->EntryPoint[1] = p[1];
@@ -60,14 +60,14 @@ int TreatmentPlanIO::RequestRead()
     {
       std::cerr << "Incorrect file format!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     std::getline( planFile, line ); // Fourth line, target point
     if ( sscanf( line.c_str(), "%f %f %f", &p[0], &p[1], &p[2] ) != 3 )
     {
       std::cerr << "Incorrect file format!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     m_TreatmentPlan->TargetPoint[0] = p[0];
     m_TreatmentPlan->TargetPoint[1] = p[1];
@@ -78,7 +78,7 @@ int TreatmentPlanIO::RequestRead()
     {
       std::cerr << "Incorrect file format!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     m_TreatmentPlan->FiducialPoints.clear();
     while ( std::getline( planFile, line ) )
@@ -87,7 +87,7 @@ int TreatmentPlanIO::RequestRead()
       {
         std::cerr << "Incorrect file format!\n";
         planFile.close();
-        return FALSE;
+        return 0;
       }
       TreatmentPlan::PointType fp;
       fp[0] = p[0];
@@ -99,14 +99,14 @@ int TreatmentPlanIO::RequestRead()
     {
       std::cerr << "At least 3 fiducial points needed!\n";
       planFile.close();
-      return FALSE;
+      return 0;
     }
     planFile.close();
-    return TRUE;
+    return 1;
   }
   else
   {
-    return FALSE;
+    return 0;
   }  
 }
 
@@ -133,11 +133,11 @@ int TreatmentPlanIO::RequestWrite()
       planFile << p[0] << "\t" << p[1] << "\t" << p[2] << "\n";
     }
     planFile.close();
-    return TRUE;
+    return 1;
   }
   else
   {
-    return FALSE;
+    return 0;
   }  
 }
 /** Destructor */
