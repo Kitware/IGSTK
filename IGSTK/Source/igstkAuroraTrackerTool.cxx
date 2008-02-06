@@ -41,8 +41,8 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
   // SROM file flag
   m_SROMFileNameSpecified = false;
 
-  // ToolId Specified
-  m_ToolIdSpecified = false;
+  // PartNumber Specified
+  m_PartNumberSpecified = false;
 
   // Channel number Specified
   m_ChannelNumberSpecified = false;
@@ -56,8 +56,8 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
   igstkAddStateMacro( 5DOFTrackerToolChannelNumberSpecified );
   igstkAddStateMacro( 5DOFTrackerToolSROMFileNameSpecified );
   igstkAddStateMacro( 6DOFTrackerToolSROMFileNameSpecified );
-  igstkAddStateMacro( 5DOFTrackerToolToolIdSpecified );
-  igstkAddStateMacro( 6DOFTrackerToolToolIdSpecified );
+  igstkAddStateMacro( 5DOFTrackerToolPartNumberSpecified );
+  igstkAddStateMacro( 6DOFTrackerToolPartNumberSpecified );
 
   // Set the input descriptors
   igstkAddInputMacro( Select5DOFTrackerTool );
@@ -68,8 +68,8 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
   igstkAddInputMacro( InValidChannelNumber ); 
   igstkAddInputMacro( ValidSROMFileName ); 
   igstkAddInputMacro( InValidSROMFileName ); 
-  igstkAddInputMacro( ValidToolId ); 
-  igstkAddInputMacro( InValidToolId ); 
+  igstkAddInputMacro( ValidPartNumber ); 
+  igstkAddInputMacro( InValidPartNumber ); 
 
   // Programming the state machine transitions:
 
@@ -144,25 +144,25 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
 
   // Transitions from 5DOFTrackerToolSROMFileNameSpecified
   igstkAddTransitionMacro( 5DOFTrackerToolSROMFileNameSpecified,
-                           ValidToolId,
-                           5DOFTrackerToolToolIdSpecified,
-                           SetToolId);
+                           ValidPartNumber,
+                           5DOFTrackerToolPartNumberSpecified,
+                           SetPartNumber);
 
   igstkAddTransitionMacro( 5DOFTrackerToolSROMFileNameSpecified,
-                           InValidToolId,
+                           InValidPartNumber,
                            5DOFTrackerToolSROMFileNameSpecified,
-                           ReportInValidToolIdSpecified);
+                           ReportInValidPartNumberSpecified);
 
   // Transitions from SROMFileNameSpecified
   igstkAddTransitionMacro( 6DOFTrackerToolSROMFileNameSpecified,
-                           ValidToolId,
-                           6DOFTrackerToolToolIdSpecified,
-                           SetToolId);
+                           ValidPartNumber,
+                           6DOFTrackerToolPartNumberSpecified,
+                           SetPartNumber);
 
   igstkAddTransitionMacro( 6DOFTrackerToolSROMFileNameSpecified,
-                           InValidToolId,
+                           InValidPartNumber,
                            6DOFTrackerToolSROMFileNameSpecified,
-                           ReportInValidToolIdSpecified);
+                           ReportInValidPartNumberSpecified);
 
 
   // Inputs to the state machine
@@ -259,15 +259,14 @@ void AuroraTrackerTool::RequestSetSROMFileName( const std::string & filename )
     }
 }
 
-/** Request the state machine to set the tool id */
-void AuroraTrackerTool::RequestSetToolId( const std::string & toolId )
+/** Request the state machine to set the part number */
+void AuroraTrackerTool::RequestSetPartNumber( const std::string & partNumber )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::RequestSetToolId called ...\n");
+    "igstk::AuroraTrackerTool::RequestSetPartNumber called ...\n");
 
-  //FIXME DO ToolID verification 
-  m_ToolIdToBeSet = toolId;
-  m_StateMachine.PushInput( m_ValidToolIdInput );
+  m_PartNumberToBeSet = partNumber;
+  m_StateMachine.PushInput( m_ValidPartNumberInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -374,30 +373,36 @@ void AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
   igstkLogMacro( CRITICAL, "Invalid SROM file name specified ");
 }
 
-/** Set valid ToolId */ 
-void AuroraTrackerTool::SetToolIdProcessing( )
+/** Set valid PartNumber */ 
+void AuroraTrackerTool::SetPartNumberProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::SetToolIdProcessing called ...\n");
+    "igstk::AuroraTrackerTool::SetPartNumberProcessing called ...\n");
 
-  m_ToolId = m_ToolIdToBeSet;
-  m_ToolIdSpecified = true;
+  m_PartNumber = m_PartNumberToBeSet;
+  m_PartNumberSpecified = true;
 }
 
-/** Report Invalid tool id  specified. */ 
-void AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
+/** Report Invalid part number  specified. */ 
+void AuroraTrackerTool::ReportInValidPartNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTrackerTool::ReportInValidToolIdSpecifiedProcessing "
+    "igstk::AuroraTrackerTool::ReportInValidPartNumberSpecifiedProcessing "
     << "called ...\n");
 
-  igstkLogMacro( CRITICAL, "Invalid ToolID specified ");
+  igstkLogMacro( CRITICAL, "Invalid PartNumber specified ");
 }
 
 /** Check if the SROM filename is specified */
 bool AuroraTrackerTool::IsSROMFileNameSpecified( ) const
 {
   return m_SROMFileNameSpecified;
+}
+
+/** Check if the Part number is specified */
+bool AuroraTrackerTool::IsPartNumberSpecified( ) const
+{
+  return m_PartNumberSpecified;
 }
 
 /** Check if the tracker tool is 5DOF or 6DOF */ 

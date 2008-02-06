@@ -206,9 +206,10 @@ AuroraTracker::ResultType AuroraTracker
 
     // most SROM files don't contain the whole 1024 bytes, they only
     // contain whatever is necessary, so the rest should be filled with zero
-    char data[1024]; 
-    memset( data, 0, 1024 );
-    sromFile.read( data, 1024 );
+    const unsigned int SROM_FILE_DATA_SIZE = 1024;
+    char data[SROM_FILE_DATA_SIZE]; 
+    memset( data, 0, SROM_FILE_DATA_SIZE );
+    sromFile.read( data, SROM_FILE_DATA_SIZE );
     sromFile.close();
 
     // the "port" must be set to "**" to support the Vicra
@@ -225,7 +226,7 @@ AuroraTracker::ResultType AuroraTracker
 
     ph = m_CommandInterpreter->GetPHRQHandle();
 
-    for ( unsigned int i = 0; i < 1024; i += 64)
+    for ( unsigned int i = 0; i < SROM_FILE_DATA_SIZE; i += 64)
       {
       // holds hexidecimal data to be sent to device
       char hexbuffer[129]; 
@@ -244,7 +245,9 @@ AuroraTracker::ResultType AuroraTracker
 
     bool foundNewTool = false;
 
-    for (int safetyCount = 0; safetyCount < 256; safetyCount++)
+    //Make several attempts to find uninitialized port
+    const unsigned int NUMBER_OF_ATTEMPTS = 256;
+    for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
       {
       m_CommandInterpreter->PHSR(
         CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
@@ -357,6 +360,24 @@ AuroraTracker::ResultType AuroraTracker
       }
     }
 
+  // if a tool part number is specified by the user, check if that matches
+  // with the port handle information
+  if( auroraTrackerTool->IsPartNumberSpecified() )   
+    {
+    char toolPartNumber[21];
+    m_CommandInterpreter->GetPHINFPartNumber( toolPartNumber );
+
+    igstkLogMacro(INFO, "Part number: " << toolPartNumber );
+
+    if( toolPartNumber != auroraTrackerTool->GetPartNumber())
+      {
+      igstkLogMacro(CRITICAL, 
+          "The part number specified doesn't match with the information from "
+          "the port handle ");
+        return FAILURE;
+      }
+    }
+
   const int status = m_CommandInterpreter->GetPHINFPortStatus();
 
   // port status
@@ -369,11 +390,6 @@ AuroraTracker::ResultType AuroraTracker
   // tool type
   igstkLogMacro(INFO, 
     "Tool type: " << m_CommandInterpreter->GetPHINFToolType());   
-
-  // tool part number
-  char partNumber[21];
-  m_CommandInterpreter->GetPHINFPartNumber( partNumber );
-  igstkLogMacro(INFO, "Part number: " << partNumber );
 
   // tool accessories
   igstkLogMacro(INFO, 

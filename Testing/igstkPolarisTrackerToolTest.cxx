@@ -97,11 +97,11 @@ int igstkPolarisTrackerToolTest( int argc, char ** argv )
     trackerTool->RequestSetSROMFileName( sromFile );
     }
 
-  // set a tool Id if specified
+  // set a tool part number if specified
   if ( argc >= 4 )
     {
-    std::string  toolId = argv[3];
-    trackerTool->RequestSetToolId( toolId );
+    std::string  partNumber = argv[3];
+    trackerTool->RequestSetPartNumber( partNumber );
     }
 
   trackerTool->RequestConfigure();

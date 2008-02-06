@@ -221,9 +221,9 @@ protected:
    *  is specified. If the user tries to attach a tracker tool with a marker
    *  type whose template file is not stored in this directory, this method
    *  will return failure. Similarly, for PolarisTracker, the method returns
-   *  failure,  if the toolID specified by the user during the tracker tool
-   *  configuration step does not match with the tool id read from the SROM
-   *  file.
+   *  failure,  if the tool part number specified by the user during the tracker
+   *  tool configuration step does not match with the part number read from the
+   *  SROM file.
    */
   virtual ResultType 
         VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 

@@ -63,8 +63,8 @@ public:
   /** Request set the SROM file name */
   void RequestSetSROMFileName( const std::string & filename );
 
-  /** Request set the ToolId */
-  void RequestSetToolId( const std::string & toolId );
+  /** Request set the PartNumber */
+  void RequestSetPartNumber( const std::string & toolId );
 
   /** The "RequestAttachToTracker" method attaches the tracker tool to a
    * tracker. */
@@ -76,11 +76,19 @@ public:
   /** Check if SROM file name specified. */
   bool IsSROMFileNameSpecified() const;
 
+  /** Check if Tool part number is specified. */
+  bool IsPartNumberSpecified() const;
+
   /** Get SROM file name */
   igstkGetStringMacro( SROMFileName );
 
   /** Get tracker tool port number */
   igstkGetMacro( PortNumber, unsigned int );
+
+  /** Get tracker tool part number */
+  igstkGetStringMacro( PartNumber );
+
+
 
 protected:
 
@@ -110,11 +118,11 @@ private:
   /** Report Invalid SROM filename specified */ 
   void ReportInValidSROMFileSpecifiedProcessing( );
 
-  /** Set Tool Id. */ 
-  void SetToolIdProcessing( );
+  /** Set part number  */ 
+  void SetPartNumberProcessing( );
 
-  /** Report Invalid Tool Id filename specified */ 
-  void ReportInValidToolIdSpecifiedProcessing( );
+  /** Report Invalid part number specified */ 
+  void ReportInValidPartNumberSpecifiedProcessing( );
 
   PolarisTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
@@ -128,7 +136,7 @@ private:
 
   /** Get boolean variable to check if the tracker toolId is 
    * specified. */
-  igstkGetMacro( ToolIdSpecified, bool );
+  igstkGetMacro( PartNumberSpecified, bool );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
@@ -137,8 +145,8 @@ private:
   igstkDeclareStateMacro( WiredTrackerToolPortNumberSpecified );
   igstkDeclareStateMacro( WirelessTrackerToolSROMFileNameSpecified );
   igstkDeclareStateMacro( WiredTrackerToolSROMFileNameSpecified );
-  igstkDeclareStateMacro( WirelessTrackerToolToolIdSpecified );
-  igstkDeclareStateMacro( WiredTrackerToolToolIdSpecified );
+  igstkDeclareStateMacro( WirelessTrackerToolPartNumberSpecified );
+  igstkDeclareStateMacro( WiredTrackerToolPartNumberSpecified );
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( SelectWiredTrackerTool );
@@ -147,8 +155,8 @@ private:
   igstkDeclareInputMacro( InValidPortNumber );
   igstkDeclareInputMacro( ValidSROMFileName );
   igstkDeclareInputMacro( InValidSROMFileName );
-  igstkDeclareInputMacro( ValidToolId);
-  igstkDeclareInputMacro( InValidToolId);
+  igstkDeclareInputMacro( ValidPartNumber);
+  igstkDeclareInputMacro( InValidPartNumber);
 
   /** Port number that identifies this tool in the Tracker. */
   unsigned int m_PortNumberToBeSet;
@@ -158,15 +166,15 @@ private:
   std::string m_SROMFileNameToBeSet;
   std::string m_SROMFileName;
 
-  /** ToolId */ 
-  std::string m_ToolIdToBeSet;
-  std::string m_ToolId;
+  /** PartNumber */ 
+  std::string m_PartNumberToBeSet;
+  std::string m_PartNumber;
 
   /** boolean to indicate if the tracker tool initialized or not. */
   bool m_TrackerToolConfigured;
 
-  /** boolean to indicate if a tool id is specified or not. */
-  bool m_ToolIdSpecified;
+  /** boolean to indicate if a tool part number is specified or not. */
+  bool m_PartNumberSpecified;
 
   /** boolean to indicate if SROM filename is specified or not. */
   bool m_SROMFileNameSpecified;

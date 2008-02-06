@@ -32,6 +32,9 @@ itkEventMacro( TrackerToolEvent,StringEvent);
 itkEventMacro( TrackerToolErrorEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolConfigurationEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolConfigurationErrorEvent,TrackerToolErrorEvent);
+itkEventMacro( InvalidRequestToAttachTrackerToolErrorEvent,TrackerToolErrorEvent);
+itkEventMacro( InvalidRequestToDetachTrackerToolErrorEvent,TrackerToolErrorEvent);
+
 itkEventMacro( TrackerToolAttachmentToTrackerEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolAttachmentToTrackerErrorEvent,TrackerToolErrorEvent);
 itkEventMacro( TrackerToolDetachmentFromTrackerEvent,TrackerToolEvent);
@@ -227,6 +230,12 @@ private:
 
   /** Report invalid request */ 
   void ReportInvalidRequestProcessing( void );
+
+  /** Report invalid request to attach the tracker tool. */ 
+  void ReportInvalidRequestToAttachTrackerToolProcessing( void );
+
+  /** Report invalid request to detach the tracker tool. */ 
+  void ReportInvalidRequestToDetachTrackerToolProcessing( void );
 
   /** No operation for state machine transition */ 
   void NoProcessing( void );

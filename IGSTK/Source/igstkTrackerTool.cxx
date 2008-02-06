@@ -76,6 +76,17 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
                            AttemptingToConfigureTrackerTool,
                            AttemptToConfigure );
 
+  igstkAddTransitionMacro( Idle,
+                           AttachToolToTracker,
+                           Idle,
+                           ReportInvalidRequestToAttachTrackerTool);
+
+  igstkAddTransitionMacro( Idle,
+                           DetachTrackerToolFromTracker,
+                           Idle,
+                           ReportInvalidRequestToDetachTrackerTool);
+
+
   // Transitions from the AttemptingToConfigure
   igstkAddTransitionMacro( AttemptingToConfigureTrackerTool,
                            ToolConfigurationSuccess,
@@ -277,6 +288,29 @@ void TrackerTool::AttemptToDetachTrackerToolFromTrackerProcessing( void )
                                    m_DetachmentFromTrackerSuccessInput,
                                    m_DetachmentFromTrackerFailureInput );
 }
+
+/** Report invalid request to attach the tracker tool. */ 
+void TrackerTool::ReportInvalidRequestToAttachTrackerToolProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::ReportInvalidRequestToAttachTrackerToolProcessing "
+    << "called ...\n");
+
+
+  this->InvokeEvent( InvalidRequestToAttachTrackerToolErrorEvent() );
+}
+
+/** Report invalid request to detach the tracker tool. */ 
+void TrackerTool::ReportInvalidRequestToDetachTrackerToolProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::TrackerTool::ReportInvalidRequestToDetachTrackerToolProcessing "
+    << "called ...\n");
+
+
+  this->InvokeEvent( InvalidRequestToDetachTrackerToolErrorEvent() );
+}
+
 
 /** Post-processing after a successful configuration attempt . */ 
 void TrackerTool::TrackerToolConfigurationSuccessProcessing( void )

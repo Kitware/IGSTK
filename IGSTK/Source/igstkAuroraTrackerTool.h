@@ -53,8 +53,8 @@ public:
   /** Request set the SROM file name */
   void RequestSetSROMFileName( const std::string & filename );
 
-  /** Request set the ToolId */
-  void RequestSetToolId( const std::string & toolId );
+  /** Request set the PartNumber */
+  void RequestSetPartNumber( const std::string & toolId );
 
   /** Request select 5DOF (five degrees of freedom) tracker tool */
   void RequestSelect5DOFTrackerTool( );
@@ -69,11 +69,17 @@ public:
   /** Check if SROM file name specified. */
   bool IsSROMFileNameSpecified() const;
 
+  /** Check if Part number is specified. */
+  bool IsPartNumberSpecified() const;
+
   /** Get SROM file name */
   igstkGetStringMacro( SROMFileName );
 
   /** Get tracker tool port number */
   igstkGetMacro( PortNumber, unsigned int );
+
+  /** Get tracker tool part number */
+  igstkGetStringMacro( PartNumber );
 
   /** Check if the tracker tool selected is 5DOF or 6DOF  
    * (five or six degrees of freedom) */
@@ -108,10 +114,10 @@ private:
   void ReportInValidSROMFileSpecifiedProcessing( );
 
   /** Set Tool Id. */ 
-  void SetToolIdProcessing( );
+  void SetPartNumberProcessing( );
 
   /** Report Invalid Tool Id filename specified */ 
-  void ReportInValidToolIdSpecifiedProcessing( );
+  void ReportInValidPartNumberSpecifiedProcessing( );
 
   /** Report 5DOF tracker tool selected */
   void Report5DOFTrackerToolSelectedProcessing();
@@ -135,8 +141,8 @@ private:
   igstkDeclareStateMacro( 5DOFTrackerToolChannelNumberSpecified );
   igstkDeclareStateMacro( 5DOFTrackerToolSROMFileNameSpecified );
   igstkDeclareStateMacro( 6DOFTrackerToolSROMFileNameSpecified );
-  igstkDeclareStateMacro( 5DOFTrackerToolToolIdSpecified );
-  igstkDeclareStateMacro( 6DOFTrackerToolToolIdSpecified );
+  igstkDeclareStateMacro( 5DOFTrackerToolPartNumberSpecified );
+  igstkDeclareStateMacro( 6DOFTrackerToolPartNumberSpecified );
 
 
   /** Inputs to the State Machine */
@@ -148,8 +154,8 @@ private:
   igstkDeclareInputMacro( InValidChannelNumber );
   igstkDeclareInputMacro( ValidSROMFileName );
   igstkDeclareInputMacro( InValidSROMFileName );
-  igstkDeclareInputMacro( ValidToolId);
-  igstkDeclareInputMacro( InValidToolId);
+  igstkDeclareInputMacro( ValidPartNumber);
+  igstkDeclareInputMacro( InValidPartNumber);
 
   /** Port number that identifies this tool in the Tracker. */
   unsigned int m_PortNumberToBeSet;
@@ -163,12 +169,12 @@ private:
   std::string m_SROMFileNameToBeSet;
   std::string m_SROMFileName;
 
-  /** ToolId */ 
-  std::string m_ToolIdToBeSet;
-  std::string m_ToolId;
+  /** PartNumber */ 
+  std::string m_PartNumberToBeSet;
+  std::string m_PartNumber;
 
   bool m_TrackerToolConfigured;
-  bool m_ToolIdSpecified;
+  bool m_PartNumberSpecified;
   bool m_SROMFileNameSpecified;
   bool m_ChannelNumberSpecified;
 

@@ -40,8 +40,8 @@ PolarisTrackerTool::PolarisTrackerTool():m_StateMachine(this)
   // SROM file flag
   m_SROMFileNameSpecified = false;
 
-  // ToolId Specified
-  m_ToolIdSpecified = false;
+  // PartNumber Specified
+  m_PartNumberSpecified = false;
 
   // Wireless tool selected
   m_WirelessTrackerToolSelected  = false;
@@ -53,8 +53,8 @@ PolarisTrackerTool::PolarisTrackerTool():m_StateMachine(this)
   igstkAddStateMacro( WiredTrackerToolPortNumberSpecified );
   igstkAddStateMacro( WirelessTrackerToolSROMFileNameSpecified );
   igstkAddStateMacro( WiredTrackerToolSROMFileNameSpecified );
-  igstkAddStateMacro( WirelessTrackerToolToolIdSpecified );
-  igstkAddStateMacro( WiredTrackerToolToolIdSpecified );
+  igstkAddStateMacro( WirelessTrackerToolPartNumberSpecified );
+  igstkAddStateMacro( WiredTrackerToolPartNumberSpecified );
 
 
   // Set the input descriptors
@@ -64,8 +64,8 @@ PolarisTrackerTool::PolarisTrackerTool():m_StateMachine(this)
   igstkAddInputMacro( InValidPortNumber ); 
   igstkAddInputMacro( ValidSROMFileName ); 
   igstkAddInputMacro( InValidSROMFileName ); 
-  igstkAddInputMacro( ValidToolId ); 
-  igstkAddInputMacro( InValidToolId ); 
+  igstkAddInputMacro( ValidPartNumber ); 
+  igstkAddInputMacro( InValidPartNumber ); 
 
 
   // Programming the state machine transitions:
@@ -116,25 +116,25 @@ PolarisTrackerTool::PolarisTrackerTool():m_StateMachine(this)
 
   // Transitions from WiredTrackerToolSROMFileNameSpecified
   igstkAddTransitionMacro( WiredTrackerToolSROMFileNameSpecified,
-                           ValidToolId,
-                           WiredTrackerToolToolIdSpecified,
-                           SetToolId);
+                           ValidPartNumber,
+                           WiredTrackerToolPartNumberSpecified,
+                           SetPartNumber);
 
   igstkAddTransitionMacro( WiredTrackerToolSROMFileNameSpecified,
-                           InValidToolId,
+                           InValidPartNumber,
                            WiredTrackerToolSROMFileNameSpecified,
-                           ReportInValidToolIdSpecified);
+                           ReportInValidPartNumberSpecified);
 
   // Transitions from WirelessTrackerToolSROMFileNameSpecified
   igstkAddTransitionMacro( WirelessTrackerToolSROMFileNameSpecified,
-                           ValidToolId,
-                           WirelessTrackerToolToolIdSpecified,
-                           SetToolId);
+                           ValidPartNumber,
+                           WirelessTrackerToolPartNumberSpecified,
+                           SetPartNumber);
 
   igstkAddTransitionMacro( WirelessTrackerToolSROMFileNameSpecified,
-                           InValidToolId,
+                           InValidPartNumber,
                            WirelessTrackerToolSROMFileNameSpecified,
-                           ReportInValidToolIdSpecified);
+                           ReportInValidPartNumberSpecified);
 
 
   // Inputs to the state machine
@@ -156,8 +156,11 @@ void PolarisTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   os << indent << "PortNumber: "   << this->m_PortNumber << std::endl;
   os << indent << "SROMFileName: " << this->m_SROMFileName << std::endl;
-  os << indent << "ToolId: "       << this->m_ToolId << std::endl;
-
+  
+  if( this->m_PartNumberSpecified )
+    {
+    os << indent << "Part number: "  << this->m_PartNumber << std::endl;
+    }
   if( this->m_WirelessTrackerToolSelected )
     {
     os << indent << " Tracker tool is wireless type"  << std::endl;
@@ -237,6 +240,13 @@ bool PolarisTrackerTool::IsSROMFileNameSpecified( ) const
   return m_SROMFileNameSpecified;
 }
 
+/** Check if Part number is specified.  */
+bool PolarisTrackerTool::IsPartNumberSpecified( ) const
+{
+  return m_PartNumberSpecified;
+}
+
+
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
  * tool is configured. */ 
 bool
@@ -247,15 +257,14 @@ PolarisTrackerTool::CheckIfTrackerToolIsConfigured( ) const
   return m_TrackerToolConfigured;
 }
 
-/** Request the state machine to set the tool id */
-void PolarisTrackerTool::RequestSetToolId( const std::string & toolId )
+/** Request the state machine to set the tool part number */
+void PolarisTrackerTool::RequestSetPartNumber( const std::string & partNumber )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::RequestSetToolId called ...\n");
+    "igstk::PolarisTrackerTool::RequestSetPartNumber called ...\n");
 
-  //FIXME DO ToolID verification 
-  m_ToolIdToBeSet = toolId;
-  m_StateMachine.PushInput( m_ValidToolIdInput );
+  m_PartNumberToBeSet = partNumber;
+  m_StateMachine.PushInput( m_ValidPartNumberInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -291,7 +300,7 @@ void PolarisTrackerTool::SetPortNumberProcessing( )
 
   // if the tool is wired type and if the port number is set, we can
   // "declare" the tracker tool configured. The user can also specify
-  // SROM file and tool id.  
+  // SROM file and tool part number.  
   if ( ! m_WirelessTrackerToolSelected )
     {
     m_TrackerToolConfigured = true;
@@ -343,21 +352,21 @@ void PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
   igstkLogMacro( CRITICAL, "Invalid SROM filename specified ");
 }
 
-/** Set valid ToolId */ 
-void PolarisTrackerTool::SetToolIdProcessing( )
+/** Set valid PartNumber */ 
+void PolarisTrackerTool::SetPartNumberProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::SetToolIdProcessing called ...\n");
+    "igstk::PolarisTrackerTool::SetPartNumberProcessing called ...\n");
 
-  m_ToolId = m_ToolIdToBeSet;
-  m_ToolIdSpecified = true;
+  m_PartNumber = m_PartNumberToBeSet;
+  m_PartNumberSpecified = true;
 }
 
-/** Report Invalid tool id  specified. */
-void PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing( )
+/** Report Invalid tool part number  specified. */
+void PolarisTrackerTool::ReportInValidPartNumberSpecifiedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::ReportInValidToolIdSpecifiedProcessing "
+    "igstk::PolarisTrackerTool::ReportInValidPartNumberSpecifiedProcessing "
     "called ...\n");
   igstkLogMacro( CRITICAL, "Invalid tool ID specified" );
 }

@@ -387,7 +387,7 @@ void Tracker::RequestClose( void )
   m_StateMachine.ProcessInputs();
 }
 
-/** The "RequestReset" tracker method should be used to bring the tracker
+/** The "RequestReset" tracker method should be used to the tracker
  * to some defined default state. */
 void Tracker::RequestReset( void )
 {
