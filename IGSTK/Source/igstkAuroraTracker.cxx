@@ -212,10 +212,9 @@ AuroraTracker::ResultType AuroraTracker
     sromFile.read( data, SROM_FILE_DATA_SIZE );
     sromFile.close();
 
-    // the "port" must be set to "**" to support the Vicra
     m_CommandInterpreter->PHRQ("********", // device number
                                "*",        // TIU or SCU
-                               "1",        // wired or wireless
+                               "0",        // wired 
                                "**",       // port
                                "**");      // channel
 

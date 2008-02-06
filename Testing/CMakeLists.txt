@@ -542,6 +542,12 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTestLoggerOutput.txt
            ${IGSTK_TEST_AURORA_PORT_NUMBER}
            )
+  ADD_TEST(igstkAuroraTrackerTest2 
+           ${IGSTK_TESTS}
+           igstkAuroraTrackerTest2
+           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
+           ${IGSTK_TEST_AURORA_PORT_NUMBER}
+           )
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -653,6 +659,9 @@ ENDIF(IGSTK_USE_FLTK)
 #IF(IGSTK_TEST_AURORA_ATTACHED)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAuroraTrackerTest.cxx
+  )
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
+    igstkAuroraTrackerTest2.cxx
   )
 #ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 

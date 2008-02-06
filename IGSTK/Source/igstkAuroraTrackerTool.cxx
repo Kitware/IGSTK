@@ -208,7 +208,9 @@ void AuroraTrackerTool::RequestSetPortNumber( unsigned int portNumber )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetPortNumber called ...\n");
 
-  if ( portNumber > 255 )
+  const unsigned int MAXIMUM_PORT_NUMBER = 12;
+
+  if ( portNumber > MAXIMUM_PORT_NUMBER )
     {
     m_StateMachine.PushInput( m_InValidPortNumberInput );
     m_StateMachine.ProcessInputs();
@@ -227,7 +229,9 @@ void AuroraTrackerTool::RequestSetChannelNumber( unsigned int channelNumber )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetChannelNumber called ...\n");
 
-  if ( channelNumber > 1 )
+  const unsigned int MAXIMUM_CHANNEL_NUMBER = 1;
+
+  if ( channelNumber > MAXIMUM_CHANNEL_NUMBER )
     {
     m_StateMachine.PushInput( m_InValidChannelNumberInput );
     m_StateMachine.ProcessInputs();
