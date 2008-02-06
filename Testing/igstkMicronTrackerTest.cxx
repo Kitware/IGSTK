@@ -79,7 +79,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
                             << "MicronTracker_Camera_Calibration_file" << "\t"
                             << "MicronTracker_initialization_file"  << "\t"
                             << "Marker_template_directory " << "\t"
-                            << "Logger_Output_directory" << std::endl;
+                            << "Logger_Output_filename" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -144,7 +144,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<40; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -196,7 +196,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<40; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 
