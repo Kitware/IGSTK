@@ -169,18 +169,18 @@ int NeedleBiopsy::RequestLoadImage()
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       this->ConnectImageRepresentation();
       this->ReadTreatmentPlan();
-      return EXIT_SUCCESS;
+      return TRUE;
     }
     else
     {
       igstkLogMacro(          DEBUG, "Reading image failure...\n" )
-      return EXIT_FAILURE;      
+      return FALSE;      
     }
   }
   else
   {
     igstkLogMacro(          DEBUG, "No directory is selected\n" )
-    return EXIT_FAILURE;
+    return FALSE;
   }
 
 }
@@ -294,7 +294,9 @@ void NeedleBiopsy::ReadTreatmentPlan()
   igstk::TreatmentPlanIO * reader = new igstk::TreatmentPlanIO;
   
   m_PlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
-  
+
+  m_Plan = new igstk::TreatmentPlan;
+
   if (itksys::SystemTools::FileExists( m_PlanFilename.c_str()))
   {
     reader->SetFileName( m_PlanFilename );
@@ -302,10 +304,6 @@ void NeedleBiopsy::ReadTreatmentPlan()
     {
       m_Plan = reader->GetTreatmentPlan();
     }
-  }
-  else
-  {
-    m_Plan = new igstk::TreatmentPlan;
   }
 
   // Populate the choice box
@@ -321,7 +319,7 @@ void NeedleBiopsy::ReadTreatmentPlan()
 
   // Setting object position according to treatment plan
   m_EntryPoint->RequestSetTransformAndParent( PointToTransform( m_Plan->EntryPoint ), m_WorldReference);
-  m_TargetPoint->RequestSetTransformAndParent( PointToTransform( m_Plan->EntryPoint ), m_WorldReference);
+  m_TargetPoint->RequestSetTransformAndParent( PointToTransform( m_Plan->TargetPoint ), m_WorldReference);
 
   this->UpdatePath();
 
@@ -357,10 +355,10 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
   }
 
   char buf[50];
-  sprintf( buf, "[%.2f, %.2f, %.2f] click image to update", p[0], p[1], p[2]);
+  sprintf( buf, "[%.2f, %.2f, %.2f]", p[0], p[1], p[2]);
   m_Annotation->RequestSetAnnotationText(0, buf);
   m_Annotation->RequestSetFontColor(0, 0, 0, 1.0);
-  m_Annotation->RequestSetFontSize(0, 14);
+  m_Annotation->RequestSetFontSize(0, 12);
 
   if( m_ImageSpatialObject->IsInside( p ) )
   {    
@@ -497,10 +495,10 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
         }
       
         char buf[50];
-        sprintf( buf, "[%.2f, %.2f, %.2f] point updated", p[0], p[1], p[2]);
+        sprintf( buf, "[%.2f, %.2f, %.2f]", p[0], p[1], p[2]);
         m_Annotation->RequestSetAnnotationText(0, buf);
         m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
-        m_Annotation->RequestSetFontSize(0, 14);
+        m_Annotation->RequestSetFontSize(0, 12);
 
       // We don't need to rewrite the file every time we modify it
       this->WriteTreatmentPlan();
