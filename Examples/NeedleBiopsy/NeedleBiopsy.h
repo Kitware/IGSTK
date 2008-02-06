@@ -98,6 +98,8 @@ private:
   
   /** DICOM image reader */
   ImageReaderType::Pointer            m_ImageReader;
+  std::string                         m_ImageDir;
+  std::string                         m_PlanFilename;
   igstk::TreatmentPlan              * m_Plan;
 
   /** Pointer to the CTImageSpatialObject */
@@ -152,7 +154,8 @@ private:
   CylinderType::Pointer                           m_Needle;
   CylinderRepresentationType::Pointer             m_NeedleRepresentation;
 
-  igstk::Annotation2D::Pointer                    m_Annotation2D;
+  //std::vector <igstk::Annotation2D::Pointer >     m_Annotation;
+  igstk::Annotation2D::Pointer     m_Annotation;
 
 
   /** Utility functions */
@@ -179,6 +182,7 @@ private:
   }
 
   void ReadTreatmentPlan();
+  void WriteTreatmentPlan();
   void ConnectImageRepresentation();
 
   /** Callback functions for picking and reslicing image events. */

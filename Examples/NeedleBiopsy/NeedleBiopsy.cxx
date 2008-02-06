@@ -20,7 +20,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "FL/Fl_File_Chooser.H"
 #include "FL/Fl_Input.H"
 #include "igstkEvents.h"
-
+#include "itksys/SystemTools.hxx"
+#include "itksys/Directory.hxx"
 
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy()
@@ -63,7 +64,7 @@ NeedleBiopsy::NeedleBiopsy()
   /** Initialize all member variables and set logger */
   m_ImageReader           = ImageReaderType::New();
   m_LandmarkRegistration  = RegistrationType::New(); 
-  m_Annotation2D          = igstk::Annotation2D::New();
+  m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
   
 
@@ -150,6 +151,7 @@ int NeedleBiopsy::RequestLoadImage()
   {
     igstkLogMacro( DEBUG, 
       "Set ImageReader directory: " << directoryname << "\n" )
+    m_ImageDir = directoryname;
     m_ImageReader->RequestSetDirectory( directoryname ); 
 
     igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
@@ -188,8 +190,11 @@ int NeedleBiopsy::RequestLoadImage()
 *  name has been verified */
 void NeedleBiopsy::ConnectImageRepresentation()
 {
-  m_Annotation2D->RequestSetAnnotationText( 0, "Georgetown ISIS Center" );
-  ViewerGroup->Views[3]->RequestAddAnnotation2D( m_Annotation2D );
+  m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
+  for ( int i=0; i<4; i++)
+  {
+    ViewerGroup->Views[i]->RequestAddAnnotation2D( m_Annotation );
+  }
 
   for ( int i=0; i<6; i++)
   {
@@ -287,13 +292,16 @@ void NeedleBiopsy::ConnectImageRepresentation()
 void NeedleBiopsy::ReadTreatmentPlan()
 {
   igstk::TreatmentPlanIO * reader = new igstk::TreatmentPlanIO;
-  //FIXME
-  // construct file name, same level as ~/DICOMDIR
-  // ~/DICOMDIR_TreatmentPlan.igstk
-  //reader->SetFileName( "./NeedAName" );
-  if ( reader->RequestRead( ) )
+  
+  m_PlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
+  
+  if (itksys::SystemTools::FileExists( m_PlanFilename.c_str()))
   {
-    m_Plan = reader->GetTreatmentPlan();
+    reader->SetFileName( m_PlanFilename );
+    if ( reader->RequestRead( ) )
+    {
+      m_Plan = reader->GetTreatmentPlan();
+    }
   }
   else
   {
@@ -321,6 +329,15 @@ void NeedleBiopsy::ReadTreatmentPlan()
   ChangeSelectedTPlanPoint();
 }
 
+void NeedleBiopsy::WriteTreatmentPlan()
+{
+  igstk::TreatmentPlanIO * writer = new igstk::TreatmentPlanIO;
+  writer->SetFileName( m_PlanFilename );
+  writer->SetTreatmentPlan( m_Plan );
+  writer->RequestWrite();
+}
+
+
 void NeedleBiopsy::ChangeSelectedTPlanPoint()
 {
   ImageSpatialObjectType::PointType    p; 
@@ -338,6 +355,12 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
     p = m_Plan->FiducialPoints[ choice-2];
     m_FiducialPoint->RequestSetTransformAndParent( PointToTransform(p), m_WorldReference );
   }
+
+  char buf[50];
+  sprintf( buf, "[%.2f, %.2f, %.2f] click image to update", p[0], p[1], p[2]);
+  m_Annotation->RequestSetAnnotationText(0, buf);
+  m_Annotation->RequestSetFontColor(0, 0, 0, 1.0);
+  m_Annotation->RequestSetFontSize(0, 14);
 
   if( m_ImageSpatialObject->IsInside( p ) )
   {    
@@ -472,6 +495,15 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
           m_FiducialPoint->RequestSetTransformAndParent( t, m_WorldReference );
           m_Plan->FiducialPoints[ choice-2] = p;
         }
+      
+        char buf[50];
+        sprintf( buf, "[%.2f, %.2f, %.2f] point updated", p[0], p[1], p[2]);
+        m_Annotation->RequestSetAnnotationText(0, buf);
+        m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
+        m_Annotation->RequestSetFontSize(0, 14);
+
+      // We don't need to rewrite the file every time we modify it
+      this->WriteTreatmentPlan();
 
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);

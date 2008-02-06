@@ -28,8 +28,8 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             xywh {45 56 64 20} align 16
           }
           Fl_Choice TPlanPointList {
-            callback {ChangeSelectedTPlanPoint();} open
-            xywh {34 108 100 20} down_box BORDER_BOX labeltype NO_LABEL
+            callback {ChangeSelectedTPlanPoint();} open selected
+            xywh {34 108 100 20} down_box BORDER_BOX align 2
           } {}
         }
         Fl_Group {} {
@@ -114,6 +114,6 @@ else
   }
   Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
   } {}
-  Function {RequestConnectToTracker()} {open selected return_type {virtual void}
+  Function {RequestConnectToTracker()} {open return_type {virtual void}
   } {}
 } 
