@@ -46,6 +46,11 @@ public:
     return m_TreatmentPlan;
   }
 
+  void SetTreatmentPlan(TreatmentPlan * plan)
+  {
+    m_TreatmentPlan = plan;
+  }
+
   TreatmentPlanIO();
   virtual ~TreatmentPlanIO();
 
