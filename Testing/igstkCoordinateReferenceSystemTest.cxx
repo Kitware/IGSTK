@@ -203,7 +203,10 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   igstk::Transform  transform1b;
   if (coordSystemAObserver->GotPayload())
     {
-    transform1b = coordSystemAObserver->GetTransform();
+    ObserverType::PayloadType payload = coordSystemAObserver->GetPayload();
+    transform1b = payload.GetTransform();
+    std::cout << "Got payload with transfrom from " << payload.GetSource()->GetName();
+    std::cout << " to " << payload.GetDestination()->GetName() << std::endl;
 
     igstk::Transform::VectorType translation1b=transform1b.GetTranslation();
 
