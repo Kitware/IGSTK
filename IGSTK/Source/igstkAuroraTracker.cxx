@@ -238,14 +238,14 @@ AuroraTracker::ResultType AuroraTracker
     }
   else
     {
-    //search ports with uninitialized handles
+    // if the tool doesn't come with SROM file is specified
+    // search ports with uninitialized handles
     // initialize ports waiting to be initialized,  
-    // repeat as necessary (in case multi-channel tools are used) 
 
-    bool foundNewTool = false;
+    bool foundTool = false;
 
     //Make several attempts to find uninitialized port
-    const unsigned int NUMBER_OF_ATTEMPTS = 256;
+    const unsigned int NUMBER_OF_ATTEMPTS = 1;
     for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
       {
       m_CommandInterpreter->PHSR(
@@ -259,23 +259,66 @@ AuroraTracker::ResultType AuroraTracker
         }
 
       unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+      igstkLogMacro( INFO, "Uninitialized number of handles found: " 
+                             << ntools << "\n" );
 
-      // Make sure there is one and only one uninitialized port
+      //if no tools are found, attempt again
       if ( ntools == 0 )
         {
         continue;
         }
 
-      // The toolnumber will be assigned to 0 by default
-      unsigned int toolNumber = 0; 
-      ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
-      foundNewTool = true;
-      break;
-      }
+      for(unsigned int toolNumber = 0; toolNumber < ntools ; toolNumber++ )
+        {
+        ph = m_CommandInterpreter->GetPHSRHandle( toolNumber );
+        
+        // Get port handle information
+        m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_PORT_LOCATION);
 
-    if( !foundNewTool )
+        // get the physical port identifier
+        char location[512];
+        m_CommandInterpreter->GetPHINFPortLocation(location);
+
+        // physical port number
+        unsigned int port = 0;
+
+        if (location[9] == '0') // wired tool
+          {
+          unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+          const unsigned int NumberOfPorts = 12;
+          if (ndiport > 0 && ndiport <= NumberOfPorts)
+            {
+            port = ndiport - 1;
+            // check if the port number specified 
+            if ( port != auroraTrackerTool->GetPortNumber() )
+              {
+              //this port doesn't match with what is specified by the user
+              //check the other uninitialized ports found 
+              igstkLogMacro( DEBUG, "Detected Port number: " 
+                             << port 
+                             << " doesn't match with what is provided " 
+                             << auroraTrackerTool->GetPortNumber() << "\n");
+              }
+            else
+              {
+              foundTool = true;
+              break;
+              }
+            }
+          }
+        }
+  
+     if( foundTool )
+       {
+       break;
+       }
+     }
+
+    if( !foundTool )
       {
-      igstkLogMacro(WARNING, "Uninitialized port not found \n");
+      igstkLogMacro(CRITICAL, "Uninitialized port that corresponds to what is specified: "
+                  << auroraTrackerTool->GetPortNumber() << " not found");
       return FAILURE;
       }
     }  
