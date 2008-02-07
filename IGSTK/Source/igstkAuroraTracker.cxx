@@ -254,7 +254,7 @@ AuroraTracker::ResultType AuroraTracker
       if (this->CheckError(m_CommandInterpreter) == FAILURE)
         {
         igstkLogMacro( WARNING, 
-           "igstk::PolarisTracker::Error searching for uninitialized ports ");
+           "igstk::PolarisTracker::Error searching for uninitialized ports \n");
         return FAILURE;
         }
 
@@ -275,7 +275,7 @@ AuroraTracker::ResultType AuroraTracker
 
     if( !foundNewTool )
       {
-      igstkLogMacro(WARNING, "Uninitialized port not found");
+      igstkLogMacro(WARNING, "Uninitialized port not found \n");
       return FAILURE;
       }
     }  
@@ -288,11 +288,11 @@ AuroraTracker::ResultType AuroraTracker
 
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
     {
-    igstkLogMacro(INFO, "Port handle initialized successfully ");
+    igstkLogMacro(INFO, "Port handle initialized successfully \n");
     }
   else
     {
-    igstkLogMacro(CRITICAL, "Failure initializing the port");
+    igstkLogMacro(CRITICAL, "Failure initializing the port \n ");
     }
 
   m_CommandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
@@ -300,7 +300,7 @@ AuroraTracker::ResultType AuroraTracker
   // tool identity and type information
   char identity[512];
   m_CommandInterpreter->GetPHINFToolInfo(identity);
-  igstkLogMacro(INFO, "Tool Information: " << identity); 
+  igstkLogMacro(INFO, "Tool Information: " << identity << "\n"); 
 
   // use tool type information to figure out mode for enabling
   int mode = CommandInterpreterType::NDI_DYNAMIC;
@@ -328,7 +328,7 @@ AuroraTracker::ResultType AuroraTracker
 
   if (this->CheckError(m_CommandInterpreter) == FAILURE)
     {
-    igstkLogMacro(CRITICAL, "Failure accessing tool information" );
+    igstkLogMacro(CRITICAL, "Failure accessing tool information \n" );
     return FAILURE;
     }
 
@@ -353,7 +353,7 @@ AuroraTracker::ResultType AuroraTracker
         igstkLogMacro(CRITICAL, 
           "The tracker tool is probably inserted into the wrong port: " 
           << "The port number specified for the tool doesn't match with " 
-          "what is detected from the hardware");
+          "what is detected from the hardware \n");
         return FAILURE;
         }
       }
@@ -366,13 +366,13 @@ AuroraTracker::ResultType AuroraTracker
     char toolPartNumber[21];
     m_CommandInterpreter->GetPHINFPartNumber( toolPartNumber );
 
-    igstkLogMacro(INFO, "Part number: " << toolPartNumber );
+    igstkLogMacro(INFO, "Part number: " << toolPartNumber << "\n" );
 
     if( toolPartNumber != auroraTrackerTool->GetPartNumber())
       {
       igstkLogMacro(CRITICAL, 
           "The part number specified doesn't match with the information from "
-          "the port handle ");
+          "the port handle \n");
         return FAILURE;
       }
     }
@@ -380,23 +380,23 @@ AuroraTracker::ResultType AuroraTracker
   const int status = m_CommandInterpreter->GetPHINFPortStatus();
 
   // port status
-  igstkLogMacro(INFO, "Port status information: " << status ); 
+  igstkLogMacro(INFO, "Port status information: " << status << "\n" ); 
 
   // tool status
   igstkLogMacro(INFO, 
-    "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus());
+    "Tool status: " <<  m_CommandInterpreter->GetPHINFPortStatus() << "\n" );
 
   // tool type
   igstkLogMacro(INFO, 
-    "Tool type: " << m_CommandInterpreter->GetPHINFToolType());   
+    "Tool type: " << m_CommandInterpreter->GetPHINFToolType() << "\n" );   
 
   // tool accessories
   igstkLogMacro(INFO, 
-    "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories());
+    "Tool accessories: " << m_CommandInterpreter->GetPHINFAccessories() << "\n" );
 
   // tool marker type
   igstkLogMacro(INFO, 
-    "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType());
+    "Marker type: " << m_CommandInterpreter->GetPHINFMarkerType() << "\n" );
 
   // Set the port handle to be added
   m_PortHandleToBeAdded = ph;
