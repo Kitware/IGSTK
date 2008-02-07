@@ -34,6 +34,7 @@
 #include "igstkRealTimeClock.h"
 #include "igstkSimulatedTrackerTool.h"
 #include "igstkCircularSimulatedTracker.h"
+#include "igstkTransformObserver.h"
 
 int igstkTrackerToolReferenceTest( int , char * [] )
 {
@@ -81,6 +82,12 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
+  TrackerToolType::Pointer  referenceTrackerTool = TrackerToolType::New();
+
+  referenceTrackerTool->RequestSetName("Reference");
+  referenceTrackerTool->RequestConfigure();
+  referenceTrackerTool->RequestAttachToTracker( tracker );
+
   typedef igstk::BoxObject                ToolObjectType;
   typedef igstk::BoxObjectRepresentation  ToolRepresentationType;
 
@@ -90,6 +97,14 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
   toolRepresentation->RequestSetBoxObject( toolObject );
   toolRepresentation->SetColor( 1.0, 0.5, 0.5 );
+
+  ToolObjectType::Pointer referenceToolObject = ToolObjectType::New();
+  referenceToolObject->SetSize( 1.0, 1.0, 1.0 );
+
+  ToolRepresentationType::Pointer referenceToolRepresentation = ToolRepresentationType::New();
+  referenceToolRepresentation->RequestSetBoxObject( toolObject );
+  referenceToolRepresentation->SetColor( 0.5, 1.0, 0.5 );
+
 
   typedef igstk::CylinderObject                TargetObjectType;
   typedef igstk::CylinderObjectRepresentation  TargetRepresentationType;
@@ -122,6 +137,24 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject );
   view3D->RequestSetTransformAndParent( identity, axesObject );
 
+  // Create calibration transforms
+  igstk::Transform calibrationToolTransform;
+  translation[0] =    0;
+  translation[1] =    0;
+  translation[2] = -1.0;
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  calibrationToolTransform.SetTranslation(
+    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
+  trackerTool->SetCalibrationTransform( calibrationToolTransform );
+
+  igstk::Transform calibrationReferenceToolTransform;
+  translation[0] =    0;
+  translation[1] =    0;
+  translation[2] =  1.0;
+  calibrationToolTransform.SetTranslation(
+    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
+  referenceTrackerTool->SetCalibrationTransform( calibrationReferenceToolTransform );
+
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
   view3D->SetCameraPosition( 10.0, 5.0, 3.0 );
@@ -130,7 +163,15 @@ int igstkTrackerToolReferenceTest( int , char * [] )
 
   view3D->RequestAddObject( axesRepresentation );
   view3D->RequestAddObject( toolRepresentation );
+  view3D->RequestAddObject( referenceToolRepresentation );
   view3D->RequestAddObject( targetRepresentation );
+
+  typedef igstk::TransformObserver ObserverType;
+  ObserverType::Pointer transformObserver = ObserverType::New();
+
+  transformObserver->ObserveTransformEventsFrom( trackerTool );
+
+  typedef igstk::CoordinateReferenceSystem   ReferenceSystemType;
 
   view3D->RequestStart();
 
@@ -138,6 +179,19 @@ int igstkTrackerToolReferenceTest( int , char * [] )
     {
     igstk::PulseGenerator::Sleep(50);
     igstk::PulseGenerator::CheckTimeouts();
+
+    // Request the transform
+    transformObserver->Clear();
+    trackerTool->RequestComputeTransformTo( referenceTrackerTool );
+    if( transformObserver->GotTransform() )
+      {
+      igstk::TransformObserver::PayloadType payload = 
+        transformObserver->GetTransformBetweenCoordinateSystems();
+      const ReferenceSystemType * source = payload.GetSource();
+      const ReferenceSystemType * destination = payload.GetDestination();
+      igstk::Transform transform = transformObserver->GetTransform();
+      std::cout << transform << std::endl;
+      }
     }
 
   tracker->RequestStartTracking();
