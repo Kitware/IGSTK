@@ -74,8 +74,8 @@ public:
 private:
 
   Transform                                 m_Transform;
-  CoordinateReferenceSystem::ConstPointer   m_Source;
-  CoordinateReferenceSystem::ConstPointer   m_Destination;
+  const CoordinateReferenceSystem       *   m_Source;
+  const CoordinateReferenceSystem       *   m_Destination;
 
 };
 
