@@ -22,92 +22,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkRealTimeClock.h"
+#include "igstkTransformObserver.h"
 
 namespace CoordinateReferenceSystemTest2
 {
-class CoordinateReferenceSystemObserver : public ::itk::Command
-{
-public:
-  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
-  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
-
-  /** Standard class typedefs. */
-  typedef CoordinateReferenceSystemObserver                 Self;
-  typedef ::itk::Command                                    Superclass;
-  typedef ::itk::SmartPointer<Self>                         Pointer;
-  typedef ::itk::SmartPointer<const Self>                   ConstPointer;
-  
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
-  itkNewMacro(CoordinateReferenceSystemObserver);
-
-  typedef ::igstk::Transform                                TransformType;
-
-  CoordinateReferenceSystemObserver()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  ~CoordinateReferenceSystemObserver()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  void ClearPayload()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-    {
-    this->ClearPayload();
-    if( EventType().CheckEvent( &event ) )
-      {
-      const EventType * transformEvent = 
-                dynamic_cast< const EventType *>( &event );
-      if( transformEvent )
-        {
-        m_Payload = transformEvent->Get();
-        m_GotPayload = true;
-        }
-      }
-    else
-      {
-      std::cout << "Got unexpected event : " << std::endl;
-      event.Print(std::cout);
-      }
-    }
-
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    this->Execute(static_cast<const itk::Object*>(caller), event);
-    }
-
-  bool GotPayload() const
-    {
-    return m_GotPayload;
-    }
-
-  const PayloadType & GetPayload() const
-    {
-    return m_Payload;
-    }
-
-  const TransformType & GetTransform() const
-    {
-    return m_Payload.GetTransform();
-    }
-
-protected:
-
-  TransformType m_Transform;
-  PayloadType   m_Payload;
-  bool          m_GotPayload;
-
-};
 
 /** Using this could make debugging painful... */
 igstk::Transform GetRandomTransform()
@@ -153,11 +71,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   typedef TimeStampType::TimePeriodType       TimePeriodType;
   typedef CoordSysType::Pointer               CoordinateSystemPointer;
   typedef CoordSysType::ConstPointer          ConstCoordinateSystemPointer;
-  typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
-                                              CoordinateReferenceSystemObserver;
-
-  typedef CoordinateReferenceSystemTest2::CoordinateReferenceSystemObserver
-                                       ::EventType CoordinateSystemEventType;
+  typedef igstk::TransformObserver            TransformObserverType;
 
   const TransformType::ErrorType              transformErrorValue = 1e-5;
   const TimePeriodType aReallyLongTime 
@@ -192,9 +106,9 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   root->GetName(); // coverage
   root->SetLogger( logger );
 
-  CoordinateReferenceSystemObserver::Pointer rootObserver = 
-                                    CoordinateReferenceSystemObserver::New();
-  root->AddObserver( CoordinateSystemEventType(), rootObserver );
+  TransformObserverType::Pointer rootObserver = 
+                                    TransformObserverType::New();
+  rootObserver->ObserveTransformEventsFrom( root );
 
   CoordinateSystemPointer A = CoordSysType::New();
   A->SetName( "A" );
@@ -279,10 +193,11 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   std::cout << "Checking transform from root to A : ";
   
+  rootObserver->Clear();
   root->RequestComputeTransformTo(A);
 
   TransformType TRootA;
-  if (rootObserver->GotPayload())
+  if( rootObserver->GotTransform() )
     {
     TRootA = rootObserver->GetTransform();
 
@@ -304,15 +219,15 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset the internal boolean flags
+  rootObserver->Clear();
 
   std::cout << "Checking transform from root to B : ";
 
   root->RequestComputeTransformTo(B);
   TransformType TRootB;
 
-  if (rootObserver->GotPayload())
+  if( rootObserver->GotTransform() )
     {
     TRootB = rootObserver->GetTransform();
 
@@ -334,14 +249,14 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset the internal boolean flags
+  rootObserver->Clear();
 
   std::cout << "Checking transform from root to C : "; 
   root->RequestComputeTransformTo(C);
   TransformType TRootC;
 
-  if (rootObserver->GotPayload())
+  if( rootObserver->GotTransform() )
     {
     TRootC = rootObserver->GetTransform();
 
@@ -364,13 +279,13 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset internal boolean flags.
+  rootObserver->Clear();
 
   std::cout << "Checking transform from root to D : "; 
   root->RequestComputeTransformTo(D);
   TransformType TRootD;
-  if (rootObserver->GotPayload())
+  if( rootObserver->GotTransform() )
     {
     TRootD = rootObserver->GetTransform();
 
@@ -393,8 +308,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "FAILED! rootObserver did not get event." << std::endl;
     }
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset internal boolean flags.
+  rootObserver->Clear();
 
   std::cout << "Checking transform from root to E : " ;
   TimeStampType now;
@@ -402,7 +317,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
 
   root->RequestComputeTransformTo(E);
   TransformType TRootE;
-  if (rootObserver->GotPayload())
+  if( rootObserver->GotTransform() )
     {
     // Disconnected, shouldn't get a transform
     testPassed = EXIT_FAILURE;
@@ -413,8 +328,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     std::cout << "passed." << std::endl;
     }
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset internal boolean flags.
+  rootObserver->Clear();
 
   root->RequestSetTransformAndParent( identity, A );
   root->RequestSetTransformAndParent( identity, B );
@@ -422,16 +337,16 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   root->RequestComputeTransformTo( NULL );
   root->RequestComputeTransformTo( root );
 
-  // Break references in the observer.
-  rootObserver->ClearPayload();
+  // Reset internal boolean flags.
+  rootObserver->Clear();
 
-  CoordinateReferenceSystemObserver::Pointer FObserver = 
-                                    CoordinateReferenceSystemObserver::New();
-  F->AddObserver( CoordinateSystemEventType(), FObserver );
+  TransformObserverType::Pointer FObserver = 
+                                    TransformObserverType::New();
+  FObserver->ObserveTransformEventsFrom( F );
   F->RequestComputeTransformTo(G);
 
   std::cout << "Checking transform from F to G : ";
-  if (FObserver->GotPayload())
+  if( FObserver->GotTransform() )
     {
     TransformType TFG = FObserver->GetTransform();
 
@@ -458,18 +373,18 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     testPassed = EXIT_FAILURE;
     }
 
-  // Break references in the observer.
-  FObserver->ClearPayload();
+  // Reset internal boolean flags.
+  FObserver->Clear();
 
   std::cout << "Checking transform from D to F : ";
 
-  CoordinateReferenceSystemObserver::Pointer DObserver = 
-                                    CoordinateReferenceSystemObserver::New();
-  D->AddObserver( CoordinateSystemEventType(), DObserver );
+  TransformObserverType::Pointer DObserver = 
+                                    TransformObserverType::New();
+  DObserver->ObserveTransformEventsFrom( D );
 
   D->RequestComputeTransformTo(F);
 
-  if (DObserver->GotPayload())
+  if( DObserver->GotTransform() )
     {
     TransformType TDF = DObserver->GetTransform();
 
@@ -497,8 +412,8 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
     testPassed = EXIT_FAILURE;
     }
 
-  // Break references in the observer.
-  DObserver->ClearPayload();
+  // Reset internal boolean flags.
+  DObserver->Clear();
 
   E->RequestDetach(); // coverage
   F->RequestDetach(); // coverage
