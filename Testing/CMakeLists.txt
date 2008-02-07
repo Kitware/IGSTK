@@ -86,6 +86,7 @@ SET(SandboxTests_SRCS
   igstkVascularNetworkObjectTest.cxx
   igstkTransductionMacroTest.cxx
   igstkObjectRepresentationRemovalTest.cxx
+  igstkTrackerToolReferenceTest.cxx
   )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -168,6 +169,7 @@ ADD_TEST( igstkCoordinateReferenceSystemDelegatorTest ${IGSTKSandbox_TESTS} igst
 ADD_TEST( igstkSpatialObjectCoordinateSystemTest3 ${IGSTKSandbox_TESTS} igstkSpatialObjectCoordinateSystemTest3)
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
+ADD_TEST( igstkTrackerToolReferenceTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
     ADD_TEST( igstkPolarisTrackerTest2  

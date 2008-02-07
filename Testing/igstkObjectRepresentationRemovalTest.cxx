@@ -100,6 +100,8 @@ int igstkObjectRepresentationRemovalTest( int argc, char* argv[] )
     igstk::PulseGenerator::CheckTimeouts();
     }
 
+  delete widget;
+
   // The goal is to exit without a crash.
   return EXIT_SUCCESS;
 }
