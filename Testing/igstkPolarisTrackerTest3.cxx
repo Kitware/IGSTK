@@ -36,7 +36,9 @@
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkTransform.h"
+#include "igstkTransformObserver.h"
 
+// FIXME : REMOVE THIS CLASS: IT IS NOW REPLACED BY THE igstkTransformObserver.
 class CoordinateReferenceSystemObserver : public ::itk::Command
 {
 public:
@@ -174,7 +176,7 @@ int igstkPolarisTrackerTest3( int argc, char * argv[] )
   PolarisTrackerTest2Command::Pointer 
                                 my_command = PolarisTrackerTest2Command::New();
 
-  typedef CoordinateReferenceSystemObserver ObserverType;
+  typedef TransformObserver        ObserverType;
   typedef ObserverType::EventType CoordinateSystemEventType;
 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
@@ -241,8 +243,7 @@ int igstkPolarisTrackerTest3( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
   //Add observer to listen to transform events 
-  trackerTool->AddObserver( CoordinateSystemEventType(), 
-                                  coordSystemAObserver );
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   //start tracking 
   std::cout << "Start tracking..." << std::endl;
@@ -272,8 +273,9 @@ int igstkPolarisTrackerTest3( int argc, char * argv[] )
               << ")" << std::endl;
 
     //Second option: use coordinate system convenience method
+    coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotPayload())
+    if( coordSystemAObserver->GotTransform() )
       {
       transform = coordSystemAObserver->GetTransform();
       position = transform.GetTranslation();
@@ -309,8 +311,9 @@ int igstkPolarisTrackerTest3( int argc, char * argv[] )
               << ")" << std::endl;
 
     //Second option: use coordinate system convenience method
+    coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotPayload())
+    if( coordSystemAObserver->GotTransform() )
       {
       transform = coordSystemAObserver->GetTransform();
       position = transform.GetTranslation();

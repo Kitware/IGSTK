@@ -36,89 +36,7 @@
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkTransform.h"
-
-class CoordinateReferenceSystemObserver : public ::itk::Command
-{
-public:
-  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
-  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
-  typedef igstk::Transform                                  TransformType;
-
-  /** Standard class typedefs. */
-  typedef CoordinateReferenceSystemObserver         Self;
-  typedef ::itk::Command                            Superclass;
-  typedef ::itk::SmartPointer<Self>        Pointer;
-  typedef ::itk::SmartPointer<const Self>  ConstPointer;
-  
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CoordinateReferenceSystemObserver, ::itk::Command);
-  itkNewMacro(CoordinateReferenceSystemObserver);
-
-  CoordinateReferenceSystemObserver()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  ~CoordinateReferenceSystemObserver()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  void ClearPayload()
-    {
-    m_GotPayload = false;
-    m_Payload.Clear();
-    }
-
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-    {
-    this->ClearPayload();
-    if( EventType().CheckEvent( &event ) )
-      {
-      const EventType * transformEvent = 
-                dynamic_cast< const EventType *>( &event );
-      if( transformEvent )
-        {
-        m_Payload = transformEvent->Get();
-        m_GotPayload = true;
-        }
-      }
-    else
-      {
-      std::cout << "Got unexpected event : " << std::endl;
-      event.Print(std::cout);
-      }
-    }
-
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-    {
-    this->Execute(static_cast<const itk::Object*>(caller), event);
-    }
-
-  bool GotPayload() const
-    {
-    return m_GotPayload;
-    }
-
-  const PayloadType & GetPayload() const
-    {
-    return m_Payload;
-    }
-
-  const TransformType & GetTransform() const
-    {
-    return m_Payload.GetTransform();
-    }
-
-protected:
-
-  TransformType m_Transform;
-  PayloadType   m_Payload;
-  bool          m_GotPayload;
-
-};
+#include "igstkTransformObserver.h"
 
 class PolarisTrackerTest2Command : public itk::Command 
 {
@@ -175,9 +93,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   PolarisTrackerTest2Command::Pointer 
                                 my_command = PolarisTrackerTest2Command::New();
 
-  typedef CoordinateReferenceSystemObserver ObserverType;
-  typedef ObserverType::EventType CoordinateSystemEventType;
-
+  typedef igstk::TransformObserver   ObserverType;
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
  
   std::string filename = argv[1];
@@ -240,8 +156,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
   //Add observer to listen to transform events 
-  trackerTool->AddObserver( CoordinateSystemEventType(), 
-                                  coordSystemAObserver );
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   //start tracking 
   std::cout << "Start tracking..." << std::endl;
@@ -271,8 +186,9 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
               << ")" << std::endl;
 
     //Second option: use coordinate system convenience method
+    coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotPayload())
+    if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
       position = transform.GetTranslation();
@@ -308,8 +224,9 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
               << ")" << std::endl;
 
     //Second option: use coordinate system convenience method
+    coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotPayload())
+    if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
       position = transform.GetTranslation();
