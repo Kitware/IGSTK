@@ -175,14 +175,16 @@ int igstkTrackerToolReferenceTest( int , char * [] )
 
   view3D->RequestStart();
 
-  for( unsigned int i = 0; i < 100; i++ )
+  std::cout << "Transforms with respect to the tracker." << std::endl;
+
+  for( unsigned int i = 0; i < 30; i++ )
     {
     igstk::PulseGenerator::Sleep(50);
     igstk::PulseGenerator::CheckTimeouts();
 
-    // Request the transform
+    // Request the transform with respect to the tracker
     transformObserver->Clear();
-    trackerTool->RequestComputeTransformTo( referenceTrackerTool );
+    trackerTool->RequestComputeTransformTo( tracker );
     if( transformObserver->GotTransform() )
       {
       igstk::TransformObserver::PayloadType payload = 
@@ -199,16 +201,30 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   view3D->RequestStop();
   tracker->RequestStopTracking();
 
-  toolRepresentation->SetColor( 0.5, 1.0, 0.5 );
+  std::cout << "Transforms with respect to the reference tracker tool" << std::endl;
 
   view3D->RequestStart();
   tracker->RequestStartTracking();
 
   // Show now the cube being tracked
-  for( unsigned int i = 0; i < 3000; i++ )
+  for( unsigned int i = 0; i < 30; i++ )
     {
     igstk::PulseGenerator::Sleep(50);
     igstk::PulseGenerator::CheckTimeouts();
+
+    // Request the transform with respect to the reference tracker tool
+    transformObserver->Clear();
+    trackerTool->RequestComputeTransformTo( referenceTrackerTool );
+    if( transformObserver->GotTransform() )
+      {
+      igstk::TransformObserver::PayloadType payload = 
+        transformObserver->GetTransformBetweenCoordinateSystems();
+      const ReferenceSystemType * source = payload.GetSource();
+      const ReferenceSystemType * destination = payload.GetDestination();
+      igstk::Transform transform = transformObserver->GetTransform();
+      std::cout << transform << std::endl;
+      }
+
     }
 
   view3D->RequestStop();
