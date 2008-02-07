@@ -30,6 +30,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkVTKLoggerOutput.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
 
 namespace CoordinateReferenceSystemTest
 {
@@ -38,6 +39,7 @@ class CoordinateReferenceSystemObserver : public ::itk::Command
 public:
   typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
   typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+  typedef igstk::TransformNotAvailableEvent                 ErrorEventType;
 
   /** Standard class typedefs. */
   typedef CoordinateReferenceSystemObserver                 Self;
@@ -80,6 +82,20 @@ public:
         {
         m_Payload = transformEvent->Get();
         m_GotPayload = true;
+        }
+      }
+    else if ( ErrorEventType().CheckEvent( &event ) )
+      {
+        const igstk::CoordinateReferenceSystemTransformToDisconnectedEvent* 
+          errorEvent = dynamic_cast< const 
+          igstk::CoordinateReferenceSystemTransformToDisconnectedEvent* >( &event );
+      if ( errorEvent )
+        {
+        igstk::CoordinateReferenceSystemTransformToErrorResult payload = errorEvent->Get();
+
+        std::cerr << "Got Disconnected event from " << payload.GetSource()->GetName();
+        std::cerr << " to " << payload.GetDestination()->GetName() << std::endl;
+        payload.Clear();
         }
       }
     else
@@ -134,6 +150,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
                 CoordinateReferenceSystemObserver
                                                      ObserverType;
   typedef ObserverType::EventType                    CoordinateSystemEventType;
+  typedef ObserverType::ErrorEventType                    CoordinateSystemErrorEventType;
 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -151,6 +168,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   typedef igstk::CoordinateReferenceSystem  ObjectType;
   ObjectType::Pointer coordinateSystemA = ObjectType::New();
   coordinateSystemA->SetLogger( logger );
+  coordinateSystemA->SetName( "A" );
 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordinateSystemA->AddObserver( CoordinateSystemEventType(), 
@@ -175,6 +193,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
 
 
   ObjectType::Pointer coordinateSystemRoot = ObjectType::New();
+  coordinateSystemRoot->SetName( "Root" );
 
   coordinateSystemA->RequestSetTransformAndParent( transform1, 
                                                    coordinateSystemRoot );
@@ -225,6 +244,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
     } // GotPayload failed
 
   ObjectType::Pointer coordinateSystemB = ObjectType::New();
+  coordinateSystemB->SetName( "B" );
   coordinateSystemB->SetLogger( logger );
 
   ObserverType::Pointer coordSystemBObserver = ObserverType::New();
@@ -302,6 +322,16 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
     testResult = EXIT_FAILURE;
     std::cout << "No transform computed. [FAILED]" << std::endl;
     } // GotPayload failed
+
+  ObserverType::Pointer coordSystemDisconnectedObserver = ObserverType::New();
+  ObjectType::Pointer coordinateSystemDisconnected = ObjectType::New();
+  coordinateSystemDisconnected->SetName( "Disconnected" );
+  coordinateSystemDisconnected->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemDisconnectedObserver );
+  coordinateSystemDisconnected->AddObserver( CoordinateSystemErrorEventType(), 
+                                  coordSystemDisconnectedObserver );
+
+  coordinateSystemDisconnected->RequestComputeTransformTo( coordinateSystemA );
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
