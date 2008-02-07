@@ -106,6 +106,9 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     igstkPolarisTrackerTest3.cxx )
 
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+    igstkPolarisTrackerTest4.cxx )
+
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
     igstkPolarisTrackerToolTest.cxx
   )
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -178,6 +181,13 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               igstkPolarisTrackerTest3
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              )
+    ADD_TEST( igstkPolarisTrackerTest4  
+              ${IGSTKSandbox_TESTS}
+              igstkPolarisTrackerTest4
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
+              0
+              1
               )
  
   ADD_TEST(igstkPolarisTrackerToolTest ${IGSTKSandbox_TESTS}

@@ -76,6 +76,7 @@ void RegisterTests()
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest2);
   REGISTER_TEST(igstkPolarisTrackerTest3);
+  REGISTER_TEST(igstkPolarisTrackerTest4);
 #endif
 
 

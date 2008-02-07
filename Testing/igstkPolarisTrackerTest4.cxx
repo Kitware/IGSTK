@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerTest2.cxx
+  Module:    igstkPolarisTrackerTest4.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -120,15 +120,15 @@ protected:
 
 };
 
-class PolarisTrackerTest2Command : public itk::Command 
+class PolarisTrackerTest4Command : public itk::Command 
 {
 public:
-  typedef  PolarisTrackerTest2Command   Self;
+  typedef  PolarisTrackerTest4Command   Self;
   typedef  itk::Command                Superclass;
   typedef itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 protected:
-  PolarisTrackerTest2Command() {};
+  PolarisTrackerTest4Command() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -147,9 +147,8 @@ public:
     }
 };
 
-
-/** This program tests using a wireless tracker tool */
-int igstkPolarisTrackerTest2( int argc, char * argv[] )
+/** This program tests multiple wired tracker tools */
+int igstkPolarisTrackerTest4( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
@@ -157,11 +156,12 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
-                            << "Wireless_SROM_filename "
+                            << "port_number1 "
+                            << "port_number2 "
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -172,8 +172,8 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   igstk::SerialCommunication::Pointer 
                      serialComm = igstk::SerialCommunication::New();
 
-  PolarisTrackerTest2Command::Pointer 
-                                my_command = PolarisTrackerTest2Command::New();
+  PolarisTrackerTest4Command::Pointer 
+                                my_command = PolarisTrackerTest4Command::New();
 
   typedef CoordinateReferenceSystemObserver ObserverType;
   typedef ObserverType::EventType CoordinateSystemEventType;
@@ -203,7 +203,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest2.txt" );
+  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest4.txt" );
   serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
@@ -225,14 +225,14 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-  // instantiate and attach wireless tracker tool  
+  // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
-  //Select wireless tracker tool
-  trackerTool->RequestSelectWirelessTrackerTool();
-  //Set the SROM file
-  std::string SROMfileName = argv[2];
-  trackerTool->RequestSetSROMFileName(SROMfileName); 
+  //Select wired tracker tool
+  trackerTool->RequestSelectWiredTrackerTool();
+  //Set the port number
+  unsigned int portNumber1 = atoi(argv[2]); 
+  trackerTool->RequestSetPortNumber( portNumber1 );
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
@@ -242,6 +242,26 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   //Add observer to listen to transform events 
   trackerTool->AddObserver( CoordinateSystemEventType(), 
                                   coordSystemAObserver );
+
+  // instantiate and attach a second wired tracker tool  
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  //Select wired tracker tool
+  trackerTool2->RequestSelectWiredTrackerTool();
+  //Set the port number
+  unsigned int portNumber2 = atoi(argv[3]); 
+  trackerTool2->RequestSetPortNumber( portNumber2 );
+  //Configure
+  trackerTool2->RequestConfigure();
+  //Attach to the tracker
+  trackerTool2->RequestAttachToTracker( tracker );
+  //Add observer to listen to events throw by the tracker tool
+  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  //Add observer to listen to transform events 
+  trackerTool2->AddObserver( CoordinateSystemEventType(), 
+                                  coordSystemAObserver );
+
+
 
   //start tracking 
   std::cout << "Start tracking..." << std::endl;
@@ -260,26 +280,19 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     VectorType                position;
 
 
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
     transform = trackerTool->GetCalibratedTransform();
-
     position = transform.GetTranslation();
     std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
-    //Second option: use coordinate system convenience method
-    trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotPayload())
-      {
-      transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
+    transform = trackerTool2->GetCalibratedTransform();
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-      }
     }
   
   std::cout << "Stop Tracking" << std::endl;
