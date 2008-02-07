@@ -32,6 +32,7 @@ class TransformObserver : public ::itk::Command
 {
 public:
   igstkStandardClassBasicTraitsMacro( TransformObserver, ::itk::Command );
+  igstkNewMacro( Self );  
 
 protected:
   TransformObserver() 
