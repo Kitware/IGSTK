@@ -201,9 +201,9 @@ PolarisTracker::ResultType PolarisTracker
   // port handle
   int ph;
 
-  if( wirelessTool || SROMFileSpecified ) 
+  if( wirelessTool ) 
     {
-    // wireless tool or SROMFile specified
+    // wireless tool 
     std::ifstream sromFile; 
     std::string SROMFileName = polarisTrackerTool->GetSROMFileName();
     sromFile.open(SROMFileName.c_str(), std::ios::binary );
@@ -217,7 +217,6 @@ PolarisTracker::ResultType PolarisTracker
 
     // most SROM files don't contain the whole 1024 bytes, they only
     // contain whatever is necessary, so the rest should be filled with zero
-   
     const unsigned int SROM_FILE_DATA_SIZE = 1024; 
     char data[SROM_FILE_DATA_SIZE]; 
     memset( data, 0, SROM_FILE_DATA_SIZE );
@@ -225,25 +224,11 @@ PolarisTracker::ResultType PolarisTracker
     sromFile.close();
 
     // request port handle using PHRQ
-    // the "port" parameter must be set to "**" to support the Vicra
-    // for wireless
-    if( wirelessTool )
-      {      
-      m_CommandInterpreter->PHRQ("********", // device number
+    m_CommandInterpreter->PHRQ("********", // device number
                                "*",        // TIU or SCU
                                "1",        // wireless
                                "**",       // port
                                "**");      // channel
-      }
-    else
-      {
-      m_CommandInterpreter->PHRQ("********", // device number
-                               "*",        // TIU or SCU
-                               "0",        // wired 
-                               "**",       // port
-                               "**");      // channel
-      }
-
     if (this->CheckError(m_CommandInterpreter) == FAILURE)
       {
       return FAILURE;
@@ -264,9 +249,8 @@ PolarisTracker::ResultType PolarisTracker
     }
   else
     {
-    // if the tool is not wireless and if no SROM file is specified
-    // search ports with uninitialized handles
-    // initialize ports waiting to be initialized,  
+    // if the tool is not wireless, search ports with 
+    // uninitialized handles
 
     bool foundTool = false;
 
@@ -335,11 +319,11 @@ PolarisTracker::ResultType PolarisTracker
           }
         }
   
-     if( foundTool )
-       {
-       break;
-       }
-     }
+    if( foundTool )
+      {
+      break;
+      }
+    }
 
     if( !foundTool )
       {
@@ -347,12 +331,44 @@ PolarisTracker::ResultType PolarisTracker
                   << polarisTrackerTool->GetPortNumber() << " not found");
       return FAILURE;
       }
+
+    // if SROM file is specified then, override the
+    // SROM image file on the hardware using PVWR.
+    if( SROMFileSpecified ) 
+      {
+      std::ifstream sromFile; 
+      std::string SROMFileName = polarisTrackerTool->GetSROMFileName();
+      sromFile.open(SROMFileName.c_str(), std::ios::binary );
+
+      if (!sromFile.is_open())
+      {
+      igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
+                   << SROMFileName << " ...\n");
+      return FAILURE;
+      }
+
+      // most SROM files don't contain the whole 1024 bytes, they only
+      // contain whatever is necessary, so the rest should be filled with zero
+      const unsigned int SROM_FILE_DATA_SIZE = 1024;
+      char data[SROM_FILE_DATA_SIZE]; 
+      memset( data, 0, SROM_FILE_DATA_SIZE );
+      sromFile.read( data, SROM_FILE_DATA_SIZE );
+      sromFile.close();
+
+      for ( unsigned int i = 0; i < SROM_FILE_DATA_SIZE; i += 64)
+        {
+        // holds hexidecimal data to be sent to device
+        char hexbuffer[129]; 
+
+        // convert data to hexidecimal and write to virtual SROM in
+        // 64-byte chunks
+        m_CommandInterpreter->HexEncode(hexbuffer, &data[i], 64);
+        m_CommandInterpreter->PVWR(ph, i, hexbuffer);
+        }
+      }
     }  
 
-  // Once we got the port handle, we can continue on with initializing
-  // and enabling the port
-
-  // initialize the port 
+   // initialize the port 
   m_CommandInterpreter->PINIT(ph);
 
   if (this->CheckError(m_CommandInterpreter) == SUCCESS)
