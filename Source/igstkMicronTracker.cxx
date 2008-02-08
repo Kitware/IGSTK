@@ -707,6 +707,17 @@ RemoveTrackerToolFromInternalDataContainers
   return SUCCESS;
 }
 
+/** Needs to be called every time when exiting tracking state. */ 
+void MicronTracker::ExitTrackingStateProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::ExitTrackingStateProcessing "
+                 "called ...\n");
+
+  //Exit tracking without terminating the tracking thread.
+  //Otherwise, everytime we start tracking, we will need to
+  //reattach the camera
+  this->ExitTrackingWithoutTerminatingTrackingThread();
+}
 
 /** Print Self function */
 void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
