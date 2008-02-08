@@ -778,10 +778,10 @@ void Tracker::UpdateStatusSuccessProcessing( void )
       TransformType toolCalibrationTransform
         = (inputItr->second)->GetCalibrationTransform();
       
-      TransformType toolCalibratedTransform;
 
+      TransformType toolCalibratedTransform;
       toolCalibratedTransform =
-         toolCalibratedTransform.TransformCompose( toolRawTransform, toolCalibratedTransform );
+         toolCalibratedTransform.TransformCompose( toolRawTransform, toolCalibrationTransform );
 
       (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
         
