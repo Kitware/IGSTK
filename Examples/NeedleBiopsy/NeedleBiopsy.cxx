@@ -127,7 +127,12 @@ NeedleBiopsy::NeedleBiopsy()
   m_ViewPickerObserver->SetCallbackFunction( this, &NeedleBiopsy::Picking );
 
   m_ViewResliceObserver = LoadedObserverType::New();
-  m_ViewResliceObserver->SetCallbackFunction( this, &NeedleBiopsy::ResliceImage);
+  m_ViewResliceObserver->SetCallbackFunction( this, 
+                                                &NeedleBiopsy::ResliceImage);
+
+  m_TrackerConfigurationObserver = LoadedObserverType::New();
+  m_TrackerConfigurationObserver->SetCallbackFunction( this, 
+                                    &NeedleBiopsy::RequestInitializeTracker);
 
   m_ImageRepresentation.clear();
   for (int i=0; i<6; i++)
@@ -382,31 +387,125 @@ void NeedleBiopsy::RequestConnectToTracker()
     {
     igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
     config.SetTrackerType( igstk::TrackerConfiguration::Polaris );
-    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
-    gui->SetConfiguration( config );
+    PolarisTrackerConfigurationGUI * gui;
+    m_TrackerConfigurationGUI = gui = new PolarisTrackerConfigurationGUI();
+    m_TrackerConfigurationGUI->SetConfiguration( config );
+    m_TrackerConfigurationGUI->RemoveAllObservers();
+    m_TrackerConfigurationGUI->AddObserver( 
+      igstk::TrackerConfigurationGUIBase::ConfigurationEvent(), 
+      m_TrackerConfigurationObserver);
     }
     break;
   case 1:
     {
     igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
     config.SetTrackerType( igstk::TrackerConfiguration::Aurora );
-    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
-    gui->SetConfiguration( config );
+    PolarisTrackerConfigurationGUI * gui;
+    m_TrackerConfigurationGUI = gui = new PolarisTrackerConfigurationGUI();
+    m_TrackerConfigurationGUI->SetConfiguration( config );
+    m_TrackerConfigurationGUI->RemoveAllObservers();
+    m_TrackerConfigurationGUI->AddObserver( 
+      igstk::TrackerConfigurationGUIBase::ConfigurationEvent(), 
+      m_TrackerConfigurationObserver);
     }
     break;
   case 2:
     {
     igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
     config.SetTrackerType( igstk::TrackerConfiguration::Micron );
-    PolarisTrackerConfigurationGUI * gui = new PolarisTrackerConfigurationGUI();
-    gui->SetConfiguration( config );
+    PolarisTrackerConfigurationGUI * gui;
+    m_TrackerConfigurationGUI = gui = new PolarisTrackerConfigurationGUI();
+    m_TrackerConfigurationGUI->SetConfiguration( config );
+    m_TrackerConfigurationGUI->RemoveAllObservers();
+    m_TrackerConfigurationGUI->AddObserver( 
+      igstk::TrackerConfigurationGUIBase::ConfigurationEvent(), 
+      m_TrackerConfigurationObserver);
     }
     break;
   }
+
 }
 
-void NeedleBiopsy::RequestInitializeTracker()
+void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 {
+  std::cout << "I am getting called!\n";
+  typedef igstk::TrackerConfigurationGUIBase  GUIType;
+  if ( GUIType::ConfigurationEvent().CheckEvent( &event ) )
+  {
+    GUIType::ConfigurationEvent *confEvent = 
+                                   ( GUIType::ConfigurationEvent *) & event;
+
+    //igstk::TrackerConfiguration  tc = confEvent->Get();
+
+    igstk::TrackerConfiguration  * tc = new igstk::TrackerConfiguration;
+    tc->SetTrackerType( igstk::TrackerConfiguration::Aurora );
+
+    igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;    
+    conf->COMPort = igstk::SerialCommunication::PortNumber3;
+    conf->Frequency = 30;
+    
+    igstk::NDITrackerToolConfiguration * tool = new igstk::NDITrackerToolConfiguration;
+    tool->Is5DOF        = 1;
+    tool->PortNumber    = 0;
+    tool->ChannelNumber = 0;
+    tool->HasSROM       = 0;
+    tool->IsReference   = 0;    
+    conf->TrackerToolList.push_back( tool );
+
+    igstk::NDITrackerToolConfiguration * tool2 = new igstk::NDITrackerToolConfiguration;
+    tool2->Is5DOF        = 1;
+    tool2->PortNumber    = 0;
+    tool2->ChannelNumber = 1;
+    tool2->HasSROM       = 0;
+    tool2->IsReference   = 0;
+    conf->TrackerToolList.push_back( tool2 );
+
+    igstk::NDITrackerToolConfiguration * tool3 = new igstk::NDITrackerToolConfiguration;
+    tool3->Is5DOF        = 0;
+    tool3->PortNumber    = 1;
+    //tool->ChannelNumber = 1;
+    tool3->HasSROM       = 1;
+    tool3->SROMFile      = "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
+    tool3->IsReference   = 0;
+    conf->TrackerToolList.push_back( tool3 );
+
+    tc->SetNDITrackerConfiguration( conf );
+
+    igstk::TrackerInitializer * initializer = new igstk::TrackerInitializer;
+    initializer->SetTrackerConfiguration( tc );
+    
+    if ( initializer->RequestInitializeTracker() )
+    {      
+      for(unsigned int i=0; i<100; i++)
+      {
+        initializer->GetTracker()->RequestUpdateStatus();
+
+        igstk::Transform                            transform;
+        igstk::Transform::VectorType                position;
+
+        for ( int i=0; i<initializer->GetNonReferenceToolList().size(); i++)
+        {
+        
+        if (initializer->HasReferenceTool())
+        {
+          transform = initializer->GetNonReferenceToolList()[i]->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+        }
+        else
+        {
+          transform = initializer->GetNonReferenceToolList()[i]->GetCalibratedTransform();
+        }
+        
+        position = transform.GetTranslation();
+        std::string toolString = initializer->GetNonReferenceToolList()[i]->GetTrackerToolIdentifier() ;
+        std::cout << "Trackertool:" << toolString
+          << "  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+        }
+      }
+      initializer->StopAndCloseTracker();
+    }
+  }
 }
 
 

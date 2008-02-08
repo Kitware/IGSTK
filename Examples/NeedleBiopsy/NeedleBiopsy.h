@@ -39,6 +39,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkTreatmentPlanIO.h"
 
 #include "PolarisTrackerConfigurationGUI.h"
+#include "igstkTrackerInitializer.h"
 
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
@@ -64,13 +65,11 @@ public:
                                                     LandmarkPointContainerType;  
 
   /** Public request methods from the GUI. */
-  int RequestLoadImage();
+  int  RequestLoadImage();
   void ChangeSelectedTPlanPoint();
   void RequestConnectToTracker();
-
-
-  virtual void RequestInitializeTracker();
-  virtual void RequestRegistration();
+  
+  void RequestRegistration();
 
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
                                                    igstk::CTImageSpatialObject);
@@ -120,12 +119,14 @@ private:
   igstk::Transform                    m_ImageToTrackerTransform;  
   
   igstk::Tracker::Pointer             m_Tracker;
+  igstk::TrackerConfigurationGUIBase  * m_TrackerConfigurationGUI;
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   LoadedObserverType::Pointer               m_ViewPickerObserver;
   LoadedObserverType::Pointer               m_ViewResliceObserver;
+  LoadedObserverType::Pointer               m_TrackerConfigurationObserver;
 
   /** Ellipsoid spatial object, used to represent 
    *  the landmark point, tip of the probe. */
@@ -187,9 +188,11 @@ private:
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
-  void UpdateFiducialPoint();
-  void UpdatePath();
   void ResliceImage( const itk::EventObject & event );
+  void RequestInitializeTracker( const itk::EventObject & event );
+
+  void UpdateFiducialPoint();
+  void UpdatePath();  
   void ResliceImage( IndexType index );  
   void NullAction(const itk::EventObject & event ){};
 
