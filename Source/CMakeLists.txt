@@ -288,6 +288,10 @@ SET(IGSTKSandbox_HEADS
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
   igstkLogger.h
+#DELETE
+  igstkPolarisTracker2.h
+  igstkAuroraTracker2.h
+  igstkNDITracker.h
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -358,6 +362,11 @@ SET(IGSTKSandbox_SRCS
   igstkImageSliceRepresentation.txx
   igstkLogger.cxx
   igstkSimulatedTracker.cxx
+
+## DELETE 
+  igstkPolarisTracker2.cxx
+  igstkAuroraTracker2.cxx
+  igstkNDITracker.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
