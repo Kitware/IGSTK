@@ -49,7 +49,8 @@ public:
   igstkLoadedEventMacro( ReslicingEvent, IGSTKEvent, IndexType );
 
   unsigned long AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
-  void  RemoveObserver( unsigned long tag );
+  void RemoveObserver( unsigned long tag );
+  void RemoveAllObservers();
 
 protected:
 

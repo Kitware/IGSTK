@@ -147,4 +147,9 @@ void QuadrantViews::RemoveObserver( unsigned long tag )
   m_Reporter->RemoveObserver( tag );
 }
 
+void QuadrantViews::RemoveAllObservers()
+{
+  m_Reporter->RemoveAllObservers();
+}
+
 } // end namespace igstk
