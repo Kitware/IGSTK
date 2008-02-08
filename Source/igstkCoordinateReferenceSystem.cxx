@@ -539,6 +539,10 @@ CoordinateReferenceSystem
   if( aSmart == bSmart )
     {
     this->m_LowestCommonAncestor = aSmart;
+    // Push the AncestorFound input. We should be in an 
+    // attempting state (AttemptingComputeTransformToInInitialized or 
+    // AttemptingComputeTransformTo) as a result of RequestComputeTransformTo
+    // This input allows us to return to our previous state.
     igstkPushInputMacro( AncestorFound );
     m_StateMachine.ProcessInputs();
     // Break reference when we're done with it.
@@ -549,6 +553,10 @@ CoordinateReferenceSystem
   if( NULL == bSmart )
     {
     // Error - target for FindLowestCommonAncestor is NULL.
+    // Push the Disconnected input. We should be in an 
+    // attempting state (AttemptingComputeTransformToInInitialized or 
+    // AttemptingComputeTransformTo) as a result of RequestComputeTransformTo
+    // This input allows us to return to our previous state.
     igstkPushInputMacro( Disconnected );
     m_StateMachine.ProcessInputs();
     return;
@@ -571,6 +579,11 @@ CoordinateReferenceSystem
       if (aTemp == bTemp)
         {
         this->m_LowestCommonAncestor = aTemp;
+        // Push the AncestorFound input. We should be in an 
+        // attempting state (AttemptingComputeTransformToInInitialized or 
+        // AttemptingComputeTransformTo) as a result of 
+        // RequestComputeTransformTo. This input allows us to return to 
+        // our previous state.
         igstkPushInputMacro( AncestorFound );
         m_StateMachine.ProcessInputs();
         // Break reference when we're done with it.
@@ -584,6 +597,11 @@ CoordinateReferenceSystem
 
   // Error - can't find a lowest common ancestor. Must
   // be disconnected.
+  // Push the Disconnected input. We should be in an 
+  // attempting state (AttemptingComputeTransformToInInitialized or 
+  // AttemptingComputeTransformTo) as a result of RequestComputeTransformTo
+  // This input allows us to return to our previous state.
+  //
   igstkPushInputMacro( Disconnected );
   m_StateMachine.ProcessInputs();
   return;
