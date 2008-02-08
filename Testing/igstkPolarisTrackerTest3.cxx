@@ -92,8 +92,7 @@ int igstkPolarisTrackerTest3( int argc, char * argv[] )
   PolarisTrackerTest2Command::Pointer 
                                 my_command = PolarisTrackerTest2Command::New();
 
-  typedef TransformObserver        ObserverType;
-  typedef ObserverType::EventType CoordinateSystemEventType;
+  typedef igstk::TransformObserver        ObserverType;
 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
  
