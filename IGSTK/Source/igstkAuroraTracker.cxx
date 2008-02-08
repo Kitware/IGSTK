@@ -245,7 +245,7 @@ AuroraTracker::ResultType AuroraTracker
     bool foundTool = false;
 
     //Make several attempts to find uninitialized port
-    const unsigned int NUMBER_OF_ATTEMPTS = 1;
+    const unsigned int NUMBER_OF_ATTEMPTS = 256;
     for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
       {
       m_CommandInterpreter->PHSR(
