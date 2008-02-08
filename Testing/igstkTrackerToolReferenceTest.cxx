@@ -175,6 +175,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   typedef igstk::CoordinateReferenceSystem   ReferenceSystemType;
 
   view3D->RequestStart();
+  tracker->RequestStartTracking();
 
   std::cout << "Transforms with respect to the tracker." << std::endl;
 
@@ -183,7 +184,6 @@ int igstkTrackerToolReferenceTest( int , char * [] )
     igstk::PulseGenerator::Sleep(50);
     igstk::PulseGenerator::CheckTimeouts();
 
-    // Request the transform with respect to the tracker
     transformObserver->Clear();
     trackerTool->RequestComputeTransformTo( tracker );
     if( transformObserver->GotTransform() )
@@ -197,23 +197,19 @@ int igstkTrackerToolReferenceTest( int , char * [] )
       }
     }
 
-  tracker->RequestStartTracking();
-
   view3D->RequestStop();
   tracker->RequestStopTracking();
 
   std::cout << "Transforms with respect to the reference tracker tool" << std::endl;
 
-  view3D->RequestStart();
   tracker->RequestStartTracking();
+  view3D->RequestStart();
 
-  // Show now the cube being tracked
   for( unsigned int i = 0; i < 30; i++ )
     {
     igstk::PulseGenerator::Sleep(50);
     igstk::PulseGenerator::CheckTimeouts();
 
-    // Request the transform with respect to the reference tracker tool
     transformObserver->Clear();
     trackerTool->RequestComputeTransformTo( referenceTrackerTool );
     if( transformObserver->GotTransform() )
@@ -228,6 +224,67 @@ int igstkTrackerToolReferenceTest( int , char * [] )
 
     }
 
+
+  view3D->RequestStop();
+  tracker->RequestStopTracking();
+
+  std::cout << "--- Connect the Reference Tool Hierarchy --- " << std::endl;
+
+  //
+  // Now connect the reference tool in the hierarchy
+  //
+  tracker->RequestSetReferenceTool( referenceTrackerTool );
+  referenceTrackerTool->RequestSetTransformAndParent( identity, axesObject );
+
+  std::cout << "Transforms with respect to the tracker." << std::endl;
+
+  tracker->RequestStartTracking();
+  view3D->RequestStart();
+
+  for( unsigned int i = 0; i < 30; i++ )
+    {
+    igstk::PulseGenerator::Sleep(50);
+    igstk::PulseGenerator::CheckTimeouts();
+
+    transformObserver->Clear();
+    trackerTool->RequestComputeTransformTo( tracker );
+    if( transformObserver->GotTransform() )
+      {
+      igstk::TransformObserver::PayloadType payload = 
+        transformObserver->GetTransformBetweenCoordinateSystems();
+      const ReferenceSystemType * source = payload.GetSource();
+      const ReferenceSystemType * destination = payload.GetDestination();
+      igstk::Transform transform = transformObserver->GetTransform();
+      std::cout << transform << std::endl;
+      }
+    }
+
+  view3D->RequestStop();
+  tracker->RequestStopTracking();
+
+  std::cout << "Transforms with respect to the reference tracker tool" << std::endl;
+
+  tracker->RequestStartTracking();
+  view3D->RequestStart();
+
+  for( unsigned int i = 0; i < 30; i++ )
+    {
+    igstk::PulseGenerator::Sleep(50);
+    igstk::PulseGenerator::CheckTimeouts();
+
+    transformObserver->Clear();
+    trackerTool->RequestComputeTransformTo( referenceTrackerTool );
+    if( transformObserver->GotTransform() )
+      {
+      igstk::TransformObserver::PayloadType payload = 
+        transformObserver->GetTransformBetweenCoordinateSystems();
+      const ReferenceSystemType * source = payload.GetSource();
+      const ReferenceSystemType * destination = payload.GetDestination();
+      igstk::Transform transform = transformObserver->GetTransform();
+      std::cout << transform << std::endl;
+      }
+    }
+    
   view3D->RequestStop();
   tracker->RequestStopTracking();
 
