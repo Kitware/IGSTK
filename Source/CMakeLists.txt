@@ -268,8 +268,8 @@ SET(IGSTKSandbox_HEADS
   igstkContourMeshObjectRepresentation.h
   igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
-  igstkCoordinateReferenceSystem.h
-  igstkCoordinateReferenceSystemDelegator.h
+  igstkCoordinateSystem.h
+  igstkCoordinateSystemDelegator.h
   igstkCoordinateSystemTransformToResult.h
   igstkCoordinateSystemTransformToErrorResult.h
   igstkCircularSimulatedTracker.h
@@ -337,8 +337,8 @@ SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
-  igstkCoordinateReferenceSystem.cxx
-  igstkCoordinateReferenceSystemDelegator.cxx
+  igstkCoordinateSystem.cxx
+  igstkCoordinateSystemDelegator.cxx
   igstkCoordinateSystemTransformToResult.cxx
   igstkCoordinateSystemTransformToErrorResult.cxx
   igstkCircularSimulatedTracker.cxx

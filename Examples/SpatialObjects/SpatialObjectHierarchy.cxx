@@ -37,8 +37,8 @@
 // Software Guide : EndCodeSnippet
 
 igstkObserverMacro(TransformToParent,
-                   ::igstk::CoordinateReferenceSystemTransformToEvent,
-                   ::igstk::CoordinateReferenceSystemTransformToResult)
+                   ::igstk::CoordinateSystemTransformToEvent,
+                   ::igstk::CoordinateSystemTransformToResult)
 
 int main( int , char *[] )
 {
@@ -81,8 +81,8 @@ int main( int , char *[] )
 //
 // \begin{verbatim}
 // igstkObserverMacro(TransformToParent,
-//                   ::igstk::CoordinateReferenceSystemTransformToEvent,
-//                   ::igstk::CoordinateReferenceSystemTransformToResult)
+//                   ::igstk::CoordinateSystemTransformToEvent,
+//                   ::igstk::CoordinateSystemTransformToResult)
 // \end{verbatim}
 // We then add the observer to the object using the 
 // \code{AddObserver()} command:
@@ -93,7 +93,7 @@ int main( int , char *[] )
   TransformToParentObserver::Pointer transformToParentObserver 
                            = TransformToParentObserver::New();
         
-  sphere2->AddObserver( ::igstk::CoordinateReferenceSystemTransformToEvent(), 
+  sphere2->AddObserver( ::igstk::CoordinateSystemTransformToEvent(), 
                         transformToParentObserver );
 
 // Software Guide : EndCodeSnippet

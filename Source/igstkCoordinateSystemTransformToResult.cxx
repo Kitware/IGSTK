@@ -19,26 +19,26 @@
 
 namespace igstk
 {
-CoordinateReferenceSystemTransformToResult
-::CoordinateReferenceSystemTransformToResult()
+CoordinateSystemTransformToResult
+::CoordinateSystemTransformToResult()
 {
   m_Source = NULL;
   m_Destination = NULL;
 }
 
-CoordinateReferenceSystemTransformToResult
-::CoordinateReferenceSystemTransformToResult(
-      const CoordinateReferenceSystemTransformToResult& in)
+CoordinateSystemTransformToResult
+::CoordinateSystemTransformToResult(
+      const CoordinateSystemTransformToResult& in)
 {
   m_Transform = in.m_Transform;
   m_Source = in.m_Source;
   m_Destination = in.m_Destination;
 }
 
-const CoordinateReferenceSystemTransformToResult &
-CoordinateReferenceSystemTransformToResult
+const CoordinateSystemTransformToResult &
+CoordinateSystemTransformToResult
 ::operator = ( 
-      const CoordinateReferenceSystemTransformToResult& in)
+      const CoordinateSystemTransformToResult& in)
 {
   if (this != &in)
     {
@@ -50,7 +50,7 @@ CoordinateReferenceSystemTransformToResult
 }
 
 void
-CoordinateReferenceSystemTransformToResult
+CoordinateSystemTransformToResult
 ::Clear()
 {
   m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
@@ -59,10 +59,10 @@ CoordinateReferenceSystemTransformToResult
 }
 
 void
-CoordinateReferenceSystemTransformToResult
+CoordinateSystemTransformToResult
 ::Initialize(const Transform& trans, 
-             const CoordinateReferenceSystem* src,
-             const CoordinateReferenceSystem* dst)
+             const CoordinateSystem* src,
+             const CoordinateSystem* dst)
 {
   m_Transform = trans;
   m_Source = src;
@@ -70,21 +70,21 @@ CoordinateReferenceSystemTransformToResult
 }
 
 const Transform & 
-CoordinateReferenceSystemTransformToResult
+CoordinateSystemTransformToResult
 ::GetTransform() const
 {
   return this->m_Transform;
 }
 
-const CoordinateReferenceSystem * 
-CoordinateReferenceSystemTransformToResult
+const CoordinateSystem * 
+CoordinateSystemTransformToResult
 ::GetSource() const
 {
   return this->m_Source;
 }
 
-const CoordinateReferenceSystem *
-CoordinateReferenceSystemTransformToResult
+const CoordinateSystem *
+CoordinateSystemTransformToResult
 ::GetDestination() const
 {
   return this->m_Destination;

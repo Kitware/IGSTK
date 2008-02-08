@@ -44,7 +44,7 @@ Point3D::~Point3D()
 
 /* Set the spatial object serving as coordinate reference system for this point */
 void 
-Point3D::SetCoordinateReferenceSystem( const SpatialObject * referenceSystem )
+Point3D::SetCoordinateSystem( const SpatialObject * referenceSystem )
 {
   this->m_ReferenceFrame = referenceSystem;
 }

@@ -29,10 +29,10 @@ void RegisterTests()
 {
   // Register Sandbox tests
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
-  REGISTER_TEST(igstkCoordinateReferenceSystemTest);
-  REGISTER_TEST(igstkCoordinateReferenceSystemTest2);
-  REGISTER_TEST(igstkCoordinateReferenceSystemTest3);
-  REGISTER_TEST(igstkCoordinateReferenceSystemDelegatorTest);
+  REGISTER_TEST(igstkCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest2);
+  REGISTER_TEST(igstkCoordinateSystemTest3);
+  REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
   REGISTER_TEST(igstkCoordinateSystemEventTest);
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkGroupObjectTest);
@@ -54,7 +54,7 @@ void RegisterTests()
 #endif
 
 #ifdef IGSTKSandbox_USE_FLTK
-  REGISTER_TEST(igstkCoordinateReferenceSystemObjectWithViewTest);
+  REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkCircularSimulatedTrackerTest);

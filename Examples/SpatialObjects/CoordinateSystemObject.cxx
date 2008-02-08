@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    CoordinateReferenceSystemObject.cxx
+  Module:    CoordinateSystemObject.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$

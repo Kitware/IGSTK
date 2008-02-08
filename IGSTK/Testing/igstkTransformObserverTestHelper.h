@@ -43,7 +43,7 @@ protected:
   ~TransformObserverTestHelper() {}
 public:
     
-  typedef ::igstk::CoordinateReferenceSystemTransformToEvent              PositiveEventType;
+  typedef ::igstk::CoordinateSystemTransformToEvent              PositiveEventType;
   typedef ::igstk::TransformNotAvailableEvent                             NegativeEventType;
         
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -100,7 +100,7 @@ public:
         
 private:
 
-  typedef ::igstk::CoordinateReferenceSystemTransformToResult TransformToResultType;
+  typedef ::igstk::CoordinateSystemTransformToResult TransformToResultType;
   typedef ::igstk::Transform                                  TransformType;
   
   TransformToResultType   m_TransformToResult;

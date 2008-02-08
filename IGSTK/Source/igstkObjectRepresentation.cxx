@@ -315,7 +315,7 @@ void ObjectRepresentation::SetOpacity(OpacityType alpha)
 /** Request Update the object representation (i.e vtkActors). */
 void ObjectRepresentation::RequestUpdateRepresentation( 
                                         const TimeStamp & time, 
-                                        const CoordinateReferenceSystem* cs )
+                                        const CoordinateSystem* cs )
 {
   igstkLogMacro( DEBUG, "RequestUpdateRepresentation at time"
                           << time );

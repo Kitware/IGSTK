@@ -15,16 +15,16 @@
 
 =========================================================================*/
 
-#ifndef __igstkCoordinateReferenceSystemTransformToResult_h
-#define __igstkCoordinateReferenceSystemTransformToResult_h
+#ifndef __igstkCoordinateSystemTransformToResult_h
+#define __igstkCoordinateSystemTransformToResult_h
 
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 
 namespace igstk
 {
 
 /**
- *  \class CoordinateReferenceSystemTransformToResult
+ *  \class CoordinateSystemTransformToResult
  *
  * \brief This class encapsulates the results of asking the coordinate
  * reference system for a transform to another coordinate reference system. 
@@ -32,23 +32,23 @@ namespace igstk
  * It is meant to be used as payload in an event that is created after a
  * successful call to RequestTransformTo(). 
  *
- *  \ingroup CoordinateReferenceSystem
+ *  \ingroup CoordinateSystem
  *
  */
-class CoordinateReferenceSystemTransformToResult
+class CoordinateSystemTransformToResult
 {
 public:
 
   /** Constructor */
-  CoordinateReferenceSystemTransformToResult();
+  CoordinateSystemTransformToResult();
 
   /** Copy constructor */
-  CoordinateReferenceSystemTransformToResult(
-      const CoordinateReferenceSystemTransformToResult& in);
+  CoordinateSystemTransformToResult(
+      const CoordinateSystemTransformToResult& in);
 
   /** Assignment operator */
-  const CoordinateReferenceSystemTransformToResult &operator = ( 
-      const CoordinateReferenceSystemTransformToResult& in);
+  const CoordinateSystemTransformToResult &operator = ( 
+      const CoordinateSystemTransformToResult& in);
 
   /** Clears the pointers that the event is holding. This 
    *  should be called after the event is received to
@@ -59,31 +59,31 @@ public:
 
   /** Sets the transform, source, and destination coordinate systems. */
   void Initialize(const Transform& trans, 
-                  const CoordinateReferenceSystem* src,
-                  const CoordinateReferenceSystem* dst);
+                  const CoordinateSystem* src,
+                  const CoordinateSystem* dst);
 
   /** Returns the computed transform. */
   const Transform & GetTransform() const;
 
   /** Returns the source coordinate system. */
-  const CoordinateReferenceSystem * GetSource() const;
+  const CoordinateSystem * GetSource() const;
 
   /** Returns the destination coordinate system. */
-  const CoordinateReferenceSystem * GetDestination() const;
+  const CoordinateSystem * GetDestination() const;
 
 private:
 
   Transform                                 m_Transform;
-  const CoordinateReferenceSystem       *   m_Source;
-  const CoordinateReferenceSystem       *   m_Destination;
+  const CoordinateSystem       *   m_Source;
+  const CoordinateSystem       *   m_Destination;
 
 };
 
 /** This event is invoked when RequestComputeTransformTo is called
  *  successfully.
  */
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToEvent, 
-                  IGSTKEvent, CoordinateReferenceSystemTransformToResult );
+igstkLoadedEventMacro( CoordinateSystemTransformToEvent, 
+                  IGSTKEvent, CoordinateSystemTransformToResult );
 
 } // end namespace igstk
 

@@ -56,7 +56,7 @@ public:
   ~Point3D();
 
   /** Set the spatial object serving as coordinate reference system for this point */
-  void SetCoordinateReferenceSystem( const SpatialObject * referenceSystem );
+  void SetCoordinateSystem( const SpatialObject * referenceSystem );
 
 private:
 

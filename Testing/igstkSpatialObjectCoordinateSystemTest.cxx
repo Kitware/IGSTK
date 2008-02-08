@@ -23,7 +23,7 @@
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkView3D.h"
-#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemDelegator.h"
 #include "igstkTracker.h"
 
 namespace igstk
@@ -166,8 +166,8 @@ void PrintSelf( std::ostream& os, itk::Indent indent ) const
 class CoordinateSystemObserver : public ::itk::Command
 {
 public:
-  typedef igstk::CoordinateReferenceSystemTransformToEvent  EventType;
-  typedef igstk::CoordinateReferenceSystemTransformToResult PayloadType;
+  typedef igstk::CoordinateSystemTransformToEvent  EventType;
+  typedef igstk::CoordinateSystemTransformToResult PayloadType;
 
   /** Standard class typedefs. */
   typedef CoordinateSystemObserver         Self;
@@ -412,7 +412,7 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     testStatus = EXIT_FAILURE;
     std::cout << "FAILED! [No event]" << std::endl;
     }
-  igstk::Friends::CoordinateReferenceSystemHelper::GetCoordinateReferenceSystem( ellipsoid2 );
+  igstk::Friends::CoordinateSystemHelper::GetCoordinateSystem( ellipsoid2 );
 
   ObserverType::Pointer trackerObserver = ObserverType::New();
   typedef igstk::SpatialObjectCoordinateSystemTest::DummyTracker  TrackerType;

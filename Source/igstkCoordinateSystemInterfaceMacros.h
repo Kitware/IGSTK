@@ -20,7 +20,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
-#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemDelegator.h"
 
 namespace igstk 
 {
@@ -41,11 +41,11 @@ public: \
   template <class TTargetPointer> \
   void RequestComputeTransformTo(const TTargetPointer & target) \
     { \
-    m_CoordinateReferenceSystemDelegator->RequestComputeTransformTo(target);\
+    m_CoordinateSystemDelegator->RequestComputeTransformTo(target);\
     } \
   void RequestGetTransformToParent() \
     { \
-    m_CoordinateReferenceSystemDelegator->RequestGetTransformToParent(); \
+    m_CoordinateSystemDelegator->RequestGetTransformToParent(); \
     } \
   template < class TParentPointer > \
   void RequestSetTransformAndParent( const Transform & transformToParent, \
@@ -53,7 +53,7 @@ public: \
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \
-      m_CoordinateReferenceSystemDelegator->RequestSetTransformAndParent( \
+      m_CoordinateSystemDelegator->RequestSetTransformAndParent( \
                                      transformToParent, parent); \
       } \
     else \
@@ -63,13 +63,13 @@ public: \
                                Transform::TransformCompose( \
                                               transformToParent, \
                                               internalTransform ); \
-      m_CoordinateReferenceSystemDelegator->RequestSetTransformAndParent( \
+      m_CoordinateSystemDelegator->RequestSetTransformAndParent( \
                           transformToParentWithInternalTransform, parent); \
       }\
     } \
-  bool IsCoordinateSystem(const CoordinateReferenceSystem* inCS) const \
+  bool IsCoordinateSystem(const CoordinateSystem* inCS) const \
     { \
-    return m_CoordinateReferenceSystemDelegator-> \
+    return m_CoordinateSystemDelegator-> \
       IsCoordinateSystem( inCS ); \
     } \
 protected: \
@@ -84,22 +84,22 @@ protected: \
     return identity; \
     } \
 private: \
-  CoordinateReferenceSystemDelegator::Pointer \
-                                  m_CoordinateReferenceSystemDelegator; \
+  CoordinateSystemDelegator::Pointer \
+                                  m_CoordinateSystemDelegator; \
   typedef ::itk::ReceptorMemberCommand< Self > CoordinateSystemObserverType; \
-  CoordinateSystemObserverType::Pointer m_CoordinateReferenceSystemObserver; \
+  CoordinateSystemObserverType::Pointer m_CoordinateSystemObserver; \
   void ObserverCallback(const ::itk::EventObject & eventvar) \
     { \
     this->InvokeEvent( eventvar ); \
     } \
-  const CoordinateReferenceSystem* GetCoordinateReferenceSystem() const \
+  const CoordinateSystem* GetCoordinateSystem() const \
     { \
     return \
-      igstk::Friends::CoordinateReferenceSystemHelper:: \
-        GetCoordinateReferenceSystem(  \
-                       m_CoordinateReferenceSystemDelegator.GetPointer() ); \
+      igstk::Friends::CoordinateSystemHelper:: \
+        GetCoordinateSystem(  \
+                       m_CoordinateSystemDelegator.GetPointer() ); \
     } \
-  igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper ); 
+  igstkFriendClassMacro( igstk::Friends::CoordinateSystemHelper ); 
 
 /**
  *  igstkCoordinateSystemClassInterfaceConstructorMacro initializes the 
@@ -108,34 +108,34 @@ private: \
  *  igstkCoordinateSystemClassInterfaceMacro in its class header.
  */
 #define igstkCoordinateSystemClassInterfaceConstructorMacro() \
-  m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New(); \
-  m_CoordinateReferenceSystemObserver->SetCallbackFunction(this, \
+  m_CoordinateSystemObserver = CoordinateSystemObserverType::New(); \
+  m_CoordinateSystemObserver->SetCallbackFunction(this, \
                                                    &Self::ObserverCallback); \
-  m_CoordinateReferenceSystemDelegator = \
-                          CoordinateReferenceSystemDelegator::New(); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemTransformToNullTargetEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemTransformToDisconnectedEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemNullParentEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemThisParentEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemParentCycleEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
-  m_CoordinateReferenceSystemDelegator->AddObserver( \
-    CoordinateReferenceSystemTransformToEvent() \
-    , m_CoordinateReferenceSystemObserver ); \
+  m_CoordinateSystemDelegator = \
+                          CoordinateSystemDelegator::New(); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemTransformToNullTargetEvent() \
+    , m_CoordinateSystemObserver ); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemTransformToDisconnectedEvent() \
+    , m_CoordinateSystemObserver ); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemNullParentEvent() \
+    , m_CoordinateSystemObserver ); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemThisParentEvent() \
+    , m_CoordinateSystemObserver ); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemParentCycleEvent() \
+    , m_CoordinateSystemObserver ); \
+  m_CoordinateSystemDelegator->AddObserver( \
+    CoordinateSystemTransformToEvent() \
+    , m_CoordinateSystemObserver ); \
   std::stringstream tempStream; \
   tempStream << this->GetNameOfClass() << " 0x"; \
   tempStream << static_cast<void*>(this); \
   std::string name = tempStream.str(); \
-  m_CoordinateReferenceSystemDelegator->SetName( name.c_str() );
+  m_CoordinateSystemDelegator->SetName( name.c_str() );
 
 } // end namespace igstk
 

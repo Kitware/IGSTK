@@ -29,7 +29,7 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 
 class vtkProp;
 
@@ -109,7 +109,7 @@ public:
   /** Update the visual representation with changes in the geometry */
   virtual void RequestUpdateRepresentation( 
     const TimeStamp & time, 
-    const CoordinateReferenceSystem* cs );
+    const CoordinateSystem* cs );
 
 protected:
 
@@ -216,7 +216,7 @@ private:
   /** Coordinate system with respect to which Transforms will be computed.
    *  This is typically the coordinate system of a View class, since the
    *  View is the one requesting update representations to this class. */
-  CoordinateReferenceSystem::ConstPointer m_TargetCoordinateSystem;
+  CoordinateSystem::ConstPointer m_TargetCoordinateSystem;
 
   /** Used to store an actor for visibility state machine processing. */
   vtkProp *                               m_VisibilitySetActor;
@@ -238,7 +238,7 @@ private:
    *  These events are defined in the file
    *  igstkCoordinateSystemInterfaceMacros.h
    *  Most of them map to the input "TransformNotAvailable",
-   *  while only the event "CoordinateReferenceSystemTransformTo"
+   *  while only the event "CoordinateSystemTransformTo"
    *  maps to the input "SpatialObjectTransform".
    *
    */
@@ -248,7 +248,7 @@ private:
 
   // The only event that brings a valid transform.
   igstkLoadedEventTransductionMacro(  
-     CoordinateReferenceSystemTransformTo,
+     CoordinateSystemTransformTo,
      SpatialObjectTransform );
 
   /** Inputs to the Visibility State Machine */

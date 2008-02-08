@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystemObjectWithViewTest.cxx
+  Module:    igstkCoordinateSystemObjectWithViewTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -34,7 +34,7 @@
 
 #include "igstkTransformObserverTestHelper.h"
 
-int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
+int igstkCoordinateSystemObjectWithViewTest( int argc, char * argv [] )
 {
  
   std::string ScreenShotFilename;
@@ -81,7 +81,7 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
   typedef igstk::FLTKWidget      WidgetType;
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(301,301,"CoordinateReferenceSystemObjectWithViewTest");
+  Fl_Window * form = new Fl_Window(301,301,"CoordinateSystemObjectWithViewTest");
   WidgetType * widget2D = new WidgetType(0,0,300,300,"View 2D");
 
   widget2D->RequestSetView( view2D );
@@ -126,14 +126,14 @@ int igstkCoordinateReferenceSystemObjectWithViewTest( int argc, char * argv [] )
                                                = TransformObserverType::New();
 
   coordinateSystem->AddObserver( 
-    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
+    igstk::CoordinateSystemTransformToEvent(), transformObserver );
 
   coordinateSystem->RequestSetTransformAndParent( transform, worldReference );
   coordinateSystem->RequestGetTransformToParent();
   
   if( !transformObserver->GotTransform() )
     {
-    std::cerr << "The CoordinateReferenceSystemObject did not returned a Transform event" 
+    std::cerr << "The CoordinateSystemObject did not returned a Transform event" 
               << std::endl;
     return EXIT_FAILURE;
     }

@@ -172,7 +172,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
 
   transformObserver->ObserveTransformEventsFrom( trackerTool );
 
-  typedef igstk::CoordinateReferenceSystem   ReferenceSystemType;
+  typedef igstk::CoordinateSystem   ReferenceSystemType;
 
   view3D->RequestStart();
   tracker->RequestStartTracking();

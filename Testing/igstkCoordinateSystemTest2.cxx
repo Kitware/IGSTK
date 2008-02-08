@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystemTest2.cxx
+  Module:    igstkCoordinateSystemTest2.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #include "igstkTransform.h"
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
 #include "igstkLogger.h"
@@ -24,7 +24,7 @@
 #include "igstkRealTimeClock.h"
 #include "igstkTransformObserver.h"
 
-namespace CoordinateReferenceSystemTest2
+namespace CoordinateSystemTest2
 {
 
 /** Using this could make debugging painful... */
@@ -60,12 +60,12 @@ igstk::Transform GetRandomTransform()
 }
 }
 
-int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
+int igstkCoordinateSystemTest2(int argc, char* argv[])
 {
 
   typedef igstk::Object::LoggerType           LoggerType; 
   typedef itk::StdStreamLogOutput             LogOutputType;
-  typedef igstk::CoordinateReferenceSystem    CoordSysType;
+  typedef igstk::CoordinateSystem    CoordSysType;
   typedef igstk::Transform                    TransformType;
   typedef igstk::TimeStamp                    TimeStampType;
   typedef TimeStampType::TimePeriodType       TimePeriodType;
@@ -162,7 +162,7 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   std::cout << std::endl;
 
 
-  TransformType TARoot = CoordinateReferenceSystemTest2::GetRandomTransform();
+  TransformType TARoot = CoordinateSystemTest2::GetRandomTransform();
   A->RequestSetTransformAndParent(TARoot, root);
 
   TransformType TBRoot;
@@ -179,16 +179,16 @@ int igstkCoordinateReferenceSystemTest2(int argc, char* argv[])
   TCA.SetTranslation(trans, transformErrorValue, aReallyLongTime);
   C->RequestSetTransformAndParent(TCA, A);
 
-  TransformType TDB = CoordinateReferenceSystemTest2::GetRandomTransform();
+  TransformType TDB = CoordinateSystemTest2::GetRandomTransform();
   D->RequestSetTransformAndParent(TDB, B);
 
-  TransformType TFC = CoordinateReferenceSystemTest2::GetRandomTransform();
+  TransformType TFC = CoordinateSystemTest2::GetRandomTransform();
   F->RequestSetTransformAndParent(TFC, C);
 
-  TransformType TGA = CoordinateReferenceSystemTest2::GetRandomTransform();
+  TransformType TGA = CoordinateSystemTest2::GetRandomTransform();
   G->RequestSetTransformAndParent(TGA, A);
 
-  TransformType THA = CoordinateReferenceSystemTest2::GetRandomTransform();
+  TransformType THA = CoordinateSystemTest2::GetRandomTransform();
   H->RequestSetTransformAndParent(THA, A);
 
   std::cout << "Checking transform from root to A : ";

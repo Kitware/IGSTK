@@ -165,7 +165,7 @@ void TestTransform()
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
   this->m_SpatialObject->AddObserver(
-    igstk::CoordinateReferenceSystemTransformToEvent(), this->m_TransformObserver );
+    igstk::CoordinateSystemTransformToEvent(), this->m_TransformObserver );
 
   this->m_SpatialObject->RequestSetTransformAndParent( transform, this->m_View );
 

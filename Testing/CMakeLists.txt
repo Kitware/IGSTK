@@ -72,10 +72,10 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkSpatialObjectCoordinateSystemTest.cxx
-  igstkCoordinateReferenceSystemTest.cxx
-  igstkCoordinateReferenceSystemTest2.cxx
-  igstkCoordinateReferenceSystemTest3.cxx
-  igstkCoordinateReferenceSystemDelegatorTest.cxx
+  igstkCoordinateSystemTest.cxx
+  igstkCoordinateSystemTest2.cxx
+  igstkCoordinateSystemTest3.cxx
+  igstkCoordinateSystemDelegatorTest.cxx
   igstkCoordinateSystemEventTest.cxx
   igstkSpatialObjectCoordinateSystemTest3.cxx
   igstkGroupObjectTest.cxx
@@ -163,10 +163,10 @@ ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkObjectRepresentationRemovalTest ${IGSTKSandbox_TESTS} igstkObjectRepresentationRemovalTest)
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
-ADD_TEST( igstkCoordinateReferenceSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest)
-ADD_TEST( igstkCoordinateReferenceSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest2)
-ADD_TEST( igstkCoordinateReferenceSystemTest3 ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemTest3)
-ADD_TEST( igstkCoordinateReferenceSystemDelegatorTest ${IGSTKSandbox_TESTS} igstkCoordinateReferenceSystemDelegatorTest)
+ADD_TEST( igstkCoordinateSystemTest ${IGSTKSandbox_TESTS} igstkCoordinateSystemTest)
+ADD_TEST( igstkCoordinateSystemTest2 ${IGSTKSandbox_TESTS} igstkCoordinateSystemTest2)
+ADD_TEST( igstkCoordinateSystemTest3 ${IGSTKSandbox_TESTS} igstkCoordinateSystemTest3)
+ADD_TEST( igstkCoordinateSystemDelegatorTest ${IGSTKSandbox_TESTS} igstkCoordinateSystemDelegatorTest)
 ADD_TEST( igstkCoordinateSystemEventTest ${IGSTKSandbox_TESTS} igstkCoordinateSystemEventTest)
 ADD_TEST( igstkSpatialObjectCoordinateSystemTest3 ${IGSTKSandbox_TESTS} igstkSpatialObjectCoordinateSystemTest3)
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
@@ -247,19 +247,19 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
 
-    ADD_TEST( igstkCoordinateReferenceSystemObjectWithViewTest
+    ADD_TEST( igstkCoordinateSystemObjectWithViewTest
               ${IGSTKSandbox_TESTS}
               --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png 
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5 
-              igstkCoordinateReferenceSystemObjectWithViewTest
+              igstkCoordinateSystemObjectWithViewTest
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
               )
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
-              igstkCoordinateReferenceSystemObjectWithViewTest.cxx)
+              igstkCoordinateSystemObjectWithViewTest.cxx)
 
     ADD_TEST( igstkCircularSimulatedTrackerTest
               ${IGSTKSandbox_TESTS}

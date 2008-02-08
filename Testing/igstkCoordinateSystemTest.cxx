@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystemTest.cxx
+  Module:    igstkCoordinateSystemTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
 #include "igstkRealTimeClock.h"
@@ -34,11 +34,11 @@
 #include "igstkTransformObserver.h"
 
 
-int igstkCoordinateReferenceSystemTest( int, char * [] )
+int igstkCoordinateSystemTest( int, char * [] )
 {
   int testResult = EXIT_SUCCESS;
 
-  std::cout << "Running igstkCoordinateReferenceSystemTest " << std::endl;
+  std::cout << "Running igstkCoordinateSystemTest " << std::endl;
 
   igstk::RealTimeClock::Initialize();
 
@@ -59,7 +59,7 @@ int igstkCoordinateReferenceSystemTest( int, char * [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
 
-  typedef igstk::CoordinateReferenceSystem  ObjectType;
+  typedef igstk::CoordinateSystem  ObjectType;
   ObjectType::Pointer coordinateSystemA = ObjectType::New();
   coordinateSystemA->SetLogger( logger );
   coordinateSystemA->SetName( "A" );

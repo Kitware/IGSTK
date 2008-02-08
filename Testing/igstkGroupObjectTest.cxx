@@ -186,7 +186,7 @@ int igstkGroupObjectTest( int, char * [] )
                                                  = TransformObserverType::New();
 
   group->AddObserver(
-    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
+    igstk::CoordinateSystemTransformToEvent(), transformObserver );
 
   group->RequestSetTransformAndParent( transform, worldReference );
 

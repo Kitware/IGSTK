@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystem.h
+  Module:    igstkCoordinateSystem.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkCoordinateReferenceSystem_h
-#define __igstkCoordinateReferenceSystem_h
+#ifndef __igstkCoordinateSystem_h
+#define __igstkCoordinateSystem_h
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
@@ -26,7 +26,7 @@
 namespace igstk
 {
 
-/** \class CoordinateReferenceSystem
+/** \class CoordinateSystem
  * 
  * \brief This class represents the frame of a coordinate reference system.
  *
@@ -39,79 +39,79 @@ namespace igstk
  * http://en.wikipedia.org/wiki/Scene_graph
  *
  *  The following diagram illustrates the state machine of 
- *  the CoordinateReferenceSystem class
+ *  the CoordinateSystem class
  *
- *  \image html  igstkCoordinateReferenceSystem.png  "CoordinateReferenceSystem
+ *  \image html  igstkCoordinateSystem.png  "CoordinateSystem
  *  State Machine Diagram" 
  *
- *  \image latex igstkCoordinateReferenceSystem.eps "CoordinateReferenceSystem
+ *  \image latex igstkCoordinateSystem.eps "CoordinateSystem
  *  State Machine Diagram" 
  *
  *  
  * \ingroup Object
  */
-class CoordinateReferenceSystem;
+class CoordinateSystem;
 
 namespace Friends 
 {
 
-/** \class CoordinateReferenceSystemHelper 
+/** \class CoordinateSystemHelper 
  *
  * \brief A proxy that ensures the encapsulation of the
- * CoordinateReferenceSystem.
+ * CoordinateSystem.
  *
- * This class is used to extract the internal CoordinateReferenceSystem 
+ * This class is used to extract the internal CoordinateSystem 
  * instance from holder classes such as the SpatialObject, Tracker, 
  * TrackerTool, and View.
  *
  */ 
-class CoordinateReferenceSystemHelper
+class CoordinateSystemHelper
 {
 public:
-  /** Templated method to extract the CoordinateReferenceSystem from a holder
+  /** Templated method to extract the CoordinateSystem from a holder
    * class. This method makes possible to protect the privacy of the Coordinate
    * Reference System in that class.
    */
   template <class T>
-  static const CoordinateReferenceSystem* 
-    GetCoordinateReferenceSystem( const T & input )
+  static const CoordinateSystem* 
+    GetCoordinateSystem( const T & input )
     {
-    return input->GetCoordinateReferenceSystem();  // private
+    return input->GetCoordinateSystem();  // private
     }
 };
 
 } // end of Friends namespace 
 
 
-class CoordinateReferenceSystem : public Object
+class CoordinateSystem : public Object
 {
 public: 
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CoordinateReferenceSystem, Object )
+  igstkStandardClassTraitsMacro( CoordinateSystem, Object )
 
   /** Tries to set the parent coordinate system and 
    *  the transform from this coordinate system to
    *  the parent. 
    */
   void RequestSetTransformAndParent(const Transform & t,
-                                    const CoordinateReferenceSystem* parent);
+                                    const CoordinateSystem* parent);
 
   /** Request the transform to parent. */
   void RequestGetTransformToParent();
 
   /** Request that a transform is computed to targetCoordSys
    *   This method generates three possible events:
-   *     CoordinateReferenceSystemTransformToEvent
-   *     CoordinateReferenceSystemTransformToNullTargetEvent
-   *     CoordinateReferenceSystemTransformToDisconnectedEvent
+   *     CoordinateSystemTransformToEvent
+   *     CoordinateSystemTransformToNullTargetEvent
+   *     CoordinateSystemTransformToDisconnectedEvent
    *
-   *   CoordinateReferenceSystemTransformToEvent is returned if the transform 
+   *   CoordinateSystemTransformToEvent is returned if the transform 
    *   is successfully computed. Otherwise, one of the other events is 
    *   generated.
    */
   void RequestComputeTransformTo(const 
-                                 CoordinateReferenceSystem* targetCoordSys);
+                                 CoordinateSystem* targetCoordSys);
 
   /** Request that the coordinate system be detached from its parent. 
    */
@@ -127,17 +127,17 @@ public:
 protected:
 
   /** Constructor */
-  CoordinateReferenceSystem( void );
+  CoordinateSystem( void );
 
   /** Destructor */
-  ~CoordinateReferenceSystem( void );
+  ~CoordinateSystem( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private: 
   /** Copy constructor -- purposely not implemented. */
-  CoordinateReferenceSystem(const Self&);
+  CoordinateSystem(const Self&);
 
   /** Assignment operator -- purposely not implemented. */
   void operator=(const Self&);
@@ -173,9 +173,9 @@ private:
    */
 
   /** Inputs for RequestComputeTransformTo */
-  igstkDeclareInputMacro( NullCoordinateReferenceSystem  );
-  igstkDeclareInputMacro( ThisCoordinateReferenceSystem  );
-  igstkDeclareInputMacro( ValidCoordinateReferenceSystem );
+  igstkDeclareInputMacro( NullCoordinateSystem  );
+  igstkDeclareInputMacro( ThisCoordinateSystem  );
+  igstkDeclareInputMacro( ValidCoordinateSystem );
 
   /** Inputs for RequestSetTransformAndParent */
   igstkDeclareInputMacro( NullParent                     ); 
@@ -264,13 +264,13 @@ private:
    *  the lowest common ancestor. The argument should be the 
    *  ancestor found by FindLowestCommonAncestor.
    */
-  Transform ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const;
+  Transform ComputeTransformTo(const CoordinateSystem* ancestor) const;
 
   /** This method is used to ensure that we do not set a parent that 
    *  causes a cycle in the scene graph. CanReach returns true if 
    *  the target is currently reachable in the scene graph.
    */
-  bool CanReach(const CoordinateReferenceSystem* target) const;
+  bool CanReach(const CoordinateSystem* target) const;
 
   /** This method is called when the state machine receives an 
    *  invalid request. 
@@ -286,37 +286,37 @@ private:
   /** This method is here so we can behave like higher-level objects with 
    *  coordinate systems.
    */
-  const CoordinateReferenceSystem* GetCoordinateReferenceSystem() const;
+  const CoordinateSystem* GetCoordinateSystem() const;
 
-  /** Make the CoordinateReferenceSystemHelper a friend. */
-  igstkFriendClassMacro( igstk::Friends::CoordinateReferenceSystemHelper ); 
+  /** Make the CoordinateSystemHelper a friend. */
+  igstkFriendClassMacro( igstk::Friends::CoordinateSystemHelper ); 
 
-}; // class CoordinateReferenceSystem
+}; // class CoordinateSystem
 
 
 //  
-//   Macros defining events related to the CoordinateReferenceSystem.
+//   Macros defining events related to the CoordinateSystem.
 //
-igstkEventMacro( CoordinateReferenceSystemSetParentError, IGSTKEvent );
+igstkEventMacro( CoordinateSystemSetParentError, IGSTKEvent );
 /** This event should be invoked when RequestSetTransformAndParent is called 
  *  with a NULL parent.
  */
-igstkEventMacro( CoordinateReferenceSystemNullParentEvent, 
-                 CoordinateReferenceSystemSetParentError );
+igstkEventMacro( CoordinateSystemNullParentEvent, 
+                 CoordinateSystemSetParentError );
 
 /** This event should be invoked when RequestSetTransformAndParent is called
  *  with the parent == this.
  */
-igstkEventMacro( CoordinateReferenceSystemThisParentEvent, 
-                 CoordinateReferenceSystemSetParentError );
+igstkEventMacro( CoordinateSystemThisParentEvent, 
+                 CoordinateSystemSetParentError );
 
 /** This event should be invoked when RequestSetTransformAndParent is called
  *  with a parent that causes a cycle in the coordinate system graph.
  */
-igstkLoadedConstObjectEventMacro( CoordinateReferenceSystemParentCycleEvent,
-                                  CoordinateReferenceSystemSetParentError, 
-                                  CoordinateReferenceSystem );
+igstkLoadedConstObjectEventMacro( CoordinateSystemParentCycleEvent,
+                                  CoordinateSystemSetParentError, 
+                                  CoordinateSystem );
 
 } // end namespace igstk
 
-#endif // __igstkCoordinateReferenceSystem_h
+#endif // __igstkCoordinateSystem_h

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystemDelegator.cxx
+  Module:    igstkCoordinateSystemDelegator.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,7 +15,7 @@
 
 =========================================================================*/
 
-#include "igstkCoordinateReferenceSystemDelegator.h"
+#include "igstkCoordinateSystemDelegator.h"
 
 /* Methods for new coordinate system classes that support the creation of scene
  * graphs. */
@@ -23,45 +23,45 @@
 namespace igstk
 {
 
-CoordinateReferenceSystemDelegator
-::CoordinateReferenceSystemDelegator() : m_StateMachine(this)
+CoordinateSystemDelegator
+::CoordinateSystemDelegator() : m_StateMachine(this)
 {
-  m_CoordinateReferenceSystemObserver = CoordinateSystemObserverType::New();
-  m_CoordinateReferenceSystemObserver->SetCallbackFunction(
+  m_CoordinateSystemObserver = CoordinateSystemObserverType::New();
+  m_CoordinateSystemObserver->SetCallbackFunction(
     this, &Self::ObserverCallback);
 
-  m_CoordinateReferenceSystem = CoordinateReferenceSystem::New();
+  m_CoordinateSystem = CoordinateSystem::New();
  
   /** Add observer for coordinate reference system events */
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemTransformToNullTargetEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemTransformToNullTargetEvent()
+    , m_CoordinateSystemObserver );
 
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemTransformToDisconnectedEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemTransformToDisconnectedEvent()
+    , m_CoordinateSystemObserver );
 
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemNullParentEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemNullParentEvent()
+    , m_CoordinateSystemObserver );
 
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemThisParentEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemThisParentEvent()
+    , m_CoordinateSystemObserver );
 
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemParentCycleEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemParentCycleEvent()
+    , m_CoordinateSystemObserver );
 
-  m_CoordinateReferenceSystem->AddObserver( 
-    CoordinateReferenceSystemTransformToEvent()
-    , m_CoordinateReferenceSystemObserver );
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemTransformToEvent()
+    , m_CoordinateSystemObserver );
 
   std::stringstream tempStream;
   tempStream << this->GetNameOfClass() << " 0x";
   tempStream << static_cast<void*>(this);
   std::string name = tempStream.str();
-  m_CoordinateReferenceSystem->SetName( name.c_str() );
+  m_CoordinateSystem->SetName( name.c_str() );
 
   igstkAddStateMacro( Idle );
 
@@ -77,89 +77,89 @@ CoordinateReferenceSystemDelegator
   m_StateMachine.SetReadyToRun();
 }
 
-CoordinateReferenceSystemDelegator::
-~CoordinateReferenceSystemDelegator()
+CoordinateSystemDelegator::
+~CoordinateSystemDelegator()
 {
 
 }
 
 void 
-CoordinateReferenceSystemDelegator::
+CoordinateSystemDelegator::
 ObserverCallback(const ::itk::EventObject & eventvar)
 {
   /** Re-invoke the event */
   this->InvokeEvent( eventvar );
 }
 
-const CoordinateReferenceSystem * 
-CoordinateReferenceSystemDelegator::GetCoordinateReferenceSystem() const
+const CoordinateSystem * 
+CoordinateSystemDelegator::GetCoordinateSystem() const
 {
-  return m_CoordinateReferenceSystem;
+  return m_CoordinateSystem;
 }
 
 void
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::NullTargetProcessing()
 {
   igstkLogMacro( WARNING, "Null target!" );  
 }
 
 void
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::NullParentProcessing()
 {
   igstkLogMacro( WARNING, "Null parent!" );
 }
 
 void 
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::RequestGetTransformToParent()
 {
   /** Handle returns with event observer */
-  this->m_CoordinateReferenceSystem->RequestGetTransformToParent();
+  this->m_CoordinateSystem->RequestGetTransformToParent();
 }
 
 // Print object information
 void 
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Coordinate system : " 
-     << m_CoordinateReferenceSystem << std::endl;
+     << m_CoordinateSystem << std::endl;
   os << indent << "Coordinate system observer : " 
-     << m_CoordinateReferenceSystemObserver << std::endl;
+     << m_CoordinateSystemObserver << std::endl;
 }
 
 void 
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::SetName (const char* _arg)
 { 
-  this->m_CoordinateReferenceSystem->SetName( _arg );
+  this->m_CoordinateSystem->SetName( _arg );
 } 
   
 void
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::SetName (const std::string & _arg) 
 {
   this->SetName( _arg.c_str() );
 }
 
 const char* 
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::GetName () const
 {
-  return this->m_CoordinateReferenceSystem->GetName();
+  return this->m_CoordinateSystem->GetName();
 }
 
 bool
-CoordinateReferenceSystemDelegator
+CoordinateSystemDelegator
 ::IsCoordinateSystem( const CoordinateSystemType* inCS) const
 {
   // Pointer comparison -- we're not checking whether the 
   // coordinate systems are equivalent, but whether the
   // instances of the coordinate system are the same.
-  return (inCS == this->m_CoordinateReferenceSystem); 
+  return (inCS == this->m_CoordinateSystem); 
 }
 
 

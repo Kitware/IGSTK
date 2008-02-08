@@ -200,7 +200,7 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, 
                                                    outputDirectory, skipLoops );
 
-  igstkTestExportStateMachine1( igstk::CoordinateReferenceSystem, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::CoordinateSystem, outputDirectory, skipLoops );
 
 #ifdef IGSTKSandbox_USE_FLTK
   igstk::FLTKWidget fltkWidget(0,0, 100, 100, "Dummy FLTKWidget for testing");

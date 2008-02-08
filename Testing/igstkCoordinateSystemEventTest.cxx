@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
 
@@ -32,10 +32,10 @@
 int igstkCoordinateSystemEventTest( int, char * [] )
 {
   /** This test is mainly for code coverage on the event results. */
-  typedef igstk::CoordinateReferenceSystem              CoordinateSystemType;
-  typedef igstk::CoordinateReferenceSystemTransformToResult 
+  typedef igstk::CoordinateSystem              CoordinateSystemType;
+  typedef igstk::CoordinateSystemTransformToResult 
                                                         TransformToResult;
-  typedef igstk::CoordinateReferenceSystemTransformToErrorResult 
+  typedef igstk::CoordinateSystemTransformToErrorResult 
                                                         ErrorResult;
   typedef igstk::Transform                              TransformType;
 

@@ -63,8 +63,8 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
   typedef igstk::Object::LoggerType               LoggerType;
   typedef itk::StdStreamLogOutput                 LogOutputType;
   typedef igstk::SpatialObject        
-                                                  CoordinateReferenceSystem;
-  typedef CoordinateReferenceSystem::Pointer      CoordinateSystemPointer;
+                                                  CoordinateSystem;
+  typedef CoordinateSystem::Pointer      CoordinateSystemPointer;
 
   LoggerType::Pointer logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -74,7 +74,7 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
   std::cout << "Running igstkSpatialObjectCoordinateSystemTest3 " << std::endl;
 
-  CoordinateSystemPointer root = CoordinateReferenceSystem::New();
+  CoordinateSystemPointer root = CoordinateSystem::New();
   // root->SetLogger( logger );
 
   igstk::Transform identity;
@@ -88,12 +88,12 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
   igstk::Transform randomTransform1 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
   igstk::Transform randomTransform2 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
 
-  CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
+  CoordinateSystemPointer temp = CoordinateSystem::New();
   // temp->SetLogger( logger );
   temp->RequestSetTransformAndParent(randomTransform1, root);
   coordSysBranch1.push_back(temp);
 
-  CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
+  CoordinateSystemPointer temp2 = CoordinateSystem::New();
   // temp2->SetLogger( logger );
   temp2->RequestSetTransformAndParent(randomTransform2, root);
   coordSysBranch2.push_back(temp2);
@@ -104,12 +104,12 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
     igstk::Transform randomTransform1 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
     igstk::Transform randomTransform2 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
 
-    CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
+    CoordinateSystemPointer temp = CoordinateSystem::New();
     // temp->SetLogger( logger );
     temp->RequestSetTransformAndParent(randomTransform1, coordSysBranch1[i-1]);
     coordSysBranch1.push_back(temp);
 
-    CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
+    CoordinateSystemPointer temp2 = CoordinateSystem::New();
     // temp2->SetLogger( logger );
     temp2->RequestSetTransformAndParent(randomTransform2, coordSysBranch2[i-1]);
     coordSysBranch2.push_back(temp2);

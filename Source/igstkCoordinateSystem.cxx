@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateReferenceSystem.cxx
+  Module:    igstkCoordinateSystem.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,7 +15,7 @@
 
 =========================================================================*/
 
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
 
@@ -23,8 +23,8 @@ namespace igstk
 { 
 
 // Constructor
-CoordinateReferenceSystem
-::CoordinateReferenceSystem():m_StateMachine(this)
+CoordinateSystem
+::CoordinateSystem():m_StateMachine(this)
 {
 
   // Using a self loop for FindLowestCommonAncestor 
@@ -56,9 +56,9 @@ CoordinateReferenceSystem
   // ---------------
   // Inputs
   // ---------------
-  igstkAddInputMacro( NullCoordinateReferenceSystem  );
-  igstkAddInputMacro( ThisCoordinateReferenceSystem  );
-  igstkAddInputMacro( ValidCoordinateReferenceSystem );
+  igstkAddInputMacro( NullCoordinateSystem  );
+  igstkAddInputMacro( ThisCoordinateSystem  );
+  igstkAddInputMacro( ValidCoordinateSystem );
 
   // RequestSetTransformAndParent
   igstkAddInputMacro( NullParent                     ); 
@@ -88,11 +88,11 @@ CoordinateReferenceSystem
                            Initialized, SetTransformAndParentThisParent );
   igstkAddTransitionMacro( Initialized, ParentCausesCycle,
                            Initialized, SetTransformAndParentCycle );
-  igstkAddTransitionMacro( Initialized, NullCoordinateReferenceSystem ,
+  igstkAddTransitionMacro( Initialized, NullCoordinateSystem ,
                            Initialized, ComputeTransformToNullTarget );
-  igstkAddTransitionMacro( Initialized, ThisCoordinateReferenceSystem ,
+  igstkAddTransitionMacro( Initialized, ThisCoordinateSystem ,
                            Initialized, ComputeTransformToThisTarget );
-  igstkAddTransitionMacro( Initialized, ValidCoordinateReferenceSystem,
+  igstkAddTransitionMacro( Initialized, ValidCoordinateSystem,
                            AttemptingComputeTransformToInInitialized,
                            ComputeTransformToValidTarget );
   igstkAddTransitionMacro( Initialized, DetachFromParent,
@@ -112,11 +112,11 @@ CoordinateReferenceSystem
                            ParentSet  , SetTransformAndParent           );
   igstkAddTransitionMacro( ParentSet  , ParentCausesCycle,
                            ParentSet  , SetTransformAndParentCycle  );
-  igstkAddTransitionMacro( ParentSet  , NullCoordinateReferenceSystem ,
+  igstkAddTransitionMacro( ParentSet  , NullCoordinateSystem ,
                            ParentSet  , ComputeTransformToNullTarget );
-  igstkAddTransitionMacro( ParentSet  , ThisCoordinateReferenceSystem ,
+  igstkAddTransitionMacro( ParentSet  , ThisCoordinateSystem ,
                            ParentSet  , ComputeTransformToThisTarget );
-  igstkAddTransitionMacro( ParentSet  , ValidCoordinateReferenceSystem ,
+  igstkAddTransitionMacro( ParentSet  , ValidCoordinateSystem ,
                            AttemptingComputeTransformTo, 
                            ComputeTransformToValidTarget);
   igstkAddTransitionMacro( ParentSet  , DetachFromParent,
@@ -138,9 +138,9 @@ CoordinateReferenceSystem
                            ComputeTransformToAncestorFound);
   /* Invalid inputs to AttemptingComputeTransformToInitialized :
   *   NullParent, ThisParent, ValidParent, ParentCausesCycle, 
-  *   NullCoordinateReferenceSystem
-  *   ThisCoordinateReferenceSystem, 
-  *   ValidCoordinateReferenceSystem,
+  *   NullCoordinateSystem
+  *   ThisCoordinateSystem, 
+  *   ValidCoordinateSystem,
   *   DetachFromParent
   */
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
@@ -160,15 +160,15 @@ CoordinateReferenceSystem
                            AttemptingComputeTransformToInInitialized,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
-                           NullCoordinateReferenceSystem,
+                           NullCoordinateSystem,
                            AttemptingComputeTransformToInInitialized,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
-                           ThisCoordinateReferenceSystem,
+                           ThisCoordinateSystem,
                            AttemptingComputeTransformToInInitialized,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
-                           ValidCoordinateReferenceSystem,
+                           ValidCoordinateSystem,
                            AttemptingComputeTransformToInInitialized,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
@@ -190,9 +190,9 @@ CoordinateReferenceSystem
   *   ThisParent, 
   *   ValidParent, 
   *   ParentCausesCycle, 
-  *   NullCoordinateReferenceSystem
-  *   ThisCoordinateReferenceSystem, 
-  *   ValidCoordinateReferenceSystem,
+  *   NullCoordinateSystem
+  *   ThisCoordinateSystem, 
+  *   ValidCoordinateSystem,
   *   DetachFromParent
   */
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
@@ -212,15 +212,15 @@ CoordinateReferenceSystem
                            AttemptingComputeTransformTo,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
-                           NullCoordinateReferenceSystem,
+                           NullCoordinateSystem,
                            AttemptingComputeTransformTo,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
-                           ThisCoordinateReferenceSystem,
+                           ThisCoordinateSystem,
                            AttemptingComputeTransformTo,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
-                           ValidCoordinateReferenceSystem,
+                           ValidCoordinateSystem,
                            AttemptingComputeTransformTo,
                            InvalidRequest );
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
@@ -233,8 +233,8 @@ CoordinateReferenceSystem
 } 
 
 // Destructor
-CoordinateReferenceSystem
-::~CoordinateReferenceSystem()  
+CoordinateSystem
+::~CoordinateSystem()  
 {
   // Break references
   m_Parent = NULL;
@@ -245,7 +245,7 @@ CoordinateReferenceSystem
 
 
 // Print object information
-void CoordinateReferenceSystem::PrintSelf( 
+void CoordinateSystem::PrintSelf( 
   std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "COORDINATE SYSTEM NAME = " << this->m_Name << std::endl;
@@ -305,25 +305,25 @@ void CoordinateReferenceSystem::PrintSelf(
 
 }
 
-void CoordinateReferenceSystem
-::RequestComputeTransformTo(const CoordinateReferenceSystem* target)
+void CoordinateSystem
+::RequestComputeTransformTo(const CoordinateSystem* target)
 {
   if (NULL == target)
     {
-    igstkPushInputMacro( NullCoordinateReferenceSystem );
+    igstkPushInputMacro( NullCoordinateSystem );
     m_StateMachine.ProcessInputs();
     return;
     }
   if (target == this)
     {
-    igstkPushInputMacro( ThisCoordinateReferenceSystem );
+    igstkPushInputMacro( ThisCoordinateSystem );
     m_StateMachine.ProcessInputs();
     return;
     }
 
   this->m_TargetFromRequestComputeTransformTo = target;
 
-  igstkPushInputMacro( ValidCoordinateReferenceSystem );
+  igstkPushInputMacro( ValidCoordinateSystem );
   m_StateMachine.ProcessInputs();
 
   // Break the reference once we're done with it...
@@ -332,20 +332,20 @@ void CoordinateReferenceSystem
   return;
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::ComputeTransformToNullTargetProcessing()
 {
   // ERROR - Can't compute transform to a NULL target.
-  CoordinateReferenceSystemTransformToErrorResult payload;
+  CoordinateSystemTransformToErrorResult payload;
   payload.Initialize( this, m_TargetFromRequestComputeTransformTo );
 
-  CoordinateReferenceSystemTransformToNullTargetEvent event;
+  CoordinateSystemTransformToNullTargetEvent event;
   event.Set( payload );
 
   this->InvokeEvent( event );
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::ComputeTransformToThisTargetProcessing()
 {
   // We have been asked for the transform to ourself --
@@ -353,17 +353,17 @@ void CoordinateReferenceSystem
   igstk::Transform transform;
   transform.SetToIdentity( TimeStamp::GetLongestPossibleTime() );
 
-  CoordinateReferenceSystemTransformToResult payload;
+  CoordinateSystemTransformToResult payload;
   payload.Initialize(transform, this, this);
 
-  CoordinateReferenceSystemTransformToEvent event;
+  CoordinateSystemTransformToEvent event;
   event.Set(payload);
 
   this->InvokeEvent( event );
 }
 
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::ComputeTransformToValidTargetProcessing()
 {
   if (this->m_TargetFromRequestComputeTransformTo.IsNull())
@@ -376,20 +376,20 @@ void CoordinateReferenceSystem
   this->FindLowestCommonAncestor( this->m_TargetFromRequestComputeTransformTo );
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::ComputeTransformToDisconnectedProcessing()
 {
   // ERROR - Disconnected from the target of ComputeTransformTo
-  CoordinateReferenceSystemTransformToErrorResult payload;
+  CoordinateSystemTransformToErrorResult payload;
   payload.Initialize(this, this->m_TargetFromRequestComputeTransformTo);
 
-  CoordinateReferenceSystemTransformToDisconnectedEvent event;
+  CoordinateSystemTransformToDisconnectedEvent event;
   event.Set( payload );
 
   this->InvokeEvent ( event );
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::ComputeTransformToAncestorFoundProcessing()
 {
   igstkLogMacro(DEBUG, "0x" << this
@@ -419,18 +419,18 @@ void CoordinateReferenceSystem
                                               thisToAncestor);
 
   // Create event
-  CoordinateReferenceSystemTransformToResult payload;
+  CoordinateSystemTransformToResult payload;
   payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo);
 
-  CoordinateReferenceSystemTransformToEvent event;
+  CoordinateSystemTransformToEvent event;
   event.Set( payload );
 
   this->InvokeEvent( event );
 }
 
 Transform
-CoordinateReferenceSystem::
-ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const
+CoordinateSystem::
+ComputeTransformTo(const CoordinateSystem* ancestor) const
 {
   if ( ancestor == this )
     {
@@ -447,9 +447,9 @@ ComputeTransformTo(const CoordinateReferenceSystem* ancestor) const
     }
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::RequestSetTransformAndParent(const Transform & transform, 
-                               const CoordinateReferenceSystem* parent)
+                               const CoordinateSystem* parent)
 {
   if (NULL == parent)
     {
@@ -497,32 +497,32 @@ void CoordinateReferenceSystem
     }
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::SetTransformAndParentProcessing()
 {
   this->m_Parent = this->m_ParentFromRequestSetTransformAndParent;
   this->m_TransformToParent = this->m_TransformFromRequestSetTransformAndParent;
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::SetTransformAndParentNullParentProcessing()
 {
   // ERROR - Can't set parent to NULL.
-  CoordinateReferenceSystemNullParentEvent event;
+  CoordinateSystemNullParentEvent event;
   this->InvokeEvent( event );
 }
 
-void CoordinateReferenceSystem
+void CoordinateSystem
 ::SetTransformAndParentThisParentProcessing()
 {
   // ERROR - Can't set our parent to this.
-  CoordinateReferenceSystemThisParentEvent event;
+  CoordinateSystemThisParentEvent event;
   this->InvokeEvent( event );
 }
 
 void 
-CoordinateReferenceSystem
-::FindLowestCommonAncestor( const CoordinateReferenceSystem* B)
+CoordinateSystem
+::FindLowestCommonAncestor( const CoordinateSystem* B)
 {
   //
   // A simple algorithm is to find a path to a root for each 
@@ -530,11 +530,11 @@ CoordinateReferenceSystem
   // do this by walking up one path and comparing it against every other
   // node in the other path.
   // 
-  typedef const CoordinateReferenceSystem* 
-                                      CoordinateReferenceSystemConstPointer;
+  typedef const CoordinateSystem* 
+                                      CoordinateSystemConstPointer;
 
-  CoordinateReferenceSystemConstPointer aSmart = this;
-  CoordinateReferenceSystemConstPointer bSmart = B;
+  CoordinateSystemConstPointer aSmart = this;
+  CoordinateSystemConstPointer bSmart = B;
 
   if( aSmart == bSmart )
     {
@@ -562,10 +562,10 @@ CoordinateReferenceSystem
     return;
     }
 
-  CoordinateReferenceSystemConstPointer aTemp; 
-  CoordinateReferenceSystemConstPointer bTemp;
-  CoordinateReferenceSystemConstPointer aTempPrev = NULL;
-  CoordinateReferenceSystemConstPointer bTempPrev = NULL;
+  CoordinateSystemConstPointer aTemp; 
+  CoordinateSystemConstPointer bTemp;
+  CoordinateSystemConstPointer aTempPrev = NULL;
+  CoordinateSystemConstPointer bTempPrev = NULL;
 
   for(bTemp = bSmart;
       bTemp != NULL;
@@ -608,8 +608,8 @@ CoordinateReferenceSystem
 }
 
 bool
-CoordinateReferenceSystem
-::CanReach(const CoordinateReferenceSystem* target) const
+CoordinateSystem
+::CanReach(const CoordinateSystem* target) const
 {
   // target is reachable since we're "target"
   if (target == this)
@@ -633,38 +633,38 @@ CoordinateReferenceSystem
 }
 
 void
-CoordinateReferenceSystem
+CoordinateSystem
 ::SetTransformAndParentCycleProcessing()
 {
-  CoordinateReferenceSystemParentCycleEvent event;
+  CoordinateSystemParentCycleEvent event;
   event.Set( this->m_ParentFromRequestSetTransformAndParent );
 
   this->InvokeEvent( event );
 }
 
 void 
-CoordinateReferenceSystem
+CoordinateSystem
 ::InvalidRequestProcessing()
 {
   igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
 
 void 
-CoordinateReferenceSystem
+CoordinateSystem
 ::RequestGetTransformToParent()
 {
   this->RequestComputeTransformTo(this->m_Parent);
 }
 
-const CoordinateReferenceSystem* 
-CoordinateReferenceSystem
-::GetCoordinateReferenceSystem() const
+const CoordinateSystem* 
+CoordinateSystem
+::GetCoordinateSystem() const
 {
   return this;
 }
 
 void 
-CoordinateReferenceSystem
+CoordinateSystem
 ::RequestDetach()
 {
   igstkPushInputMacro( DetachFromParent );
@@ -672,14 +672,14 @@ CoordinateReferenceSystem
 }
 
 void
-CoordinateReferenceSystem
+CoordinateSystem
 ::DoNothingProcessing()
 {
   // Purposely does nothing.
 }
 
 void
-CoordinateReferenceSystem
+CoordinateSystem
 ::DetachFromParentProcessing()
 {
   //

@@ -15,15 +15,15 @@
 
 =========================================================================*/
 
-#ifndef __igstkCoordinateReferenceSystemTransformToErrorResult_h
-#define __igstkCoordinateReferenceSystemTransformToErrorResult_h
+#ifndef __igstkCoordinateSystemTransformToErrorResult_h
+#define __igstkCoordinateSystemTransformToErrorResult_h
 
-#include "igstkCoordinateReferenceSystem.h"
+#include "igstkCoordinateSystem.h"
 
 namespace igstk
 {
 
-/** \class CoordinateReferenceSystemTransformToErrorResult
+/** \class CoordinateSystemTransformToErrorResult
  *
  * \brief This class is used a result of RequestComputeTransformTo
  * when there is an error. It encapsulates information about the 
@@ -32,23 +32,23 @@ namespace igstk
  * It is meant to be used as payload in an event that is created after a
  * error during a call to RequestTransformTo(). 
  *
- *  \ingroup CoordinateReferenceSystem
+ *  \ingroup CoordinateSystem
  *
  */
-class CoordinateReferenceSystemTransformToErrorResult
+class CoordinateSystemTransformToErrorResult
 {
 public:
 
-  CoordinateReferenceSystemTransformToErrorResult();
+  CoordinateSystemTransformToErrorResult();
 
-  CoordinateReferenceSystemTransformToErrorResult(
-      const CoordinateReferenceSystemTransformToErrorResult& in);
+  CoordinateSystemTransformToErrorResult(
+      const CoordinateSystemTransformToErrorResult& in);
 
-  CoordinateReferenceSystemTransformToErrorResult &operator = ( 
-      const CoordinateReferenceSystemTransformToErrorResult& in);
+  CoordinateSystemTransformToErrorResult &operator = ( 
+      const CoordinateSystemTransformToErrorResult& in);
 
-  void Initialize(const CoordinateReferenceSystem* src,
-                  const CoordinateReferenceSystem* dst);
+  void Initialize(const CoordinateSystem* src,
+                  const CoordinateSystem* dst);
 
   /** Clears the pointers that the event is holding. This 
    *  should be called after the event is received to
@@ -58,31 +58,31 @@ public:
   void Clear();
 
   /** Returns the source coordinate system. */
-  const CoordinateReferenceSystem * GetSource() const;
+  const CoordinateSystem * GetSource() const;
 
   /** Returns the destination coordinate system. */
-  const CoordinateReferenceSystem * GetDestination() const;
+  const CoordinateSystem * GetDestination() const;
 
 private:
 
-  CoordinateReferenceSystem::ConstPointer   m_Source;
-  CoordinateReferenceSystem::ConstPointer   m_Destination;
+  CoordinateSystem::ConstPointer   m_Source;
+  CoordinateSystem::ConstPointer   m_Destination;
 };
 
 /** This event is invoked when RequestComputeTransformTo is called with
  *  a NULL target coordinate system.
  */
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToNullTargetEvent,
+igstkLoadedEventMacro( CoordinateSystemTransformToNullTargetEvent,
                        TransformNotAvailableEvent,
-                       CoordinateReferenceSystemTransformToErrorResult );
+                       CoordinateSystemTransformToErrorResult );
 
 /** This event is invoked when RequestComputeTransformTo is called with
  *  a destination coordinate system that is not reachable, i.e. not connected,
  *  to the source coordinate system.
  */
-igstkLoadedEventMacro( CoordinateReferenceSystemTransformToDisconnectedEvent,
+igstkLoadedEventMacro( CoordinateSystemTransformToDisconnectedEvent,
                        TransformNotAvailableEvent,
-                       CoordinateReferenceSystemTransformToErrorResult );
+                       CoordinateSystemTransformToErrorResult );
 
 } // end namespace igstk
 

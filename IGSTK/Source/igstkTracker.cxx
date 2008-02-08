@@ -936,7 +936,7 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 
   os << indent << "ValidityTime: " << this->m_ValidityTime << std::endl;
   os << indent << "CoordinateSystemDelegator: ";
-  this->m_CoordinateReferenceSystemDelegator->PrintSelf( os, indent );
+  this->m_CoordinateSystemDelegator->PrintSelf( os, indent );
 }
 
 /** The "SetFrequencyProcessing" passes the frequency value to the Pulse

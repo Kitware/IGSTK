@@ -20,24 +20,24 @@
 
 namespace igstk
 {
-CoordinateReferenceSystemTransformToErrorResult
-::CoordinateReferenceSystemTransformToErrorResult()
+CoordinateSystemTransformToErrorResult
+::CoordinateSystemTransformToErrorResult()
 {
 
 }
 
-CoordinateReferenceSystemTransformToErrorResult
-::CoordinateReferenceSystemTransformToErrorResult(
-      const CoordinateReferenceSystemTransformToErrorResult& in)
+CoordinateSystemTransformToErrorResult
+::CoordinateSystemTransformToErrorResult(
+      const CoordinateSystemTransformToErrorResult& in)
 {
   m_Source = in.m_Source;
   m_Destination = in.m_Destination;
 }
 
-CoordinateReferenceSystemTransformToErrorResult&
-CoordinateReferenceSystemTransformToErrorResult
+CoordinateSystemTransformToErrorResult&
+CoordinateSystemTransformToErrorResult
 ::operator = ( 
-      const CoordinateReferenceSystemTransformToErrorResult& in)
+      const CoordinateSystemTransformToErrorResult& in)
 {
   if (this != &in)
     {
@@ -48,30 +48,30 @@ CoordinateReferenceSystemTransformToErrorResult
 }
 
 void
-CoordinateReferenceSystemTransformToErrorResult
-::Initialize(const CoordinateReferenceSystem* src,
-             const CoordinateReferenceSystem* dst)
+CoordinateSystemTransformToErrorResult
+::Initialize(const CoordinateSystem* src,
+             const CoordinateSystem* dst)
 {
   m_Source = src;
   m_Destination = dst;
 }
 
-const CoordinateReferenceSystem * 
-CoordinateReferenceSystemTransformToErrorResult
+const CoordinateSystem * 
+CoordinateSystemTransformToErrorResult
 ::GetSource() const
 {
   return this->m_Source;
 }
 
-const CoordinateReferenceSystem *
-CoordinateReferenceSystemTransformToErrorResult
+const CoordinateSystem *
+CoordinateSystemTransformToErrorResult
 ::GetDestination() const
 {
   return this->m_Destination;
 }
 
 void
-CoordinateReferenceSystemTransformToErrorResult
+CoordinateSystemTransformToErrorResult
 ::Clear()
 {
   m_Source = NULL;

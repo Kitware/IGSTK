@@ -181,7 +181,7 @@ int igstkVascularNetworkObjectTest( int, char * [] )
                                                  = TransformObserverType::New();
 
   network->AddObserver(
-    igstk::CoordinateReferenceSystemTransformToEvent(), transformObserver );
+    igstk::CoordinateSystemTransformToEvent(), transformObserver );
 
   network->RequestSetTransformAndParent( transform, worldReference );
 

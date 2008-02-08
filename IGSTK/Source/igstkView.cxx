@@ -445,10 +445,10 @@ void View::ResetCameraProcessing()
   ObjectListType::iterator itr    = this->m_Objects.begin();
   ObjectListType::iterator endItr = this->m_Objects.end();
 
-  typedef igstk::Friends::CoordinateReferenceSystemHelper 
-                          CoordinateReferenceSystemHelperType;
-  const CoordinateReferenceSystem* thisCS = 
-    CoordinateReferenceSystemHelperType::GetCoordinateReferenceSystem( this );
+  typedef igstk::Friends::CoordinateSystemHelper 
+                          CoordinateSystemHelperType;
+  const CoordinateSystem* thisCS = 
+    CoordinateSystemHelperType::GetCoordinateSystem( this );
   while( itr != endItr )
     {
     (*itr)->RequestUpdateRepresentation( renderTime, thisCS );
@@ -607,11 +607,11 @@ void View::RefreshRender()
   ObjectListType::iterator itr    = this->m_Objects.begin();
   ObjectListType::iterator endItr = this->m_Objects.end();
 
-  typedef igstk::Friends::CoordinateReferenceSystemHelper 
-                          CoordinateReferenceSystemHelperType;
+  typedef igstk::Friends::CoordinateSystemHelper 
+                          CoordinateSystemHelperType;
  
-  const CoordinateReferenceSystem* thisCS = 
-     CoordinateReferenceSystemHelperType::GetCoordinateReferenceSystem( this );  
+  const CoordinateSystem* thisCS = 
+     CoordinateSystemHelperType::GetCoordinateSystem( this );  
 
   while( itr != endItr )
     {
@@ -967,7 +967,7 @@ void View::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
 
   os << indent << "CoordinateSystemDelegator: ";
-  this->m_CoordinateReferenceSystemDelegator->PrintSelf( os, indent );
+  this->m_CoordinateSystemDelegator->PrintSelf( os, indent );
 }
 
 } // end namespace igstk
