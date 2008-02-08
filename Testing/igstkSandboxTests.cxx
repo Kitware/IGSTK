@@ -33,6 +33,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCoordinateReferenceSystemTest2);
   REGISTER_TEST(igstkCoordinateReferenceSystemTest3);
   REGISTER_TEST(igstkCoordinateReferenceSystemDelegatorTest);
+  REGISTER_TEST(igstkCoordinateSystemEventTest);
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
