@@ -21,17 +21,19 @@
 #include "itkStdStreamLogOutput.h"
 #include "itkTimeProbe.h"
 
+#include "igstkView2D.h"
 
 int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
 {
   const int depth = 10;
   const int numIters = 100000;
 
-  typedef igstk::Object::LoggerType               LoggerType;
-  typedef itk::StdStreamLogOutput                 LogOutputType;
+  typedef igstk::Object::LoggerType         LoggerType;
+  typedef itk::StdStreamLogOutput           LogOutputType;
   typedef igstk::CoordinateReferenceSystemDelegator
-                                                  CoordinateReferenceSystem;
-  typedef CoordinateReferenceSystem::Pointer      CoordinateSystemPointer;
+                                            CoordinateSystemDelegator;
+  typedef CoordinateSystemDelegator::Pointer      
+                                            CoordinateSystemDelegatorPointer;
 
   LoggerType::Pointer logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -42,23 +44,23 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
   std::cout << "Running igstkCoordinateReferenceSystemDelegatorTest" 
             << std::endl;
 
-  CoordinateSystemPointer root = CoordinateReferenceSystem::New();
+  CoordinateSystemDelegatorPointer root = CoordinateSystemDelegator::New();
   root->SetLogger( logger );
 
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
-  std::vector<CoordinateSystemPointer> coordSysBranch1;
-  std::vector<CoordinateSystemPointer> coordSysBranch2;
+  std::vector<CoordinateSystemDelegatorPointer> coordSysBranch1;
+  std::vector<CoordinateSystemDelegatorPointer> coordSysBranch2;
 
   // Scope temp and temp2
   {
-  CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
+  CoordinateSystemDelegatorPointer temp = CoordinateSystemDelegator::New();
   temp->SetLogger( logger );
   temp->RequestSetTransformAndParent(identity, root);
   coordSysBranch1.push_back(temp);
 
-  CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
+  CoordinateSystemDelegatorPointer temp2 = CoordinateSystemDelegator::New();
   temp2->SetLogger( logger );
   temp2->RequestSetTransformAndParent(identity, root);
   coordSysBranch2.push_back(temp2);
@@ -66,19 +68,19 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
 
   for (int i = 1; i < depth; i++)
     {
-    CoordinateSystemPointer temp = CoordinateReferenceSystem::New();
+    CoordinateSystemDelegatorPointer temp = CoordinateSystemDelegator::New();
     temp->SetLogger( logger );
     temp->RequestSetTransformAndParent(identity, coordSysBranch1[i-1]);
     coordSysBranch1.push_back(temp);
 
-    CoordinateSystemPointer temp2 = CoordinateReferenceSystem::New();
+    CoordinateSystemDelegatorPointer temp2 = CoordinateSystemDelegator::New();
     temp2->SetLogger( logger );
     temp2->RequestSetTransformAndParent(identity,coordSysBranch2[i-1]);
     coordSysBranch2.push_back(temp2);
     }
 
-  CoordinateSystemPointer leaf1 = coordSysBranch1[depth-1];
-  CoordinateSystemPointer leaf2 = coordSysBranch2[depth-1];
+  CoordinateSystemDelegatorPointer leaf1 = coordSysBranch1[depth-1];
+  CoordinateSystemDelegatorPointer leaf2 = coordSysBranch2[depth-1];
 
   itk::TimeProbe probe1;
   itk::TimeProbe probe2;
@@ -108,7 +110,7 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
             << " Mean time = "
             << probe2.GetMeanTime() << std::endl;
 
-  CoordinateReferenceSystem* nullCS = NULL;
+  CoordinateSystemDelegator* nullCS = NULL;
   leaf1->RequestSetTransformAndParent( identity, nullCS ); // coverage
   leaf1->RequestComputeTransformTo( nullCS ); // coverage
   leaf1->Print( std::cout ); // coverage
@@ -120,6 +122,16 @@ int igstkCoordinateReferenceSystemDelegatorTest(int argc, char* argv[])
     std::cerr << "leaf1->GetName() returned the wrong name." << std::endl;
     std::cerr << "Got : " << leaf1->GetName() << std::endl;
     std::cerr << "Expected : " << leaf1Name << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  igstk::CoordinateReferenceSystem::Pointer fooCS = 
+                                      igstk::CoordinateReferenceSystem::New();
+
+  if ( leaf1->IsCoordinateSystem( fooCS ) == true ) // coverage
+    {
+    std::cerr << "leaf1->IsCoordinateSystem( fooCS ) ";
+    std::cerr << "should not return true!" << std::endl;
     return EXIT_FAILURE;
     }
 
