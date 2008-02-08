@@ -102,7 +102,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   referenceToolObject->SetSize( 1.0, 1.0, 1.0 );
 
   ToolRepresentationType::Pointer referenceToolRepresentation = ToolRepresentationType::New();
-  referenceToolRepresentation->RequestSetBoxObject( toolObject );
+  referenceToolRepresentation->RequestSetBoxObject( referenceToolObject );
   referenceToolRepresentation->SetColor( 0.5, 1.0, 0.5 );
 
 
@@ -134,6 +134,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   // Connect the objects in the scene to a coordinate reference system.
   tracker->RequestSetTransformAndParent( identity, axesObject );
   toolObject->RequestSetTransformAndParent( identity, trackerTool );
+  referenceToolObject->RequestSetTransformAndParent( identity, referenceTrackerTool );
   targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject );
   view3D->RequestSetTransformAndParent( identity, axesObject );
 
@@ -141,7 +142,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   igstk::Transform calibrationToolTransform;
   translation[0] =    0;
   translation[1] =    0;
-  translation[2] = -1.0;
+  translation[2] = -2.0;
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   calibrationToolTransform.SetTranslation(
     translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
@@ -150,7 +151,7 @@ int igstkTrackerToolReferenceTest( int , char * [] )
   igstk::Transform calibrationReferenceToolTransform;
   translation[0] =    0;
   translation[1] =    0;
-  translation[2] =  1.0;
+  translation[2] =  2.0;
   calibrationToolTransform.SetTranslation(
     translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
   referenceTrackerTool->SetCalibrationTransform( calibrationReferenceToolTransform );
