@@ -102,7 +102,8 @@ if( fileName )
       }
       Fl_Button {} {
         label Confirm
-        callback {TrackerConfigWindow->hide();}
+        callback {RequestGetConfiguration();
+TrackerConfigWindow->hide();} selected
         xywh {315 435 70 25}
       }
     }
@@ -112,6 +113,6 @@ if( fileName )
   } {}
   Function {InitializeGUI()} {open return_type {virtual void}
   } {}
-  Function {GetGUISetting()} {open selected return_type {virtual void}
+  Function {GetGUISetting()} {open return_type {virtual void}
   } {}
 } 
