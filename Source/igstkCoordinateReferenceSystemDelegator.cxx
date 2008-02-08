@@ -152,5 +152,15 @@ CoordinateReferenceSystemDelegator
   return this->m_CoordinateReferenceSystem->GetName();
 }
 
+bool
+CoordinateReferenceSystemDelegator
+::IsCoordinateSystem( const CoordinateSystemType* inCS) const
+{
+  // Pointer comparison -- we're not checking whether the 
+  // coordinate systems are equivalent, but whether the
+  // instances of the coordinate system are the same.
+  return (inCS == this->m_CoordinateReferenceSystem); 
+}
+
 
 } // end igstk namespace

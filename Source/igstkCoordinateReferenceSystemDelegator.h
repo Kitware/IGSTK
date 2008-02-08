@@ -114,6 +114,16 @@ public:
                                                              targetCoordSys);
     }
 
+  /** Typedef for coordinate system*/
+  typedef igstk::CoordinateReferenceSystem              CoordinateSystemType;
+
+  /** Allows another object to verify which coordinate system 
+   *  an object owns. This does not check that the coordinate
+   *  systems are equivalent, but whether the instances of 
+   *  the coordinate systems are identical.
+   */
+  bool IsCoordinateSystem( const CoordinateSystemType* ) const;
+
   /** Print out object information. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 

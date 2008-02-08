@@ -67,6 +67,11 @@ public: \
                           transformToParentWithInternalTransform, parent); \
       }\
     } \
+  bool IsCoordinateSystem(const CoordinateReferenceSystem* inCS) const \
+    { \
+    return m_CoordinateReferenceSystemDelegator-> \
+      IsCoordinateSystem( inCS ); \
+    } \
 protected: \
   virtual bool IsInternalTransformRequired() \
     { \
