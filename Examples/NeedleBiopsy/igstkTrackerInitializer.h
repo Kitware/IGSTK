@@ -42,7 +42,12 @@ public:
   
   typedef TrackerConfiguration::TrackerType  TrackerType;
 
-  TrackerInitializer( TrackerConfiguration * config );
+  TrackerInitializer( );
+
+  void SetTrackerConfiguration( TrackerConfiguration * config )
+  {
+    m_TrackerConfiguration = config;
+  }
 
   int RequestInitializeTracker();
   
@@ -53,22 +58,47 @@ public:
     return m_Tracker;
   }
 
-  std::list< igstk::TrackerTool::Pointer > GetToolList()
+  std::vector< TrackerTool::Pointer > GetNonReferenceToolList()
   {
     return m_TrackerToolList;
   }
+
+  int HasReferenceTool()
+  {
+    return m_HasReferenceTool;
+  }
+
+  TrackerTool::Pointer GetReferenceTool()
+  {
+    return m_ReferenceTool;
+  }
+
+  void StopAndCloseTracker()
+  {
+    m_Tracker->RequestStopTracking();
+    m_Tracker->RequestClose();
+    if ( m_TrackerType == TrackerConfiguration::Aurora || m_TrackerType == TrackerConfiguration::Polaris)
+    {
+      m_Communication->CloseCommunication();
+    }
+    
+  }
+
 
   virtual ~TrackerInitializer();
 
 private:
   
-  TrackerType            m_TrackerType;
+  TrackerType                           m_TrackerType;
 
-  Tracker::Pointer                             m_Tracker;
-  std::list< igstk::TrackerTool::Pointer >     m_TrackerToolList;
+  Tracker::Pointer                      m_Tracker;
+  std::vector< TrackerTool::Pointer >   m_TrackerToolList;
+  bool                                  m_HasReferenceTool;
+  TrackerTool::Pointer                  m_ReferenceTool;
 
   PolarisTracker::Pointer               m_PolarisTracker;
   AuroraTracker::Pointer                m_AuroraTracker;
+  SerialCommunication::Pointer          m_Communication;
   
   int InitializePolarisTracker();
   int InitializeAuroraTracker();

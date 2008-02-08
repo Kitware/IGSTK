@@ -22,9 +22,8 @@ namespace igstk
 
 
 /** Constructor: Initializes all internal variables. */
-TrackerInitializer::TrackerInitializer( TrackerConfiguration * config)
-{ 
-    m_TrackerConfiguration = config;
+TrackerInitializer::TrackerInitializer()
+{
     m_ErrorMessage  = "";
 }
 
@@ -68,20 +67,25 @@ int TrackerInitializer::InitializePolarisTracker()
 {
   NDITrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetNDITrackerConfiguration();
   
-  SerialCommunication::Pointer serialCom = SerialCommunication::New();
+  m_Communication = SerialCommunication::New();
 
-  serialCom->SetPortNumber( trackerConfig->COMPort );
-  serialCom->SetParity( SerialCommunication::NoParity );
-  serialCom->SetBaudRate(SerialCommunication::BaudRate115200);
-  serialCom->SetDataBits( SerialCommunication::DataBits8 );
-  serialCom->SetStopBits( SerialCommunication::StopBits1 );
-  serialCom->SetHardwareHandshake( SerialCommunication::HandshakeOff);
-  serialCom->OpenCommunication();
+  m_Communication->SetPortNumber( trackerConfig->COMPort );
+  m_Communication->SetParity( SerialCommunication::NoParity );
+  m_Communication->SetBaudRate(SerialCommunication::BaudRate115200);
+  m_Communication->SetDataBits( SerialCommunication::DataBits8 );
+  m_Communication->SetStopBits( SerialCommunication::StopBits1 );
+  m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
+  if ( !m_Communication->OpenCommunication())
+  {
+    std::cout << "Serial port open failure\n";
+    return 0;
+  }
 
   m_Tracker = m_PolarisTracker = PolarisTracker::New();
-  m_PolarisTracker->SetCommunication( serialCom );
+  m_PolarisTracker->SetCommunication( m_Communication );
   m_PolarisTracker->RequestOpen();
 
+  m_TrackerToolList.clear();
   for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
   {
     PolarisTrackerTool::Pointer tool = PolarisTrackerTool::New();
@@ -111,17 +115,18 @@ int TrackerInitializer::InitializePolarisTracker()
     if ( toolConfig->IsReference )
     {
       m_PolarisTracker->RequestSetReferenceTool( tool );
+      m_ReferenceTool = tool;
+      m_HasReferenceTool = 1;
     }
     else
     {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
-
-    m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
-    m_Tracker->RequestStartTracking();
-    
   }
+
+  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestStartTracking();
 
   return 1;
 
@@ -131,20 +136,26 @@ int TrackerInitializer::InitializeAuroraTracker()
 {
   NDITrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetNDITrackerConfiguration();
 
-  SerialCommunication::Pointer serialCom = SerialCommunication::New();
+  m_Communication = SerialCommunication::New();
 
-  serialCom->SetPortNumber( trackerConfig->COMPort );
-  serialCom->SetParity( SerialCommunication::NoParity );
-  serialCom->SetBaudRate(SerialCommunication::BaudRate115200);
-  serialCom->SetDataBits( SerialCommunication::DataBits8 );
-  serialCom->SetStopBits( SerialCommunication::StopBits1 );
-  serialCom->SetHardwareHandshake( SerialCommunication::HandshakeOff);
-  serialCom->OpenCommunication();
+  m_Communication->SetPortNumber( trackerConfig->COMPort );
+  m_Communication->SetParity( SerialCommunication::NoParity );
+  m_Communication->SetBaudRate(SerialCommunication::BaudRate115200);
+  m_Communication->SetDataBits( SerialCommunication::DataBits8 );
+  m_Communication->SetStopBits( SerialCommunication::StopBits1 );
+  m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
+  
+  if( !m_Communication->OpenCommunication())
+  {
+    std::cout << "Serial port open failure\n";
+    return 0;
+  }
 
   m_Tracker = m_AuroraTracker = AuroraTracker::New();
-  m_AuroraTracker->SetCommunication( serialCom );
+  m_AuroraTracker->SetCommunication( m_Communication );
   m_AuroraTracker->RequestOpen();
 
+  m_TrackerToolList.clear();
   for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
   {
     AuroraTrackerTool::Pointer tool = AuroraTrackerTool::New();
@@ -179,20 +190,20 @@ int TrackerInitializer::InitializeAuroraTracker()
     if ( toolConfig->IsReference )
     {
       m_AuroraTracker->RequestSetReferenceTool( tool );
+      m_ReferenceTool = tool;
+      m_HasReferenceTool = 1;
     }
     else
     {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
-
-    m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
-    m_Tracker->RequestStartTracking();
-
   }
 
-  return 1;
+  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestStartTracking();
 
+  return 1;
 }
 
 #ifdef IGSTKSandbox_USE_MicronTracker
@@ -209,6 +220,7 @@ int TrackerInitializer::InitializeMicronTracker()
 
   m_MicronTracker->RequestOpen();
 
+  m_TrackerToolList.clear();
   for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
   {
     MicronTrackerTool::Pointer tool = MicronTrackerTool::New();
@@ -223,17 +235,18 @@ int TrackerInitializer::InitializeMicronTracker()
     if ( toolConfig->IsReference )
     {
       m_MicronTracker->RequestSetReferenceTool( tool );
+      m_ReferenceTool = tool;
+      m_HasReferenceTool = 1;
     }
     else
     {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
     }
-
-    m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
-    m_Tracker->RequestStartTracking();
-
   }
+
+  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestStartTracking();
 
   return 1;
 
