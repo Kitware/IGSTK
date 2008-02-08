@@ -242,6 +242,10 @@ SerialCommunication::SerialCommunication() :  m_StateMachine( this )
                            Timeout,
                            ReadyForCommunication,
                            Timeout );
+  igstkAddTransitionMacro( AttemptingToRead,
+                           PurgeBuffers,
+                           AttemptingToPurgeBuffers,
+                           AttemptToPurgeBuffers);
 
   // AttemptingToWrite
   igstkAddTransitionMacro( AttemptingToWrite,

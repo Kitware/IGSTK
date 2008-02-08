@@ -687,7 +687,34 @@ void Tracker::ExitTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing "
                  "called ...\n");
+
+  // by default, we will exit tracking by terminating tracking thread
+  this->ExitTrackingTerminatingTrackingThread();
+}
+
+/** Exit tracking by terminating tracking thread */ 
+void Tracker::ExitTrackingWithoutTerminatingTrackingThread( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingWithoutTerminatingTrackingThread "
+                 "called ...\n");
+
   m_PulseGenerator->RequestStop();
+}
+
+/** Exit tracking by terminating tracking thread */ 
+void Tracker::ExitTrackingTerminatingTrackingThread( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingTerminatingTrackingThread "
+                 "called ...\n");
+
+  m_PulseGenerator->RequestStop();
+
+  // Terminating the TrackingThread.
+  if ( this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
+    }
 }
 
 /** The "AttemptToUpdateStatus" method attempts to update status

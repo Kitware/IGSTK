@@ -259,6 +259,25 @@ protected:
   void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool,
                                       bool flag ) const;
 
+  /** Depending on the tracker type, the tracking thread should be 
+    * terminated or left untouched when we stop tracking. For example,
+    * in the case of MicronTracker, it is better to not terminate the
+    * tracking thread. Otherwise, everytime we restart tracking, then 
+    * the camera has to be reattached. For NDI trackers, the tracking
+    * thread has to be terminated first to send TSTOP command */  
+
+  /** Always called when exiting tracking state. This methold will be
+    * overriden in derived classes. */
+  void ExitTrackingStateProcessing( void );
+
+  /** Exit tracking without terminating tracking thread */
+  void ExitTrackingWithoutTerminatingTrackingThread();
+
+  /** Exit tracking after terminating tracking thread */
+  void ExitTrackingTerminatingTrackingThread();
+
+
+
 private:
   Tracker(const Self&);           //purposely not implemented
   void operator=(const Self&);    //purposely not implemented
@@ -428,9 +447,6 @@ private:
 
   /** Always called when entering tracking state. */
   void EnterTrackingStateProcessing( void );
-
-  /** Always called when entering tracking state. */
-  void ExitTrackingStateProcessing( void );
 
   /** Detach all tracker tools from the tracker */
   void DetachAllTrackerToolsFromTracker();
