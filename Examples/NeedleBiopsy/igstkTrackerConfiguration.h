@@ -49,9 +49,19 @@ public:
     return m_MicronTrackerConfiguration;
   }
 
+  void SetMicronTrackerConfiguration(MicronTrackerConfiguration * conf)
+  {
+    m_MicronTrackerConfiguration = conf;
+  }
+
   NDITrackerConfiguration    * GetNDITrackerConfiguration()
   {
     return m_NDITrackerConfiguration;
+  }
+
+  void SetNDITrackerConfiguration(NDITrackerConfiguration * conf)
+  {
+    m_NDITrackerConfiguration = conf;
   }
 
   virtual ~TrackerConfiguration();
@@ -73,7 +83,12 @@ public:
   bool               IsReference;
   igstk::Transform   CalibrationTransform;
 
-  MicronTrackerToolConfiguration(){};
+  MicronTrackerToolConfiguration()
+  {
+    MarkerName  = "";
+    IsReference = 0;
+    CalibrationTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+  };
   virtual ~MicronTrackerToolConfiguration(){};
 };
 
@@ -89,7 +104,16 @@ public:
   std::string        SROMFile;
   igstk::Transform   CalibrationTransform;
 
-  NDITrackerToolConfiguration(){};
+  NDITrackerToolConfiguration(){
+    WiredTool    = 1;
+    Is5DOF       = 0;
+    IsReference  = 0;
+    HasSROM      = 0;
+    PortNumber   = 0;
+    ChannelNumber= 0;
+    SROMFile     = "";
+    CalibrationTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+  };
   virtual ~NDITrackerToolConfiguration(){};
 };
 
@@ -106,7 +130,11 @@ public:
 
   MicronTrackerConfiguration()
   {
+    CameraCalibrationFileDirectory = "";
+    InitializationFile             = "";
+    TemplatesDirectory             = "";
     Frequency = 30;
+    TrackerToolList.clear();
   }
   virtual ~MicronTrackerConfiguration(){};
 
@@ -122,7 +150,9 @@ public:
 
   NDITrackerConfiguration()
   {
+    COMPort   = SerialCommunication::PortNumber0; 
     Frequency = 30;
+    TrackerToolList.clear();
   }
   virtual ~NDITrackerConfiguration(){};
 };
