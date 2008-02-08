@@ -23,11 +23,27 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerConfigurationGUIBase::TrackerConfigurationGUIBase()
 {
+  m_Reporter = ::itk::Object::New();
 }
 
 /** Destructor */
 TrackerConfigurationGUIBase::~TrackerConfigurationGUIBase()
 {
+}
+
+unsigned long TrackerConfigurationGUIBase::AddObserver( const ::itk::EventObject & event, ::itk::Command * observer )
+{
+  return m_Reporter->AddObserver( event, observer );
+}
+
+void TrackerConfigurationGUIBase::RemoveObserver( unsigned long tag )
+{
+  m_Reporter->RemoveObserver( tag );
+}
+
+void TrackerConfigurationGUIBase::RemoveAllObservers()
+{
+  m_Reporter->RemoveAllObservers();
 }
 
 } // end of name space

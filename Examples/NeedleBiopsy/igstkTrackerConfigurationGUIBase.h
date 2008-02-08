@@ -48,7 +48,8 @@ public:
   igstkLoadedEventMacro( ConfigurationEvent, IGSTKEvent, TrackerConfiguration );
 
   unsigned long AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
-  void  RemoveObserver( unsigned long tag );
+  void RemoveObserver( unsigned long tag );
+  void RemoveAllObservers();
 
   friend class TrackerConfiguration;
 
@@ -58,8 +59,8 @@ public:
 protected:
   
   // Tracker specific GUI class has to implement this methods
-  virtual void InitializeGUI() = 0;
-  virtual void GetGUISetting() = 0;
+  virtual void InitializeGUI() {};
+  virtual void GetGUISetting() {};
 
 private:
   
