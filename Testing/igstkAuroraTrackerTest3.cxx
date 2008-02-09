@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerTest2.cxx
+  Module:    igstkAuroraTrackerTest3.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -32,21 +32,19 @@
 
 #include "igstkSystemInformation.h"
 #include "igstkSerialCommunication.h"
-#include "igstkSerialCommunicationSimulator.h"
-#include "igstkPolarisTracker.h"
-#include "igstkPolarisTrackerTool.h"
+#include "igstkAuroraTracker2.h"
+#include "igstkAuroraTrackerTool2.h"
 #include "igstkTransform.h"
-#include "igstkTransformObserver.h"
 
-class PolarisTrackerTest2Command : public itk::Command 
+class AuroraTrackerTest3Command : public itk::Command 
 {
 public:
-  typedef  PolarisTrackerTest2Command   Self;
+  typedef  AuroraTrackerTest3Command   Self;
   typedef  itk::Command                Superclass;
   typedef itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
 protected:
-  PolarisTrackerTest2Command() {};
+  AuroraTrackerTest3Command() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -65,37 +63,36 @@ public:
     }
 };
 
-
-/** This program tests using a wireless tracker tool */
-int igstkPolarisTrackerTest2( int argc, char * argv[] )
+//This program tests using 5DOF tracker tools
+int igstkAuroraTrackerTest3( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType   LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   if( argc < 3 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "Logger_Output_filename "
-                            << "Wireless_SROM_filename "
+                            << "Logger_Output_filename " <<"\t"
+                            << "PortA_number" << "\t"
+                            << "PortB_number" << "\t"
+                            << "Order" << "\t"
+                            << "UseSpliter?" << "\t"
                             << std::endl;
     return EXIT_FAILURE;
     }
 
 
-  igstk::PolarisTrackerTool::Pointer tool = igstk::PolarisTrackerTool::New();
+  igstk::AuroraTrackerTool2::Pointer tool = igstk::AuroraTrackerTool2::New();
 
   igstk::SerialCommunication::Pointer 
                      serialComm = igstk::SerialCommunication::New();
 
-  PolarisTrackerTest2Command::Pointer 
-                                my_command = PolarisTrackerTest2Command::New();
+  AuroraTrackerTest3Command::Pointer 
+                                my_command = AuroraTrackerTest3Command::New();
 
-  typedef igstk::TransformObserver   ObserverType;
-  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
- 
   std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
@@ -106,27 +103,27 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   LogOutputType::Pointer logOutput = LogOutputType::New();  
   logOutput->SetStream( loggerFile );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
+  logger->SetPriorityLevel( LoggerType::DEBUG);
 
   serialComm->AddObserver( itk::AnyEvent(), my_command);
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_POLARIS_PORT_NUMBER );
+  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest2.txt" );
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest3.txt" );
   serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
 
-  igstk::PolarisTracker::Pointer  tracker;
+  igstk::AuroraTracker2::Pointer  tracker;
 
-  tracker = igstk::PolarisTracker::New();
+  tracker = igstk::AuroraTracker2::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
 
@@ -138,28 +135,81 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::PolarisTrackerTool         TrackerToolType;
+  typedef igstk::AuroraTrackerTool2      TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-  // instantiate and attach wireless tracker tool  
+  unsigned int portANumber = atoi(argv[2]);
+  unsigned int portBNumber = atoi(argv[3]);
+  unsigned int order = atoi(argv[4]);
+  unsigned int spliter = atoi(argv[5]);
+
+  // instantiate tracker tool with 5DOF 
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
-  //Select wireless tracker tool
-  trackerTool->RequestSelectWirelessTrackerTool();
-  //Set the SROM file
-  std::string SROMfileName = argv[2];
-  trackerTool->RequestSetSROMFileName(SROMfileName); 
-  //Configure
-  trackerTool->RequestConfigure();
-  //Attach to the tracker
-  trackerTool->RequestAttachToTracker( tracker );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool->AddObserver( itk::AnyEvent(), my_command);
-  //Add observer to listen to transform events 
-  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
+  trackerTool->RequestSelect5DOFTrackerTool();
+  //Set the port number 
+  trackerTool->RequestSetPortNumber( portANumber );
+  //Set channel number to zero
+  trackerTool->RequestSetChannelNumber( 0 );
+ 
 
+  // instantiate a second tracker tool with 5DOF 
+  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
+  trackerTool2->SetLogger( logger );
+  trackerTool2->RequestSelect5DOFTrackerTool();
+  //Set the port number 
+  trackerTool2->RequestSetPortNumber( portANumber );
+  //Set channel number to one 
+  trackerTool2->RequestSetChannelNumber( 1 );
+
+
+  // instantiate a third tracker tool with 5DOF 
+  TrackerToolType::Pointer trackerTool3 = TrackerToolType::New();
+  trackerTool3->SetLogger( logger );
+  trackerTool3->RequestSelect5DOFTrackerTool();
+  //Set the port number 
+  trackerTool3->RequestSetPortNumber( portBNumber );
+  //Set channel number to one 
+  trackerTool3->RequestSetChannelNumber( 0 );
+
+
+  if ( order == 0)
+   { 
+     // These two are on the same port using spliter
+     std::cout << "Attaching tool 1\n";
+     trackerTool->RequestConfigure();
+     trackerTool->RequestAttachToTracker( tracker );
+     if (spliter)
+     {
+       std::cout << "Attaching tool 2\n";
+       trackerTool2->RequestConfigure();
+       trackerTool2->RequestAttachToTracker( tracker );
+     }
+
+     // This is a single 5DOF tool plugged directly into the port
+     std::cout << "Attaching tool 3\n";
+     trackerTool3->RequestConfigure();
+     trackerTool3->RequestAttachToTracker( tracker );
+   }
+   else
+   {
+     // This is a single 5DOF tool plugged directly into the port
+     std::cout << "Attaching tool 3\n";
+     trackerTool3->RequestConfigure();
+     trackerTool3->RequestAttachToTracker( tracker );
+
+     // These two are on the same port using spliter
+     std::cout << "Attaching tool 1\n";
+     trackerTool->RequestConfigure();
+     trackerTool->RequestAttachToTracker( tracker );
+     if (spliter)
+     {
+       std::cout << "Attaching tool 2\n";
+       trackerTool2->RequestConfigure();
+       trackerTool2->RequestAttachToTracker( tracker );
+     }
+   }
   //start tracking 
-  std::cout << "Start tracking..." << std::endl;
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -174,73 +224,45 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
     transform = trackerTool->GetCalibratedTransform();
-
     position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+    std::string toolString = trackerTool->GetTrackerToolIdentifier() ;
+    std::cout << "Trackertool:" << toolString
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
-    //Second option: use coordinate system convenience method
-    coordSystemAObserver->Clear();
-    trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotTransform())
-      {
-      transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
+    if (spliter)
+    {    
+    transform = trackerTool2->GetCalibratedTransform();
+    position = transform.GetTranslation();
+    toolString = trackerTool2->GetTrackerToolIdentifier() ;
+    std::cout << "Trackertool2:" << toolString
+              << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-      }
+    }
+
+    transform = trackerTool3->GetCalibratedTransform();
+    position = transform.GetTranslation();
+    toolString = trackerTool3->GetTrackerToolIdentifier() ;
+    std::cout << "Trackertool3:" << toolString
+                << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
     }
   
-  std::cout << "Stop Tracking" << std::endl;
+  std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
-  // restart tracking
-  std::cout << "Restart tracking" << std::endl;
-  tracker->RequestStartTracking();
-
-  for(unsigned int i=0; i<20; i++)
-    {
-    tracker->RequestUpdateStatus();
-
-    TransformType             transform;
-    VectorType                position;
-
-
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    //Second option: use coordinate system convenience method
-    coordSystemAObserver->Clear();
-    trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotTransform())
-      {
-      transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-      }
-    }
- 
   std::cout << "RequestClose()" << std::endl;
   tracker->RequestClose();
 
   std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();
+
+  std::cout << "[PASSED]" << std::endl;
+
 
   return EXIT_SUCCESS;
 }
