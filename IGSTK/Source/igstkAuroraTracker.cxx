@@ -188,15 +188,29 @@ AuroraTracker::ResultType AuroraTracker
 
   bool SROMFileSpecified  = auroraTrackerTool->IsSROMFileNameSpecified();
 
+  //Make several attempts to find uninitialized port
+  const unsigned int NUMBER_OF_ATTEMPTS = 256;
+  
+  // free ports that are waiting to be freed
+  m_CommandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
+  unsigned int ntools = m_CommandInterpreter->GetPHSRNumberOfHandles();
+  unsigned int tool;
+  for (tool = 0; tool < ntools; tool++)
+    {
+    const int ph = m_CommandInterpreter->GetPHSRHandle(tool);
+    m_CommandInterpreter->PHF(ph);
+
+    // if failed to release handle, print error but continue on
+    this->CheckError(m_CommandInterpreter);
+    }
+
   // port handle
   int ph;
 
   // search ports with uninitialized handles
   bool foundTool = false;
 
-  //Make several attempts to find uninitialized port
-  const unsigned int NUMBER_OF_ATTEMPTS = 256;
-  for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
+ for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
     {
     m_CommandInterpreter->PHSR(
     CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
@@ -433,7 +447,7 @@ AuroraTracker::
 AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) 
 {
   igstkLogMacro( DEBUG, 
-    "igstk::AuroraTracker::VerifyTrackerToolInformation called ...\n");
+    "igstk::AuroraTracker::AddTrackerToolToInternalDataContainers called ...\n");
 
   typedef igstk::AuroraTrackerTool              AuroraTrackerToolType;
 
