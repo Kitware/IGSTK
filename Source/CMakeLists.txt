@@ -290,7 +290,9 @@ SET(IGSTKSandbox_HEADS
   igstkLogger.h
 #DELETE
   igstkPolarisTracker2.h
+  igstkPolarisTrackerTool2.h
   igstkAuroraTracker2.h
+  igstkAuroraTrackerTool2.h
   igstkNDITracker.h
 )
 
@@ -365,7 +367,9 @@ SET(IGSTKSandbox_SRCS
 
 ## DELETE 
   igstkPolarisTracker2.cxx
+  igstkPolarisTrackerTool2.cxx
   igstkAuroraTracker2.cxx
+  igstkAuroraTrackerTool2.cxx
   igstkNDITracker.cxx
 )
 

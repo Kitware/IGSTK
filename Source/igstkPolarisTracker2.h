@@ -18,9 +18,7 @@
 #ifndef __igstkPolarisTracker2_h
 #define __igstkPolarisTracker2_h
 
-#include "igstkSerialCommunication.h"
-#include "igstkNDICommandInterpreter.h"
-#include "igstkPolarisTrackerTool.h"
+#include "igstkPolarisTrackerTool2.h"
 #include "igstkNDITracker.h"
 
 namespace igstk

@@ -69,6 +69,16 @@ NDITracker::CheckError(CommandInterpreterType *interpreter) const
   return SUCCESS;
 }
 
+/** Get method for the command interpreter 
+*  This will method will be used by the derived classes */
+NDITracker::CommandInterpreterType::Pointer 
+NDITracker::GetCommandInterpreter() const
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::NDITracker:: GetCommandInterpreter ...\n");
+
+  return m_CommandInterpreter;  
+}
 
 /** Set the communication object, it will be initialized as necessary
   * for use with the NDI */

@@ -21,6 +21,7 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#include "igstkNDICommandInterpreter.h"
 #include "igstkPolarisTracker2.h"
 
 #include <iostream>
@@ -64,7 +65,7 @@ PolarisTracker2::ResultType PolarisTracker2
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTracker2::VerifyTrackerToolInformation called ...\n");
 
-  typedef igstk::PolarisTrackerTool              PolarisTrackerToolType;
+  typedef igstk::PolarisTrackerTool2              PolarisTrackerToolType;
 
   TrackerToolType * trackerToolNonConst = 
                   const_cast<TrackerToolType*>(trackerTool);
@@ -74,6 +75,7 @@ PolarisTracker2::ResultType PolarisTracker2
 
   if ( polarisTrackerTool == NULL )
     {
+    igstkLogMacro ( DEBUG, "polarisTrackerTool pointer is null\n" );
     return FAILURE;
     } 
 

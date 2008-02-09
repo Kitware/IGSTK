@@ -18,9 +18,7 @@
 #ifndef __igstkAuroraTracker2_h
 #define __igstkAuroraTracker2_h
 
-#include "igstkSerialCommunication.h"
-#include "igstkNDICommandInterpreter.h"
-#include "igstkAuroraTrackerTool.h"
+#include "igstkAuroraTrackerTool2.h"
 #include "igstkNDITracker.h"
 
 namespace igstk

@@ -98,7 +98,7 @@ protected:
 
   /** Get method for the command interpreter 
     * This will method will be used by the derived classes */
-  CommandInterpreterType::Pointer GetCommandInterpreter();
+  CommandInterpreterType::Pointer GetCommandInterpreter() const;
 
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * ) const;

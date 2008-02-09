@@ -22,6 +22,7 @@
 #endif
 
 #include "igstkAuroraTracker2.h"
+#include "igstkNDICommandInterpreter.h"
 
 #include <iostream>
 #include <fstream>
@@ -56,7 +57,7 @@ AuroraTracker2::ResultType AuroraTracker2
     "AuroraTracker2::VerifyTrackerToolInformation called ...\n");
 
   /** typedefs for the tool */
-  typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
+  typedef igstk::AuroraTrackerTool2      AuroraTrackerToolType;
 
   TrackerToolType * trackerToolNonConst = 
                     const_cast<TrackerToolType*>(trackerTool);
