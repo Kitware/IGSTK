@@ -111,18 +111,11 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     igstkPolarisTrackerTest4.cxx )
 
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-    igstkPolarisTrackerTest5.cxx )
-
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
     igstkPolarisTrackerToolTest.cxx
   )
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED)
- SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-    igstkAuroraTrackerTest3.cxx
-  )
-
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
     igstkAuroraTrackerToolTest.cxx
   )
@@ -200,14 +193,6 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               0
               1
               )
-
-    ADD_TEST( igstkPolarisTrackerTest5  
-              ${IGSTKSandbox_TESTS}
-              igstkPolarisTrackerTest5
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest5LoggerOutput.txt
-              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
-              )
- 
   ADD_TEST(igstkPolarisTrackerToolTest ${IGSTKSandbox_TESTS}
 igstkPolarisTrackerToolTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -216,12 +201,6 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
  ADD_TEST(igstkAuroraTrackerToolTest ${IGSTKSandbox_TESTS}
 igstkAuroraTrackerToolTest)
 
- ADD_TEST(igstkAuroraTrackerTest3 
-           ${IGSTKSandbox_TESTS}
-           igstkAuroraTrackerTest3
-           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
-           ${IGSTK_TEST_AURORA_PORT_NUMBER}
-           )
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTKSandbox_USE_FLTK)

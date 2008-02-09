@@ -79,13 +79,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerTest2);
   REGISTER_TEST(igstkPolarisTrackerTest3);
   REGISTER_TEST(igstkPolarisTrackerTest4);
-  REGISTER_TEST(igstkPolarisTrackerTest5);
 #endif
-
-#ifdef IGSTK_TEST_AURORA_ATTACHED
-  REGISTER_TEST(igstkAuroraTrackerTest3);
-#endif
-
 
 
 }
