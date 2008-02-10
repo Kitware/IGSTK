@@ -83,6 +83,12 @@ public:
   /** Returns the transform to the parent if available. */
   void RequestGetTransformToParent();
 
+  /** Detach from its parents */
+  void RequestDetach()
+  {
+    this->m_CoordinateSystem->RequestDetach();
+  }
+
   /**
    * Tries to compute the transformation from this coordinate system
    * to another coordinate system. This method is templated on the 
