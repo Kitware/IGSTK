@@ -77,7 +77,7 @@ void
 TrackerToolObserverToSocketRelay::RequestSetTrackerTool( const TrackerTool * trackerTool )
 {
   this->m_TrackerTool = trackerTool;
-  this->m_TrackerTool->AddObserver( TransformModifiedEvent(), this->m_Observer );
+  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToResult(), this->m_Observer );
 }
 
 
@@ -118,9 +118,10 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
   const int numberOfParametersToSend = 12;
 
 
-  const TransformModifiedEvent * transformEvent = static_cast< const TransformModifiedEvent * >( &event );
+  const CoordinateSystemTransformToResult * transformEvent = 
+    static_cast< const CoordinateSystemTransformToResult * >( &event );
 
-  igstk::Transform transform = transformEvent->Get();
+  igstk::Transform transform = transformEvent->GetTransform();
 
   std::cout << "Sending transform " << transform << std::endl;
 
