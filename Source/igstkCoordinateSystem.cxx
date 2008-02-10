@@ -665,7 +665,7 @@ CoordinateSystem
 
 void 
 CoordinateSystem
-::RequestDetach()
+::RequestDetachFromParent()
 {
   igstkPushInputMacro( DetachFromParent );
   m_StateMachine.ProcessInputs();

@@ -47,9 +47,9 @@ public: \
     { \
     m_CoordinateSystemDelegator->RequestGetTransformToParent(); \
     } \
-  void RequestDetach()\
+  void RequestDetachFromParent()\
     { \
-    m_CoordinateSystemDelegator->RequestDetach();\
+    m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
   template < class TParentPointer > \
   void RequestSetTransformAndParent( const Transform & transformToParent, \

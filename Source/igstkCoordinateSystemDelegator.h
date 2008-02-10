@@ -84,10 +84,10 @@ public:
   void RequestGetTransformToParent();
 
   /** Detach from its parents */
-  void RequestDetach()
-  {
-    this->m_CoordinateSystem->RequestDetach();
-  }
+  void RequestDetachFromParent()
+    {
+    this->m_CoordinateSystem->RequestDetachFromParent();
+    }
 
   /**
    * Tries to compute the transformation from this coordinate system

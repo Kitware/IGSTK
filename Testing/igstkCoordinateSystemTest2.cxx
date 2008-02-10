@@ -415,8 +415,8 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   // Reset internal boolean flags.
   DObserver->Clear();
 
-  E->RequestDetach(); // coverage
-  F->RequestDetach(); // coverage
+  E->RequestDetachFromParent(); // coverage
+  F->RequestDetachFromParent(); // coverage
 
   std::cout << F << std::endl;
 

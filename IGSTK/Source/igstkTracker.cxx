@@ -339,7 +339,7 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
       {
       m_ApplyingReferenceTool = true;
       m_ReferenceTool = trackerTool;
-      m_ReferenceTool->RequestDetach();
+      m_ReferenceTool->RequestDetachFromParent();
 
       //VERY IMPORTANT: Make the reference tracker tool the parent of the tracker
       this->RequestSetTransformAndParent( identityTransform, trackerTool );

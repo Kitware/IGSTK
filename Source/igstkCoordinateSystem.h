@@ -115,7 +115,7 @@ public:
 
   /** Request that the coordinate system be detached from its parent. 
    */
-  void RequestDetach();
+  void RequestDetachFromParent();
   
   /**  Coordinate systems have a name to facilitate
    *   future export of the scene graph as a diagram.
