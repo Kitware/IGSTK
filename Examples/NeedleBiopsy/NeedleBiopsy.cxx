@@ -198,7 +198,7 @@ void NeedleBiopsy::ConnectImageRepresentation()
   m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
   for( int i=0; i<4; i++)
     {
-    ViewerGroup->Views[i]->RequestAddAnnotation2D( m_Annotation );
+    ViewerGroup->m_Views[i]->RequestAddAnnotation2D( m_Annotation );
     }
 
   for( int i=0; i<6; i++)
@@ -223,20 +223,21 @@ void NeedleBiopsy::ConnectImageRepresentation()
 
   for ( int i=0; i<3; i++)
     {
-    ViewerGroup->Views[i]->RequestRemoveObject( m_ImageRepresentation[i] );
-    ViewerGroup->Views[3]->RequestRemoveObject( m_ImageRepresentation[i+3] );
-    ViewerGroup->Views[i]->RequestAddObject( m_ImageRepresentation[i] );
-    ViewerGroup->Views[3]->RequestAddObject( m_ImageRepresentation[i+3] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_ImageRepresentation[i] );
+    ViewerGroup->m_Views[3]->RequestRemoveObject( m_ImageRepresentation[i+3] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_ImageRepresentation[i] );
+    ViewerGroup->m_Views[3]->RequestAddObject( m_ImageRepresentation[i+3] );
     }
 
   for ( int i=0; i<4; i++)
     {
-    ViewerGroup->Views[i]->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_NeedleRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_TargetRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_EntryRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_FiducialRepresentation->Copy() );
-    ViewerGroup->Views[i]->RequestAddObject( m_PathRepresentation[i] );
+    igstk::View::Pointer view =  ViewerGroup->m_Views[i];
+    view->RequestAddObject( m_NeedleTipRepresentation->Copy() );
+    view->RequestAddObject( m_NeedleRepresentation->Copy() );
+    view->RequestAddObject( m_TargetRepresentation->Copy() );
+    view->RequestAddObject( m_EntryRepresentation->Copy() );
+    view->RequestAddObject( m_FiducialRepresentation->Copy() );
+    view->RequestAddObject( m_PathRepresentation[i] );
     }
 
   /** Setting up the sence graph */
@@ -244,7 +245,7 @@ void NeedleBiopsy::ConnectImageRepresentation()
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
   for( int i=0; i<4; i++)
     {
-    ViewerGroup->Views[i]->RequestSetTransformAndParent(
+    ViewerGroup->m_Views[i]->RequestSetTransformAndParent(
       transform, m_WorldReference );
     }
 
@@ -259,10 +260,10 @@ void NeedleBiopsy::ConnectImageRepresentation()
   /** Reset and enable the view */
   for( int i=0; i<4; i++)
     {
-    ViewerGroup->Views[i]->RequestResetCamera();
-    ViewerGroup->Views[i]->SetRefreshRate( 30 );
-    ViewerGroup->Views[i]->RequestStart();
-    ViewerGroup->Displays[i]->RequestEnableInteractions();
+    ViewerGroup->m_Views[i]->RequestResetCamera();
+    ViewerGroup->m_Views[i]->SetRefreshRate( 30 );
+    ViewerGroup->m_Views[i]->RequestStart();
+    ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
 
   // Request information about the slices. The answers will be
@@ -283,10 +284,10 @@ void NeedleBiopsy::ConnectImageRepresentation()
         static_cast< unsigned int > ( (min + max) / 2.0 );
       m_ImageRepresentation[i]->RequestSetSliceNumber( slice );
       m_ImageRepresentation[i+3]->RequestSetSliceNumber( slice );
-      ViewerGroup->Sliders[i]->minimum( min );
-      ViewerGroup->Sliders[i]->maximum( max );
-      ViewerGroup->Sliders[i]->value( slice );
-      ViewerGroup->Sliders[i]->activate();
+      ViewerGroup->m_Sliders[i]->minimum( min );
+      ViewerGroup->m_Sliders[i]->maximum( max );
+      ViewerGroup->m_Sliders[i]->value( slice );
+      ViewerGroup->m_Sliders[i]->activate();
       boundsObs->Reset();
       }
     }
@@ -294,7 +295,7 @@ void NeedleBiopsy::ConnectImageRepresentation()
   /** Adding observer for picking event */
   for ( int i=0; i<3; i++)
     {
-    ViewerGroup->Views[i]->AddObserver(
+    ViewerGroup->m_Views[i]->AddObserver(
       igstk::CoordinateSystemTransformToEvent(),
       m_ViewPickerObserver );
     }
@@ -576,9 +577,9 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
   m_ImageRepresentation[4]->RequestSetSliceNumber( index[0] );
   m_ImageRepresentation[5]->RequestSetSliceNumber( index[1] );
 
-  ViewerGroup->AxialSlider->value( index[2] );
-  ViewerGroup->SagittalSlider->value( index[0] );
-  ViewerGroup->CoronalSlider->value( index[1] );
+  ViewerGroup->m_AxialSlider->value( index[2] );
+  ViewerGroup->m_SagittalSlider->value( index[0] );
+  ViewerGroup->m_CoronalSlider->value( index[1] );
 
   this->ViewerGroup->redraw();
   Fl::check();
@@ -664,12 +665,12 @@ void NeedleBiopsy::UpdatePath()
 
   for (int i=0; i<4; i++)
     {
-    ViewerGroup->Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
     m_PathRepresentation[i]->RequestSetTubeObject( NULL );
     m_PathRepresentation[i]->RequestSetTubeObject( m_Path );
     m_PathRepresentation[i]->SetColor( 0.0, 1.0, 0.0 );
     m_PathRepresentation[i]->SetOpacity( 0.5 );
-    ViewerGroup->Views[i]->RequestAddObject( m_PathRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_PathRepresentation[i] );
     }
 
 }

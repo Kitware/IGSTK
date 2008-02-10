@@ -34,43 +34,43 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
 
   // Create widgets
   typedef igstk::FLTKWidget   WidgetType;
-  Displays.clear();
-  DisplayAxialWidget    = new WidgetType(X, Y, WW, HH, "Display 0");
-  Displays.push_back( DisplayAxialWidget);    // Displays[0]
-  DisplaySagittalWidget = new WidgetType(X+WW+N, Y, WW, HH, "Display 1");
-  Displays.push_back( DisplaySagittalWidget); // Displays[1]
-  DisplayCoronalWidget  = new WidgetType(X, Y+HH+N, WW, HH, "Display 2");
-  Displays.push_back( DisplayCoronalWidget);  // Displays[2]
-  Display3DWidget       = new WidgetType(X+WW+N, Y+HH+N, WW, HH, "Display 3");
-  Displays.push_back( Display3DWidget);       // Displays[3]
+  m_Displays.clear();
+  m_DisplayAxialWidget    = new WidgetType(X, Y, WW, HH, "Display 0");
+  m_Displays.push_back( m_DisplayAxialWidget);    // m_Displays[0]
+  m_DisplaySagittalWidget = new WidgetType(X+WW+N, Y, WW, HH, "Display 1");
+  m_Displays.push_back( m_DisplaySagittalWidget); // m_Displays[1]
+  m_DisplayCoronalWidget  = new WidgetType(X, Y+HH+N, WW, HH, "Display 2");
+  m_Displays.push_back( m_DisplayCoronalWidget);  // m_Displays[2]
+  m_Display3DWidget       = new WidgetType(X+WW+N, Y+HH+N, WW, HH, "Display 3");
+  m_Displays.push_back( m_Display3DWidget);       // m_Displays[3]
 
   // Create views
-  Views.clear();
+  m_Views.clear();
   ViewType::Pointer v;
-  v = DisplayAxial    = ViewType2D::New();
-  DisplayAxial->RequestSetOrientation( View2D::Axial );
-  Views.push_back( v );    // Views[0];
-  v = DisplaySagittal = ViewType2D::New();
-  DisplaySagittal->RequestSetOrientation( View2D::Sagittal);
-  Views.push_back( v );    // Views[1];
-  v = DisplayCoronal  = ViewType2D::New();
-  DisplayCoronal->RequestSetOrientation( View2D::Coronal );
-  Views.push_back( v );    // Views[2];
-  v = Display3D       = ViewType3D::New();
-  Views.push_back( v );    // Views[3];
+  v = m_DisplayAxial    = ViewType2D::New();
+  m_DisplayAxial->RequestSetOrientation( View2D::Axial );
+  m_Views.push_back( v );    // Views[0];
+  v = m_DisplaySagittal = ViewType2D::New();
+  m_DisplaySagittal->RequestSetOrientation( View2D::Sagittal);
+  m_Views.push_back( v );    // Views[1];
+  v = m_DisplayCoronal  = ViewType2D::New();
+  m_DisplayCoronal->RequestSetOrientation( View2D::Coronal );
+  m_Views.push_back( v );    // Views[2];
+  v = m_Display3D       = ViewType3D::New();
+  m_Views.push_back( v );    // Views[3];
 
   // Connect views to widgets
   for( int i=0; i<4; i++ )
     {
-    Displays[i]->RequestSetView( Views[i] );
+    m_Displays[i]->RequestSetView( m_Views[i] );
     }
  
 
   // Create slider bars
-  Sliders.clear();
+  m_Sliders.clear();
 
     {
-    Fl_Value_Slider* o = AxialSlider = new Fl_Value_Slider(X, Y+HH, WW, N);
+    Fl_Value_Slider* o = m_AxialSlider = new Fl_Value_Slider(X, Y+HH, WW, N);
     o->type(5);
     o->box(FL_DOWN_FRAME);
     o->maximum(3);
@@ -79,10 +79,10 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
     o->deactivate();
     }
 
-  Sliders.push_back( AxialSlider );
+  m_Sliders.push_back( m_AxialSlider );
 
     {
-    Fl_Value_Slider* o = SagittalSlider =
+    Fl_Value_Slider* o = m_SagittalSlider =
       new Fl_Value_Slider(X+WW+N, Y+HH, WW, N);
     o->type(5);
     o->box(FL_DOWN_FRAME);
@@ -92,10 +92,11 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
     o->deactivate();
     }
 
-  Sliders.push_back( SagittalSlider );
+  m_Sliders.push_back( m_SagittalSlider );
 
     {
-    Fl_Value_Slider* o = CoronalSlider = new Fl_Value_Slider(X, HH*2+N+Y, WW, N);
+    Fl_Value_Slider* o = m_CoronalSlider = 
+      new Fl_Value_Slider(X, HH*2+N+Y, WW, N);
     o->type(5);
     o->box(FL_DOWN_FRAME);
     o->maximum(3);
@@ -104,30 +105,30 @@ QuadrantViews::QuadrantViews(int X, int Y, int W, int H, const char *L)
     o->deactivate();
     }
 
-  Sliders.push_back( CoronalSlider );
+  m_Sliders.push_back( m_CoronalSlider );
 
   end();
 }
 
 QuadrantViews::~QuadrantViews()
 {
-  Displays.clear();
-  Views.clear();
-  Sliders.clear();
+  m_Displays.clear();
+  m_Views.clear();
+  m_Sliders.clear();
 
-  delete DisplayAxialWidget;
-  delete DisplayCoronalWidget;
-  delete DisplaySagittalWidget;
-  delete Display3DWidget;
+  delete m_DisplayAxialWidget;
+  delete m_DisplayCoronalWidget;
+  delete m_DisplaySagittalWidget;
+  delete m_Display3DWidget;
 
 }
 void QuadrantViews::RequestResliceImage(void)
 {
   IndexType index;
 
-  index[2]  = (int ) AxialSlider->value();
-  index[0]  = (int ) SagittalSlider->value();
-  index[1]  = (int ) CoronalSlider->value();
+  index[2]  = (int ) m_AxialSlider->value();
+  index[0]  = (int ) m_SagittalSlider->value();
+  index[1]  = (int ) m_CoronalSlider->value();
 
   ReslicingEvent reslicingEvent;
   reslicingEvent.Set( index );
