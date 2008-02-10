@@ -69,7 +69,7 @@ int TrackerInitializer::InitializePolarisTracker()
   
   m_Communication = SerialCommunication::New();
 
-  m_Communication->SetPortNumber( trackerConfig->COMPort );
+  m_Communication->SetPortNumber( trackerConfig->m_COMPort );
   m_Communication->SetParity( SerialCommunication::NoParity );
   m_Communication->SetBaudRate(SerialCommunication::BaudRate115200);
   m_Communication->SetDataBits( SerialCommunication::DataBits8 );
@@ -86,46 +86,47 @@ int TrackerInitializer::InitializePolarisTracker()
   m_PolarisTracker->RequestOpen();
 
   m_TrackerToolList.clear();
-  for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
-  {
+  for( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++ )
+    {
     PolarisTrackerTool::Pointer tool = PolarisTrackerTool::New();
-    NDITrackerToolConfiguration * toolConfig = trackerConfig->TrackerToolList[i];
+    NDITrackerToolConfiguration * toolConfig =
+      trackerConfig->m_TrackerToolList[i];
 
-    if ( toolConfig->WiredTool)
-    {
-      tool->RequestSelectWiredTrackerTool();
-      tool->RequestSetPortNumber( toolConfig->PortNumber );
-      if ( toolConfig->HasSROM )
+    if( toolConfig->m_WiredTool)
       {
-        tool->RequestSetSROMFileName( toolConfig->SROMFile );
+      tool->RequestSelectWiredTrackerTool();
+      tool->RequestSetPortNumber( toolConfig->m_PortNumber );
+      if ( toolConfig->m_HasSROM )
+      {
+        tool->RequestSetSROMFileName( toolConfig->m_SROMFile );
       }
-      tool->SetCalibrationTransform( toolConfig->CalibrationTransform);
+      tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform);
       tool->RequestConfigure();
-    }
+      }
     else
-    {
+      {
       tool->RequestSelectWirelessTrackerTool();
-      tool->RequestSetSROMFileName( toolConfig->SROMFile );
-      tool->SetCalibrationTransform( toolConfig->CalibrationTransform);
+      tool->RequestSetSROMFileName( toolConfig->m_SROMFile );
+      tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform);
       tool->RequestConfigure();
-    }
+      }
     
     tool->RequestAttachToTracker( m_PolarisTracker );
 
-    if ( toolConfig->IsReference )
-    {
+    if( toolConfig->m_IsReference )
+      {
       m_PolarisTracker->RequestSetReferenceTool( tool );
       m_ReferenceTool = tool;
       m_HasReferenceTool = 1;
-    }
+      }
     else
-    {
+      {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      }
     }
-  }
 
-  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
 
   return 1;
@@ -138,7 +139,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 
   m_Communication = SerialCommunication::New();
 
-  m_Communication->SetPortNumber( trackerConfig->COMPort );
+  m_Communication->SetPortNumber( trackerConfig->m_COMPort );
   m_Communication->SetParity( SerialCommunication::NoParity );
   m_Communication->SetBaudRate(SerialCommunication::BaudRate115200);
   m_Communication->SetDataBits( SerialCommunication::DataBits8 );
@@ -156,38 +157,39 @@ int TrackerInitializer::InitializeAuroraTracker()
   m_AuroraTracker->RequestOpen();
 
   m_TrackerToolList.clear();
-  for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
+  for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
   {
     AuroraTrackerTool::Pointer tool = AuroraTrackerTool::New();
-    NDITrackerToolConfiguration * toolConfig = trackerConfig->TrackerToolList[i];
+    NDITrackerToolConfiguration * toolConfig =
+      trackerConfig->m_TrackerToolList[i];
 
-    if ( toolConfig->Is5DOF)
-    {
+    if( toolConfig->m_Is5DOF )
+      {
       tool->RequestSelect5DOFTrackerTool();
-      tool->RequestSetPortNumber( toolConfig->PortNumber );
-      tool->RequestSetChannelNumber( toolConfig->ChannelNumber );
-      if ( toolConfig->HasSROM )
-      {
-        tool->RequestSetSROMFileName( toolConfig->SROMFile );
-      }
-      tool->SetCalibrationTransform( toolConfig->CalibrationTransform);
+      tool->RequestSetPortNumber( toolConfig->m_PortNumber );
+      tool->RequestSetChannelNumber( toolConfig->m_ChannelNumber );
+      if ( toolConfig->m_HasSROM )
+        {
+        tool->RequestSetSROMFileName( toolConfig->m_SROMFile );
+        }
+      tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform);
       tool->RequestConfigure();
-    }
+      }
     else // 6 DOF tool
-    {
-      tool->RequestSelect6DOFTrackerTool();
-      tool->RequestSetPortNumber( toolConfig->PortNumber);
-      if ( toolConfig->HasSROM )
       {
-        tool->RequestSetSROMFileName( toolConfig->SROMFile );
-      }
-      tool->SetCalibrationTransform( toolConfig->CalibrationTransform);
+      tool->RequestSelect6DOFTrackerTool();
+      tool->RequestSetPortNumber( toolConfig->m_PortNumber);
+      if ( toolConfig->m_HasSROM )
+        {
+        tool->RequestSetSROMFileName( toolConfig->m_SROMFile );
+        }
+      tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform);
       tool->RequestConfigure();
-    }
+      }
 
     tool->RequestAttachToTracker( m_AuroraTracker );
 
-    if ( toolConfig->IsReference )
+    if ( toolConfig->m_IsReference )
     {
       m_AuroraTracker->RequestSetReferenceTool( tool );
       m_ReferenceTool = tool;
@@ -200,7 +202,7 @@ int TrackerInitializer::InitializeAuroraTracker()
     }
   }
 
-  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
 
   return 1;
@@ -221,31 +223,31 @@ int TrackerInitializer::InitializeMicronTracker()
   m_MicronTracker->RequestOpen();
 
   m_TrackerToolList.clear();
-  for ( int i=0; i< trackerConfig->TrackerToolList.size(); i++)
-  {
+  for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
+    {
     MicronTrackerTool::Pointer tool = MicronTrackerTool::New();
-    MicronTrackerToolConfiguration * toolConfig = trackerConfig->TrackerToolList[i];
+    MicronTrackerToolConfiguration * toolConfig = trackerConfig->m_TrackerToolList[i];
 
     tool->RequestSetMarkerName( toolConfig->MarkerName );
-    tool->SetCalibrationTransform( toolConfig->CalibrationTransform );
+    tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform );
     tool->RequestConfigure();
 
     tool->RequestAttachToTracker( m_MicronTracker );
 
-    if ( toolConfig->IsReference )
-    {
+    if( toolConfig->m_IsReference )
+      {
       m_MicronTracker->RequestSetReferenceTool( tool );
       m_ReferenceTool = tool;
       m_HasReferenceTool = 1;
-    }
+      }
     else
-    {
+      {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      }
     }
-  }
 
-  m_Tracker->RequestSetFrequency( trackerConfig->Frequency );
+  m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
 
   return 1;

@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __TrackerConfiguration_h
-#define __TrackerConfiguration_h
+#ifndef __igstkTrackerConfiguration_h
+#define __igstkTrackerConfiguration_h
 
 #include "igstkSerialCommunication.h"
 
@@ -39,30 +39,30 @@ public:
     
   TrackerConfiguration();
 
-  TrackerType GetTrackerType() { return m_TrackerType; };
+  TrackerType GetTrackerType() { return m_TrackerType; }
 
   void SetTrackerType( TrackerType trackerType );
   std::string GetTrackerTypeAsString();
 
   MicronTrackerConfiguration * GetMicronTrackerConfiguration()
-  {
+    {
     return m_MicronTrackerConfiguration;
-  }
+    }
 
   void SetMicronTrackerConfiguration(MicronTrackerConfiguration * conf)
-  {
+    {
     m_MicronTrackerConfiguration = conf;
-  }
+    }
 
   NDITrackerConfiguration    * GetNDITrackerConfiguration()
-  {
+    {
     return m_NDITrackerConfiguration;
-  }
+    }
 
   void SetNDITrackerConfiguration(NDITrackerConfiguration * conf)
-  {
+    {
     m_NDITrackerConfiguration = conf;
-  }
+    }
 
   virtual ~TrackerConfiguration();
 
@@ -79,41 +79,44 @@ private:
 class MicronTrackerToolConfiguration
 {
 public:
-  std::string        MarkerName;
-  bool               IsReference;
-  igstk::Transform   CalibrationTransform;
+  std::string        m_MarkerName;
+  bool               m_IsReference;
+  igstk::Transform   m_CalibrationTransform;
 
   MicronTrackerToolConfiguration()
-  {
-    MarkerName  = "";
-    IsReference = 0;
-    CalibrationTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
-  };
+    {
+    m_MarkerName  = "";
+    m_IsReference = 0;
+    m_CalibrationTransform.SetToIdentity(
+      igstk::TimeStamp::GetLongestPossibleTime());
+    }
   virtual ~MicronTrackerToolConfiguration(){};
 };
 
 class NDITrackerToolConfiguration
 {
 public:
-  bool               WiredTool;
-  bool               Is5DOF;
-  bool               IsReference;
-  bool               HasSROM;
-  int                PortNumber;
-  int                ChannelNumber;
-  std::string        SROMFile;
-  igstk::Transform   CalibrationTransform;
+  bool               m_WiredTool;
+  bool               m_Is5DOF;
+  bool               m_IsReference;
+  bool               m_HasSROM;
+  int                m_PortNumber;
+  int                m_ChannelNumber;
+  std::string        m_SROMFile;
+  igstk::Transform   m_CalibrationTransform;
 
-  NDITrackerToolConfiguration(){
-    WiredTool    = 1;
-    Is5DOF       = 0;
-    IsReference  = 0;
-    HasSROM      = 0;
-    PortNumber   = 0;
-    ChannelNumber= 0;
-    SROMFile     = "";
-    CalibrationTransform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
-  };
+  NDITrackerToolConfiguration()
+    {
+    m_WiredTool    = 1;
+    m_Is5DOF       = 0;
+    m_IsReference  = 0;
+    m_HasSROM      = 0;
+    m_PortNumber   = 0;
+    m_ChannelNumber= 0;
+    m_SROMFile     = "";
+    m_CalibrationTransform.SetToIdentity(
+      igstk::TimeStamp::GetLongestPossibleTime());
+    }
   virtual ~NDITrackerToolConfiguration(){};
 };
 
@@ -121,21 +124,21 @@ public:
 class MicronTrackerConfiguration
 {
 public:
-  std::string     CameraCalibrationFileDirectory;
-  std::string     InitializationFile;
-  std::string     TemplatesDirectory;
-  double          Frequency;
+  std::string     m_CameraCalibrationFileDirectory;
+  std::string     m_InitializationFile;
+  std::string     m_TemplatesDirectory;
+  double          m_Frequency;
 
-  std::vector< MicronTrackerToolConfiguration * > TrackerToolList;
+  std::vector< MicronTrackerToolConfiguration * > m_TrackerToolList;
 
   MicronTrackerConfiguration()
-  {
-    CameraCalibrationFileDirectory = "";
-    InitializationFile             = "";
-    TemplatesDirectory             = "";
-    Frequency = 30;
-    TrackerToolList.clear();
-  }
+    {
+    m_CameraCalibrationFileDirectory = "";
+    m_InitializationFile             = "";
+    m_TemplatesDirectory             = "";
+    m_Frequency = 30;
+    m_TrackerToolList.clear();
+    }
   virtual ~MicronTrackerConfiguration(){};
 
 };
@@ -143,17 +146,17 @@ public:
 class NDITrackerConfiguration
 {
 public:
-  igstk::SerialCommunication::PortNumberType     COMPort;
-  double                                         Frequency;
+  igstk::SerialCommunication::PortNumberType     m_COMPort;
+  double                                         m_Frequency;
 
-  std::vector< NDITrackerToolConfiguration * >     TrackerToolList;
+  std::vector< NDITrackerToolConfiguration * >     m_TrackerToolList;
 
   NDITrackerConfiguration()
-  {
-    COMPort   = SerialCommunication::PortNumber0; 
-    Frequency = 30;
-    TrackerToolList.clear();
-  }
+    {
+    m_COMPort   = SerialCommunication::PortNumber0; 
+    m_Frequency = 30;
+    m_TrackerToolList.clear();
+    }
   virtual ~NDITrackerConfiguration(){};
 };
 

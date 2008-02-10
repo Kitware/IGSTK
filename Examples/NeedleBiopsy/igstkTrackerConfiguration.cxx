@@ -29,30 +29,30 @@ void TrackerConfiguration::SetTrackerType( TrackerType trackerType )
 {
   m_TrackerType = trackerType;
   switch( m_TrackerType )
-  {
-  case Polaris:
-  case Aurora:
-    m_NDITrackerConfiguration = new NDITrackerConfiguration;
-    break;
-  case Micron:
-    m_MicronTrackerConfiguration = new MicronTrackerConfiguration;
-    break;
-  }
+    {
+    case Polaris:
+    case Aurora:
+      m_NDITrackerConfiguration = new NDITrackerConfiguration;
+      break;
+    case Micron:
+      m_MicronTrackerConfiguration = new MicronTrackerConfiguration;
+      break;
+    }
 }
 
 std::string TrackerConfiguration::GetTrackerTypeAsString()
 {
   switch( m_TrackerType )
-  {
-  case Polaris:
-    return "Polaris"; break;
-  case Aurora:
-    return "Aurora"; break;
-  case Micron:
-    return "Micron"; break;
-  default:
-    return "Not Defined";
-  }
+    {
+    case Polaris:
+      return "Polaris"; break;
+    case Aurora:
+      return "Aurora"; break;
+    case Micron:
+      return "Micron"; break;
+    default:
+      return "Not Defined";
+    }
 
 }
 /** Destructor */

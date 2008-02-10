@@ -456,35 +456,36 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
     tc->SetTrackerType( igstk::TrackerConfiguration::Aurora );
 
     igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;
-    conf->COMPort = igstk::SerialCommunication::PortNumber3;
-    conf->Frequency = 30;
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    conf->m_Frequency = 30;
 
     typedef igstk::NDITrackerToolConfiguration ToolConfigurationType;
 
     ToolConfigurationType * tool = new ToolConfigurationType;
-    tool->Is5DOF        = 1;
-    tool->PortNumber    = 0;
-    tool->ChannelNumber = 0;
-    tool->HasSROM       = 0;
-    tool->IsReference   = 0;
-    conf->TrackerToolList.push_back( tool );
+    tool->m_Is5DOF        = 1;
+    tool->m_PortNumber    = 0;
+    tool->m_ChannelNumber = 0;
+    tool->m_HasSROM       = 0;
+    tool->m_IsReference   = 0;
+    conf->m_TrackerToolList.push_back( tool );
 
     ToolConfigurationType * tool2 = new ToolConfigurationType;
-    tool2->Is5DOF        = 1;
-    tool2->PortNumber    = 0;
-    tool2->ChannelNumber = 1;
-    tool2->HasSROM       = 0;
-    tool2->IsReference   = 0;
-    conf->TrackerToolList.push_back( tool2 );
+    tool2->m_Is5DOF        = 1;
+    tool2->m_PortNumber    = 0;
+    tool2->m_ChannelNumber = 1;
+    tool2->m_HasSROM       = 0;
+    tool2->m_IsReference   = 0;
+    conf->m_TrackerToolList.push_back( tool2 );
 
     ToolConfigurationType * tool3 = new ToolConfigurationType;
-    tool3->Is5DOF        = 0;
-    tool3->PortNumber    = 1;
-    //tool->ChannelNumber = 1;
-    tool3->HasSROM       = 1;
-    tool3->SROMFile      = "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
-    tool3->IsReference   = 0;
-    conf->TrackerToolList.push_back( tool3 );
+    tool3->m_Is5DOF        = 0;
+    tool3->m_PortNumber    = 1;
+    //tool->m_ChannelNumber = 1;
+    tool3->m_HasSROM       = 1;
+    tool3->m_SROMFile      =
+      "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
+    tool3->m_IsReference   = 0;
+    conf->m_TrackerToolList.push_back( tool3 );
 
     tc->SetNDITrackerConfiguration( conf );
 
