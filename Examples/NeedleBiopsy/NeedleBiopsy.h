@@ -118,7 +118,7 @@ private:
   /** To store the landmark registration result transform */
   igstk::Transform                    m_ImageToTrackerTransform;  
   
-  igstk::Tracker::Pointer             m_Tracker;
+  igstk::Tracker::Pointer               m_Tracker;
   igstk::TrackerConfigurationGUIBase  * m_TrackerConfigurationGUI;
 
   /** Observer type for loaded event, 
@@ -160,27 +160,30 @@ private:
 
 
   /** Utility functions */
-  inline igstk::Transform PointToTransform( ImageSpatialObjectType::PointType point)
-  {
+  inline igstk::Transform PointToTransform( 
+    const ImageSpatialObjectType::PointType & point)
+    {
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
     for (int i=0; i<3; i++)
-    {
+      {
       translation[i] = point[i];
-    }
-    transform.SetTranslation( translation, 0.1, igstk::TimeStamp::GetLongestPossibleTime() );
+      }
+    transform.SetTranslation( translation, 
+      0.1, igstk::TimeStamp::GetLongestPossibleTime() );
     return transform;
-  }
+    }
 
-  inline ImageSpatialObjectType::PointType TransformToPoint( igstk::Transform transform)
-  {
+  inline ImageSpatialObjectType::PointType TransformToPoint(
+    const igstk::Transform & transform)
+    {
     ImageSpatialObjectType::PointType point;
     for (int i=0; i<3; i++)
-    {
+      {
       point[i] = transform.GetTranslation()[i];
-    }
+      }
     return point;
-  }
+    }
 
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
