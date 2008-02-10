@@ -89,7 +89,7 @@ Fl_Group( x, y, w, h, label )
                                          calibrationObserver );
   this->m_pivotCalibration->AddObserver( PivotCalibrationNew::CalibrationFailureEvent(),
                                          calibrationObserver );
-  this->m_pivotCalibration->AddObserver( igstk::TransformModifiedEvent(),
+  this->m_pivotCalibration->AddObserver( igstk::CoordinateSystemTransformToEvent(),
                                          calibrationObserver );
   this->m_pivotCalibration->AddObserver( igstk::PointEvent(),
                                          calibrationObserver );
@@ -259,12 +259,13 @@ PivotCalibrationFLTKWidget::CalibrationObserver::Execute( itk::Object *caller,
     PivotCalibrationNew* calib = dynamic_cast< PivotCalibrationNew *> (caller);
     calib->RequestCalibrationTransform();
   }
-  else if( const igstk::TransformModifiedEvent *trnsfrmEvt =
-           dynamic_cast< const igstk::TransformModifiedEvent *> (&event) ) 
+  else if( const igstk::CoordinateSystemTransformToEvent *transformEvent =
+           dynamic_cast< const igstk::CoordinateSystemTransformToEvent *> (&event) ) 
   {
-    igstk::Transform trnsfrm = trnsfrmEvt->Get();
-    igstk::Transform::VersorType v = trnsfrm.GetRotation();
-    igstk::Transform::VectorType t = trnsfrm.GetTranslation();
+    igstk::CoordinateSystemTransformToResult result = transformEvent->Get();
+    igstk::Transform transform = result.GetTransform();
+    igstk::Transform::VersorType v = transform.GetRotation();
+    igstk::Transform::VectorType t = transform.GetTranslation();
 
     this->m_calibrationInformationStream<<"Transform:\n";
     this->m_calibrationInformationStream<<"\t quaternion: ";

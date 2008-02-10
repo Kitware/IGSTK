@@ -44,7 +44,7 @@ namespace igstk
  *  PivotCalibrationNew::DataAcquisitionEndEvent
  *  PivotCalibrationNew::CalibrationSuccessEvent
  *  PivotCalibrationNew::CalibrationFailureEvent
- *  igstk::TransformModifiedEvent - contains the calibration transform
+ *  igstk::CoordinateSystemTransformToEvent - contains the calibration transform
  *  igstk::PointEvent - contains the pivot point
  *  igstk::DoubleTypeEvent - contains the calibration root mean square error
  *
