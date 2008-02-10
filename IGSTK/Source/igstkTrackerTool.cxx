@@ -476,8 +476,20 @@ TrackerTool
   const TransformType & transform )
 {
   m_CalibratedTransformWithRespectToReferenceTrackerTool = transform;
-  TransformModifiedEvent transformEvent;
-  transformEvent.Set( transform );
+
+  CoordinateSystemTransformToResult transformCarrier;
+
+  transformCarrier.Initialize(
+    transform,
+    this->GetCoordinateSystem(),
+    this->m_CalibrationCoordinateSystem );
+  // the m_CalibrationCoordinateSystem is the one that should be attached to
+  // the Tracker, while the this->GetCoordinateSystem() is the one at which
+  // spatial objects should be attached to.
+
+  CoordinateSystemTransformToEvent transformEvent;
+  transformEvent.Set( transformCarrier );
+
   this->InvokeEvent( transformEvent );
 }
 

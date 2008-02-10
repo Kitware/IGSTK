@@ -87,6 +87,13 @@ protected: \
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() ); \
     return identity; \
     } \
+  const CoordinateSystem* GetCoordinateSystem() const \
+    { \
+    return \
+      igstk::Friends::CoordinateSystemHelper:: \
+        GetCoordinateSystem(  \
+                       m_CoordinateSystemDelegator.GetPointer() ); \
+    } \
 private: \
   CoordinateSystemDelegator::Pointer \
                                   m_CoordinateSystemDelegator; \
@@ -95,13 +102,6 @@ private: \
   void ObserverCallback(const ::itk::EventObject & eventvar) \
     { \
     this->InvokeEvent( eventvar ); \
-    } \
-  const CoordinateSystem* GetCoordinateSystem() const \
-    { \
-    return \
-      igstk::Friends::CoordinateSystemHelper:: \
-        GetCoordinateSystem(  \
-                       m_CoordinateSystemDelegator.GetPointer() ); \
     } \
   igstkFriendClassMacro( igstk::Friends::CoordinateSystemHelper ); 
 

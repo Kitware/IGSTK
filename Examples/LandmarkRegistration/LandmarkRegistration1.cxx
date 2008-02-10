@@ -60,6 +60,7 @@
 // BeginCodeSnippet
 #include "igstkEvents.h"
 #include "igstkTransform.h"
+#include "igstkCoordinateSystemTransformToResult.h" 
 // EndCodeSnippet
 
 
@@ -122,10 +123,10 @@ private:
 
 // BeginLatex
 // 
-// Similarly, a callback class needs to be defined to observe the 
-// \doxygen{TransformModified} event. This event is loaded with 
-// transform parameters that are computed by the registration component.
-// The commands are as follows:
+// Similarly, a callback class needs to be defined to observe the
+// \doxygen{CoordinateSystemTransformToEvent} event. This event is loaded with
+// transform parameters that are computed by the registration component.  The
+// commands are as follows:
 // EndLatex
 
 // BeginCodeSnippet
@@ -137,7 +138,7 @@ public:
   typedef itk::Command                                  Superclass;
   itkNewMacro(Self);
 
-  typedef igstk::TransformModifiedEvent TransformModifiedEventType;
+  typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
   
   void Execute( const itk::Object *caller, const itk::EventObject & event )
     {
@@ -146,9 +147,14 @@ public:
   void Execute( itk::Object *caller, const itk::EventObject & event )
     {
     std::cout<< " TransformEvent is thrown" << std::endl;
-    const TransformModifiedEventType * transformEvent =
-                dynamic_cast < const TransformModifiedEventType* > ( &event );
-    m_Transform = transformEvent->Get();
+    const TransformEventType * transformEvent =
+      dynamic_cast < const TransformEventType* > ( &event );
+
+    const igstk::CoordinateSystemTransformToResult transformCarrier =
+      transformEvent->Get();
+
+    m_Transform = transformCarrier.GetTransform();
+
     m_EventReceived = true;
     } 
   bool GetEventReceived()
@@ -385,7 +391,7 @@ int main( int argv, char * argc[] )
   // BeginCodeSnippet
   Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
                             Landmark3DRegistrationGetTransformCallback::New();
-  landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
+  landmarkRegister->AddObserver( igstk::CoordinateSystemTransformToEvent(), lrtcb );
   //EndCodeSnippet
 
 

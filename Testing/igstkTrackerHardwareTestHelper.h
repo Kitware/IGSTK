@@ -78,7 +78,7 @@ protected:
     this->m_TransformObserver->SetCallbackFunction( this,
                                           & Self::CallbackModifiedEvent );
     this->m_SpatialObject->AddObserver( 
-      TransformModifiedEvent(), this->m_TransformObserver );
+      CoordinateSystemTransformToEvent(), this->m_TransformObserver );
 
     this->m_NumberOfPositionsToTest = 16;
     this->m_NumberOfOrientationsToTest = 12;
@@ -210,13 +210,14 @@ private:
   
   void CallbackModifiedEvent( const ::itk::EventObject & eventvar )
     {
-    const TransformModifiedEvent * realEvent =
-      dynamic_cast < const TransformModifiedEvent * > ( &eventvar ); 
+    const CoordinateSystemTransformToEvent * realEvent =
+      dynamic_cast < const CoordinateSystemTransformToEvent * > ( &eventvar ); 
 
     if( realEvent )
       {
 
-      this->m_SpatialObjectTransform = realEvent->Get();
+      CoordinateSystemTransformToResult result = realEvent->Get();
+      this->m_SpatialObjectTransform = result.GetTransform();
 
       if( this->m_GrabbingType == GrabbingPosition )
         {

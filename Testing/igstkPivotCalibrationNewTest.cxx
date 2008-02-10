@@ -103,11 +103,12 @@ public:
         dynamic_cast< const igstk::PointEvent * > (&event);
       std::cout<<"Pivot point is: "<<pntEvent->Get()<<std::endl;
     }
-    else if( dynamic_cast< const igstk::TransformModifiedEvent * > (&event) )  
+    else if( dynamic_cast< const igstk::CoordinateSystemTransformToEvent * > (&event) )  
     {
-      const igstk::TransformModifiedEvent *transformEvent =  
-        dynamic_cast< const igstk::TransformModifiedEvent * > (&event);
-      std::cout<<"Calibration transformation is: "<<transformEvent->Get()<<std::endl;
+      const igstk::CoordinateSystemTransformToEvent *transformEvent =  
+        dynamic_cast< const igstk::CoordinateSystemTransformToEvent * > (&event);
+      const igstk::CoordinateSystemTransformToResult result = transformEvent->Get();
+      std::cout<<"Calibration transformation is: "<< result.GetTransform() <<std::endl;
     }
     else if( dynamic_cast< const igstk::DoubleTypeEvent * > (&event) )  
     {
@@ -221,7 +222,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
  *  1. Initialize (InitializationSuccessEvent), compute calibration 
  *     (CalibrationSuccessEvent) and get all the calibration
  *     data, transformation, pivot point and calibration RMSE 
- *     (TransformModifiedEvent, PointEvent, DoubleTypeEvent).
+ *     (CoordinateSystemTransformToEvent, PointEvent, DoubleTypeEvent).
  *  2. Initialize (InitializationSuccessEvent), get all calibration data (
  *     InvalidRequestError).
  *  3. Invalid initialization (InitializationFailureEvent), get all calibration 
@@ -235,7 +236,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
  *  6. Same as 1, Initialize (InitializationSuccessEvent), compute calibration 
  *     (CalibrationSuccessEvent) and get all the calibration
  *     data, transformation, pivot point and calibration RMSE 
- *     (TransformModifiedEvent, PointEvent, DoubleTypeEvent).
+ *     (CoordinateSystemTransformToEvent, PointEvent, DoubleTypeEvent).
  */
  int igstkPivotCalibrationNewTest( int argv, char * argc[] )
 {
@@ -347,7 +348,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
                                  pivotCalibrationObserver );
   pivotCalibration->AddObserver( igstk::PivotCalibrationNew::CalibrationSuccessEvent(), 
                                  pivotCalibrationObserver );
-  pivotCalibration->AddObserver( igstk::TransformModifiedEvent(), 
+  pivotCalibration->AddObserver( igstk::CoordinateSystemTransformToEvent(), 
                                  pivotCalibrationObserver );
   pivotCalibration->AddObserver( igstk::PointEvent(), 
                                  pivotCalibrationObserver );
@@ -357,7 +358,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
         //Test 1. Initialize (InitializationSuccessEvent), compute calibration 
         //(CalibrationSuccessEvent) and get all the calibration
         //data, transformation, pivot point and calibration RMSE 
-        //(TransformModifiedEvent, PointEvent, DoubleTypeEvent).
+        //(CoordinateSystemTransformToEvent, PointEvent, DoubleTypeEvent).
 
                //initialize the pivot calibration
   std::cout<<"\nTest 1:\n";
@@ -550,7 +551,7 @@ int exitFailure( igstk::SerialCommunication::Pointer &communication,
         //Test 6. Same as Test 1, Initialize (InitializationSuccessEvent), compute 
         //calibration (CalibrationSuccessEvent) and get all the calibration
         //data, transformation, pivot point and calibration RMSE 
-        //(TransformModifiedEvent, PointEvent, DoubleTypeEvent).
+        //(CoordinateSystemTransformToEvent, PointEvent, DoubleTypeEvent).
   std::cout<<"\nTest 6:\n";
   std::cout<<"Next line should report successful initialization.\n";
   pivotCalibration->RequestInitialize( NUMBER_OF_TRANSFORMATIONS, 

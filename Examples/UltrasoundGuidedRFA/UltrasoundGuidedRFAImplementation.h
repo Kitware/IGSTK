@@ -78,11 +78,13 @@ public:
   igstkObserverObjectMacro(USImage,igstk::USImageReader::ImageModifiedEvent,
                                                   igstk::USImageObject)
 
-  igstkObserverMacro(USImageTransform, igstk::TransformModifiedEvent,
-                                                               igstk::Transform)
+  igstkObserverMacro(USImageTransform, 
+    igstk::CoordinateSystemTransformToEvent,
+    igstk::CoordinateSystemTransformToResult)
 
-  igstkObserverMacro(RegistrationTransform,igstk::TransformModifiedEvent,
-                                                               igstk::Transform)
+  igstkObserverMacro(RegistrationTransform,
+    igstk::CoordinateSystemTransformToEvent,
+    igstk::CoordinateSystemTransformToResult )
 
 public:
 

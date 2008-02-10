@@ -74,8 +74,8 @@ public:
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
                                                    igstk::CTImageSpatialObject);
 
-  igstkObserverMacro( Registration, igstk::TransformModifiedEvent,
-                                                              igstk::Transform);
+  igstkObserverMacro( Registration, igstk::CoordinateSystemTransformToEvent,
+    igstk::CoordinateSystemTransformToResult );
 
   igstkObserverMacro( RegistrationError, igstk::DoubleTypeEvent, double );
 

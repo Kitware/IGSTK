@@ -209,9 +209,18 @@ void MR3DImageToUS3DImageRegistration
   igstkLogMacro( DEBUG, "igstk::MR3DImageToUS3DImageRegistration\
                       ::ReportRegistrationTransformProcessing called...\n" );
 
-  TransformModifiedEvent event;
-  event.Set( this->m_RegistrationTransform );
-  this->InvokeEvent( event );
+  CoordinateSystemTransformToResult transformCarrier;
+
+  transformCarrier.Initialize( this->m_RegistrationTransform,
+   NULL, // It should be one of the images Coordinate system
+   NULL  // It should be the coordinate system of the other image 
+   );
+
+  CoordinateSystemTransformToEvent transformEvent;
+
+  transformEvent.Set( transformCarrier );
+
+  this->InvokeEvent( transformEvent );
 }
 
 
@@ -356,7 +365,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   // the registration
   USImageTransformObserver::Pointer usTransformObserver 
                                     = USImageTransformObserver::New();
-  m_USFixedImage->AddObserver( TransformModifiedEvent(),
+  m_USFixedImage->AddObserver( CoordinateSystemTransformToEvent(),
                                            usTransformObserver );
 
   m_USFixedImage->RequestGetImageTransform();
@@ -364,7 +373,9 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   Transform usTransform;
   if( usTransformObserver->GotUSImageTransform() )
     {
-    usTransform = usTransformObserver->GetUSImageTransform();
+    const CoordinateSystemTransformToResult transformCarrier =
+      usTransformObserver->GetUSImageTransform();
+    usTransform = transformCarrier.GetTransform();
     }
   else
     {

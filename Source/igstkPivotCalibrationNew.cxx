@@ -493,14 +493,9 @@ PivotCalibrationNew::GetTransformProcessing()
   this->m_PivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( this->m_GetCalibrationTransformObserver->GotCalibrationTransform() ) 
   {
-    CoordinateSystemTransformToResult result;
     CoordinateSystemTransformToEvent  event;
-    result.Initialize( 
-      this->m_GetCalibrationTransformObserver->GetCalibrationTransform(),
-      NULL,
-      NULL); // FIXME: These two pointers should be the source and destination
-             // coordinate systems.
-    event.Set( result );
+    event.Set(
+      this->m_GetCalibrationTransformObserver->GetCalibrationTransform() );
     this->InvokeEvent(  event );
   }  
 }

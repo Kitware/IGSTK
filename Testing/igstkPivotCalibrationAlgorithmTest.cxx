@@ -1,5 +1,6 @@
 #include <iostream>
 #include "igstkPivotCalibrationAlgorithm.h"
+#include "igstkCoordinateSystemTransformToResult.h"
 
 
 /** Class for observing the invalid request error.*/
@@ -101,7 +102,7 @@ private:
 };
 
 
-typedef PayloadEventObserver< igstk::TransformModifiedEvent > 
+typedef PayloadEventObserver< igstk::CoordinateSystemTransformToEvent > 
   TransformEventObserver;
 typedef PayloadEventObserver< igstk::PointEvent > PivotPointEventObserver;
 typedef PayloadEventObserver< igstk::DoubleTypeEvent > RMSEEventObserver;
@@ -848,7 +849,7 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
                                          calibrationEventObserver);
   pivotCalibrationAlgorithm->AddObserver(igstk::PivotCalibrationAlgorithm::CalibrationFailureEvent(), 
                                          calibrationEventObserver);
-  pivotCalibrationAlgorithm->AddObserver(igstk::TransformModifiedEvent(), 
+  pivotCalibrationAlgorithm->AddObserver(igstk::CoordinateSystemTransformToEvent(), 
                                          transformEventObserver);
   pivotCalibrationAlgorithm->AddObserver(igstk::PointEvent(), 
                                          pivotPointEventObserver);
@@ -912,7 +913,9 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   if( !transformEventObserver->EventOccured() )
     return EXIT_FAILURE;
   transformEventObserver->Reset();
-  computedTransform1 = transformEventObserver->Get();
+  igstk::CoordinateSystemTransformToResult transformCarrier1 = 
+    transformEventObserver->Get();
+  computedTransform1 = transformCarrier1.GetTransform();
   std::cout<<"Next line should show the calibration transformation:\n";
   std::cout<<computedTransform1<<std::endl;
 
@@ -990,7 +993,9 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   if( !transformEventObserver->EventOccured() )
     return EXIT_FAILURE;
   transformEventObserver->Reset();
-  computedTransform2 = transformEventObserver->Get();
+  igstk::CoordinateSystemTransformToResult transformCarrier2 =
+    transformEventObserver->Get();
+  computedTransform2 = transformCarrier2.GetTransform();
   composedTransform = igstk::Transform::TransformCompose( computedTransform2, 
                                                           computedTransform1.GetInverse() );
   std::cout<<"Next line should show the identity transformation:\n";

@@ -407,7 +407,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
 
-  m_ImageSpatialObject->AddObserver( TransformModifiedEvent(), 
+  m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
                                      m_ImageTransformObserver );
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
@@ -437,7 +437,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 
   if( this->m_ImageTransformObserver->GotImageTransform() ) 
     {
-    this->m_ImageTransform = this->m_ImageTransformObserver->GetImageTransform();
+    const CoordinateSystemTransformToResult transformCarrier =
+      this->m_ImageTransformObserver->GetImageTransform();
+    this->m_ImageTransform = transformCarrier.GetTransform();
 
     // Image Actor takes care of the image origin position internally.
     this->m_ImageActor->SetPosition(0,0,0); 

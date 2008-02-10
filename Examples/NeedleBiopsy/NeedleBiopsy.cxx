@@ -106,11 +106,11 @@ NeedleBiopsy::NeedleBiopsy()
 
 
   m_Path                       = PathType::New();
-  TubePointType p;
-  p.SetPosition( 0, 0, 0);
-  p.SetRadius( 2 );
-  m_Path->AddPoint( p );
-  m_Path->AddPoint( p );
+  TubePointType point;
+  point.SetPosition( 0, 0, 0);
+  point.SetRadius( 2 );
+  m_Path->AddPoint( point );
+  m_Path->AddPoint( point );
 
   m_PathRepresentation.clear();
   for (int i=0; i<4; i++)
@@ -285,7 +285,8 @@ void NeedleBiopsy::ConnectImageRepresentation()
   /** Adding observer for picking event */
   for ( int i=0; i<3; i++)
   {
-    ViewerGroup->Views[i]->AddObserver( igstk::TransformModifiedEvent(), 
+    ViewerGroup->Views[i]->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), 
       m_ViewPickerObserver );
   }
 
@@ -343,32 +344,32 @@ void NeedleBiopsy::WriteTreatmentPlan()
 
 void NeedleBiopsy::ChangeSelectedTPlanPoint()
 {
-  ImageSpatialObjectType::PointType    p; 
+  ImageSpatialObjectType::PointType    point; 
   int choice = TPlanPointList->value();
   if( choice == 0 )
-  {    
-    p = m_Plan->EntryPoint;
-  }
+    {    
+    point = m_Plan->EntryPoint;
+    }
   else if ( choice == 1 )
-  {
-    p = m_Plan->TargetPoint;
-  }
+    {
+    point = m_Plan->TargetPoint;
+    }
   else
-  {
-    p = m_Plan->FiducialPoints[ choice-2];
-    m_FiducialPoint->RequestSetTransformAndParent( PointToTransform(p), m_WorldReference );
-  }
+    {
+    point = m_Plan->FiducialPoints[ choice-2];
+    m_FiducialPoint->RequestSetTransformAndParent( PointToTransform(point), m_WorldReference );
+    }
 
   char buf[50];
-  sprintf( buf, "[%.2f, %.2f, %.2f]", p[0], p[1], p[2]);
+  sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
   m_Annotation->RequestSetAnnotationText(0, buf);
   m_Annotation->RequestSetFontColor(0, 0, 0, 1.0);
   m_Annotation->RequestSetFontSize(0, 12);
 
-  if( m_ImageSpatialObject->IsInside( p ) )
+  if( m_ImageSpatialObject->IsInside( point ) )
   {    
     ImageSpatialObjectType::IndexType index;
-    m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+    m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
     igstkLogMacro( DEBUG, index <<"\n");
     ResliceImage( index );
   }
@@ -564,46 +565,49 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
 
 void NeedleBiopsy::Picking( const itk::EventObject & event)
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = 
-                                     ( igstk::TransformModifiedEvent *) & event;
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent = 
+      dynamic_cast< const TransformEventType *>( & event );
     
-    igstk::Transform  t = tmevent->Get();
-    ImageSpatialObjectType::PointType    p = TransformToPoint( t );
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    igstk::Transform  transform = transformCarrier.GetTransform();
+    ImageSpatialObjectType::PointType point = TransformToPoint( transform );
         
-    if( m_ImageSpatialObject->IsInside( p ) )
+    if( m_ImageSpatialObject->IsInside( point ) )
       {
-        int choice = TPlanPointList->value();
-        if( choice == 0 )
+      int choice = TPlanPointList->value();
+
+      if( choice == 0 )
         {          
-          m_EntryPoint->RequestSetTransformAndParent( t , m_WorldReference );
-          m_Plan->EntryPoint = p;          
-          this->UpdatePath();
+        m_EntryPoint->RequestSetTransformAndParent( transform , m_WorldReference );
+        m_Plan->EntryPoint = point;          
+        this->UpdatePath();
         }
-        else if ( choice == 1 )
+      else if ( choice == 1 )
         {
-          m_TargetPoint->RequestSetTransformAndParent( t, m_WorldReference );
-          m_Plan->TargetPoint = p;
-          this->UpdatePath();
+        m_TargetPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+        m_Plan->TargetPoint = point;
+        this->UpdatePath();
         }
-        else
+      else
         {
-          m_FiducialPoint->RequestSetTransformAndParent( t, m_WorldReference );
-          m_Plan->FiducialPoints[ choice-2] = p;
+        m_FiducialPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+        m_Plan->FiducialPoints[ choice-2] = point;
         }
-      
-        char buf[50];
-        sprintf( buf, "[%.2f, %.2f, %.2f]", p[0], p[1], p[2]);
-        m_Annotation->RequestSetAnnotationText(0, buf);
-        m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
-        m_Annotation->RequestSetFontSize(0, 12);
+    
+      char buf[50];
+      sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
+      m_Annotation->RequestSetAnnotationText(0, buf);
+      m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
+      m_Annotation->RequestSetFontSize(0, 12);
 
       // We don't need to rewrite the file every time we modify it
       this->WriteTreatmentPlan();
 
       ImageSpatialObjectType::IndexType index;
-      m_ImageSpatialObject->TransformPhysicalPointToIndex( p, index);
+      m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
       igstkLogMacro( DEBUG, index <<"\n")
       ResliceImage( index );
       }
@@ -619,18 +623,18 @@ void NeedleBiopsy::UpdatePath()
 {
   m_Path->Clear();
   
-  TubePointType p;
+  TubePointType point;
   igstk::Transform::VectorType v;
     
   v = ( PointToTransform( m_Plan->EntryPoint) ).GetTranslation();
-  p.SetPosition( v[0], v[1], v[2]);
-  p.SetRadius( 2 );
-  m_Path->AddPoint( p );
+  point.SetPosition( v[0], v[1], v[2]);
+  point.SetRadius( 2 );
+  m_Path->AddPoint( point );
 
   v = ( PointToTransform( m_Plan->TargetPoint) ).GetTranslation();
-  p.SetPosition( v[0], v[1], v[2]);
-  p.SetRadius( 2.1 ); 
-  m_Path->AddPoint( p );
+  point.SetPosition( v[0], v[1], v[2]);
+  point.SetRadius( 2.1 ); 
+  m_Path->AddPoint( point );
 
 
   for (int i=0; i<4; i++)

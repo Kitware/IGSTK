@@ -24,6 +24,8 @@
 #endif
 
 #include "igstkTransform.h"
+#include "igstkCoordinateSystemTransformToResult.h"
+#include "igstkCoordinateSystemTransformToErrorResult.h"
 
 namespace igstk
 {

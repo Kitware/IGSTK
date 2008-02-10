@@ -122,7 +122,8 @@ protected:
    * the ImageSpatialObject when an image is requested. */
    igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
                        EventHelperType::VTKImagePointerType );
-   igstkObserverMacro( ImageTransform, TransformModifiedEvent, Transform );
+   igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
+     CoordinateSystemTransformToResult );
 
 
 private:

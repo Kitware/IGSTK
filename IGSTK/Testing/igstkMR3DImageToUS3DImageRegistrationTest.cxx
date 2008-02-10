@@ -30,11 +30,10 @@
 #include "igstkMRImageReader.h"
 #include "igstkMR3DImageToUS3DImageRegistration.h"
 #include "igstkUltrasoundImageSimulator.h"
+#include "igstkTransformObserver.h"
 
 namespace MR3DImageToUS3DImageRegistrationTest
 {
-igstkObserverMacro(RegistrationTransform,
-                   ::igstk::TransformModifiedEvent,::igstk::Transform)
 igstkObserverObjectMacro(USImage,::igstk::USImageReader::ImageModifiedEvent,
                          ::igstk::USImageObject)   
 igstkObserverObjectMacro(MRImage,
@@ -147,19 +146,17 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
   registration->SetInitialTransform(initialTransform);
   registration->RequestCalculateRegistration();
 
-  typedef MR3DImageToUS3DImageRegistrationTest::RegistrationTransformObserver 
-                                            RegistrationTransformObserverType;
-  RegistrationTransformObserverType::Pointer registrationTransformObserver 
-                                    = RegistrationTransformObserverType::New();
+  igstk::TransformObserver::Pointer registrationTransformObserver = 
+    igstk::TransformObserver::New();
 
-  registration->AddObserver(::igstk::TransformModifiedEvent(),
-                            registrationTransformObserver);
+  registrationTransformObserver->ObserveTransformEventsFrom( registration );
+  registrationTransformObserver->Clear();
+
   registration->RequestGetRegistrationTransform();
 
-  if(registrationTransformObserver->GotRegistrationTransform())
+  if( registrationTransformObserver->GotTransform() )
     {
-    igstk::Transform final = 
-                  registrationTransformObserver->GetRegistrationTransform();
+    igstk::Transform final = registrationTransformObserver->GetTransform();
     VectorType finalT = final.GetTranslation();
     finalT += initialTransform.GetTranslation();
     

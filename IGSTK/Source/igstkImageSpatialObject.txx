@@ -225,10 +225,15 @@ ImageSpatialObject< TPixelType, VDimension >
 ::ReportImageTransformProcessing() 
 {
   igstkLogMacro( DEBUG, "ReportImageTransformProcessing() called ....\n");
+  CoordinateSystemTransformToResult transformCarrier;
+  CoordinateSystemTransformToEvent transformEvent;
 
-  TransformModifiedEvent  event;
-  event.Set( this->m_ImageTransform );
-  this->InvokeEvent( event );
+  transformCarrier.Initialize( this->m_ImageTransform,
+    this->m_DICOMCoordinateSystem,
+    this->GetCoordinateSystem() );
+
+  transformEvent.Set( transformCarrier );
+  this->InvokeEvent( transformEvent );
 }
 
 

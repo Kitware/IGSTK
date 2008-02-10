@@ -711,12 +711,15 @@ void DeckOfCardRobot::ConnectImageRepresentationProcessing()
   this->SetROI->activate();
 
   //Add the picker observer
-  this->DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
-                                   m_ViewPickerObserver );
-  this->DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
-                                   m_ViewPickerObserver );
-  this->DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
-                                   m_ViewPickerObserver );
+  this->DisplayAxial->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), 
+    m_ViewPickerObserver );
+  this->DisplaySagittal->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(),
+    m_ViewPickerObserver );
+  this->DisplayCoronal->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), 
+    m_ViewPickerObserver );
 
 }
 
@@ -776,19 +779,25 @@ void DeckOfCardRobot::SetCoronalSliderBoundsProcessing()
 
 void DeckOfCardRobot::DrawPickedPoint( const itk::EventObject & event)
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = \
-                                     ( igstk::TransformModifiedEvent *) & event;
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent =
+      dynamic_cast< const TransformEventType * >( & event );
     
+    const igstk::CoordinateSystemTransformToResult transformCarrier =
+      tmevent->Get();
+
+    const igstk::Transform transform = transformCarrier.GetTransform();
+
     ImageSpatialObjectType::PointType    p;
-    p[0] = tmevent->Get().GetTranslation()[0];
-    p[1] = tmevent->Get().GetTranslation()[1];
-    p[2] = tmevent->Get().GetTranslation()[2];
+    p[0] = transform.GetTranslation()[0];
+    p[1] = transform.GetTranslation()[1];
+    p[2] = transform.GetTranslation()[2];
     
     if( m_ImageSpatialObject->IsInside( p ) )
       {
-      m_ImageLandmarkTransformToBeSet = tmevent->Get();
+      m_ImageLandmarkTransformToBeSet = transform;
       
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED  
       m_PickedPoint->RequestSetTransform( m_ImageLandmarkTransformToBeSet );

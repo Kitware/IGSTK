@@ -301,6 +301,11 @@ private:
 
   /** Define the coordinate system interface*/
   igstkCoordinateSystemClassInterfaceMacro();
+
+  /** Additional coordinate system used for defining 
+   *  picking transforms with respect to the View's 
+   *  coordinate system. */
+  CoordinateSystem::Pointer  m_PickerCoordinateSystem;
 };
 
 std::ostream& operator<<(std::ostream& os, const View& o);

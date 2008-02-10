@@ -21,6 +21,7 @@
 #include "itkRegionOfInterestImageFilter.h"
 #include "PCAOnPoints.h"
 #include "igstkLandmark3DRegistration.h"
+#include "igstkTransformObserver.h"
 
 namespace igstk 
 {
@@ -144,9 +145,13 @@ bool LandmarkBasedRegistration::Execute()
     }
   landmarkRegistration->RequestComputeTransform();
 
-  TransformObserver::Pointer transformObserver = TransformObserver::New();
-  landmarkRegistration->AddObserver( igstk::TransformModifiedEvent(),
-                                     transformObserver );
+  igstk::TransformObserver::Pointer transformObserver = 
+    igstk::TransformObserver::New();
+
+  transformObserver->ObserveTransformEventsFrom( landmarkRegistration );
+
+  transformObserver->Clear();
+
   landmarkRegistration->RequestGetTransformFromTrackerToImage();
   if ( transformObserver->GotTransform())
     {

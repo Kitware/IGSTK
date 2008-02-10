@@ -198,6 +198,7 @@ private:
   VTKImportFilterPointer             m_VtkImporter;
 
   Transform                          m_ImageTransform;
+  CoordinateSystem::Pointer          m_DICOMCoordinateSystem;  
 
 };
 

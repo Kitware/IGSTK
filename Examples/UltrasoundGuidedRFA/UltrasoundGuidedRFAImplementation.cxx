@@ -517,7 +517,7 @@ void UltrasoundGuidedRFAImplementation
   USImageTransformObserver::Pointer transformObserver = 
                                                 USImageTransformObserver::New();
 
-  usImage->AddObserver( ::igstk::TransformModifiedEvent(), 
+  usImage->AddObserver( ::igstk::CoordinateSystemTransformToEvent(), 
                         transformObserver );
   usImage->RequestGetTransform();
   
@@ -540,7 +540,7 @@ void UltrasoundGuidedRFAImplementation
   RegistrationTransformObserver::Pointer registrationTransformObserver 
                                     = RegistrationTransformObserver::New();
 
-  m_Registration->AddObserver(TransformModifiedEvent(),
+  m_Registration->AddObserver(igstk::CoordinateSystemTransformToEvent(),
                               registrationTransformObserver);
   m_Registration->RequestGetRegistrationTransform();
 

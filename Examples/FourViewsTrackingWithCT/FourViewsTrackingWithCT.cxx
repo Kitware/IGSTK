@@ -68,7 +68,9 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
                    &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( igstk::TransformModifiedEvent(), 
+  m_LandmarkRegistration->AddObserver( igstk::CoordinateSystemTransformToEvent(), 
+                                               m_LandmarkRegistrationObserver );
+  m_LandmarkRegistration->AddObserver( igstk::TransformNotAvailableEvent(), 
                                                m_LandmarkRegistrationObserver );
 
   m_LandmarkRegistrationRMSErrorObserver = ObserverType2::New();
@@ -161,12 +163,14 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
   m_ViewPickerObserver->SetCallbackFunction( this, 
                                    &FourViewsTrackingWithCT::DrawPickedPoint );
 
-  this->m_DisplayAxial->AddObserver( igstk::TransformModifiedEvent(), 
-                                   m_ViewPickerObserver );
-  this->m_DisplaySagittal->AddObserver( igstk::TransformModifiedEvent(), 
-                                      m_ViewPickerObserver );
-  this->m_DisplayCoronal->AddObserver( igstk::TransformModifiedEvent(), 
-                                     m_ViewPickerObserver );
+  this->m_DisplayAxial->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), m_ViewPickerObserver );
+
+  this->m_DisplaySagittal->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), m_ViewPickerObserver );
+
+  this->m_DisplayCoronal->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), m_ViewPickerObserver );
 
   this->m_DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
   this->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
@@ -972,16 +976,15 @@ void FourViewsTrackingWithCT::SetCoronalSliderBoundsProcessing()
 void FourViewsTrackingWithCT
 ::GetLandmarkRegistrationTransform( const itk::EventObject & event )
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = ( 
-                                       igstk::TransformModifiedEvent *) & event;
-    m_ImageToTrackerTransform = tmevent->Get();
-    
-    /* FIXME
-    m_Tracker->SetPatientTransform( m_ImageToTrackerTransform );
-    */
+    typedef igstk::CoordinateSystemTransformToEvent EventType;
 
+    const EventType *tmevent = dynamic_cast< const EventType * >( & event );
+
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    m_ImageToTrackerTransform = transformCarrier.GetTransform();
+    
     igstkLogMacro( DEBUG, 
                  "Registration Transform" << m_ImageToTrackerTransform << "\n");
     igstkLogMacro( DEBUG, "Registration Transform Inverse" 
@@ -990,8 +993,10 @@ void FourViewsTrackingWithCT
     }
   else
     {
-    // FIXME.. how to get the failure condition
-    m_StateMachine.PushInput( m_RegistrationFailureInput );
+    if( igstk::TransformNotAvailableEvent().CheckEvent( &event ) )
+      {
+      m_StateMachine.PushInput( m_RegistrationFailureInput );
+      }
     }
 }
 
@@ -1011,15 +1016,20 @@ void FourViewsTrackingWithCT
 
 void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = ( 
-                                       igstk::TransformModifiedEvent *) & event;
-    
+    typedef igstk::CoordinateSystemTransformToEvent EventType;
+
+    const EventType *tmevent = dynamic_cast< const EventType * >( & event );
+
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+
+    igstk::Transform transform = transformCarrier.GetTransform();
+
     ImageSpatialObjectType::PointType    p;
-    p[0] = tmevent->Get().GetTranslation()[0];
-    p[1] = tmevent->Get().GetTranslation()[1];
-    p[2] = tmevent->Get().GetTranslation()[2];
+    p[0] = transform.GetTranslation()[0];
+    p[1] = transform.GetTranslation()[1];
+    p[2] = transform.GetTranslation()[2];
     
     // FIXME:
     // We should check if GetCTImage() returns a valid image or guarantee
@@ -1033,7 +1043,7 @@ void FourViewsTrackingWithCT::DrawPickedPoint( const itk::EventObject & event)
 
     if( m_CTImageObserver->GetCTImage()->IsInside( p ) )
       {
-      m_ImageLandmarkTransformToBeSet = tmevent->Get();
+      m_ImageLandmarkTransformToBeSet = transform;
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED  
       m_Ellipsoid->RequestSetTransform( m_ImageLandmarkTransformToBeSet );
 #endif

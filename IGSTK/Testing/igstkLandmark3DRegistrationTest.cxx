@@ -30,6 +30,7 @@
 #include "itkMacro.h"
 #include "igstkEvents.h"
 #include "igstkTransform.h"
+#include "igstkTransformObserver.h"
 
 
 class Landmark3DRegistrationErrorCallback : public itk::Command
@@ -71,49 +72,6 @@ protected:
   Landmark3DRegistrationInvalidRequestCallback() {};
 
 private:
-};
-
-class Landmark3DRegistrationGetTransformCallback: public itk::Command
-{
-public:
-  typedef Landmark3DRegistrationGetTransformCallback  Self;
-  typedef itk::SmartPointer<Self>                     Pointer;
-  typedef itk::Command                                Superclass;
-  itkNewMacro(Self);
-
-  typedef igstk::TransformModifiedEvent TransformModifiedEventType;
-
-  void Execute( const itk::Object *caller, const itk::EventObject & event )
-    {
-    }
-  void Execute( itk::Object *caller, const itk::EventObject & event )
-    {
-    std::cout<< " TransformEvent is thrown" << std::endl;
-    const TransformModifiedEventType * transformEvent =
-                  dynamic_cast < const TransformModifiedEventType* > ( &event );
-    m_Transform = transformEvent->Get();
-    m_EventReceived = true;
-    } 
-  
-  bool GetEventReceived()
-    {
-    return m_EventReceived;
-    }
-  
-  igstk::Transform GetTransform()
-    {
-    return m_Transform;
-    }  
-
-protected:
-  Landmark3DRegistrationGetTransformCallback()   
-    {
-    m_EventReceived = true;
-    }
-
-private:
-  bool m_EventReceived;
-  igstk::Transform m_Transform;
 };
 
 class Landmark3DRegistrationGetRMSErrorCallback: public itk::Command
@@ -300,13 +258,15 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
   ParametersType     parameters(6);
 
   // Setup an obsever to get the transform parameters
-  Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
-                            Landmark3DRegistrationGetTransformCallback::New();
+  igstk::TransformObserver::Pointer lrtcb = igstk::TransformObserver::New();
 
-  landmarkRegister->AddObserver( igstk::TransformModifiedEvent(), lrtcb );
+  lrtcb->ObserveTransformEventsFrom( landmarkRegister );
+
+  lrtcb->Clear();
+
   landmarkRegister->RequestGetTransformFromTrackerToImage();
 
-  if( !lrtcb->GetEventReceived() )
+  if( !lrtcb->GotTransform() )
     {
     std::cerr << "LandmarkRegsistration class failed to throw a modified "
               << "transform event" << std::endl;

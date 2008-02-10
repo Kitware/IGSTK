@@ -266,6 +266,9 @@ private:
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
+  /** Helper coordinate system used point of reference 
+   * for the calibration Transform. */
+  CoordinateSystem::Pointer   m_CalibrationCoordinateSystem;
 };
 
 std::ostream& operator<<(std::ostream& os, const TrackerTool& o);

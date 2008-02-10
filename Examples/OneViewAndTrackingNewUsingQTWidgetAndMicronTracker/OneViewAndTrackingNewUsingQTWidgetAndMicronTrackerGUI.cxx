@@ -144,7 +144,7 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 ::SetView( igstk::View * view )
 {
   m_GUI.Display3D->RequestSetView (view);
-  view->AddObserver( igstk::TransformModifiedEvent(), 
+  view->AddObserver( igstk::CoordinateSystemTransformToEvent(), 
                                    m_ViewPickerObserver );
 }
 
@@ -234,14 +234,18 @@ void
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 ::ParsePickedPoint( const itk::EventObject & event)
 {
-  if ( igstk::TransformModifiedEvent().CheckEvent( &event ) )
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::TransformModifiedEvent *tmevent = 
-                                     ( igstk::TransformModifiedEvent *) & event;
+    igstk::CoordinateSystemTransformToEvent * tmevent = 
+      dynamic_cast< igstk::CoordinateSystemTransformToEvent *>( & event );
     
-    std::cout << "Translation transform: " << tmevent->Get().GetTranslation()[0]
-                                           << tmevent->Get().GetTranslation()[1]
-                                           << tmevent->Get().GetTranslation()[2]
+    igstk::CoordinateSystemTransformToResult transformCarrier = event.Get();
+
+    const igstk::Transform transform = transformCarrier.GetTransform();
+
+    std::cout << "Translation transform: " << transform.GetTranslation()[0]
+                                           << transform.GetTranslation()[1]
+                                           << transform.GetTranslation()[2]
                                            << std::endl;
     }
 }

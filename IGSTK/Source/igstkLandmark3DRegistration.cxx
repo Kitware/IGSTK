@@ -21,6 +21,7 @@
 
 #include "igstkLandmark3DRegistration.h"
 #include "igstkEvents.h"
+#include "igstkCoordinateSystemTransformToResult.h" 
 
 #include "itkNumericTraits.h"
 #include "itkMatrix.h"
@@ -602,9 +603,16 @@ Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
 
   transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
 
-  TransformModifiedEvent event; 
-  event.Set( transform );
-  this->InvokeEvent( event );
+  CoordinateSystemTransformToResult transformCarrier;
+  transformCarrier.Initialize( transform,
+    NULL,    // It should be the coordinate system of the Tracker
+    NULL     // It should be the coordinate system of the Image
+    );
+
+  CoordinateSystemTransformToEvent transformEvent; 
+  transformEvent.Set( transformCarrier );
+
+  this->InvokeEvent( transformEvent );
 }
 
 /** The "GetTransformFromImageToTrackerProcessing()" method throws and event
@@ -631,9 +639,16 @@ Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
 
   transform.SetTranslationAndRotation( translation, versor, error, timePeriod );
 
-  TransformModifiedEvent event; 
-  event.Set( transform.GetInverse() );
-  this->InvokeEvent( event );
+  CoordinateSystemTransformToResult transformCarrier;
+  transformCarrier.Initialize( transform.GetInverse(),
+    NULL,    // It should be the coordinate system of the Image
+    NULL     // It should be the coordinate system of the Tracker
+    );
+
+  CoordinateSystemTransformToEvent transformEvent; 
+  transformEvent.Set( transformCarrier );
+
+  this->InvokeEvent( transformEvent );
 }
 
 

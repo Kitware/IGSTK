@@ -400,11 +400,17 @@ void View::SetPickedPointCoordinates( double x, double y )
   double errorValue = 1.0; // this should be obtained from 
                            // the picked object.
 
-  igstk::Transform transform;
+  Transform transform;
   transform.SetTranslation( pickedPoint, errorValue, validityTime );
 
-  igstk::TransformModifiedEvent transformEvent;
-  transformEvent.Set( transform );
+  CoordinateSystemTransformToResult transformCarrier;
+
+  transformCarrier.Initialize( transform,
+    this->m_PickerCoordinateSystem,
+    this->GetCoordinateSystem() );
+
+  CoordinateSystemTransformToEvent  transformEvent;
+  transformEvent.Set( transformCarrier );
 
   this->InvokeEvent( transformEvent );
 }

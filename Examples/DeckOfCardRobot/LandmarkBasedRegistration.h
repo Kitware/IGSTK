@@ -36,7 +36,8 @@ public:
   itkNewMacro( Self );
   
   igstkObserverMacro( Transform, 
-                            igstk::TransformModifiedEvent, igstk::Transform );
+    igstk::CoordinateSystemTransformToEvent, 
+    igstk::CoordinateSystemTransformToResult );
 
   igstkObserverMacro( LandmarkRegistrationRMSError, 
                             igstk::DoubleTypeEvent, double );
