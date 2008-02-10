@@ -20,6 +20,7 @@
 #endif
 
 #include "igstkTrackerToolObserverToSocketRelay.h"
+#include "igstkCoordinateSystemTransformToResult.h"
 
 #include "igstkEvents.h"
 #include "igstkTrackerTool.h"
@@ -76,7 +77,7 @@ void
 TrackerToolObserverToSocketRelay::RequestSetTrackerTool( const TrackerTool * trackerTool )
 {
   this->m_TrackerTool = trackerTool;
-  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToResult(), this->m_Observer );
+  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent(), this->m_Observer );
 }
 
 
@@ -117,47 +118,53 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
   const int numberOfParametersToSend = 12;
 
 
-  const CoordinateSystemTransformToResult * transformEvent =
-    static_cast< const CoordinateSystemTransformToResult * >( &event );
+  const CoordinateSystemTransformToEvent * transformEvent =
+    dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
 
-  igstk::Transform transform = transformEvent->GetTransform();
-
-  std::cout << "Sending transform " << transform << std::endl;
-
-  transform.ExportTransform( *(this->m_Matrix) );
-
-  unsigned int counter = 0;
-  double dataToBeSent[ numberOfParametersToSend ];
-
-  for (unsigned int i = 0; i < 4; i++)
+  if( transformEvent )
     {
-    for (unsigned int j = 0; j < 3; j++)
+    igstk::CoordinateSystemTransformToResult transformCarrier = 
+      transformEvent->Get();
+
+    igstk::Transform transform = transformCarrier.GetTransform();
+
+    std::cout << "Sending transform " << transform << std::endl;
+
+    transform.ExportTransform( *(this->m_Matrix) );
+
+    unsigned int counter = 0;
+    double dataToBeSent[ numberOfParametersToSend ];
+
+    for (unsigned int i = 0; i < 4; i++)
       {
-      dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
+      for (unsigned int j = 0; j < 3; j++)
+        {
+        dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
+        }
       }
-    }
 
-  // Hack for demo
-  dataToBeSent[11] += 1000;
+    // Hack for demo
+    dataToBeSent[11] += 1000;
 
-  if( !this->m_SocketCommunicator->Send( dataToBeSent, numberOfParametersToSend, 1, this->m_Tag ) )
-    {
-    std::cerr << "Client error: Error sending data." << std::endl;
-    }
+    if( !this->m_SocketCommunicator->Send( dataToBeSent, numberOfParametersToSend, 1, this->m_Tag ) )
+      {
+      std::cerr << "Client error: Error sending data." << std::endl;
+      }
 
-  //this->m_Tag++;
+    //this->m_Tag++;
 
-  this->m_WaitingForNextRequestFromSocket = true;
-
-  char confirmation;
-
-  if (!this->m_SocketCommunicator->Receive( &confirmation, 1, 1, this->m_Tag))
-    {
     this->m_WaitingForNextRequestFromSocket = true;
-    }
-  else
-    {
-    this->m_WaitingForNextRequestFromSocket = false;
+
+    char confirmation;
+
+    if (!this->m_SocketCommunicator->Receive( &confirmation, 1, 1, this->m_Tag))
+      {
+      this->m_WaitingForNextRequestFromSocket = true;
+      }
+    else
+      {
+      this->m_WaitingForNextRequestFromSocket = false;
+      }
     }
 
 }
