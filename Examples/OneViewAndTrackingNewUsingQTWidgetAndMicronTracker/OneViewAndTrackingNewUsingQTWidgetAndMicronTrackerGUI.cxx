@@ -18,6 +18,8 @@
 #include "OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI.moc"
 #include "OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI.h"
 
+#include "igstkCoordinateSystemTransformToResult.h"
+
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::
 OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI()
 {
@@ -236,10 +238,10 @@ OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
 {
   if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
     {
-    igstk::CoordinateSystemTransformToEvent * tmevent = 
-      dynamic_cast< igstk::CoordinateSystemTransformToEvent *>( & event );
+    const igstk::CoordinateSystemTransformToEvent * tmevent = 
+      dynamic_cast< const igstk::CoordinateSystemTransformToEvent *>( & event );
     
-    igstk::CoordinateSystemTransformToResult transformCarrier = event.Get();
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
 
     const igstk::Transform transform = transformCarrier.GetTransform();
 
