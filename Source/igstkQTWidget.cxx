@@ -226,8 +226,8 @@ void QTWidget::mousePressEvent(QMouseEvent* e)
 }
 
 
-/** This method is overloaded from the QWidget class in 
- *  order to insert the invocation of the TransformModifiedEvent.
+/** This method is overloaded from the QWidget class in order to insert the
+ * invocation of the VTK mouse button events.
  */
 void 
 QTWidget
@@ -364,7 +364,7 @@ void QTWidget::wheelEvent(QWheelEvent* e)
 
 
 /** Report that an invalid or suspicious operation has been requested. This may
- * mean that an error condition has arised in one of the componenta that
+ * mean that an error condition has arisen in one of the components that
  * interact with this class. */
 void QTWidget::ReportInvalidRequestProcessing()
 {
