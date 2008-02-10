@@ -76,8 +76,8 @@ public:
 
   /** This method is used to request the calibration transformation.
    *  The method should only be invoked after a successful calibration. 
-   *  It generates two events: TransformModifiedEvent, and 
-   *  InvalidRequestErrorEvent, respectively denoting that a calibration 
+   *  It generates two events: CoordinateSystemTransformToEvent, and 
+   *  TransformNotAvailableEvent, respectively denoting that a calibration 
    *  transform is and isn't available. */
   void RequestCalibrationTransform();
 

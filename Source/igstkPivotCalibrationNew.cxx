@@ -41,7 +41,7 @@ PivotCalibrationNew::PivotCalibrationNew() : m_StateMachine( this )
                     //create the observers for all the requests that are 
                     //forwarded to the PivotCalibrationAlgorithm
   this->m_GetCalibrationTransformObserver = CalibrationTransformObserver::New();
-  this->m_PivotCalibrationAlgorithm->AddObserver( TransformModifiedEvent() , 
+  this->m_PivotCalibrationAlgorithm->AddObserver( CoordinateSystemTransformToEvent() , 
                                                   this->m_GetCalibrationTransformObserver );
   this->m_GetPivotPointObserver = PivotPointObserver::New(); 
   this->m_PivotCalibrationAlgorithm->AddObserver( PointEvent() , 
@@ -493,9 +493,15 @@ PivotCalibrationNew::GetTransformProcessing()
   this->m_PivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( this->m_GetCalibrationTransformObserver->GotCalibrationTransform() ) 
   {
-    TransformModifiedEvent evt;
-    evt.Set( this->m_GetCalibrationTransformObserver->GetCalibrationTransform() );
-    this->InvokeEvent( evt );
+    CoordinateSystemTransformToResult result;
+    CoordinateSystemTransformToEvent  event;
+    result.Initialize( 
+      this->m_GetCalibrationTransformObserver->GetCalibrationTransform(),
+      NULL,
+      NULL); // FIXME: These two pointers should be the source and destination
+             // coordinate systems.
+    event.Set( result );
+    this->InvokeEvent(  event );
   }  
 }
 
