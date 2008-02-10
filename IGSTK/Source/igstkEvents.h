@@ -20,7 +20,6 @@
 /** This file contains the declarations of IGSTK Events used to communicate 
  *  among components. */
 
-#include "igstkTransform.h"
 #include "vtkImageData.h"
 
 namespace igstk 
@@ -178,7 +177,6 @@ igstkEventMacro( InvalidRequestErrorEvent, IGSTKEvent );
 igstkEventMacro( TransformNotAvailableEvent, InvalidRequestErrorEvent );
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
-igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
 igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
                        EventHelperType::DoubleType );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
