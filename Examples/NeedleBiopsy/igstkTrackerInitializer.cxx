@@ -221,13 +221,13 @@ int TrackerInitializer::InitializeMicronTracker()
   m_Tracker = m_MicronTracker = MicronTracker::New();
   
   m_MicronTracker->SetCameraCalibrationFilesDirectory( 
-    trackerConfig->CameraCalibrationFileDirectory );
+    trackerConfig->m_CameraCalibrationFileDirectory );
 
   m_MicronTracker->SetInitializationFile( 
-    trackerConfig->InitializationFile );
+    trackerConfig->m_InitializationFile );
 
   m_MicronTracker->SetMarkerTemplatesDirectory( 
-    trackerConfig->TemplatesDirectory );
+    trackerConfig->m_TemplatesDirectory );
 
   m_MicronTracker->RequestOpen();
 
@@ -238,7 +238,7 @@ int TrackerInitializer::InitializeMicronTracker()
     MicronTrackerToolConfiguration * toolConfig = 
       trackerConfig->m_TrackerToolList[i];
 
-    tool->RequestSetMarkerName( toolConfig->MarkerName );
+    tool->RequestSetMarkerName( toolConfig->m_MarkerName );
     tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform );
     tool->RequestConfigure();
 
