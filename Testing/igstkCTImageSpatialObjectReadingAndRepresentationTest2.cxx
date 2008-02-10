@@ -34,7 +34,7 @@ igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
-int igstkCTImageSpatialObjectReadingAndRepresentationTest2( 
+int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
                                                         int argc, char* argv[] )
 {
 
@@ -42,15 +42,15 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
   if( argc < 4 )
     {
-      std::cerr << "Usage: " << argv[0] << "  CTImage  " 
-              << "Output image file for a screenshot" 
+      std::cerr << "Usage: " << argv[0] << "  CTImage  "
+              << "Output image file for a screenshot"
               << " CTImageExcerpt " << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
-  
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -59,10 +59,10 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput
                                               = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK
                                        // OutputWindow -> logger
 
   typedef igstk::CTImageReader         ReaderType;
@@ -77,22 +77,22 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   ReaderType::DirectoryNameType directoryName = argv[1];
 
   reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
-  
- 
+
+
   typedef igstk::CTImageSpatialObject  CTImageType;
   typedef CTImageType::Pointer         CTImagePointer;
 
-  // First, on purpose attempt to use an Empty image, 
+  // First, on purpose attempt to use an Empty image,
   // in order to test error conditions.
   //
-  typedef CTImageSpatialObjectReadingAndRepresentationTest2::CTImageObserver 
+  typedef CTImageSpatialObjectReadingAndRepresentationTest2::CTImageObserver
                                                         CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                             ctImageObserver);
 
-   
-    // Now read the image, so we can test the normal case
+
+  // Now read the image, so we can test the normal case
   //
   try
     {
@@ -104,21 +104,21 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
               << std::endl;
     std::cerr << "This should not have happened. The State Machine should have"
               << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " 
+    std::cerr << "catched that exception and converted it into a SM Input "
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   reader->RequestGetImage();    // Request to send the image as an event.
 
   if( ctImageObserver->GotCTImage() )
     {
-      
+
     CTImagePointer ctImage = ctImageObserver->GetCTImage();
 
     if( ctImage->IsEmpty() )
       {
-      std::cerr << "The image was expected to be Non-Empty, but it was empty." 
+      std::cerr << "The image was expected to be Non-Empty, but it was empty."
                 << std::endl;
       return EXIT_FAILURE;
       }
@@ -126,7 +126,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
       {
       std::cerr << "Test for reception of the image PASSED !" << std::endl;
       }
-   
+
     }
   else
     {
@@ -137,17 +137,17 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
   RepresentationType::Pointer representation = RepresentationType::New();
- 
-  representation->RequestSetImageSpatialObject( 
+
+  representation->RequestSetImageSpatialObject(
                            ctImageObserver->GetCTImage() );
 
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );
-    
+
   view2D->RequestResetCamera();
   view2D->RequestAddObject( representation );
-   
+
   // Create an FLTK minimal GUI
   typedef igstk::FLTKWidget      WidgetType;
 
@@ -181,11 +181,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
   /* Save screenshots in a file */
   std::string filename;
-  filename = argv[2]; 
-  view2D->RequestSaveScreenShot( filename ); 
- 
+  filename = argv[2];
+  view2D->RequestSaveScreenShot( filename );
 
-  
+
+
   // Do manual redraws for each orientation while changing slice numbers
     {
     representation->RequestSetOrientation( RepresentationType::Axial );
@@ -231,11 +231,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
 
   delete widget2D;
   delete form;
- 
+
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;
     }
-  
+
   return EXIT_SUCCESS;
 }

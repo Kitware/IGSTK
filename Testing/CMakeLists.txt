@@ -88,6 +88,7 @@ SET(SandboxTests_SRCS
   igstkTransductionMacroTest.cxx
   igstkObjectRepresentationRemovalTest.cxx
   igstkTrackerToolReferenceTest.cxx
+  igstkTrackerToolReferenceAndImageTest.cxx
   )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -135,26 +136,26 @@ ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunic
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  ADD_TEST( igstkTransformSocketListenerTest 
-    ${IGSTKSandbox_TESTS} 
+  ADD_TEST( igstkTransformSocketListenerTest
+    ${IGSTKSandbox_TESTS}
     igstkTransformSocketListenerTest
     16666 1000
     )
 
-  ADD_TEST( igstkTrackerToolObserverToSocketRelayTest 
-    ${IGSTKSandbox_TESTS} 
+  ADD_TEST( igstkTrackerToolObserverToSocketRelayTest
+    ${IGSTKSandbox_TESTS}
     igstkTrackerToolObserverToSocketRelayTest
     localhost 16666 1000 30 10
     )
 
-  ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest 
-    ${IGSTKSandbox_TESTS} 
+  ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest
+    ${IGSTKSandbox_TESTS}
     igstkPolarisTrackerToolObserverToSocketRelayTest
     localhost 16666 1000
     )
 
-  ADD_TEST( igstkVicraTrackerToolObserverToSocketRelayTest 
-    ${IGSTKSandbox_TESTS} 
+  ADD_TEST( igstkVicraTrackerToolObserverToSocketRelayTest
+    ${IGSTKSandbox_TESTS}
     igstkPolarisTrackerToolObserverToSocketRelayTest
     localhost 16666 1000
     )
@@ -172,21 +173,22 @@ ADD_TEST( igstkSpatialObjectCoordinateSystemTest3 ${IGSTKSandbox_TESTS} igstkSpa
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 ADD_TEST( igstkTrackerToolReferenceTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceTest)
+ADD_TEST( igstkTrackerToolReferenceAndImageTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceAndImageTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
-    ADD_TEST( igstkPolarisTrackerTest2  
+    ADD_TEST( igstkPolarisTrackerTest2
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerTest2
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest2LoggerOutput.txt
               ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
               )
-    ADD_TEST( igstkPolarisTrackerTest3  
+    ADD_TEST( igstkPolarisTrackerTest3
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerTest3
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
               )
-    ADD_TEST( igstkPolarisTrackerTest4  
+    ADD_TEST( igstkPolarisTrackerTest4
               ${IGSTKSandbox_TESTS}
               igstkPolarisTrackerTest4
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
@@ -208,7 +210,7 @@ IF(IGSTKSandbox_USE_FLTK)
 # FIXME: When done debugging, register it inside of the test drivers.
 ADD_EXECUTABLE( igstkCTImageSpatialObjectReadingAndRepresentationTest4 igstkCTImageSpatialObjectReadingAndRepresentationTest4.cxx)
 TARGET_LINK_LIBRARIES( igstkCTImageSpatialObjectReadingAndRepresentationTest4 IGSTKSandbox )
-ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4  
+ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
   ${CXX_TEST_PATH}/igstkCTImageSpatialObjectReadingAndRepresentationTest4
   ${IGSTK_DATA_ROOT}/Input/E000192 )
 # END OF FIXME
@@ -222,43 +224,43 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
     # A first test to compare the one screenshot from a FLTKWidget
     ADD_TEST( igstkFLTKWidgetTest2_1
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 10 
+              --toleranceNumberOfPixels 10
               igstkFLTKWidgetTest2
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
               )
 
     # A second test to compare the second screenshot
     ADD_TEST( igstkFLTKWidgetTest2_2
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 10 
+              --toleranceNumberOfPixels 10
               igstkFLTKWidgetTest2
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
               )
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
 
     ADD_TEST( igstkCoordinateSystemObjectWithViewTest
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceNumberOfPixels 5
               igstkCoordinateSystemObjectWithViewTest
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
               )
 
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
               igstkCoordinateSystemObjectWithViewTest.cxx)
 
     ADD_TEST( igstkCircularSimulatedTrackerTest
@@ -266,7 +268,7 @@ ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
               igstkCircularSimulatedTrackerTest
               )
 
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
               igstkCircularSimulatedTrackerTest.cxx)
 
 ENDIF(IGSTKSandbox_USE_FLTK)
@@ -283,14 +285,14 @@ IF(IGSTKSandbox_USE_Qt)
               igstkQTWidgetTest2)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkQTWidgetTest2.cxx)
- 
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3 
+
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceNumberOfPixels 5
               igstkCTImageSpatialObjectReadingAndRepresentationTest3
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
@@ -311,7 +313,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
         igstkMicronTrackerTest.cxx)
 
     ADD_TEST( igstkMicronTrackerToolTest
-              ${IGSTKSandbox_TESTS} igstkMicronTrackerToolTest ) 
+              ${IGSTKSandbox_TESTS} igstkMicronTrackerToolTest )
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkMicronTrackerToolTest.cxx)
 
@@ -328,7 +330,7 @@ IF(IGSTKSandbox_DATA_ROOT)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest.cxx)
 
-    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS} 
+    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
               igstkAnnotation2DTest2
@@ -337,13 +339,13 @@ IF(IGSTKSandbox_DATA_ROOT)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAnnotation2DTest2.cxx)
 
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest2 
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest2
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceNumberOfPixels 5
               igstkCTImageSpatialObjectReadingAndRepresentationTest2
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
@@ -396,7 +398,7 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
 # FIXME: comment out the FlockOfBirds tests just for the
-# time being. It requires major work to make it consistent 
+# time being. It requires major work to make it consistent
 # with the new Tracker API
 #
 #  igstkFlockOfBirdsCommandInterpreterTest.cxx
@@ -455,13 +457,13 @@ FOREACH(TestFiles ${IGSTKTests_SRCS})
 ENDFOREACH(TestFiles)
 
 # Add generic test that require input data
-ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
+ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTK_TESTS}
-            --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
-                      ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
+            --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
+                      ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
             --toleranceIntensity 10
             --toleranceRadius    5
-            --toleranceNumberOfPixels 5 
+            --toleranceNumberOfPixels 5
            igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
@@ -488,8 +490,8 @@ IF (IGSTK_DATA_ROOT)
            igstkMR3DImageToUS3DImageRegistrationTest
            ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
- 
-  ADD_TEST( igstkAuroraTrackerSimulatedTest  
+
+  ADD_TEST( igstkAuroraTrackerSimulatedTest
               ${IGSTK_TESTS}
               igstkAuroraTrackerSimulatedTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerSimulatedTestLoggerOutput.txt
@@ -499,7 +501,7 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
 
-  ADD_TEST( igstkPolarisTrackerSimulatedTest  
+  ADD_TEST( igstkPolarisTrackerSimulatedTest
               ${IGSTK_TESTS}
               igstkPolarisTrackerSimulatedTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
@@ -537,11 +539,11 @@ IF (IGSTK_DATA_ROOT)
        ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTKSandbox_DICOM_TEST_OUTPUT_DIR})
 
   IF (IGSTK_USE_FLTK)
-    ADD_TEST( igstkAnnotation2DTest1 ${IGSTK_TESTS} 
+    ADD_TEST( igstkAnnotation2DTest1 ${IGSTK_TESTS}
        --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest1ScreenShot.png
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest1ScreenShot.png
               igstkAnnotation2DTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest1ScreenShot.png)
   ENDIF (IGSTK_USE_FLTK)
 
@@ -550,13 +552,13 @@ ENDIF(IGSTK_DATA_ROOT)
 #-----------------------------------------------------------------------------
 # Tests depend on external device
 IF(IGSTK_TEST_AURORA_ATTACHED)
-  ADD_TEST(igstkAuroraTrackerTest 
+  ADD_TEST(igstkAuroraTrackerTest
            ${IGSTK_TESTS}
            igstkAuroraTrackerTest
            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTestLoggerOutput.txt
            ${IGSTK_TEST_AURORA_PORT_NUMBER}
            )
-  ADD_TEST(igstkAuroraTrackerTest2 
+  ADD_TEST(igstkAuroraTrackerTest2
            ${IGSTK_TESTS}
            igstkAuroraTrackerTest2
            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
@@ -569,7 +571,7 @@ IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
-    ADD_TEST( igstkPolarisTrackerTest  
+    ADD_TEST( igstkPolarisTrackerTest
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
@@ -638,13 +640,13 @@ IF(IGSTK_USE_FLTK)
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
 
-    ADD_TEST( igstkCTImageSpatialObjectRepresentationWindowLevelTest 
+    ADD_TEST( igstkCTImageSpatialObjectRepresentationWindowLevelTest
               ${IGSTK_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkWindowLevelScreenShot01.png 
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png 
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkWindowLevelScreenShot01.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceNumberOfPixels 5
               igstkCTImageSpatialObjectRepresentationWindowLevelTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png
