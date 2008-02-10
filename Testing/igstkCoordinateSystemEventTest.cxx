@@ -17,7 +17,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters 
+// Warning about: identifier was truncated to '255' characters
 // in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -33,9 +33,9 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 {
   /** This test is mainly for code coverage on the event results. */
   typedef igstk::CoordinateSystem              CoordinateSystemType;
-  typedef igstk::CoordinateSystemTransformToResult 
+  typedef igstk::CoordinateSystemTransformToResult
                                                         TransformToResult;
-  typedef igstk::CoordinateSystemTransformToErrorResult 
+  typedef igstk::CoordinateSystemTransformToErrorResult
                                                         ErrorResult;
   typedef igstk::Transform                              TransformType;
 
@@ -48,7 +48,7 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 
   // Test Initialize
   transformToResult.Initialize( transform, cs1, cs2 );
-  
+
   // Copy ctor
   TransformToResult transformToResult2 = transformToResult;
 
@@ -72,7 +72,7 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 
   // Test Initialize
   errorResult.Initialize( cs1, cs2 );
-  
+
   // Copy ctor
   ErrorResult errorResult2 = errorResult;
 

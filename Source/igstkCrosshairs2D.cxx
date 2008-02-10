@@ -1,6 +1,20 @@
-/*
- * No license text yet. 
- */
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkCrosshairs2D.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #include "igstkCrosshairs2D.h"
 
 #include <vtkAxisActor2D.h>
@@ -25,19 +39,34 @@ Crosshairs2D::Crosshairs2D() :
     igstkAddInputMacro(InvalidViewport);
     igstkAddInputMacro(ValidPosition);
     igstkAddInputMacro(InvalidPosition);
-    
+
     igstkAddStateMacro(Idle);
     igstkAddStateMacro(ViewportSet);
     igstkAddStateMacro(PositionSet);
 
-    igstkAddTransitionMacro(Idle, ValidViewport, ViewportSet, SetViewport);
-    igstkAddTransitionMacro(Idle, InvalidViewport, Idle, No);
+    igstkAddTransitionMacro( Idle,
+                             ValidViewport,
+                             ViewportSet, SetViewport);
 
-    igstkAddTransitionMacro(ViewportSet, ValidPosition, PositionSet, SetPosition);
-    igstkAddTransitionMacro(ViewportSet, InvalidPosition, ViewportSet, No);
-    
-    igstkAddTransitionMacro(PositionSet, ValidPosition, PositionSet, SetPosition);
-    igstkAddTransitionMacro(PositionSet, InvalidPosition, PositionSet, No);
+    igstkAddTransitionMacro( Idle,
+                             InvalidViewport,
+                             Idle, No);
+
+    igstkAddTransitionMacro( ViewportSet,
+                             ValidPosition,
+                             PositionSet, SetPosition);
+
+    igstkAddTransitionMacro( ViewportSet,
+                             InvalidPosition,
+                             ViewportSet, No);
+
+    igstkAddTransitionMacro( PositionSet,
+                             ValidPosition,
+                             PositionSet, SetPosition);
+
+    igstkAddTransitionMacro( PositionSet,
+                             InvalidPosition,
+                             PositionSet, No);
 
     igstkSetInitialStateMacro(Idle);
 
@@ -46,24 +75,24 @@ Crosshairs2D::Crosshairs2D() :
 
 Crosshairs2D::~Crosshairs2D()
 {
-    m_HorizontalAxisActor->Delete();
-    m_VerticalAxisActor->Delete();
+  m_HorizontalAxisActor->Delete();
+  m_VerticalAxisActor->Delete();
 }
 
 
 void Crosshairs2D::RequestSetViewport(vtkViewport *viewport)
 {
-    ///@TODO: Add complete checks for valid viewport?
-    if(viewport != NULL)
-    {
-        m_ViewportToBeSet = viewport;
-        igstkPushInputMacro(ValidViewport);
-    }
-    else
-    {
-        igstkPushInputMacro(InvalidViewport);
-    }
-    m_StateMachine.ProcessInputs();
+  ///@TODO: Add complete checks for valid viewport?
+  if(viewport != NULL)
+  {
+      m_ViewportToBeSet = viewport;
+      igstkPushInputMacro(ValidViewport);
+  }
+  else
+  {
+      igstkPushInputMacro(InvalidViewport);
+  }
+  m_StateMachine.ProcessInputs();
 }
 
 void Crosshairs2D::SetViewportProcessing()
@@ -88,11 +117,13 @@ void Crosshairs2D::SetPositionProcessing()
   positionCoordinate->SetCoordinateSystemToWorld();
   positionCoordinate->SetValue(m_XPosition, m_YPosition, m_ZPosition);
 
-  int *displayCoordinates = positionCoordinate->GetComputedDisplayValue(m_Viewport);
+  int *displayCoordinates =
+    positionCoordinate->GetComputedDisplayValue( m_Viewport );
+
   int displayXPosition = displayCoordinates[0];
   int displayYPosition = displayCoordinates[1];
   positionCoordinate->Delete();
-  
+
   // Get viewport size
   int *portSize = m_Viewport->GetSize();
   int viewportXSizeInPixels = portSize[0];
@@ -129,5 +160,7 @@ void Crosshairs2D::RequestSetZPosition(double z)
 }
 
 void Crosshairs2D::NoProcessing()
-{}
+{
 }
+
+} // end namespace igstk

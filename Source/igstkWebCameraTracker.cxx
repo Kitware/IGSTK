@@ -49,10 +49,10 @@ WebCameraTracker::ResultType WebCameraTracker::InternalOpen( void )
   this->m_VideoSource->SetOutputFormatToRGB();
   this->m_VideoSource->SetFrameRate( 30 );
   this->m_VideoSource->SetFrameSize( 960, 720, 1 );
-//  this->m_VideoSource->SetFrameSize( 320, 240, 1 );
   this->m_VideoSource->Initialize();
   this->m_Position.Fill( 0.0 );
-  this->m_ImageViewer->SetInputConnection( this->m_VideoSource->GetOutputPort() );
+  this->m_ImageViewer->SetInputConnection(
+    this->m_VideoSource->GetOutputPort() );
   this->m_X = 0.0;
   return SUCCESS;
 }
@@ -84,7 +84,8 @@ WebCameraTracker::ResultType WebCameraTracker::InternalClose( void )
 }
 
 WebCameraTracker::ResultType
-WebCameraTracker::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+WebCameraTracker::VerifyTrackerToolInformation(
+  const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
@@ -102,7 +103,8 @@ WebCameraTracker::InternalUpdateStatus( void )
 
   typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer =
+    this->GetTrackerToolContainer();
 
   ConstIteratorType inputItr = trackerToolContainer.begin();
   ConstIteratorType inputEnd = trackerToolContainer.end();
@@ -126,8 +128,12 @@ WebCameraTracker::InternalUpdateStatus( void )
   // set the raw transform in all the tracker tools
   while( inputItr != inputEnd )
     {
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform(
+      trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate(
+      trackerToolContainer[inputItr->first], true );
+
     ++inputItr;
     }
 
@@ -136,27 +142,30 @@ WebCameraTracker::InternalUpdateStatus( void )
   return SUCCESS;
 }
 
- 
-WebCameraTracker::ResultType WebCameraTracker::InternalThreadedUpdateStatus( void )
+
+WebCameraTracker::ResultType
+WebCameraTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "WebCameraTracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG,
+    "WebCameraTracker::InternalThreadedUpdateStatus called ...\n");
   return SUCCESS;
 }
 
-WebCameraTracker::ResultType 
+WebCameraTracker::ResultType
 WebCameraTracker
-::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers(
+  const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
 
-WebCameraTracker::ResultType 
+WebCameraTracker::ResultType
 WebCameraTracker
 ::AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
- 
+
 void
 WebCameraTracker::DetectBrightestPixels( void )
 {
@@ -238,10 +247,13 @@ WebCameraTracker::DetectBrightestPixels( void )
 void
 WebCameraTracker::ComputeCenterOfMass( void )
 {
-  PixelValueListType::const_iterator valueItr = this->m_BrightestPixelValues.begin();
-  PixelValueListType::const_iterator valueEnd = this->m_BrightestPixelValues.end();
+  typedef PixelValueListType::const_iterator IteratorType;
 
-  PointListType::const_iterator pointItr = this->m_BrightestPixelPositions.begin();
+  IteratorType valueItr = this->m_BrightestPixelValues.begin();
+  IteratorType valueEnd = this->m_BrightestPixelValues.end();
+
+  PointListType::const_iterator pointItr =
+      this->m_BrightestPixelPositions.begin();
 
   double sumWeights   = 0.0;
   double sumWeightedX = 0.0;
@@ -250,8 +262,8 @@ WebCameraTracker::ComputeCenterOfMass( void )
   while( valueItr != valueEnd )
     {
     sumWeights   += (*valueItr);
-    sumWeightedX += (*valueItr) * pointItr->operator[]( 0 ); 
-    sumWeightedY += (*valueItr) * pointItr->operator[]( 1 ); 
+    sumWeightedX += (*valueItr) * pointItr->operator[]( 0 );
+    sumWeightedY += (*valueItr) * pointItr->operator[]( 1 );
     ++pointItr;
     ++valueItr;
     }
@@ -265,7 +277,9 @@ WebCameraTracker::ComputeCenterOfMass( void )
   this->m_Position[0] = sumWeightedX;
   this->m_Position[1] = sumWeightedY;
 
-  std::cout << this->m_Position << " from " << this->m_BrightestPixelPositions.size() << " pixels " << std::endl;
+  std::cout << this->m_Position << " from "
+    << this->m_BrightestPixelPositions.size()
+    << " pixels " << std::endl;
 }
 
 

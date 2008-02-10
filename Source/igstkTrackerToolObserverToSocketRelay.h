@@ -30,14 +30,15 @@ namespace igstk
 {
 /** \class TrackerToolObserverToSocketRelay
  *
- *  \brief This class observe a TrackerTool for Transforms events and relay them to a socket connection.
+ *  \brief This class observe a TrackerTool for Transforms events and relay
+ *  them to a socket connection.
  *
  */
 
 class TrackerToolObserverToSocketRelay  : public Object
 {
- 
-public: 
+
+public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( TrackerToolObserverToSocketRelay, Object )
@@ -54,7 +55,7 @@ public:
 
 protected:
 
-  /** Constructor is protected in order to enforce 
+  /** Constructor is protected in order to enforce
    *  the use of the New() operator */
   TrackerToolObserverToSocketRelay(void);
 
@@ -63,7 +64,8 @@ protected:
   /** Print the object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  void ResendTransformThroughSocket( itk::Object * caller, const itk::EventObject & event );
+  void ResendTransformThroughSocket(
+    itk::Object * caller, const itk::EventObject & event );
 
   typedef itk::MemberCommand< TrackerToolObserverToSocketRelay >   ObserverType;
 
@@ -77,7 +79,7 @@ private:
   vtkSocketController       * m_SocketController;
 
   vtkSocketCommunicator     * m_SocketCommunicator;
-  
+
   bool                        m_WaitingForNextRequestFromSocket;
 
   vtkMatrix4x4              * m_Matrix;

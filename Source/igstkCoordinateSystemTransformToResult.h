@@ -73,7 +73,7 @@ public:
 
 private:
 
-  Transform                                 m_Transform;
+  Transform                        m_Transform;
   const CoordinateSystem       *   m_Source;
   const CoordinateSystem       *   m_Destination;
 

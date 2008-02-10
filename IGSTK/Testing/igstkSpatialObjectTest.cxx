@@ -50,15 +50,15 @@ public:
 
 protected:
   DummyTrackerTool():m_StateMachine(this)
-  {
-  }
+    {
+    }
   ~DummyTrackerTool()
-  {
-  }
+    {
+    }
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
-  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
 };
 
 class DummySpatialObject : public SpatialObject
@@ -87,7 +87,7 @@ public:
       }
 
     return true;
-  }
+    }
 
 protected:
   DummySpatialObject( void ):m_StateMachine(this) {};
@@ -99,97 +99,97 @@ class MyTracker : public Tracker
 {
 public:
 
-    /** Macro with standard traits declarations. */
-    igstkStandardClassTraitsMacro( MyTracker, Tracker )
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MyTracker, Tracker )
 
-    typedef Superclass::TransformType           TransformType;
+  typedef Superclass::TransformType           TransformType;
 
 protected:
-    MyTracker():m_StateMachine(this)
+  MyTracker():m_StateMachine(this)
+    {
+    m_Position[0] = 0.0;
+    m_Position[1] = 0.0;
+    m_Position[2] = 0.0;
+
+    m_ValidityTime = 100.0; // 100.0 milliseconds
+    }
+  virtual ~MyTracker() {};
+
+  typedef Tracker::ResultType                 ResultType;
+  typedef TransformType::VectorType           PositionType;
+  typedef TransformType::ErrorType            ErrorType;
+
+  virtual ResultType InternalOpen( void ) { return SUCCESS; }
+  virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
+  virtual ResultType InternalUpdateStatus( void )
+    {
+
+    typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+    TrackerToolsContainerType trackerToolContainer =
+      this->GetTrackerToolContainer();
+
+    ConstIteratorType inputItr = trackerToolContainer.begin();
+    ConstIteratorType inputEnd = trackerToolContainer.end();
+
+    typedef igstk::Transform   TransformType;
+    TransformType transform;
+
+    while( inputItr != inputEnd )
       {
-      m_Position[0] = 0.0;
-      m_Position[1] = 0.0;
-      m_Position[2] = 0.0;
+      transform.SetToIdentity( this->GetValidityTime() );
+      m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
+      m_Position[1] += 2.0;  // just to simulate a linear movement
+      m_Position[2] += 3.0;  // being tracked in space.
 
-      m_ValidityTime = 100.0; // 100.0 milliseconds
-      }
-    virtual ~MyTracker() {};
+      ErrorType errorValue = 0.5;
+      transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
 
-    typedef Tracker::ResultType                 ResultType;
-    typedef TransformType::VectorType           PositionType;
-    typedef TransformType::ErrorType            ErrorType;
+      // set the raw transform
+      this->SetTrackerToolRawTransform(
+        trackerToolContainer[inputItr->first], transform );
 
-    virtual ResultType InternalOpen( void ) { return SUCCESS; }
-    virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalUpdateStatus( void )
-      {
+      this->SetTrackerToolTransformUpdate(
+        trackerToolContainer[inputItr->first], true );
 
-      typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
-      TrackerToolsContainerType trackerToolContainer =
-        this->GetTrackerToolContainer();
-
-      ConstIteratorType inputItr = trackerToolContainer.begin();
-      ConstIteratorType inputEnd = trackerToolContainer.end();
-
-      typedef igstk::Transform   TransformType;
-      TransformType transform;
-
-      while( inputItr != inputEnd )
-        {
-        transform.SetToIdentity( this->GetValidityTime() );
-        m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
-        m_Position[1] += 2.0;  // just to simulate a linear movement
-        m_Position[2] += 3.0;  // being tracked in space.
-
-        ErrorType errorValue = 0.5;
-        transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
-
-        // set the raw transform
-        this->SetTrackerToolRawTransform(
-          trackerToolContainer[inputItr->first], transform );
-
-        this->SetTrackerToolTransformUpdate(
-          trackerToolContainer[inputItr->first], true );
-
-        ++inputItr;
-        }
-
-      return SUCCESS;
+      ++inputItr;
       }
 
-    virtual ResultType InternalThreadedUpdateStatus( void )
-      { return SUCCESS; }
+    return SUCCESS;
+    }
 
-    virtual ResultType InternalReset( void )
-      { return SUCCESS; }
+  virtual ResultType InternalThreadedUpdateStatus( void )
+    { return SUCCESS; }
 
-    virtual ResultType InternalStopTracking( void )
-      { return SUCCESS; }
+  virtual ResultType InternalReset( void )
+    { return SUCCESS; }
 
-    virtual ResultType InternalClose( void )
-      { return SUCCESS; }
+  virtual ResultType InternalStopTracking( void )
+    { return SUCCESS; }
 
-    virtual ResultType VerifyTrackerToolInformation(
-      const TrackerToolType * trackerTool )
-      { return SUCCESS; }
+  virtual ResultType InternalClose( void )
+    { return SUCCESS; }
 
-    virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-      const TrackerToolType * trackerTool )
-      { return SUCCESS; }
+  virtual ResultType VerifyTrackerToolInformation(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
 
-    virtual ResultType AddTrackerToolToInternalDataContainers(
-      const TrackerToolType * trackerTool )
-      { return SUCCESS; }
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
+
+  virtual ResultType AddTrackerToolToInternalDataContainers(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
 
 private:
 
-    MyTracker(const Self&);  //purposely not implemented
-    void operator=(const Self&); //purposely not implemented
+  MyTracker(const Self&);  //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
-    typedef TrackerTool                 TrackerToolType;
-    typedef Transform::TimePeriodType   TimePeriodType;
-    TimePeriodType                      m_ValidityTime;
-    PositionType                        m_Position;
+  typedef TrackerTool                 TrackerToolType;
+  typedef Transform::TimePeriodType   TimePeriodType;
+  TimePeriodType                      m_ValidityTime;
+  PositionType                        m_Position;
 };
 
 
@@ -231,8 +231,9 @@ int igstkSpatialObjectTest( int, char * [] )
 
   tracker->RequestOpen();
 
-  typedef igstk::SpatialObjectTest::DummyTrackerTool        TrackerToolType;
-  typedef TrackerToolType::TransformType    TransformType;
+  typedef igstk::SpatialObjectTest::DummyTrackerTool    TrackerToolType;
+  typedef TrackerToolType::TransformType                TransformType;
+
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );

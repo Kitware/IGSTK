@@ -16,7 +16,7 @@ PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters in 
+// Warning about: identifier was truncated to '255' characters in
 // the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -67,25 +67,29 @@ QMouseTracker::ResultType QMouseTracker::InternalClose( void )
 {
   return SUCCESS;
 }
- 
+
 QMouseTracker::ResultType QMouseTracker
 ::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "QMouseTracker::VerifyTrackerToolInformation called ...\n");
+  igstkLogMacro( DEBUG,
+    "QMouseTracker::VerifyTrackerToolInformation called ...\n");
   return SUCCESS;
 }
 
 QMouseTracker::ResultType QMouseTracker
 ::AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "QMouseTracker::AddTrackerToolToInternalDataContainers called ...\n");
+  igstkLogMacro( DEBUG,
+    "QMouseTracker::AddTrackerToolToInternalDataContainers called ...\n");
   return SUCCESS;
 }
 
 QMouseTracker::ResultType QMouseTracker
-::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers(
+  const TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, "QMouseTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
+  igstkLogMacro( DEBUG,
+    "QMouseTracker::RemoveTrackerToolFromInternalDataContainers called ...\n");
   return SUCCESS;
 }
 
@@ -95,11 +99,12 @@ QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
 
   typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
- 
+  TrackerToolsContainerType trackerToolContainer =
+    this->GetTrackerToolContainer();
+
   ConstIteratorType inputItr = trackerToolContainer.begin();
   ConstIteratorType inputEnd = trackerToolContainer.end();
- 
+
   typedef igstk::Transform   TransformType;
   TransformType transform;
 
@@ -121,17 +126,22 @@ QMouseTracker::ResultType QMouseTracker::InternalUpdateStatus( void )
     transform.SetTranslation( position, errorValue, this->GetValidityTime() );
 
     // set the raw transform
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform(
+      trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate(
+       trackerToolContainer[inputItr->first], true );
+
     ++inputItr;
     }
 
   return SUCCESS;
 }
- 
+
 QMouseTracker::ResultType QMouseTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "QMouseTracker::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG,
+    "QMouseTracker::InternalThreadedUpdateStatus called ...\n");
   return SUCCESS;
 }
 

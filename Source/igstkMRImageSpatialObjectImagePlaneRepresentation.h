@@ -24,21 +24,21 @@ namespace igstk
 {
 
 /** \class MRImageSpatialObjectImagePlaneRepresentation
- *  \brief This class implements a spatial object represenation 
+ *  \brief This class implements a spatial object represenation
  *  for MRI modality.
  *
  * \ingroup Spatial object representation
  */
 
-class MRImageSpatialObjectImagePlaneRepresentation : 
-         public ImageSpatialObjectImagePlaneRepresentation< MRImageSpatialObject >
+class MRImageSpatialObjectImagePlaneRepresentation :
+  public ImageSpatialObjectImagePlaneRepresentation< MRImageSpatialObject >
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( MRImageSpatialObjectImagePlaneRepresentation, \
-                    ImageSpatialObjectImagePlaneRepresentation< MRImageSpatialObject > )
+  igstkStandardClassTraitsMacro( MRImageSpatialObjectImagePlaneRepresentation,
+    ImageSpatialObjectImagePlaneRepresentation< MRImageSpatialObject > )
 
 protected:
 
@@ -46,7 +46,7 @@ protected:
   virtual ~MRImageSpatialObjectImagePlaneRepresentation( void ) {};
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 

@@ -530,8 +530,7 @@ CoordinateSystem
   // do this by walking up one path and comparing it against every other
   // node in the other path.
   // 
-  typedef const CoordinateSystem* 
-                                      CoordinateSystemConstPointer;
+  typedef const CoordinateSystem* CoordinateSystemConstPointer;
 
   CoordinateSystemConstPointer aSmart = this;
   CoordinateSystemConstPointer bSmart = B;

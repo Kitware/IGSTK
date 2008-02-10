@@ -143,6 +143,7 @@ void MicronTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Marker name : "        << m_MarkerName << std::endl;
-  os << indent << "TrackerToolConfigured:"<< m_TrackerToolConfigured << std::endl;
+  os << indent << "TrackerToolConfigured:"
+     << m_TrackerToolConfigured << std::endl;
 }
 }

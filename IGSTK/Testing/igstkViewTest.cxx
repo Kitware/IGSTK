@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters in the 
+//  Warning about: identifier was truncated to '255' characters in the
 //  debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -40,18 +40,18 @@
 #include "igstkDefaultWidget.h"
 
 namespace ViewTest {
-  
-class ViewObserver : public ::itk::Command 
+
+class ViewObserver : public ::itk::Command
 {
 public:
-  
-  typedef  ViewObserver               Self;
+
+  typedef  ViewObserver                  Self;
   typedef  ::itk::Command                Superclass;
   typedef  ::itk::SmartPointer<Self>     Pointer;
   itkNewMacro( Self );
 
 protected:
-  ViewObserver() 
+  ViewObserver()
     {
     m_PulseCounter = 0;
     m_View = 0;
@@ -96,15 +96,15 @@ public:
 
       if( m_PulseCounter == 10 )
         {
-        *m_Resize = true; 
-        }                
-   
+        *m_Resize = true;
+        }
+
       if( m_PulseCounter > 50 )
         {
         if( m_View )
           {
           m_View->RequestStop();
-          } 
+          }
         else
           {
           std::cerr << "View pointer is NULL " << std::endl;
@@ -115,7 +115,7 @@ public:
       }
     }
 private:
-  
+
   unsigned long         m_PulseCounter;
   ::igstk::View       * m_View;
   bool *                m_End;
@@ -131,28 +131,30 @@ int igstkViewTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::View2D              View2DType;
-  typedef igstk::View3D              View3DType;
-  typedef ViewTest::ViewObserver  ObserverType;
+  typedef igstk::View2D               View2DType;
+  typedef igstk::View3D               View3DType;
+  typedef ViewTest::ViewObserver      ObserverType;
 
   bool bEnd    = false;
   bool bResize = false;
 
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::CRITICAL ); // can be set to DEBUG if necessary
+
+  // The following line can be set to DEBUG if necessary
+  logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput =
                                                 igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from
                                        // VTK OutputWindow -> logger
 
 
@@ -165,10 +167,10 @@ int igstkViewTest( int, char * [] )
     RepresentationType::Pointer AxesRepresentation = RepresentationType::New();
     AxesRepresentation->RequestSetAxesObject( worldReference );
 
-    // Create the ellipsoid 
+    // Create the ellipsoid
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
-    
+
 
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
@@ -178,7 +180,7 @@ int igstkViewTest( int, char * [] )
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
 
-    // Create the cylinder 
+    // Create the cylinder
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
@@ -191,7 +193,7 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetColor(1.0,0.0,0.0);
     cylinderRepresentation->SetOpacity(1.0);
 
-    const double validityTimeInMilliseconds = 
+    const double validityTimeInMilliseconds =
       igstk::TimeStamp::GetLongestPossibleTime();
 
     igstk::Transform transform;
@@ -203,13 +205,14 @@ int igstkViewTest( int, char * [] )
     rotation.Set( 0.0, 0.0, 0.0, 1.0 );
     igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
 
-    transform.SetTranslationAndRotation( 
+    transform.SetTranslationAndRotation(
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
     ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
+    // 30 degrees in radians
+    const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0;
 
-    const double cylinderAngle = 30.0 * vcl_atan(1.0) / 45.0; // 30 degrees in radians
     const double rx = vcl_sin( cylinderAngle / 2.0 );
     const double rw = vcl_cos( cylinderAngle / 2.0 );
     translation[0] =  0.0;
@@ -217,13 +220,13 @@ int igstkViewTest( int, char * [] )
     translation[2] =  0.0;  // translate the cylinder along Z
     rotation.Set( rx, 0.0, 0.0, rw );
 
-    transform.SetTranslationAndRotation( 
+    transform.SetTranslationAndRotation(
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
     cylinder->RequestSetTransformAndParent( transform, worldReference );
 
     cylinderRepresentation->SetLogger( logger );
-  
+
 #ifdef TESTView3D
     { // create a scope for the view3D
 
@@ -235,7 +238,7 @@ int igstkViewTest( int, char * [] )
     dummyWidget2.RequestSetView( view3D );
 
     ObserverType::Pointer viewObserver2 = ObserverType::New();
-    
+
     bEnd = false;
     bResize = false;
 
@@ -244,7 +247,7 @@ int igstkViewTest( int, char * [] )
     viewObserver2->SetResizeFlag( &bResize );
     viewObserver2->ResetCounter();
 
-    worldReference->SetSize(1.0,1.0,1.0); 
+    worldReference->SetSize(1.0,1.0,1.0);
 
     view3D->SetRefreshRate( 30 );
     view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
@@ -252,7 +255,7 @@ int igstkViewTest( int, char * [] )
     view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
     view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
     // Exercise GetNameOfClass() method
-    std::cout << view3D->View3DType::Superclass::GetNameOfClass() 
+    std::cout << view3D->View3DType::Superclass::GetNameOfClass()
               << std::endl;
 
     // Exercise Print() and PrintSelf() method.
@@ -278,7 +281,7 @@ int igstkViewTest( int, char * [] )
 
     // Exercise the screenshot option with a valid filename
     view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
-   
+
     } // end of view3D scope
 #endif
 
@@ -289,7 +292,7 @@ int igstkViewTest( int, char * [] )
     view2D->SetLogger( logger );
 
     // Exercise GetNameOfClass() method
-    std::cout << view2D->View2DType::Superclass::GetNameOfClass() 
+    std::cout << view2D->View2DType::Superclass::GetNameOfClass()
               << std::endl;
 
     igstk::DefaultWidget dummyWidget(300,300);
@@ -297,7 +300,7 @@ int igstkViewTest( int, char * [] )
 
     // Create an observer in order to count number of view redraws
     ObserverType::Pointer viewObserver = ObserverType::New();
-    
+
     bEnd = false;
     bResize = false;
 
@@ -310,7 +313,7 @@ int igstkViewTest( int, char * [] )
     view2D->SetRefreshRate( 30 );
     view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
     view2D->RequestSetOrientation( View2DType::Axial );
-   
+
     transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
     view2D->RequestSetTransformAndParent( transform, worldReference );
 
@@ -323,14 +326,14 @@ int igstkViewTest( int, char * [] )
     view2D->RequestRemoveObject( ellipsoidRepresentation );
     // Add it back
     view2D->RequestAddObject( ellipsoidRepresentation );
-    
+
     // Exercise and test the Print() methods
     view2D->Print( std::cout, 0 );
 
     std::cout << *view2D << std::endl;
 
     // Auto adjust the camera zoom factor
-    view2D->RequestResetCamera(); 
+    view2D->RequestResetCamera();
 
     view2D->RequestStart();
 
@@ -351,12 +354,12 @@ int igstkViewTest( int, char * [] )
         {
         break;
         }
-      
-      // modify the render window  
+
+      // modify the render window
       if ( bResize )
         {
         bResize = false;
-        } 
+        }
       }
 
     // Exercise the screenshot option with a valid filename
@@ -376,6 +379,6 @@ int igstkViewTest( int, char * [] )
     {
     return EXIT_FAILURE;
     }
- 
+
   return EXIT_SUCCESS;
 }

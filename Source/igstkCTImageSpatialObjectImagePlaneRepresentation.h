@@ -32,19 +32,19 @@ namespace igstk
  *
  * \image latex igstkCTImageSpatialObjectImagePlaneRepresentation.eps
  *             "CT Image Spatial Object Representation State Diagram"
- 
+
  * \ingroup Spatial object representation
  */
 
-class CTImageSpatialObjectImagePlaneRepresentation : 
-         public ImageSpatialObjectImagePlaneRepresentation< CTImageSpatialObject >
+class CTImageSpatialObjectImagePlaneRepresentation :
+  public ImageSpatialObjectImagePlaneRepresentation< CTImageSpatialObject >
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CTImageSpatialObjectImagePlaneRepresentation, \
-                    ImageSpatialObjectImagePlaneRepresentation< CTImageSpatialObject > )
+  igstkStandardClassTraitsMacro( CTImageSpatialObjectImagePlaneRepresentation,
+    ImageSpatialObjectImagePlaneRepresentation< CTImageSpatialObject > )
 
 protected:
 
@@ -52,7 +52,7 @@ protected:
   virtual ~CTImageSpatialObjectImagePlaneRepresentation( void ) {};
 
   /** Print the object information in a stream. */
-  void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 

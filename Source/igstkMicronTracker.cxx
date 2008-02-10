@@ -23,7 +23,7 @@
 
 //
 // These header files can be found in the Utilities/MicronTracker subdirectory.
-// 
+//
 #include "Markers.h"
 #include "Marker.h"
 #include "Persistence.h"
@@ -109,8 +109,8 @@ MicronTracker::~MicronTracker(void)
 void MicronTracker::CreateErrorCodeList()
 {
   ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
-  
-  ecc[0]  = "OK"; 
+
+  ecc[0]  = "OK";
   ecc[1]  = "Invalid object handle";
   ecc[2]  = "Reentrant access - library is not thread-safe";
   ecc[3]  = "Internal MicronTracker software error";
@@ -169,13 +169,13 @@ void MicronTracker::CreateErrorCodeList()
   ecc[55] = "Grab frame error";
 }
 
-std::string  
+std::string
 MicronTracker::GetErrorDescription( unsigned int code )
 {
   if ( code >= 0 && code <= 55 )
     {
     return MicronTracker::m_ErrorCodeContainer[code];
-    } 
+    }
   else
     {
     return "Unknown error code";
@@ -192,21 +192,21 @@ MicronTracker::LoadMarkerTemplates( void )
   // clear templates already loaded
   this->m_Markers->clearTemplates();
 
-  if( this->m_MarkerTemplatesDirectory == "" || 
-      !itksys::SystemTools::FileExists( this->m_MarkerTemplatesDirectory.c_str() ) ) 
+  if( this->m_MarkerTemplatesDirectory == "" ||
+      !itksys::SystemTools::FileExists( this->m_MarkerTemplatesDirectory.c_str() ) )
     {
     igstkLogMacro( CRITICAL, "Marker templates directory is not properly set");
     return FAILURE;
     }
 
-  char * markerTemplateDirectory = 
+  char * markerTemplateDirectory =
             const_cast< char *> ( this->m_MarkerTemplatesDirectory.c_str() );
- 
+
   unsigned int  status = Markers_LoadTemplates( markerTemplateDirectory );
 
   if ( status != 0 )
     {
-    igstkLogMacro( CRITICAL, "Error loading the marker templates: " 
+    igstkLogMacro( CRITICAL, "Error loading the marker templates: "
                    << MicronTracker::GetErrorDescription( status ));
     return FAILURE;
     }
@@ -252,13 +252,13 @@ bool MicronTracker::Initialize( void )
   igstkLogMacro( DEBUG, "igstk::MicronTracker::Initialize called ...\n");
 
   bool result = true;
-  if( this->m_InitializationFile == "" || 
-      !itksys::SystemTools::FileExists( this->m_InitializationFile.c_str() ) ) 
+  if( this->m_InitializationFile == "" ||
+      !itksys::SystemTools::FileExists( this->m_InitializationFile.c_str() ) )
     {
     igstkLogMacro( CRITICAL, "Initialization file (.ini ) is not properly set");
     return FAILURE;
     }
-  char * initializationFilename = 
+  char * initializationFilename =
             const_cast< char *> ( this->m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
   this->m_Persistence->setSection ("General");
@@ -270,23 +270,23 @@ bool MicronTracker::Initialize( void )
   // reds (warm) and blue (cool) colors in the lighting.
   const double defaultLightCoolness = 0.1;
 
-  // light coolness value will be set on the camera after it is attached. 
-  this->m_CameraLightCoolness = 
+  // light coolness value will be set on the camera after it is attached.
+  this->m_CameraLightCoolness =
       this->m_Persistence->retrieveDouble(
          "LightCoolness", defaultLightCoolness);
- 
+
   // PredictiveFramesInterleave controls the number of predictive-only matching
   // frames inserted between each subsequent full-matching frames. A valued of 0
-  // means that all frames are full-matching (require more computing resource). 
-  // A value of 3, for example, means that 3 out of every 4 frames would be 
+  // means that all frames are full-matching (require more computing resource).
+  // A value of 3, for example, means that 3 out of every 4 frames would be
   // predictive-only.
   //
 
   const int defaultFrameInterleave = 0;
   this->m_Markers->setPredictiveFramesInterleave(
     this->m_Persistence->retrieveInt("PredictiveFramesInterleave",
-      defaultFrameInterleave) ); 
-  
+      defaultFrameInterleave) );
+
   // Sets the template match tolerance (in millimeters).  This tolerance
   // determines the sensitivity of the MicronTracker to deviations between the
   // measured relative positions of XPoints and their relative positions as
@@ -298,17 +298,17 @@ bool MicronTracker::Initialize( void )
   //
 
   const double defaultTempMatchToleranceMM = 1.0;
-  this->m_Markers->setTemplateMatchToleranceMM( 
+  this->m_Markers->setTemplateMatchToleranceMM(
       this->m_Persistence->retrieveDouble(
          "TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
-  
+
   // Selects which image footprint size to use for the XPoint detection
   // algorithm.  Smaller XPoint footprint is 9 pixels in diameter, while the
   // regular size is 11.  Using the smaller footprint allows to detect smaller
   // markers at larger distances from the camera, at the expense of reduced
   // accuracy near the far end of the FOM.
   const bool defaultSmallerXPFootprint = true;
-  const bool SmallerXPFootprint = 
+  const bool SmallerXPFootprint =
             (bool)(this->m_Persistence->retrieveInt(
                        "DetectSmallMarkers", defaultSmallerXPFootprint));
   this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
@@ -332,24 +332,24 @@ bool MicronTracker::SetUpCameras( void )
 
   bool result = true;
 
-  if ( this->m_CameraCalibrationFilesDirectory == "" || 
-       !itksys::SystemTools::FileExists( 
-       this->m_CameraCalibrationFilesDirectory.c_str() ) ) 
+  if ( this->m_CameraCalibrationFilesDirectory == "" ||
+       !itksys::SystemTools::FileExists(
+       this->m_CameraCalibrationFilesDirectory.c_str() ) )
     {
-    igstkLogMacro( CRITICAL, 
+    igstkLogMacro( CRITICAL,
       "Camera calibration directory is not properly set");
     return FAILURE;
     }
- 
-  this->m_Cameras->SetCameraCalibrationFilesDirectory( 
+
+  this->m_Cameras->SetCameraCalibrationFilesDirectory(
     this->m_CameraCalibrationFilesDirectory );
 
   int success = this->m_Cameras->AttachAvailableCameras();
 
   if ( success )
     {
-    igstkLogMacro(CRITICAL, 
-      " No camera available or missing calibration file in:\t " 
+    igstkLogMacro(CRITICAL,
+      " No camera available or missing calibration file in:\t "
       << this->m_CameraCalibrationFilesDirectory);
 
     igstkLogMacro(CRITICAL, "MTC Error returned: " << MTLastErrorString());
@@ -359,13 +359,13 @@ bool MicronTracker::SetUpCameras( void )
   else
     {
     //This tracker implementation only handles a single camera. However, MTC
-    //library provides 
-    if ( this->m_Cameras->getCount() >= 1 ) 
+    //library provides
+    if ( this->m_Cameras->getCount() >= 1 )
       {
       this->m_SelectedCamera = this->m_Cameras->m_vCameras[0];
       // set the camera Light coolness parameter
       this->m_SelectedCamera->setLightCoolness( this->m_CameraLightCoolness );
-      } 
+      }
     }
 
   return result;
@@ -376,8 +376,8 @@ MicronTracker::ResultType
 MicronTracker
 ::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
-  igstkLogMacro( DEBUG, 
-    "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");  
+  igstkLogMacro( DEBUG,
+    "igstk::MicronTracker::VerifyTrackerToolInformation called ...\n");
 
   // Verify that the template file for the marker is found
   unsigned int totalNumberOfTemplates = Markers_TemplatesCount();
@@ -385,10 +385,10 @@ MicronTracker
 
   typedef igstk::MicronTrackerTool              MicronTrackerToolType;
 
-  TrackerToolType * trackerToolNonConst = 
+  TrackerToolType * trackerToolNonConst =
           const_cast<TrackerToolType *>( trackerTool );
 
-  MicronTrackerToolType * micronTrackerTool  = 
+  MicronTrackerToolType * micronTrackerTool  =
         dynamic_cast< MicronTrackerToolType *> ( trackerToolNonConst );
 
   if ( micronTrackerTool == NULL )
@@ -409,40 +409,40 @@ MicronTracker
   igstkLogMacro( CRITICAL, "Tracker tool template NOT FOUND");
   return FAILURE;
 }
- 
+
 /** Detach camera. */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");  
+  igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");
   this->m_Cameras->Detach();
-  
+
   return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
 {
-  igstkLogMacro( DEBUG, 
-    "igstk::MicronTracker::InternalStartTracking called ...\n");  
+  igstkLogMacro( DEBUG,
+    "igstk::MicronTracker::InternalStartTracking called ...\n");
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
-  //  set the appropriate input to the state machine) 
-  return SUCCESS; 
+  //  set the appropriate input to the state machine)
+  return SUCCESS;
 }
 
 /** Take the tracking device out of tracking mode. */
 MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::MicronTracker::InternalStopTracking called ...\n");
 
   // Send the command to stop tracking.
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
-  //  set the appropriate input to the state machine) 
-  return SUCCESS; 
+  //  set the appropriate input to the state machine)
+  return SUCCESS;
 }
 
 /** Reset the tracking device to put it back to its original state. */
@@ -455,7 +455,7 @@ MicronTracker::ResultType MicronTracker::InternalReset( void )
 /** Update the status and the transforms for all TrackerTools. */
 MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::MicronTracker::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
@@ -472,7 +472,7 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
 
-  TrackerToolsContainerType trackerToolContainer = 
+  TrackerToolsContainerType trackerToolContainer =
     this->GetTrackerToolContainer();
 
   unsigned int toolId = 0;
@@ -484,14 +484,14 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
       {
       igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
                      "tool " << inputItr->first << " is not in view\n");
-      // report to the tracker tool that the tracker is not available 
-      this->ReportTrackingToolNotAvailable( 
+      // report to the tracker tool that the tracker is not available
+      this->ReportTrackingToolNotAvailable(
         trackerToolContainer[inputItr->first]);
 
       ++inputItr;
       continue;
       }
-    // report to the tracker tool that the tracker is Visible 
+    // report to the tracker tool that the tracker is Visible
     this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
     // create the transform
@@ -515,17 +515,17 @@ MicronTracker::ResultType MicronTracker::InternalUpdateStatus()
     // report error value
     // Get error value from the tracker. TODO
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = 0.0; 
+    ErrorType errorValue = 0.0;
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
 
     // set the raw transform
-    this->SetTrackerToolRawTransform( 
+    this->SetTrackerToolRawTransform(
       trackerToolContainer[inputItr->first], transform );
 
-    this->SetTrackerToolTransformUpdate( 
+    this->SetTrackerToolTransformUpdate(
       trackerToolContainer[inputItr->first], true );
 
     ++inputItr;
@@ -559,43 +559,44 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     }
 
   // process frame
-  unsigned int completionCode = this->m_Markers->processFrame( m_SelectedCamera ); 
+  unsigned int completionCode =
+    this->m_Markers->processFrame( m_SelectedCamera );
 
-  if ( completionCode != 0 ) 
+  if ( completionCode != 0 )
     {
-    igstkLogMacro( CRITICAL, "Error processing a frame: " 
+    igstkLogMacro( CRITICAL, "Error processing a frame: "
      << MicronTracker::GetErrorDescription( completionCode ));
     m_BufferLock->Unlock();
     return FAILURE;
     }
 
   // process identified markers
-  Collection* markersCollection = 
+  Collection* markersCollection =
     new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
- 
-  if (markersCollection->count() == 0) 
+
+  if (markersCollection->count() == 0)
     {
-    delete markersCollection; 
+    delete markersCollection;
     m_BufferLock->Unlock();
     return FAILURE;
     }
 
-  for(unsigned int markerNum = 1; 
+  for(unsigned int markerNum = 1;
       markerNum <= markersCollection->count(); markerNum++)
     {
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
-      //Get postion and pose information 
+      //Get postion and pose information
       Xform3D* Marker2CurrCameraXf = NULL;
-      Marker2CurrCameraXf = 
+      Marker2CurrCameraXf =
         marker->marker2CameraXf(this->m_SelectedCamera->Handle());
 
       if(Marker2CurrCameraXf != NULL)
         {
-        // Tooltip calibration information which could be available in the 
+        // Tooltip calibration information which could be available in the
         // marker template file will not be used here. If needed, the calibration
-        // transform should be set to the tracker tool using the 
+        // transform should be set to the tracker tool using the
         // SetCalibrationTransform method in the trackertool and the Tracker
         // base class will computed the composition.
 
@@ -608,31 +609,31 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
         translation[1] = Marker2CurrCameraXf->getShift(1);
         translation[2] = Marker2CurrCameraXf->getShift(2);
 
-        transform.push_back( translation[0] ); 
-        transform.push_back( translation[1] ); 
-        transform.push_back( translation[2] ); 
+        transform.push_back( translation[0] );
+        transform.push_back( translation[1] );
+        transform.push_back( translation[2] );
 
         //the next four are quaternion
         double quaternion[4];
-    
+
         quaternion[0] = -1.0 * Marker2CurrCameraXf->getQuaternion(0);
         quaternion[1] = -1.0 * Marker2CurrCameraXf->getQuaternion(1);
         quaternion[2] = -1.0 * Marker2CurrCameraXf->getQuaternion(2);
         quaternion[3] = Marker2CurrCameraXf->getQuaternion(3);
 
-        transform.push_back( quaternion[0] ); 
-        transform.push_back( quaternion[1] ); 
-        transform.push_back( quaternion[2] ); 
-        transform.push_back( quaternion[3] ); 
+        transform.push_back( quaternion[0] );
+        transform.push_back( quaternion[1] );
+        transform.push_back( quaternion[2] );
+        transform.push_back( quaternion[3] );
 
         //
-        // Check if a Tracker tool is added with this marker type 
+        // Check if a Tracker tool is added with this marker type
         //
         typedef TrackerToolTransformContainerType::iterator InputIterator;
 
-        InputIterator markerItr = 
+        InputIterator markerItr =
           m_ToolTransformBuffer.find( marker->getName() );
-  
+
         if( markerItr != this->m_ToolTransformBuffer.end() )
           {
           this->m_ToolTransformBuffer[ marker->getName() ] = transform;
@@ -642,13 +643,13 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
       }
     // DO NOT delete marker. This is a possible bug in Marker class.
     // Invoking the marker class destructor causes misidentification of the
-    // markers in the subsequent frames. 
+    // markers in the subsequent frames.
     //
     //             "delete marker;"
     //
     }
 
-  delete markersCollection; 
+  delete markersCollection;
 
   // unlock the buffer
   m_BufferLock->Unlock();
@@ -656,9 +657,9 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   return SUCCESS;
 }
 
-MicronTracker::ResultType 
+MicronTracker::ResultType
 MicronTracker::
-AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) 
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
@@ -669,7 +670,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     return FAILURE;
     }
 
-  const std::string trackerToolIdentifier = 
+  const std::string trackerToolIdentifier =
                     trackerTool->GetTrackerToolIdentifier();
 
   std::vector< double > transform;
@@ -688,16 +689,16 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 }
 
 
-MicronTracker::ResultType 
+MicronTracker::ResultType
 MicronTracker::
 RemoveTrackerToolFromInternalDataContainers
-( const TrackerToolType * trackerTool ) 
+( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  const std::string trackerToolIdentifier = 
+  const std::string trackerToolIdentifier =
                       trackerTool->GetTrackerToolIdentifier();
 
   // remove the tool from the Transform buffer container
@@ -707,7 +708,7 @@ RemoveTrackerToolFromInternalDataContainers
   return SUCCESS;
 }
 
-/** Needs to be called every time when exiting tracking state. */ 
+/** Needs to be called every time when exiting tracking state. */
 void MicronTracker::ExitTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::ExitTrackingStateProcessing "
@@ -725,12 +726,12 @@ void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Number of tools: " << this->m_NumberOfTools << std::endl;
-  os << indent << "Camera calibration files directory: " 
+  os << indent << "Camera calibration files directory: "
                << this->m_CameraCalibrationFilesDirectory << std::endl;
   os << indent << "Initialization file: " << this->m_InitializationFile << std::endl;
-  os << indent << "Markers template directory: " 
+  os << indent << "Markers template directory: "
                << this->m_MarkerTemplatesDirectory << std::endl;
-  os << indent << "Camera Light coolness value : " 
+  os << indent << "Camera Light coolness value : "
                << this->m_CameraLightCoolness << std::endl;
 }
 

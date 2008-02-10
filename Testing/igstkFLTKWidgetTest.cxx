@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters in the 
+//  Warning about: identifier was truncated to '255' characters in the
 //  debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -37,18 +37,18 @@
 #include "itkStdStreamLogOutput.h"
 
 namespace FLTKWidgetTest{
-  
-class ViewObserver : public ::itk::Command 
+
+class ViewObserver : public ::itk::Command
 {
 public:
-  
+
   typedef  ViewObserver               Self;
   typedef  ::itk::Command             Superclass;
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
 protected:
-  ViewObserver() 
+  ViewObserver()
     {
     m_PulseCounter = 0;
     m_View = 0;
@@ -85,7 +85,7 @@ public:
         if( m_View )
           {
           m_View->RequestStop();
-          } 
+          }
         else
           {
           std::cerr << "View pointer is NULL " << std::endl;
@@ -96,7 +96,7 @@ public:
       }
     }
 private:
-  
+
   unsigned long       m_PulseCounter;
   ::igstk::View     * m_View;
   bool *              m_End;
@@ -116,7 +116,7 @@ int igstkFLTKWidgetTest( int, char * [] )
 
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput  LogOutputType;
-  
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -125,21 +125,21 @@ int igstkFLTKWidgetTest( int, char * [] )
   logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput =
                                                 igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from
                                        // VTK OutputWindow -> logger
 
   try
     {
     // Create the referene system
     igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
-   
-    // Create the ellipsoid 
+
+    // Create the ellipsoid
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
-    
+
     // Create the ellipsoid representation
     igstk::EllipsoidObjectRepresentation::Pointer ellipsoidRepresentation =
                              igstk::EllipsoidObjectRepresentation::New();
@@ -148,7 +148,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     ellipsoidRepresentation->SetColor(0.0,1.0,0.0);
     ellipsoidRepresentation->SetOpacity(1.0);
 
-    // Create the cylinder 
+    // Create the cylinder
     igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
     cylinder->SetRadius(0.1);
     cylinder->SetHeight(0.5);
@@ -171,7 +171,7 @@ int igstkFLTKWidgetTest( int, char * [] )
     rotation.Set( 0.0, 0.0, 0.0, 1.0 );
     igstk::Transform::ErrorType errorValue = 10; // 10 millimeters
 
-    transform.SetTranslationAndRotation( 
+    transform.SetTranslationAndRotation(
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
     ellipsoid->RequestSetTransformAndParent( transform, worldReference );
@@ -180,19 +180,20 @@ int igstkFLTKWidgetTest( int, char * [] )
     translation[2] = -2.00;  // translate the cylinder along Z
     rotation.Set( 0.7071, 0.0, 0.0, 0.7071 );
 
-    transform.SetTranslationAndRotation( 
+    transform.SetTranslationAndRotation(
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
     cylinder->RequestSetTransformAndParent( transform, worldReference );
 
     View2DType::Pointer view2D = View2DType::New();
     view2D->SetLogger( logger );
-    
+
     View3DType::Pointer view3D = View3DType::New();
     view3D->SetLogger( logger );
 
     igstk::Transform identityTransform;
-    identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    identityTransform.SetToIdentity(
+      igstk::TimeStamp::GetLongestPossibleTime() );
 
     view2D->RequestSetTransformAndParent( identityTransform, worldReference );
     view3D->RequestSetTransformAndParent( identityTransform, worldReference );
@@ -207,11 +208,11 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     typedef igstk::FLTKWidget      WidgetType;
     Fl_Window * form = new Fl_Window(601,301,"View Test");
-    
-    // instantiate FLTK widgets 
+
+    // instantiate FLTK widgets
     WidgetType * widget2D = new WidgetType( 10,10,280,280,"2D View");
     widget2D->RequestSetView( view2D );
-    
+
     WidgetType * widget3D = new WidgetType( 310,10,280,280,"3D View");
     widget3D->RequestSetView( view3D );
 
@@ -226,7 +227,7 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     typedef FLTKWidgetTest::ViewObserver ObserverType;
     ObserverType::Pointer viewObserver = ObserverType::New();
-    
+
     viewObserver->SetView( view3D );
     viewObserver->SetEndFlag( &bEnd );
 
@@ -239,8 +240,8 @@ int igstkFLTKWidgetTest( int, char * [] )
       igstk::PulseGenerator::CheckTimeouts();
       }
 
-    //Test a widget without a view connected to it 
-    WidgetType * widget3DWithoutViewConnected = 
+    //Test a widget without a view connected to it
+    WidgetType * widget3DWithoutViewConnected =
                       new WidgetType( 310,10,280,280,"3D View");
     widget3DWithoutViewConnected->SetLogger( logger );
 
@@ -259,6 +260,6 @@ int igstkFLTKWidgetTest( int, char * [] )
     {
     return EXIT_FAILURE;
     }
- 
+
   return EXIT_SUCCESS;
 }

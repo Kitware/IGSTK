@@ -31,12 +31,12 @@
 
 namespace igstk
 {
- 
+
 
 /** \class ImageSliceRepresentation
- * 
- * \brief This class represents an oblique image object. 
- * 
+ *
+ * \brief This class represents an oblique image object.
+ *
  * \ingroup ObjectRepresentation
  */
 template < class TImageSpatialObject >
@@ -46,13 +46,13 @@ class ImageSliceRepresentation : public ObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( 
+  igstkStandardTemplatedClassTraitsMacro(
                                 ImageSliceRepresentation,ObjectRepresentation )
 
 public:
 
   /** Available slice orientation. */
-  enum SliceOrientationType { 
+  enum SliceOrientationType {
     Axial = 0,
     Sagittal = 1,
     Coronal = 2,
@@ -62,7 +62,7 @@ public:
    };
 
   /** Available surgeon positions. */
-  enum SurgeonPositionType { 
+  enum SurgeonPositionType {
     Left = 0,
     Right = 1,
     };
@@ -71,14 +71,14 @@ public:
 
   typedef Transform                           TransformType;
 
-  typedef typename ImageSpatialObjectType::ConstPointer 
+  typedef typename ImageSpatialObjectType::ConstPointer
                                               ImageSpatialObjectConstPointer;
 
   typedef typename ImageSpatialObjectType::PointType  PointType;
 
 
   /** Connect this representation class to the spatial object */
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType *
     ImageSpatialObject );
 
   void RequestSetOpacity( double opacity )
@@ -97,14 +97,9 @@ public:
 
   /** Request to set the probe transform used to reslice through the volume */
   void RequestSetProbeTransform( TransformType trasform);
-  void RequestSetProbeVectorAndPosition( double * probeVector, 
+  void RequestSetProbeVectorAndPosition( double * probeVector,
                                          double * probePosition );
-/*
-  void RequestSetProbeHubAndTip( TransformType::VectorType hub, 
-                                 TransformType::VectorType tip,
-                                 int focus = 0 );*/
 
- 
   /** Request reslice a 3D image */
   vtkCamera * RequestReslice();
 
@@ -115,13 +110,13 @@ public:
     }
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 protected:
 
   /** Constructor */
   ImageSliceRepresentation();
-  
+
   /** Destructor */
   ~ImageSliceRepresentation();
 
@@ -151,7 +146,7 @@ private:
   double                                  m_ProbePosition[3];
   double                                  m_ProbeVector[3];
 
-    
+
   /** VTK classes that support display of an image */
 
   vtkImageData                           * m_ImageData;
@@ -160,7 +155,7 @@ private:
   vtkImageMapToWindowLevelColors         * m_MapColors;
   vtkImageActor                          * m_Actor;
 
-  
+
   double                                 m_AxisX[3];
   double                                 m_AxisY[3];
   double                                 m_AxisZ[3];
@@ -185,10 +180,10 @@ private:
   /** Sets the vtkImageData from the spatial object. This method MUST be
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
-  
+
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
-    
+
   /** Declare the observer that will receive a VTK image from the
    * ImageSpatialObject */
   igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
@@ -199,9 +194,9 @@ private:
 private:
 
   /** Inputs to the State Machine */
-  
+
   /** States for the State Machine */
-  
+
 };
 
 } // end namespace igstk

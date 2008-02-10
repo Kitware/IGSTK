@@ -28,7 +28,7 @@ namespace igstk
 
 /** Constructor */
 template < class TImageSpatialObject >
-ImageSliceRepresentation < TImageSpatialObject > 
+ImageSliceRepresentation < TImageSpatialObject >
 ::ImageSliceRepresentation():m_StateMachine(this)
 {
   m_SliceOrientation = Axial;
@@ -52,14 +52,14 @@ ImageSliceRepresentation < TImageSpatialObject >
   m_Actor = vtkImageActor::New();
   m_Actor->SetOpacity( m_ActorOpacity );
   this->AddActor( m_Actor );
-   
+
   // Set default values for window and level
   m_Level = 0;
   m_Window = 2000;
   m_MapColors  = vtkImageMapToWindowLevelColors::New();
   m_MapColors->SetWindow( m_Window );
   m_MapColors->SetLevel( m_Level );
-  
+
   // Image reslice
   m_ImageReslice = vtkImageReslice::New();
   m_ImageReslice->SetBackgroundColor( 128.0, 128.0, 128.0, 0 );
@@ -72,14 +72,14 @@ ImageSliceRepresentation < TImageSpatialObject >
 
   // Observer for vtkImageData
   m_VTKImageObserver = VTKImageObserver::New();
-  
-} 
+
+}
 
 /** Destructor */
 
 template < class TImageSpatialObject >
-ImageSliceRepresentation < TImageSpatialObject > 
-::~ImageSliceRepresentation()  
+ImageSliceRepresentation < TImageSpatialObject >
+::~ImageSliceRepresentation()
 {
   // This deletes also the m_Actor
   this->DeleteActors();
@@ -88,7 +88,7 @@ ImageSliceRepresentation < TImageSpatialObject >
 
 
 template < class TImageSpatialObject >
-void 
+void
 ImageSliceRepresentation < TImageSpatialObject >
 ::RequestSetSliceOrientation( SliceOrientationType orientation )
 {
@@ -132,29 +132,29 @@ ImageSliceRepresentation < TImageSpatialObject >
       m_AxisZ[2] = 0;
     break;
     }
-  
+
   //ADDCODE
-  // this->SetupCamera();  
+  // this->SetupCamera();
 }
 
 /** Overloaded DeleteActor function */
 template < class TImageSpatialObject >
-void 
+void
 ImageSliceRepresentation < TImageSpatialObject >
 ::DeleteActors( )
 {
   igstkLogMacro( DEBUG, "igstk::ImageSliceRepresentation\
                         ::DeleteActors called...\n");
-   
+
   this->Superclass::DeleteActors();
-  
+
   m_Actor = NULL;
 
 }
- 
+
 /** Set the Image Spatial Object */
 template < class TImageSpatialObject >
-void 
+void
 ImageSliceRepresentation < TImageSpatialObject >
 ::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
@@ -170,8 +170,8 @@ ImageSliceRepresentation < TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "igstk::ImageSliceRepresentation\
                          ::SetImageSpatialObjectProcessing called...\n");
-  
-  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(),
                                       m_VTKImageObserver );
 
   //
@@ -181,10 +181,10 @@ ImageSliceRepresentation < TImageSpatialObject >
   m_VTKImageObserver->Reset();
 
   m_ImageSpatialObject->RequestGetVTKImage();
-  
+
   if( m_VTKImageObserver->GotVTKImage() )
     {
-    m_ImageData = const_cast< vtkImageData *> 
+    m_ImageData = const_cast< vtkImageData *>
                                         ( m_VTKImageObserver->GetVTKImage() );
     m_ImageData->Update();
     }
@@ -203,7 +203,7 @@ ImageSliceRepresentation < TImageSpatialObject >
   probeVector[0] = 0;
   probeVector[1] = 0;
   probeVector[2] = -1;
-  probeVector = m_ProbeTransform.GetRotation().Transform(probeVector); 
+  probeVector = m_ProbeTransform.GetRotation().Transform(probeVector);
   translation = m_ProbeTransform.GetTranslation();
 
   for (int i=0; i<3; i++)
@@ -214,9 +214,9 @@ ImageSliceRepresentation < TImageSpatialObject >
 }
 
 template < class TImageSpatialObject >
-void 
+void
 ImageSliceRepresentation < TImageSpatialObject >
-::RequestSetProbeVectorAndPosition(double * probeVector, 
+::RequestSetProbeVectorAndPosition(double * probeVector,
                                    double * probePosition )
 {
   for (int i=0; i<3; i++)
@@ -228,20 +228,20 @@ ImageSliceRepresentation < TImageSpatialObject >
 }
 
 template < class TImageSpatialObject >
-vtkCamera * 
+vtkCamera *
 ImageSliceRepresentation < TImageSpatialObject >
 ::RequestReslice( )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
            "igstk::ImageSliceRepresentation::ResliceProcessing called...\n");
- 
+
   itk::Vector< double, 3 >       vx, vy, vn, v;
 
   if( m_SliceOrientation == OffAxial)
     {
     // Calculate the reslice axes
     vx.Fill( 0.0 );
-    vx[0] = 1; 
+    vx[0] = 1;
 
     vy[0] = m_ProbeVector[0];
     vy[1] = m_ProbeVector[1];
@@ -253,7 +253,7 @@ ImageSliceRepresentation < TImageSpatialObject >
       igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
       }
 
-    vn = itk::CrossProduct( vx, vy ); 
+    vn = itk::CrossProduct( vx, vy );
     vy = itk::CrossProduct( vn, vx );
 
     v.Fill( 0.0 );
@@ -288,11 +288,11 @@ ImageSliceRepresentation < TImageSpatialObject >
     vx.Fill( 0.0 );
     if( m_SurgeonPosition == Left )
       {
-      vx[2] = -1; 
+      vx[2] = -1;
       }
     else if ( m_SurgeonPosition == Right )
       {
-      vx[2] = 1; 
+      vx[2] = 1;
       }
 
     vn[0] = m_ProbeVector[0];
@@ -305,19 +305,19 @@ ImageSliceRepresentation < TImageSpatialObject >
       igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
       }
 
-    vy = itk::CrossProduct( vn, vx ); 
+    vy = itk::CrossProduct( vn, vx );
     vx = itk::CrossProduct( vy, vn );
 
     v.Fill( 0.0 );
     //v[2] = -1;
     if( m_SurgeonPosition == Left )
       {
-      v[2] = -1; 
+      v[2] = -1;
       }
     else if ( m_SurgeonPosition == Right )
       {
-      v[2] = 1; 
-      }  
+      v[2] = 1;
+      }
     if (vx*v<0)
     {
       vx *= -1;
@@ -328,12 +328,12 @@ ImageSliceRepresentation < TImageSpatialObject >
 
     if( m_SurgeonPosition == Left )
       {
-      v[0] = -1; 
+      v[0] = -1;
       }
     else if ( m_SurgeonPosition == Right )
       {
-      v[0] = 1; 
-      } 
+      v[0] = 1;
+      }
 
     if (vy*v<0)
     {
@@ -349,7 +349,7 @@ ImageSliceRepresentation < TImageSpatialObject >
     {
     // Calculate the reslice axes
     vy.Fill( 0.0 );
-    vy[2] = -1; 
+    vy[2] = -1;
 
     vx[0] = m_ProbeVector[0];
     vx[1] = m_ProbeVector[1];
@@ -361,7 +361,7 @@ ImageSliceRepresentation < TImageSpatialObject >
       igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
       }
 
-    vn = itk::CrossProduct( vx, vy ); 
+    vn = itk::CrossProduct( vx, vy );
     vx = itk::CrossProduct( vy, vn );
 
     v.Fill( 0.0 );
@@ -381,7 +381,7 @@ ImageSliceRepresentation < TImageSpatialObject >
     vx.Normalize();
     vy.Normalize();
     vn.Normalize();
-   
+
     }
   else if( m_SliceOrientation == Axial)
     {
@@ -393,7 +393,7 @@ ImageSliceRepresentation < TImageSpatialObject >
     vn[2] = 1;
     }
 
-  // set the reslice axes  
+  // set the reslice axes
   m_ResliceAxes->Identity();
   for ( int i = 0; i < 3; i++ )
     {
@@ -402,7 +402,7 @@ ImageSliceRepresentation < TImageSpatialObject >
     m_ResliceAxes->SetElement(i, 2, vn[i] );
     m_ResliceAxes->SetElement(i, 3, m_ProbePosition[i]);
     }
-   
+
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetOutputSpacing( 1,1,1 );
   m_ImageReslice->SetOutputOrigin( -m_SliceSize/2, -m_SliceSize/2, 0 );
@@ -420,7 +420,7 @@ ImageSliceRepresentation < TImageSpatialObject >
     focalPoint[i] = m_ProbePosition[i];
     position[i] = m_ProbePosition[i];
     }
-  
+
   for ( int i = 0; i<3; i++ )
     {
     position[i] -= m_CameraDistance * vn[i];
@@ -441,7 +441,7 @@ ImageSliceRepresentation < TImageSpatialObject >
 
 
 template < class TImageSpatialObject >
-void 
+void
 ImageSliceRepresentation < TImageSpatialObject >
 ::SetWindowLevel( double window, double level )
 {
@@ -509,12 +509,12 @@ ImageSliceRepresentation < TImageSpatialObject >
   m_ResliceAxes->Identity();
   for ( int i = 0; i < 3; i++ )
     {
-     m_ResliceAxes->SetElement(i, 0, m_AxisX[i] );
-     m_ResliceAxes->SetElement(i, 1, m_AxisY[i] );
-     m_ResliceAxes->SetElement(i, 2, m_AxisZ[i] );
-     m_ResliceAxes->SetElement(i, 3, m_FocalPoint[i]);
+    m_ResliceAxes->SetElement(i, 0, m_AxisX[i] );
+    m_ResliceAxes->SetElement(i, 1, m_AxisY[i] );
+    m_ResliceAxes->SetElement(i, 2, m_AxisZ[i] );
+    m_ResliceAxes->SetElement(i, 3, m_FocalPoint[i]);
     }
-  
+
   m_ImageReslice->SetInput ( m_ImageData );
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetOutputDimensionality(2);
@@ -533,7 +533,7 @@ ImageSliceRepresentation < TImageSpatialObject >
   m_MapColors->SetInput( m_ImageReslice->GetOutput() );
 
   m_Actor = vtkImageActor::New();
-  m_Actor->SetInput( m_MapColors->GetOutput() );  
+  m_Actor->SetInput( m_MapColors->GetOutput() );
   m_Actor->SetUserMatrix( m_ResliceAxes );
   m_Actor->SetOpacity( m_ActorOpacity );
   this->AddActor( m_Actor );
@@ -542,7 +542,7 @@ ImageSliceRepresentation < TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageSliceRepresentation < TImageSpatialObject >
-::ConnectVTKPipelineProcessing() 
+::ConnectVTKPipelineProcessing()
 {
   /*
   m_ImageReslice->SetInput ( m_ImageData );

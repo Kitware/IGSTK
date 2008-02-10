@@ -33,7 +33,7 @@ igstk::Transform GetRandomTransform()
   igstk::Transform::VectorType translation;
   igstk::Transform::VersorType rotation;
 
-  /** Rescale and shift the translation values to 
+  /** Rescale and shift the translation values to
    *  prevent large numbers from taking up too
    *  many bits to construct precise answers and
    *  to allow for negative numbers */
@@ -51,7 +51,7 @@ igstk::Transform GetRandomTransform()
   rotation.Set(x, y, z, w);
 
   igstk::Transform result;
-  result.SetTranslationAndRotation( translation, 
+  result.SetTranslationAndRotation( translation,
                                     rotation,
                                     1e-5, // error tol
                                     igstk::TimeStamp::GetLongestPossibleTime()
@@ -63,9 +63,9 @@ igstk::Transform GetRandomTransform()
 int igstkCoordinateSystemTest2(int argc, char* argv[])
 {
 
-  typedef igstk::Object::LoggerType           LoggerType; 
+  typedef igstk::Object::LoggerType           LoggerType;
   typedef itk::StdStreamLogOutput             LogOutputType;
-  typedef igstk::CoordinateSystem    CoordSysType;
+  typedef igstk::CoordinateSystem             CoordSysType;
   typedef igstk::Transform                    TransformType;
   typedef igstk::TimeStamp                    TimeStampType;
   typedef TimeStampType::TimePeriodType       TimePeriodType;
@@ -74,7 +74,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   typedef igstk::TransformObserver            TransformObserverType;
 
   const TransformType::ErrorType              transformErrorValue = 1e-5;
-  const TimePeriodType aReallyLongTime 
+  const TimePeriodType aReallyLongTime
                                    = TimeStampType::GetLongestPossibleTime();
 
   const double tol = 1.0e-12;
@@ -93,7 +93,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   //
   //
   //                              root        E
-  //                               | | 
+  //                               | |
   //                             --   --
   //                            |       |
   //                        --- A --    B
@@ -106,7 +106,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   root->GetName(); // coverage
   root->SetLogger( logger );
 
-  TransformObserverType::Pointer rootObserver = 
+  TransformObserverType::Pointer rootObserver =
                                     TransformObserverType::New();
   rootObserver->ObserveTransformEventsFrom( root );
 
@@ -156,7 +156,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   std::cout << "                            |       |       " << std::endl;
   std::cout << "                        --- A --    B       " << std::endl;
   std::cout << "                       |    |   |   |       " << std::endl;
-  std::cout << "                       G    C   H   D       " << std::endl; 
+  std::cout << "                       G    C   H   D       " << std::endl;
   std::cout << "                            |               " << std::endl;
   std::cout << "                            F               " << std::endl;
   std::cout << std::endl;
@@ -192,7 +192,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   H->RequestSetTransformAndParent(THA, A);
 
   std::cout << "Checking transform from root to A : ";
-  
+
   rootObserver->Clear();
   root->RequestComputeTransformTo(A);
 
@@ -252,7 +252,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   // Reset the internal boolean flags
   rootObserver->Clear();
 
-  std::cout << "Checking transform from root to C : "; 
+  std::cout << "Checking transform from root to C : ";
   root->RequestComputeTransformTo(C);
   TransformType TRootC;
 
@@ -282,7 +282,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   // Reset internal boolean flags.
   rootObserver->Clear();
 
-  std::cout << "Checking transform from root to D : "; 
+  std::cout << "Checking transform from root to D : ";
   root->RequestComputeTransformTo(D);
   TransformType TRootD;
   if( rootObserver->GotTransform() )
@@ -340,7 +340,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   // Reset internal boolean flags.
   rootObserver->Clear();
 
-  TransformObserverType::Pointer FObserver = 
+  TransformObserverType::Pointer FObserver =
                                     TransformObserverType::New();
   FObserver->ObserveTransformEventsFrom( F );
   F->RequestComputeTransformTo(G);
@@ -350,7 +350,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
     {
     TransformType TFG = FObserver->GetTransform();
 
-    TransformType TFGTrue = 
+    TransformType TFGTrue =
               TransformType
                     ::TransformCompose( TGA.GetInverse(),
                                 TransformType::TransformCompose(TCA, TFC));
@@ -378,7 +378,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
 
   std::cout << "Checking transform from D to F : ";
 
-  TransformObserverType::Pointer DObserver = 
+  TransformObserverType::Pointer DObserver =
                                     TransformObserverType::New();
   DObserver->ObserveTransformEventsFrom( D );
 
@@ -389,7 +389,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
     TransformType TDF = DObserver->GetTransform();
 
     TransformType TDRoot = TransformType::TransformCompose(TBRoot, TDB);
-    TransformType TFRoot = TransformType::TransformCompose(TARoot, 
+    TransformType TFRoot = TransformType::TransformCompose(TARoot,
                                   TransformType::TransformCompose(TCA, TFC));
     TransformType TDFTrue = TransformType
                              ::TransformCompose(TFRoot.GetInverse(), TDRoot);

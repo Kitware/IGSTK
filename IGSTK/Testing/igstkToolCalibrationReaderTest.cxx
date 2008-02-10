@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 //  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -34,14 +34,14 @@ int igstkToolCalibrationReaderTest( int argc, char * argv[] )
 {
   if(argc<3)
     {
-    std::cout << "Usage = " << argv[0] << " calibrationFile" 
+    std::cout << "Usage = " << argv[0] << " calibrationFile"
               << " calibrationFileCorrupted" << std::endl;
     return EXIT_FAILURE;
     }
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType         LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
-  typedef igstk::ToolCalibrationReader< igstk::PivotCalibration > 
+  typedef igstk::ToolCalibrationReader< igstk::PivotCalibration >
                                             ToolCalibrationReaderType;
 
   // Logger object created for logging calibration computation
@@ -53,8 +53,8 @@ int igstkToolCalibrationReaderTest( int argc, char * argv[] )
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
   // Create the specific tool calibration reader and attach the logger
-  
-  ToolCalibrationReaderType::Pointer reader = 
+
+  ToolCalibrationReaderType::Pointer reader =
                               ToolCalibrationReaderType::New();
 
   reader->SetLogger( logger );

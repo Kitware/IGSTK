@@ -49,4 +49,3 @@ ShouldBuildMessage(PriorityLevelType level)
 
 
 } // namespace igstk
-

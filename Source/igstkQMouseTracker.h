@@ -26,11 +26,11 @@ namespace igstk
 /** \class QMouseTracker
  *   \brief Implementation of the Mouse TrackerTool class.
  *
- *   The purpose of this class is to provide a minimal 
- *   implementation of a Tracker. This class is intended 
+ *   The purpose of this class is to provide a minimal
+ *   implementation of a Tracker. This class is intended
  *   only for minimal demos and for debugging applications.
  *   It is not intended to be used in a real application to
- *   be deployed in a surgery room. 
+ *   be deployed in a surgery room.
  *
  *   \ingroup Trackers
  */
@@ -75,13 +75,15 @@ protected:
   virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
   /** Remove tracker tool from the data container */
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+    const TrackerToolType * );
 
   /** Add tracker tool to internal data containers */
-  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * );
+  virtual ResultType AddTrackerToolToInternalDataContainers(
+    const TrackerToolType * );
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 

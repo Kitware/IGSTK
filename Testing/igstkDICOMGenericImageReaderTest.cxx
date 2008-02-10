@@ -45,10 +45,10 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
     std::cerr<<"Usage: "<<argv[0]<<"  CTImage "<<std::endl;
     return EXIT_FAILURE;
     }
-  
+
   typedef igstk::Object::LoggerType     LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  
+  typedef itk::StdStreamLogOutput       LogOutputType;
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -68,7 +68,7 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
   ReaderType::DirectoryNameType directoryName = argv[1];
 
   reader->RequestSetDirectory( directoryName );
-  
+
   reader->Print( std::cout );
 
   // FIXME: This observer must be added back, once we have the generic image
@@ -80,7 +80,7 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
   //
   // FIXME: This event must be added
   // reader->AddObserver(
-  //           ::igstk::DICOMGenericImageReader::ImageModifiedEvent(), 
+  //           ::igstk::DICOMGenericImageReader::ImageModifiedEvent(),
   //           ctImageObserver);
 
   try
@@ -91,9 +91,9 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
     {
     std::cerr << "ERROR: An exception was thrown while reading the CT dataset"
               << std::endl;
-    std::cerr << "This should not have happened. The State Machine should have" 
+    std::cerr << "This should not have happened. The State Machine should have"
               << std::endl;
-    std::cerr << "catched that exception and converted it into a SM Input " 
+    std::cerr << "catched that exception and converted it into a SM Input "
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -114,6 +114,6 @@ int igstkDICOMGenericImageReaderTest( int argc, char* argv[] )
   // Details of the loaded image
   ctImage->Print( std::cout );
   */
-  
+
   return EXIT_SUCCESS;
 }

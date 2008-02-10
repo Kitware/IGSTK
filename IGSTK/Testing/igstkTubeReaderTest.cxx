@@ -37,14 +37,14 @@ int igstkTubeReaderTest( int argc, char * argv [] )
     std::cerr << " inputBadFileName " << std::endl;
     return 1;
     }
-  
+
   typedef igstk::TubeReader    ReaderType;
 
   ReaderType::Pointer  reader = ReaderType::New();
 
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  
+  typedef igstk::Object::LoggerType       LoggerType;
+  typedef itk::StdStreamLogOutput         LogOutputType;
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -61,13 +61,13 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   reader->Print( std::cout );
 
   // Test error condition: on purpose request to read an object
-  // without having provided the filename 
+  // without having provided the filename
   reader->RequestReadObject();
 
   // Test empty name
   std::string emptyname;
   reader->RequestSetFileName( emptyname );
-  
+
   // Test file doesn't exist
   std::string filenameThatDoesntExist = "/This/FileName/Does/Not/Exist";
   reader->RequestSetFileName( filenameThatDoesntExist );
@@ -75,21 +75,21 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   // Test file that is a directory
   std::string filenameIsADirectory = ".";
   reader->RequestSetFileName( filenameIsADirectory );
-  
+
   // Test file that exists
   std::string filenameThatExists = argv[1];
   reader->RequestSetFileName( filenameThatExists );
 
   // Request to read the object from the file
   reader->RequestReadObject();
-  
+
   // Now reading a corrupted file
   std::string filenameWithCorruptedContent = argv[2];
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();
-  
+
   typedef ReaderType::TubeType TubeType;
-  
+
   TubeType::ConstPointer tube = reader->GetOutput();
 
   tube->Print( std::cout );

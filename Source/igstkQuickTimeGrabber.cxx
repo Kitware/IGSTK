@@ -33,7 +33,7 @@ namespace igstk
 QuickTimeGrabber::QuickTimeGrabber(void):m_StateMachine(this)
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber constructor called ...\n");
-  
+
   // allocate memory for the video data
   videoDataPtr = (VideoDataRecord*)NewPtrClear(sizeof(VideoDataRecord));
   videoDataPtr->videoObject = this;
@@ -41,7 +41,7 @@ QuickTimeGrabber::QuickTimeGrabber(void):m_StateMachine(this)
   videoDataPtr->timeScale = 0;
   videoDataPtr->timeScaleMod = 0;
   videoDataPtr->grabber = this;
-  
+
   videoMemoryPtr = NULL;
 }
 
@@ -49,7 +49,7 @@ QuickTimeGrabber::QuickTimeGrabber(void):m_StateMachine(this)
 QuickTimeGrabber::~QuickTimeGrabber(void)
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber destructor called ...\n");
-  
+
   if (videoDataPtr->seqGrab) {
     if (m_isGrabbing) SGStop(videoDataPtr->seqGrab);
     CloseComponent(videoDataPtr->seqGrab);
@@ -57,27 +57,27 @@ QuickTimeGrabber::~QuickTimeGrabber(void)
   }
   //UnlockPixels(GetGWorldPixMap(videoDataPtr->pGWorld));
   DisposeGWorld(videoDataPtr->pGWorld);
-  DisposePtr((char*)videoDataPtr);  
+  DisposePtr((char*)videoDataPtr);
 }
 
-QuickTimeGrabber::ResultType 
+QuickTimeGrabber::ResultType
 QuickTimeGrabber::InternalSetVideoBufferSizeProcessing( void )
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                         "::InternalSetVideoBufferSizeProcessing called ...\n");
-  
+
   m_VideoBufferSize = m_VideoBufferSizeToBeSet;
   ResultType result = SUCCESS;
   return result;
 }
 
 
-QuickTimeGrabber::ResultType 
+QuickTimeGrabber::ResultType
 QuickTimeGrabber::InternalSetWantedFramerateProcessing( void )
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                         "::InternalSetWantedFramerateProcessing called ...\n");
-  
+
   m_Framerate = m_FramerateToBeSet;
   ResultType result = SUCCESS;
   return result;
@@ -87,16 +87,17 @@ QuickTimeGrabber::InternalSetWantedFramerateProcessing( void )
 void QuickTimeGrabber::SetVideoMemoryPtr(void* pixels)
 {
   if (pixels != NULL)
-  {
+    {
     videoMemoryPtr = pixels;
-  } else {
-    
+    }
+  else
+    {
     igstkLogMacro( CRITICAL, "QuickTimeGrabber::SetVideoMemoryPtr failed!\n");
     VideoGrabberErrorEvent event;
     std::string s = "QuickTimeGrabber::SetVideoMemoryPtr failed!";
     event.Set(s);
     this->InvokeEvent(event);
-  }
+    }
 }
 
   /** Internal fuction to initialize grabber.
@@ -107,44 +108,46 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                         "::InternalInitializeProcessing called ...\n");
-                               
-  ResultType result = SUCCESS;    
-   
-  
+
+  ResultType result = SUCCESS;
+
+
   try
-  {
+    {
     OSErr err = noErr;
 
-    // Test if all necessary variables have been set 
+    // Test if all necessary variables have been set
     if (videoMemoryPtr == NULL)
-      throw "Video memory not assigned!";    
-      
+      {
+      throw "Video memory not assigned!";
+      }
+
     // Deprecated code - The only code that works on both Mac and PC
-    
+
     // Initialize platform specific variables
     Rect videoRect;
     videoRect.top = 0;
     videoRect.left = 0;
     videoRect.bottom = m_VideoOutputDimensions.m_Height - 1;
     videoRect.right = m_VideoOutputDimensions.m_Width - 1;
-    
+
     m_isGrabbing      = false;
     m_callbackRunning = false;
-    
+
     //GWorldPtr m_GWorldPtr;
     //SGChannel m_Channel;
     //SeqGrabComponent  m_SeqGrab;
-    
-    // Moved to igstkVideoObjectRepresentation m_ImageData 
+
+    // Moved to igstkVideoObjectRepresentation m_ImageData
     //videoGrabberImage = vtkImageData::New();
     //videoGrabberImage->SetScalarTypeToUnsignedChar();
     //videoGrabberImage->SetNumberOfScalarComponents(m_VideoOutputFormat / 8);
     //videoGrabberImage->SetExtent(videoRect.left, videoRect.right,
     //                             videoRect.top, videoRect.bottom, 0, 0);
     //videoGrabberImage->AllocateScalars();
-        
+
     videoDataPtr->pixelDepth = m_VideoOutputFormat;
-    
+
     videoDataPtr->theClut = GetCTable(40); // Defining the color lookup table
     reverseCTable(videoDataPtr->theClut);
     err = QTNewGWorldFromPtr(&(videoDataPtr->pGWorld),  // returned GWorld
@@ -154,60 +157,74 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
                              NULL,                      // GDHandle
                              0,                         // flags
                              videoMemoryPtr,            //buffer
-                             m_VideoOutputDimensions.m_Width * 
+                             m_VideoOutputDimensions.m_Width *
                              m_VideoOutputFormat / 8);  //row bytes
-    
-    
-    if(err!=noErr) 
+
+
+    if(err!=noErr)
+      {
       throw "QTNewGWorld failed!";
-    
-    if (videoDataPtr->pGWorld == NULL) 
+      }
+
+    if (videoDataPtr->pGWorld == NULL)
+      {
       throw "QTNewGWorld did not initialize GWorld!";
-    
+      }
+
     // Always fails ???
     //err = LockPixels(GetGWorldPixMap(videoDataPtr->pGWorld));
-    //if(err!=noErr) 
+    //if(err!=noErr)
     //    throw "LockPixels failed!";
-    
+
     videoDataPtr->bounds = videoRect;
     videoDataPtr->seqGrab = OpenDefaultComponent(SeqGrabComponentType, 0);
-    
-    if (videoDataPtr->seqGrab == NULL) 
+
+    if (videoDataPtr->seqGrab == NULL)
+      {
       throw "Sequence grabber component not initialized!";
-    
+      }
+
     // Initialize sequence grabber component
     if (noErr != SGInitialize(videoDataPtr->seqGrab))
+      {
       throw "SGInitialize failed!";
-        
-    if (noErr != SGNewChannel(videoDataPtr->seqGrab, VideoMediaType, 
+      }
+
+    if (noErr != SGNewChannel(videoDataPtr->seqGrab, VideoMediaType,
                               &(videoDataPtr->sgchanVideo)))
+      {
       throw "SGNewChannel failed";
-    
+      }
+
     if (noErr != SGSetChannelBounds(videoDataPtr->sgchanVideo, &videoRect))
+      {
       throw "SGNewChannel failed";
-    
+      }
+
     if (noErr != SGSetChannelUsage(videoDataPtr->sgchanVideo, seqGrabRecord))
-    {
+      {
       // clean up on failure
       SGDisposeChannel(videoDataPtr->seqGrab, videoDataPtr->sgchanVideo);
       throw "SGSetChannelUsage failed";
-    }
-        
-    if (noErr != 
+      }
+
+    if (noErr !=
         SGSetGWorld(videoDataPtr->seqGrab, videoDataPtr->pGWorld, NULL))
+      {
       throw "SGSetGWorld failed";
-    
-    
+      }
+
+
     // Grabber control panel - Not working correcly???
-    //if (noErr != SGSettingsDialog (videoDataPtr->seqGrab, 
-    //                               videoDataPtr->sgchanVideo, 
+    //if (noErr != SGSettingsDialog (videoDataPtr->seqGrab,
+    //                               videoDataPtr->sgchanVideo,
     //                               0, NULL, 0, NULL, 0))
     //  throw "SGSettingsDialog failed";
-    
+
     // Configure Hardware
-    VideoDigitizerComponent vd = 
+    VideoDigitizerComponent vd =
       SGGetVideoDigitizerComponent(videoDataPtr->sgchanVideo);
-    VDSetInputStandard(vd,palIn); 
+    VDSetInputStandard(vd,palIn);
     VDSetInput(vd,2);
 
     // Don't work???
@@ -215,29 +232,38 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
     //GetCodecNameList(list, 1);
     //if (noErr != GetCodecNameList(list, 1))
     //  throw "GetCodecNameList failed";
-    
-    
+
+
     // Set paramaters without SGSettingsDialog()
     if (noErr != SGSetVideoCompressorType(videoDataPtr->sgchanVideo, 'raw '))
+      {
       throw "SGSetVideoCompressorType failed";
-    
-    if (noErr != SGSetVideoCompressor(videoDataPtr->sgchanVideo, 8, 0, 
+      }
+
+    if (noErr != SGSetVideoCompressor(videoDataPtr->sgchanVideo, 8, 0,
                                       codecMaxQuality, 0, 0))
+      {
       throw "SGSetVideoCompressor failed";
-    
-    
+      }
+
+
     // specify a data function
-    if (noErr != SGSetDataProc(videoDataPtr->seqGrab, 
+    if (noErr != SGSetDataProc(videoDataPtr->seqGrab,
                                NewSGDataUPP((this->videoGrabDataProc)),
                                (long)videoDataPtr))
+      {
       throw "SGSetDataProc failed";
-    
+      }
+
     // Prepare QT sequence grabber for record operation
     if (noErr != SGPrepare(videoDataPtr->seqGrab, false, true))
+      {
       throw "SGPrepare failed";
-    
-  }
-  catch (char const *str) {
+      }
+
+    }
+  catch (char const *str)
+    {
     igstkLogMacro( CRITICAL, "QuickTimeGrabber::InternalInitializeProcessing: "
                    << str << "\n");
     result = FAILURE;
@@ -246,15 +272,15 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
     s.append(str);
     event.Set(s);
     this->InvokeEvent(event);
-  }
-  
+    }
+
   return result;
 }
 
   /** Internal fuction to activate grabber. */
 
 QuickTimeGrabber::ResultType QuickTimeGrabber
-                             ::InternalActivateGrabberProcessing( void ) 
+                             ::InternalActivateGrabberProcessing( void )
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                  "::InternalActivateGrabberProcessing called ...\n");
@@ -262,7 +288,7 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
   ResultType result = SUCCESS;
   return result;
 }
-  
+
   /** Internal fuction to deactivate grabber. */
 
 QuickTimeGrabber::ResultType QuickTimeGrabber
@@ -270,9 +296,9 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                  "::InternalDeactivateGrabberProcessing called ...\n");
-                            
+
   m_callbackRunning = false;
-  
+
   ResultType result = SUCCESS;
   return result;
 }
@@ -283,21 +309,21 @@ QuickTimeGrabber::ResultType QuickTimeGrabber::ProcessVideo( void )
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                  "::ProcessVideo called ...\n");
-  
+
   ResultType result = SUCCESS;
-  
+
   OSErr err = noErr;
   err = SGIdle(videoDataPtr->seqGrab);
-  
+
   //if ( noErr != SGIdle(videoDataPtr->seqGrab))
   if (noErr != err)
-  {
+    {
     // Always fails???
     //igstkLogMacro( WARNING, "QuickTimeGrabber"
     //               "::ProcessVideo: "
     //               "SGIdle failed! \n");
     result = FAILURE;
-  }            
+    }
   return result;
 }
 
@@ -309,21 +335,21 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                         "::InternalGrabOneFrameProcessing called ...\n");
-                               
+
   ResultType result = SUCCESS;
-  
-  
+
+
   // Give processing power to the video sequence grabber
   /*result = */ProcessVideo();
-  
+
  /*********************
   * To be implemented *
   *********************/
-                               
+
   return result;
 }
 
-  
+
   /** Internal fuction to start grabbing. */
 
 QuickTimeGrabber::ResultType QuickTimeGrabber
@@ -331,9 +357,9 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                         "::InternalStartGrabbingProcessing called ...\n");
-                               
+
   ResultType result = WAIT;
-            
+
   if ( noErr != SGStartRecord(videoDataPtr->seqGrab) )
   {
     igstkLogMacro( CRITICAL, "QuickTimeGrabber"
@@ -341,20 +367,20 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
                    "Failed to start grabbing! \n");
     result = FAILURE;
   }
-  
+
   if (result == WAIT)
     m_isGrabbing = true;
-  
+
   // If callback function already up and running, go to GrabbingState
   if (m_callbackRunning)
     result = SUCCESS;
-  
+
   //this->GrabbingTransition();
- 
+
   return result;
 }
 
-  
+
   /** Internal fuction to stop grabbing. */
 
 QuickTimeGrabber::ResultType QuickTimeGrabber
@@ -364,7 +390,7 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
                         "::InternalStopGrabbingProcessing called ...\n");
 
   ResultType result = SUCCESS;
-  
+
   if ( noErr != SGStop(videoDataPtr->seqGrab) )
   {
     igstkLogMacro( CRITICAL, "QuickTimeGrabber"
@@ -372,10 +398,10 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
                    "Failed to stop grabbing! \n");
     result = FAILURE;
   }
-  
+
   if (result == SUCCESS)
     m_isGrabbing = false;
-  
+
   return result;
 }
 
@@ -386,11 +412,11 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 {
   igstkLogMacro( DEBUG, "QuickTimeGrabber"
                  "::InternalGrabbingTransition called ...\n");
-  
+
   m_callbackRunning = true;
-  
+
   ResultType result = SUCCESS;
-  
+
   return result;
 }
 
@@ -402,59 +428,59 @@ QuickTimeGrabber::ResultType QuickTimeGrabber
 /* write the data to another destination.                       */
 /****************************************************************/
 pascal OSErr QuickTimeGrabber
-             ::videoGrabDataProc(SGChannel c, Ptr p, long len, long *offset, 
-                                 long chRefCon, TimeValue time, 
+             ::videoGrabDataProc(SGChannel c, Ptr p, long len, long *offset,
+                                 long chRefCon, TimeValue time,
                                  short writeType, long refCon) {
-                 
+
   CodecFlags      ignore;
   OSErr           err = noErr;
   VideoDataRecord *videoPtr;
-  
+
   videoPtr=(VideoDataRecord*)refCon;
-  
+
   if (videoPtr->timeScale == 0) {
     // first time here so set the time scale
     err = SGGetChannelTimeScale(c, &videoPtr->timeScale);
     videoPtr->timeScaleMod = (float)videoPtr->timeScale/1000;
-    
+
     // Transition to GrabbingState
     videoPtr->grabber->GrabbingTransition();
   }
-  
+
   if(videoPtr->pixelDepth==88) {
     memcpy( (GetPixBaseAddr(GetGWorldPixMap(videoPtr->pGWorld))),
-            p, videoPtr->bounds.right*videoPtr->bounds.bottom); 
+            p, videoPtr->bounds.right*videoPtr->bounds.bottom);
   } else {
     if (videoPtr->pGWorld) {
       if (videoPtr->decomSeq == 0) {
         // Set up getting grabbed data into the GWorld
         ImageDescriptionHandle imageDesc = (ImageDescriptionHandle)NewHandle(0);
-        // retrieve a channel’s current sample description, 
+        // retrieve a channel’s current sample description,
         // the channel returns a sample description that is
         // appropriate to the type of data being captured
         err = SGGetChannelSampleDescription(c, (Handle)imageDesc);
-        
+
         Rect dvsize;
         dvsize.top = 0;
         dvsize.left = 0;
         dvsize.bottom = (*imageDesc)->height - 1;
         dvsize.right = (*imageDesc)->width - 1;
-        
+
         //Correct the video proportions
-        videoPtr->bounds.bottom = (int)round((videoPtr->bounds.right+1) * 
-                                             (*imageDesc)->height / 
+        videoPtr->bounds.bottom = (int)round((videoPtr->bounds.right+1) *
+                                             (*imageDesc)->height /
                                              (float)(*imageDesc)->width);
-        
+
         MatrixRecord scaleMatrix;
         RectMatrix(&scaleMatrix, &dvsize, &videoPtr->bounds);
-        
+
         // begin the process of decompressing a sequence of frames
-        // this is a set-up call and is only called once for the sequence 
+        // this is a set-up call and is only called once for the sequence
         // - the ICM will interrogate different codecs
-        // and construct a suitable decompression chain, 
+        // and construct a suitable decompression chain,
         // as this is a time consuming process we don't want to do this
         // once per frame (eg. by using DecompressImage)
-        // for more information see Ice Floe #8 
+        // for more information see Ice Floe #8
         // http://developer.apple.com/quicktime/icefloe/dispatch008.html
         // the destination is specified as the GWorld
         err = DecompressSequenceBeginS(// receive unique ID for sequence
@@ -465,34 +491,34 @@ pascal OSErr QuickTimeGrabber
                                        len,
                                        // port for the DESTINATION image
                                        videoPtr->pGWorld,
-                                       // graphics device handle, if port 
+                                       // graphics device handle, if port
                                        // is set, set to NULL
                                        NULL,
-                                       // source rectangle defining the portion 
-                                       // of the image to decompress 
+                                       // source rectangle defining the portion
+                                       // of the image to decompress
                                        NULL,
                                        // transformation matrix
                                        &scaleMatrix,
                                        // transfer mode specifier
                                        srcCopy,
-                                       // clipping region in dest. 
+                                       // clipping region in dest.
                                        // coordinate system to use as a mask
                                        (RgnHandle)NULL,
                                        // flags
                                        NULL,
                                        // accuracy in decompression
                                        codecMinQuality,
-                                       // compressor identifier or special 
+                                       // compressor identifier or special
                                        // identifiers ie. bestSpeedCodec
                                        bestSpeedCodec);
 
         DisposeHandle((Handle)imageDesc);
       }
-      
-      
-      // decompress a frame into the GWorld - can queue a frame for async 
+
+
+      // decompress a frame into the GWorld - can queue a frame for async
       // decompression when passed in a completion proc
-      err = DecompressSequenceFrameS(// sequence ID returned by 
+      err = DecompressSequenceFrameS(// sequence ID returned by
                                      //DecompressSequenceBegin
                                      videoPtr->decomSeq,
                                      // pointer to compressed image data
@@ -505,7 +531,7 @@ pascal OSErr QuickTimeGrabber
       if (err) {
         printf("Fault in decompress sequence %d\n",err);
         err = noErr;
-        
+
       }
     }
   }
@@ -525,16 +551,18 @@ void QuickTimeGrabber::reverseCTable(CTabHandle& cTable)
 {
   int oldValueIndex = 0;
   int newValueIndex = (*cTable)->ctSize - oldValueIndex;
-  
-  while (oldValueIndex < newValueIndex) {
-    
+
+  while (oldValueIndex < newValueIndex)
+    {
     ColorSpec csOld = (*cTable)->ctTable[oldValueIndex];
-    (*cTable)->ctTable[oldValueIndex].rgb = 
-      (*cTable)->ctTable[newValueIndex].rgb;
+      (*cTable)->ctTable[oldValueIndex].rgb =
+        (*cTable)->ctTable[newValueIndex].rgb;
+
     (*cTable)->ctTable[newValueIndex].rgb = csOld.rgb;
+
     oldValueIndex++;
     newValueIndex = (*cTable)->ctSize - oldValueIndex;
-  }
+    }
   CTabChanged(cTable);
 }
 

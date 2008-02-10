@@ -33,14 +33,14 @@
 int igstkToolCalibrationTest( int, char * [] )
 {
   // Define type used in the calibration class
-  typedef igstk::ToolCalibration    CalibrationType;
+  typedef igstk::ToolCalibration         CalibrationType;
 
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput                          LogOutputType;
+  typedef igstk::Object::LoggerType      LoggerType;
+  typedef itk::StdStreamLogOutput        LogOutputType;
 
   // Logger object created for logging calibration computation
-  LoggerType::Pointer                       logger = LoggerType::New();
-  LogOutputType::Pointer                    logOutput = LogOutputType::New();
+  LoggerType::Pointer                    logger = LoggerType::New();
+  LogOutputType::Pointer                 logOutput = LogOutputType::New();
 
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );

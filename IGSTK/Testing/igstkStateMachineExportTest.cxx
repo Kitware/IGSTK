@@ -85,7 +85,7 @@
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
-namespace igstk 
+namespace igstk
 {
 class DummyTrackerTool : public igstk::TrackerTool
 {
@@ -95,17 +95,17 @@ public:
 
 protected:
   DummyTrackerTool():m_StateMachine(this)
-  {
-  }
+    {
+    }
   ~DummyTrackerTool()
-  {
-  }
+    {
+    }
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
-  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
 };
- 
+
 class DummyTracker : public Tracker
 {
 public:
@@ -119,88 +119,89 @@ public:
 
 protected:
 
+  DummyTracker():m_StateMachine(this)
+    {
+    }
 
-DummyTracker():m_StateMachine(this)
-{
-}
+  ~DummyTracker()
+    {
+    }
 
-~DummyTracker()
-{
-}
+  ResultType InternalOpen( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalOpen( void )
-{
-  return SUCCESS;
-}
+  ResultType InternalStartTracking( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalStartTracking( void )
-{
-  return SUCCESS;
-}
+  ResultType InternalReset( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalReset( void )
-{
-  return SUCCESS;
-}
+  ResultType InternalStopTracking( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalStopTracking( void )
-{
-  return SUCCESS;
-}
+  ResultType InternalDeactivateTools( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
+  ResultType InternalClose( void )
+    {
+    return SUCCESS;
+    }
 
-ResultType InternalClose( void )
-{
-  return SUCCESS;
-}
+  ResultType
+  VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
 
-ResultType 
-VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
+  ResultType
+  AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
 
-ResultType 
-AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
+  ResultType
+  RemoveTrackerToolFromInternalDataContainers(
+    const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
 
-ResultType 
-RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
+  ResultType
+  InternalUpdateStatus( void )
+    {
+    igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
+    return SUCCESS;
+    }
 
-ResultType 
-InternalUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
-  return SUCCESS;
-}
+  ResultType
+  InternalThreadedUpdateStatus( void )
+    {
+    igstkLogMacro( DEBUG,
+      "DummyTracker::InternalThreadedUpdateStatus called ...\n");
+    return SUCCESS;
+    }
 
-ResultType 
-InternalThreadedUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "DummyTracker::InternalThreadedUpdateStatus called ...\n");
-  return SUCCESS;
-}
-
-/** Print Self function */
-void PrintSelf( std::ostream& os, itk::Indent indent ) const
-{
-  Superclass::PrintSelf(os, indent);
-}
+  /** Print Self function */
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const
+    {
+    Superclass::PrintSelf(os, indent);
+    }
 
 };
 
 template<class ClassType>
-void ExportStateMachineDescription( 
-              const ClassType * instance, 
+void ExportStateMachineDescription(
+              const ClassType * instance,
               const std::string & outputDirectory, bool skipLoops )
 {
   std::string filename = outputDirectory+"/";
@@ -263,7 +264,7 @@ void ExportStateMachineDescription(
                                                                   skipLoops ); \
 }
 
-// This is for classes that do not use SmartPointers and have a default 
+// This is for classes that do not use SmartPointers and have a default
 // constructor
 #define igstkTestExportStateMachine2( type, outputDirectory, skipLoops ) \
 { \
@@ -287,11 +288,11 @@ public:      \
 
 namespace igstk
 {
-  
+
 typedef ImageSpatialObject<float,3>                 ImageSpatialObjectType;
 typedef ImageReader< ImageSpatialObjectType >       ImageReaderType;
 typedef DICOMImageReader< ImageSpatialObjectType >  DICOMImageReaderType;
-typedef ImageSpatialObjectRepresentation< ImageSpatialObjectType >  
+typedef ImageSpatialObjectRepresentation< ImageSpatialObjectType >
                                         ImageSpatialObjectRepresentationType;
 
 typedef SpatialObjectReader<3,float>                SpatialObjectReaderType;
@@ -310,9 +311,9 @@ public:
   virtual void UpdateRepresentationProcessing() {};
 
 };
-  
+
 igstkDeclareSurrogateClass( SpatialObjectSurrogate, SpatialObject );
-igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate, 
+igstkDeclareSurrogateClass( ImageSpatialObjectSurrogate,
                              ImageSpatialObjectType );
 igstkDeclareSurrogateClass( DICOMImageReaderSurrogate, DICOMImageReaderType );
 }
@@ -340,94 +341,100 @@ int main( int argc, char * argv [] )
   std::cout << "Skip Loops option = " << skipLoops << std::endl;
 
   // This is for classes that use SmartPointers
-  igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::CylinderObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::EllipsoidObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::AxesObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::AxesObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::BoxObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::BoxObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::ConeObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::ConeObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::MeshObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::MeshObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::TubeObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::TubeObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::UltrasoundProbeObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::UltrasoundProbeObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::EllipsoidObject, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::CylinderObject, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::PulseGenerator, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::DummyTracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::DummyTrackerTool, outputDirectory,skipLoops );
-  igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,skipLoops );
- 
-  igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::DummyTracker, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::Landmark3DRegistrationErrorEstimator, 
+  igstkTestExportStateMachine1( igstk::DummyTrackerTool, outputDirectory,
+                                                                    skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory,
+                                                                    skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory,
+                                                                    skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,
+                                                                    skipLoops );
+
+  igstkTestExportStateMachine1( igstk::Landmark3DRegistration, outputDirectory,
+                                                                    skipLoops );
+  igstkTestExportStateMachine1( igstk::Landmark3DRegistrationErrorEstimator,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::CTImageReader, outputDirectory,
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::MeshReader, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::TubeReader, outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::MRImageReader, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::MRImageSpatialObject, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::MRImageSpatialObject, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::MRImageSpatialObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::MRImageSpatialObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::CTImageSpatialObject, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::CTImageSpatialObject, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::CTImageSpatialObjectRepresentation, 
+  igstkTestExportStateMachine1( igstk::CTImageSpatialObjectRepresentation,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType, 
+  igstkTestExportStateMachine1( igstk::ImageSpatialObjectRepresentationType,
                                                    outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration, 
+  igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration, 
+  igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration,
                                                    outputDirectory, skipLoops );
 
   igstkTestExportStateMachine1( igstk::View, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View2D, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View3D, outputDirectory, skipLoops );
-  
-  igstkTestExportStateMachine1( igstk::CoordinateSystemDelegator, outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1(
+    igstk::CoordinateSystemDelegator, outputDirectory, skipLoops );
 
 #if defined(IGSTK_USE_FLTK)
-  // The Widget classes don't use SmartPointer and don't have a 
+  // The Widget classes don't use SmartPointer and don't have a
   // default constructor.
   igstk::FLTKWidget widget(0,0, 100, 100, "dummy view for testing");
-  igstk::ExportStateMachineDescription( &widget, outputDirectory, skipLoops ); 
+  igstk::ExportStateMachineDescription( &widget, outputDirectory, skipLoops );
 #endif
 
   // Exporting Abstract classes by creating derived surrogates for them.
-  igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
+  igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate , 
+  igstkTestExportStateMachine1( igstk::ImageSpatialObjectSurrogate ,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate, 
+  igstkTestExportStateMachine1( igstk::DICOMImageReaderSurrogate,
                                                    outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate, 
+  igstkTestExportStateMachine1( igstk::ObjectRepresentationSurrogate,
                                                    outputDirectory, skipLoops );
   // Export the state diagrams for the Serial Communication classes according
   // to the current platform.
 #if defined(WIN32) || defined(_WIN32)
-  igstkTestExportStateMachine1( igstk::SerialCommunicationForWindows, 
+  igstkTestExportStateMachine1( igstk::SerialCommunicationForWindows,
                                                    outputDirectory, skipLoops );
 #else
-  igstkTestExportStateMachine1( igstk::SerialCommunicationForPosix, 
+  igstkTestExportStateMachine1( igstk::SerialCommunicationForPosix,
                                                    outputDirectory, skipLoops );
 #endif
 

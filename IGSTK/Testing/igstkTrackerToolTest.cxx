@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 //  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -36,25 +36,25 @@ public:
 
 protected:
   TestingTrackerTool():m_StateMachine(this)
-  {
-  }
+    {
+    }
   ~TestingTrackerTool()
-  {
-  }
+    {
+    }
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
-  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
 };
 }
- 
+
 int igstkTrackerToolTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::TestingTrackerTool             TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
-    
+
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
   trackerTool->RequestConfigure();

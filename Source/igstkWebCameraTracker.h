@@ -64,8 +64,11 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
-  virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+    const TrackerToolType * );
+
+  virtual ResultType AddTrackerToolToInternalDataContainers(
+    const TrackerToolType * );
 
   /** This is the most important method of the WebCameraTracker family.
    *  This method must be overloaded in derived classes in order to
@@ -79,7 +82,7 @@ protected:
   virtual ResultType InternalThreadedUpdateStatus( void );
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** types for internal data structures */
   typedef unsigned char               PixelType;
@@ -108,7 +111,7 @@ private:
 
   PointListType               m_BrightestPixelPositions;
   PixelValueListType          m_BrightestPixelValues;
-  
+
   PointType                   m_Position;
 };
 

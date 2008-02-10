@@ -37,13 +37,13 @@ namespace igstk
 {
 
 /** Constructor */
-FLTKWidget::FLTKWidget( int x, int y, int w, int h, const char *l ) : 
+FLTKWidget::FLTKWidget( int x, int y, int w, int h, const char *l ) :
 Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
-{ 
+{
   igstkLogMacro( DEBUG, "igstkFLTKWidget::Constructor() called ...\n");
-  
+
   this->m_Logger = NULL;
-  
+
   this->end();
 
   //Turn on interaction handling
@@ -55,8 +55,8 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   this->m_Renderer = NULL;
   this->m_RenderWindowInteractor = NULL;
 
-  // instantiate the view object 
-  this->m_View = ViewType::New(); 
+  // instantiate the view object
+  this->m_View = ViewType::New();
 
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
@@ -66,7 +66,7 @@ Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( ViewConnected );
 
-  igstkAddTransitionMacro( Idle, ValidView, ViewConnected, ConnectView );   
+  igstkAddTransitionMacro( Idle, ValidView, ViewConnected, ConnectView );
 
   igstkAddTransitionMacro( Idle, EnableInteractions,
                            Idle,  ReportInvalidRequest );
@@ -90,7 +90,7 @@ FLTKWidget::~FLTKWidget()
   igstkLogMacro( DEBUG,
                 "igstkFLTKWidget::igstkFLTKWidgeti::Destructor() called ...\n");
 
-  if ( ! this->m_View.IsNull() ) 
+  if ( ! this->m_View.IsNull() )
     {
     this->m_View->RequestStop();
 
@@ -124,7 +124,7 @@ void FLTKWidget::SetRenderer( vtkRenderer * renderer )
 }
 
 /** Set VTK render window interactor */
-void 
+void
 FLTKWidget::SetRenderWindowInteractor( vtkRenderWindowInteractor * interactor )
 {
   this->m_RenderWindowInteractor = interactor;
@@ -166,14 +166,14 @@ void FLTKWidget::ConnectViewProcessing( )
 void FLTKWidget::SetRenderWindowID(void)
 {
 
-  if ( this->m_Renderer == NULL ) 
+  if ( this->m_Renderer == NULL )
     {
     return;
     }
 
   vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
 
-  if ( renderWindow == NULL ) 
+  if ( renderWindow == NULL )
     {
     return;
     }
@@ -191,7 +191,7 @@ void FLTKWidget::SetRenderWindowID(void)
   #endif
 
 }
- 
+
 /** Request enable interactions */
 void FLTKWidget::RequestEnableInteractions()
 {
@@ -261,7 +261,7 @@ void FLTKWidget::draw(void)
     this->SetRenderWindowID();
     }
 
-  vtkRenderWindowInteractor * interactor = this->m_RenderWindowInteractor; 
+  vtkRenderWindowInteractor * interactor = this->m_RenderWindowInteractor;
 
   if ( interactor != NULL )
     {
@@ -277,7 +277,7 @@ void FLTKWidget::hide()
 }
 
 /** Resize function */
-void FLTKWidget::resize( int x, int y, int w, int h ) 
+void FLTKWidget::resize( int x, int y, int w, int h )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::resize() called ...\n");
 
@@ -288,35 +288,35 @@ void FLTKWidget::resize( int x, int y, int w, int h )
     }
 
   // resize the FLTK window by calling ancestor method
-  Fl_Gl_Window::resize( x, y, w, h ); 
+  Fl_Gl_Window::resize( x, y, w, h );
 }
 
 
 /** main FLTK event handler */
-int FLTKWidget::handle( int event ) 
+int FLTKWidget::handle( int event )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::handle() called ...\n");
 
-  vtkRenderWindowInteractor * renderWindowInteractor = 
-                                                   this->m_RenderWindowInteractor;
+  vtkRenderWindowInteractor * renderWindowInteractor =
+    this->m_RenderWindowInteractor;
 
   if ( renderWindowInteractor == NULL )
     {
     return 0;
     }
 
-  if( !renderWindowInteractor->GetEnabled() || !this->m_InteractionHandling) 
+  if( !renderWindowInteractor->GetEnabled() || !this->m_InteractionHandling)
     {
     return 0;
     }
   // SEI(x, y, ctrl, shift, keycode, repeatcount, keysym)
   renderWindowInteractor->SetEventInformation(
-                            Fl::event_x(), this->h()-Fl::event_y()-1, 
-                            Fl::event_state( FL_CTRL ), 
+                            Fl::event_x(), this->h()-Fl::event_y()-1,
+                            Fl::event_state( FL_CTRL ),
                             Fl::event_state( FL_SHIFT ),
-                            Fl::event_key(), 1, NULL);   
-    
-  switch( event ) 
+                            Fl::event_key(), 1, NULL);
+
+  switch( event )
     {
     case FL_FOCUS:
     case FL_UNFOCUS:
@@ -325,11 +325,11 @@ int FLTKWidget::handle( int event )
 
     case FL_KEYBOARD:   // keypress
       renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
-      
+
       // Disabling VTK keyboard interaction
       //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
       //this->InvokeEvent(vtkCommand::CharEvent, NULL);
-     
+
       // now for possible controversy: there
       // is no way to find out if the
       // InteractorStyle actually did
@@ -344,10 +344,10 @@ int FLTKWidget::handle( int event )
       // hotkeys)
       return 0;
       break;
-     
+
     case FL_PUSH: // mouse down
       this->take_focus();  // this allows key events to work
-      switch( Fl::event_button() ) 
+      switch( Fl::event_button() )
         {
         case FL_LEFT_MOUSE:
           renderWindowInteractor->InvokeEvent(
@@ -362,11 +362,11 @@ int FLTKWidget::handle( int event )
                                      vtkCommand::RightButtonPressEvent,NULL);
           break;
         }
-      break; // this break should be here, at least according to 
+      break; // this break should be here, at least according to
              // vtkXRenderWindowInteractor
 
-      // we test for both of these, as fltk classifies mouse moves as 
-      // with or without button press whereas vtk wants all mouse movement 
+      // we test for both of these, as fltk classifies mouse moves as
+      // with or without button press whereas vtk wants all mouse movement
       // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
@@ -374,7 +374,7 @@ int FLTKWidget::handle( int event )
     break;
 
     case FL_RELEASE:    // mouse up
-      switch( Fl::event_button() ) 
+      switch( Fl::event_button() )
         {
         case FL_LEFT_MOUSE:
           {
@@ -395,7 +395,7 @@ int FLTKWidget::handle( int event )
         }
       break;
 
-    default:    // let the base class handle everything else 
+    default:    // let the base class handle everything else
     return Fl_Gl_Window::handle( event );
     } // switch(event)...
 

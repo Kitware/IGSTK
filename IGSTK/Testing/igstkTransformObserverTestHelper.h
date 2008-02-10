@@ -26,7 +26,7 @@
 namespace igstk
 {
 
-class TransformObserverTestHelper : public ::itk::Command 
+class TransformObserverTestHelper : public ::itk::Command
 {
 public:
   typedef  TransformObserverTestHelper     Self;
@@ -35,17 +35,17 @@ public:
   itkNewMacro( Self );
 
 protected:
-  TransformObserverTestHelper() 
+  TransformObserverTestHelper()
     {
     m_GotTransform = false;
     m_GotTransformNotAvailableMessage = false;
     }
   ~TransformObserverTestHelper() {}
 public:
-    
-  typedef ::igstk::CoordinateSystemTransformToEvent              PositiveEventType;
-  typedef ::igstk::TransformNotAvailableEvent                             NegativeEventType;
-        
+
+  typedef ::igstk::CoordinateSystemTransformToEvent     PositiveEventType;
+  typedef ::igstk::TransformNotAvailableEvent           NegativeEventType;
+
   void Execute(itk::Object *caller, const itk::EventObject & event)
     {
     const itk::Object * constCaller = caller;
@@ -60,7 +60,7 @@ public:
 
     if( PositiveEventType().CheckEvent( &event ) )
       {
-      const PositiveEventType * transformEvent = 
+      const PositiveEventType * transformEvent =
                  dynamic_cast< const PositiveEventType *>( &event );
       if( transformEvent )
         {
@@ -73,7 +73,7 @@ public:
 
     if( NegativeEventType().CheckEvent( &event ) )
       {
-      const NegativeEventType * negativeEvent = 
+      const NegativeEventType * negativeEvent =
                  dynamic_cast< const NegativeEventType *>( &event );
       if( negativeEvent )
         {
@@ -97,15 +97,15 @@ public:
     {
     return m_Transform;
     }
-        
+
 private:
 
-  typedef ::igstk::CoordinateSystemTransformToResult TransformToResultType;
-  typedef ::igstk::Transform                                  TransformType;
-  
+  typedef ::igstk::CoordinateSystemTransformToResult   TransformToResultType;
+  typedef ::igstk::Transform                           TransformType;
+
   TransformToResultType   m_TransformToResult;
   TransformType           m_Transform;
-  
+
   bool                m_GotTransform;
   bool                m_GotTransformNotAvailableMessage;
 };

@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 //  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -38,10 +38,10 @@ igstkObserverObjectMacro(MRImage,
     ::igstk::MRImageReader::ImageModifiedEvent,::igstk::MRImageSpatialObject)
 
 // Simulate an US from the MR image
-typedef igstk::UltrasoundImageSimulator<igstk::MRImageSpatialObject> 
+typedef igstk::UltrasoundImageSimulator<igstk::MRImageSpatialObject>
                                                               USSimulatorType;
 typedef USSimulatorType::ImageModifiedEvent        USImageModifiedEventType;
-  
+
 igstkObserverObjectMacro(SimulatedUSImage,
                          USImageModifiedEventType,
                          igstk::USImageObject)
@@ -51,7 +51,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 {
   if(argc<3)
     {
-    std::cout << "Usage = " << argv[0] << " directory" 
+    std::cout << "Usage = " << argv[0] << " directory"
               << argv[1] << "output image" << std::endl;
     return EXIT_FAILURE;
     }
@@ -60,10 +60,10 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   MRReader->RequestSetDirectory(argv[1]);
   MRReader->RequestReadImage();
 
-  typedef UltrasoundImageSimulatorTest::MRImageObserver 
+  typedef UltrasoundImageSimulatorTest::MRImageObserver
                                                         MRImageObserverType;
   MRImageObserverType::Pointer mrImageObserver = MRImageObserverType::New();
- 
+
   MRReader->AddObserver(::igstk::MRImageReader::ImageModifiedEvent(),
                             mrImageObserver);
 
@@ -98,7 +98,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   typedef UltrasoundImageSimulatorTest::SimulatedUSImageObserver
                                                      SimulatedUSImageObserver;
-  SimulatedUSImageObserver::Pointer usImageObserver 
+  SimulatedUSImageObserver::Pointer usImageObserver
                                             = SimulatedUSImageObserver::New();
   usSimulator->AddObserver(USSimulatorType::ImageModifiedEvent(),
                              usImageObserver);
@@ -111,19 +111,19 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  igstk::USImageObject::Pointer usImage = 
+  igstk::USImageObject::Pointer usImage =
                                        usImageObserver->GetSimulatedUSImage();
 
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"UltrasoundImageSimulatorTest");
-    
-  typedef igstk::View2D  View2DType;
+
+  typedef igstk::View2D          View2DType;
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
 
-  // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
+  // instantiate FLTK widget
+  FLTKWidgetType * fltkWidget2D =
                     new FLTKWidgetType( 10,10,280,280,"2D View");
   fltkWidget2D->RequestSetView( view2D );
 
@@ -133,24 +133,24 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   // Add the image object representation to the view
   typedef igstk::USImageObjectRepresentation ImageRepresentationType;
-  ImageRepresentationType::Pointer imageRepresentation 
+  ImageRepresentationType::Pointer imageRepresentation
                                             = ImageRepresentationType::New();
 
   view2D->RequestAddObject( imageRepresentation );
- 
+
   imageRepresentation->SetWindowLevel( 255 / 2.0, 255 / 2.0 );
   imageRepresentation->RequestSetImageSpatialObject( usImage );
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
-  
+
   view2D->RequestSetOrientation( igstk::View2D::Axial );
 
   imageRepresentation->RequestSetSliceNumber( 0 );
-  
+
   view2D->RequestResetCamera();
   view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
 
-  Fl::wait(1.0);  
+  Fl::wait(1.0);
   igstk::PulseGenerator::CheckTimeouts();
 
   igstk::PulseGenerator::CheckTimeouts();
@@ -158,7 +158,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   // Save screenshots in a file
   std::string filename;
-  filename = argv[2]; 
+  filename = argv[2];
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 

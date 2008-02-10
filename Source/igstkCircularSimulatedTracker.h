@@ -57,8 +57,8 @@ protected:
 
   virtual ~CircularSimulatedTracker();
 
-  typedef Tracker::ResultType         ResultType;
-  typedef RealTimeClock::TimeStampType   TimeType;
+  typedef Tracker::ResultType             ResultType;
+  typedef RealTimeClock::TimeStampType    TimeType;
 
   virtual ResultType InternalOpen( void );
 
@@ -75,7 +75,8 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( TrackerToolType * );
 
-  virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * );
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * );
 
 
   /** This is the most important method of this class. It computes the

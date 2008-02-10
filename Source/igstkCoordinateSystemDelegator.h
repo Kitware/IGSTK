@@ -144,12 +144,10 @@ protected:
 
 private:
   /** Purposely not implemented. */
-  CoordinateSystemDelegator
-                                (const CoordinateSystemDelegator& );
+  CoordinateSystemDelegator(const CoordinateSystemDelegator& );
 
   /** Purposely not implemented. */
-  CoordinateSystemDelegator& operator= 
-                                 (const CoordinateSystemDelegator&);
+  CoordinateSystemDelegator& operator=(const CoordinateSystemDelegator&);
 
   /** One state */
   igstkDeclareStateMacro( Idle );

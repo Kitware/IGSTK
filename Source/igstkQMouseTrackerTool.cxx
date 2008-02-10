@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 // in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -45,24 +45,26 @@ void QMouseTrackerTool::RequestSetMouseName( const MouseNameType & mouseName )
   m_TrackerToolConfigured = true;
 
   // For MouseTracker, mouse name is used as a unique identifier
-  this->SetTrackerToolIdentifier( m_MouseName ); 
+  this->SetTrackerToolIdentifier( m_MouseName );
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
+ * tool * is configured */
 bool
 QMouseTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG,
+   "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
-/** The "RequestAttachToTracker" method attaches 
+/** The "RequestAttachToTracker" method attaches
  * the tracker tool to a tracker. */
-void 
+void
 QMouseTrackerTool::RequestAttachToTracker( QMouseTracker *  tracker )
 {
   // This delegation is done only to enforce type matching between
-  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // TrackerTool and Tracker. It prevents the user from accidentally
   // mix TrackerTools and Trackers of different type;
   this->TrackerTool::RequestAttachToTracker( tracker );
 }

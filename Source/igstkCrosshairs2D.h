@@ -1,8 +1,19 @@
-/*
- * No license text yet. (What license should contributors to IGSTK use?)
- * Would like to include the Sintef name somewhere in the IGSTK license.
- */
+/*=========================================================================
 
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkCrosshairs2D.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkCrosshairs2D_h
 #define __igstkCrosshairs2D_h
 
@@ -20,15 +31,18 @@ namespace igstk
  * @brief A class to display a 2D crosshair in the overlay plane of QView.
  * @date 2007.06.30
  * @author Torleif Sandnes
+ *
+ * Contributed by SINTEF
+ *
  */
 class Crosshairs2D : public Object
 {
 public:
     igstkStandardClassTraitsMacro(Crosshairs2D, igstk::Object);
-    
+
     Crosshairs2D();
     ~Crosshairs2D();
-    
+
     /**
      * Set the x,y and z coordinates of the crosshairs.
      * @param x The x coordinate.
@@ -57,26 +71,26 @@ public:
 
     /**
      * Set the viewport to render in. (Required for coordinate conversions.)
-     * @param viewPort The vtk viewport that the crosshairs will be rendered in.  
+     * @param viewPort The vtk viewport that the crosshairs will be rendered in.
      */
     void RequestSetViewport(vtkViewport *viewPort);
-    
+
     /**
      * Return the horizontal axis actor.
-     * @warning This method should not be accessed by clients of this class. 
+     * @warning This method should not be accessed by clients of this class.
      * It's only purpose is to enable view objects to add the actor to a scene.
      * @return A pointer to the horizontal vtkAxisActor2D object.
      */
-    vtkAxisActor2D *GetHorizontalAxisActor() const 
+    vtkAxisActor2D *GetHorizontalAxisActor() const
     { return m_HorizontalAxisActor; }
-    
+
     /**
      * Return the vertical axis actor.
-     * @warning This method should not be accessed by clients of this class. 
+     * @warning This method should not be accessed by clients of this class.
      * It's only purpose is to enable view objects to add the actor to a scene.
      * @return A pointer to the vertical vtkAxisActor2D object.
      */
-    vtkAxisActor2D *GetVerticalAxisActor() const 
+    vtkAxisActor2D *GetVerticalAxisActor() const
     { return m_VerticalAxisActor; }
 
 private:
@@ -104,6 +118,6 @@ private:
     igstkDeclareStateMacro(Idle);
     igstkDeclareStateMacro(ViewportSet);
     igstkDeclareStateMacro(PositionSet);
-};    
+};
 }
 #endif

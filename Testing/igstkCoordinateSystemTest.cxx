@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters 
+// Warning about: identifier was truncated to '255' characters
 // in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -53,10 +53,10 @@ int igstkCoordinateSystemTest( int, char * [] )
   logger->SetPriorityLevel( LoggerType::INFO );
 
   // Create an igstk::VTKLoggerOutput and then test it.
-  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput 
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput
                                              = igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
+  vtkLoggerOutput->SetLogger(logger);  // redirect messages from
                                        // VTK OutputWindow -> logger
 
   typedef igstk::CoordinateSystem  ObjectType;
@@ -81,14 +81,14 @@ int igstkCoordinateSystemTest( int, char * [] )
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
-  transform1.SetTranslationAndRotation( 
+  transform1.SetTranslationAndRotation(
     translation, rotation, errorValue, validityTimeInMilliseconds );
 
 
   ObjectType::Pointer coordinateSystemRoot = ObjectType::New();
   coordinateSystemRoot->SetName( "Root" );
 
-  coordinateSystemA->RequestSetTransformAndParent( transform1, 
+  coordinateSystemA->RequestSetTransformAndParent( transform1,
                                                    coordinateSystemRoot );
 
   coordinateSystemA->RequestComputeTransformTo(coordinateSystemRoot);
@@ -96,11 +96,12 @@ int igstkCoordinateSystemTest( int, char * [] )
   igstk::Transform  transform1b;
   if( coordSystemAObserver->GotTransform() )
     {
-    ObserverType::PayloadType payload = 
+    ObserverType::PayloadType payload =
       coordSystemAObserver->GetTransformBetweenCoordinateSystems();
 
     transform1b = payload.GetTransform();
-    std::cout << "Got payload with transfrom from " << payload.GetSource()->GetName();
+    std::cout << "Got payload with transfrom from ";
+    std::cout << payload.GetSource()->GetName();
     std::cout << " to " << payload.GetDestination()->GetName() << std::endl;
 
     igstk::Transform::VectorType translation1b=transform1b.GetTranslation();
@@ -109,7 +110,7 @@ int igstkCoordinateSystemTest( int, char * [] )
       {
       if( fabs( translation1b[i]  - translation[i] ) > tolerance )
         {
-        std::cerr << "Translation component is out of range [FAILED]" 
+        std::cerr << "Translation component is out of range [FAILED]"
                   << std::endl;
         std::cerr << "input  translation = " << translation << std::endl;
         std::cerr << "output translation = " << translation1b << std::endl;
@@ -123,7 +124,7 @@ int igstkCoordinateSystemTest( int, char * [] )
         fabs( rotation1b.GetZ() - rotation.GetZ() ) > tolerance ||
         fabs( rotation1b.GetW() - rotation.GetW() ) > tolerance     )
       {
-      std::cerr << "Rotation component is out of range [FAILED]" 
+      std::cerr << "Rotation component is out of range [FAILED]"
                 << std::endl;
       std::cerr << "input  rotation = " << rotation   << std::endl;
       std::cerr << "output rotation = " << rotation1b << std::endl;
@@ -156,14 +157,14 @@ int igstkCoordinateSystemTest( int, char * [] )
 
   igstk::Transform transform2;
 
-  transform2.SetTranslationAndRotation( 
+  transform2.SetTranslationAndRotation(
     translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  coordinateSystemB->RequestSetTransformAndParent( transform2, 
+  coordinateSystemB->RequestSetTransformAndParent( transform2,
                                                    coordinateSystemA );
 
   // Verify the computation of the transform to the root
-  igstk::Transform  transform3a  = igstk::Transform::TransformCompose( 
+  igstk::Transform  transform3a  = igstk::Transform::TransformCompose(
                                                     transform1, transform2 );
 
   coordinateSystemB->RequestComputeTransformTo(coordinateSystemRoot);
@@ -186,7 +187,7 @@ int igstkCoordinateSystemTest( int, char * [] )
       {
       if( fabs( translation3a[i]  - translation3b[i] ) > tolerance )
         {
-        std::cerr << "Translation component is out of range [FAILED]" 
+        std::cerr << "Translation component is out of range [FAILED]"
                   << std::endl;
         std::cerr << "input  translation = " << translation3a << std::endl;
         std::cerr << "output translation = " << translation3b << std::endl;
@@ -202,7 +203,7 @@ int igstkCoordinateSystemTest( int, char * [] )
         fabs( rotation3a.GetZ() - rotation3b.GetZ() ) > tolerance ||
         fabs( rotation3a.GetW() - rotation3b.GetW() ) > tolerance     )
       {
-      std::cerr << "Rotation component is out of range [FAILED]" 
+      std::cerr << "Rotation component is out of range [FAILED]"
                 << std::endl;
       std::cerr << "input  rotation = " << rotation3a << std::endl;
       std::cerr << "output rotation = " << rotation3b << std::endl;
@@ -224,7 +225,8 @@ int igstkCoordinateSystemTest( int, char * [] )
   ObjectType::Pointer coordinateSystemDisconnected = ObjectType::New();
   coordinateSystemDisconnected->SetName( "Disconnected" );
 
-  coordSystemDisconnectedObserver->ObserveTransformEventsFrom( coordinateSystemDisconnected );
+  coordSystemDisconnectedObserver->ObserveTransformEventsFrom(
+    coordinateSystemDisconnected );
 
   coordinateSystemDisconnected->RequestComputeTransformTo( coordinateSystemA );
 

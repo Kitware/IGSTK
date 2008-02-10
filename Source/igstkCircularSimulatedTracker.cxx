@@ -16,7 +16,7 @@ PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
 #if defined(_MSC_VER)
-// Warning about: identifier was truncated to '255' characters in 
+// Warning about: identifier was truncated to '255' characters in
 // the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -39,55 +39,64 @@ CircularSimulatedTracker::~CircularSimulatedTracker()
 {
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalOpen( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalOpen( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStartTracking( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalStartTracking( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalReset( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalReset( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalStopTracking( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalStopTracking( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalDeactivateTools( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalDeactivateTools( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType CircularSimulatedTracker::InternalClose( void )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::InternalClose( void )
 {
   return SUCCESS;
 }
 
-CircularSimulatedTracker::ResultType 
-CircularSimulatedTracker::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+CircularSimulatedTracker::ResultType
+CircularSimulatedTracker::VerifyTrackerToolInformation(
+  TrackerToolType * trackerTool )
 {
   return SUCCESS;
 }
 
 
-CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker::ResultType
 CircularSimulatedTracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "CircularSimulatedTracker::InternalUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG,
+    "CircularSimulatedTracker::InternalUpdateStatus called ...\n");
 
   typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
- 
+  TrackerToolsContainerType trackerToolContainer =
+    this->GetTrackerToolContainer();
+
   ConstIteratorType inputItr = trackerToolContainer.begin();
   ConstIteratorType inputEnd = trackerToolContainer.end();
- 
+
   typedef igstk::Transform   TransformType;
   TransformType transform;
 
@@ -107,8 +116,12 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
   // set the raw transform in all the tracker tools
   while( inputItr != inputEnd )
     {
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+    this->SetTrackerToolRawTransform(
+      trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate(
+      trackerToolContainer[inputItr->first], true );
+
     ++inputItr;
     }
 
@@ -116,24 +129,25 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
   const double DegreesToRadians = ( atan(1.0) / 45.0 );
 
   const RealTimeClock::TimeStampType timeNow = RealTimeClock::GetTimeStamp();
-  const RealTimeClock::TimeStampType timeLapseInSeconds = 
+  const RealTimeClock::TimeStampType timeLapseInSeconds =
     MillisecondsToSeconds * ( timeNow - this->m_TimeOfLastUpdate );
 
 
-  this->m_Angle += DegreesToRadians * this->m_AngularSpeed * timeLapseInSeconds;
+  this->m_Angle +=
+    DegreesToRadians * this->m_AngularSpeed * timeLapseInSeconds;
 
   this->m_TimeOfLastUpdate = timeNow;
 
   return SUCCESS;
 }
 
-SimulatedTracker::ResultType 
+SimulatedTracker::ResultType
 CircularSimulatedTracker::InternalThreadedUpdateStatus( void )
 {
   return FAILURE;
 }
 
-CircularSimulatedTracker::ResultType 
+CircularSimulatedTracker::ResultType
 CircularSimulatedTracker
 ::RemoveTrackerToolFromInternalDataContainers
 ( const TrackerToolType * trackerTool )
@@ -142,14 +156,17 @@ CircularSimulatedTracker
 }
 
 /** Print Self function */
-void CircularSimulatedTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void CircularSimulatedTracker::PrintSelf(
+  std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Radius: " << this->m_Radius << std::endl;
   os << indent << "Angle: " << this->m_Angle << std::endl;
   os << indent << "Angular Speed: " << this->m_AngularSpeed << std::endl;
-  os << indent << "Time of Last Update : " << this->m_TimeOfLastUpdate << std::endl;
+
+  os << indent << "Time of Last Update : ";
+  os << this->m_TimeOfLastUpdate << std::endl;
 }
 
 }

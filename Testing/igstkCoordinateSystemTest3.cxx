@@ -29,8 +29,8 @@ int igstkCoordinateSystemTest3(int argc, char* argv[])
 
   typedef igstk::Object::LoggerType               LoggerType;
   typedef itk::StdStreamLogOutput                 LogOutputType;
-  typedef igstk::CoordinateSystem        CoordinateSystem;
-  typedef CoordinateSystem::Pointer      CoordinateSystemPointer;
+  typedef igstk::CoordinateSystem                 CoordinateSystem;
+  typedef CoordinateSystem::Pointer               CoordinateSystemPointer;
 
   LoggerType::Pointer logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();

@@ -190,7 +190,8 @@ void ContourVascularNetworkObjectRepresentation::CreateActors()
 }
 
 /** Create the vtk Actors for one vessel */
-void ContourVascularNetworkObjectRepresentation::CreateActorsForOneVesselProcessing()
+void ContourVascularNetworkObjectRepresentation::
+CreateActorsForOneVesselProcessing()
 {
   const VesselObjectType * vessel = m_VesselReceivedInputToBeSet;
 

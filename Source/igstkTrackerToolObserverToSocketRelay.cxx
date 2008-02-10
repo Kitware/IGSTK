@@ -46,15 +46,15 @@ TrackerToolObserverToSocketRelay::TrackerToolObserverToSocketRelay():m_StateMach
 
 TrackerToolObserverToSocketRelay::~TrackerToolObserverToSocketRelay()
 {
-   this->m_Observer = NULL; // FIXME also disconnect as an observer
+  this->m_Observer = NULL; // FIXME also disconnect as an observer
 
-   this->m_SocketController->Delete();
-   this->m_SocketCommunicator->Delete();
-   this->m_Matrix->Delete();
+  this->m_SocketController->Delete();
+  this->m_SocketCommunicator->Delete();
+  this->m_Matrix->Delete();
 
-   this->m_SocketController = NULL;
-   this->m_SocketCommunicator = NULL;
-   this->m_Matrix = NULL;
+  this->m_SocketController = NULL;
+  this->m_SocketCommunicator = NULL;
+  this->m_Matrix = NULL;
 }
 
 
@@ -70,7 +70,6 @@ TrackerToolObserverToSocketRelay::RequestSetHostName( const char * hostname )
 {
   this->m_HostName = hostname;
 }
-
 
 
 void
@@ -99,7 +98,7 @@ TrackerToolObserverToSocketRelay::RequestStart()
 
   this->m_WaitingForNextRequestFromSocket = false;
 }
- 
+
 
 void
 TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * caller, const itk::EventObject & event )
@@ -118,7 +117,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
   const int numberOfParametersToSend = 12;
 
 
-  const CoordinateSystemTransformToResult * transformEvent = 
+  const CoordinateSystemTransformToResult * transformEvent =
     static_cast< const CoordinateSystemTransformToResult * >( &event );
 
   igstk::Transform transform = transformEvent->GetTransform();
@@ -137,7 +136,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
       dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
       }
     }
-  
+
   // Hack for demo
   dataToBeSent[11] += 1000;
 
@@ -162,7 +161,7 @@ TrackerToolObserverToSocketRelay::ResendTransformThroughSocket( itk::Object * ca
     }
 
 }
- 
+
 
 
 /** Print Self function */

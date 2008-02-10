@@ -45,9 +45,9 @@ public:
   igstkGetStringMacro( MouseName );
 
   /** Set tracker tool mouse name */
-  virtual void RequestSetMouseName( const MouseNameType & MouseName ); 
+  virtual void RequestSetMouseName( const MouseNameType & MouseName );
 
-  /** The "RequestAttachToTracker" method attaches 
+  /** The "RequestAttachToTracker" method attaches
    * the tracker tool to a tracker. */
   virtual void RequestAttachToTracker( QMouseTracker * );
 
@@ -56,14 +56,14 @@ protected:
   QMouseTrackerTool();
   ~QMouseTrackerTool();
 
- /** Print object information */
-  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
 private:
 
-  /** Get boolean variable to check if the tracker tool is 
+  /** Get boolean variable to check if the tracker tool is
    * configured or not */
-  virtual bool CheckIfTrackerToolIsConfigured() const; 
+  virtual bool CheckIfTrackerToolIsConfigured() const;
 
   QMouseTrackerTool(const Self&);   //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
@@ -72,7 +72,7 @@ private:
 
   bool            m_TrackerToolConfigured;
 
-};  
+};
 
 } // namespace igstk
 
