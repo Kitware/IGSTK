@@ -65,13 +65,18 @@ FourViewsTrackingWithCT::FourViewsTrackingWithCT():m_StateMachine(this)
 
   m_LandmarkRegistration = RegistrationType::New();
   m_LandmarkRegistration->SetLogger( m_Logger );
+
   m_LandmarkRegistrationObserver = ObserverType2::New();
   m_LandmarkRegistrationObserver->SetCallbackFunction( this, 
-                   &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
-  m_LandmarkRegistration->AddObserver( igstk::CoordinateSystemTransformToEvent(), 
-                                               m_LandmarkRegistrationObserver );
-  m_LandmarkRegistration->AddObserver( igstk::TransformNotAvailableEvent(), 
-                                               m_LandmarkRegistrationObserver );
+    &FourViewsTrackingWithCT::GetLandmarkRegistrationTransform );
+
+  m_LandmarkRegistration->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(),
+    m_LandmarkRegistrationObserver );
+
+  m_LandmarkRegistration->AddObserver( 
+    igstk::TransformNotAvailableEvent(), 
+    m_LandmarkRegistrationObserver );
 
   m_LandmarkRegistrationRMSErrorObserver = ObserverType2::New();
   m_LandmarkRegistrationRMSErrorObserver->SetCallbackFunction( this, 
