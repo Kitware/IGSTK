@@ -31,8 +31,7 @@
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
-#include "igstkTransformObserverTestHelper.h"
+#include "igstkTransformObserver.h"
 
 namespace igstk
 {
@@ -180,13 +179,14 @@ int igstkGroupObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  typedef igstk::TransformObserverTestHelper  TransformObserverType;
+  typedef igstk::TransformObserver TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
-                                                 = TransformObserverType::New();
+    = TransformObserverType::New();
 
-  group->AddObserver(
-    igstk::CoordinateSystemTransformToEvent(), transformObserver );
+  transformObserver->ObserveTransformEventsFrom( group );
+
+  transformObserver->Clear();
 
   group->RequestSetTransformAndParent( transform, worldReference );
 

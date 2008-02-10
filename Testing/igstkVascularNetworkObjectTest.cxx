@@ -32,7 +32,7 @@
 #include "itkStdStreamLogOutput.h"
 #include "igstkAxesObject.h"
 
-#include "igstkTransformObserverTestHelper.h"
+#include "igstkTransformObserver.h"
 
 namespace igstk
 {
@@ -175,13 +175,14 @@ int igstkVascularNetworkObjectTest( int, char * [] )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  typedef igstk::TransformObserverTestHelper  TransformObserverType;
+  typedef igstk::TransformObserver TransformObserverType;
 
   TransformObserverType::Pointer transformObserver 
-                                                 = TransformObserverType::New();
+    = TransformObserverType::New();
 
-  network->AddObserver(
-    igstk::CoordinateSystemTransformToEvent(), transformObserver );
+  transformObserver->ObserveTransformEventsFrom( network );
+
+  transformObserver->Clear();
 
   network->RequestSetTransformAndParent( transform, worldReference );
 

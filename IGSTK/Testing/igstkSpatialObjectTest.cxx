@@ -28,7 +28,6 @@
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 
-#include "igstkTransformObserverTestHelper.h"
 
 namespace igstk
 {

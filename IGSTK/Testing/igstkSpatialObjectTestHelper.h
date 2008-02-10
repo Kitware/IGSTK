@@ -24,7 +24,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkDefaultWidget.h"
-#include "igstkTransformObserverTestHelper.h"
+#include "igstkTransformObserver.h"
 
 namespace igstk
 {
@@ -42,7 +42,7 @@ public:
   typedef typename RepresentationType::Pointer  RepresentationPointer;
   typedef igstk::View2D                         View2DType;
   typedef igstk::DefaultWidget                  WidgetType;
-  typedef igstk::TransformObserverTestHelper    TransformObserverType;
+  typedef igstk::TransformObserver              TransformObserverType;
 
 
 public:
@@ -163,8 +163,10 @@ public:
     transform.SetTranslationAndRotation(
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    this->m_SpatialObject->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), this->m_TransformObserver );
+    this->m_TransformObserver->ObserveTransformEventsFrom( 
+      this->m_SpatialObject );
+
+    this->m_TransformObserver->Clear();
 
     this->m_SpatialObject->RequestSetTransformAndParent(
       transform, this->m_View );

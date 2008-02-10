@@ -30,9 +30,8 @@
 #include "igstkRealTimeClock.h"
 #include "igstkVTKLoggerOutput.h"
 #include "igstkLogger.h"
+#include "igstkTransformObserver.h"
 #include "itkStdStreamLogOutput.h"
-
-#include "igstkTransformObserverTestHelper.h"
 
 int igstkCoordinateSystemObjectWithViewTest( int argc, char * argv [] )
 {
@@ -120,13 +119,14 @@ int igstkCoordinateSystemObjectWithViewTest( int argc, char * argv [] )
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
 
-  typedef igstk::TransformObserverTestHelper TransformObserverType;
+  typedef igstk::TransformObserver TransformObserverType;
 
-  TransformObserverType::Pointer transformObserver 
-                                               = TransformObserverType::New();
+  TransformObserverType::Pointer transformObserver
+    = TransformObserverType::New();
 
-  coordinateSystem->AddObserver( 
-    igstk::CoordinateSystemTransformToEvent(), transformObserver );
+  transformObserver->ObserveTransformEventsFrom( coordinateSystem );
+
+  transformObserver->Clear();
 
   coordinateSystem->RequestSetTransformAndParent( transform, worldReference );
   coordinateSystem->RequestGetTransformToParent();
