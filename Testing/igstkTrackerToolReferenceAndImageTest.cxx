@@ -45,8 +45,17 @@ igstkObserverObjectMacro(CTImage,
 }
 
 
-int igstkTrackerToolReferenceAndImageTest( int , char * [] )
+int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
 {
+
+  if( argc < 2 )
+    {
+    std::cerr << "Missing command line arguments" << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << " inputCTDICOMDirectory" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   igstk::RealTimeClock::Initialize();
 
   //
@@ -255,8 +264,9 @@ int igstkTrackerToolReferenceAndImageTest( int , char * [] )
     return EXIT_FAILURE;
     }
 
-  typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
-  RepresentationType::Pointer imageRepresentation = RepresentationType::New();
+  typedef igstk::CTImageSpatialObjectRepresentation ImageRepresentationType;
+  ImageRepresentationType::Pointer imageRepresentation = 
+    ImageRepresentationType::New();
 
   CTImagePointer ctImage = ctImageObserver->GetCTImage();
 
