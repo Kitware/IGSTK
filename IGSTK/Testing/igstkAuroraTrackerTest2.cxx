@@ -39,9 +39,9 @@
 class AuroraTrackerTestCommand : public itk::Command 
 {
 public:
-  typedef  AuroraTrackerTestCommand   Self;
-  typedef  itk::Command                Superclass;
-  typedef itk::SmartPointer<Self>      Pointer;
+  typedef  AuroraTrackerTestCommand     Self;
+  typedef  itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>       Pointer;
   itkNewMacro( Self );
 protected:
   AuroraTrackerTestCommand() {};
@@ -135,7 +135,7 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::AuroraTrackerTool      TrackerToolType;
+  typedef igstk::AuroraTrackerTool          TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   unsigned int portANumber = atoi(argv[2]);
@@ -173,42 +173,43 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
   trackerTool3->RequestSetChannelNumber( 0 );
 
 
-  if ( order == 0)
-   { 
-     // These two are on the same port using spliter
-     std::cout << "Attaching tool 1\n";
-     trackerTool->RequestConfigure();
-     trackerTool->RequestAttachToTracker( tracker );
-     if (spliter)
-     {
-       std::cout << "Attaching tool 2\n";
-       trackerTool2->RequestConfigure();
-       trackerTool2->RequestAttachToTracker( tracker );
-     }
+  if( order == 0)
+    { 
+    // These two are on the same port using spliter
+    std::cout << "Attaching tool 1\n";
+    trackerTool->RequestConfigure();
+    trackerTool->RequestAttachToTracker( tracker );
+    if( spliter )
+      {
+      std::cout << "Attaching tool 2\n";
+      trackerTool2->RequestConfigure();
+      trackerTool2->RequestAttachToTracker( tracker );
+      }
 
-     // This is a single 5DOF tool plugged directly into the port
-     std::cout << "Attaching tool 3\n";
-     trackerTool3->RequestConfigure();
-     trackerTool3->RequestAttachToTracker( tracker );
-   }
-   else
-   {
-     // This is a single 5DOF tool plugged directly into the port
-     std::cout << "Attaching tool 3\n";
-     trackerTool3->RequestConfigure();
-     trackerTool3->RequestAttachToTracker( tracker );
+    // This is a single 5DOF tool plugged directly into the port
+    std::cout << "Attaching tool 3\n";
+    trackerTool3->RequestConfigure();
+    trackerTool3->RequestAttachToTracker( tracker );
+    }
+  else
+    {
+    // This is a single 5DOF tool plugged directly into the port
+    std::cout << "Attaching tool 3\n";
+    trackerTool3->RequestConfigure();
+    trackerTool3->RequestAttachToTracker( tracker );
 
-     // These two are on the same port using spliter
-     std::cout << "Attaching tool 1\n";
-     trackerTool->RequestConfigure();
-     trackerTool->RequestAttachToTracker( tracker );
-     if (spliter)
-     {
-       std::cout << "Attaching tool 2\n";
-       trackerTool2->RequestConfigure();
-       trackerTool2->RequestAttachToTracker( tracker );
-     }
-   }
+    // These two are on the same port using spliter
+    std::cout << "Attaching tool 1\n";
+    trackerTool->RequestConfigure();
+    trackerTool->RequestAttachToTracker( tracker );
+    if( spliter )
+      {
+      std::cout << "Attaching tool 2\n";
+      trackerTool2->RequestConfigure();
+      trackerTool2->RequestAttachToTracker( tracker );
+      }
+    }
+
   //start tracking 
   tracker->RequestStartTracking();
 
@@ -226,26 +227,26 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
 
     transform = trackerTool->GetCalibratedTransform();
     position = transform.GetTranslation();
-    std::string toolString = trackerTool->GetTrackerToolIdentifier() ;
+    std::string toolString = trackerTool->GetTrackerToolIdentifier();
     std::cout << "Trackertool:" << toolString
               << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
 
     if (spliter)
-    {    
-    transform = trackerTool2->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    toolString = trackerTool2->GetTrackerToolIdentifier() ;
-    std::cout << "Trackertool2:" << toolString
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-    }
+      {    
+      transform = trackerTool2->GetCalibratedTransform();
+      position = transform.GetTranslation();
+      toolString = trackerTool2->GetTrackerToolIdentifier();
+      std::cout << "Trackertool2:" << toolString
+                << "  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+      }
 
     transform = trackerTool3->GetCalibratedTransform();
     position = transform.GetTranslation();
-    toolString = trackerTool3->GetTrackerToolIdentifier() ;
+    toolString = trackerTool3->GetTrackerToolIdentifier();
     std::cout << "Trackertool3:" << toolString
                 << "  Position = (" << position[0]
               << "," << position[1] << "," << position[2]

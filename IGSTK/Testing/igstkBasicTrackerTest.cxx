@@ -49,15 +49,16 @@ public:
 
 protected:
   TestingTrackerTool():m_StateMachine(this)
-  {
-  }
+    {
+    }
+
   ~TestingTrackerTool()
-  {
-  }
+    {
+    }
 
   /** Check if the tracker tool is configured or not. This method should
    *  be implemented in the derived classes*/
-  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
 
 };
  
@@ -199,7 +200,8 @@ protected:
 
   typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
+  TrackerToolsContainerType trackerToolContainer = 
+    this->GetTrackerToolContainer();
  
   ConstIteratorType inputItr = trackerToolContainer.begin();
   ConstIteratorType inputEnd = trackerToolContainer.end();
@@ -214,8 +216,12 @@ protected:
       transform.SetTranslation( m_Translation, errorValue, validityPeriod );
 
       // set the raw transform
-      this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-      this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+      this->SetTrackerToolRawTransform( 
+        trackerToolContainer[inputItr->first], transform );
+
+      this->SetTrackerToolTransformUpdate( 
+        trackerToolContainer[inputItr->first], true );
+
       ++inputItr;
       }
 
@@ -232,7 +238,8 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+  Tracker::ResultType VerifyTrackerToolInformation( 
+    const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )
@@ -243,7 +250,8 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )
@@ -254,7 +262,8 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+  Tracker::ResultType AddTrackerToolToInternalDataContainers( 
+    const TrackerToolType * trackerTool )
     {
     static bool success = false;
     if( !success )
@@ -362,7 +371,10 @@ int igstkBasicTrackerTest( int, char * [] )
   transform = referenceTool->GetCalibrationTransform();
   std::cout << transform << std::endl;
 
-  transform = referenceTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+  // FIXME: This dangerous method should be removed
+  transform = 
+    referenceTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+
   std::cout << transform << std::endl;
 
 

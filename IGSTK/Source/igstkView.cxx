@@ -498,8 +498,8 @@ void View::SetRenderWindowSizeProcessing()
   if( this->m_Annotation2DToBeAdded ) 
     {
     this->m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( 
-                                              this->m_RenderWindowWidthToBeSet,
-                                              this->m_RenderWindowHeightToBeSet );
+      this->m_RenderWindowWidthToBeSet,
+      this->m_RenderWindowHeightToBeSet );
     }
 
   this->m_RenderWindowInteractor->Modified();
@@ -692,8 +692,10 @@ void View::AddObjectProcessing()
   this->m_ObjectToBeAdded->CreateActors();
 
   ObjectRepresentation::ActorsListType actors = 
-                                              this->m_ObjectToBeAdded->GetActors();
+    this->m_ObjectToBeAdded->GetActors();
+
   ObjectRepresentation::ActorsListType::iterator actorIt = actors.begin();
+
   while(actorIt != actors.end())
     {
     this->RequestAddActor(*actorIt);
@@ -712,9 +714,14 @@ void View::AddAnnotation2DProcessing( )
   const int * size = this->m_RenderWindowInteractor->GetSize();
   igstkLogMacro( DEBUG, "RenderWindow size: " << size[0] << "," << size[1]);
 
-  this->m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( size[0], size[1] );
+  this->m_Annotation2DToBeAdded->RequestSetAnnotationsViewPort( 
+    size[0], size[1] );
+
   this->m_Annotation2DToBeAdded->RequestAddAnnotations( );
-  Annotation2D::ActorsListType actors = this->m_Annotation2DToBeAdded->GetActors();
+
+  Annotation2D::ActorsListType actors = 
+    this->m_Annotation2DToBeAdded->GetActors();
+
   Annotation2D::ActorsListType::iterator actorIt = actors.begin();
 
   while(actorIt != actors.end())

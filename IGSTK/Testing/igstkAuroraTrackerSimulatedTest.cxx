@@ -39,7 +39,7 @@
 class AuroraTrackerTestCommand : public itk::Command 
 {
 public:
-  typedef  AuroraTrackerTestCommand   Self;
+  typedef  AuroraTrackerTestCommand    Self;
   typedef  itk::Command                Superclass;
   typedef itk::SmartPointer<Self>      Pointer;
   itkNewMacro( Self );
@@ -134,7 +134,7 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::AuroraTrackerTool      TrackerToolType;
+  typedef igstk::AuroraTrackerTool          TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach 5DOF tracker tool type 

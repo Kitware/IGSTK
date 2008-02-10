@@ -41,12 +41,13 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   if( argc < 2 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  [Screenshotfilename] " << std::endl;
+    std::cerr << "Usage: " << argv[0]
+      << "  CTImage  [Screenshotfilename] " << std::endl;
     return EXIT_FAILURE;
     }
   
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -168,7 +169,8 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Link the coordinate systems of the view and the image
   igstk::Transform identityTransform;
   identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  view2D->RequestSetTransformAndParent( identityTransform, ctImageObserver->GetCTImage() );
+  view2D->RequestSetTransformAndParent( 
+    identityTransform, ctImageObserver->GetCTImage() );
 
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );

@@ -256,7 +256,7 @@ PolarisTracker::ResultType PolarisTracker
       }
     }  
 
-    // initialize the port 
+  // initialize the port 
   commandInterpreter->PINIT(ph);
 
   if (this->CheckError(commandInterpreter) == SUCCESS)
