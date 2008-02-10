@@ -20,6 +20,7 @@
 /** This file contains the declarations of IGSTK Events used to communicate 
  *  among components. */
 
+#include "igstkTransform.h"
 #include "vtkImageData.h"
 
 namespace igstk 
