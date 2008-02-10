@@ -3,6 +3,7 @@
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
+#include "igstkCoordinateSystemInterfaceMacros.h"
 
 
 namespace igstk
@@ -400,8 +401,12 @@ PivotCalibrationAlgorithm::GetTransformProcessing()
                   "igstk::PivotCalibrationAlgorithm::"
                   "GetTransformProcessing called...\n");
 
-  TransformModifiedEvent event; 
-  event.Set( this->m_Transform );
+  CoordinateSystemTransformToResult result;
+  CoordinateSystemTransformToEvent event; 
+  // FIXME: This event should also include the source and destination coordinate systems.
+  result.Initialize( this->m_Transform, NULL, NULL );
+
+  event.Set( result );
   this->InvokeEvent( event );
 }
 
