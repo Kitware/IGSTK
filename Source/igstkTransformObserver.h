@@ -43,8 +43,8 @@ protected:
   ~TransformObserver() {}
 public:
     
-  typedef CoordinateSystemTransformToEvent              PositiveEventType;
-  typedef TransformNotAvailableEvent                             NegativeEventType;
+  typedef CoordinateSystemTransformToEvent     PositiveEventType;
+  typedef TransformNotAvailableEvent           NegativeEventType;
         
   /** Payload contained in an event that returns a valid transform. This
    * payload includes the following items: Transform, Source coordinate system,
