@@ -110,10 +110,11 @@ private:
     {
     public:
       ObservedObjectTagPairObjectMatchPredicate(
-        const itk::Object* obj) : m_TargetObject( obj ) {};
+        const itk::Object* obj) : m_TargetObject( obj ) 
+        {
+        }
 
-      bool operator() (
-        const igstk::Object::ObservedObjectTagPair& objTagPair )
+      bool operator()( const igstk::Object::ObservedObjectTagPair& objTagPair )
       {
       if (objTagPair.first == m_TargetObject)
         {

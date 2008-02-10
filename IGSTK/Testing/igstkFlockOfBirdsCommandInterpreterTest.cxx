@@ -128,7 +128,7 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
 #ifdef IGSTK_SIMULATOR_TEST

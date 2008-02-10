@@ -136,7 +136,7 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::PolarisTrackerTool      TrackerToolType;
+  typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wireless tracker tool

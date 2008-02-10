@@ -68,7 +68,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Object::LoggerType   LoggerType;
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   if( argc < 3 )
@@ -131,7 +131,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::PolarisTrackerTool      TrackerToolType;
+  typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  

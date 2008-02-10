@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 //  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -32,7 +32,7 @@
 
 namespace igstk
 {
-  
+
 namespace SpatialObjectTest
 {
 
@@ -44,7 +44,7 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
 
-  /** The "RequestAttachToTracker" method attaches 
+  /** The "RequestAttachToTracker" method attaches
    * the tracker tool to a tracker. */
   virtual void RequestAttachToTracker( MyTracker * );
 
@@ -60,7 +60,7 @@ protected:
    *  be implemented in the derived classes*/
   virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; } ;
 };
- 
+
 class DummySpatialObject : public SpatialObject
 {
 public:
@@ -92,7 +92,7 @@ public:
 protected:
   DummySpatialObject( void ):m_StateMachine(this) {};
   ~DummySpatialObject( void ) {};
-  
+
 };
 
 class MyTracker : public Tracker
@@ -105,7 +105,7 @@ public:
     typedef Superclass::TransformType           TransformType;
 
 protected:
-    MyTracker():m_StateMachine(this) 
+    MyTracker():m_StateMachine(this)
       {
       m_Position[0] = 0.0;
       m_Position[1] = 0.0;
@@ -121,15 +121,16 @@ protected:
 
     virtual ResultType InternalOpen( void ) { return SUCCESS; }
     virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalUpdateStatus( void ) 
-      { 
+    virtual ResultType InternalUpdateStatus( void )
+      {
 
       typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
-      TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
-     
+      TrackerToolsContainerType trackerToolContainer =
+        this->GetTrackerToolContainer();
+
       ConstIteratorType inputItr = trackerToolContainer.begin();
       ConstIteratorType inputEnd = trackerToolContainer.end();
-     
+
       typedef igstk::Transform   TransformType;
       TransformType transform;
 
@@ -140,24 +141,45 @@ protected:
         m_Position[1] += 2.0;  // just to simulate a linear movement
         m_Position[2] += 3.0;  // being tracked in space.
 
-        ErrorType errorValue = 0.5; 
+        ErrorType errorValue = 0.5;
         transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
+
         // set the raw transform
-        this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-        this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
+        this->SetTrackerToolRawTransform(
+          trackerToolContainer[inputItr->first], transform );
+
+        this->SetTrackerToolTransformUpdate(
+          trackerToolContainer[inputItr->first], true );
+
         ++inputItr;
         }
 
-      return SUCCESS; 
+      return SUCCESS;
       }
 
-    virtual ResultType InternalThreadedUpdateStatus( void )  { return SUCCESS; }
-    virtual ResultType InternalReset( void ) { return SUCCESS; }
-    virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalClose( void ) { return SUCCESS; }
-    virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * trackerTool ) { return SUCCESS; }
-    virtual ResultType RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool ) { return SUCCESS; }
-    virtual ResultType AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool ) { return SUCCESS; }
+    virtual ResultType InternalThreadedUpdateStatus( void )
+      { return SUCCESS; }
+
+    virtual ResultType InternalReset( void )
+      { return SUCCESS; }
+
+    virtual ResultType InternalStopTracking( void )
+      { return SUCCESS; }
+
+    virtual ResultType InternalClose( void )
+      { return SUCCESS; }
+
+    virtual ResultType VerifyTrackerToolInformation(
+      const TrackerToolType * trackerTool )
+      { return SUCCESS; }
+
+    virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+      const TrackerToolType * trackerTool )
+      { return SUCCESS; }
+
+    virtual ResultType AddTrackerToolToInternalDataContainers(
+      const TrackerToolType * trackerTool )
+      { return SUCCESS; }
 
 private:
 
@@ -171,12 +193,12 @@ private:
 };
 
 
-/** The "RequestAttachToTracker" method attaches 
+/** The "RequestAttachToTracker" method attaches
  * the tracker tool to a tracker. */
 void DummyTrackerTool::RequestAttachToTracker( MyTracker *  tracker )
 {
   // This delegation is done only to enforce type matching between
-  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // TrackerTool and Tracker. It prevents the user from accidentally
   // mix TrackerTools and Trackers of different type;
   this->Superclass::RequestAttachToTracker( tracker );
 }
@@ -218,7 +240,7 @@ int igstkSpatialObjectTest( int, char * [] )
   dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   dummyObject->Print( std::cout );
-  
+
   tracker->RequestStartTracking();
 
   for(unsigned int i=0; i<50; i++)
@@ -239,7 +261,7 @@ int igstkSpatialObjectTest( int, char * [] )
   igstk::Transform trackerTransform;
   trackerTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  dummyObject2->RequestSetTransformAndParent( 
+  dummyObject2->RequestSetTransformAndParent(
     trackerTransform, worldReference );
 
 

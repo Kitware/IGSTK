@@ -36,9 +36,9 @@
 class MouseTrackerTestCommand : public itk::Command 
 {
 public:
-  typedef  MouseTrackerTestCommand   Self;
-  typedef  itk::Command                Superclass;
-  typedef itk::SmartPointer<Self>      Pointer;
+  typedef MouseTrackerTestCommand     Self;
+  typedef itk::Command                Superclass;
+  typedef itk::SmartPointer<Self>     Pointer;
   itkNewMacro( Self );
 protected:
   MouseTrackerTestCommand() {};
@@ -66,10 +66,10 @@ int igstkMouseTrackerTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Transform         TransformType;
-  typedef igstk::MouseTracker      MouseTrackerType;
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Transform             TransformType;
+  typedef igstk::MouseTracker          MouseTrackerType;
+  typedef igstk::Object::LoggerType    LoggerType;
+  typedef itk::StdStreamLogOutput      LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -97,7 +97,7 @@ int igstkMouseTrackerTest( int, char * [] )
 
   tracker->RequestOpen();
 
-  typedef igstk::MouseTrackerTool      TrackerToolType;
+  typedef igstk::MouseTrackerTool           TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach wired tracker tool  
@@ -141,4 +141,3 @@ int igstkMouseTrackerTest( int, char * [] )
 
   return EXIT_SUCCESS;
 }
-

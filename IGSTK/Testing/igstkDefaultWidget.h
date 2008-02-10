@@ -34,8 +34,8 @@ namespace igstk {
 class DefaultWidget 
 {
 public:
-  typedef ::igstk::ViewProxy< DefaultWidget > ProxyType;
-  typedef ::igstk::View                  ViewType;
+  typedef ::igstk::ViewProxy< DefaultWidget >   ProxyType;
+  typedef ::igstk::View                         ViewType;
 
   friend class ::igstk::ViewProxy< DefaultWidget >;
 

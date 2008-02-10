@@ -327,9 +327,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   //
   //  Now visualize the object 3 under tracking
   //
-  ellipsoidObject3->RequestSetTransformAndParent( identityTransform, trackerTool );
+  ellipsoidObject3->RequestSetTransformAndParent( 
+    identityTransform, trackerTool );
+
   igstk::Transform calibrationTransform;
-  calibrationTransform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
+
+  calibrationTransform.SetToIdentity( 
+    ::igstk::TimeStamp::GetLongestPossibleTime() );
+
   trackerTool->SetCalibrationTransform( calibrationTransform );
 
   trackerTool->RequestSetName("tool1");

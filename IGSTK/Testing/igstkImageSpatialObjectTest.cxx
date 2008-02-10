@@ -39,7 +39,9 @@ int igstkImageSpatialObjectTest( int , char* [] )
   const unsigned int      Dimension = 3;
 
   typedef igstk::ImageSpatialObject< PixelType, Dimension >     ObjectType;
-  typedef igstk::ImageSpatialObjectRepresentation< ObjectType > RepresentationType;
+
+  typedef igstk::ImageSpatialObjectRepresentation< 
+                                               ObjectType > RepresentationType;
 
   typedef igstk::SpatialObjectTestHelper<
     ObjectType, RepresentationType > TestHelperType;

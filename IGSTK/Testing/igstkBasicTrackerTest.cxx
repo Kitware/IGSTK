@@ -198,13 +198,13 @@ protected:
       return FAILURE;
       }
 
-  typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+    typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
 
-  TrackerToolsContainerType trackerToolContainer = 
-    this->GetTrackerToolContainer();
- 
-  ConstIteratorType inputItr = trackerToolContainer.begin();
-  ConstIteratorType inputEnd = trackerToolContainer.end();
+    TrackerToolsContainerType trackerToolContainer = 
+      this->GetTrackerToolContainer();
+   
+    ConstIteratorType inputItr = trackerToolContainer.begin();
+    ConstIteratorType inputEnd = trackerToolContainer.end();
  
     const double validityPeriod = 500.0; // valid for 500 milliseconds.
 

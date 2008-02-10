@@ -88,9 +88,9 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   typedef igstk::SerialCommunication            CommunicationType;
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  typedef igstk::NDICommandInterpreter  CommandInterpreterType;
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::NDICommandInterpreter    CommandInterpreterType;
+  typedef igstk::Object::LoggerType       LoggerType;
+  typedef itk::StdStreamLogOutput         LogOutputType;
    
   NDICommandInterpreterTestCommand::Pointer errorCommand =
     NDICommandInterpreterTestCommand::New();

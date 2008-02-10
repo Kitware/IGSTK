@@ -45,7 +45,7 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType         LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
 
   // Logger object created for logging calibration computation
