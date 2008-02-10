@@ -390,8 +390,10 @@ int main( int argv, char * argc[] )
 
   // BeginCodeSnippet
   Landmark3DRegistrationGetTransformCallback::Pointer lrtcb =
-                            Landmark3DRegistrationGetTransformCallback::New();
-  landmarkRegister->AddObserver( igstk::CoordinateSystemTransformToEvent(), lrtcb );
+    Landmark3DRegistrationGetTransformCallback::New();
+
+  landmarkRegister->AddObserver( 
+    igstk::CoordinateSystemTransformToEvent(), lrtcb );
   //EndCodeSnippet
 
 
