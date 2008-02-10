@@ -33,9 +33,17 @@ VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
   igstkAddStateMacro( Init );
   igstkAddStateMacro( AttemtingToGetVessel );
 
-  igstkAddTransitionMacro( Init, GetVessel, AttemtingToGetVessel, SearchForVessel );
-  igstkAddTransitionMacro( AttemtingToGetVessel, VesselReceived, Init, ReportVessel );
-  igstkAddTransitionMacro( AttemtingToGetVessel, VesselNotFound, Init, ReportVesselNotFound );
+  igstkAddTransitionMacro( Init, 
+                           GetVessel, 
+                           AttemtingToGetVessel, SearchForVessel );
+
+  igstkAddTransitionMacro( AttemtingToGetVessel, 
+                           VesselReceived, 
+                           Init, ReportVessel );
+
+  igstkAddTransitionMacro( AttemtingToGetVessel, 
+                           VesselNotFound, 
+                           Init, ReportVesselNotFound );
 
   igstkSetInitialStateMacro( Init );
 

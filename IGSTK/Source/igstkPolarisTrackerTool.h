@@ -89,7 +89,6 @@ public:
   igstkGetStringMacro( PartNumber );
 
 
-
 protected:
 
   PolarisTrackerTool();

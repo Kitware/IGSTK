@@ -315,9 +315,9 @@ PulseGenerator
 ::Sleep( unsigned int milliseconds )
 {
   #if defined(WIN32) || defined(_WIN32)
-    ::Sleep( milliseconds );
+  ::Sleep( milliseconds );
   #else
-    usleep( milliseconds * 1000 );  // usleep uses microsecond
+  usleep( milliseconds * 1000 );  // usleep uses microsecond
   #endif
 }
 

@@ -72,8 +72,8 @@ int main( int argc, char *argv[] )
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
-  typedef igstk::Object::LoggerType             LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();

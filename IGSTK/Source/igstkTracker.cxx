@@ -678,8 +678,9 @@ void Tracker::ExitTrackingStateProcessing( void )
 /** Exit tracking by terminating tracking thread */ 
 void Tracker::ExitTrackingWithoutTerminatingTrackingThread( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingWithoutTerminatingTrackingThread "
-                 "called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ExitTrackingWithoutTerminatingTrackingThread "
+    "called ...\n");
 
   m_PulseGenerator->RequestStop();
 }
@@ -782,22 +783,24 @@ void Tracker::UpdateStatusSuccessProcessing( void )
 
       TransformType toolCalibratedTransform;
       toolCalibratedTransform =
-         toolCalibratedTransform.TransformCompose( toolRawTransform, toolCalibrationTransform );
+         toolCalibratedTransform.TransformCompose( 
+            toolRawTransform, toolCalibrationTransform );
 
       (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
         
-      // if a reference tracker tool has been specified, then if the tracker tool that is
-      // being updated is the selected reference tracker tool, then update the
-      // transform that is from the tracker to the the reference tracker tool. Otherwise,
-      // update the transform from the tracker tool to the tracker. 
-      if ( m_ApplyingReferenceTool )
+      // if a reference tracker tool has been specified, then if the tracker
+      // tool that is being updated is the selected reference tracker tool,
+      // then update the transform that is from the tracker to the the
+      // reference tracker tool. Otherwise, update the transform from the
+      // tracker tool to the tracker. 
+      if( m_ApplyingReferenceTool )
         {
         if ( (inputItr->first) == m_ReferenceTool->GetTrackerToolIdentifier())
           {
           this->RequestSetTransformAndParent( 
             toolCalibratedTransform.GetInverse(), inputItr->second );
           }
-       else
+        else
           {
           (inputItr->second)->RequestSetTransformAndParent( 
             toolCalibratedTransform, this );

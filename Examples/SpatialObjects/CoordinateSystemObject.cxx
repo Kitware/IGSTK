@@ -34,6 +34,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
+//
 // We then declare the object using smart pointers, as follows:
 //
 // Software Guide : EndLatex 

@@ -32,8 +32,12 @@ itkEventMacro( TrackerToolEvent,StringEvent);
 itkEventMacro( TrackerToolErrorEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolConfigurationEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolConfigurationErrorEvent,TrackerToolErrorEvent);
-itkEventMacro( InvalidRequestToAttachTrackerToolErrorEvent,TrackerToolErrorEvent);
-itkEventMacro( InvalidRequestToDetachTrackerToolErrorEvent,TrackerToolErrorEvent);
+
+itkEventMacro( InvalidRequestToAttachTrackerToolErrorEvent,
+               TrackerToolErrorEvent);
+
+itkEventMacro( InvalidRequestToDetachTrackerToolErrorEvent,
+               TrackerToolErrorEvent);
 
 itkEventMacro( TrackerToolAttachmentToTrackerEvent,TrackerToolEvent);
 itkEventMacro( TrackerToolAttachmentToTrackerErrorEvent,TrackerToolErrorEvent);

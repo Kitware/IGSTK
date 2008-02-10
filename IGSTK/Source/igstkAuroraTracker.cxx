@@ -72,7 +72,8 @@ AuroraTracker::ResultType AuroraTracker
 
   bool SROMFileSpecified  = auroraTrackerTool->IsSROMFileNameSpecified();
 
-  CommandInterpreterType::Pointer commandInterpreter = this->GetCommandInterpreter();
+  CommandInterpreterType::Pointer commandInterpreter = 
+    this->GetCommandInterpreter();
 
   //Make several attempts to find uninitialized port
   const unsigned int NUMBER_OF_ATTEMPTS = 256;
@@ -96,7 +97,7 @@ AuroraTracker::ResultType AuroraTracker
   // search ports with uninitialized handles
   bool foundTool = false;
 
- for (int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
+  for( int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
     {
     commandInterpreter->PHSR(
     CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
@@ -114,50 +115,50 @@ AuroraTracker::ResultType AuroraTracker
 
     //if no tools are found, attempt again
     if ( ntools == 0 )
-    {
-    continue;
-    }
-
-    for(unsigned int toolNumber = 0; toolNumber < ntools ; toolNumber++ )
-    {
-    ph = commandInterpreter->GetPHSRHandle( toolNumber );
-
-    // Get port handle information
-    commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_PORT_LOCATION);
-
-    // get the physical port identifier
-    char location[512];
-    commandInterpreter->GetPHINFPortLocation(location);
-
-    // physical port number
-    unsigned int port = 0;
-
-    if (location[9] == '0') // wired tool
       {
-      unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+      continue;
+      }
 
-      const unsigned int NumberOfPorts = 12;
-      if (ndiport > 0 && ndiport <= NumberOfPorts)
+    for( unsigned int toolNumber = 0; toolNumber < ntools; toolNumber++ )
+      {
+      ph = commandInterpreter->GetPHSRHandle( toolNumber );
+
+      // Get port handle information
+      commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_PORT_LOCATION);
+
+      // get the physical port identifier
+      char location[512];
+      commandInterpreter->GetPHINFPortLocation(location);
+
+      // physical port number
+      unsigned int port = 0;
+
+      if (location[9] == '0') // wired tool
         {
-        port = ndiport - 1;
-        // check if the port number specified 
-        if ( port != auroraTrackerTool->GetPortNumber() )
+        unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+        const unsigned int NumberOfPorts = 12;
+        if (ndiport > 0 && ndiport <= NumberOfPorts)
           {
-          //this port doesn't match with what is specified by the user
-          //check the other uninitialized ports found 
-          igstkLogMacro( DEBUG, "Detected Port number: " 
-                         << port 
-                         << " doesn't match with what is provided " 
-                         << auroraTrackerTool->GetPortNumber() << "\n");
-          }
-        else
-          {
-          foundTool = true;
-          break;
+          port = ndiport - 1;
+          // check if the port number specified 
+          if ( port != auroraTrackerTool->GetPortNumber() )
+            {
+            //this port doesn't match with what is specified by the user
+            //check the other uninitialized ports found 
+            igstkLogMacro( DEBUG, "Detected Port number: " 
+                           << port 
+                           << " doesn't match with what is provided " 
+                           << auroraTrackerTool->GetPortNumber() << "\n");
+            }
+          else
+            {
+            foundTool = true;
+            break;
+            }
           }
         }
       }
-    }
 
   if( foundTool )
       {
@@ -167,8 +168,9 @@ AuroraTracker::ResultType AuroraTracker
 
   if( !foundTool )
   {
-  igstkLogMacro(CRITICAL, "Uninitialized port that corresponds to what is specified: "
-            << auroraTrackerTool->GetPortNumber() << " not found");
+  igstkLogMacro(CRITICAL, 
+    "Uninitialized port that corresponds to what is specified: "
+    << auroraTrackerTool->GetPortNumber() << " not found");
   return FAILURE;
   }
 
@@ -181,11 +183,11 @@ AuroraTracker::ResultType AuroraTracker
     sromFile.open(SROMFileName.c_str(), std::ios::binary );
 
     if (!sromFile.is_open())
-    {
-    igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
-                 << SROMFileName << " ...\n");
-    return FAILURE;
-    }
+      {
+      igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
+                   << SROMFileName << " ...\n");
+      return FAILURE;
+      }
 
     // most SROM files don't contain the whole 1024 bytes, they only
     // contain whatever is necessary, so the rest should be filled with zero
@@ -297,7 +299,7 @@ AuroraTracker::ResultType AuroraTracker
       igstkLogMacro(CRITICAL, 
           "The part number specified doesn't match with the information from "
           "the port handle \n");
-        return FAILURE;
+      return FAILURE;
       }
     }
 

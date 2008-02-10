@@ -77,9 +77,10 @@ private:
     private:
 
       /**
-       *  member variables */
-      bool m_ErrorOccured;
-      std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
+       *  member variables 
+       */
+      bool                                m_ErrorOccured;
+      std::map<std::string,std::string>   m_ErrorEvent2ErrorMessage;
 
       //purposely not implemented
       TrackingErrorObserver(const Self&);

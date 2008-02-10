@@ -334,7 +334,8 @@ void ObjectRepresentation::RequestGetTransformProcessing()
   // The response to this request is part of the internal dialog between the
   // ObjectRepresentation and the SpatialObject. There is no need to report the
   // answer outside of the ObjectRepresentation.
-  this->m_SpatialObject->RequestComputeTransformTo( this->m_TargetCoordinateSystem );
+  this->m_SpatialObject->RequestComputeTransformTo( 
+    this->m_TargetCoordinateSystem );
 
 }
 
@@ -424,7 +425,8 @@ void ObjectRepresentation::MakeObjectsInvisibleProcessing()
  * is valid with respect to the requested rendering time. */
 void ObjectRepresentation::MakeObjectsVisibleProcessing()
 {
-  igstkLogMacro( WARNING, "MakeObjectsVisibleProcessing at " << this->m_TimeToRender );
+  igstkLogMacro( WARNING, 
+    "MakeObjectsVisibleProcessing at " << this->m_TimeToRender );
   
   ActorsListType::iterator it = this->m_Actors.begin();
   while(it != this->m_Actors.end())

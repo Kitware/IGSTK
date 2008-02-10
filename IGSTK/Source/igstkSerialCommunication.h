@@ -213,7 +213,7 @@ protected:
   // These methods are the interface to the derived classes.
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenPort( void ) { return SUCCESS; };
+  virtual ResultType InternalOpenPort( void ) { return SUCCESS; }
 
   /** Set communication parameters on the open port. */
   virtual ResultType InternalUpdateParameters( void ) { return SUCCESS; }

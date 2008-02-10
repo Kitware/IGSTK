@@ -82,7 +82,8 @@ PolarisTracker::ResultType PolarisTracker
   bool wirelessTool = polarisTrackerTool->IsToolWirelessType();
   bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
 
-  CommandInterpreterType::Pointer commandInterpreter = this->GetCommandInterpreter();
+  CommandInterpreterType::Pointer commandInterpreter =
+    this->GetCommandInterpreter();
 
   // port handle
   int ph;
@@ -164,7 +165,7 @@ PolarisTracker::ResultType PolarisTracker
         continue;
         }
 
-      for(unsigned int toolNumber = 0; toolNumber < ntools ; toolNumber++ )
+      for( unsigned int toolNumber = 0; toolNumber < ntools; toolNumber++ )
         {
         ph = commandInterpreter->GetPHSRHandle( toolNumber );
         
@@ -213,8 +214,9 @@ PolarisTracker::ResultType PolarisTracker
 
     if( !foundTool )
       {
-      igstkLogMacro(CRITICAL, "Uninitialized port that corresponds to what is specified: "
-                  << polarisTrackerTool->GetPortNumber() << " not found");
+      igstkLogMacro(CRITICAL, 
+        "Uninitialized port that corresponds to what is specified: "
+        << polarisTrackerTool->GetPortNumber() << " not found");
       return FAILURE;
       }
 
@@ -227,11 +229,11 @@ PolarisTracker::ResultType PolarisTracker
       sromFile.open(SROMFileName.c_str(), std::ios::binary );
 
       if (!sromFile.is_open())
-      {
-      igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
-                   << SROMFileName << " ...\n");
-      return FAILURE;
-      }
+        {
+        igstkLogMacro( WARNING, "AuroraTracker::Failing to open"
+                     << SROMFileName << " ...\n");
+        return FAILURE;
+        }
 
       // most SROM files don't contain the whole 1024 bytes, they only
       // contain whatever is necessary, so the rest should be filled with zero
@@ -254,7 +256,7 @@ PolarisTracker::ResultType PolarisTracker
       }
     }  
 
-   // initialize the port 
+    // initialize the port 
   commandInterpreter->PINIT(ph);
 
   if (this->CheckError(commandInterpreter) == SUCCESS)
