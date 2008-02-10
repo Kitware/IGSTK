@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __TreatmentPlan_h
-#define __TreatmentPlan_h
+#ifndef __igstkTreatmentPlan_h
+#define __igstkTreatmentPlan_h
 
 #include "igstkLandmark3DRegistration.h"
 #include "igstkTrackerConfiguration.h"
@@ -31,13 +31,13 @@ public:
   typedef Landmark3DRegistration::LandmarkImagePointType      PointType;
   typedef Landmark3DRegistration::LandmarkPointContainerType  PointListType;
 
-  PointType            EntryPoint;
-  PointType            TargetPoint;
-  PointListType        FiducialPoints;
+  PointType            m_EntryPoint;
+  PointType            m_TargetPoint;
+  PointListType        m_FiducialPoints;
 
   // To be added
   // Add the capability to save tracker configuration in plan
-  std::vector< TrackerConfiguration * >             TrackerCofigurations;
+  std::vector< TrackerConfiguration * >      m_TrackerCofigurations;
 
   TreatmentPlan();
   virtual ~TreatmentPlan();

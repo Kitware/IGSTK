@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __TrackerConfigurationGUIBase_h
-#define __TrackerConfigurationGUIBase_h
+#ifndef __igstkTrackerConfigurationGUIBase_h
+#define __igstkTrackerConfigurationGUIBase_h
 
 #include "igstkTrackerConfiguration.h"
 
@@ -29,25 +29,27 @@ public:
   
   typedef TrackerConfiguration::TrackerType TrackerType;
 
-  TrackerType GetTrackerType() { return m_TrackerType; };
+  TrackerType GetTrackerType() { return m_TrackerType; }
 
   virtual void SetConfiguration( TrackerConfiguration config )
-  {
+    {
     m_TrackerConfiguration = config;
     InitializeGUI();
-  }
+    }
 
   virtual void RequestGetConfiguration()
-  {
+    {
     GetGUISetting();
     ConfigurationEvent confEvent;
     confEvent.Set( m_TrackerConfiguration );
     m_Reporter->InvokeEvent( confEvent );
-  }
+    }
 
   igstkLoadedEventMacro( ConfigurationEvent, IGSTKEvent, TrackerConfiguration );
 
-  unsigned long AddObserver( const ::itk::EventObject & event, ::itk::Command * observer );
+  unsigned long AddObserver( 
+    const ::itk::EventObject & event, ::itk::Command * observer );
+
   void RemoveObserver( unsigned long tag );
   void RemoveAllObservers();
 

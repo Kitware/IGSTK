@@ -31,7 +31,8 @@ TrackerConfigurationGUIBase::~TrackerConfigurationGUIBase()
 {
 }
 
-unsigned long TrackerConfigurationGUIBase::AddObserver( const ::itk::EventObject & event, ::itk::Command * observer )
+unsigned long TrackerConfigurationGUIBase::AddObserver( 
+  const ::itk::EventObject & event, ::itk::Command * observer )
 {
   return m_Reporter->AddObserver( event, observer );
 }

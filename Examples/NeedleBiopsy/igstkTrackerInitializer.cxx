@@ -24,37 +24,38 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerInitializer::TrackerInitializer()
 {
-    m_ErrorMessage  = "";
+  m_ErrorMessage  = "";
 }
 
 int TrackerInitializer::RequestInitializeTracker()
 {
-  if ( m_TrackerConfiguration == NULL )
-  {
+  if( m_TrackerConfiguration == NULL )
+    {
     m_ErrorMessage = "Invalid configuration file";
     return 0;
-  }
+    }
 
   m_TrackerType = m_TrackerConfiguration->GetTrackerType();
 
-  if ( m_TrackerType == TrackerConfiguration::Polaris )
-  {
+  if( m_TrackerType == TrackerConfiguration::Polaris )
+    {
     return InitializePolarisTracker();
-  }
+    }
   else if (m_TrackerType == TrackerConfiguration::Aurora)
-  {
+    {
     return InitializeAuroraTracker();
-  }
+    }
   else if (m_TrackerType == TrackerConfiguration::Micron)
-  {
+    {
     #ifdef IGSTKSandbox_USE_MicronTracker
     return InitializeMicronTracker();
     #else
-    m_ErrorMessage = "Please configure IGSTKSandbox to use MicronTrakcer first\n";
+    m_ErrorMessage = 
+      "Please configure IGSTKSandbox to use MicronTrakcer first\n";
     return 0;
     #endif /* IGSTKSandbox_USE_MicronTracker */
     
-  }
+    }
   else
     {
     m_ErrorMessage = "Invalid tracker type";
@@ -65,7 +66,8 @@ int TrackerInitializer::RequestInitializeTracker()
 
 int TrackerInitializer::InitializePolarisTracker()
 {
-  NDITrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetNDITrackerConfiguration();
+  NDITrackerConfiguration * trackerConfig = 
+    m_TrackerConfiguration->GetNDITrackerConfiguration();
   
   m_Communication = SerialCommunication::New();
 
@@ -76,10 +78,10 @@ int TrackerInitializer::InitializePolarisTracker()
   m_Communication->SetStopBits( SerialCommunication::StopBits1 );
   m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
   if ( !m_Communication->OpenCommunication())
-  {
+    {
     std::cout << "Serial port open failure\n";
     return 0;
-  }
+    }
 
   m_Tracker = m_PolarisTracker = PolarisTracker::New();
   m_PolarisTracker->SetCommunication( m_Communication );
@@ -97,9 +99,9 @@ int TrackerInitializer::InitializePolarisTracker()
       tool->RequestSelectWiredTrackerTool();
       tool->RequestSetPortNumber( toolConfig->m_PortNumber );
       if ( toolConfig->m_HasSROM )
-      {
+        {
         tool->RequestSetSROMFileName( toolConfig->m_SROMFile );
-      }
+        }
       tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform);
       tool->RequestConfigure();
       }
@@ -135,7 +137,8 @@ int TrackerInitializer::InitializePolarisTracker()
 
 int TrackerInitializer::InitializeAuroraTracker()
 {
-  NDITrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetNDITrackerConfiguration();
+  NDITrackerConfiguration * trackerConfig = 
+    m_TrackerConfiguration->GetNDITrackerConfiguration();
 
   m_Communication = SerialCommunication::New();
 
@@ -147,10 +150,10 @@ int TrackerInitializer::InitializeAuroraTracker()
   m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
   
   if( !m_Communication->OpenCommunication())
-  {
+    {
     std::cout << "Serial port open failure\n";
     return 0;
-  }
+    }
 
   m_Tracker = m_AuroraTracker = AuroraTracker::New();
   m_AuroraTracker->SetCommunication( m_Communication );
@@ -158,7 +161,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 
   m_TrackerToolList.clear();
   for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
-  {
+    {
     AuroraTrackerTool::Pointer tool = AuroraTrackerTool::New();
     NDITrackerToolConfiguration * toolConfig =
       trackerConfig->m_TrackerToolList[i];
@@ -190,17 +193,17 @@ int TrackerInitializer::InitializeAuroraTracker()
     tool->RequestAttachToTracker( m_AuroraTracker );
 
     if ( toolConfig->m_IsReference )
-    {
+      {
       m_AuroraTracker->RequestSetReferenceTool( tool );
       m_ReferenceTool = tool;
       m_HasReferenceTool = 1;
-    }
+      }
     else
-    {
+      {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      }
     }
-  }
 
   m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
@@ -211,14 +214,20 @@ int TrackerInitializer::InitializeAuroraTracker()
 #ifdef IGSTKSandbox_USE_MicronTracker
 int TrackerInitializer::InitializeMicronTracker()
 {
-  MicronTrackerConfiguration * trackerConfig = m_TrackerConfiguration->GetMicronTrackerConfiguration();
+  MicronTrackerConfiguration * trackerConfig = 
+    m_TrackerConfiguration->GetMicronTrackerConfiguration();
 
 
   m_Tracker = m_MicronTracker = MicronTracker::New();
   
-  m_MicronTracker->SetCameraCalibrationFilesDirectory( trackerConfig->CameraCalibrationFileDirectory );
-  m_MicronTracker->SetInitializationFile( trackerConfig->InitializationFile );
-  m_MicronTracker->SetMarkerTemplatesDirectory( trackerConfig->TemplatesDirectory );
+  m_MicronTracker->SetCameraCalibrationFilesDirectory( 
+    trackerConfig->CameraCalibrationFileDirectory );
+
+  m_MicronTracker->SetInitializationFile( 
+    trackerConfig->InitializationFile );
+
+  m_MicronTracker->SetMarkerTemplatesDirectory( 
+    trackerConfig->TemplatesDirectory );
 
   m_MicronTracker->RequestOpen();
 
@@ -226,7 +235,8 @@ int TrackerInitializer::InitializeMicronTracker()
   for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
     {
     MicronTrackerTool::Pointer tool = MicronTrackerTool::New();
-    MicronTrackerToolConfiguration * toolConfig = trackerConfig->m_TrackerToolList[i];
+    MicronTrackerToolConfiguration * toolConfig = 
+      trackerConfig->m_TrackerToolList[i];
 
     tool->RequestSetMarkerName( toolConfig->MarkerName );
     tool->SetCalibrationTransform( toolConfig->m_CalibrationTransform );
@@ -260,9 +270,9 @@ int TrackerInitializer::InitializeMicronTracker()
 TrackerInitializer::~TrackerInitializer()
 {
   if (m_TrackerConfiguration)
-  {
+    {
     delete m_TrackerConfiguration;
-  }
+    }
 
 }
 

@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __TrackerInitializer_h
-#define __TrackerInitializer_h
+#ifndef __igstkTrackerInitializer_h
+#define __igstkTrackerInitializer_h
 
 #include "igstkSandboxConfigure.h"
 
@@ -45,44 +45,45 @@ public:
   TrackerInitializer( );
 
   void SetTrackerConfiguration( TrackerConfiguration * config )
-  {
+    {
     m_TrackerConfiguration = config;
-  }
+    }
 
   int RequestInitializeTracker();
   
   itkGetStringMacro( ErrorMessage );
   
   igstk::Tracker::Pointer GetTracker()
-  {
+    {
     return m_Tracker;
-  }
+    }
 
   std::vector< TrackerTool::Pointer > GetNonReferenceToolList()
-  {
+    {
     return m_TrackerToolList;
-  }
+    }
 
   int HasReferenceTool()
-  {
+    {
     return m_HasReferenceTool;
-  }
+    }
 
   TrackerTool::Pointer GetReferenceTool()
-  {
+    {
     return m_ReferenceTool;
-  }
+    }
 
   void StopAndCloseTracker()
-  {
+    {
     m_Tracker->RequestStopTracking();
     m_Tracker->RequestClose();
-    if ( m_TrackerType == TrackerConfiguration::Aurora || m_TrackerType == TrackerConfiguration::Polaris)
-    {
+    if ( m_TrackerType == TrackerConfiguration::Aurora || 
+         m_TrackerType == TrackerConfiguration::Polaris)
+      {
       m_Communication->CloseCommunication();
-    }
+      }
     
-  }
+    }
 
 
   virtual ~TrackerInitializer();

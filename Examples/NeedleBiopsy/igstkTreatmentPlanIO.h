@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __TreatmentPlanIO_h
-#define __TreatmentPlanIO_h
+#ifndef __igstkTreatmentPlanIO_h
+#define __igstkTreatmentPlanIO_h
 
 
 #include "igstkTreatmentPlan.h"
@@ -29,27 +29,27 @@ class TreatmentPlanIO
 public:
   
   std::string GetFileName()
-  {
+    {
     return m_FileName;
-  }
+    }
 
   void SetFileName( std::string fileName)
-  {
+    {
     m_FileName = fileName;
-  }
+    }
 
   int RequestRead();
   int RequestWrite();
 
   TreatmentPlan * GetTreatmentPlan()
-  {
+    {
     return m_TreatmentPlan;
-  }
+    }
 
   void SetTreatmentPlan(TreatmentPlan * plan)
-  {
+    {
     m_TreatmentPlan = plan;
-  }
+    }
 
   TreatmentPlanIO();
   virtual ~TreatmentPlanIO();

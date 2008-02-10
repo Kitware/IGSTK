@@ -327,7 +327,7 @@ void NeedleBiopsy::ReadTreatmentPlan()
   TPlanPointList->add( "Entry" );
   TPlanPointList->add( "Target" );
   char buf[10];
-  for( int i = 0; i < m_Plan->FiducialPoints.size(); i++ )
+  for( int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
     {
     sprintf( buf, "Fiducial%i", i+1 );
     TPlanPointList->add( buf );
@@ -335,10 +335,10 @@ void NeedleBiopsy::ReadTreatmentPlan()
 
   // Setting object position according to treatment plan
   m_EntryPoint->RequestSetTransformAndParent( 
-    PointToTransform( m_Plan->EntryPoint ), m_WorldReference);
+    PointToTransform( m_Plan->m_EntryPoint ), m_WorldReference);
 
   m_TargetPoint->RequestSetTransformAndParent( 
-    PointToTransform( m_Plan->TargetPoint ), m_WorldReference);
+    PointToTransform( m_Plan->m_TargetPoint ), m_WorldReference);
 
   this->UpdatePath();
 
@@ -361,15 +361,15 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
   int choice = TPlanPointList->value();
   if( choice == 0 )
     {
-    point = m_Plan->EntryPoint;
+    point = m_Plan->m_EntryPoint;
     }
   else if ( choice == 1 )
     {
-    point = m_Plan->TargetPoint;
+    point = m_Plan->m_TargetPoint;
     }
   else
     {
-    point = m_Plan->FiducialPoints[ choice-2];
+    point = m_Plan->m_FiducialPoints[ choice-2];
     m_FiducialPoint->RequestSetTransformAndParent(
       PointToTransform(point), m_WorldReference );
     }
@@ -607,21 +607,21 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
         {
         m_EntryPoint->RequestSetTransformAndParent( 
           transform , m_WorldReference );
-        m_Plan->EntryPoint = point;
+        m_Plan->m_EntryPoint = point;
         this->UpdatePath();
         }
       else if ( choice == 1 )
         {
         m_TargetPoint->RequestSetTransformAndParent( 
           transform, m_WorldReference );
-        m_Plan->TargetPoint = point;
+        m_Plan->m_TargetPoint = point;
         this->UpdatePath();
         }
       else
         {
         m_FiducialPoint->RequestSetTransformAndParent( 
           transform, m_WorldReference );
-        m_Plan->FiducialPoints[ choice-2] = point;
+        m_Plan->m_FiducialPoints[ choice-2] = point;
         }
 
       char buf[50];
@@ -653,12 +653,12 @@ void NeedleBiopsy::UpdatePath()
   TubePointType point;
   igstk::Transform::VectorType v;
 
-  v = ( PointToTransform( m_Plan->EntryPoint) ).GetTranslation();
+  v = ( PointToTransform( m_Plan->m_EntryPoint) ).GetTranslation();
   point.SetPosition( v[0], v[1], v[2]);
   point.SetRadius( 2 );
   m_Path->AddPoint( point );
 
-  v = ( PointToTransform( m_Plan->TargetPoint) ).GetTranslation();
+  v = ( PointToTransform( m_Plan->m_TargetPoint) ).GetTranslation();
   point.SetPosition( v[0], v[1], v[2]);
   point.SetRadius( 2.1 );
   m_Path->AddPoint( point );
