@@ -67,6 +67,24 @@ ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
 ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
 ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 ADD_TEST(igstkTrackerTest ${IGSTK_TESTS} igstkTrackerTest)
+ADD_TEST(igstkCircularSimulatedTrackerTest ${IGSTK_TESTS}
+igstkCircularSimulatedTrackerTest)
+
+ADD_TEST(igstkSpatialObjectCoordinateSystemTest ${IGSTK_TESTS} igstkSpatialObjectCoordinateSystemTest)
+ADD_TEST(igstkCoordinateSystemTest ${IGSTK_TESTS} igstkCoordinateSystemTest)
+ADD_TEST(igstkCoordinateSystemTest2 ${IGSTK_TESTS} igstkCoordinateSystemTest2)
+ADD_TEST(igstkCoordinateSystemTest3 ${IGSTK_TESTS} igstkCoordinateSystemTest3)
+ADD_TEST(igstkCoordinateSystemDelegatorTest ${IGSTK_TESTS}
+igstkCoordinateSystemDelegatorTest)
+ADD_TEST(igstkCoordinateSystemEventTest ${IGSTK_TESTS}
+igstkCoordinateSystemEventTest)
+ADD_TEST(igstkSpatialObjectCoordinateSystemTest3 ${IGSTK_TESTS}
+igstkSpatialObjectCoordinateSystemTest3)
+
+
+
+
+
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
@@ -159,6 +177,9 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
            ${IGSTK_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
            ${IGSTK_TEST_AURORA_PORT_NUMBER}
            )
+
+ ADD_TEST(igstkAuroraTrackerToolTest ${IGSTK_TESTS} igstkAuroraTrackerToolTest)
+
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -216,13 +237,28 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
           )
 
-
-
+    ADD_TEST( igstkCoordinateSystemObjectWithViewTest
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCoordinateSystemObjectWithViewTest
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              )
 
   IF (IGSTK_DATA_ROOT)
 
      ADD_TEST( igstkAnnotation2DTest ${IGSTK_TESTS} igstkAnnotation2DTest
          ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+    ADD_TEST( igstkAnnotation2DTest2 ${IGSTK_TESTS}
+       --compare ${IGSTK_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
+       ${IGSTK_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
+              igstkAnnotation2DTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
 
      ADD_TEST( igstkImageSpatialObjectRepresentationTest2 
        ${IGSTK_TESTS}
@@ -342,8 +378,16 @@ SET(BasicTests_SRCS
   igstkTokenTest.cxx
   igstkTrackerToolTest.cxx
   igstkTrackerTest.cxx
+  igstkCircularSimulatedTrackerTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
+  igstkSpatialObjectCoordinateSystemTest.cxx
+  igstkCoordinateSystemTest.cxx
+  igstkCoordinateSystemTest2.cxx
+  igstkCoordinateSystemTest3.cxx
+  igstkCoordinateSystemDelegatorTest.cxx
+  igstkCoordinateSystemEventTest.cxx
+  igstkSpatialObjectCoordinateSystemTest3.cxx
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
@@ -353,6 +397,11 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
   )
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkAuroraTrackerTest2.cxx)
+
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAuroraTrackerToolTest.cxx
+  )
+ 
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -398,6 +447,7 @@ IF(IGSTK_USE_FLTK)
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkAnnotation2DTest.cxx
+    igstkAnnotation2DTest2.cxx
     igstkAxesObjectTest.cxx
     igstkBoxObjectTest.cxx
     igstkConeObjectTest.cxx
@@ -413,6 +463,7 @@ IF(IGSTK_USE_FLTK)
     igstkMouseTrackerTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
     igstkSpatialObjectRepresentationVisibilityTest.cxx
+    igstkCoordinateSystemObjectWithViewTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS

@@ -59,10 +59,19 @@ void RegisterTests()
   REGISTER_TEST(igstkTimeStampTest);
   REGISTER_TEST(igstkTokenTest);
   REGISTER_TEST(igstkTrackerTest);
+  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
 
+  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest3);
+  REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
+  REGISTER_TEST(igstkCoordinateSystemEventTest);
+  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
+ 
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -73,6 +82,7 @@ void RegisterTests()
 #ifdef IGSTK_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkAuroraTrackerTest2);
+  REGISTER_TEST(igstkAuroraTrackerToolTest);
 #endif
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
@@ -117,6 +127,7 @@ void RegisterTests()
 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
+  REGISTER_TEST(igstkAnnotation2DTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
