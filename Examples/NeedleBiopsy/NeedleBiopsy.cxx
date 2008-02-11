@@ -447,7 +447,6 @@ void NeedleBiopsy::RequestConnectToTracker()
 
 void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 {
-  std::cout << "I am getting called!\n";
   typedef igstk::TrackerConfigurationGUIBase  GUIType;
   if ( GUIType::ConfigurationEvent().CheckEvent( &event ) )
     {
@@ -455,9 +454,6 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
                                    ( GUIType::ConfigurationEvent *) & event;
 
     igstk::TrackerConfiguration  tc = confEvent->Get();
-
-    typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer transformObserver = ObserverType::New();
 
     igstk::TrackerInitializer * initializer = new igstk::TrackerInitializer;
     initializer->SetTrackerConfiguration( & tc );
@@ -467,44 +463,6 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       igstk::Tracker::Pointer     tracker = initializer->GetTracker();
       igstk::TrackerTool::Pointer tool = initializer->GetNonReferenceToolList()[0];
       igstk::TrackerTool::Pointer refTool = initializer->GetReferenceTool();
-      transformObserver->ObserveTransformEventsFrom( tool );
-      transformObserver->ObserveTransformEventsFrom( refTool );
-      
-      for(unsigned int i=0; i<400; i++)
-        {
-        tracker->RequestUpdateStatus();
-
-        igstk::Transform                            transform;
-        igstk::Transform::VectorType                position;
-        std::string                                 toolString;
-
-        transformObserver->Clear();
-        tool->RequestComputeTransformTo( refTool );
-        if( transformObserver->GotTransform() )
-          {
-          transform = transformObserver->GetTransform();
-          }        
-        position = transform.GetTranslation();
-        toolString = tool->GetTrackerToolIdentifier() ;
-        std::cout << "Trackertool:" << toolString
-          << "  Position = (" << position[0]
-        << "," << position[1] << "," << position[2]
-        << ")" << std::endl;
-
-        transformObserver->Clear();
-        refTool->RequestComputeTransformTo( tracker );
-        if( transformObserver->GotTransform() )
-        {
-          transform = transformObserver->GetTransform();
-        }        
-        position = transform.GetTranslation();
-        toolString = refTool->GetTrackerToolIdentifier() ;
-        std::cout << "Trackertool:" << toolString
-          << "  Position = (" << position[0]
-        << "," << position[1] << "," << position[2]
-        << ")" << std::endl;
-
-        }
       m_TrackerInitializerList.push_back( initializer );
       UpdateTrackerAndTrackerToolList();
     }
