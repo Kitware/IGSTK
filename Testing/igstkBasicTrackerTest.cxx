@@ -347,12 +347,6 @@ int igstkBasicTrackerTest( int, char * [] )
   transform = tool->GetCalibrationTransform();
   std::cout << transform << std::endl;
 
-  transform = tool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
-  std::cout << transform << std::endl;
-
-  transform = tool->GetRawTransform();
-  std::cout << transform << std::endl;
-
   translation[0] = -2;
   translation[1] = -4;
   translation[2] = -6;
@@ -369,16 +363,6 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->RequestSetReferenceTool( referenceTool );
 
   transform = referenceTool->GetCalibrationTransform();
-  std::cout << transform << std::endl;
-
-  // FIXME: This dangerous method should be removed
-  transform = 
-    referenceTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
-
-  std::cout << transform << std::endl;
-
-
-  transform = referenceTool->GetRawTransform();
   std::cout << transform << std::endl;
 
   igstk::CylinderObject::Pointer object = igstk::CylinderObject::New();

@@ -80,21 +80,11 @@ public:
   typedef Tracker           TrackerType;
   typedef Transform         TransformType;
 
-  /** Get the tool transform. */
-  igstkGetMacro( CalibratedTransformWithRespectToReferenceTrackerTool,
-                                   TransformType ); 
-
   /** Get the calibration transform for this tool. */
   igstkGetMacro( CalibrationTransform, TransformType );
 
   /**  Set the calibration transform for this tool. */
   void SetCalibrationTransform( const TransformType & );
-
-  /** Get the raw transform for this tool. */
-  igstkGetMacro( RawTransform, TransformType );
-
-  /** Get calibrated raw transform for this tool. */
-  igstkGetMacro( CalibratedTransform, TransformType );
 
   /** Get whether the tool was updated during tracker UpdateStatus() */
   igstkGetMacro( Updated, bool );
@@ -148,10 +138,8 @@ private:
   /** Push AttachmentToTrackerFailure input to the tracker tool*/ 
   void RequestReportFailedTrackerToolAttachment();
 
-  /** Set calibrated raw transform with respect to a reference
-    * tracker tool */
-  void SetCalibratedTransformWithRespectToReferenceTrackerTool
-                                ( const TransformType & transform ); 
+  /** Get the raw transform for this tool. */
+  igstkGetMacro( RawTransform, TransformType );
 
   /** Set the raw transform for this tool. */
   void SetRawTransform( const TransformType & );
@@ -243,10 +231,6 @@ private:
 
   /** No operation for state machine transition */ 
   void NoProcessing( void );
-
-  /** Calibrated raw transform with respect to reference
-   * tracker tool. */
-  TransformType   m_CalibratedTransformWithRespectToReferenceTrackerTool;
 
   /** Calibration transform for the tool */
   TransformType                 m_CalibrationTransform; 

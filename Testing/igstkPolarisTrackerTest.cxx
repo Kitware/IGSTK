@@ -35,6 +35,7 @@
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkTransform.h"
+#include "igstkTransformObserver.h"
 
 class PolarisTrackerTestCommand : public itk::Command 
 {
@@ -70,6 +71,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::TransformObserver      ObserverType;
 
   if( argc < 3 )
     {
@@ -147,6 +149,11 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   trackerTool->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
+  //Add observer to listen to transform events 
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
+
+
 
   // instantiate and attach wireless tracker tool
   std::cout << "Instantiate second tracker tool: " << std::endl;
@@ -164,6 +171,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   trackerTool2->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
 
   //start tracking 
   tracker->RequestStartTracking();
@@ -180,21 +189,34 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
-    transform = trackerTool2->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool2:" 
+              << trackerTool2->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
+
+
+
     }
   
   std::cout << "RequestStopTracking()" << std::endl;
@@ -215,13 +237,18 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

@@ -36,6 +36,8 @@
 #include "igstkAuroraTrackerTool.h"
 #include "igstkTransform.h"
 
+#include "igstkTransformObserver.h"
+
 class AuroraTrackerTestCommand : public itk::Command 
 {
 public:
@@ -70,6 +72,7 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
 
   typedef igstk::Object::LoggerType     LoggerType; 
   typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::TransformObserver      ObserverType;
 
   if( argc < 4 )
     {
@@ -151,6 +154,9 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to transform events 
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   // instantiate and attach a second 5DOF tracker tool type 
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
@@ -164,7 +170,8 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool2->RequestConfigure();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
-
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
 
   //start tracking 
   tracker->RequestStartTracking();
@@ -181,20 +188,31 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform(); 
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool transform using observer:" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
-    transform = trackerTool2->GetCalibratedTransform(); 
-    position = transform.GetTranslation();
-    std::cout << "Trackertool2:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool2 transform using observer:" 
+              << trackerTool2->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-
+      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

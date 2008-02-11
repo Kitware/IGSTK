@@ -102,6 +102,8 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 // EndCodeSnippet
+//
+#include "igstkTransformObserver.h"
 
 
 // BeginLatex
@@ -237,6 +239,7 @@ int main(int , char** )
 
   typedef igstk::MouseTrackerTool           TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
+  typedef igstk::TransformObserver           ObserverType;
 
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
@@ -246,6 +249,8 @@ int main(int , char** )
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   // EndCodeSnippet
   //
@@ -340,13 +345,18 @@ int main(int , char** )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
     }
   // EndCodeSnippet

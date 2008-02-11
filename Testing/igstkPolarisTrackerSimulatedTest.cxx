@@ -35,7 +35,9 @@
 #include "igstkSerialCommunicationSimulator.h"
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
+
 #include "igstkTransform.h"
+#include "igstkTransformObserver.h"
 
 class PolarisTrackerTestCommand : public itk::Command 
 {
@@ -71,6 +73,7 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
 
   typedef igstk::Object::LoggerType       LoggerType; 
   typedef itk::StdStreamLogOutput         LogOutputType;
+  typedef igstk::TransformObserver        ObserverType;
 
   if( argc < 4 )
     {
@@ -153,6 +156,9 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to transform events 
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   // instantiate and attach wired tracker tool  
   std::cout << "Instantiate second tracker tool: " << std::endl;
@@ -166,6 +172,9 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool2->RequestConfigure();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
+
 
   // instantiate and attach wired tracker tool  
   std::cout << "Instantiate third tracker tool: " << std::endl;
@@ -179,8 +188,10 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool3->RequestConfigure();
   //Attach to the tracker
   trackerTool3->RequestAttachToTracker( tracker );
+  ObserverType::Pointer coordSystemAObserver3 = ObserverType::New();
+  coordSystemAObserver3->ObserveTransformEventsFrom( trackerTool3 );
 
-    //start tracking 
+  //start tracking 
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -195,26 +206,44 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
-    transform = trackerTool2->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool2:" 
+              << trackerTool2->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
-    transform = trackerTool3->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool3->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[3]
+    coordSystemAObserver3->Clear();
+    trackerTool3->RequestGetTransformToParent();
+    if (coordSystemAObserver3->GotTransform())
+      {
+      transform = coordSystemAObserver3->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool3:" 
+              << trackerTool3->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

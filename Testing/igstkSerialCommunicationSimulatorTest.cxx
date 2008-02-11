@@ -34,7 +34,9 @@
 #include "igstkSerialCommunicationSimulator.h"
 
 #include "igstkAuroraTracker.h"
+
 #include "igstkTransform.h"
+#include "igstkTransformObserver.h"
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
@@ -65,6 +67,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::TransformObserver      ObserverType;
 
   igstk::SerialCommunicationSimulator::Pointer 
                       serialComm = igstk::SerialCommunicationSimulator::New();
@@ -129,6 +132,8 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   tool->RequestConfigure();
   tool->RequestAttachToTracker( tracker );
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( tool );
 
   tracker->SetLogger( logger );
 
@@ -154,10 +159,22 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   for(int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
-    transitions = tool->GetRawTransform();
-    position = transitions.GetTranslation();
-    std::cout << "Position = (" << position[0] << "," 
-              << position[1] << "," << position[2] << ")" << std::endl;
+
+    TransformType             transform;
+    VectorType                position;
+
+    coordSystemAObserver->Clear();
+    tool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
+              << tool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+      }
     }
 
   tracker->RequestStopTracking();

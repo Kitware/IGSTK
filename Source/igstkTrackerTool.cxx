@@ -36,8 +36,6 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
 
   m_RawTransform.SetToIdentity( longestPossibleTime );  
   m_CalibratedTransform.SetToIdentity( longestPossibleTime );
-  m_CalibratedTransformWithRespectToReferenceTrackerTool.SetToIdentity( 
-    longestPossibleTime );
   m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
 
   m_Updated = false; // not yet updated
@@ -467,32 +465,6 @@ void TrackerTool::NoProcessing( void )
 
 }
 
-/** Method to set the calibrated raw transform with respect to 
- *  a reference tracker tool.
- * This method should only be called by the Tracker */
-void 
-TrackerTool
-::SetCalibratedTransformWithRespectToReferenceTrackerTool( 
-  const TransformType & transform )
-{
-  m_CalibratedTransformWithRespectToReferenceTrackerTool = transform;
-
-  CoordinateSystemTransformToResult transformCarrier;
-
-  transformCarrier.Initialize(
-    transform,
-    this->GetCoordinateSystem(),
-    this->m_CalibrationCoordinateSystem );
-  // the m_CalibrationCoordinateSystem is the one that should be attached to
-  // the Tracker, while the this->GetCoordinateSystem() is the one at which
-  // spatial objects should be attached to.
-
-  CoordinateSystemTransformToEvent transformEvent;
-  transformEvent.Set( transformCarrier );
-
-  this->InvokeEvent( transformEvent );
-}
-
 /** Method to set the calibration transform for the tracker tool */ 
 void 
 TrackerTool::SetCalibrationTransform( const TransformType & transform )
@@ -521,9 +493,6 @@ void TrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Transform: "
-     << this->m_CalibratedTransformWithRespectToReferenceTrackerTool 
-     << std::endl;
   os << indent << "Raw transform: " << this->m_RawTransform << std::endl;
   os << indent << "CalibrationTransform: "
                << this->m_CalibrationTransform << std::endl;

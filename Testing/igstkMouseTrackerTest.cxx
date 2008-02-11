@@ -33,6 +33,10 @@
 #include "igstkMouseTracker.h"
 #include "igstkMouseTrackerTool.h"
 
+#include "igstkTransform.h"
+#include "igstkTransformObserver.h"
+
+
 class MouseTrackerTestCommand : public itk::Command 
 {
 public:
@@ -70,6 +74,7 @@ int igstkMouseTrackerTest( int, char * [] )
   typedef igstk::MouseTracker          MouseTrackerType;
   typedef igstk::Object::LoggerType    LoggerType;
   typedef itk::StdStreamLogOutput      LogOutputType;
+  typedef igstk::TransformObserver     ObserverType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -111,6 +116,8 @@ int igstkMouseTrackerTest( int, char * [] )
   trackerTool->RequestAttachToTracker( tracker );
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
   tracker->RequestStartTracking();
 
@@ -126,13 +133,18 @@ int igstkMouseTrackerTest( int, char * [] )
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetRawTransform();
-
-    position = transform.GetTranslation();
-
-    std::cout << "Mouse:" << trackerTool->GetTrackerToolIdentifier() 
-                          <<  "\t" <<  "( " << position[0] << "," 
-            << position[1] << "," << position[2] << ")" << std::endl;
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Mouse :" 
+              << trackerTool->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+      }
     }
   
   tracker->RequestStopTracking();
