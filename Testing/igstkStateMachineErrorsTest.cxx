@@ -31,13 +31,14 @@
 #pragma warning( disable : 4355 )
 #endif
 
-#include "itkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkRealTimeClock.h"
 
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include "igstkObject.h"
+#include "igstkLogger.h"
 
 #include <iostream>
 
@@ -464,7 +465,8 @@ int igstkStateMachineErrorsTest( int, char * [] )
   itk::StdStreamLogOutput::Pointer coutput = itk::StdStreamLogOutput::New();
   coutput->SetStream( std::cout );
     
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             LoggerType;
+  LoggerType::Pointer logger = LoggerType::New();
   
   // Setting the logger
   logger->SetName("org.igstk.rootLogger");

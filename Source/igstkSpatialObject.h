@@ -18,26 +18,35 @@
 #ifndef __igstkSpatialObject_h
 #define __igstkSpatialObject_h
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkSpatialObject.h"
 
 #include "igstkMacros.h"
 #include "igstkObject.h"
-#include "igstkTransform.h"
 #include "igstkStateMachine.h"
-#include "igstkTrackerTool.h"
 #include "igstkEvents.h"
+
+#include "igstkCoordinateSystemInterfaceMacros.h"
 
 namespace igstk
 {
 
+
 /** \class SpatialObject
  * 
- * \brief This class encapsulates an ITK spatial object with the goal of
- * restricting access to functionalities that are not essential for IGS
- * applications, or to functionalities thay may present risks and unnecessary
- * flexibility.  This is an abstract class, you should use the derived classes
- * that represent specific shapes.
+ * \brief Geometrical abstraction of physical objects present in the surgical
+ * scene.
+ *
+ * This class is intended to describe objects in the surgical scenario.
+ * Subclasses of this class will be used for representing, for example,
+ * surgical instruments such as needles, catheters and guide wires; as well as
+ * pre-operative and intra-operative images.
+ *
+ * This class encapsulates an ITK spatial object with the goal of restricting
+ * access to functionalities that are not essential for IGS applications, or to
+ * functionalities thay may present risks and unnecessary flexibility.  This is
+ * an abstract class, you should use the derived classes that represent
+ * specific shapes.
  *
  *
  *  \image html  igstkSpatialObject.png  "SpatialObject State Machine Diagram"
@@ -45,7 +54,6 @@ namespace igstk
  *
  * \ingroup Object
  */
-
 class SpatialObject : public Object
 {
 
@@ -54,43 +62,35 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( SpatialObject, Object )
 
-public:
+public: // this "public: is necessary because the 
+        // Macro above introduces a private section.
+
 
   /** Typedefs */
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
-  /** Set the Transform corresponding to the ObjectToWorld transformation of
-   * the SpatialObject. */
-  void RequestSetTransform( const Transform & transform );
-
-  /** Set a new object. */
-  void RequestAddObject(Self * object);
-
-  /** Request the Transform associated to the ObjectToWorld transformation
-   * of the SpatialObject */
-  void RequestGetTransform();
-
-  /** Return a child object given the id */
-  const Self * GetObject(unsigned long id) const;
-
-  /** Request the protocol for attaching to a tracker tool. This is a one-time
-   * operation. Once a Spatial Object is attached to a tracker tool it is not
-   * expected to get back to manual nor to be re-attached to a second tracker
-   * tool. */
-  void RequestAttachToTrackerTool( const TrackerTool * trackerTool );
-
 protected:
 
+  /** The constructor of this class is declared protected to enforce the use of
+   * SmartPointers syntax when instantiating objects of this class. This
+   * constructor will be called indirectly by the ::New() method. It will
+   * initialize the internal state machine of this class. */
   SpatialObject( void );
+
+  /** The destructor should be overriden in derived classes that allocate
+   * memory for member variables. */
   ~SpatialObject( void );
 
-  /** Connect this representation class to the spatial object */
-  void RequestSetSpatialObject( SpatialObjectType * );
+  /** Replacement for RequestSetSpatialObject(). Internal is added to the name
+   * to clarify that this is used with the ITK spatial object as argument */
+  void RequestSetInternalSpatialObject( SpatialObjectType * object );
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  SpatialObjectType * GetSpatialObject();
+  /** Returns the ITK spatial object that is contained inside this IGSTK 
+   *  spatial object */
+  SpatialObjectType * GetInternalSpatialObject() const;
 
 private:
   
@@ -98,70 +98,38 @@ private:
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
-  /** Parent Spatial Object */
-  Self::Pointer                m_Parent;
-
-  /** Internal list of object */
-  std::vector<Pointer> m_InternalObjectList;
-
-  /** Internal Object */
-  Pointer m_ObjectToBeAdded;
-
-  /** Internal Transform and temporary transform */
-  Transform                    m_Transform;
-  Transform                    m_TransformToBeSet;
-
-  /** TrackerTool to be attached to, and temporary pointer */
-  TrackerTool::ConstPointer    m_TrackerTool;
-  TrackerTool::ConstPointer    m_TrackerToolToAttachTo;
-
-  /** Set the Transform corresponding to the ObjectToWorld transformation of
-   * the SpatialObject. This method is only intended to be called from a 
-   * callback that is observing events from a TrackerTool object. */
-  void RequestSetTrackedTransform(const Transform & transform );
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( SpatialObjectNull );
-  igstkDeclareInputMacro( SpatialObjectValid );
-  igstkDeclareInputMacro( ObjectNull );
-  igstkDeclareInputMacro( ObjectValid );
-  igstkDeclareInputMacro( TrackingEnabled );
-  igstkDeclareInputMacro( TrackingLost );
-  igstkDeclareInputMacro( TrackingRestored );
-  igstkDeclareInputMacro( TrackingDisabled );
-  igstkDeclareInputMacro( ManualTransform );
-  igstkDeclareInputMacro( TrackerTransform );
-  igstkDeclareInputMacro( RequestGetTransform );
+  igstkDeclareInputMacro( InternalSpatialObjectNull );
+  igstkDeclareInputMacro( InternalSpatialObjectValid );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( NonTracked );
-  igstkDeclareStateMacro( Tracked );
-  igstkDeclareStateMacro( TrackedLost );
+  igstkDeclareStateMacro( Ready );
 
   /** Action methods to be invoked only by the state machine */
-  void SetSpatialObjectProcessing();
-  void AddObjectProcessing();
-  void ReportTrackingRestoredProcessing();
-  void ReportTrackingDisabledProcessing();
-  void ReportTrackingLostProcessing();
-  void ReportInvalidRequestProcessing();
-  void AttachToTrackerToolProcessing();
-  void SetTransformProcessing();
-  void BroadcastStaticTransformProcessing();
-  void BroadcastTrackedTransformProcessing();
-  void BroadcastExpiredTrackedTransformProcessing();
+  void SetInternalSpatialObjectProcessing();
 
-  /** Null operation for a State Machine transition */
-  void NoProcessing();
+  /** Invoked by the state machine after a call to 
+   *  RequestSetInternalSpatialObject with a null object. */
+  void ReportSpatialObjectNullProcessing();
 
-  /** Set/Get the parent Spatial Object, this method provides half of the
-   * functionality of attaching this object to a scene graph. This method is
-   * private, and can only be called from the AddObjectProcessing() method. */
-  igstkSetMacro( Parent, Pointer );
-  igstkGetMacro( Parent, Pointer );
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
 
 };
+
+/** Event to be invoked when the state of the SpatialObject changes.
+ *  For example, if the radius of a cylinder changes. */
+igstkLoadedObjectEventMacro( 
+  SpatialObjectModifiedEvent, IGSTKEvent, SpatialObject );
+
+/** Event to be send to observers that request a SpatialObject, when the
+ * spatial object is not yet ready at the provider.  For example, when a
+ * GroupObject is queried for a child or when a VascularNetwork is queried for
+ * a Vessel using an Id. */
+igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKEvent );
 
 } // end namespace igstk
 

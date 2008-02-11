@@ -19,18 +19,20 @@
 #define __igstkTracker_h
 
 #include <vector>
+#include <map>
 
 #include "itkMutexLock.h"
 #include "itkConditionVariable.h"
 #include "itkMultiThreader.h"
-#include "itkVersorTransform.h"
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
-#include "igstkTrackerPort.h"
 #include "igstkTransform.h"
-#include "igstkSpatialObject.h"
 #include "igstkPulseGenerator.h"
+#include "igstkTrackerTool.h"
+
+#include "igstkCoordinateSystemInterfaceMacros.h"
+
 
 namespace igstk
 {
@@ -56,9 +58,12 @@ itkEventMacro( TrackerStopTrackingErrorEvent,              TrackerErrorEvent);
 itkEventMacro( TrackerUpdateStatusEvent,                   TrackerEvent);
 itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
 
+itkEventMacro( AttachingTrackerToolToTrackerEvent,         TrackerEvent);
+itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
+
 
 /** \class Tracker
- *  \brief Superclass for concrete IGSTK Tracker classes.
+ *  \brief Abstract superclass for concrete IGSTK Tracker classes.
  *
  *  This class presents a generic interface for tracking the
  *  positions of objects in IGSTK.  The various derived
@@ -93,34 +98,15 @@ class Tracker : public Object
 {
 
 public:
-  
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( Tracker, Object )
+  igstkStandardAbstractClassTraitsMacro( Tracker, Object ) 
 
 public:
 
-  /** typedef for times used by the tracker */
-  typedef Transform::TimePeriodType      TimePeriodType;
+  igstkFriendClassMacro( TrackerTool );
 
-  /** typedefs from igstk::TrackerTool class */
-  typedef Transform                      TransformType;
-  typedef double                         ErrorType;
-
-  /** typedefs for PatientTransform */
-  typedef Transform                      PatientTransformType;
-
-  /** typedefs for ToolCalibrationTransform */
-  typedef Transform                      ToolCalibrationTransformType;
-
-  /** typedefs from igstk::TrackerTool class */
-  typedef igstk::TrackerTool             TrackerToolType;
-  typedef TrackerToolType::Pointer       TrackerToolPointer;
-  typedef TrackerToolType::ConstPointer  TrackerToolConstPointer;
-
-  /** typedefs for the TrackerPort class */
-  typedef igstk::TrackerPort                TrackerPortType;
-  typedef TrackerPortType::Pointer          TrackerPortPointer;
-  typedef std::vector< TrackerPortPointer > TrackerPortVectorType;
+  /** typedefs from TrackerTool class */
+  typedef TrackerTool       TrackerToolType;
 
   /** The "RequestOpen" method attempts to open communication with the 
    *  tracking device. It generates a TrackerOpenEvent if successful,
@@ -131,9 +117,6 @@ public:
    *  It generates a TrackerCloseEvent if successful,
    *  or a TrackerCloseErrorEvent if not successful. */
   void RequestClose( void );
-
-  /** The "RequestInitialize" method initializes a newly opened device. */
-  void RequestInitialize( void );
 
   /** The "RequestReset" tracker method should be used to bring the tracker
   to some defined default state. */
@@ -150,70 +133,17 @@ public:
   ports and tools when the tracker is in tracking state. */
   void RequestUpdateStatus( void );
 
-  /** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" in the variable "position". Note that this
-   * variable represents the position and orientation of the tool in 3D space.
-   * */
-  void GetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         TransformType &position ) const;
+  /** The "RequestSetFrequency" method defines the frequency at which the
+   * Transform information will be queried from the Tracker device. Note that
+   * Tracker devices have their own internal frequency rate, and if you set here
+   * a frequency that is higher than what the Tracker device is capable to
+   * follow, then you will start receiving transforms with repeated values. */
+  void RequestSetFrequency( double frequencyInHz );
 
-  /** Associate a TrackerTool to an object to be tracked. This is a one-to-one
-   * association and cannot be changed during the life of the application */
-  void AttachObjectToTrackerTool( unsigned int portNumber,
-                                  unsigned int toolNumber,
-                                  SpatialObject * objectToTrack );
-
-  /** The "SetReferenceTool" sets the reference tool. */
-  void SetReferenceTool( bool applyReferenceTool, unsigned int portNumber,
-                         unsigned int toolNumber );
-
-  /** The "GetReferenceTool" gets the reference tool.
-   * If the reference tool is not applied, it returns false.
-   * Otherwise, it returns true. */
-  bool GetReferenceTool( unsigned int &portNumber,
-                         unsigned int &toolNumber ) const;
-
-  /** The "SetPatientTransform" sets PatientTransform.
-
-    T ' = P * R^-1 * T * C
-
-    where:
-    " T " is the original tool transform reported by the device,
-    " R^-1 " is the inverse of the transform for the reference tool,
-    " P " is the Patient transform (it specifies the position of the reference
-    with respect to patient coordinates), and
-    " T ' " is the transformation that is reported to the spatial objects
-    " C " is the tool calibration transform.
-  */
-  void SetPatientTransform( const PatientTransformType& _arg );
-
-  /** The "GetPatientTransform" gets PatientTransform. */
-  PatientTransformType GetPatientTransform() const; 
-
-  /** The "SetToolCalibrationTransform" sets the tool calibration transform */
-  void SetToolCalibrationTransform( unsigned int portNumber,
-                                    unsigned int toolNumber,
-                                    const ToolCalibrationTransformType& t );
-
-  /** Get the tool calibration transform. */
-  ToolCalibrationTransformType GetToolCalibrationTransform(
-                             unsigned int portNumber,
-                             unsigned int toolNumber) const;
-
-  /** Set the time period over which a tool transform should be considered
-   *  valid. */
-  igstkSetMacro( ValidityTime, TimePeriodType );
-
-  /** Get the validity time. */
-  igstkGetMacro( ValidityTime, TimePeriodType );
+  /** Set a reference tracker tool */
+  void RequestSetReferenceTool( TrackerToolType * trackerTool );
 
 protected:
-
-  typedef enum 
-    { 
-    FAILURE=0, 
-    SUCCESS
-    } ResultType;
 
   Tracker(void);
 
@@ -225,69 +155,131 @@ protected:
   /** GetThreadingEnabled(bool) : get m_ThreadingEnabled value  */
   igstkGetMacro( ThreadingEnabled, bool );
 
+  /** typedef for times used by the tracker */
+  typedef Transform::TimePeriodType         TimePeriodType;
+
+ /** Set the time period over which a tool transform should be considered
+   *  valid. */
+  igstkSetMacro( ValidityTime, TimePeriodType );
+
+  /** Get the validity time. */
+  igstkGetMacro( ValidityTime, TimePeriodType );
+
+  typedef enum 
+    { 
+    FAILURE=0, 
+    SUCCESS
+    } ResultType;
+
+  /** typedefs from Transform class */
+  typedef Transform                      TransformType;
+
   /** The "InternalOpen" method opens communication with a tracking device.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalOpen( void );
+  virtual ResultType InternalOpen( void ) = 0;
 
   /** The "InternalClose" method closes communication with a tracking device.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalClose( void );
+  virtual ResultType InternalClose( void ) = 0;
 
   /** The "InternalReset" method resets tracker to a known configuration. 
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalReset( void );
-
-  /** The "InternalActivateTools" method activates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalActivateTools( void );
-
-  /** The "InternalDeactivateTools" method deactivates tools.
-      This method is to be overridden by a descendant class 
-      and responsible for device-specific processing */
-  virtual ResultType InternalDeactivateTools( void );
+  virtual ResultType InternalReset( void ) = 0;
 
   /** The "InternalStartTracking" method starts tracking.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStartTracking( void );
+  virtual ResultType InternalStartTracking( void ) = 0;
 
   /** The "InternalStopTracking" method stops tracking.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalStopTracking( void );
+  virtual ResultType InternalStopTracking( void ) = 0;
 
   /** The "InternalUpdateStatus" method updates tracker status.
-      This method is to be overridden by a descendant class 
+      This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
-  virtual ResultType InternalUpdateStatus( void );
+  virtual ResultType InternalUpdateStatus( void ) = 0;
 
   /** The "InternalThreadedUpdateStatus" method updates tracker status.
       This method is called in a separate thread.
-      This method is to be overridden by a descendant class
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
-  virtual ResultType InternalThreadedUpdateStatus( void );
-
-  /** The "AddPort" method adds a port to the tracker. */
-  void AddPort( TrackerPortType * port);
-
-  /** The "ClearPorts" clears all the ports. */
-  void ClearPorts( void );
-
-  /** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
-   * port numbered "portNumber" by the content of variable "position". Note
-   * that this variable represents the position and orientation of the tool in
-   * 3D space.  */
-  void SetToolTransform( unsigned int portNumber, unsigned int toolNumber,
-                         const TransformType & position );
+  virtual ResultType InternalThreadedUpdateStatus( void ) = 0;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  /** Verify if a tracker tool information is correct before attaching
+   *  it to the tracker. This method is used to verify the information supplied
+   *  by the user about the tracker tool. The information depends on the
+   *  tracker type. For example, during the configuration step of the
+   *  MicronTracker, location of the directory containing marker template files
+   *  is specified. If the user tries to attach a tracker tool with a marker
+   *  type whose template file is not stored in this directory, this method
+   *  will return failure. Similarly, for PolarisTracker, the method returns
+   *  failure,  if the tool part number specified by the user during the tracker
+   *  tool configuration step does not match with the part number read from the
+   *  SROM file.
+   */
+  virtual ResultType 
+        VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 
+
+  /** This method will remove entries of the traceker tool from internal
+    * data containers */
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                     const TrackerToolType * trackerTool ) = 0; 
+
+  /** Add tracker tool entry to internal containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+                                    const TrackerToolType * trackerTool ) = 0;
+
+  /** typedefs from TrackerTool class */
+  typedef std::map< std::string, TrackerToolType *>  TrackerToolsContainerType;
+
+  /** Access method for the tracker tool container. This method 
+    * is useful in the derived classes to access the unique identifiers 
+    * of the tracker tools */
+  const TrackerToolsContainerType & GetTrackerToolContainer() const;
+
+  /** Report to tracker tool that it is not available for tracking */
+  void ReportTrackingToolNotAvailable( TrackerToolType * trackerTool ) const;
+
+  /** Report to tracker tool that it is visible */
+  void ReportTrackingToolVisible( TrackerToolType * trackerTool ) const;
+
+  /** Set tracker tool raw transform */
+  void SetTrackerToolRawTransform( TrackerToolType * trackerTool, 
+                                   const TransformType transform );
+
+  /** Turn on/off update flag of the tracker tool */
+  void SetTrackerToolTransformUpdate( TrackerToolType * trackerTool,
+                                      bool flag ) const;
+
+  /** Depending on the tracker type, the tracking thread should be 
+    * terminated or left untouched when we stop tracking. For example,
+    * in the case of MicronTracker, it is better to not terminate the
+    * tracking thread. Otherwise, everytime we restart tracking, then 
+    * the camera has to be reattached. For NDI trackers, the tracking
+    * thread has to be terminated first to send TSTOP command */  
+
+  /** Always called when exiting tracking state. This methold will be
+    * overriden in derived classes. */
+  void ExitTrackingStateProcessing( void );
+
+  /** Exit tracking without terminating tracking thread */
+  void ExitTrackingWithoutTerminatingTrackingThread();
+
+  /** Exit tracking after terminating tracking thread */
+  void ExitTrackingTerminatingTrackingThread();
+
+
 private:
+  Tracker(const Self&);           //purposely not implemented
+  void operator=(const Self&);    //purposely not implemented
 
   /** Pulse generator for driving the rate of tracker updates. */
   PulseGenerator::Pointer   m_PulseGenerator;
@@ -296,24 +288,27 @@ private:
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
 
-  /** Vector of all tool ports on the tracker */
-  TrackerPortVectorType     m_Ports;
+  // An associative container of TrackerTool Pointer with 
+  // TrackerTool identifier used as a Key
+  TrackerToolsContainerType           m_TrackerTools;
   
+  /** typedefs from TrackerTool class */
+  typedef TrackerToolType::Pointer                   TrackerToolPointer;
+
   /** The reference tool */
-  bool                      m_ApplyingReferenceTool;
-  TrackerToolPointer        m_ReferenceTool;
-  unsigned int              m_ReferenceToolPortNumber;
-  unsigned int              m_ReferenceToolNumber;
+  bool                                m_ApplyingReferenceTool;
+  TrackerToolPointer                  m_ReferenceTool;
 
-  /** Patient Transform */
-  PatientTransformType      m_PatientTransform;
-
-  /** Validity time */
-  TimePeriodType            m_ValidityTime;
+  /** Validity time, and its default value [milliseconds] */
+  TimePeriodType                      m_ValidityTime;
 
   /** Multi-threading enabled flag : The descendant class will use
       multi-threading, if this flag is set as true */
-  bool                            m_ThreadingEnabled;
+  bool                                m_ThreadingEnabled;
+
+  /** Boolean value to indicate that the tracking thread 
+    * has started */
+  bool                                m_TrackingThreadStarted;
 
   /** itk::MultiThreader object pointer */
   itk::MultiThreader::Pointer     m_Threader;
@@ -334,8 +329,8 @@ private:
   igstkDeclareStateMacro( AttemptingToEstablishCommunication );
   igstkDeclareStateMacro( AttemptingToCloseCommunication );
   igstkDeclareStateMacro( CommunicationEstablished );
-  igstkDeclareStateMacro( AttemptingToActivateTools );
-  igstkDeclareStateMacro( ToolsActive );
+  igstkDeclareStateMacro( AttemptingToAttachTrackerTool );
+  igstkDeclareStateMacro( TrackerToolAttached );
   igstkDeclareStateMacro( AttemptingToTrack );
   igstkDeclareStateMacro( Tracking );
   igstkDeclareStateMacro( AttemptingToUpdate );
@@ -343,15 +338,23 @@ private:
 
   /** List of Inputs */
   igstkDeclareInputMacro( EstablishCommunication );
-  igstkDeclareInputMacro( ActivateTools );
   igstkDeclareInputMacro( StartTracking );
+  igstkDeclareInputMacro( AttachTrackerTool );
   igstkDeclareInputMacro( UpdateStatus );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Reset );
   igstkDeclareInputMacro( CloseCommunication );
+  igstkDeclareInputMacro( ValidFrequency );
 
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
+
+  /** Attach a tracker tool to the tracker. This method
+   *  should be called by the tracker tool.  */
+  void RequestAttachTool( TrackerToolType * trackerTool );
+
+  /** Request to remove a tracker tool from this tracker  */
+  ResultType RequestRemoveTool( TrackerToolType * trackerTool );
 
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
@@ -360,16 +363,16 @@ private:
       tracking device. */
   void AttemptToOpenProcessing( void );
   
-  /** The "AttemptToActivateToolsProcessing" method attempts 
-   *  to activate tools. */
-  void AttemptToActivateToolsProcessing( void );
-
   /** The "AttemptToStartTrackingProcessing" method attempts 
    *  to start tracking. */
   void AttemptToStartTrackingProcessing( void );
 
   /** The "AttemptToStopTrackingProcessing" method attempts to stop tracking. */
   void AttemptToStopTrackingProcessing( void );
+
+  /** The "AttemptToAttachTrackerToolProcessing" method attempts 
+   *  to attach a tracker tool to the tracker . */
+  void AttemptToAttachTrackerToolProcessing( void );
 
   /** The "AttemptToUpdateStatusProcessing" method attempts to update status
       during tracking. */
@@ -386,10 +389,6 @@ private:
   /** The "CloseFromTrackingStateProcessing" method closes tracker in
       use, when the tracker is in tracking state. */
   void CloseFromTrackingStateProcessing( void );
-
-  /** The "CloseFromToolsActiveStateProcessing" method closes tracker
-      in use, when the tracker is in active tools state. */
-  void CloseFromToolsActiveStateProcessing( void);
 
   /** The "CloseFromCommunicatingStateProcessing" method closes
       tracker in use, when the tracker is in communicating state. */
@@ -425,6 +424,14 @@ private:
   /** Post-processing after start tracking has failed. */ 
   void StartTrackingFailureProcessing( void );
 
+  /** Post-processing after attaching a tracker tool
+     has been successful. */ 
+  void AttachingTrackerToolSuccessProcessing( void );
+
+  /** Post-processing after an attempt to attach a tracker tool
+   *  has failed. */ 
+  void AttachingTrackerToolFailureProcessing( void );
+
   /** Post-processing after stop tracking has been successful. */ 
   void StopTrackingSuccessProcessing( void );
 
@@ -440,9 +447,22 @@ private:
   /** Always called when entering tracking state. */
   void EnterTrackingStateProcessing( void );
 
-  /** Always called when entering tracking state. */
-  void ExitTrackingStateProcessing( void );
+  /** Detach all tracker tools from the tracker */
+  void DetachAllTrackerToolsFromTracker();
 
+  /** Report invalid request */ 
+  void ReportInvalidRequestProcessing( void );
+
+  /** Actually set the frequency of update */ 
+  void SetFrequencyProcessing( void );
+
+  /** Define the coordinate system interface 
+   */
+  igstkCoordinateSystemClassInterfaceMacro();
+
+  TrackerToolType   * m_TrackerToolToBeAttached;
+
+  double              m_FrequencyToBeSet;
 };
 
 }

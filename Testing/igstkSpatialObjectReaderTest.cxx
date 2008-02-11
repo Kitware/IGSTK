@@ -21,7 +21,7 @@
 
 #include "igstkSpatialObjectReader.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkSpatialObjectReaderTest( int argc, char * argv [] )
@@ -46,8 +46,8 @@ int igstkSpatialObjectReaderTest( int argc, char * argv [] )
 
   ReaderType::Pointer  reader = ReaderType::New();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();

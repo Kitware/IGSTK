@@ -48,15 +48,12 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAuroraTracker.h"
+#include "igstkView2D.h"
+#include "igstkView3D.h"
 // EndCodeSnippet
 
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
-#include "itkLogger.h"
+#include "igstkSerialCommunication.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 class FourViewsAndTrackingImplementation : public FourViewsAndTrackingGUI
@@ -64,21 +61,33 @@ class FourViewsAndTrackingImplementation : public FourViewsAndTrackingGUI
 
 public:
 
-  typedef itk::Logger              LoggerType; 
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  typedef igstk::AuroraTracker     TrackerType;
+  typedef igstk::Object::LoggerType             LoggerType;
+  typedef itk::StdStreamLogOutput               LogOutputType;
+  typedef igstk::AuroraTracker                  TrackerType;
+  typedef igstk::AuroraTrackerTool              TrackerToolType;
 
-#ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication            CommunicationType;
 
 public:
 
   FourViewsAndTrackingImplementation()
     {
+    this->Display3D = ViewType3D::New();
+    this->DisplayAxial = ViewType2D::New();
+    this->DisplayCoronal = ViewType2D::New();
+    this->DisplaySagittal = ViewType2D::New();
+
+    this->DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
+    this->DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
+    this->DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
+
+    this->Display3DWidget->RequestSetView( this->Display3D );
+    this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
+    this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
+    this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+
     m_Tracker = TrackerType::New();
+    m_TrackerTool = TrackerToolType::New();
     m_Logger = LoggerType::New();
     m_LogOutput = LogOutputType::New();
     m_LogFile.open("logFourViewsAndTracking.txt");
@@ -105,7 +114,7 @@ public:
     m_Communication->SetLogger( m_Logger );
     m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
     m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
     m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
     m_Communication->SetHardwareHandshake( 
@@ -114,33 +123,29 @@ public:
 
     m_Communication->OpenCommunication();
 
+    const unsigned int toolPort = 0;
+    m_TrackerTool->RequestSetPortNumber( toolPort );
+    m_TrackerTool->RequestConfigure();
+    m_TrackerTool->RequestAttachToTracker( m_Tracker );
+
     m_Tracker->RequestOpen();
-    m_Tracker->RequestInitialize();
 
     // Set up the four quadrant views
     this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->Display3D->RequestStart();
+    this->Display3DWidget->RequestEnableInteractions();
+    this->Display3D->SetRefreshRate( 60 ); // 60 Hz
 
     this->DisplayAxial->RequestResetCamera();
-    this->DisplayAxial->Update();
-    this->DisplayAxial->RequestEnableInteractions();
-    this->DisplayAxial->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplayAxial->RequestStart();
+    this->DisplayAxialWidget->RequestEnableInteractions();
+    this->DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
 
     this->DisplayCoronal->RequestResetCamera();
-    this->DisplayCoronal->Update();
-    this->DisplayCoronal->RequestEnableInteractions();
-    this->DisplayCoronal->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplayCoronal->RequestStart();
+    this->DisplayCoronalWidget->RequestEnableInteractions();
+    this->DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
 
     this->DisplaySagittal->RequestResetCamera();
-    this->DisplaySagittal->Update();
-    this->DisplaySagittal->RequestEnableInteractions();
-    this->DisplaySagittal->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->DisplaySagittal->RequestStart();
+    this->DisplaySagittalWidget->RequestEnableInteractions();
+    this->DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
       
     m_Tracking = false;
     }
@@ -185,9 +190,9 @@ public:
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
     {
-    const unsigned int toolPort = 0;
-    const unsigned int toolNumber = 0;
-    m_Tracker->AttachObjectToTrackerTool( toolPort, toolNumber, objectToTrack );
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool );
     }
 
   void ResetCameras()
@@ -196,24 +201,55 @@ public:
     this->DisplayAxial->RequestResetCamera();
     this->DisplayCoronal->RequestResetCamera();
     this->DisplaySagittal->RequestResetCamera();
+    }
 
-    this->Display3D->Update();
-    this->DisplayAxial->Update();
-    this->DisplayCoronal->Update();
-    this->DisplaySagittal->Update();
+  void StartViews()
+    {
+    this->Display3D->RequestStart();
+    this->DisplayAxial->RequestStart();
+    this->DisplayCoronal->RequestStart();
+    this->DisplaySagittal->RequestStart();
+    }
+
+  void StopViews()
+    {
+    this->Display3D->RequestStop();
+    this->DisplayAxial->RequestStop();
+    this->DisplayCoronal->RequestStop();
+    this->DisplaySagittal->RequestStop();
+    }
+
+
+  void ConnectViewsToSpatialObjectParent( igstk::SpatialObject* so )
+    {
+    igstk::Transform trans;
+    trans.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    this->Display3D->RequestSetTransformAndParent( trans, so );
+    this->DisplayAxial->RequestSetTransformAndParent( trans, so );
+    this->DisplayCoronal->RequestSetTransformAndParent( trans, so );
+    this->DisplaySagittal->RequestSetTransformAndParent( trans, so );
     }
 
 private:
+  typedef igstk::View2D ViewType2D;
+  typedef igstk::View3D ViewType3D;
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer             m_Logger;
+  LogOutputType::Pointer          m_LogOutput;
+  TrackerType::Pointer            m_Tracker;
+  TrackerToolType::Pointer        m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 
   bool                    m_Tracking;
     
   std::ofstream           m_LogFile;
+
+  ViewType2D::Pointer DisplayAxial;
+  ViewType2D::Pointer DisplayCoronal;
+  ViewType2D::Pointer DisplaySagittal;
+  ViewType3D::Pointer Display3D;
 };
 
 

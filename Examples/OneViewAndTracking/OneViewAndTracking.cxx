@@ -24,6 +24,16 @@
 
 int main(int , char** )
 { 
+  /**
+   *  Coordinate systems:
+   *
+   *              Ellipsoid
+   *                  |
+   *            --------------
+   *           |              |
+   *       Cylinder        Display3D
+   *
+   */
 
   igstk::RealTimeClock::Initialize();
 
@@ -50,9 +60,6 @@ int main(int , char** )
 
   std::cout << "Transform to static ellipsoid = " << transform << std::endl;
 
-  ellipsoid->RequestSetTransform( transform );
-
-
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
         ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -72,6 +79,11 @@ int main(int , char** )
   cylinderRepresentation->SetColor(1.0,0.0,0.0);
   cylinderRepresentation->SetOpacity(1.0);
 
+  // Make an identity transform and attach the cylinder to the ellipsoid.
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder->RequestSetTransformAndParent( identity, ellipsoid );
+
   // Add the ellipsoid representations to the view
   application.AddEllipsoid( ellipsoidRepresentation );
   application.AddCylinder(  cylinderRepresentation  );
@@ -79,15 +91,19 @@ int main(int , char** )
   // Associate the Spatial Object to the tracker
   application.AttachObjectToTrack( cylinder );
 
-  application.Display3D->RequestResetCamera();
-  application.Display3D->Update();
+  // View coordinate system is with respect to the ellipsoid.
+  application.View3D->RequestSetTransformAndParent( identity, ellipsoid );
+
+  application.View3D->RequestResetCamera();
+  application.View3D->SetRefreshRate( 60 ); // 60 Hz
+
+  application.Show();
 
   while( !application.HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
     }
-
 
   return EXIT_SUCCESS;
 }

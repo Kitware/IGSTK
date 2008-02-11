@@ -63,7 +63,7 @@ public:
   void RequestGetVascularNetwork();
 
   /** Event type */
-  igstkLoadedObjectEventMacro( VascularNetworkModifiedEvent, IGSTKEvent, 
+  igstkLoadedObjectEventMacro( VascularNetworkObjectModifiedEvent, IGSTKEvent, 
                                VascularNetworkObject);
 
 protected:

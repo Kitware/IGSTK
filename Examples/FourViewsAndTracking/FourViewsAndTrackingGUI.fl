@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class FourViewsAndTrackingGUI {open
@@ -10,29 +10,29 @@ class FourViewsAndTrackingGUI {open
       label {IGSTK: Four Quadrants Example} open
       xywh {457 58 775 710} type Double hide resizable
     } {
-      Fl_Box Display3D {
+      Fl_Box Display3DWidget {
         label {Display 3D}
         xywh {5 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplayAxial {
+      Fl_Box DisplayAxialWidget {
         label {Display Axial}
         xywh {388 5 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplaySagittal {
+      Fl_Box DisplaySagittalWidget {
         label {Display Sagittal}
         xywh {388 338 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
-      Fl_Box DisplayCoronal {
+      Fl_Box DisplayCoronalWidget {
         label {Display Coronal}
         xywh {5 338 380 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView2D.h>}
-        class {igstk::View2D}
+        code0 {\#include <igstkFLTKWidget.h>}
+        class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingButton {
         label Tracking
@@ -46,35 +46,37 @@ else             this->DisableTracking();}
         xywh {670 675 85 25}
       }
     }
-    code {this->hasQuitted = false;
-this->DisplayAxial->RequestSetOrientation( igstk::View2D::Axial );
-this->DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal );
-this->DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal );} {}
+    code {this->hasQuitted = false;} {}
   }
   Function {~FourViewsAndTrackingGUI()} {open return_type virtual
   } {
-    code {delete Display3D;
-delete DisplayAxial;
-delete DisplaySagittal;
-delete DisplayCoronal;} {selected
-    }
+    code {delete Display3DWidget;
+delete DisplayAxialWidget;
+delete DisplaySagittalWidget;
+delete DisplayCoronalWidget;} {}
   }
   Function {Quit()} {return_type {virtual void}
   } {
-    code {mainWindow->hide();
+    code {this->StopViews();
+mainWindow->hide();
 this->hasQuitted = true;} {}
   }
   Function {Show()} {return_type {virtual void}
   } {
-    code {mainWindow->show();} {}
+    code {mainWindow->show();
+this->StartViews();} {}
   }
-  Function {EnableTracking()} {open return_type {virtual void}
+  Function {EnableTracking()} {return_type {virtual void}
   } {}
-  Function {DisableTracking()} {open return_type {virtual void}
+  Function {DisableTracking()} {return_type {virtual void}
   } {}
   decl {bool hasQuitted;} {}
   Function {HasQuitted()} {return_type {virtual bool}
   } {
     code {return this->hasQuitted;} {}
   }
+  Function {StartViews()} {open return_type {virtual void}
+  } {}
+  Function {StopViews()} {open selected return_type {virtual void}
+  } {}
 } 

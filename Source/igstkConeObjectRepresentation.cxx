@@ -128,7 +128,6 @@ void ConeObjectRepresentation
 void ConeObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG,  "UpdateRepresentationProcessing called ....\n" );
-  this->RequestVerifyTimeStamp();
 
   m_ConeSource->SetRadius( m_ConeSpatialObject->GetRadius() );
   m_ConeSource->SetHeight( m_ConeSpatialObject->GetHeight() );

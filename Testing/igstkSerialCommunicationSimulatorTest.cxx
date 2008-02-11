@@ -25,7 +25,7 @@
 #include <set>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"
@@ -63,7 +63,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
   igstk::SerialCommunicationSimulator::Pointer 
@@ -121,9 +121,14 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   serialComm->OpenCommunication();
 
-  igstk::AuroraTracker::Pointer  tracker;
+  igstk::AuroraTracker::Pointer       tracker;
+  igstk::AuroraTrackerTool::Pointer   tool;
 
   tracker = igstk::AuroraTracker::New();
+  tool    = igstk::AuroraTrackerTool::New();
+
+  tool->RequestConfigure();
+  tool->RequestAttachToTracker( tracker );
 
   tracker->SetLogger( logger );
 
@@ -137,8 +142,6 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 
   std::cout << tracker << std::endl;
 
-  tracker->RequestInitialize();
-
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -151,7 +154,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   for(int i=0; i<10; i++)
     {
     tracker->RequestUpdateStatus();
-    tracker->GetToolTransform( 0, 0, transitions );
+    transitions = tool->GetRawTransform();
     position = transitions.GetTranslation();
     std::cout << "Position = (" << position[0] << "," 
               << position[1] << "," << position[2] << ")" << std::endl;

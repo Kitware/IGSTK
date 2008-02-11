@@ -43,9 +43,6 @@ public:
 
   typedef Superclass::TransformType           TransformType;
 
-  /** Get the transform */ 
-  void GetTransform(TransformType & transform);
-
   /** Scaling factor */
   igstkSetMacro( ScaleFactor, double );
   igstkGetMacro( ScaleFactor, double );
@@ -60,11 +57,11 @@ protected:
 
   virtual ResultType InternalOpen( void );
 
-  virtual ResultType InternalActivateTools( void );
-
   virtual ResultType InternalStartTracking( void );
 
   virtual ResultType InternalUpdateStatus( void );
+
+  virtual ResultType InternalThreadedUpdateStatus( void );
 
   virtual ResultType InternalReset( void );
 
@@ -74,6 +71,15 @@ protected:
 
   virtual ResultType InternalClose( void );
 
+  /** Verify tracker tool information */
+  virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
+
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * );
+
+  virtual ResultType AddTrackerToolToInternalDataContainers( 
+    const TrackerToolType * );
+
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -81,13 +87,6 @@ private:
 
   MouseTracker(const Self&);  //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  typedef TrackerTool                 TrackerToolType;
-  typedef TrackerPort                 TrackerPortType;
-
-  TrackerToolType::Pointer            m_Tool;
-
-  TrackerPortType::Pointer            m_Port;
 
   double                              m_ScaleFactor;
 };

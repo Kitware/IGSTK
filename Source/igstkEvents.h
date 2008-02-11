@@ -178,7 +178,6 @@ igstkEventMacro( InvalidRequestErrorEvent, IGSTKEvent );
 igstkEventMacro( TransformNotAvailableEvent, InvalidRequestErrorEvent );
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
-igstkLoadedEventMacro( TransformModifiedEvent, IGSTKEvent, Transform );
 igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
                        EventHelperType::DoubleType );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );

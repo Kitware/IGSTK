@@ -92,6 +92,33 @@ IF(IGSTK_USE_FLTK)
   ENDIF (FLTK_FOUND)
 ENDIF(IGSTK_USE_FLTK)
 
+#
+# FIND Qt
+#
+OPTION(IGSTK_USE_Qt "Use Qt for GUI" OFF)
+IF(IGSTK_USE_Qt)
+ # use what QVTK built with
+ SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+ SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
+ SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
+ SET(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE STRING "")
+
+ IF( DESIRED_QT_VERSION MATCHES 3 )
+    MESSAGE( FATAL_ERROR " VTK built using Qt 3. Please use Qt4" )
+ ENDIF( DESIRED_QT_VERSION MATCHES 3)
+
+ FIND_PACKAGE(Qt4 REQUIRED)
+
+ IF(QT_USE_FILE)
+   INCLUDE(${QT_USE_FILE})
+ ELSE(QT_USE_FILE)
+   SET(QT_LIBRARIES   ${QT_QT_LIBRARY})
+ ENDIF(QT_USE_FILE)
+
+ INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR})
+
+ENDIF(IGSTK_USE_Qt)
+
 # The IGSTK Library
 SUBDIRS(Source)
 
@@ -105,6 +132,25 @@ OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" ON)
 IF(IGSTK_BUILD_EXAMPLES)
    SUBDIRS(Examples)
 ENDIF(IGSTK_BUILD_EXAMPLES)
+
+# Connect MicronTracker
+OPTION(IGSTK_USE_MicronTracker "Connect MicronTracker" OFF)
+
+IF(IGSTK_USE_MicronTracker)
+  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h
+  "C:/Program Files/Claron Technology/MicronTracker/Dist"
+  DOC "Directory where the MTC.h file is located")
+  INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
+  INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/MicronTracker/src )
+
+  FIND_LIBRARY( MTC_LIBRARY 
+    NAMES MTC MTC.dll 
+    PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
+    DOC "Full path to the MTC.dll file"
+    )
+  GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
+  LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
+ENDIF(IGSTK_USE_MicronTracker)
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.

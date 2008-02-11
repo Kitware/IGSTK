@@ -17,7 +17,7 @@
 #ifndef __igstkMacros_h
 #define __igstkMacros_h
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkCommand.h"
 
 /** \file igstkMacros.h defines standard system-wide macros, constants, 
@@ -44,9 +44,12 @@ namespace igstk
 {         \
   if (this->GetLogger() ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    this->GetLogger()->Write(::itk::Logger::x, message.str()); \
+    if (this->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      this->GetLogger()->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -58,9 +61,12 @@ namespace igstk
 {         \
   if (obj->GetLogger() ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
+    if (obj->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -72,9 +78,12 @@ namespace igstk
 {         \
   if ( logger ) \
     {  \
-    ::itk::OStringStream message; \
-    message << y; \
-    logger->Write(::itk::Logger::x, message.str()); \
+    if (logger->ShouldBuildMessage( ::igstk::Logger::x )) \
+      { \
+      ::itk::OStringStream message; \
+      message << y; \
+      logger->Write(::itk::Logger::x, message.str()); \
+      } \
     }  \
 }
 
@@ -132,7 +141,7 @@ static Pointer New(void) \
  * LoggerType must be defined before this macro is used. */
 #define  igstkLoggerMacro() \
 public: \
-  typedef ::itk::Logger                  LoggerType; \
+  typedef ::igstk::Logger                LoggerType; \
 protected: \
   LoggerType* GetLogger() const { return m_Logger; } \
 private: \
@@ -157,6 +166,20 @@ public: \
       this->m_##name = ""; \
       } \
     this->Modified(); \
+  } \
+  virtual void Set##name (const std::string & _arg) \
+  { \
+    this->Set##name( _arg.c_str() ); \
+  } \
+
+
+/** Get character string.  Creates member Get"name"() 
+ * (e.g., SetFilename(char *)). The macro assumes that
+ * the class member (name) is declared as a type std::string. */
+#define igstkGetStringMacro(name) \
+  virtual const char* Get##name () const \
+  { \
+    return this->m_##name.c_str(); \
   }
 
 
@@ -269,17 +292,20 @@ public:  \
 #define igstkEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  void Callback##event##input( const ::itk::EventObject & ) \
+  void Callback##event##input##Input( const ::itk::EventObject & ) \
   { \
-    m_StateMachine.PushInput( m_##input ); \
+    igstkPushInputMacro( input ); \
+    m_StateMachine.ProcessInputs(); \
   } \
 public: \
-  void Observe##event(const ::itk::Object * object ) \
+  void Observe##event##Event(const ::igstk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this, \
-                                          & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
+    this->RegisterObservedObject( object, tag ); \
     } 
 
 
@@ -289,47 +315,52 @@ public: \
 #define igstkLoadedEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ::igstk::event::PayloadType                 m_##input##ToBeSet; \
-  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  ::igstk::event##Event::PayloadType m_##input##InputToBeSet; \
+  void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
-  const ::igstk::event * realevent = \
-                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
+  const ::igstk::event##Event * realevent = \
+      dynamic_cast < const ::igstk::event##Event * > ( &eventvar ); \
     if( realevent ) \
       { \
-      m_##input##ToBeSet = realevent->Get(); \
-      m_StateMachine.PushInput( m_##input ); \
+      m_##input##InputToBeSet = realevent->Get(); \
+      igstkPushInputMacro( input ); \
+      m_StateMachine.ProcessInputs(); \
       } \
   } \
 public: \
- void Observe##input(const ::itk::Object * object ) \
+ void Observe##input##Input(const ::igstk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
+    this->RegisterObservedObject( object, tag ); \
     }
-
 #define igstkLoadedObjectEventTransductionMacro( event, input ) \
 private: \
   ReceptorObserverPointer m_Observer##event##input;  \
-  ::igstk::event::PayloadType *                m_##input##ToBeSet; \
-  void Callback##event##input( const ::itk::EventObject & eventvar ) \
+  ::igstk::event##Event::PayloadType *  m_##input##InputToBeSet; \
+  void Callback##event##input##Input( const ::itk::EventObject & eventvar ) \
   { \
-  const ::igstk::event * realevent = \
-                      dynamic_cast < const ::igstk::event * > ( &eventvar ); \
+  const ::igstk::event##Event * realevent = \
+     dynamic_cast < const ::igstk::event##Event * > ( &eventvar ); \
     if( realevent ) \
       { \
-      m_##input##ToBeSet = realevent->Get(); \
-      m_StateMachine.PushInput( m_##input ); \
+      m_##input##InputToBeSet = realevent->Get(); \
+      igstkPushInputMacro( input ); \
+      m_StateMachine.ProcessInputs(); \
       } \
   } \
 public: \
- void Observe##input(const ::itk::Object * object ) \
+ void Observe##input##Input(const ::igstk::Object * object ) \
     { \
     m_Observer##event##input = ReceptorObserverType::New(); \
     m_Observer##event##input->SetCallbackFunction( this,\
-                                           & Self::Callback##event##input ); \
-    object->AddObserver( ::igstk::event(),m_Observer##event##input ); \
+      & Self::Callback##event##input##Input ); \
+    unsigned long tag = object->AddObserver( \
+      ::igstk::event##Event(),m_Observer##event##input ); \
+    this->RegisterObservedObject( object, tag ); \
     }
 
 

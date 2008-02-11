@@ -47,13 +47,16 @@ public:
     
   /** Typedefs */
   typedef VesselObject                      VesselObjectType;
-    
-  /** Return the output vessel as an event */
-  void RequestGetVessel(unsigned long id);
 
-  /** Event type */
-  igstkLoadedObjectEventMacro( VesselObjectModifiedEvent, IGSTKEvent, 
-                               VesselObject);
+  /** Return the number of objects in the group */
+  unsigned long GetNumberOfVessels() const;
+  
+  /** Request Adding a Vessel to the list of children. Note that this
+   * method may invoke the RequestAddChild() method in the superclass. */
+  void RequestAddVessel( const Transform & transform, VesselObjectType * child );
+ 
+  /** Return the output vessel as an event with payload. */
+  void RequestGetVessel(unsigned long id);
 
 protected:
 
@@ -65,25 +68,60 @@ protected:
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
-  
-  /** This function reports the vascular network */
-  void ReportVesselProcessing();
+
+  /* Make the following methods protected to avoid ambiguities in the 
+   * API of this class. When adding Vessels, users should call RequestAddVessel()
+   * and not attempt to use the superclass method RequestAddChild() */
+  unsigned long GetNumberOfChildren() const;
+  void RequestAddChild( SpatialObject * child );
+  void RequestGetChild( unsigned long childId );
 
 private:
 
-  /** These two methods must be declared and note be implemented
+  /** These two methods must be declared and not be implemented
   *  in order to enforce the protocol of smart pointers. */
   VascularNetworkObject(const Self&);          //purposely not implemented
   void operator=(const Self&);                 //purposely not implemented
  
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( GetVessel );
+  igstkDeclareInputMacro( VesselReceived );
+  igstkDeclareInputMacro( VesselNotFound );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Init );
-  unsigned long m_VesselId;
+  igstkDeclareStateMacro( AttemtingToGetVessel );
+
+  unsigned long         m_VesselId;
+
+  /** This function sends a found vessel as a payload to an event. */
+  void ReportVesselProcessing();
+
+  /** This function search for a vessel the vascular network */
+  void SearchForVesselProcessing();
+
+  /** Report when a request has been made at an incorrect time. */
+  void ReportInvalidRequestProcessing();
+
+  /** Report no vessel found */
+  void ReportVesselNotFoundProcessing();
+
+  igstkLoadedObjectEventTransductionMacro(
+    SpatialObjectModified, VesselReceived );
+
+  igstkEventTransductionMacro(
+    SpatialObjectNotAvailable, VesselNotFound );
 
 };
+
+//
+// Macros declaring events to be used when requesting VascularNetworkObjects.
+//
+igstkLoadedObjectEventMacro( VascularNetworkObjectModifiedEvent, 
+  IGSTKEvent, VascularNetworkObject );
+
+igstkEventMacro( VascularNetworkObjectNotAvailableEvent, 
+  InvalidRequestErrorEvent );
 
 } // end namespace igstk
 

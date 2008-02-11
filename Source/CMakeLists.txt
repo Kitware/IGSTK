@@ -4,9 +4,6 @@
 # The header files
 
 SET(IGSTK_HEADS
-  igstkFlockOfBirdsCommandInterpreter.h
-  igstkFlockOfBirdsTracker.h
-  igstkFlockOfBirdsTrackerTool.h
   igstkUSImageObject.h
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
@@ -14,6 +11,7 @@ SET(IGSTK_HEADS
   igstkVascularNetworkObjectRepresentation.h
   igstkVascularNetworkReader.h
   igstkVesselObject.h
+  igstkVesselObjectRepresentation.h
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -70,7 +68,6 @@ SET(IGSTK_HEADS
   igstkTransform.h
   igstkToken.h
   igstkTracker.h
-  igstkTrackerPort.h
   igstkTrackerTool.h
   igstkTubeObject.h
   igstkTubeObjectRepresentation.h
@@ -82,6 +79,20 @@ SET(IGSTK_HEADS
   igstkMeshReader.h
   igstkGroupObject.h
   igstkTubeGroupObject.h
+  igstkLogger.h
+  igstkCoordinateSystem.h
+  igstkCoordinateSystemDelegator.h
+  igstkCoordinateSystemTransformToResult.h
+  igstkCoordinateSystemTransformToErrorResult.h
+
+  igstkCircularSimulatedTracker.h
+  igstkSimulatedTrackerTool.h
+  igstkSimulatedTracker.h
+  igstkNDITracker.h
+
+  igstkView.h
+  igstkView2D.h
+  igstkView3D.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -89,19 +100,34 @@ IF(IGSTK_USE_FLTK)
     ${IGSTK_HEADS}
     igstkFLTKTextBufferLogOutput.h
     igstkFLTKTextLogOutput.h
-    igstkView.h
-    igstkView2D.h
-    igstkView3D.h
     igstkMouseTracker.h
+    igstkMouseTrackerTool.h
+    igstkFLTKWidget.h
     )
 ENDIF(IGSTK_USE_FLTK)
+
+IF(IGSTK_USE_Qt)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkQMouseTracker.h
+      igstkQMouseTrackerTool.h
+      igstkQTWidget.h
+   )
+ENDIF(IGSTK_USE_Qt)
+
+IF(IGSTK_USE_MicronTracker)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkMicronTracker.h
+      igstkMicronTrackerTool.h
+     )
+ENDIF(IGSTK_USE_MicronTracker)
+
+
 
 # The implementation files
 
 SET(IGSTK_SRCS  
-  igstkFlockOfBirdsCommandInterpreter.cxx
-  igstkFlockOfBirdsTracker.cxx
-  igstkFlockOfBirdsTrackerTool.cxx
   igstkUSImageObject.cxx
   igstkUSImageObjectRepresentation.cxx
   igstkUSImageReader.cxx
@@ -110,6 +136,7 @@ SET(IGSTK_SRCS
   igstkVascularNetworkObjectRepresentation.cxx
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
+  igstkVesselObjectRepresentation.cxx
   igstkToolCalibration.cxx
   igstkPivotCalibrationReader.cxx
   igstkAnnotation2D.cxx
@@ -159,7 +186,6 @@ SET(IGSTK_SRCS
   igstkTimeStamp.cxx
   igstkToken.cxx
   igstkTracker.cxx
-  igstkTrackerPort.cxx
   igstkTrackerTool.cxx
   igstkTransform.cxx
   igstkTubeObject.cxx
@@ -171,6 +197,21 @@ SET(IGSTK_SRCS
   igstkMeshReader.cxx
   igstkGroupObject.cxx
   igstkTubeGroupObject.cxx
+  igstkLogger.cxx
+  igstkCoordinateSystem.cxx
+  igstkCoordinateSystemDelegator.cxx
+  igstkCoordinateSystemTransformToResult.cxx
+  igstkCoordinateSystemTransformToErrorResult.cxx
+
+  igstkCircularSimulatedTracker.cxx
+  igstkSimulatedTrackerTool.cxx
+  igstkSimulatedTracker.cxx
+  igstkNDITracker.cxx
+
+  igstkView.cxx
+  igstkView2D.cxx
+  igstkView3D.cxx
+  igstkViewProxyBase.cxx
 )
 
 IF(IGSTK_USE_FLTK)
@@ -178,15 +219,29 @@ IF(IGSTK_USE_FLTK)
     ${IGSTK_SRCS}
     igstkFLTKTextBufferLogOutput.cxx
     igstkFLTKTextLogOutput.cxx
-    igstkView.cxx
-    igstkView2D.cxx
-    igstkView3D.cxx
     igstkMouseTracker.cxx
+    igstkMouseTrackerTool.cxx
+    igstkFLTKWidget.cxx
     )
 ENDIF(IGSTK_USE_FLTK)
 
+IF(IGSTK_USE_Qt)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkQMouseTracker.cxx
+      igstkQMouseTrackerTool.cxx
+      igstkQTWidget.cxx
+   )
+ENDIF(IGSTK_USE_Qt)
 
-
+IF(IGSTK_USE_MicronTracker)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkMicronTracker.cxx
+      igstkMicronTrackerTool.cxx
+ 
+     )
+ENDIF(IGSTK_USE_MicronTracker)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
@@ -204,6 +259,26 @@ ELSE( WIN32 )
   )
 ENDIF( WIN32 )
 
+# Variable for holding extra libraries
+SET(EXTRA_LIBS)
+IF(IGSTK_USE_Qt)
+  IF(APPLE)
+   SET(EXTRA_LIBS ${EXTRA_LIBS} QVTK  "-framework QtTest")
+  ELSE(APPLE)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} QVTK  ${QT_QTTEST_LIBRARY})
+  ENDIF(APPLE)
+ENDIF(IGSTK_USE_Qt)
+
+IF(IGSTK_USE_MicronTracker)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
+   
+  IF(WIN32)
+    SET(EXTRA_LIBS ${EXTRA_LIBS}  comctl32 wsock32 odbc32 odbccp32 )
+  ELSE(WIN32)
+    SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dc1394_control )
+  ENDIF(WIN32)
+  
+ENDIF(IGSTK_USE_MicronTracker)
 
 # Adding the IGSTK library
 
@@ -214,6 +289,7 @@ TARGET_LINK_LIBRARIES( IGSTK
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon vtksys
+    ${EXTRA_LIBS}
 )
 
 IF(IGSTK_USE_FLTK)

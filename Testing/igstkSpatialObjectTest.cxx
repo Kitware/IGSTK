@@ -16,21 +16,49 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//  Warning about: identifier was truncated to '255' characters 
+//  Warning about: identifier was truncated to '255' characters
 //  in the debug information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
 
 #include <iostream>
 
+#include "igstkAxesObject.h"
 #include "igstkSpatialObject.h"
 #include "igstkTracker.h"
+#include "igstkTrackerTool.h"
+
 
 namespace igstk
 {
-  
+
 namespace SpatialObjectTest
 {
+
+class MyTracker;
+
+class DummyTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+
+  /** The "RequestAttachToTracker" method attaches
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( MyTracker * );
+
+protected:
+  DummyTrackerTool():m_StateMachine(this)
+    {
+    }
+  ~DummyTrackerTool()
+    {
+    }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
+};
 
 class DummySpatialObject : public SpatialObject
 {
@@ -39,123 +67,141 @@ public:
 
   bool TestMethods()
     {
-    this->RequestAddObject( NULL );        // Test with null pointer
-    this->RequestSetSpatialObject( NULL ); // Test with null pointer
+    this->RequestSetInternalSpatialObject( NULL ); // Test with null pointer
 
     Self::Pointer sibling = Self::New();   // Test with valid pointer
-    this->RequestAddObject( sibling );
-      
+
     typedef SpatialObject::SpatialObjectType SpatialObjectType;
     SpatialObjectType::Pointer so = SpatialObjectType::New();
-    this->RequestSetSpatialObject( so );   // Test with valid pointer
+    this->RequestSetInternalSpatialObject( so );   // Test with valid pointer
 
-    sibling->RequestSetSpatialObject( so );
-    this->RequestAddObject( sibling );
-      
-    const Self * me1 = dynamic_cast< const Self *>( this->GetObject(  0  ) );
-    if( !me1 )
+    sibling->RequestSetInternalSpatialObject( so );
+
+    SpatialObject::SpatialObjectType * spatialObject =
+      this->GetInternalSpatialObject();
+
+    if( spatialObject != so.GetPointer() )
       {
-      std::cerr << "Error in GetObject() with valid Id" << std::endl;
-      return false;
-      }
-    
-    const Self * me2 = dynamic_cast< const Self *>( this->GetObject( 100 ) );
-    if( me2 )
-      {
-      std::cerr << "Error in GetObject() with invalid Id" << std::endl;
       return false;
       }
 
     return true;
-  }
+    }
 
 protected:
   DummySpatialObject( void ):m_StateMachine(this) {};
   ~DummySpatialObject( void ) {};
-  
+
 };
 
 class MyTracker : public Tracker
 {
 public:
 
-    /** Macro with standard traits declarations. */
-    igstkStandardClassTraitsMacro( MyTracker, Tracker )
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( MyTracker, Tracker )
 
-    typedef Superclass::TransformType           TransformType;
-
-    void GetTransform(TransformType & transform) 
-          { this->GetToolTransform(0, 0, transform); }
+  typedef Superclass::TransformType           TransformType;
 
 protected:
-    MyTracker():m_StateMachine(this) 
+  MyTracker():m_StateMachine(this)
+    {
+    m_Position[0] = 0.0;
+    m_Position[1] = 0.0;
+    m_Position[2] = 0.0;
+
+    m_ValidityTime = 100.0; // 100.0 milliseconds
+    }
+  virtual ~MyTracker() {};
+
+  typedef Tracker::ResultType                 ResultType;
+  typedef TransformType::VectorType           PositionType;
+  typedef TransformType::ErrorType            ErrorType;
+
+  virtual ResultType InternalOpen( void ) { return SUCCESS; }
+  virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
+  virtual ResultType InternalUpdateStatus( void )
+    {
+
+    typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+    TrackerToolsContainerType trackerToolContainer =
+      this->GetTrackerToolContainer();
+
+    ConstIteratorType inputItr = trackerToolContainer.begin();
+    ConstIteratorType inputEnd = trackerToolContainer.end();
+
+    typedef igstk::Transform   TransformType;
+    TransformType transform;
+
+    while( inputItr != inputEnd )
       {
-      m_Position[0] = 0.0;
-      m_Position[1] = 0.0;
-      m_Position[2] = 0.0;
-
-      m_ValidityTime = 100.0; // 100.0 milliseconds
-      }
-    virtual ~MyTracker() {};
-
-    typedef Tracker::ResultType                 ResultType;
-    typedef TransformType::VectorType           PositionType;
-    typedef TransformType::ErrorType            ErrorType;
-
-    virtual ResultType InternalOpen( void ) { return SUCCESS; }
-    virtual ResultType InternalActivateTools( void ) 
-      {
-      igstkLogMacro( DEBUG, "MyTracker::InternalActivateTools called ...\n");
-      TrackerPortType::Pointer port = TrackerPortType::New();
-      port->AddTool( TrackerToolType::New() );
-      this->AddPort( port );
-      return SUCCESS;
-      }
-    virtual ResultType InternalStartTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalUpdateStatus( void ) 
-      { 
-      TransformType transform;
-      transform.SetToIdentity( m_ValidityTime );
-      
+      transform.SetToIdentity( this->GetValidityTime() );
       m_Position[0] += 1.0;  // drift along a vector (1.0, 2.0, 3.0)
       m_Position[1] += 2.0;  // just to simulate a linear movement
       m_Position[2] += 3.0;  // being tracked in space.
 
-      ErrorType errorValue = 0.5; 
-
+      ErrorType errorValue = 0.5;
       transform.SetTranslation( m_Position, errorValue, m_ValidityTime );
-      this->SetToolTransform( 0, 0, transform );
 
-      std::cout << "MyTracker::InternalUpdateStatus() " 
-                << m_Position << std::endl;
-  
-      return SUCCESS; 
+      // set the raw transform
+      this->SetTrackerToolRawTransform(
+        trackerToolContainer[inputItr->first], transform );
+
+      this->SetTrackerToolTransformUpdate(
+        trackerToolContainer[inputItr->first], true );
+
+      ++inputItr;
       }
-    virtual ResultType InternalReset( void ) { return SUCCESS; }
-    virtual ResultType InternalStopTracking( void ) { return SUCCESS; }
-    virtual ResultType InternalDeactivateTools( void ) 
-      { 
-      m_Port = TrackerPortType::New();
-      m_Tool = TrackerToolType::New();
-      m_Port->AddTool( m_Tool );
-      this->AddPort( m_Port );
-      return SUCCESS; 
-      }
-    virtual ResultType InternalClose( void ) { return SUCCESS; }
+
+    return SUCCESS;
+    }
+
+  virtual ResultType InternalThreadedUpdateStatus( void )
+    { return SUCCESS; }
+
+  virtual ResultType InternalReset( void )
+    { return SUCCESS; }
+
+  virtual ResultType InternalStopTracking( void )
+    { return SUCCESS; }
+
+  virtual ResultType InternalClose( void )
+    { return SUCCESS; }
+
+  virtual ResultType VerifyTrackerToolInformation(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
+
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
+
+  virtual ResultType AddTrackerToolToInternalDataContainers(
+    const TrackerToolType * trackerTool )
+    { return SUCCESS; }
 
 private:
 
-    MyTracker(const Self&);  //purposely not implemented
-    void operator=(const Self&); //purposely not implemented
+  MyTracker(const Self&);  //purposely not implemented
+  void operator=(const Self&); //purposely not implemented
 
-    typedef TrackerTool                 TrackerToolType;
-    typedef TrackerPort                 TrackerPortType;
-    typedef Transform::TimePeriodType   TimePeriodType;
-    TimePeriodType                      m_ValidityTime;
-    TrackerPortType::Pointer            m_Port;
-    TrackerToolType::Pointer            m_Tool;
-    PositionType                        m_Position;
+  typedef TrackerTool                 TrackerToolType;
+  typedef Transform::TimePeriodType   TimePeriodType;
+  TimePeriodType                      m_ValidityTime;
+  PositionType                        m_Position;
 };
+
+
+/** The "RequestAttachToTracker" method attaches
+ * the tracker tool to a tracker. */
+void DummyTrackerTool::RequestAttachToTracker( MyTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally
+  // mix TrackerTools and Trackers of different type;
+  this->Superclass::RequestAttachToTracker( tracker );
+}
+
 
 } // end SpatialObjectTest namespace
 
@@ -167,6 +213,7 @@ int igstkSpatialObjectTest( int, char * [] )
 
   igstk::RealTimeClock::Initialize();
 
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   typedef igstk::SpatialObjectTest::DummySpatialObject ObjectType;
   ObjectType::Pointer dummyObject = ObjectType::New();
@@ -176,29 +223,47 @@ int igstkSpatialObjectTest( int, char * [] )
   typedef igstk::SpatialObjectTest::MyTracker   TrackerType;
   TrackerType::Pointer  tracker = TrackerType::New();
 
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference );
 
   tracker->RequestOpen();
-  tracker->RequestInitialize();
 
-  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, dummyObject );
+  typedef igstk::SpatialObjectTest::DummyTrackerTool    TrackerToolType;
+  typedef TrackerToolType::TransformType                TransformType;
+
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->RequestConfigure();
+  trackerTool->RequestAttachToTracker( tracker );
+
+  dummyObject->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   dummyObject->Print( std::cout );
-  
+
   tracker->RequestStartTracking();
 
   for(unsigned int i=0; i<50; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();
-    dummyObject->RequestGetTransform();
+    dummyObject->RequestGetTransformToParent();
     }
 
   tracker->RequestStopTracking();
   tracker->RequestClose();
 
-  std::cout << "[PASSED]" << std::endl;
+  std::cout << "Tracked object [PASSED]" << std::endl;
+
+
+  ObjectType::Pointer dummyObject2 = ObjectType::New();
+
+
+  igstk::Transform trackerTransform;
+  trackerTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  dummyObject2->RequestSetTransformAndParent(
+    trackerTransform, worldReference );
+
 
   std::cout << "Test [DONE]" << std::endl;
 

@@ -46,6 +46,11 @@ public:
   igstkStandardClassTraitsMacro( CTImageSpatialObjectRepresentation, \
                     ImageSpatialObjectRepresentation< CTImageSpatialObject > )
 
+  /** Return a copy of the current object representation.
+   * \warning This method does not connect the ImageSpatialObject of the
+   * original. */
+  Pointer Copy() const;
+
 protected:
 
   CTImageSpatialObjectRepresentation( void );

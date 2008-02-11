@@ -25,7 +25,7 @@ BoxObject::BoxObject():m_StateMachine(this)
   igstkLogMacro( DEBUG, "Constructor called ....\n" );
 
   m_BoxSpatialObject = BoxSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_BoxSpatialObject );
+  this->RequestSetInternalSpatialObject( m_BoxSpatialObject );
   m_Size[0] = 1.0;
   m_Size[1] = 1.0;
   m_Size[2] = 1.0;

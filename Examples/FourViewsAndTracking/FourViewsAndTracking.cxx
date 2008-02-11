@@ -29,7 +29,6 @@ int main(int , char** )
 
   FourViewsAndTrackingImplementation   application;
 
-  application.Show();
 
   // Create the ellipsoid 
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
@@ -48,8 +47,6 @@ int main(int , char** )
   transform.SetTranslationAndRotation( 
       translation, rotation, errorValue, validityTimeInMilliseconds );
 
-  ellipsoid->RequestSetTransform( transform );
-
   // Create the ellipsoid representation
   igstk::EllipsoidObjectRepresentation::Pointer 
         ellipsoidRepresentation = igstk::EllipsoidObjectRepresentation::New();
@@ -61,6 +58,9 @@ int main(int , char** )
   igstk::CylinderObject::Pointer cylinder = igstk::CylinderObject::New();
   cylinder->SetRadius(1.0);
   cylinder->SetHeight(300.0);  // about the size of a needle
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder->RequestSetTransformAndParent( identity, ellipsoid );
 
   // Create the cylinder representation
   igstk::CylinderObjectRepresentation::Pointer 
@@ -70,16 +70,41 @@ int main(int , char** )
   cylinderRepresentation->SetOpacity(1.0);
 
 
+  // Create another cylinder 
+  igstk::CylinderObject::Pointer cylinder2 = igstk::CylinderObject::New();
+  cylinder2->SetRadius(30.0);
+  cylinder2->SetHeight(300.0);  // about the size of a needle
+
+  igstk::Transform cylinder2Transform;
+  igstk::Transform::VersorType rotation2;
+  rotation2.Set( 0.0, 1.0, 0.0, 1.0 );
+
+  cylinder2Transform.SetRotation( 
+    rotation2, errorValue, igstk::TimeStamp::GetLongestPossibleTime() );
+
+  // Create another cylinder representation
+  igstk::CylinderObjectRepresentation::Pointer 
+          cylinderRepresentation2 = igstk::CylinderObjectRepresentation::New();
+  cylinderRepresentation2->RequestSetCylinderObject( cylinder2 );
+  cylinderRepresentation2->SetColor(1.0,1.0,0.0);
+  cylinderRepresentation2->SetOpacity(0.6);
+
+  cylinder2->RequestSetTransformAndParent( cylinder2Transform, ellipsoid );
+
   // Add the ellipsoid representations to the views
   application.AddEllipsoid( ellipsoidRepresentation );
   application.AddCylinder(  cylinderRepresentation  );
+  application.AddCylinder(  cylinderRepresentation2  );
 
   // Associate the Spatial Object to the tracker
   application.AttachObjectToTrack( cylinder );
 
+  application.ConnectViewsToSpatialObjectParent( ellipsoid );
 
   application.ResetCameras();
 
+  // Show the main GUI window
+  application.Show();
 
   while( !application.HasQuitted() )
     {

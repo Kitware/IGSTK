@@ -79,7 +79,7 @@ void VascularNetworkReader::RequestGetVascularNetwork()
 /** This function reports the vascular network */
 void VascularNetworkReader::ReportVascularNetworkProcessing()
 {
-  VascularNetworkModifiedEvent  event;
+  VascularNetworkObjectModifiedEvent  event;
   event.Set( this->m_VascularNetwork );
   this->InvokeEvent( event );
 }
@@ -122,7 +122,10 @@ void VascularNetworkReader::AttemptReadObjectProcessing()
         vessel->SetVesselSpatialObject(vesselTube);
 
         // For the moment no hierarchy
-        m_VascularNetwork->RequestAddObject(vessel);
+        igstk::Transform identityTransform;
+        identityTransform.SetToIdentity( 
+                           igstk::TimeStamp::GetLongestPossibleTime() );
+        m_VascularNetwork->RequestAddVessel( identityTransform, vessel );
         }
       }
     it++;

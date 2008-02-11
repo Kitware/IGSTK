@@ -60,7 +60,7 @@ public:
   typedef double      TimePeriodType;
 
   /** Define the longest time period on the machine */
-  static double GetLongestPossibleTime(); 
+  static TimePeriodType GetLongestPossibleTime(); 
 
   /** Compute the intersection of two time stamps */
   static TimeStamp ComputeOverlap( TimeStamp t1, TimeStamp t2 );

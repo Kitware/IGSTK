@@ -25,26 +25,18 @@
 #include <set>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkSystemInformation.h"
 #include "igstkEvents.h"
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
+#include "igstkSerialCommunication.h"
 
 class SerialCommunicationTestCommand : public itk::Command 
 {
 public:
 
-#ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix  CommunicationType;
-#endif
+  typedef igstk::SerialCommunication     CommunicationType;
 
   typedef  SerialCommunicationTestCommand   Self;
   typedef  itk::Command                     Superclass;
@@ -72,14 +64,10 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger                   LoggerType; 
+  typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-#ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix  CommunicationType;
-#endif
+  typedef igstk::SerialCommunication    CommunicationType;
 
   // this is set if the test failed in any way
   int testStatus = EXIT_SUCCESS;
@@ -119,7 +107,7 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   serialComm->SetPortNumber( CommunicationType::PortNumber0 );
   serialComm->SetParity( CommunicationType::NoParity );
-  serialComm->SetBaudRate( CommunicationType::BaudRate9600 );
+  serialComm->SetBaudRate( CommunicationType::BaudRate115200 );
   serialComm->SetDataBits( CommunicationType::DataBits8 );
   serialComm->SetStopBits( CommunicationType::StopBits1 );
   serialComm->SetHardwareHandshake( CommunicationType::HandshakeOff );

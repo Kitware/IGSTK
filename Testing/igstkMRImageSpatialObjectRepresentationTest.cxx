@@ -21,7 +21,7 @@
 
 #include "igstkMRImageSpatialObjectRepresentation.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkMRImageSpatialObjectRepresentationTest( int , char* [] )
@@ -34,8 +34,8 @@ int igstkMRImageSpatialObjectRepresentationTest( int , char* [] )
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();

@@ -24,7 +24,7 @@ VesselObject::VesselObject():m_StateMachine(this)
 {
   // We create the verssel spatial object
   m_VesselSpatialObject = VesselSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_VesselSpatialObject );
+  this->RequestSetInternalSpatialObject( m_VesselSpatialObject );
 } 
 
 /** Destructor */
@@ -40,7 +40,7 @@ void VesselObject
   if(vessel)
     {
     m_VesselSpatialObject = vessel;
-    this->RequestSetSpatialObject( m_VesselSpatialObject );
+    this->RequestSetInternalSpatialObject( m_VesselSpatialObject );
     }
 }
 

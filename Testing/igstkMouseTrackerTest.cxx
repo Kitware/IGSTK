@@ -27,20 +27,49 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkMouseTracker.h"
+#include "igstkMouseTrackerTool.h"
 
+class MouseTrackerTestCommand : public itk::Command 
+{
+public:
+  typedef MouseTrackerTestCommand     Self;
+  typedef itk::Command                Superclass;
+  typedef itk::SmartPointer<Self>     Pointer;
+  itkNewMacro( Self );
+protected:
+  MouseTrackerTestCommand() {};
+
+public:
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    Execute( (const itk::Object *)caller, event);
+    }
+
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+    {
+    // don't print "CompletedEvent", only print interesting events
+    if (!igstk::CompletedEvent().CheckEvent(&event) &&
+        !itk::DeleteEvent().CheckEvent(&event) )
+      {
+      std::cout << event.GetEventName() << std::endl;
+      }
+    }
+};
+
+  
 int igstkMouseTrackerTest( int, char * [] )
 {
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::Transform         TransformType;
-  typedef igstk::MouseTracker      MouseTrackerType;
-  typedef itk::Logger              LoggerType; 
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Transform             TransformType;
+  typedef igstk::MouseTracker          MouseTrackerType;
+  typedef igstk::Object::LoggerType    LoggerType;
+  typedef itk::StdStreamLogOutput      LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -49,6 +78,10 @@ int igstkMouseTrackerTest( int, char * [] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG );
 
+  MouseTrackerTestCommand::Pointer 
+                                my_command = MouseTrackerTestCommand::New();
+
+ 
   MouseTrackerType::Pointer tracker = MouseTrackerType::New();
   tracker->SetLogger( logger );
 
@@ -64,27 +97,45 @@ int igstkMouseTrackerTest( int, char * [] )
 
   tracker->RequestOpen();
 
-  tracker->RequestInitialize();
+  typedef igstk::MouseTrackerTool           TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+
+  // instantiate and attach wired tracker tool  
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->SetLogger( logger );
+  std::string mouseName = "PS/s";
+  trackerTool->RequestSetMouseName( mouseName );
+  //Configure
+  trackerTool->RequestConfigure();
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to events throw by the tracker tool
+  trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
   tracker->RequestStartTracking();
 
-  TransformType transform;
+  typedef igstk::Transform            TransformType;
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
 
-  tracker->RequestUpdateStatus();
 
-  tracker->GetTransform( transform );
+  for(unsigned int i=0; i<20; i++)
+    {
+    tracker->RequestUpdateStatus();
 
-  TransformType::VectorType position = transform.GetTranslation();
-  
-  std::cout << "Mouse Position -> ( " << position[0] << "," 
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool->GetRawTransform();
+
+    position = transform.GetTranslation();
+
+    std::cout << "Mouse:" << trackerTool->GetTrackerToolIdentifier() 
+                          <<  "\t" <<  "( " << position[0] << "," 
             << position[1] << "," << position[2] << ")" << std::endl;
-
-  tracker->RequestReset();
-
+    }
+  
   tracker->RequestStopTracking();
-
-  std::cout << tracker << std::endl;
-  std::cout << transform << std::endl;
 
   tracker->RequestClose();
 

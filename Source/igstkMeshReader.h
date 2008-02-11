@@ -45,9 +45,6 @@ public:
                 TMeshSpatialObject * imageSpatialObject )
     {
     imageSpatialObject->SetMesh( reader->GetITKMesh() );  
-    ::igstk::Transform transform;
-    transform.SetToIdentity( TimeStamp::GetLongestPossibleTime() );
-    imageSpatialObject->RequestSetTransform( transform );
     }
 
 }; // end of MeshReaderToMeshSpatialObject class

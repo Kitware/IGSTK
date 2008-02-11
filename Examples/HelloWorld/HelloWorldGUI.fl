@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 class HelloWorldGUI {open
@@ -10,16 +10,19 @@ class HelloWorldGUI {open
   }
   decl {bool quit;} {}
   decl {TrackerPointer m_Tracker;} {}
+  decl {igstk::View3D::Pointer  View;} {public
+  }
   Function {HelloWorldGUI()} {} {
     Fl_Window MainWindow {
       label {IGSTK: HelloWorld Example} open
       xywh {619 249 515 375} type Double resizable visible
     } {
       Fl_Box Display {
-        label Display
+        label Display selected
         xywh {5 5 505 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include <igstkView3D.h>}
-        class {igstk::View3D}
+        code0 {\#include "igstkView3D.h"}
+        code1 {\#include "igstkFLTKWidget.h"}
+        class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingBt {
         label Tracking
@@ -33,12 +36,21 @@ class HelloWorldGUI {open
         xywh {421 345 90 25}
       }
     }
-    code {this->quit = false;} {}
+    code {this->quit = false;
+this->View = igstk::View3D::New();
+this->Display->RequestSetView( this->View );} {}
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->quit = false;
+this->MainWindow->show();
+this->View->RequestStart();} {}
   }
   Function {Quit()} {return_type {virtual void}
   } {
-    code {this->MainWindow->hide();
-this->quit = true;} {}
+    code {this->View->RequestStop();
+this->quit = true;
+this->MainWindow->hide();} {}
   }
   Function {SetTracking( bool tracking )} {return_type {virtual void}
   } {
@@ -51,10 +63,9 @@ else
   this->m_Tracker->RequestStopTracking();
   }} {}
   }
-  Function {~HelloWorldGUI()} {open return_type virtual
+  Function {~HelloWorldGUI()} {return_type virtual
   } {
-    code {delete Display;} {selected
-    }
+    code {delete Display;} {}
   }
   Function {SetTracker( TrackerType * tracker)} {return_type {virtual void}
   } {

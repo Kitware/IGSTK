@@ -30,35 +30,28 @@
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkAuroraTracker.h"
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
-
-#include "itkLogger.h"
+#include "igstkSerialCommunication.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 class OneViewAndTrackingImplementation : public OneViewAndTrackingGUI
 {
 public:
 
-  typedef itk::Logger              LoggerType; 
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType       LoggerType;
+  typedef itk::StdStreamLogOutput         LogOutputType;
 
-  typedef igstk::AuroraTracker     TrackerType;
+  typedef igstk::AuroraTracker            TrackerType;
+  typedef igstk::AuroraTrackerTool        TrackerToolType;
 
-#ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif
+  typedef igstk::SerialCommunication      CommunicationType;
 
 public:
 
   OneViewAndTrackingImplementation()
     {
     m_Tracker = TrackerType::New();
+    m_TrackerTool = TrackerToolType::New();
 
     m_Logger = LoggerType::New();
     m_LogOutput = LogOutputType::New();
@@ -87,7 +80,7 @@ public:
     m_Communication->SetLogger( m_Logger );
     m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
     m_Communication->SetParity( igstk::SerialCommunication::NoParity );
-    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+    m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
     m_Communication->SetStopBits( igstk::SerialCommunication::StopBits1 );
     m_Communication->SetHardwareHandshake( 
@@ -96,16 +89,13 @@ public:
 
     m_Communication->OpenCommunication();
 
-    m_Tracker->RequestOpen();
-    m_Tracker->RequestInitialize();
+    const unsigned int toolPort = 0;
+    m_TrackerTool->RequestSetPortNumber( toolPort );
+    m_TrackerTool->RequestConfigure();
+    m_TrackerTool->RequestAttachToTracker( m_Tracker );
 
-    // Set up the four quadrant views
-    this->Display3D->RequestResetCamera();
-    this->Display3D->Update();
-    this->Display3D->RequestEnableInteractions();
-    this->Display3D->RequestSetRefreshRate( 60 ); // 60 Hz
-    this->Display3D->RequestStart();
-   
+    m_Tracker->RequestOpen();
+
     m_Tracking = false;
     }
 
@@ -132,28 +122,28 @@ public:
   void AddCylinder( igstk::CylinderObjectRepresentation 
                                                     * cylinderRepresentation )
     {
-    this->Display3D->RequestAddObject( cylinderRepresentation->Copy() );
+    this->View3D->RequestAddObject( cylinderRepresentation->Copy() );
     }
   
   void AddEllipsoid( igstk::EllipsoidObjectRepresentation * 
       ellipsoidRepresentation )
     {
-    this->Display3D->RequestAddObject( ellipsoidRepresentation->Copy() );
+    this->View3D->RequestAddObject( ellipsoidRepresentation->Copy() );
     }
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
     {
-    const unsigned int toolPort = 0;
-    const unsigned int toolNumber = 0;
-    m_Tracker->AttachObjectToTrackerTool( 
-        toolPort, toolNumber, objectToTrack );
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    objectToTrack->RequestSetTransformAndParent( transform, m_TrackerTool );
     }
 
 private:
 
-  LoggerType::Pointer     m_Logger;
-  LogOutputType::Pointer  m_LogOutput;
-  TrackerType::Pointer    m_Tracker;
+  LoggerType::Pointer         m_Logger;
+  LogOutputType::Pointer      m_LogOutput;
+  TrackerType::Pointer        m_Tracker;
+  TrackerToolType::Pointer    m_TrackerTool;
 
   CommunicationType::Pointer m_Communication;
 

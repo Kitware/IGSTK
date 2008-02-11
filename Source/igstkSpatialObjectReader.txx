@@ -21,7 +21,7 @@
 #include "igstkSpatialObjectReader.h"
 
 namespace igstk
-{ 
+{
 
 
 /** Constructor */
@@ -38,7 +38,7 @@ SpatialObjectReader< TDimension, TPixelType >
   igstkAddStateMacro( ObjectRead );
   igstkAddStateMacro( ObjectAttemptingRead );
 
-  /** List of  Inputs */
+  // List of  Inputs
   igstkAddInputMacro( ReadObjectRequest );
   igstkAddInputMacro( ObjectReadingError );
   igstkAddInputMacro( ObjectReadingSuccess );
@@ -47,33 +47,77 @@ SpatialObjectReader< TDimension, TPixelType >
   igstkAddInputMacro( ObjectFileNameIsDirectory );
   igstkAddInputMacro( ObjectFileNameDoesNotExist );
 
-  igstkAddTransitionMacro( Idle, ObjectFileNameValid, 
+  // Transitions from Idle State
+  igstkAddTransitionMacro( Idle, ObjectFileNameValid,
                            ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty, 
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsEmpty,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory, 
+  igstkAddTransitionMacro( Idle, ObjectFileNameIsDirectory,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist, 
+  igstkAddTransitionMacro( Idle, ObjectFileNameDoesNotExist,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( Idle, ReadObjectRequest, 
+  igstkAddTransitionMacro( Idle, ReadObjectRequest,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest, 
+  igstkAddTransitionMacro( Idle, ObjectReadingError,
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, ObjectReadingSuccess,
+                           Idle, ReportInvalidRequest );
+
+  // Transitions from ObjectFileNameRead State
+  igstkAddTransitionMacro( ObjectFileNameRead, ReadObjectRequest,
                            ObjectAttemptingRead, AttemptReadObject );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid, 
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectReadingError,
+                           ObjectFileNameRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectReadingSuccess,
+                           ObjectFileNameRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectFileNameValid,
                            ObjectFileNameRead, SetFileName );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty, 
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectFileNameIsEmpty,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory, 
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectFileNameIsDirectory,
                            Idle, ReportInvalidRequest );
-  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist, 
+  igstkAddTransitionMacro( ObjectFileNameRead, ObjectFileNameDoesNotExist,
                            Idle, ReportInvalidRequest );
 
+  // Transitions from ObjectRead State
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid,
+                           ObjectFileNameRead, SetFileName );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsEmpty,
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameIsDirectory,
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectFileNameDoesNotExist,
+                           Idle, ReportInvalidRequest );
+  // The following transition assumes that objects do not change after being
+  // read the first time.
+  igstkAddTransitionMacro( ObjectRead, ReadObjectRequest,
+                           ObjectRead, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( ObjectRead, ObjectReadingSuccess,
+                           ObjectRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, ObjectReadingError,
+                           ObjectRead, ReportInvalidRequest );
 
-  //Errors related to Object reading 
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError, 
+
+  // Transitions from ObjectAttemptingRead State
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingError,
                            Idle, ReportObjectReadingError );
-  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess, 
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectReadingSuccess,
                            ObjectRead, ReportObjectReadingSuccess );
+  // if we are waiting, reading an object, we ignore new filenames 
+  // regardless of whether they are valid or invalid (two next transitions).
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectFileNameValid,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectFileNameIsEmpty,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectFileNameIsDirectory,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectAttemptingRead, ObjectFileNameDoesNotExist,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+  // if we are waiting, reading an object, we ignore a redundant request for 
+  // reading the object. We are already responding to a previous read request.
+  igstkAddTransitionMacro( ObjectAttemptingRead, ReadObjectRequest,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -81,11 +125,11 @@ SpatialObjectReader< TDimension, TPixelType >
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
-} 
+}
 
 /** Destructor */
 template <unsigned int TDimension, typename TPixelType>
-SpatialObjectReader<TDimension,TPixelType>::~SpatialObjectReader()  
+SpatialObjectReader<TDimension,TPixelType>::~SpatialObjectReader()
 {
 
 }
@@ -149,7 +193,7 @@ void SpatialObjectReader<TDimension,TPixelType>
     this->m_StateMachine.ProcessInputs();
     return;
     }
-  
+
   this->m_StateMachine.PushInput( this->m_ObjectFileNameValidInput );
   this->m_StateMachine.ProcessInputs();
 }

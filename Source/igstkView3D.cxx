@@ -21,7 +21,7 @@
 namespace igstk {
 
 /** Constructor */
-View3D::View3D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
+View3D::View3D( ) : m_StateMachine(this) , View()
 {
   vtkInteractorStyleTrackballCamera * interactorStyle = 
                                      vtkInteractorStyleTrackballCamera::New();
@@ -34,13 +34,6 @@ View3D::~View3D()
 {
   this->SetInteractorStyle( NULL );
 }
-
-/** Main FLTK event handler */
-int View3D::handle( int event ) 
-{
-  return View::handle( event );
-}
-
 
 /** Print object information */
 void View3D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const

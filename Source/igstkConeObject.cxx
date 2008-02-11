@@ -26,7 +26,7 @@ ConeObject::ConeObject():m_StateMachine(this)
 
   // We create the ellipse spatial object
   m_ConeSpatialObject = ConeSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_ConeSpatialObject );
+  this->RequestSetInternalSpatialObject( m_ConeSpatialObject );
   m_Radius = 1;
   m_Height = 1;
 } 

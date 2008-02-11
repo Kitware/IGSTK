@@ -23,7 +23,7 @@
 
 #include <vtkOutputWindow.h>
 #include <vtkSmartPointer.h>
-#include <itkLogger.h>
+#include <igstkLogger.h>
 #include "igstkMacros.h"
 
 

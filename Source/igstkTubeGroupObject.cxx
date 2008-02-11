@@ -34,7 +34,11 @@ TubeGroupObject::~TubeGroupObject()
 const TubeGroupObject::TubeObjectType * 
 TubeGroupObject::GetTube(unsigned long id) const
 {
+#ifdef USE_SPATIAL_OBJECT_DEPRECATED
   return dynamic_cast<const TubeObject*>(this->GetObject(id));
+#else
+  return NULL;
+#endif
 }
 
 /** Print object information */

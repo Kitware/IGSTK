@@ -81,6 +81,7 @@
 
 // BeginCodeSnippet
 #include "igstkMouseTracker.h"
+#include "igstkMouseTrackerTool.h"
 // EndCodeSnippet
 
 
@@ -98,7 +99,7 @@
 // EndLatex
 
 // BeginCodeSnippet
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 // EndCodeSnippet
 
@@ -182,6 +183,11 @@ int main(int , char** )
   cylinder->SetRadius(0.1);
   cylinder->SetHeight(3);
 
+  // Add the position of the cylinder with respect to the View.
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder->RequestSetTransformAndParent( transform, m_GUI->View );
+
   igstk::CylinderObjectRepresentation::Pointer 
           cylinderRepresentation = igstk::CylinderObjectRepresentation::New();
   cylinderRepresentation->RequestSetCylinderObject( cylinder );
@@ -190,16 +196,13 @@ int main(int , char** )
   // EndCodeSnippet
   
   // BeginLatex
-  // Next, the spatial objects are added to the view, and the camera position
-  // is reset to observe all objects in the scene, as follows:
+  // Next, the spatial objects are added to the view as follows:
   //
   // 
   // EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->RequestAddObject( ellipsoidRepresentation );
-  m_GUI->Display->RequestAddObject( cylinderRepresentation );
-  m_GUI->Display->RequestResetCamera();
-  m_GUI->Display->Update();
+  m_GUI->View->RequestAddObject( ellipsoidRepresentation );
+  m_GUI->View->RequestAddObject( cylinderRepresentation );
   // EndCodeSnippet
 
   // BeginLatex
@@ -228,21 +231,33 @@ int main(int , char** )
   // EndLatex
   // BeginCodeSnippet
   igstk::MouseTracker::Pointer tracker = igstk::MouseTracker::New();
-  tracker->RequestOpen();
-  tracker->RequestInitialize();
-  tracker->SetScaleFactor( 100.0 );
-  // EndCodeSnippet
 
-  // BeginLatex
-  // Now, the previously created spatial object is attached to the tracker and 
-  // the tracker is set to monitor the mouse events from the user interface.
-  // The tool port and tool number is the naming convention from NDI trackers 
-  // (refer to Chapter \ref{Chapter:Tracker} on page \pageref{Chapter:Tracker}).
-  // EndLatex
-  // BeginCodeSnippet
-  const unsigned int toolPort = 0;
-  const unsigned int toolNumber = 0;
-  tracker->AttachObjectToTrackerTool( toolPort, toolNumber, ellipsoid );
+  tracker->RequestOpen();
+  tracker->SetScaleFactor( 100.0 );
+
+  typedef igstk::MouseTrackerTool           TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+
+  // instantiate and attach wired tracker tool  
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  std::string mouseName = "PS/2";
+  trackerTool->RequestSetMouseName( mouseName );
+  //Configure
+  trackerTool->RequestConfigure();
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
+
+  // EndCodeSnippet
+  //
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                      igstk::TimeStamp::GetLongestPossibleTime() );
+   
+  ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool );
+
+  // Attach a viewer to the tracker 
+  m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker );
+
   m_GUI->SetTracker( tracker );
   // EndCodeSnippet
 
@@ -253,7 +268,9 @@ int main(int , char** )
   // \ref{Chapter:Logging} on page \pageref{Chapter:Logging}.
   // EndLatex
   // BeginCodeSnippet
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType             LoggerType;
+
+  LoggerType::Pointer logger = LoggerType::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   itk::StdStreamLogOutput::Pointer fileOutput = itk::StdStreamLogOutput::New();
     
@@ -267,23 +284,39 @@ int main(int , char** )
   // EndCodeSnippet
   
   // BeginLatex
-  // By connecting the logger to the Display and the Tracker, messages from 
+  // By connecting the logger to the View and the Tracker, messages from 
   // these components are redirected to the logger, as follows: 
   // EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->SetLogger( logger ); 
+  m_GUI->View->SetLogger( logger ); 
   tracker->SetLogger( logger );
   // EndCodeSnippet
 
 
   // BeginLatex
-  // Next, the refresh frequency of the display window is set. After the
-  // \code{RequestStart()} function is called, the pulse generator inside the
-  // display window will start ticking, and will call the display to update
-  // itself 60 times per second, as follows: EndLatex
+  // Next, the refresh frequency of the display window is set. The
+  // \code{Show()} method of the GUI will invoke internally the
+  // \code{RequestStart()} method of the View. After the \code{RequestStart()}
+  // function is called, the pulse generator inside the display window will
+  // start ticking, and will call the display to update itself 60 times per
+  // second, as follows: EndLatex
   // BeginCodeSnippet
-  m_GUI->Display->RequestSetRefreshRate( 60 ); 
-  m_GUI->Display->RequestStart();
+  m_GUI->View->SetRefreshRate( 60 ); 
+  m_GUI->Show();
+  // EndCodeSnippet
+
+  // BeginLatex
+  // Here we reset the camera position so that we can observe all objects
+  // in the scene. We have deferred this call to shortly before the main
+  // event loop so that all the coordinate systems have been set up. 
+  // 
+  // We need to have coordinate system connections between the view and 
+  // each object that we wish to display. For instance, the cylinder's 
+  // coordinate system is attached directly to the view. The ellipsoid, 
+  // however, is attached to the tracker tool. The tracker tool is attached 
+  // to the tracker, which has an attached view. 
+  // BeginCodeSnippet
+  m_GUI->View->RequestResetCamera();
   // EndCodeSnippet
 
   // BeginLatex
@@ -293,10 +326,28 @@ int main(int , char** )
   // out. The command is as follows:
   // EndLatex
   // BeginCodeSnippet
+  //
+  //
+
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
+
+    TransformType             transform;
+    VectorType                position;
+
+    transform = trackerTool->GetCalibratedTransform();
+
+    position = transform.GetTranslation();
+    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
+              << "  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+
     }
   // EndCodeSnippet
 

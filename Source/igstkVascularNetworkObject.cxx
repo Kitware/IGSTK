@@ -22,14 +22,28 @@ namespace igstk
 /** Constructor */
 VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
 {
+  // Observe the superclass
+  this->ObserveVesselReceivedInput( this );
+  this->ObserveSpatialObjectNotAvailableEvent( this );
+
   igstkAddInputMacro( GetVessel );
+  igstkAddInputMacro( VesselReceived );
+  igstkAddInputMacro( VesselNotFound );
 
   igstkAddStateMacro( Init );
+  igstkAddStateMacro( AttemtingToGetVessel );
 
-  igstkAddTransitionMacro( Init,
-                           GetVessel,
-                           Init,
-                           ReportVessel );
+  igstkAddTransitionMacro( Init, 
+                           GetVessel, 
+                           AttemtingToGetVessel, SearchForVessel );
+
+  igstkAddTransitionMacro( AttemtingToGetVessel, 
+                           VesselReceived, 
+                           Init, ReportVessel );
+
+  igstkAddTransitionMacro( AttemtingToGetVessel, 
+                           VesselNotFound, 
+                           Init, ReportVesselNotFound );
 
   igstkSetInitialStateMacro( Init );
 
@@ -39,15 +53,24 @@ VascularNetworkObject::VascularNetworkObject():m_StateMachine(this)
 }
 
 /** This function reports the vessel */
+void VascularNetworkObject::SearchForVesselProcessing()
+{
+  // This request goes to the parent, the GroupObject
+  // and it will trigger a callback in the Observer.
+  this->Superclass::RequestGetChild( m_VesselId );
+}
+
+/** This function reports the vessel */
 void VascularNetworkObject::ReportVesselProcessing()
 {
-  const VesselObjectType* vessel = 
-           dynamic_cast<const VesselObjectType*>(this->GetObject(m_VesselId));
+  VesselObjectType * vessel = 
+    static_cast< VesselObjectType * >( m_VesselReceivedInputToBeSet );
 
   VesselObjectModifiedEvent  event;
   event.Set( const_cast<VesselObjectType*>(vessel)  );
   this->InvokeEvent( event );
 }
+
 
 /** Destructor */
 VascularNetworkObject::~VascularNetworkObject()  
@@ -55,18 +78,36 @@ VascularNetworkObject::~VascularNetworkObject()
 }
 
 /** Request to get a vessel */
-void VascularNetworkObject::RequestGetVessel(unsigned long id)
+void VascularNetworkObject::RequestGetVessel( unsigned long vesselId )
 {
   igstkLogMacro( DEBUG, 
               "igstk::VascularNetworkObject::RequestGetVessel called...\n");
   
-  // Check that this is a valid id
-  if(id < this->GetNumberOfObjects())
-    {
-    m_VesselId = id;
-    m_StateMachine.PushInput(m_GetVesselInput);
-    m_StateMachine.ProcessInputs();
-    }
+  m_VesselId = vesselId;
+  igstkPushInputMacro( GetVessel );
+  m_StateMachine.ProcessInputs();
+}
+
+/** Return the number of Vessels associated with this network */
+unsigned long VascularNetworkObject
+::GetNumberOfVessels() const
+{
+  return this->Superclass::GetNumberOfChildren();
+}
+
+/** Request adding a child to the group */
+void VascularNetworkObject::RequestAddVessel( 
+  const Transform & transform, VesselObjectType * vessel )
+{
+  this->Superclass::RequestAddChild( transform, vessel );
+}
+
+/** Report that an invalid or suspicious operation has been requested.
+ * This may mean that an error condition has arised in one of the
+ * componenta that interact with this SpatialObject. */
+void VascularNetworkObject::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "Invalid request made to the State Machine" );
 }
 
 /** Print object information */
@@ -76,5 +117,11 @@ void VascularNetworkObject
   Superclass::PrintSelf(os, indent);
 }
 
+/** This function reports the vessel */
+void VascularNetworkObject::ReportVesselNotFoundProcessing()
+{
+  VesselObjectNotAvailableEvent  event;
+  this->InvokeEvent( event );
+}
 
 } // end namespace igstk

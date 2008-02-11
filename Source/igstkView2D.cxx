@@ -15,13 +15,12 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
-
 #include "vtkInteractorStyleImage.h"
 
 namespace igstk {
 
 /** Constructor */
-View2D::View2D( int x, int y, int w, int h, const char *l ) : View(x,y,w,h,l)
+View2D::View2D() : m_StateMachine(this), View()
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   this->SetInteractorStyle( interactorStyle );
@@ -36,14 +35,6 @@ View2D::~View2D()
 {
   this->SetInteractorStyle( NULL );
 }
-
-
-/** Main FLTK event handler */
-int View2D::handle( int event ) 
-{
-  return View::handle( event );
-}
-
 
 /** Print object information */
 void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
@@ -76,27 +67,27 @@ void View2D::RequestSetOrientation( const OrientationType & orientation )
     case Sagittal:
       {
       position[0] += distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  1 );
+      this->SetCameraViewUp (     0,  0,  1 );
       break;
       }
     case Coronal:
       {
       position[1] -= distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  0,  1 );
+      this->SetCameraViewUp (  0,  0,  1 );
       break;
       }
     case Axial:
       {
       position[2] -= distanceToFocalPoint;
-      m_Camera->SetViewUp (     0,  -1,  0 );
+      this->SetCameraViewUp (     0,  -1,  0 );
       break;
       }
     }
 
-  m_Camera->SetPosition (   position );
-  m_Camera->SetFocalPoint ( focalPoint );
-  m_Camera->SetClippingRange( 0.1, 100000 );
-  m_Camera->ParallelProjectionOn();
+  this->SetCameraPosition (   position[0], position[1], position[2] );
+  this->SetCameraFocalPoint ( focalPoint[0], focalPoint[1], focalPoint[2] );
+  this->SetCameraClippingRange( 0.1, 100000 );
+  this->SetCameraParallelProjection( true );
 }
 
 

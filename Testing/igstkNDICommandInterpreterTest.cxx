@@ -29,16 +29,12 @@
 #include <string.h>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkSystemInformation.h"
 #include "igstkNDICommandInterpreter.h"
-#ifdef WIN32
-#include "igstkSerialCommunicationForWindows.h"
-#else
-#include "igstkSerialCommunicationForPosix.h"
-#endif
+#include "igstkSerialCommunication.h"
 #include "igstkSerialCommunicationSimulator.h"
 
 
@@ -89,16 +85,12 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 #ifdef IGSTK_SIMULATOR_TEST
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 #else  /* IGSTK_SIMULATOR_TEST */
-#ifdef WIN32
-  typedef igstk::SerialCommunicationForWindows  CommunicationType;
-#else
-  typedef igstk::SerialCommunicationForPosix    CommunicationType;
-#endif /* WIN32 */
+  typedef igstk::SerialCommunication            CommunicationType;
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  typedef igstk::NDICommandInterpreter  CommandInterpreterType;
-  typedef itk::Logger                   LoggerType; 
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::NDICommandInterpreter    CommandInterpreterType;
+  typedef igstk::Object::LoggerType       LoggerType;
+  typedef itk::StdStreamLogOutput         LogOutputType;
    
   NDICommandInterpreterTestCommand::Pointer errorCommand =
     NDICommandInterpreterTestCommand::New();

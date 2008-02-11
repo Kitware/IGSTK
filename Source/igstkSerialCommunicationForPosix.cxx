@@ -18,6 +18,7 @@
 
 #include "igstkConfigure.h"
 #include "igstkSerialCommunicationForPosix.h"
+#include "igstkPulseGenerator.h"
 
 /** Standard includes */
 #include <errno.h>
@@ -39,7 +40,6 @@
 #elif defined (HAVE_TERMIO_H)
   #include <termio.h>
 #endif
-#include <sys/time.h>
 
 
 namespace igstk
@@ -330,11 +330,7 @@ void SerialCommunicationForPosix::InternalSleep( unsigned int milliseconds )
 {
   igstkLogMacro( DEBUG, "SerialCommunicationForPosix::"
                  "InternalSleep called ...\n" );
-
-  struct timespec sleep_time, dummy;
-  sleep_time.tv_sec = milliseconds/1000;
-  sleep_time.tv_nsec = (milliseconds - sleep_time.tv_sec*1000)*1000000;
-  nanosleep(&sleep_time,&dummy);
+  PulseGenerator::Sleep( milliseconds );
 }
 
 

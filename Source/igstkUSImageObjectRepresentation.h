@@ -46,6 +46,11 @@ public:
   igstkStandardClassTraitsMacro( USImageObjectRepresentation, \
                         ImageSpatialObjectRepresentation< USImageObject > )
 
+  /** Return a copy of the current object representation.
+   * \warning This method does not connect the ImageSpatialObject of the
+   * original. */
+  Pointer Copy() const;
+
 protected:
 
   USImageObjectRepresentation( void );

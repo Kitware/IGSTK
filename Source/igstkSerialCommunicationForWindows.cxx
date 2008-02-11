@@ -21,6 +21,7 @@
 
 #include "igstkConfigure.h"
 #include "igstkSerialCommunicationForWindows.h"
+#include "igstkPulseGenerator.h"
 
 
 namespace igstk
@@ -281,7 +282,7 @@ SerialCommunicationForWindows::InternalSendBreak( void )
 
   if (SetCommBreak(m_PortHandle))
     {
-    ::Sleep(300);   // hold break for 0.3 seconds
+    PulseGenerator::Sleep(300);   // hold break for 0.3 seconds
 
     if (ClearCommBreak(m_PortHandle))
       {
@@ -312,8 +313,7 @@ SerialCommunicationForWindows::InternalPurgeBuffers( void )
 
 void SerialCommunicationForWindows::InternalSleep( int milliseconds )
 {
-  // use Windows sleep function
-  ::Sleep(milliseconds);
+  PulseGenerator::Sleep(milliseconds);
 }
 
 

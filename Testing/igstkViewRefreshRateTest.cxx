@@ -37,9 +37,12 @@
 #include "igstkEvents.h"
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
+#include "igstkAxesObject.h"
+#include "igstkAxesObjectRepresentation.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
+#include "igstkFLTKWidget.h"
 
 namespace ViewRefreshRateTest
 {
@@ -127,12 +130,12 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( itk::Logger::CRITICAL );
 
   LogOutputType::Pointer logOutput = LogOutputType::New();
 
@@ -158,6 +161,14 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
 
   try
     {
+    // Define a representation for the coordinate system
+    igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+
+    typedef igstk::AxesObjectRepresentation  RepresentationType;
+    RepresentationType::Pointer axesRepresentation = RepresentationType::New();
+    axesRepresentation->RequestSetAxesObject( worldReference );
+
+
     // Create the ellipsoid 
     igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
     ellipsoid->SetRadius(0.1,0.1,0.1);
@@ -171,33 +182,28 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     ellipsoidRepresentation->SetOpacity(1.0);
     ellipsoidRepresentation->SetLogger( logger );
 
-    // Create an FLTK minimal GUI
-    Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
-    
-    View2DType * view2D = new View2DType( 10,10,280,280,"2D View");
-    View3DType * view3D = new View3DType(310,10,280,280,"3D View");
+    View2DType::Pointer view2D = View2DType::New();
+    View3DType::Pointer view3D = View3DType::New();
+
     view2D->SetLogger( logger );
     view3D->SetLogger( logger );
+
+    typedef igstk::FLTKWidget    FLTKWidgetType;
+
+    // Create an FLTK minimal GUI
+    Fl_Window * form = new Fl_Window(601,301,"View Refresh Rate Test");
+
+    FLTKWidgetType * widget2D = new FLTKWidgetType(  10,10,280,280,"2D View");
+    FLTKWidgetType * widget3D = new FLTKWidgetType( 310,10,280,280,"2D View");
 
     form->end();
     // End of the GUI creation
 
+    widget2D->RequestSetView( view2D );
+    widget3D->RequestSetView( view3D );
+    
     form->show();
-    
-    view2D->RequestResetCamera();
-    view2D->RequestEnableInteractions();
-    
-    view3D->RequestResetCamera();
-    view3D->RequestEnableInteractions();
-    
- 
-    // Add the ellipsoid to the view
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( ellipsoidRepresentation );
-    
-    view2D->RequestDisableInteractions();
-    view3D->RequestDisableInteractions();
-
+   
     bool bEnd = false;
 
     typedef ViewRefreshRateTest::ViewObserver ObserverType;
@@ -220,8 +226,25 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     transform.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityTimeInMilliseconds );
 
-    ellipsoid->RequestSetTransform( transform );
+    ellipsoid->RequestSetTransformAndParent( transform, worldReference );
 
+    igstk::Transform identity;
+    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    view2D->RequestSetTransformAndParent( identity, worldReference );
+    view3D->RequestSetTransformAndParent( identity, worldReference );
+
+    // Add the ellipsoid to the view
+    view2D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( ellipsoidRepresentation );
+    
+    // Add the axes of the reference system to the view
+    view2D->RequestAddObject( axesRepresentation );
+    view3D->RequestAddObject( axesRepresentation );
+    
+    view2D->RequestResetCamera();
+    view3D->RequestResetCamera();
+ 
     // Exercise the code for resizing the window
     form->resize(100, 100, 600, 300);
 
@@ -231,10 +254,10 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
       static_cast< unsigned long >( refreshRate * expectedNumberOfSeconds );
 
     // Set the refresh rate for the view that we are validating
-    view2D->RequestSetRefreshRate( refreshRate );
+    view2D->SetRefreshRate( refreshRate );
 
     // Make it compete with another view that refreshes at double the rate.
-    view3D->RequestSetRefreshRate( refreshRate * 2 );
+    view3D->SetRefreshRate( refreshRate * 2 );
 
     viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
     
@@ -248,16 +271,14 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
     
     const double beginTime = igstk::RealTimeClock::GetTimeStamp();
     
-    while(1)
+    while( !bEnd )
       {
       Fl::wait(0.001);
       igstk::PulseGenerator::CheckTimeouts();
-      if( bEnd )
-        {
-        break;
-        }
       }
 
+    view2D->RequestStop();
+    view3D->RequestStop();
 
     const double endTime   = igstk::RealTimeClock::GetTimeStamp();
 
@@ -280,11 +301,10 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
       result = false;
       }
 
-  
     // at this point the observer should have hid the form
 
-    delete view2D;
-    delete view3D;
+    delete widget2D;
+    delete widget3D;
     delete form;
     }
   catch(...)

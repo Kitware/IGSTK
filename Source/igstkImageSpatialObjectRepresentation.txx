@@ -28,6 +28,7 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkImageData.h"
+#include "vtkMath.h"
 
 namespace igstk
 {
@@ -47,6 +48,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   // Create classes for displaying images
   m_ImageActor = vtkImageActor::New();
   this->AddActor( m_ImageActor );
+
   m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
   m_ImageData  = NULL;
@@ -57,6 +59,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   
   // Create the observer to VTK image events 
   m_VTKImageObserver = VTKImageObserver::New();
+  m_ImageTransformObserver = ImageTransformObserver::New();
 
 
   igstkAddInputMacro( ValidImageSpatialObject );
@@ -404,6 +407,9 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
 
+  m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
+                                     m_ImageTransformObserver );
+
   this->RequestSetSpatialObject( m_ImageSpatialObject );
   
   // This method gets a VTK image data from the private method of the
@@ -423,6 +429,27 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
       this->m_ImageData->Update();
       }
     this->m_MapColors->SetInput( this->m_ImageData );
+    }
+
+  this->m_ImageTransformObserver->Reset();
+
+  this->m_ImageSpatialObject->RequestGetImageTransform();
+
+  if( this->m_ImageTransformObserver->GotImageTransform() ) 
+    {
+    const CoordinateSystemTransformToResult transformCarrier =
+      this->m_ImageTransformObserver->GetImageTransform();
+    this->m_ImageTransform = transformCarrier.GetTransform();
+
+    // Image Actor takes care of the image origin position internally.
+    this->m_ImageActor->SetPosition(0,0,0); 
+
+    vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
+
+    this->m_ImageTransform.ExportTransform( *imageTransformMatrix );
+
+    this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
+    imageTransformMatrix->Delete();
     }
 
   this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
@@ -468,12 +495,26 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkImageActor::New();
-  this->AddActor( m_ImageActor );
+  m_ImageActor->SetPosition(0,0,0);
+  m_ImageActor->SetOrientation(0,0,0);
     
+  this->AddActor( m_ImageActor );
+
+  //convert RGB to HSV
+  double hue = 0.0;
+  double saturation = 0.0;
+  double value = 1.0;
+
+  vtkMath::RGBToHSV( this->GetRed(),
+                     this->GetGreen(),
+                     this->GetBlue(),
+                     &hue,&saturation,&value );
+
   m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-  m_LUT->SetSaturationRange (0, 0);
-  m_LUT->SetHueRange (0, 0);
-  m_LUT->SetValueRange (0, 1);
+  m_LUT->SetSaturationRange (saturation, saturation);
+  m_LUT->SetAlphaRange (m_Opacity, m_Opacity);
+  m_LUT->SetHueRange (hue, hue);
+  m_LUT->SetValueRange (0, value);
   m_LUT->SetRampToLinear();
 
   m_MapColors->SetLookupTable( m_LUT );

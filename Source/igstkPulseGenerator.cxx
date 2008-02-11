@@ -25,6 +25,15 @@
 #include "igstkEvents.h"
 #include "igstkRealTimeClock.h"
 
+// includes for Sleep
+#if defined (_WIN32) || defined (WIN32)
+#include <windows.h>
+#else
+#include <time.h>
+#include <unistd.h>
+#endif
+
+
 namespace igstk
 {
 
@@ -299,6 +308,17 @@ PulseGenerator::ReportMissedPulseProcessing()
                           needed by Observers to complete their execute\
                           method. Please reduce the frequency, of use \
                           faster Execute methods.");
+}
+
+void 
+PulseGenerator
+::Sleep( unsigned int milliseconds )
+{
+  #if defined(WIN32) || defined(_WIN32)
+  ::Sleep( milliseconds );
+  #else
+  usleep( milliseconds * 1000 );  // usleep uses microsecond
+  #endif
 }
 
 void 

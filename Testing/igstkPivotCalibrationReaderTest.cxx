@@ -25,7 +25,7 @@
 #include "igstkPivotCalibrationReader.h"
 #include <itksys/SystemTools.hxx>
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 namespace ToolCalibrationTest
@@ -45,7 +45,7 @@ int igstkPivotCalibrationReaderTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::Logger                       LoggerType; 
+  typedef igstk::Object::LoggerType         LoggerType;
   typedef itk::StdStreamLogOutput           LogOutputType;
 
   // Logger object created for logging calibration computation

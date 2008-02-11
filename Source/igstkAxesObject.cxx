@@ -23,7 +23,7 @@ namespace igstk
 AxesObject::AxesObject():m_StateMachine(this)
 {
   m_AxesSpatialObject = AxesSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_AxesSpatialObject );
+  this->RequestSetInternalSpatialObject( m_AxesSpatialObject );
   m_Size[0] = 1.0;
   m_Size[1] = 1.0;
   m_Size[2] = 1.0;

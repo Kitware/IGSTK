@@ -40,9 +40,6 @@ INCLUDE_DIRECTORIES (
 
 #-----------------------------------------------------------------------------
 # Add testing command
-ADD_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest ${IGSTK_TESTS} igstkFlockOfBirdsCommandInterpreterFBBTest)
-ADD_TEST(igstkFlockOfBirdsCommandInterpreterTest ${IGSTK_TESTS} igstkFlockOfBirdsCommandInterpreterTest)
-ADD_TEST(igstkFlockOfBirdsTrackerTest ${IGSTK_TESTS} igstkFlockOfBirdsTrackerTest)
 ADD_TEST(igstkVesselObjectTest ${IGSTK_TESTS} igstkVesselObjectTest)
 ADD_TEST(igstkUSImageObjectTest ${IGSTK_TESTS} igstkUSImageObjectTest)
 ADD_TEST(igstkUSImageObjectRepresentationTest ${IGSTK_TESTS} igstkUSImageObjectRepresentationTest)
@@ -68,8 +65,8 @@ ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 ADD_TEST(igstkStringEventTest ${IGSTK_TESTS} igstkStringEventTest )
 ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
 ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
-ADD_TEST(igstkTrackerPortTest ${IGSTK_TESTS} igstkTrackerPortTest)
 ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
+ADD_TEST(igstkTrackerTest ${IGSTK_TESTS} igstkTrackerTest)
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
@@ -137,7 +134,18 @@ ENDIF(IGSTK_DATA_ROOT)
 #-----------------------------------------------------------------------------
 # Tests depend on external device
 IF(IGSTK_TEST_AURORA_ATTACHED)
-  ADD_TEST(igstkAuroraTrackerTest ${IGSTK_TESTS} igstkAuroraTrackerTest)
+  ADD_TEST(igstkAuroraTrackerTest
+           ${IGSTK_TESTS}
+           igstkAuroraTrackerTest
+           ${IGSTK_TEST_OUTPUT_DIR}/igstkAuroraTrackerTestLoggerOutput.txt
+           ${IGSTK_TEST_AURORA_PORT_NUMBER}
+           )
+  ADD_TEST(igstkAuroraTrackerTest2
+           ${IGSTK_TESTS}
+           igstkAuroraTrackerTest2
+           ${IGSTK_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
+           ${IGSTK_TEST_AURORA_PORT_NUMBER}
+           )
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -294,9 +302,6 @@ ENDIF(IGSTK_USE_FLTK)
 #-----------------------------------------------------------------------------
 # Set the source file
 SET(BasicTests_SRCS
-  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
-  igstkFlockOfBirdsCommandInterpreterTest.cxx 
-  igstkFlockOfBirdsTrackerTest.cxx 
   igstkVesselObjectTest.cxx 
   igstkUSImageObjectTest.cxx 
   igstkUSImageObjectRepresentationTest.cxx 
@@ -322,8 +327,8 @@ SET(BasicTests_SRCS
   igstkStringEventTest.cxx
   igstkTimeStampTest.cxx
   igstkTokenTest.cxx
-  igstkTrackerPortTest.cxx
   igstkTrackerToolTest.cxx
+  igstkTrackerTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
   )  
@@ -333,6 +338,8 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkAuroraTrackerTest.cxx
   )
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAuroraTrackerTest2.cxx)
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)

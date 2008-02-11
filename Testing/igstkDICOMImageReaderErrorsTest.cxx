@@ -22,7 +22,7 @@
 #include "igstkDICOMImageReader.h"
 #include "igstkImageSpatialObject.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkCommand.h"
 #include "itkStdStreamLogOutput.h"
 #include <itksys/SystemTools.hxx>
@@ -245,8 +245,8 @@ int igstkDICOMImageReaderErrorsTest( int argc, char* argv [])
               << "Bad DICOM image Output Directory" << std::endl; 
     return EXIT_FAILURE;
     } 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();

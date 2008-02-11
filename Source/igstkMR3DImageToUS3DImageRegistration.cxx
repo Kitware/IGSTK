@@ -50,7 +50,7 @@ public:
 
   typedef itk::RegularStepGradientDescentOptimizer   OptimizerType;
   typedef const OptimizerType*                       OptimizerPointer;
-  typedef ::itk::Logger                              LoggerType; 
+  typedef ::igstk::Object::LoggerType                LoggerType; 
 
   void SetLogger( LoggerType * logger )
     {
@@ -209,9 +209,18 @@ void MR3DImageToUS3DImageRegistration
   igstkLogMacro( DEBUG, "igstk::MR3DImageToUS3DImageRegistration\
                       ::ReportRegistrationTransformProcessing called...\n" );
 
-  TransformModifiedEvent event;
-  event.Set( this->m_RegistrationTransform );
-  this->InvokeEvent( event );
+  CoordinateSystemTransformToResult transformCarrier;
+
+  transformCarrier.Initialize( this->m_RegistrationTransform,
+   NULL, // It should be one of the images Coordinate system
+   NULL  // It should be the coordinate system of the other image 
+   );
+
+  CoordinateSystemTransformToEvent transformEvent;
+
+  transformEvent.Set( transformCarrier );
+
+  this->InvokeEvent( transformEvent );
 }
 
 
@@ -356,14 +365,17 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   // the registration
   USImageTransformObserver::Pointer usTransformObserver 
                                     = USImageTransformObserver::New();
-  m_USFixedImage->AddObserver( TransformModifiedEvent(),
+  m_USFixedImage->AddObserver( CoordinateSystemTransformToEvent(),
                                            usTransformObserver );
-  m_USFixedImage->RequestGetTransform();
+
+  m_USFixedImage->RequestGetImageTransform();
 
   Transform usTransform;
   if( usTransformObserver->GotUSImageTransform() )
     {
-    usTransform = usTransformObserver->GetUSImageTransform();
+    const CoordinateSystemTransformToResult transformCarrier =
+      usTransformObserver->GetUSImageTransform();
+    usTransform = transformCarrier.GetTransform();
     }
   else
     {
@@ -495,9 +507,9 @@ void MR3DImageToUS3DImageRegistration::RequestCalculateRegistration()
   this->ObserveUSImageTransformInput(this->m_USFixedImage);
   this->ObserveMRImageTransformInput(this->m_MRMovingImage);
 
-  const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetTransform();
+  const_cast<USImageObject*>(this->m_USFixedImage)->RequestGetImageTransform();
   const_cast<MRImageSpatialObject*>(
-                            this->m_MRMovingImage)->RequestGetTransform();
+                            this->m_MRMovingImage)->RequestGetImageTransform();
 
   this->m_StateMachine.PushInput( this->m_CalculateRegistrationInput );
   this->m_StateMachine.ProcessInputs();

@@ -24,27 +24,54 @@
 #include <iostream>
 #include <fstream>
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkCylinderObject.h"
 
 #include "igstkTracker.h"
+#include "igstkTrackerTool.h"
 #include "igstkRealTimeClock.h"
 
 namespace igstk
 {
-  
+
+class TestingTracker;
+
+class TestingTrackerTool : public igstk::TrackerTool
+{
+public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TestingTrackerTool, TrackerTool )
+
+  /** The "RequestAttachToTracker" method attaches 
+   * the tracker tool to a tracker. */
+  virtual void RequestAttachToTracker( TestingTracker *  tracker );
+
+protected:
+  TestingTrackerTool():m_StateMachine(this)
+    {
+    }
+
+  ~TestingTrackerTool()
+    {
+    }
+
+  /** Check if the tracker tool is configured or not. This method should
+   *  be implemented in the derived classes*/
+  virtual bool CheckIfTrackerToolIsConfigured( ) const { return true; }
+
+};
+ 
 class TestingTracker : public igstk::Tracker
 {
 public:
-  typedef TestingTracker                 Self;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
-  typedef igstk::Tracker::TransformType  TransformType;
+
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro( TestingTracker, Tracker )
+
+  typedef Superclass::TransformType      TransformType;
   typedef TransformType::VectorType      VectorType;
 
-  igstkNewMacro(Self);
-  igstkTypeMacro(TestingTracker,Tracker);
 
   void SetTranslation(VectorType &translation)
     {
@@ -68,34 +95,21 @@ public:
 
 protected:
 
-  TestingTracker()
+  TestingTracker():m_StateMachine(this)
     {
-    typedef TrackerTool  TrackerToolType;
-    typedef TrackerPort  TrackerPortType;
-    TrackerToolType::Pointer trackerTool = TrackerToolType::New();
-    TrackerPortType::Pointer trackerPort = TrackerPortType::New();
-    trackerPort->AddTool( trackerTool );
-    this->AddPort( trackerPort );
-
-    TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
-    TrackerPortType::Pointer trackerPort2 = TrackerPortType::New();
-    trackerPort2->AddTool( trackerTool2 );
-    this->AddPort( trackerPort2 );
-    igstk::Transform::VectorType   translation;
-    igstk::Transform::VersorType rotation;
-    igstk::Transform             transform;
+    igstk::Transform::VectorType    translation;
+    igstk::Transform::VersorType    rotation;
+    igstk::Transform                transform;
     translation[0] = -100;
     translation[1] = -100;
     translation[2] = -100;
     rotation.SetRotationAroundZ(0.1);
     transform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
-    SetToolTransform(1, 0, transform);
     m_Translation = translation;
     }
 
   ~TestingTracker() 
     {
-    this->ClearPorts();
     }
 
   Tracker::ResultType InternalOpen( void )
@@ -184,16 +198,79 @@ protected:
       return FAILURE;
       }
 
-    const unsigned int toolNumber = 0;
-    const unsigned int portNumber = 0;
+    typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+
+    TrackerToolsContainerType trackerToolContainer = 
+      this->GetTrackerToolContainer();
+   
+    ConstIteratorType inputItr = trackerToolContainer.begin();
+    ConstIteratorType inputEnd = trackerToolContainer.end();
+ 
     const double validityPeriod = 500.0; // valid for 500 milliseconds.
 
     TransformType transform;
     TransformType::ErrorType errorValue = 0.01; // 10 microns
 
-    transform.SetTranslation( m_Translation, errorValue, validityPeriod );
-    this->SetToolTransform( toolNumber, portNumber, transform );
+    while( inputItr != inputEnd )
+      {
+      transform.SetTranslation( m_Translation, errorValue, validityPeriod );
 
+      // set the raw transform
+      this->SetTrackerToolRawTransform( 
+        trackerToolContainer[inputItr->first], transform );
+
+      this->SetTrackerToolTransformUpdate( 
+        trackerToolContainer[inputItr->first], true );
+
+      ++inputItr;
+      }
+
+    return SUCCESS;
+    }
+  Tracker::ResultType InternalThreadedUpdateStatus( void )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType VerifyTrackerToolInformation( 
+    const TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( 
+    const TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
+    return SUCCESS;
+    }
+
+  Tracker::ResultType AddTrackerToolToInternalDataContainers( 
+    const TrackerToolType * trackerTool )
+    {
+    static bool success = false;
+    if( !success )
+      {
+      success = true;
+      return FAILURE;
+      }
     return SUCCESS;
     }
 
@@ -202,6 +279,17 @@ private:
   igstk::Transform::VectorType m_Translation;
  
 };
+
+/** The "RequestAttachToTracker" method attaches 
+* the tracker tool to a tracker. */
+void TestingTrackerTool::RequestAttachToTracker( TestingTracker *  tracker )
+{
+  // This delegation is done only to enforce type matching between
+  // TrackerTool and Tracker. It prevents the user from accidentally 
+  // mix TrackerTools and Trackers of different type;
+  this->TrackerTool::RequestAttachToTracker( tracker );
+}
+
 }   // namespace igstk
 
 int igstkBasicTrackerTest( int, char * [] )
@@ -210,8 +298,14 @@ int igstkBasicTrackerTest( int, char * [] )
   igstk::RealTimeClock::Initialize();
 
 
-  igstk::TestingTracker::Pointer tracker = igstk::TestingTracker::New();
-  itk::Logger::Pointer logger = itk::Logger::New();
+  igstk::TestingTracker::Pointer tracker        = igstk::TestingTracker::New();
+ 
+  typedef igstk::TestingTrackerTool          TrackerToolType;
+  TrackerToolType::Pointer    tool           = TrackerToolType::New();
+  TrackerToolType::Pointer    referenceTool  = TrackerToolType::New();
+
+  typedef igstk::Object::LoggerType             LoggerType;
+  LoggerType::Pointer logger = LoggerType::New();
 
   // create the outputs for the logger
   itk::StdStreamLogOutput::Pointer fileLogOutput1 = 
@@ -244,61 +338,61 @@ int igstkBasicTrackerTest( int, char * [] )
 
   igstk::Transform::VectorType translation;
   igstk::Transform::VersorType rotation;
-  igstk::Transform transform, patientTransform, toolCalibrationTransform;
-  tracker->GetToolTransform(0, 0, transform);
+  igstk::Transform transform;
+
+  tool->RequestConfigure();
+  tool->RequestAttachToTracker( tracker );
+  referenceTool->RequestAttachToTracker( tracker );
+
+  transform = tool->GetCalibrationTransform();
   std::cout << transform << std::endl;
 
-  translation[0] = 1;
-  translation[1] = 2;
-  translation[2] = 3;
-  rotation.SetRotationAroundX(1.0);
-  patientTransform.SetTranslationAndRotation(translation, rotation, 0.1, 10000);
-  tracker->SetPatientTransform(patientTransform);
-  patientTransform.SetToIdentity(10000);
-  patientTransform = tracker->GetPatientTransform();
-  std::cout << patientTransform << std::endl;
+  transform = tool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+  std::cout << transform << std::endl;
+
+  transform = tool->GetRawTransform();
+  std::cout << transform << std::endl;
 
   translation[0] = -2;
   translation[1] = -4;
   translation[2] = -6;
   rotation.SetRotationAroundX(-1.0);
+
+  igstk::Transform toolCalibrationTransform;
   toolCalibrationTransform.SetTranslationAndRotation(translation, rotation, 
                                                                    0.1, 10000);
-  tracker->SetToolCalibrationTransform(0, 0, toolCalibrationTransform);
+  tool->SetCalibrationTransform( toolCalibrationTransform );
   toolCalibrationTransform.SetToIdentity(10000);
-  toolCalibrationTransform = tracker->GetToolCalibrationTransform(0, 0);
+  toolCalibrationTransform = tool->GetCalibrationTransform();
   std::cout << toolCalibrationTransform << std::endl;
 
-  tracker->SetReferenceTool(false, 1, 0);
-  tracker->SetReferenceTool(true, 1, 0);
-  unsigned int refTool;
-  unsigned int refPort;
-  bool bApplyRefTool;
-  bApplyRefTool = tracker->GetReferenceTool(refPort, refTool);
-  std::cout << "ReferenceTool flag : " << bApplyRefTool << "\t port: " 
-            << refPort << ", tool: " << refTool << std::endl;
-  if( bApplyRefTool != true  ||  refTool != 0  ||  refPort != 1 )
-    {
-    std::cerr << "SetReferenceTool() or GetReferenceTool() doesn't"
-              << " work correctly!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  tracker->RequestSetReferenceTool( referenceTool );
 
-  tracker->GetToolTransform(0, 0, transform);
+  transform = referenceTool->GetCalibrationTransform();
+  std::cout << transform << std::endl;
+
+  // FIXME: This dangerous method should be removed
+  transform = 
+    referenceTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
+
+  std::cout << transform << std::endl;
+
+
+  transform = referenceTool->GetRawTransform();
   std::cout << transform << std::endl;
 
   igstk::CylinderObject::Pointer object = igstk::CylinderObject::New();
   object->SetRadius(1.0);
   object->SetHeight(1.0);
-  const unsigned int toolNumber = 0;
-  const unsigned int portNumber = 0;
-  tracker->AttachObjectToTrackerTool(portNumber, toolNumber, object);
+
+  igstk::Transform  identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+ 
+  // Connect the second ellipsoid to the tracker tool.
+  object->RequestSetTransformAndParent( identityTransform, tool );
 
   tracker->RequestOpen();  // for failure
   tracker->RequestOpen();  // for success
-
-  tracker->RequestInitialize();  // for failure
-  tracker->RequestInitialize();  // for success
 
   tracker->RequestStartTracking(); // for failure
   tracker->RequestStartTracking(); // for success
@@ -311,7 +405,6 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->RequestReset(); // for failure
   tracker->RequestReset(); // for success
 
-  tracker->RequestInitialize();
   tracker->RequestStartTracking();
   
   tracker->RequestStopTracking();  // for failure
@@ -321,25 +414,7 @@ int igstkBasicTrackerTest( int, char * [] )
 
   // for testing CloseFromToolsActiveStateProcessing()
   tracker->RequestOpen();
-  tracker->RequestInitialize();
   tracker->RequestClose();
-
-  // covering the base tracker's internal functions
-  igstk::Tracker::Pointer basetracker = igstk::Tracker::New();
-  basetracker->SetLogger( logger );
-
-  basetracker->RequestOpen();
-
-  basetracker->RequestInitialize();
-
-  basetracker->RequestStartTracking();
-
-  basetracker->RequestUpdateStatus();
-  basetracker->RequestReset();
-  basetracker->RequestInitialize();
-  basetracker->RequestStartTracking();
-  basetracker->RequestStopTracking();
-  basetracker->RequestClose();
 
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;

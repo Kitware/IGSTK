@@ -26,16 +26,20 @@
 namespace igstk
 {
 
+
 /** Constructor */
 Tracker::Tracker(void) :  m_StateMachine( this ) 
 {
+  /** Coordinate system interface */
+  igstkCoordinateSystemClassInterfaceConstructorMacro();
+
   // Set the state descriptors
   igstkAddStateMacro( Idle ); 
   igstkAddStateMacro( AttemptingToEstablishCommunication ); 
   igstkAddStateMacro( AttemptingToCloseCommunication); 
+  igstkAddStateMacro( AttemptingToAttachTrackerTool );
+  igstkAddStateMacro( TrackerToolAttached );
   igstkAddStateMacro( CommunicationEstablished );
-  igstkAddStateMacro( AttemptingToActivateTools ); 
-  igstkAddStateMacro( ToolsActive ); 
   igstkAddStateMacro( AttemptingToTrack ); 
   igstkAddStateMacro( AttemptingToStopTracking); 
   igstkAddStateMacro( Tracking ); 
@@ -43,7 +47,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   
   // Set the input descriptors
   igstkAddInputMacro( EstablishCommunication);
-  igstkAddInputMacro( ActivateTools); 
+  igstkAddInputMacro( AttachTrackerTool);
   igstkAddInputMacro( StartTracking); 
   igstkAddInputMacro( UpdateStatus); 
   igstkAddInputMacro( StopTracking); 
@@ -51,6 +55,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   igstkAddInputMacro( CloseCommunication); 
   igstkAddInputMacro( Success); 
   igstkAddInputMacro( Failure); 
+  igstkAddInputMacro( ValidFrequency); 
 
   // Programming the state machine transitions:
 
@@ -59,6 +64,34 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            EstablishCommunication,
                            AttemptingToEstablishCommunication,
                            AttemptToOpen );
+  igstkAddTransitionMacro( Idle,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           AttachTrackerTool,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           UpdateStatus,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           Reset,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           ValidFrequency,
+                           Idle,
+                           SetFrequency );
 
   // Transitions from the AttemptingToEstablishCommunication
   igstkAddTransitionMacro( AttemptingToEstablishCommunication,
@@ -71,11 +104,21 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Idle,
                            CommunicationEstablishmentFailure );
 
+  igstkAddTransitionMacro( AttemptingToEstablishCommunication,
+                           ValidFrequency,
+                           AttemptingToEstablishCommunication,
+                           ReportInvalidRequest );
+
   // Transitions from CommunicationEstablished
   igstkAddTransitionMacro( CommunicationEstablished,
-                           ActivateTools,
-                           AttemptingToActivateTools,
-                           AttemptToActivateTools );
+                           AttachTrackerTool,
+                           AttemptingToAttachTrackerTool,
+                           AttemptToAttachTrackerTool );
+
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           StartTracking,
+                           AttemptingToTrack,
+                           AttemptToStartTracking );
 
   igstkAddTransitionMacro( CommunicationEstablished,
                            CloseCommunication,
@@ -87,32 +130,67 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            CommunicationEstablished,
                            ResetFromCommunicatingState );
 
-  // Transitions from AttemptingToActivateTools
-  igstkAddTransitionMacro( AttemptingToActivateTools,
-                           Success,
-                           ToolsActive,
-                           ToolsActivationSuccess );
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           StopTracking,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro( AttemptingToActivateTools,
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           EstablishCommunication,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           UpdateStatus,
+                           CommunicationEstablished,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( CommunicationEstablished,
+                           ValidFrequency,
+                           CommunicationEstablished,
+                           SetFrequency );
+
+  // Transitions from AttemptingToAttachTrackerTool
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
+                           Success,
+                           TrackerToolAttached,
+                           AttachingTrackerToolSuccess );
+
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
                            Failure,
                            CommunicationEstablished,
-                           ToolsActivationFailure );
+                           AttachingTrackerToolFailure );
 
-  // Transitions from ToolsActive
-  igstkAddTransitionMacro( ToolsActive,
+  igstkAddTransitionMacro( AttemptingToAttachTrackerTool,
+                           ValidFrequency,
+                           AttemptingToAttachTrackerTool,
+                           ReportInvalidRequest );
+
+  // Transitions from TrackerToolAttached
+  igstkAddTransitionMacro( TrackerToolAttached,
                            StartTracking,
                            AttemptingToTrack,
                            AttemptToStartTracking );
 
-  igstkAddTransitionMacro( ToolsActive,
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           AttachTrackerTool,
+                           AttemptingToAttachTrackerTool,
+                           AttemptToAttachTrackerTool );
+
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           ValidFrequency,
+                           TrackerToolAttached,
+                           SetFrequency );
+
+  igstkAddTransitionMacro( TrackerToolAttached,
+                           StopTracking,
+                           TrackerToolAttached,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerToolAttached,
                            CloseCommunication,
                            AttemptingToCloseCommunication,
-                           CloseFromToolsActiveState );
-
-  igstkAddTransitionMacro( ToolsActive,
-                           Reset,
-                           CommunicationEstablished,
-                           ResetFromToolsActiveState );
+                           CloseFromCommunicatingState );
 
   // Transitions from AttemptingToTrack
   igstkAddTransitionMacro( AttemptingToTrack,
@@ -122,8 +200,13 @@ Tracker::Tracker(void) :  m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToTrack,
                            Failure,
-                           ToolsActive,
+                           CommunicationEstablished,
                            StartTrackingFailure );
+
+  igstkAddTransitionMacro( AttemptingToTrack,
+                           ValidFrequency,
+                           AttemptingToTrack,
+                           ReportInvalidRequest );
 
   // Transitions from Tracking
   igstkAddTransitionMacro( Tracking,
@@ -146,6 +229,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            AttemptingToCloseCommunication,
                            CloseFromTrackingState );
 
+  igstkAddTransitionMacro( Tracking,
+                           ValidFrequency,
+                           Tracking,
+                           ReportInvalidRequest );
+
   // Transitions from AttemptingToUpdate
   igstkAddTransitionMacro( AttemptingToUpdate,
                            Success,
@@ -157,16 +245,26 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Tracking,
                            UpdateStatusFailure );
 
+  igstkAddTransitionMacro( AttemptingToUpdate,
+                           ValidFrequency,
+                           AttemptingToUpdate,
+                           ReportInvalidRequest );
+
   // Transitions from AttemptingToStopTracking
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            Success,
-                           ToolsActive,
+                           CommunicationEstablished,
                            StopTrackingSuccess );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            Failure,
                            Tracking,
                            StopTrackingFailure );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           ValidFrequency,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            Success,
@@ -177,6 +275,11 @@ Tracker::Tracker(void) :  m_StateMachine( this )
                            Failure,
                            CommunicationEstablished,
                            CloseCommunicationFailure );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           ValidFrequency,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -193,12 +296,14 @@ Tracker::Tracker(void) :  m_StateMachine( this )
 
   // This is update rate for sending tracking information to the
   // spatial objects, it should be set to at least 30 Hz
-  m_PulseGenerator->RequestSetFrequency( 30 );
+  const double DEFAULT_REFRESH_RATE = 30.0;
+  m_PulseGenerator->RequestSetFrequency( DEFAULT_REFRESH_RATE );
 
   // This is the time period for which transformation should be
   // considered valid.  After this time, they expire.  This time
   // is in milliseconds.
-  m_ValidityTime = 400.0;
+  const TimePeriodType DEFAULT_VALIDITY_TIME = 400;
+  m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;
@@ -206,15 +311,46 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   m_ConditionNextTransformReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
+  m_TrackingThreadStarted = false;
 }
-
 
 /** Destructor */
 Tracker::~Tracker(void)
 {
-  m_Ports.clear();
 }
 
+/** This method sets the reference tool. */
+void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestSetReferenceTool called ...\n");
+  // connect the reference tracker tool the tracker 
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                    igstk::TimeStamp::GetLongestPossibleTime() );
+  
+  if( trackerTool != NULL )
+    {
+    // check if it is already attached to the tracker
+    typedef TrackerToolsContainerType::iterator InputIterator;
+    InputIterator toolItr = 
+                m_TrackerTools.find( trackerTool->GetTrackerToolIdentifier() );
+
+    if( toolItr != m_TrackerTools.end() )
+      {
+      m_ApplyingReferenceTool = true;
+      m_ReferenceTool = trackerTool;
+      m_ReferenceTool->RequestDetachFromParent();
+
+      //VERY IMPORTANT: Make the reference tracker tool the parent of the tracker
+      this->RequestSetTransformAndParent( identityTransform, trackerTool );
+      }
+    else
+      {
+      igstkLogMacro( CRITICAL, "Request to use a tracker tool as a reference"
+      << "has failed. The tracker tool is not attached to the tracker ");
+      }
+   }
+}
 
 /** The "RequestOpen" method attempts to open communication with the
  *  tracking device. */
@@ -234,17 +370,7 @@ void Tracker::RequestClose( void )
   m_StateMachine.ProcessInputs();
 }
 
-
-/** The "RequestInitialize" method initializes a newly opened device. */
-void Tracker::RequestInitialize( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::RequestInitialize called ...\n");
-  igstkPushInputMacro( ActivateTools );
-  this->m_StateMachine.ProcessInputs();
-}
-
-
-/** The "RequestReset" tracker method should be used to bring the tracker
+/** The "RequestReset" tracker method should be used to the tracker
  * to some defined default state. */
 void Tracker::RequestReset( void )
 {
@@ -283,175 +409,18 @@ void Tracker::RequestUpdateStatus( void )
 }
 
 
-/** The "GetToolTransform" gets the position of tool numbered "toolNumber" on
- * port numbered "portNumber" in the variable "position". Note that this
- * variable represents the position and orientation of the tool in 3D space. */
-void Tracker::GetToolTransform( unsigned int portNumber,
-                                unsigned int toolNumber,
-                                TransformType &transitions ) const
+/** The "RequestSetFrequency" method is used for defining the rate at which 
+ * Transforms are queried from the Tracker device */
+void Tracker::RequestSetFrequency( double frequencyInHz )
 {
-  if ( portNumber < this->m_Ports.size()  )
+  igstkLogMacro( DEBUG, "igstk::Tracker::RequestSetFrequency called ...\n");
+  if( frequencyInHz > 0.0 )
     {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolConstPointer tool = port->GetTool( toolNumber );
-        transitions = tool->GetTransform();
-        }
-      }
+    this->m_FrequencyToBeSet = frequencyInHz;
+    igstkPushInputMacro( ValidFrequency );
+    m_StateMachine.ProcessInputs();
     }
 }
-
-/** The "SetToolTransform" sets the position of tool numbered "toolNumber" on
- * port numbered "portNumber" by the content of variable "position". Note
- * that this variable represents the position and orientation of the tool in
- * 3D space.  */
-void Tracker::SetToolTransform( unsigned int portNumber,
-                                unsigned int toolNumber,
-                                const TransformType & transform )
-{
-
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        tool->SetRawTransform( transform );
-        tool->SetUpdated( true );
-        }
-      }
-    }
-}
-
-/** Associate a TrackerTool to an object to be tracked. This is a one-to-one
- * association and cannot be changed during the life of the application */
-void Tracker::AttachObjectToTrackerTool( unsigned int portNumber,
-                                         unsigned int toolNumber,
-                                         SpatialObject * objectToTrack )
-{
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        objectToTrack->RequestAttachToTrackerTool( tool );
-        }
-      }
-    }
-}
-
-
-/** The "AddPort" method adds a port to the tracker. */
-void Tracker::AddPort( TrackerPortType * port )
-{
-  TrackerPortPointer portPtr = port;
-  this->m_Ports.push_back( portPtr );
-}
-
-/** The "ClearPorts" clears all the ports. */
-void Tracker::ClearPorts( void )
-{
-  this->m_Ports.clear();
-}
-
-/** The "InternalOpen" method opens communication with a tracking device.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalOpen( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalOpen called ...\n");
-  return SUCCESS;
-}
-
-/** The "InternalClose" method closes communication with a tracking device.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalClose( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalClose called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalReset" method resets tracker to a known configuration. 
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalReset( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalReset called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalActivateTools" method activates tools.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalActivateTools( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalActivateTools called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalDeactivateTools" method deactivates tools.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalDeactivateTools( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalDeactivateTools called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalStartTracking" method starts tracking.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalStartTracking( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalStartTracking called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalStopTracking" method stops tracking.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalStopTracking( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalStopTracking called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalUpdateStatus" method updates tracker status.
- *  This method is to be overridden by a descendant class 
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::InternalUpdateStatus called ...\n");
-  return SUCCESS;
-}
-
-
-/** The "InternalThreadedUpdateStatus" method updates tracker status.
- *  This method is called in a separate thread.
- *  This method is to be overridden by a descendant class
- *  and responsible for device-specific processing */
-Tracker::ResultType Tracker::InternalThreadedUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, 
-                 "igstk::Tracker::InternalThreadedUpdateStatus called ...\n");
-  return SUCCESS;
-}
-
 
 /** The "AttemptToOpen" method attempts to open communication with a
  *  tracking device. */
@@ -523,20 +492,6 @@ void Tracker::ResetFromCommunicatingStateProcessing( void )
     }
 }
 
-/** The "AttemptToActivateTools" method attempts to activate tools. */
-void Tracker::AttemptToActivateToolsProcessing( void )
-{
-  igstkLogMacro( DEBUG,
-           "igstk::Tracker::AttemptToActivateToolsProcessing called ...\n");
-
-  ResultType result = this->InternalActivateTools();
-  
-  m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_SuccessInput,
-                                   m_FailureInput );
-}
-  
-
 /** Post-processing after ports and tools setup has been successful. */ 
 void Tracker::ToolsActivationSuccessProcessing( void )
 {
@@ -573,6 +528,20 @@ void Tracker::StartTrackingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::StartTrackingSuccessProcessing "
                  "called ...\n");
+
+  // Report to all the tracker tools that tracking has been started
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    (inputItr->second)->RequestReportTrackingStarted();
+    ++inputItr;
+    }
+
+
   // going from AttemptingToTrackState to TrackingState
   this->EnterTrackingStateProcessing();
 
@@ -588,6 +557,51 @@ void Tracker::StartTrackingFailureProcessing( void )
   this->InvokeEvent( TrackerStartTrackingErrorEvent() );
 }
 
+/** Post-processing after attaching a tracker tool to the tracker
+ *  has been successful. */ 
+void Tracker::AttachingTrackerToolSuccessProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttachingTrackerToolSuccessProcessing "
+                 "called ...\n");
+
+  m_TrackerTools[ m_TrackerToolToBeAttached->GetTrackerToolIdentifier() ] 
+                                   = m_TrackerToolToBeAttached; 
+
+  // report to the tracker tool that the attachment has been 
+  // successful
+  m_TrackerToolToBeAttached->RequestReportSuccessfulTrackerToolAttachment();
+
+  // Add the tracker tool to the internal data containers
+  this->AddTrackerToolToInternalDataContainers( m_TrackerToolToBeAttached );
+
+  //connect the tracker tool coordinate system to the tracker
+  //system. By default, make the tracker coordinate system to 
+  //be a parent of the tracker tool coordinate system
+  //If a reference tracker tool is specified, the reference
+  //tracker tool will become the parent of all the tracker tools.
+  TransformType identityTransform;
+  identityTransform.SetToIdentity( 
+                  igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_TrackerToolToBeAttached->RequestSetTransformAndParent( 
+    identityTransform, this );
+
+  this->InvokeEvent( AttachingTrackerToolToTrackerEvent() );
+}
+
+/** Post-processing after attaching a tracker tool to the tracker
+ *  has failed. */ 
+void Tracker::AttachingTrackerToolFailureProcessing( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::AttachingTrackerToolFailureProcessing "
+                 "called ...\n");
+
+  // report to the tracker tool that the attachment has failed
+  m_TrackerToolToBeAttached->RequestReportFailedTrackerToolAttachment();
+
+  this->InvokeEvent( AttachingTrackerToolToTrackerErrorEvent() );
+}
+ 
 /** The "AttemptToStopTracking" method attempts to stop tracking. */
 void Tracker::AttemptToStopTrackingProcessing( void )
 {
@@ -610,6 +624,18 @@ void Tracker::StopTrackingSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::StopTrackingSuccessProcessing "
                  "called ...\n");
 
+  // Report to all the tracker tools that tracking has been stopped
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    (inputItr->second)->RequestReportTrackingStopped();
+    ++inputItr;
+    }
+
   this->InvokeEvent( TrackerStopTrackingEvent() );  
 }
 
@@ -630,9 +656,10 @@ void Tracker::EnterTrackingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::EnterTrackingStateProcessing "
                  "called ...\n");
 
-  if ( this->GetThreadingEnabled() )
+  if ( ! m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
     m_ThreadID = m_Threader->SpawnThread( TrackingThreadFunction, this );
+    m_TrackingThreadStarted= true;
     }
 
   m_PulseGenerator->RequestStart();
@@ -643,12 +670,34 @@ void Tracker::ExitTrackingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingStateProcessing "
                  "called ...\n");
+
+  // by default, we will exit tracking by terminating tracking thread
+  this->ExitTrackingTerminatingTrackingThread();
+}
+
+/** Exit tracking by terminating tracking thread */ 
+void Tracker::ExitTrackingWithoutTerminatingTrackingThread( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ExitTrackingWithoutTerminatingTrackingThread "
+    "called ...\n");
+
+  m_PulseGenerator->RequestStop();
+}
+
+/** Exit tracking by terminating tracking thread */ 
+void Tracker::ExitTrackingTerminatingTrackingThread( void )
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ExitTrackingTerminatingTrackingThread "
+                 "called ...\n");
+
   m_PulseGenerator->RequestStop();
 
   // Terminating the TrackingThread.
   if ( this->GetThreadingEnabled() )
     {
     m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
     }
 }
 
@@ -660,17 +709,20 @@ void Tracker::AttemptToUpdateStatusProcessing( void )
                         "called ...\n");
 
   // Set all tools to "not updated"
-  unsigned int numPorts = m_Ports.size();
-  for (unsigned int portNumber = 0; portNumber < numPorts; portNumber++)
+  //
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  unsigned int toolId = 0;
+
+  while( inputItr != inputEnd )
     {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    unsigned int numTools = port->GetNumberOfTools();
-    for (unsigned int toolNumber = 0; toolNumber < numTools; toolNumber++)
-      {
-      port->GetTool( toolNumber )->SetUpdated(false);
-      }
+    (inputItr->second)->SetUpdated(false);
+    ++inputItr;
     }
-      
+ 
   // wait for a new transform to be available, it would be nice if
   // "Wait" had a time limit like pthread_cond_timedwait() on Unix or
   // WaitForSingleObject() on Windows
@@ -697,85 +749,70 @@ void Tracker::UpdateStatusSuccessProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusSuccessProcessing "
                  "called ...\n");
 
-  // calibrate transforms for all tools that were updated
-  unsigned int numPorts = m_Ports.size();
-  for (unsigned int portNumber = 0; portNumber < numPorts; portNumber++)
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
     {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    unsigned int numTools = port->GetNumberOfTools();
-    for (unsigned int toolNumber = 0; toolNumber < numTools; toolNumber++)
+    if ( (inputItr->second)->GetUpdated() &&
+           ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) ) 
       {
-      TrackerToolPointer tool = port->GetTool( toolNumber );
+      const TransformType transform = (inputItr->second)->GetRawTransform();
+
+      const double timeToExpiration = transform.GetExpirationTime() - 
+                                      transform.GetStartTime();
+
+      TransformType::VersorType rotationRaw;
+      TransformType::VectorType translationRaw;
+
+      translationRaw = transform.GetTranslation();
+      rotationRaw    = transform.GetRotation();
+
+      TransformType toolRawTransform;
+      toolRawTransform.SetTranslationAndRotation( translationRaw, rotationRaw,
+                        transform.GetError(),
+                        timeToExpiration );
+
+      (inputItr->second)->SetRawTransform( toolRawTransform );
+ 
+      TransformType toolCalibrationTransform
+        = (inputItr->second)->GetCalibrationTransform();
       
-      if ( tool->GetUpdated() &&
-           ( !m_ApplyingReferenceTool || m_ReferenceTool->GetUpdated() ) )
+
+      TransformType toolCalibratedTransform;
+      toolCalibratedTransform =
+         toolCalibratedTransform.TransformCompose( 
+            toolRawTransform, toolCalibrationTransform );
+
+      (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
+        
+      // if a reference tracker tool has been specified, then if the tracker
+      // tool that is being updated is the selected reference tracker tool,
+      // then update the transform that is from the tracker to the the
+      // reference tracker tool. Otherwise, update the transform from the
+      // tracker tool to the tracker. 
+      if( m_ApplyingReferenceTool )
         {
-        TransformType transform = tool->GetRawTransform();
-
-        ToolCalibrationTransformType toolCalibrationTransform
-                                    = tool->GetToolCalibrationTransform();
-
-        
-        // T ' = P * R^-1 * T * C
-        //
-        // where:
-        // " T " is the original tool transform reported by the device,
-        // " R^-1 " is the inverse of the transform for the reference tool,
-        // " P " is the Patient transform (it specifies the position of
-        //       the reference with respect to patient coordinates), and
-        // " T ' " is the transformation that is reported to the spatial 
-        // objects
-        // " C " is the tool calibration transform.
-        
-
-        TransformType::VersorType rotation;
-        TransformType::VectorType translation;
-
-        // start with ToolCalibrationTransform
-        rotation = toolCalibrationTransform.GetRotation();
-        translation = toolCalibrationTransform.GetTranslation();
-
-        // transform by the tracker's tool transform
-        rotation = transform.GetRotation()*rotation;
-        translation = transform.GetRotation().Transform(translation);
-        translation += transform.GetTranslation();
-
-        // applying ReferenceTool
-        if ( m_ApplyingReferenceTool )
+        if ( (inputItr->first) == m_ReferenceTool->GetTrackerToolIdentifier())
           {
-          // since this is an inverse transform, apply translation first
-          TransformType::VersorType inverseRotation =
-            m_ReferenceTool->GetRawTransform().GetRotation().GetReciprocal();
-
-          translation -= m_ReferenceTool->GetRawTransform().GetTranslation();
-          translation = inverseRotation.Transform(translation);
-          rotation = inverseRotation*rotation;
-
-          // also include the reference tool's ToolCalibrationTransform
-          inverseRotation = m_ReferenceTool->GetToolCalibrationTransform().
-                                             GetRotation().GetReciprocal();
-          translation -= m_ReferenceTool->GetToolCalibrationTransform().
-                                             GetTranslation();
-          translation = inverseRotation.Transform(translation);
-          rotation = inverseRotation*rotation;
+          this->RequestSetTransformAndParent( 
+            toolCalibratedTransform.GetInverse(), inputItr->second );
           }
-
-        // applying PatientTransform
-        rotation = m_PatientTransform.GetRotation()*rotation;
-        translation = m_PatientTransform.GetRotation().Transform(translation);
-        translation += m_PatientTransform.GetTranslation();
-
-        const double timeToExpiration = transform.GetExpirationTime() - 
-                                        transform.GetStartTime();
-
-        TransformType toolTransform;
-        toolTransform.SetTranslationAndRotation( translation, rotation,
-                          transform.GetError(),
-                          timeToExpiration );
-
-        tool->SetTransform( toolTransform );
+        else
+          {
+          (inputItr->second)->RequestSetTransformAndParent( 
+            toolCalibratedTransform, this );
+          }
+        }
+      else
+        {
+        (inputItr->second)->RequestSetTransformAndParent( 
+            toolCalibratedTransform, this );
         }
       }
+    ++inputItr;
     }
 
   this->InvokeEvent( TrackerUpdateStatusEvent() );  
@@ -803,30 +840,18 @@ void Tracker::CloseFromTrackingStateProcessing( void )
 
   ResultType result = this->InternalStopTracking();
 
-  if( result == SUCCESS )
+  // detach all the tracker tools from the tracker
+  this->DetachAllTrackerToolsFromTracker();
+
+  // Terminating the TrackingThread and if it is started
+  if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
-    result = this->InternalDeactivateTools();
-    if ( result == SUCCESS )
-      {
-      result = this->InternalClose();
-      }
+    m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
     }
 
-  m_StateMachine.PushInputBoolean( (bool)result,
-                                   m_SuccessInput,
-                                   m_FailureInput );
-}
 
-/** The "CloseFromToolsActiveStateProcessing" method closes tracker
- *  in use, when the tracker is in active tools state. */
-void Tracker::CloseFromToolsActiveStateProcessing( void)
-{
-  igstkLogMacro( DEBUG, "igstk::Tracker::"
-                 "CloseFromToolsActiveStateProcessing called ...\n");
-
-  ResultType result = this->InternalDeactivateTools();
-
-  if ( result == SUCCESS )
+  if( result == SUCCESS )
     {
     result = this->InternalClose();
     }
@@ -836,6 +861,24 @@ void Tracker::CloseFromToolsActiveStateProcessing( void)
                                    m_FailureInput );
 }
 
+/** Detach all tracker tools from the tracker */
+void Tracker::DetachAllTrackerToolsFromTracker()
+{
+
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();  
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    this->RemoveTrackerToolFromInternalDataContainers( inputItr->second ); 
+    ++inputItr;
+    }
+
+  m_TrackerTools.clear();
+}
+ 
 /** The "CloseFromCommunicatingStateProcessing" method closes
  *  tracker in use, when the tracker is in communicating state. */
 void Tracker::CloseFromCommunicatingStateProcessing( void )
@@ -843,6 +886,17 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Tracker::"
                  "CloseFromCommunicatingStateProcessing called ...\n");
 
+  // Detach all the tracker tools from the tracker
+  this->DetachAllTrackerToolsFromTracker();
+
+  // Terminating the TrackingThread and if it is started
+  if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
+    {
+    m_Threader->TerminateThread( m_ThreadID );
+    m_TrackingThreadStarted = false;
+    }
+
+  
   ResultType result = this->InternalClose();
 
   m_StateMachine.PushInputBoolean( (bool)result,
@@ -885,125 +939,71 @@ void Tracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
 
   os << indent << "ValidityTime: " << this->m_ValidityTime << std::endl;
-
-  os << indent << "Number of ports: " << this->m_Ports.size() << std::endl;
-  for(unsigned int i=0; i < m_Ports.size(); ++i )
-    {
-    if( this->m_Ports[i] )
-      {
-      os << indent << *this->m_Ports[i] << std::endl;
-      }
-    }
+  os << indent << "CoordinateSystemDelegator: ";
+  this->m_CoordinateSystemDelegator->PrintSelf( os, indent );
 }
 
-
-/** The "SetReferenceTool" sets the reference tool. */
-void Tracker::SetReferenceTool( bool applyReferenceTool,
-                                unsigned int portNumber,
-                                unsigned int toolNumber )
+/** The "SetFrequencyProcessing" passes the frequency value to the Pulse
+ * Generator. Note that it is still possible for the PulseGenerator to reject
+ * the value and stay at its current frequency. */
+void Tracker::SetFrequencyProcessing( void )
 {
-  if( applyReferenceTool == false )
-    {
-    m_ApplyingReferenceTool = applyReferenceTool;
-    return;
-    }
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        m_ReferenceTool = port->GetTool( toolNumber );
-        m_ReferenceToolPortNumber = portNumber;
-        m_ReferenceToolNumber = toolNumber;
-        m_ApplyingReferenceTool = applyReferenceTool;
-        }
-      }
-    }
+  igstkLogMacro( DEBUG, 
+                 "igstk::Tracker::SetFrequencyProcessing called ...\n");
+
+  this->m_PulseGenerator->RequestSetFrequency( this->m_FrequencyToBeSet );
 }
 
 
-/** The "GetReferenceTool" gets the reference tool.
- * If the reference tool is not applied, it returns false.
- * Otherwise, it returns true. */
-bool Tracker::GetReferenceTool( unsigned int &portNumber,
-                                unsigned int &toolNumber ) const
+/** Request adding a tool to the tracker  */
+void
+Tracker::
+RequestAttachTool( TrackerToolType * trackerTool )
 {
-  portNumber = m_ReferenceToolPortNumber;
-  toolNumber = m_ReferenceToolNumber;
-
-  return m_ApplyingReferenceTool;
+  igstkLogMacro( DEBUG, "igstk::Tracker::"
+                 "RequestAttachTool called ...\n");
+ 
+  m_TrackerToolToBeAttached = trackerTool;
+  
+  igstkPushInputMacro( AttachTrackerTool );
+  this->m_StateMachine.ProcessInputs();
 }
 
-
-/** The "SetPatientTransform" sets PatientTransform.
- *
- *  T ' = W * R^-1 * T * C
- *
- *  where:
- *  " T " is the original tool transform reported by the device,
- *  " R^-1 " is the inverse of the transform for the reference tool,
- *  " W " is the Patient transform (it specifies the position of the reference
- *  with respect to patient coordinates), and
- *  " T ' " is the transformation that is reported to the spatial objects
- *  " C " is the tool calibration transform */
-void Tracker::SetPatientTransform( const PatientTransformType& transform )
+/** The "AttemptToAttachTrackerToolProcessing" method attempts to
+ * add a tracker tool to the tracker */
+void Tracker::AttemptToAttachTrackerToolProcessing( void )
 {
-  m_PatientTransform = transform;
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::AttemptToAttachTrackerToolProcessing called ...\n");
+
+  // Verify the tracker tool information before adding it to the
+  // tracker. The conditions that need be verified depend on 
+  // the tracker type. For example, for MicronTracker, the 
+  // the tracker should have access to the template file of the
+  // Marker that is attached to the tracker tool. 
+  ResultType result = 
+    this->VerifyTrackerToolInformation( m_TrackerToolToBeAttached );
+ 
+  m_StateMachine.PushInputBoolean( (bool)result,
+                                   m_SuccessInput,
+                                   m_FailureInput );
 }
 
-
-/** The "GetPatientTransform" gets PatientTransform. */
-Tracker::PatientTransformType Tracker::GetPatientTransform() const
+/** Request remove a tool from the tracker  */
+Tracker::ResultType 
+Tracker::
+RequestRemoveTool( TrackerToolType * trackerTool )
 {
-  return m_PatientTransform;
+  this->m_TrackerTools.erase( trackerTool->GetTrackerToolIdentifier() );
+  this->RemoveTrackerToolFromInternalDataContainers( trackerTool ); 
+  return SUCCESS;
 }
 
-
-/** The "SetToolCalibrationTransform" sets the tool calibration transform */
-void Tracker::SetToolCalibrationTransform( unsigned int portNumber,
-                                           unsigned int toolNumber,
-                           const ToolCalibrationTransformType& transform )
+const Tracker::TrackerToolsContainerType &
+Tracker::GetTrackerToolContainer() const
 {
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        tool->SetToolCalibrationTransform( transform );
-        }
-      }
-    }
+  return m_TrackerTools;
 }
-
-
-/** The "GetToolCalibrationTransform" gets the tool calibration transform */
-Tracker::ToolCalibrationTransformType
-Tracker::GetToolCalibrationTransform(unsigned int portNumber,
-                                     unsigned int toolNumber) const
-{
-  ToolCalibrationTransformType transform;
-
-  if ( portNumber < this->m_Ports.size()  )
-    {
-    TrackerPortPointer port = this->m_Ports[ portNumber ];
-    if ( port.IsNotNull() )
-      {
-      if( toolNumber < port->GetNumberOfTools() )
-        {
-        TrackerToolPointer tool = port->GetTool( toolNumber );
-        transform = tool->GetToolCalibrationTransform();
-        }
-      }
-    }
-
-  return transform;
-}
-
 
 /** Thread function for tracking */
 ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
@@ -1050,6 +1050,52 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
                       "out of " << totalCount << "updates." << std::endl );
 
   return ITK_THREAD_RETURN_VALUE;
+}
+
+/** Report to the tracker tool that the tool is not available */
+void 
+Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool ) const
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ReportTrackingToolNotAvailable called...\n");
+  trackerTool->RequestReportTrackingToolNotAvailable();
+}
+
+/** Report to the tracker tool that the tool is Visible */
+void 
+Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool ) const
+{
+  igstkLogMacro( DEBUG, "igstk::Tracker::ReportTrackingToolVisible called...\n");
+  trackerTool->RequestReportTrackingToolVisible();
+}
+
+/** Set raw transform */
+void 
+Tracker::SetTrackerToolRawTransform( 
+  TrackerToolType * trackerTool, const TransformType transform )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::SetTrackerToolRawTransform called...\n");
+  trackerTool->SetRawTransform( transform );
+}
+
+/** Turn on/off update flag of the tracker tool */
+void 
+Tracker::SetTrackerToolTransformUpdate( 
+  TrackerToolType * trackerTool, bool flag ) const
+{
+  igstkLogMacro( DEBUG, 
+     "igstk::Tracker::SetTrackerToolTransformUpdate called...\n");
+  trackerTool->SetUpdated( flag ); 
+}
+
+/** Report invalid request */
+void Tracker::ReportInvalidRequestProcessing( void )
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::Tracker::ReportInvalidRequestProcessing called...\n");
+
+  this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
 }

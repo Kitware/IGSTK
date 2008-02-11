@@ -26,7 +26,7 @@
 #include "igstkPulseGenerator.h"
 #include "itkCommand.h"
 #include "igstkEvents.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include <FL/Fl.H>
@@ -113,7 +113,8 @@ int igstkPulseGeneratorTest( int, char * [] )
   bool bEnd = false;
   ObserverType::Pointer observer = ObserverType::New();
 
-  itk::Logger::Pointer logger = itk::Logger::New();
+  typedef igstk::Object::LoggerType   LoggerType;
+  LoggerType::Pointer logger = LoggerType::New();
   itk::StdStreamLogOutput::Pointer logOutput = itk::StdStreamLogOutput::New();
   logOutput->SetStream( std::cout );
 

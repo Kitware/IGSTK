@@ -171,6 +171,38 @@ Transform
     }
 }
 
+bool 
+Transform
+::IsNumericallyEquivalent( const Transform& inputTransform, double tol ) const
+{
+  Transform shouldBeIdentity = TransformCompose( *this, this->GetInverse() );
+  bool isEquivalent = shouldBeIdentity.IsIdentity( tol );
+  return isEquivalent;
+}
+
+bool 
+Transform
+::IsIdentity( double tol ) const
+{
+  bool isIdentity = true;
+
+  // If the cosinus of half the angle is not 1.0 (up to a tolerance) 
+  // then this Transform is not an identity.
+  if( vnl_math_abs( this->m_Rotation.GetW() - 1.0 ) > tol )
+    {
+    isIdentity = false;
+    }
+
+  // If the norm of the translation vector is not 0.0 (up to a tolerance)
+  // then this Transform is not an identity.
+  if( vnl_math_abs( this->m_Translation.GetNorm() ) > tol )
+    {
+    isIdentity = false;
+    }
+
+  return isIdentity;
+}
+
 
 bool
 Transform
@@ -270,7 +302,7 @@ void Transform::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
-  os << indent << this->m_TimeStamp << std::endl;
+  this->m_TimeStamp.Print( os, indent ); // Get the right indenting.
   os << indent << this->m_Translation << std::endl;
   os << indent << this->m_Rotation << std::endl;
   os << indent << this->m_Error << std::endl;

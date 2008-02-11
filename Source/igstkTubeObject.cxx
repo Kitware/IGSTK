@@ -25,7 +25,7 @@ TubeObject::TubeObject():m_StateMachine(this)
 {
   // We create the ellipse spatial object
   m_TubeSpatialObject = TubeSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_TubeSpatialObject );
+  this->RequestSetInternalSpatialObject( m_TubeSpatialObject );
 } 
 
 /** Destructor */
@@ -39,7 +39,7 @@ void TubeObject
 ::SetTubeSpatialObject( TubeSpatialObjectType * tube ) 
 {
   m_TubeSpatialObject = tube;
-  this->RequestSetSpatialObject( m_TubeSpatialObject );
+  this->RequestSetInternalSpatialObject( m_TubeSpatialObject );
 }
 
 /** Add a point to the tube */

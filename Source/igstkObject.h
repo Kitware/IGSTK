@@ -21,6 +21,7 @@
 #include "itkObject.h"
 #include "itkLogger.h"
 
+#include "igstkLogger.h"
 #include "igstkMacros.h"
 
 
@@ -52,11 +53,12 @@ public:
   igstkTypeMacro( Object, ::itk::Object );  
   igstkNewMacro( Self );  
   
-  typedef ::itk::Logger                  LoggerType; 
+  typedef igstk::Logger                    LoggerType;
 
   /** Connect the Logger for this class */
   void SetLogger( LoggerType * logger );
 
+  void RemoveObserver(unsigned long tag) const;
 
 protected: 
 
@@ -74,10 +76,59 @@ protected:
   /** Print the object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
+  /** Register observed objects in an internal array so that they 
+   *  can be disconnected upon destruction */
+  void RegisterObservedObject( 
+    const ::igstk::Object * object, unsigned long tag );
+
+  /** Remove observers that this object may have connected to other objects */
+  void RemoveFromObservedObjects();
+
 private: 
   
-  mutable LoggerType::Pointer   m_Logger; 
+  typedef ::igstk::Object                         ObservedObjectType;
+  typedef std::pair< const ObservedObjectType *, 
+                     unsigned long>               ObservedObjectTagPair;
+  typedef std::list< ObservedObjectTagPair >      ObservedObjectPairContainer;
+  typedef ::itk::MemberCommand< Self >            DeleteEventCommandType;
+  typedef ::itk::EventObject                      EventType;
 
+  mutable LoggerType::Pointer                 m_Logger; 
+  ObservedObjectPairContainer                 m_ObservedObjectPairContainer;
+  DeleteEventCommandType::Pointer             m_ObservedObjectDeleteReceptor;
+
+  /** This method is called when an object we are observing is deleted.
+   *  It removes the object being deleted (caller) from our internal list
+   *  of observed objects. We use the internal list to remove our observers
+   *  when we are deleted.
+   */
+  void ObservedObjectDeleteProcessing(const itk::Object* caller, 
+                                      const EventType& event );
+
+  // Put this here so we can share typedefs.
+  class ObservedObjectTagPairObjectMatchPredicate
+    {
+    public:
+      ObservedObjectTagPairObjectMatchPredicate(
+        const itk::Object* obj) : m_TargetObject( obj )
+      {
+      }
+
+      bool operator()( const igstk::Object::ObservedObjectTagPair& objTagPair )
+      {
+      if (objTagPair.first == m_TargetObject)
+        {
+        return true;
+        }
+      else
+        {
+        return false;
+        }
+      }
+
+    private:
+      const itk::Object* m_TargetObject;
+    };
 
 };
 

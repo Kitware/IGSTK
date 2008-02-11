@@ -20,18 +20,17 @@
 #endif
 
 #include "igstkConfigure.h"
+#include "igstkAxesObject.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkBoxObject.h"
 #include "igstkBoxObjectRepresentation.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
 
 namespace ImageSpatialObjectRepresentationTest3
 {
@@ -53,15 +52,15 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
   
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType     LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput
@@ -69,15 +68,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
-  worldReference->SetLogger( logger );
-#endif 
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   typedef igstk::CTImageReader         ReaderType;
 
@@ -120,7 +111,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  /* Set up the boxal spatial object that will be added to each 
+  /* Set up the box spatial object that will be added to each 
    * each corners of the image */
   
   // Top Left corner
@@ -156,12 +147,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform.SetTranslation( translation, errorValue, validtyTime ); 
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  boxObject->RequestAttachToSpatialObjectParent( worldReference );
-  boxObject->RequestSetTransformToSpatialObjectParent( transform );
-#else
-  boxObject->RequestSetTransform( transform );
-#endif
+  boxObject->RequestSetTransformAndParent( transform, worldReference );
 
   boxObjectRepresentation->RequestSetBoxObject( boxObject );
   boxObjectRepresentation->SetColor( 1.0, 1.0, 1.0 );
@@ -197,12 +183,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform2.SetTranslation( translation2, errorValue2, validtyTime2 ); 
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  boxObject2->RequestAttachToSpatialObjectParent( worldReference );
-  boxObject2->RequestSetTransformToSpatialObjectParent( transform2 );
-#else
-  boxObject2->RequestSetTransform( transform2 );
-#endif
+  boxObject2->RequestSetTransformAndParent( transform2, worldReference );
 
   boxObjectRepresentation2->RequestSetBoxObject( boxObject2 );
   boxObjectRepresentation2->SetColor( 1.0, 1.0, 1.0 );
@@ -238,12 +219,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform3.SetTranslation( translation3, errorValue3, validtyTime3 ); 
       
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  boxObject3->RequestAttachToSpatialObjectParent( worldReference );
-  boxObject3->RequestSetTransformToSpatialObjectParent( transform3 );
-#else
-  boxObject3->RequestSetTransform( transform3 );
-#endif
+  boxObject3->RequestSetTransformAndParent( transform3, worldReference );
 
   boxObjectRepresentation3->RequestSetBoxObject( boxObject3 );
   boxObjectRepresentation3->SetColor( 1.0, 1.0, 1.0 );
@@ -279,13 +255,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   
   transform4.SetTranslation( translation4, errorValue4, validtyTime4 ); 
       
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  boxObject4->RequestAttachToSpatialObjectParent( worldReference );
-  boxObject4->RequestSetTransformToSpatialObjectParent( transform4 );
-#else
-  boxObject4->RequestSetTransform( transform4 );
-#endif
-
+  boxObject4->RequestSetTransformAndParent( transform4, worldReference );
 
   boxObjectRepresentation4->RequestSetBoxObject( boxObject4 );
   boxObjectRepresentation4->SetColor( 1.0, 1.0, 1.0 );
@@ -295,14 +265,25 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      WidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
 
+  // instantiate FLTK widget 
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
+  
   form->end();
   form->show();
 
   view2D->SetLogger( logger ); 
-  view2D->RequestEnableInteractions();
+
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  view2D->RequestSetTransformAndParent( identityTransform, worldReference );
 
   // Add the image object representation to the view
   view2D->RequestAddObject( imageRepresentation );
@@ -328,12 +309,8 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
 
   transform.SetToIdentity( validtyTime );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
-  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
-#else
-  imageSpatialObject->RequestSetTransform( transform );
-#endif
+  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference );
+
   imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
@@ -343,8 +320,9 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   imageRepresentation->RequestSetSliceNumber( 0 );
   
   view2D->RequestResetCamera();
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
+
   Fl::wait(1.0);  
   igstk::PulseGenerator::CheckTimeouts();
 
@@ -363,7 +341,7 @@ int igstkImageSpatialObjectRepresentationTest3( int argc, char* argv[] )
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
-  delete view2D;
+  delete widget2D;
   delete form;
  
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

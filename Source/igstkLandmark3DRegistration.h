@@ -112,9 +112,13 @@ public:
    * transform parameter calculation */
   void RequestComputeTransform();
 
-  /** The "RequesteGetTransform" method will be used to request to get
-   *   transform */
-  void RequestGetTransform();
+  /** The "RequesteGetTransformFromTrackerToImage" method will be used
+   *  to request to get the transform from the Tracker to the Image. */
+  void RequestGetTransformFromTrackerToImage();
+
+  /** The "RequesteGetTransformFromImageToTracker" method will be used
+   *  to request to get the transform from the Image to the Tracker. */
+  void RequestGetTransformFromImageToTracker();
  
   /** The "RequestGetRMSError" method will be used to get the RMS error
    *  value */
@@ -182,7 +186,8 @@ private:
   igstkDeclareInputMacro( ImageLandmark );
   igstkDeclareInputMacro( TrackerLandmark );
   igstkDeclareInputMacro( ComputeTransform );
-  igstkDeclareInputMacro( GetTransform );
+  igstkDeclareInputMacro( GetTransformFromTrackerToImage );
+  igstkDeclareInputMacro( GetTransformFromImageToTracker );
   igstkDeclareInputMacro( GetRMSError );
   igstkDeclareInputMacro( ResetRegistration );
   igstkDeclareInputMacro( TransformComputationFailure );
@@ -209,9 +214,15 @@ private:
    * transformation parameters */
   void ComputeTransformProcessing();
 
-  /** The "GetTransformProcessing" method throws an event containing the 
-   *  transform parameters */
-  void GetTransformProcessing();
+  /** The "GetTransformFromTrackerToImageProcessing" method throws
+   * an event containing the transform parameters from tracker to
+   * image */
+  void GetTransformFromTrackerToImageProcessing();
+
+  /** The "GetTransformFromImageToTrackerProcessing" method throws
+   * an event containing the transform parameters from image to
+   * tracker */
+  void GetTransformFromImageToTrackerProcessing();
 
   /** The "GetRMSErrorProcessing" method throws an event containing the 
    *  RMS error value */

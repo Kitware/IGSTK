@@ -27,12 +27,6 @@
 
 void RegisterTests()
 {
-
-// Register test  
-  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
-  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterTest);
-  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest);
-  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
@@ -56,6 +50,7 @@ void RegisterTests()
   REGISTER_TEST(igstkMultipleOutputTest);  
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
+
   REGISTER_TEST(igstkSpatialObjectTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkStateMachineErrorsTest);
@@ -63,7 +58,7 @@ void RegisterTests()
   REGISTER_TEST(igstkStringEventTest);
   REGISTER_TEST(igstkTimeStampTest);
   REGISTER_TEST(igstkTokenTest);
-  REGISTER_TEST(igstkTrackerPortTest);
+  REGISTER_TEST(igstkTrackerTest);
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
@@ -77,6 +72,7 @@ void RegisterTests()
 
 #ifdef IGSTK_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
+  REGISTER_TEST(igstkAuroraTrackerTest2);
 #endif
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
@@ -116,6 +112,7 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
+
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
 
 #ifdef IGSTK_DATA_ROOT

@@ -29,8 +29,9 @@ namespace igstk
  * \brief Implements the 3-dimensional Group structure.
  *
  * \par Overview
- * GroupObject implements the 3-dimensional Group structure. 
- *
+ * GroupObject implements the 3-dimensional Group structure. This spatial
+ * object keeps reference to its children, so it is possible to navigate the
+ * scene graph downwards.
  *
  * \ingroup Object
  */
@@ -50,8 +51,16 @@ public:
   typedef itk::GroupSpatialObject<3>          GroupSpatialObjectType;
 
   /** Return the number of objects in the group */
-  unsigned long GetNumberOfObjects() const;
+  unsigned long GetNumberOfChildren() const;
   
+  /** Request Adding a SpatialObject to the list of children.  Note that this
+   * method invoke the reciprocal RequestSetTransformAndParent(transform,parent)
+   * method on the child. */
+  void RequestAddChild( const Transform & transform, SpatialObject * child );
+
+  /** Request to get the child identified with a given childId number */
+  void RequestGetChild( unsigned long childId );
+
 protected:
 
   /** Constructor */
@@ -68,6 +77,34 @@ private:
   /** Internal itkGroupSpatialObject */
   GroupSpatialObjectType::Pointer   m_GroupSpatialObject;
 
+  typedef std::vector< SpatialObject::Pointer >  ChildrenContainerType;
+
+  ChildrenContainerType             m_ChildrenArray;
+
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( AddChildValid );
+  igstkDeclareInputMacro( AddChildInvalid );
+  igstkDeclareInputMacro( GetChildValid );
+  igstkDeclareInputMacro( GetChildInvalid );
+
+  /** States for the State Machine */
+  igstkDeclareStateMacro( EmptyGroup );
+  igstkDeclareStateMacro( NonEmptyGroup );
+
+  /** Action methods to be invoked only by the state machine */
+  void AddChildProcessing();
+  void GetChildProcessing();
+  void ReportNoChildAvailableProcessing();
+  
+  /** Null operation for a State Machine transition */
+  void NoProcessing();
+
+  /** Report when a request has been made at an incorrect time. */
+  void ReportInvalidRequestProcessing();
+
+  SpatialObject  *   m_ChildToAdd;
+  Transform          m_TransformToAdd;
+  unsigned long      m_ChildIdToGet;
 };
 
 } // end namespace igstk

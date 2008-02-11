@@ -27,13 +27,16 @@
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 #include "igstkView3D.h"
+#include "igstkDefaultWidget.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObjectRepresentation.h"
+
+#include "igstkCircularSimulatedTracker.h"
+#include "igstkSimulatedTrackerTool.h"
+
 
 namespace igstk
 {
@@ -55,18 +58,19 @@ protected:
   ViewObserver() 
     {
     m_PulseCounter = 0;
-    m_NumberOfPulsesToStop = 100;
-    m_Form = 0;
+    m_NumberOfPulsesToStop = 50;
     m_View = 0;
+    m_End = NULL;
     }
 public:
 
-  void SetForm( Fl_Window * form )
+  void Reset()
     {
-    m_Form = form;
-    m_PulseCounter = 0;
+    if( m_End )
+      {
+      *m_End = false;
+      }
     }
-
   void SetEndFlag( bool * end )
     {
     m_End = end;
@@ -101,14 +105,6 @@ public:
 
       if( m_PulseCounter > m_NumberOfPulsesToStop )
         {
-        if( m_View )
-          {
-          m_View->RequestStop();
-          } 
-        else
-          {
-          std::cerr << "View pointer is NULL " << std::endl;
-          }
         *m_End = true;
         return;
         }
@@ -121,13 +117,11 @@ public:
 
 private:
 
-  unsigned long       m_PulseCounter;
-  unsigned long       m_NumberOfPulsesToStop;
-  Fl_Window *         m_Form;
-  ::igstk::View *     m_View;
-  bool *              m_End;
+  unsigned long              m_PulseCounter;
+  unsigned long              m_NumberOfPulsesToStop;
+  ::igstk::View::Pointer     m_View;
+  bool *                     m_End;
 };
-
 
 } // end of VisibilityObjectTest namespace
 
@@ -147,8 +141,8 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -165,171 +159,224 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from VTK 
                                        // OutputWindow 
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
+  typedef igstk::AxesObjectRepresentation  RepresentationType;
+  RepresentationType::Pointer axesRepresentation = RepresentationType::New();
+  axesRepresentation->RequestSetAxesObject( worldReference );
+  worldReference->SetSize( 0.5, 0.5, 0.5 );
 
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
+  typedef ::igstk::CircularSimulatedTracker    TrackerType;
+  typedef ::igstk::SimulatedTrackerTool        TrackerToolType;
 
-  worldReference->SetLogger( logger );
-#endif 
+  TrackerType::Pointer       tracker     = TrackerType::New();
+  TrackerToolType::Pointer   trackerTool = TrackerToolType::New();
+
 
   typedef igstk::EllipsoidObjectRepresentation  ObjectRepresentationType;
   ObjectRepresentationType::Pointer 
-                    ellipsoidRepresentation = ObjectRepresentationType::New();
-  ellipsoidRepresentation->SetLogger( logger );
+                    ellipsoidRepresentation1 = ObjectRepresentationType::New();
+  ellipsoidRepresentation1->SetLogger( logger );
 
   ObjectRepresentationType::Pointer 
                     ellipsoidRepresentation2 = ObjectRepresentationType::New();
 
+  ObjectRepresentationType::Pointer 
+                    ellipsoidRepresentation3 = ObjectRepresentationType::New();
+
   typedef igstk::EllipsoidObject  ObjectType;
-  ObjectType::Pointer ellipsoidObject = ObjectType::New();
-  ellipsoidObject->SetLogger( logger );
+  ObjectType::Pointer ellipsoidObject1 = ObjectType::New();
+  ellipsoidObject1->SetLogger( logger );
  
   ObjectType::Pointer ellipsoidObject2 = ObjectType::New();
   ellipsoidObject2->SetLogger( logger );
  
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ellipsoidObject->RequestAttachToSpatialObjectParent( worldReference );
-  ellipsoidObject2->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
-
+  ObjectType::Pointer ellipsoidObject3 = ObjectType::New();
+  ellipsoidObject3->SetLogger( logger );
+ 
+ 
+  ellipsoidRepresentation1->RequestSetEllipsoidObject(ellipsoidObject1);
+  ellipsoidRepresentation1->SetColor( 0.0, 0.0, 1.0 );
+  ellipsoidRepresentation1->SetOpacity( 1.0 );
+ 
   ellipsoidRepresentation2->RequestSetEllipsoidObject(ellipsoidObject2);
   ellipsoidRepresentation2->SetColor( 1.0, 0.0, 0.0 );
   ellipsoidRepresentation2->SetOpacity( 1.0 );
   
-   
-  ellipsoidRepresentation->RequestSetEllipsoidObject(ellipsoidObject);
-  ellipsoidRepresentation->SetColor( 0.0, 0.0, 1.0 );
-  ellipsoidRepresentation->SetOpacity( 1.0 );
+  ellipsoidRepresentation3->RequestSetEllipsoidObject(ellipsoidObject3);
+  ellipsoidRepresentation3->SetColor( 0.0, 1.0, 0.0 );
+  ellipsoidRepresentation3->SetOpacity( 1.0 );
   
-  Fl_Window * form = new Fl_Window(512,512,"Visibility Test");
-
+ 
   typedef igstk::View3D  View3DType;
-  View3DType * view3D = new View3DType(6,6,500,500,"View 3D");
+
+  View3DType::Pointer view3D = View3DType::New();
   view3D->SetLogger( logger );
-  
-  form->end();
-  // End of the GUI creation
+ 
+  // Create an minimal GUI
+  typedef igstk::DefaultWidget      WidgetType;
 
-  form->show();
+  WidgetType * widget = new WidgetType( 512, 512 );
   
+  // At this point the View should be displayed
+  widget->RequestSetView( view3D );
+
   // this will indirectly call CreateActors() 
-  view3D->RequestAddObject( ellipsoidRepresentation  );
+  view3D->RequestAddObject( axesRepresentation );
+  view3D->RequestAddObject( ellipsoidRepresentation1  );
   view3D->RequestAddObject( ellipsoidRepresentation2 );
+  view3D->RequestAddObject( ellipsoidRepresentation3 );
 
-  double validityTimeInMilliseconds = 1000;
-  igstk::Transform transform;
-  igstk::Transform::VectorType translation;
-  translation[0] = 0;
-  translation[1] = 1;
-  translation[2] = 2;
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  view3D->RequestSetTransformAndParent( identityTransform, worldReference );
+
+  double validityTimeInMilliseconds = 1000; // 1 second
+  igstk::Transform transform1;
+  igstk::Transform::VectorType translation1;
+  translation1[0] =  0.5;
+  translation1[1] =- 0.5;
+  translation1[2] =  0.0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
+  
+  transform1.SetTranslationAndRotation( 
+      translation1, rotation, errorValue, validityTimeInMilliseconds );
 
+  ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference );
+
+  // This is the transform for the permanent object.
   igstk::Transform transform2;
   igstk::Transform::VectorType translation2;
-  translation2[0] = 0;
-  translation2[1] = 2;
-  translation2[2] = 2;
+  translation2[0] = 0.0;
+  translation2[1] = 1.0;
+  translation2[2] = 0.0;
+
+  transform2.SetTranslationAndRotation( 
+      translation2, rotation, errorValue, 
+      ::igstk::TimeStamp::GetLongestPossibleTime() );
+
+  ellipsoidObject2->RequestSetTransformAndParent( transform2, worldReference );
 
   
+  // This is the transform for the permanent object.
+  igstk::Transform transform3;
+  igstk::Transform::VectorType translation3;
+  translation3[0] = -0.5;
+  translation3[1] = -0.5;
+  translation3[2] =  0.0;
+
+  transform3.SetTranslationAndRotation( 
+      translation3, rotation, errorValue, 
+      ::igstk::TimeStamp::GetLongestPossibleTime() );
+
+  ellipsoidObject3->RequestSetTransformAndParent( transform3, worldReference );
+
+
+  view3D->RequestResetCamera();
+
   bool bEnd = false;
   const double refreshRate = 20.0;
 
   typedef ::igstk::VisibilityObjectTest::ViewObserver  ViewObserverType;
   ViewObserverType::Pointer viewObserver = ViewObserverType::New();
 
-  view3D->RequestSetRefreshRate( refreshRate );
-  view3D->RequestEnableInteractions();
+  view3D->SetRefreshRate( refreshRate );
 
   viewObserver->SetView( view3D );
-  viewObserver->SetForm( form );
   viewObserver->SetEndFlag( &bEnd );
 
-  const unsigned long numberOfSeconds = 3;
+  const unsigned long numberOfSeconds = 2;
   const unsigned long numberOfPulsesToStop = 
     static_cast< unsigned long >( refreshRate * numberOfSeconds );
 
-  view3D->RequestStart();
+  const unsigned int numberOfFlicks = 4;
 
-  transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds );
-
-  ellipsoidObject->RequestSetTransform( transform );
-
-  transform2.SetTranslationAndRotation( 
-      translation2, rotation, errorValue, 
-      ::igstk::TimeStamp::GetLongestPossibleTime() );
-
-  ellipsoidObject2->RequestSetTransform( transform2 );
-
-  
-  // Stabilize the transient period where the camera
-  // must be reset.
-  for(unsigned int k=0; k<10; k++)
+  for( unsigned int i=0; i<numberOfFlicks; i++)
     {
-    Fl::wait(0.05);
-    igstk::PulseGenerator::CheckTimeouts();
-    view3D->RequestResetCamera();
+    viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
+    viewObserver->Reset();
+
+    transform1.SetTranslationAndRotation( 
+        translation1, rotation, errorValue, validityTimeInMilliseconds );
+
+    ellipsoidObject1->RequestSetTransformAndParent( transform1, worldReference );
+
+    std::cout << "Flick " << i <<  "   end flag =  " << bEnd << std::endl;
+
+    view3D->RequestStart();
+
+    while( !bEnd )
+      {
+      igstk::PulseGenerator::Sleep(20);
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+
+    view3D->RequestStop();
+
     }
 
-  // Now start the real test.
-  //
-  // 1) Set the transform to be valid for one second
-  // 2) Reset the pulses counter in the view observer
-  //    to count for 3 seconds.
-  //
-  // 3) Restart the pulse generator of the View.
-  //
-  //
  
   std::string screenShotFileName1 = argv[1]; 
-
   std::string screenShotFileName2 = argv[2];
 
   bool screenShotTaken = false;
 
-  for( unsigned int tt=0; tt<5; tt++ )
+  //
+  //  Now visualize the object 3 under tracking
+  //
+  ellipsoidObject3->RequestSetTransformAndParent( 
+    identityTransform, trackerTool );
+
+  igstk::Transform calibrationTransform;
+
+  calibrationTransform.SetToIdentity( 
+    ::igstk::TimeStamp::GetLongestPossibleTime() );
+
+  trackerTool->SetCalibrationTransform( calibrationTransform );
+
+  trackerTool->RequestSetName("tool1");
+  trackerTool->RequestConfigure();
+  tracker->RequestSetTransformAndParent( identityTransform, worldReference );
+
+ 
+  // restart the count of the observer
+  viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
+  viewObserver->Reset();
+
+  view3D->RequestStart();
+
+  const double speedInDegreesPerSecond = 36.0;
+  const double radiusInMillimeters = 2.0;
+
+  tracker->RequestOpen();
+  tracker->SetRadius( radiusInMillimeters );
+  tracker->SetAngularSpeed( speedInDegreesPerSecond );
+  
+  trackerTool->RequestAttachToTracker( tracker );
+
+  tracker->RequestStartTracking();
+
+  while( !bEnd )
     {
-    validityTimeInMilliseconds = 1000;
-    transform.SetTranslationAndRotation( 
-        translation, rotation, errorValue, validityTimeInMilliseconds );
-
-    ellipsoidObject->RequestSetTransform( transform );
-
-
-    // restart the count of the observer
-    viewObserver->SetNumberOfPulsesToStop( numberOfPulsesToStop );
-    bEnd = false;
-    view3D->RequestStart();
-
-
-    while(1)
+    igstk::PulseGenerator::Sleep(20);
+    if ( ! screenShotTaken )  
       {
-      Fl::wait(0.001);
-      if ( ! screenShotTaken )  
-        {
-        view3D->RequestSaveScreenShot( screenShotFileName1 );
-        screenShotTaken = true;
-        }
-      igstk::PulseGenerator::CheckTimeouts();
-      if( bEnd )
-        {
-        break;
-        }
+      view3D->RequestSaveScreenShot( screenShotFileName1 );
+      screenShotTaken = true;
       }
-  
-    view3D->RequestSaveScreenShot( screenShotFileName2 );
+    igstk::PulseGenerator::CheckTimeouts();
     }
-
-
-  delete view3D;
   
-  delete form;
+  tracker->RequestStopTracking();
+  tracker->RequestClose();
+
+  view3D->RequestSaveScreenShot( screenShotFileName2 );
+  view3D->RequestStop();
+
+  delete widget;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {

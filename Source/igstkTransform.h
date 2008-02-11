@@ -72,7 +72,7 @@ public:
 
   /** Transform composition method */
   static Transform TransformCompose( Transform leftTransform, 
-                                     Transform rightTransform);
+                                     Transform rightTransform );
 
   /** Assign the values of one transform to another */
   const Transform & operator=( const Transform & inputTransform );
@@ -167,10 +167,18 @@ public:
   void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
 
-  /** Assign the values of one transform to another */
+  /** Compare two transforms for equivalence, in the 
+   *  sense that these are the same objects in memory.
+   */
   bool operator==( const Transform & inputTransform );
   bool operator!=( const Transform & inputTransform );
 
+  /** Compare two transforms for equivalence. */
+  bool IsNumericallyEquivalent( 
+    const Transform& inputTransform, double tol = vnl_math::eps ) const;
+
+  /** Evaluate if the Transform is an Identity upto a given tolerance */
+  bool IsIdentity( double tol = vnl_math::eps ) const;
 
   /** Resets the Transform to an Identity Transform */
   void SetToIdentity( TimePeriodType validityPeriodInMilliseconds );

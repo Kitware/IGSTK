@@ -122,7 +122,6 @@ void EllipsoidObjectRepresentation::SetEllipsoidObjectProcessing()
 void EllipsoidObjectRepresentation::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
-  this->RequestVerifyTimeStamp();
 
   EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
   m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );

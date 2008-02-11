@@ -33,7 +33,7 @@
 #include <string.h>
 
 #include "itkCommand.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkSystemInformation.h"
@@ -84,9 +84,9 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
 
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 
-  typedef igstk::NDICommandInterpreter  CommandInterpreterType;
-  typedef itk::Logger                   LoggerType; 
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef igstk::NDICommandInterpreter      CommandInterpreterType;
+  typedef igstk::Object::LoggerType         LoggerType;
+  typedef itk::StdStreamLogOutput           LogOutputType;
 
   NDICommandInterpreterTestCommand::Pointer errorCommand =
     NDICommandInterpreterTestCommand::New();

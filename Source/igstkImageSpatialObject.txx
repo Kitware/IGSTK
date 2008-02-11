@@ -31,7 +31,7 @@ ImageSpatialObject< TPixelType, VDimension >
 {
   // Create the image spatial object
   m_ImageSpatialObject = ImageSpatialObjectType::New();
-  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  this->RequestSetInternalSpatialObject( m_ImageSpatialObject );
 
   // initialize the logger 
   m_Logger = NULL;
@@ -66,6 +66,7 @@ ImageSpatialObject< TPixelType, VDimension >
   igstkAddInputMacro( InvalidImage );
   igstkAddInputMacro( RequestITKImage );
   igstkAddInputMacro( RequestVTKImage );
+  igstkAddInputMacro( RequestImageTransform );
 
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ImageSet );
@@ -78,6 +79,8 @@ ImageSpatialObject< TPixelType, VDimension >
                            Initial, ReportImageNotAvailable );
   igstkAddTransitionMacro( Initial, RequestVTKImage, 
                            Initial, ReportImageNotAvailable );
+  igstkAddTransitionMacro( Initial, RequestImageTransform, 
+                           Initial, ReportImageNotAvailable );
 
   igstkAddTransitionMacro( ImageSet, ValidImage, 
                            ImageSet, SetImage );
@@ -87,6 +90,8 @@ ImageSpatialObject< TPixelType, VDimension >
                            ImageSet, ReportITKImage );
   igstkAddTransitionMacro( ImageSet, RequestVTKImage, 
                            ImageSet, ReportVTKImage );
+  igstkAddTransitionMacro( ImageSet, RequestImageTransform, 
+                           ImageSet, ReportImageTransform );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -194,6 +199,47 @@ ImageSpatialObject< TPixelType, VDimension >
 template< class TPixelType, unsigned int VDimension >
 void
 ImageSpatialObject< TPixelType, VDimension >
+::RequestGetImageTransform() const
+{
+  igstkLogMacro( DEBUG, "RequestGetImageTransform() called ....\n");
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetImageTransform();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetImageTransform() 
+{
+  igstkLogMacro( DEBUG, "RequestImageTransform() called ....\n");
+
+  igstkPushInputMacro( RequestImageTransform );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportImageTransformProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportImageTransformProcessing() called ....\n");
+  CoordinateSystemTransformToResult transformCarrier;
+  CoordinateSystemTransformToEvent transformEvent;
+
+  transformCarrier.Initialize( this->m_ImageTransform,
+    this->m_DICOMCoordinateSystem,
+    this->GetCoordinateSystem() );
+
+  transformEvent.Set( transformCarrier );
+  this->InvokeEvent( transformEvent );
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
 ::ReportITKImageProcessing() 
 {
   igstkLogMacro( DEBUG, "ReportITKImageProcessing() called ....\n");
@@ -255,14 +301,13 @@ ImageSpatialObject< TPixelType, VDimension >
   typename Transform::VectorType   tranlationToOrigin = 
                  origin - rotation.Transform( origin );
  
-  typename Transform::ErrorType           errorValue = 1e-20;
-  typename Transform::TimePeriodType      validtyTime = -1;
+  typename Transform::ErrorType      errorValue = 1e-20;
+  typename Transform::TimePeriodType validtyTime = 
+    TimeStamp::GetLongestPossibleTime();
   
-  transform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
+  m_ImageTransform.SetTranslationAndRotation( tranlationToOrigin, rotation, 
                                            errorValue, validtyTime );
  
-  this->RequestSetTransform( transform ); 
-
   m_ItkExporter->SetInput( m_Image );
   m_VtkImporter->UpdateWholeExtent();
 }
@@ -335,6 +380,28 @@ ImageSpatialObject< TPixelType, VDimension >
   os << "Details of the image " << m_Image.GetPointer() << std::endl;
   os << "ITK Exporter filter " << m_ItkExporter.GetPointer() << std::endl;
   os << "VTK Importer filter " << m_VtkImporter << std::endl;
+}
+
+/** For coordinate systems, this method lets us indicate that 
+ *  we need to provide an additional transform. 
+ */
+template< class TPixelType, unsigned int VDimension >
+bool
+ImageSpatialObject< TPixelType, VDimension >
+::IsInternalTransformRequired()
+{ 
+  return true;
+} 
+
+/** For coordinate systems, allows us to hook in the image transform to
+ *  calls to RequestSetTransformAndParent.
+ */
+template< class TPixelType, unsigned int VDimension >
+Transform
+ImageSpatialObject< TPixelType, VDimension >
+::GetInternalTransform() const
+{ 
+  return m_ImageTransform;
 }
 
 

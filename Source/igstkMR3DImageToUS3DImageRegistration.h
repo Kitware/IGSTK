@@ -167,10 +167,10 @@ private:
   igstkObserverConstObjectMacro(ITKMRImage,
     MRImageSpatialObject::ITKImageModifiedEvent,MRImageSpatialObject::ImageType)
   
-  igstkObserverMacro(USImageTransform,TransformModifiedEvent,
-                     Transform)
-  igstkObserverMacro(MRImageTransform,TransformModifiedEvent,
-                     Transform)
+  igstkObserverMacro(USImageTransform,CoordinateSystemTransformToEvent,
+                     CoordinateSystemTransformToResult )
+  igstkObserverMacro(MRImageTransform,CoordinateSystemTransformToEvent,
+                     CoordinateSystemTransformToResult )
 
 
 private:
@@ -194,10 +194,10 @@ private:
 
   
   /** Methods for Converting Events into State Machine Inputs */
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent,
-                                     MRImageTransformInput );
-  igstkLoadedEventTransductionMacro( TransformModifiedEvent ,
-                                     USImageTransformInput );
+  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo,
+                                     MRImageTransform );
+  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo ,
+                                     USImageTransform );
 
   /** Variable to save the calibration transform */
   TransformType                     m_RegistrationTransform;

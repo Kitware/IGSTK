@@ -85,6 +85,11 @@ private:
   /** Null operation for a State Machine transition */
   void NoProcessing();
 
+  /** Create the VTK actors for one Vessel. This method will serve as 
+   * callback for the VesselObserver. */
+  void CreateActorsForOneVesselProcessing();
+
+
 private:
 
   /** These two methods must be declared and note be implemented
@@ -95,15 +100,21 @@ private:
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidVascularNetworkObject );
   igstkDeclareInputMacro( NullVascularNetworkObject );
+  igstkDeclareInputMacro( VesselReceived );
+  igstkDeclareInputMacro( VesselNotFound );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullVascularNetworkObject );
   igstkDeclareStateMacro( ValidVascularNetworkObject );
+  igstkDeclareStateMacro( AttemptingToGetVessel );
 
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
  
-  igstkObserverObjectMacro(Vessel,
-    VascularNetworkObjectType::VesselObjectModifiedEvent,VesselObjectType)
+  igstkLoadedObjectEventTransductionMacro(
+    VesselObjectModified, VesselReceived );
+
+  igstkEventTransductionMacro(
+    VesselObjectNotAvailable, VesselNotFound );
 
 };
 

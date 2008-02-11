@@ -25,7 +25,7 @@
 
 #include "itkObject.h"
 #include "itkEventObject.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkMacros.h"
@@ -100,13 +100,16 @@ public:
 
   typedef Communication::ResultType      ResultType;
 
-  typedef SerialCommunication            Self;
-  typedef Communication                  Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
-  typedef itk::SmartPointer<const Self>  ConstPointer;
+  /** Standard traits of a basic class */
+  igstkStandardClassBasicTraitsMacro( SerialCommunication, Communication );
 
-  /**  Run-time type information (and related methods). */
-  igstkTypeMacro( SerialCommunication, Communication );
+  /** Customized New method that will return the implementation of
+   * SerialCommunication that is appropriate for this platform.  
+   * \sa SerialCommunicationForWindows 
+   * \sa SerialCommunicationForPosix
+   */
+  static Pointer New(void);
+
 
   /** Specify which serial port to use.  If communication is open,
    *  this has no effect until communication is closed and reopened. */
@@ -210,7 +213,7 @@ protected:
   // These methods are the interface to the derived classes.
 
   /** Opens serial port for communication; */
-  virtual ResultType InternalOpenPort( void ) { return SUCCESS; };
+  virtual ResultType InternalOpenPort( void ) { return SUCCESS; }
 
   /** Set communication parameters on the open port. */
   virtual ResultType InternalUpdateParameters( void ) { return SUCCESS; }
@@ -297,7 +300,7 @@ private:
   bool                     m_Capture;
   
   /** Logger for recording */
-  itk::Logger::Pointer     m_Recorder;
+  igstk::Object::LoggerType::Pointer     m_Recorder;
   
   /** RTS Signal type */
   unsigned int             m_RTSSignal;

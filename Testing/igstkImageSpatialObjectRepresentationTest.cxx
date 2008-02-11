@@ -23,15 +23,13 @@
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkView2D.h"
+#include "igstkFLTKWidget.h"
 #include "igstkCTImageReader.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkAxesObject.h"
 
 namespace igstk
 {
@@ -147,15 +145,15 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -164,15 +162,9 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
+  igstk::AxesObject::Pointer worldReference = igstk::AxesObject::New();
 
   worldReference->SetLogger( logger );
-#endif 
 
   // Instantiate a reader
   //
@@ -221,17 +213,19 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
   
   representation->RequestSetSliceNumber( 10 );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
-#endif 
-
-
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
     
   typedef igstk::View2D  View2DType;
+  // Create an FLTK minimal GUI
+  typedef igstk::FLTKWidget      WidgetType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
+
+  // instantiate FLTK widget 
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
+  widget2D->RequestSetView( view2D );
+  widget2D->SetLogger( logger );
 
   view2D->SetLogger( logger );
 
@@ -261,13 +255,10 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   imageSpatialObject->SetLogger( logger );
 
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  imageSpatialObject->RequestAttachToSpatialObjectParent( worldReference );
-  igstk::Transform                   transform;
-  igstk::Transform::TimePeriodType   validtyTime = 1e20;
-  transform.SetToIdentity( validtyTime );
-  imageSpatialObject->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
+  igstk::Transform  transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  imageSpatialObject->RequestSetTransformAndParent( transform, worldReference );
+
 
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
@@ -337,9 +328,10 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
 
   view2D->RequestAddObject( representation );
 
+  view2D->RequestSetTransformAndParent( transform, worldReference );
   
   // Set and initialize the pulse generator of the view 
-  view2D->RequestSetRefreshRate( 30 );
+  view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
  
 
@@ -435,7 +427,7 @@ int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
     }
 
 
-  delete view2D;
+  delete widget2D;
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

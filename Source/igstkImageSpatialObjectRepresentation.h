@@ -32,9 +32,12 @@ namespace igstk
 
 /** \class ImageSpatialObjectRepresentation
  * 
- *\brief This class represents an image object. The parameters of the object
- * are ... The image object is rendered in a VTK scene using the
- * ... object.
+ *\brief This class renders and ImageSpatialObject in a VTK scene using a slice
+ * based representation.
+ *
+ * You can select the orientation of the slice to be Axial, Sagittal or Coronal.
+ * The number of the slice to be rendered can also be selected, as well as values
+ * of opacity, window and level.
  * 
  *\image html igstkImageSpatialObjectRepresentation.png "State Machine Diagram"
  *
@@ -119,6 +122,8 @@ protected:
    * the ImageSpatialObject when an image is requested. */
    igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
                        EventHelperType::VTKImagePointerType );
+   igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
+     CoordinateSystemTransformToResult );
 
 
 private:
@@ -199,8 +204,12 @@ private:
   OrientationType      m_Orientation;
 
   /** Observer to the VTK image events */
-  typename VTKImageObserver::Pointer   m_VTKImageObserver;
+  typename VTKImageObserver::Pointer         m_VTKImageObserver;
+  typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
 
+  /** Transform containing the information about image origin
+   *  and image orientation taken from the DICOM input image */
+  Transform                                  m_ImageTransform;
 };
 
 } // end namespace igstk

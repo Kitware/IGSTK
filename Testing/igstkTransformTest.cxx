@@ -24,14 +24,8 @@
 #include <math.h>
 #include <iostream>
 #include "igstkTransform.h"
+#include "igstkPulseGenerator.h"
 
-// includes for Sleep
-#if defined (_WIN32) || defined (WIN32)
-#include <windows.h>
-#else
-#include <time.h>
-#include <unistd.h>
-#endif
 
 int igstkTransformTest( int, char * [] )
 {
@@ -51,6 +45,13 @@ int igstkTransformTest( int, char * [] )
     // Test the SetToIdentity() method
     const double identityValidityPeriod = 100.0; // milliseconds
     t1.SetToIdentity( identityValidityPeriod );
+
+    // Exercise the IsIdentity() method
+    if( ! t1.IsIdentity() )
+      {
+      std::cerr << "SetIdentity()/IsIdentity() pair failed" << std::endl;
+      return EXIT_FAILURE;
+      }
 
     VectorType translation;
     translation[0] = 10.0;
@@ -230,6 +231,26 @@ int igstkTransformTest( int, char * [] )
       return EXIT_FAILURE;
       }
 
+    // Testing the IsNumericallyEquivalent() method
+    igstk::Transform tt  = t1;
+    igstk::Transform ti  = tt.GetInverse();
+    igstk::Transform tii = ti.GetInverse();
+
+    if( ! tt.IsNumericallyEquivalent( tii ) )
+      {
+      std::cerr << "Error in GetInverse()/IsNumericallyEquivalent() pair";
+      std::cerr << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    if( tt.IsNumericallyEquivalent( ti ) )
+      {
+      std::cerr << "Error in GetInverse()/IsNumericallyEquivalent() pair";
+      std::cerr << std::endl;
+      return EXIT_FAILURE;
+      }
+
+
     translation[0] = 0.0;
     translation[1] = 0.0;
     translation[2] = 0.0;
@@ -245,12 +266,7 @@ int igstkTransformTest( int, char * [] )
 
     tinv.SetTranslationAndRotation( translation, rotation, lagerError, 
                                                                 longerPeriod );
-    
-#if defined (_WIN32) || defined (WIN32)
-    ::Sleep( 250 );            // Windows Sleep uses miliseconds
-#else
-    usleep( 250 * 1000 );  // linux usleep uses microsecond
-#endif
+    igstk::PulseGenerator::Sleep(250);
 
     std::cout << "Composing two transforms" << std::endl;
     std::cout << "Transform t1 = " << t1 << std::endl;

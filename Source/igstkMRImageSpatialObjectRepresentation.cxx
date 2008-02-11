@@ -26,6 +26,29 @@ MRImageSpatialObjectRepresentation
 
 } 
 
+/** Destructor */
+MRImageSpatialObjectRepresentation
+::~MRImageSpatialObjectRepresentation()
+{
+
+}
+
+/** Method that clones this object */
+MRImageSpatialObjectRepresentation::Pointer
+MRImageSpatialObjectRepresentation
+::Copy() const
+{
+  igstkLogMacro( DEBUG, "igstk::MRImageSpatialObjectRepresentation\
+                        ::Copy called...\n");
+
+  Pointer newOR = Self::New();
+  newOR->SetColor( this->GetRed(), this->GetGreen(), this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+
+  return newOR;
+}
+
+
 /** Print Self function */
 void MRImageSpatialObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const

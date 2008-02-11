@@ -24,12 +24,9 @@
 #include "igstkView2D.h"
 #include "igstkAnnotation2D.h"
 #include "igstkVTKLoggerOutput.h"
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-#include "igstkWorldCoordinateReferenceSystemObject.h"
-#endif
+#include "igstkFLTKWidget.h"
 
 namespace Annotation2DTest
 {
@@ -44,19 +41,20 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   if( argc < 2 )
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  CTImage  " << std::endl;
+    std::cerr << "Usage: " << argv[0]
+      << "  CTImage  [Screenshotfilename] " << std::endl;
     return EXIT_FAILURE;
     }
   
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG );
+  logger->SetPriorityLevel( LoggerType::CRITICAL );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -64,16 +62,6 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   vtkLoggerOutput->OverrideVTKWindow();
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  typedef igstk::WorldCoordinateReferenceSystemObject  
-    WorldReferenceSystemType;
-
-  WorldReferenceSystemType::Pointer worldReference =
-    WorldReferenceSystemType::New();
-
-  worldReference->SetLogger( logger );
-#endif 
 
 
   typedef igstk::CTImageReader         ReaderType;
@@ -90,7 +78,7 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   reader->RequestSetDirectory( directoryName );
   
   typedef igstk::CTImageSpatialObject  CTImageType;
-  typedef CTImageType::Pointer         CTImagePointer;
+  typedef CTImageType::ConstPointer    CTImagePointer;
 
   // Attach an observer
   typedef Annotation2DTest::CTImageObserver CTImageObserverType;
@@ -127,17 +115,8 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   RepresentationType::Pointer representation = RepresentationType::New();
           
-  CTImagePointer ctImage = ctImageObserver->GetCTImage();
-
-#ifdef IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
-  ctImage->RequestAttachToSpatialObjectParent( worldReference );
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  ctImage->RequestSetTransformToSpatialObjectParent( transform );
-#endif 
-
   representation->SetLogger( logger );
-  representation->RequestSetImageSpatialObject( ctImage );
+  representation->RequestSetImageSpatialObject( ctImageObserver->GetCTImage() );
   representation->RequestSetOrientation( RepresentationType::Axial );
 
   // Add 2D Annotations
@@ -147,13 +126,13 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   annotation->SetLogger( logger );
   
   //Add the annotations to each corner ([0,3]
-  annotation->RequestAddAnnotationText ( 0, "Corner 0");
-  annotation->RequestAddAnnotationText ( 1, "Corner 1");
-  annotation->RequestAddAnnotationText ( 2, "Corner 2");
-  annotation->RequestAddAnnotationText ( 3, "Corner 3");
-  
+  annotation->RequestSetAnnotationText ( 0, "Corner 0");
+  annotation->RequestSetAnnotationText ( 1, "Corner 1");
+  annotation->RequestSetAnnotationText ( 2, "Corner 2");
+  annotation->RequestSetAnnotationText ( 3, "Corner 3");
+
   // Add an invalid index for testing purpose 
-  annotation->RequestAddAnnotationText ( 10, "Invalid index");
+  annotation->RequestSetAnnotationText ( 10, "Invalid index");
 
   // Invoke AddAnnotations function for testing purpose
   annotation->RequestAddAnnotations();
@@ -161,22 +140,38 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // Invoke the print function
   annotation->Print( std::cout );
 
-  // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532,"CT Read View Test");
-    
   typedef igstk::View2D  View2DType;
 
-  View2DType * view2D = new View2DType( 10,10,512,512,"2D View");
+  View2DType::Pointer view2D = View2DType::New();
+
+  typedef igstk::FLTKWidget      WidgetType;
+
+  // Create an FLTK minimal GUI
+  Fl_Window * form = new Fl_Window(532,532,"Annotation2D Test");
+
+  // instantiate FLTK widget 
+  WidgetType * widget2D = new WidgetType( 10,10,512,512,"2D View");
 
   form->end();
+
+  widget2D->RequestSetView( view2D );
+
   form->show();
 
+  Fl::wait( 1.00 );
+
   view2D->SetLogger( logger ); 
-  view2D->RequestEnableInteractions();
+  widget2D->SetLogger( logger );
 
   // Add spatialobject
   view2D->RequestAddObject( representation );
-  
+
+  // Link the coordinate systems of the view and the image
+  igstk::Transform identityTransform;
+  identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  view2D->RequestSetTransformAndParent( 
+    identityTransform, ctImageObserver->GetCTImage() );
+
   // Add annotation
   view2D->RequestAddAnnotation2D( annotation );
 
@@ -184,21 +179,24 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
   // all the objects in the scene.
   view2D->RequestResetCamera();
 
-  
   // Start the pulse generator of the View 
-  view2D->RequestSetRefreshRate( 20 );
+  view2D->SetRefreshRate( 20 );
   view2D->RequestStart();
 
-
   // Do manual redraws
-  for( unsigned int i=0; i < 100; i++)
+  for( unsigned int i=0; i < 200; i++)
     {
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();   // trigger FLTK redraws
     }
 
-  delete view2D;
+  if( argc > 2 )
+    {
+    view2D->RequestSaveScreenShot( argv[2] );
+    }
+
+  delete widget2D;
   delete form;
   
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

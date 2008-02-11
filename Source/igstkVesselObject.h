@@ -101,6 +101,12 @@ private:
   VesselSpatialObjectType::Pointer   m_VesselSpatialObject;
 };
 
+/** Event type */
+igstkLoadedObjectEventMacro( VesselObjectModifiedEvent, IGSTKEvent, 
+                             VesselObject );
+
+igstkEventMacro( VesselObjectNotAvailableEvent, InvalidRequestErrorEvent );
+
 } // end namespace igstk
 
 #endif // __igstkVesselObject_h

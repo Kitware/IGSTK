@@ -103,6 +103,13 @@ public:
   void RequestGetVTKImage();
   void RequestGetVTKImage() const;
 
+  /** Request to get the image transform. This transform involves the
+   *  Translation to the origin, and the rotation given by the direction
+   *  cosines from the DICOM image.
+   */
+  void RequestGetImageTransform();
+  void RequestGetImageTransform() const;
+
   /** Event types */
   igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, 
                                              IGSTKEvent, ImageType);
@@ -110,6 +117,16 @@ public:
   igstkEventMacro( ImageNotAvailableEvent, IGSTKEvent );
 
 protected:
+
+  /** For coordinate systems, this method lets us indicate that 
+   *  we need to provide an additional transform. 
+   */
+  virtual bool IsInternalTransformRequired();
+
+  /** For coordinate systems, allows us to hook in the image transform to
+   *  calls to RequestSetTransformAndParent.
+   */
+  virtual Transform GetInternalTransform() const;
 
   ImageSpatialObject( void );
   ~ImageSpatialObject( void );
@@ -143,6 +160,7 @@ private:
   igstkDeclareInputMacro( InvalidImage );
   igstkDeclareInputMacro( RequestITKImage );
   igstkDeclareInputMacro( RequestVTKImage );
+  igstkDeclareInputMacro( RequestImageTransform );
   
   /** State Machine States */
   igstkDeclareStateMacro( Initial );
@@ -156,6 +174,11 @@ private:
   void ReportITKImageProcessing();
   void ReportVTKImageProcessing();
   void ReportImageNotAvailableProcessing();
+
+  /** This function reports the image transform. This transform
+   * contains the translation to the image origin of coordinates
+   * and the direction cosines from the DICOM image. */
+  void ReportImageTransformProcessing();
 
   /** This is the variable holding the real data container in the form of an
    * ITK image. This image should never be exposed at the IGSTK API. */
@@ -174,6 +197,8 @@ private:
   ITKExportFilterPointer             m_ItkExporter;
   VTKImportFilterPointer             m_VtkImporter;
 
+  Transform                          m_ImageTransform;
+  CoordinateSystem::Pointer          m_DICOMCoordinateSystem;  
 
 };
 

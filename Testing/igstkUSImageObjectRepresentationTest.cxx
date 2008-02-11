@@ -21,7 +21,7 @@
 
 #include "igstkUSImageObjectRepresentation.h"
 
-#include "itkLogger.h"
+#include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
 int igstkUSImageObjectRepresentationTest( int , char* [] )
@@ -32,9 +32,9 @@ int igstkUSImageObjectRepresentationTest( int , char* [] )
 
   RepresentationType::Pointer  representation = RepresentationType::New();
 
-  typedef itk::Logger              LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
-  
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
+
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -47,7 +47,7 @@ int igstkUSImageObjectRepresentationTest( int , char* [] )
   std::string name = representation->GetNameOfClass();
 
   std::cout << "Name of class = " << name << std::endl;
-    
+
   representation->Print( std::cout );
 
   return EXIT_SUCCESS;
