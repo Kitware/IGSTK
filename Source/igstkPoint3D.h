@@ -26,17 +26,18 @@ PURPOSE.  See the above copyright notices for more information.
 
 
 #include "itkPoint.h"
-#include "itkSmartPointer.h"
 
 
 namespace igstk {
 
 // forward declaration.
-class SpatialObject; 
+class CoordinateSystem; 
 
 /** \class Point3D
  * 
  * \brief Class for representing a position in 3D Space.
+ *
+ * Points are defined in a specific coordinate system.
  *
  * \ingroup Object
  */
@@ -48,21 +49,25 @@ public:
   typedef Point3D                   Self;
   typedef itk::Point<double, 3>     Superclass;
 
-  typedef ::itk::SmartPointer< const SpatialObject > SpatialObjectPointer;
-
-  /** Constructor. It will initialize the point to (0,0,0) and the world
+  /** Constructor. It will initialize the point to (0,0,0) and an unknown
    * coordinate system. */
   Point3D();
+
+  /** Destructor */
   ~Point3D();
 
-  /** Set the spatial object serving as coordinate reference system for this point */
-  void SetCoordinateSystem( const SpatialObject * referenceSystem );
+  /** Set the coordinate system for this point. */
+  void SetCoordinateSystem( const CoordinateSystem * coordinateSystem );
+  const CoordinateSystem * GetCoordinateSystem() const;
 
 private:
 
-  SpatialObjectPointer  m_ReferenceFrame;
+  const CoordinateSystem *  m_CoordinateSystem;
 
 };
+
+/** This event returns a point in a coordinate system. */
+igstkLoadedEventMacro( PointEvent, IGSTKEvent, Point3D );
 
 } // end namespace igstk
 

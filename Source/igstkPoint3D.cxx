@@ -29,12 +29,12 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk {
 
 
-/* Constructor. It will initialize the point to (0,0,0) and the world
+/* Constructor. It will initialize the point to (0,0,0), and an unknown
  * coordinate system. */
 Point3D::Point3D()
 {
   this->Fill( 0.0 );
-  this->m_ReferenceFrame = NULL;
+  this->m_CoordinateSystem = NULL;
 }
 
 /* Destructor. */
@@ -42,12 +42,20 @@ Point3D::~Point3D()
 {
 }
 
-/* Set the spatial object serving as coordinate reference system for this point */
+/* Set the coordinate system for this point */
 void 
-Point3D::SetCoordinateSystem( const SpatialObject * referenceSystem )
+Point3D::SetCoordinateSystem( const CoordinateSystem * coordinateSystem )
 {
-  this->m_ReferenceFrame = referenceSystem;
+  this->m_CoordinateSystem = coordinateSystem;
 }
+
+/* Get the coordinate system for this point */
+const Point3D::CoordinateSystem * 
+Point3D::GetCoordinateSystem() const
+{
+  return this->m_CoordinateSystem;
+}
+
 
 
 } // end namespace igstk
