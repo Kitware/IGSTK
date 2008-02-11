@@ -3,6 +3,8 @@ PROJECT(NeedleBiopsy)
 SET(NeedleBiopsy_GUI_SRCS
   NeedleBiopsyGUI.fl
   PolarisTrackerConfigurationGUI.fl
+  AuroraTrackerConfigurationGUI.fl
+  MicronTrackerConfigurationGUI.fl
   )
   
 SET(NeedleBiopsy_SRCS

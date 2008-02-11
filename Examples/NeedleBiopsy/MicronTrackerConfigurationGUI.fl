@@ -1,0 +1,120 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {MicronTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window TrackerConfigurationWindow {
+      label {Mcron Tracker Configuration} open
+      xywh {403 96 418 475} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Group ReferenceToolGroup {open
+        xywh {25 375 360 53} box ENGRAVED_BOX deactivate
+      } {
+        Fl_Choice ReferenceToolMarker {
+          label {Reference Tool Marker:}
+          xywh {212 391 63 25} down_box BORDER_BOX
+        } {}
+      }
+      Fl_Round_Button UseReferenceTool {
+        label {Use Reference Tool ?}
+        callback {if( UseReferenceTool->value() )
+{
+  ReferenceToolGroup->activate();
+}
+else
+{
+  ReferenceToolGroup->deactivate();
+}}
+        xywh {30 340 25 25} down_box ROUND_DOWN_BOX
+      }
+      Fl_Group TrackerToolGroup {open
+        xywh {20 152 365 178} box ENGRAVED_BOX
+      } {
+        Fl_Choice TrackerToolMarker {
+          label {Tracker Tool Marker:}
+          xywh {206 168 65 25} down_box BORDER_BOX
+        } {}
+        Fl_Group {} {
+          label {Tool Tip Offset}
+          xywh {20 220 365 70} box ENGRAVED_BOX
+        } {
+          Fl_Value_Input OffsetX {
+            label {X:}
+            xywh {70 250 55 25}
+          }
+          Fl_Value_Input OffsetY {
+            label {Y:}
+            xywh {190 250 55 25}
+          }
+          Fl_Value_Input OffsetZ {
+            label {Z:}
+            xywh {315 250 55 25}
+          }
+        }
+        Fl_Round_Button SwitchZAxes {
+          label {Switch Z axis?}
+          xywh {55 296 25 25} down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {GetGUISetting();
+RequestGetConfiguration();
+TrackerConfigurationWindow->hide();}
+        xywh {315 435 70 25}
+      }
+      Fl_Output CalibrationFileDir {
+        label {Calibration File Dir:}
+        xywh {145 20 215 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileDir = fl_dir_chooser("SROM file for tracker tool","");
+if( fileDir )
+{
+  CalibrationFileDir->value(fileDir);
+}}
+        xywh {365 19 25 25}
+      }
+      Fl_Output InitializationFile {
+        label {Initialization File Dir:}
+        xywh {145 60 215 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.*","");
+if( fileName )
+{
+  InitializationFile->value(fileName);
+}}
+        xywh {365 59 25 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileDir = fl_dir_chooser("SROM file for tracker tool","");
+if( fileDir )
+{
+  CalibrationFileDir->value(fileDir);
+}} selected
+        xywh {365 98 25 25}
+      }
+      Fl_Output TemplateFileDir {
+        label {Template File Dir:}
+        xywh {145 100 215 25}
+      }
+    }
+    code {TrackerConfigurationWindow->show();} {}
+  }
+  Function {~MicronTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {InitializeGUI()} {open return_type {virtual void}
+  } {}
+  Function {GetGUISetting()} {open return_type {virtual void}
+  } {}
+} 
