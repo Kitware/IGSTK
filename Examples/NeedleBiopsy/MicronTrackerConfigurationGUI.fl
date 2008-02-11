@@ -100,7 +100,27 @@ if( fileName )
         callback {char * fileDir = fl_dir_chooser("SROM file for tracker tool","");
 if( fileDir )
 {
-  CalibrationFileDir->value(fileDir);
+  TemplateFileDir->value(fileDir);
+  TrackerToolMarker->clear();
+  ReferenceToolMarker->clear();
+  itksys::Directory * dir = new itksys::Directory;
+  if( dir->Load(fileDir) )
+    {
+    int n = dir->GetNumberOfFiles();
+    for( int i=0; i<n; i++ )
+      {
+      std::string s = dir->GetPath();
+      s += dir->GetFile(i);
+      if(itksys::SystemTools::FileIsDirectory(s.c_str()))
+        {
+        continue;
+        }
+      TrackerToolMarker->add(dir->GetFile(i));
+      ReferenceToolMarker->add(dir->GetFile(i));    
+      }
+    TrackerToolMarker->value(0);
+    ReferenceToolMarker->value(1);
+    }
 }} selected
         xywh {365 98 25 25}
       }
