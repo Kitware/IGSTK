@@ -23,6 +23,13 @@
 namespace igstk
 {
 
+itkEventMacro( AuroraTrackerToolEvent,StringEvent);
+itkEventMacro( AuroraTrackerToolErrorEvent,AuroraTrackerToolEvent);
+itkEventMacro( InvalidAuroraPortNumberErrorEvent,AuroraTrackerToolErrorEvent);
+itkEventMacro( InvalidAuroraSROMFilenameErrorEvent,AuroraTrackerToolErrorEvent);
+itkEventMacro( InvalidAuroraPartNumberErrorEvent,AuroraTrackerToolErrorEvent);
+itkEventMacro( InvalidAuroraChannelNumberErrorEvent,AuroraTrackerToolErrorEvent);
+
 class AuroraTracker;
 
 /** \class AuroraTrackerTool

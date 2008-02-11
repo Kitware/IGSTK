@@ -97,10 +97,23 @@ IF (IGSTK_DATA_ROOT)
              igstkMR3DImageToUS3DImageRegistrationTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
-  ADD_TEST(igstkAuroraTrackerSimulatedTest ${IGSTK_TESTS} igstkAuroraTrackerSimulatedTest)
+  ADD_TEST( igstkAuroraTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkAuroraTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkAuroraTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
+              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom )
+
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
-  ADD_TEST(igstkPolarisTrackerSimulatedTest ${IGSTK_TESTS} igstkPolarisTrackerSimulatedTest)
+
+  ADD_TEST( igstkPolarisTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkPolarisTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
+              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom )
+ 
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
   
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 

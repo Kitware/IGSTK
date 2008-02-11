@@ -197,7 +197,9 @@ void PolarisTrackerTool::RequestSetPortNumber( unsigned int portNumber )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::RequestSetPortNumber called ...\n");
 
-  if ( portNumber > 255 )
+  const unsigned MAXIMUM_PORT_NUMBER = 12;
+
+  if( portNumber >= MAXIMUM_PORT_NUMBER )
     {
     m_StateMachine.PushInput( m_InValidPortNumberInput );
     m_StateMachine.ProcessInputs();
@@ -315,6 +317,8 @@ void PolarisTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
     "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid Port Number specified ");
+
+  this->InvokeEvent( InvalidPolarisPortNumberErrorEvent() );
 }
 
 /** Set valid SROM filename */ 
@@ -350,6 +354,8 @@ void PolarisTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
     "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid SROM filename specified ");
+
+  this->InvokeEvent( InvalidPolarisSROMFilenameErrorEvent() );
 }
 
 /** Set valid PartNumber */ 
@@ -369,6 +375,8 @@ void PolarisTrackerTool::ReportInValidPartNumberSpecifiedProcessing( )
     "igstk::PolarisTrackerTool::ReportInValidPartNumberSpecifiedProcessing "
     "called ...\n");
   igstkLogMacro( CRITICAL, "Invalid tool ID specified" );
+
+  this->InvokeEvent( InvalidPolarisPartNumberErrorEvent() );
 }
 
 /** The "RequestAttachToTracker" method attaches 

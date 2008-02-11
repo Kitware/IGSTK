@@ -163,7 +163,7 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   igstkAddTransitionMacro( AttemptingToDetachTrackerToolFromTracker,
                            DetachmentFromTrackerSuccess,
                            Idle,
-                           TrackerToolDetachmentFromTrackerSuccess );
+                             TrackerToolDetachmentFromTrackerSuccess );
 
   igstkAddTransitionMacro( AttemptingToDetachTrackerToolFromTracker,
                            DetachmentFromTrackerFailure,

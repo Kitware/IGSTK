@@ -327,6 +327,8 @@ void AuroraTrackerTool::ReportInValidPortNumberSpecifiedProcessing( )
     << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid port numbner specified ");
+
+  this->InvokeEvent( InvalidAuroraPortNumberErrorEvent() );
 }
 
 /** Set valid channel number */ 
@@ -355,6 +357,8 @@ void AuroraTrackerTool::ReportInValidChannelNumberSpecifiedProcessing( )
     << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid Channel numbner specified ");
+
+  this->InvokeEvent( InvalidAuroraChannelNumberErrorEvent() );
 }
 
 /** Set valid SROM filename */ 
@@ -375,6 +379,8 @@ void AuroraTrackerTool::ReportInValidSROMFileSpecifiedProcessing( )
     << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid SROM file name specified ");
+
+  this->InvokeEvent( InvalidAuroraSROMFilenameErrorEvent() );
 }
 
 /** Set valid PartNumber */ 
@@ -395,6 +401,8 @@ void AuroraTrackerTool::ReportInValidPartNumberSpecifiedProcessing( )
     << "called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid PartNumber specified ");
+
+  this->InvokeEvent( InvalidAuroraPartNumberErrorEvent() );
 }
 
 /** Check if the SROM filename is specified */
