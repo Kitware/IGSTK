@@ -356,6 +356,14 @@ Landmark3DRegistration::Landmark3DRegistration() : m_StateMachine( this )
 
   // Initialize collinearity tolerance
   m_CollinearityTolerance = 0.0001;
+
+
+  // Initialize the coordinate systems of the Tracker and the Image
+  // This should later be replaced with the actual coordinate systems
+  // of the Tracker and Image points that are received.
+  m_TrackerCoordinateSystem = CoordinateSystem::New();
+  m_ImageCoordinateSystem   = CoordinateSystem::New();
+
 } 
 
 /** Destructor */
@@ -605,8 +613,8 @@ Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
 
   CoordinateSystemTransformToResult transformCarrier;
   transformCarrier.Initialize( transform,
-    NULL,    // It should be the coordinate system of the Tracker
-    NULL     // It should be the coordinate system of the Image
+    m_TrackerCoordinateSystem,
+    m_ImageCoordinateSystem
     );
 
   CoordinateSystemTransformToEvent transformEvent; 
@@ -641,8 +649,8 @@ Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
 
   CoordinateSystemTransformToResult transformCarrier;
   transformCarrier.Initialize( transform.GetInverse(),
-    NULL,    // It should be the coordinate system of the Image
-    NULL     // It should be the coordinate system of the Tracker
+    m_ImageCoordinateSystem,
+    m_TrackerCoordinateSystem
     );
 
   CoordinateSystemTransformToEvent transformEvent; 

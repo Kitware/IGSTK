@@ -95,8 +95,9 @@ ImageSpatialObject< TPixelType, VDimension >
 
   igstkSetInitialStateMacro( Initial );
 
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
 
+  this->m_DICOMCoordinateSystem = CoordinateSystem::New();
 }
 
 

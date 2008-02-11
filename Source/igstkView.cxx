@@ -238,7 +238,7 @@ m_StateMachine(this)
 
   igstkSetInitialStateMacro( Idle );
 
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
 
   this->m_ActorToBeAdded = 0;
   this->m_ActorToBeRemoved = 0;
@@ -251,6 +251,8 @@ m_StateMachine(this)
   this->m_PulseGenerator->AddObserver( PulseEvent(), this->m_PulseObserver );
 
   this->SetRefreshRate( 30 ); // 30 Hz is rather low frequency for video.
+
+  this->m_PickerCoordinateSystem = CoordinateSystem::New();
 }
 
 /** Destructor */

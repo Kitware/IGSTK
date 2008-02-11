@@ -23,6 +23,7 @@
 #include "igstkMacros.h"
 #include "igstkObject.h"
 #include "igstkTransform.h"
+#include "igstkCoordinateSystem.h"
 
 #include "itkImage.h"
 #include "itkLandmarkBasedTransformInitializer.h"
@@ -239,6 +240,10 @@ private:
   /** The "ReportFailureInTransformComputation" method throws 
    *  TransformComputationFailureEvent*/
   void ReportFailureInTransformComputationProcessing();
+
+  /** Coordinate systems for the Image and Tracker that are being registered */ 
+  CoordinateSystem::Pointer     m_TrackerCoordinateSystem;
+  CoordinateSystem::Pointer     m_ImageCoordinateSystem;
 };
 
 } // end namespace igstk

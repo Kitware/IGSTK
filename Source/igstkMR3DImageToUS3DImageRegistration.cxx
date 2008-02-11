@@ -212,8 +212,8 @@ void MR3DImageToUS3DImageRegistration
   CoordinateSystemTransformToResult transformCarrier;
 
   transformCarrier.Initialize( this->m_RegistrationTransform,
-   NULL, // It should be one of the images Coordinate system
-   NULL  // It should be the coordinate system of the other image 
+   this->m_MRMovingImage,
+   this->m_USFixedImage 
    );
 
   CoordinateSystemTransformToEvent transformEvent;

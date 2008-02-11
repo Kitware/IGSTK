@@ -171,7 +171,9 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   // Inputs to the state machine
   igstkSetInitialStateMacro( Idle );
 
-  m_StateMachine.SetReadyToRun();
+  this->m_StateMachine.SetReadyToRun();
+
+  this->m_CalibrationCoordinateSystem = CoordinateSystem::New();
 
 }
 
