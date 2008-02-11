@@ -112,6 +112,7 @@ private:
 
     
   igstk::Tracker::Pointer                         m_Tracker;
+  igstk::TrackerTool::Pointer                     m_RegistrationTrackerTool;
   igstk::TrackerConfigurationGUIBase            * m_TrackerConfigurationGUI;
   std::vector< igstk::TrackerInitializer * >      m_TrackerInitializerList;
   

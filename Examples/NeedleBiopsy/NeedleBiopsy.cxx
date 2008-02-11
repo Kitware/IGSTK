@@ -71,7 +71,8 @@ NeedleBiopsy::NeedleBiopsy()
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
-  
+  m_TrackerInitializerList.clear();
+
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
@@ -459,14 +460,31 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
     initializer->SetTrackerConfiguration( & tc );
 
     if ( initializer->RequestInitializeTracker() )
-    { 
+      { 
       igstk::Tracker::Pointer     tracker = initializer->GetTracker();
-      igstk::TrackerTool::Pointer tool = initializer->GetNonReferenceToolList()[0];
+      igstk::TrackerTool::Pointer tool = 
+                                  initializer->GetNonReferenceToolList()[0];
       igstk::TrackerTool::Pointer refTool = initializer->GetReferenceTool();
+      
+      // Connect the scene graph with an identity transform first
+      igstk::Transform transform;
+      transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+      if ( initializer->m_HasReferenceTool )
+        {
+        refTool->RequestSetTransformAndParent(transform, m_WorldReference);
+        }
+      else
+        {
+        tracker->RequestSetTransformAndParent(transform, m_WorldReference);
+        }
+      m_RegistrationTrackerTool = tool;
+
       m_TrackerInitializerList.push_back( initializer );
       UpdateTrackerAndTrackerToolList();
+      TrackerList->value(m_TrackerInitializerList.size()-1);
+      TrackerToolList->value(m_TrackerInitializerList.size()-1);
+      }
     }
-  }
 }
 
 void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
@@ -478,10 +496,10 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
   for ( int i=0; i<m_TrackerInitializerList.size(); i++)
     {
       char buf[10];
-      _itoa(i, buf, 10);
+      _itoa(i+1, buf, 10);
       s = "Tracker ";
-      s = s + buf + ":" + 
-                       m_TrackerInitializerList[i]->GetTrackerTypeAsString();
+      s = s + buf + " [" + 
+                  m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
       TrackerList->add( s.c_str() );
       std::vector< igstk::TrackerTool::Pointer > toolList = 
                       m_TrackerInitializerList[i]->GetNonReferenceToolList();
@@ -490,8 +508,8 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
           char buf[10];
           _itoa(++n, buf, 10);
           s = "Tool ";
-          s = s + buf + ":" + 
-                       m_TrackerInitializerList[i]->GetTrackerTypeAsString();
+          s = s + buf + " [" + 
+                  m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
           TrackerToolList->add( s.c_str() );
         }
     }
@@ -502,16 +520,30 @@ void NeedleBiopsy::RequestDisconnetTracker()
 {
   RequestStopTracking();
   int n = TrackerList->value();
-  m_TrackerInitializerList[n]->StopAndCloseTracker();
-  m_TrackerInitializerList.erase( m_TrackerInitializerList.begin() + n );
-  UpdateTrackerAndTrackerToolList();
-  TrackerList->value(0);
-  TrackerToolList->value(0);
-  ChangeActiveTrackerTool();
+  if ( n < m_TrackerInitializerList.size() )
+    {
+    m_TrackerInitializerList[n]->StopAndCloseTracker();
+    m_TrackerInitializerList.erase( m_TrackerInitializerList.begin() + n );
+    UpdateTrackerAndTrackerToolList();
+    if (m_TrackerInitializerList.size()>0)
+      {
+        TrackerList->value(0);
+        TrackerToolList->value(0);
+      }
+    ChangeActiveTrackerTool();
+    }
 }
 
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
+  if (m_TrackerInitializerList.size() == 0)
+    {
+    // Disconnect all observer
+    }
+  else
+    {
+    // Hook up approperiate observer
+    }
 
 }
 
