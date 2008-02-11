@@ -208,7 +208,7 @@ void AuroraTrackerTool::RequestSetPortNumber( unsigned int portNumber )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetPortNumber called ...\n");
 
-  const unsigned int MAXIMUM_PORT_NUMBER = 12;
+  const unsigned int MAXIMUM_PORT_NUMBER = 4;
 
   if ( portNumber > MAXIMUM_PORT_NUMBER )
     {
