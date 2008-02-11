@@ -236,9 +236,10 @@ int igstkTransformTest( int, char * [] )
     igstk::Transform ti  = tt.GetInverse();
     igstk::Transform tii = ti.GetInverse();
 
-    if( ! tt.IsNumericallyEquivalent( tii ) )
+    const double inverseTolerance = 1e-15;
+    if( ! tt.IsNumericallyEquivalent( tii, inverseTolerance ) )
       {
-      std::cerr << "Error in GetInverse()/IsNumericallyEquivalent() pair";
+      std::cerr << "Error in GetInverse()^2/IsNumericallyEquivalent() pair";
       std::cerr << std::endl;
       return EXIT_FAILURE;
       }
