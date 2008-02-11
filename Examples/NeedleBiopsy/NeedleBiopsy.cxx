@@ -496,7 +496,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
   for ( int i=0; i<m_TrackerInitializerList.size(); i++)
     {
       char buf[10];
-      _itoa(i+1, buf, 10);
+      sprintf(buf, "%d", i+1);
       s = "Tracker ";
       s = s + buf + " [" + 
                   m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
@@ -506,7 +506,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
       for ( int j=0; j< toolList.size(); j++)
         {
           char buf[10];
-          _itoa(++n, buf, 10);
+          sprintf(buf,"%d", ++n);
           s = "Tool ";
           s = s + buf + " [" + 
                   m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
