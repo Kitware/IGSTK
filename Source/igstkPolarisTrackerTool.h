@@ -57,7 +57,8 @@ public:
   igstkStandardClassTraitsMacro( PolarisTrackerTool, TrackerTool )
 
   /** Request setting the port number. The tool can only be attached to a
-   * Tracker after its port number has been defined */
+   * tracker after its port number has been defined. Valid port numbers are
+   * in [0,11]. */
   void RequestSetPortNumber( unsigned int portNumber );
 
   /** Set the TrackerTool to be wired */
