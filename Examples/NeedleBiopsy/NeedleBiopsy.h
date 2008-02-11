@@ -58,7 +58,6 @@ public:
 
   /** typedef for RegistrationType */
   typedef igstk::Landmark3DRegistration               RegistrationType;
-  //typedef RegistrationType::TransformType             TransformType;
   typedef RegistrationType::LandmarkPointContainerType  
                                                    LandmarkPointContainerType;  
 
@@ -69,6 +68,8 @@ public:
   void RequestDisconnetTracker();
   void ChangeActiveTrackerTool();
   void RequestRegistration();
+  void RequestStartTracking();
+  void RequestStopTracking();
 
   /** Define observers for event communication */
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
@@ -109,12 +110,11 @@ private:
   LandmarkPointContainerType                      m_ImageLandmarksContainer;
   LandmarkPointContainerType                      m_TrackerLandmarksContainer;
 
-  /** To store the landmark registration result transform */
-  igstk::Transform                    m_ImageToTrackerTransform;  
+    
+  igstk::Tracker::Pointer                         m_Tracker;
+  igstk::TrackerConfigurationGUIBase            * m_TrackerConfigurationGUI;
+  std::vector< igstk::TrackerInitializer * >      m_TrackerInitializerList;
   
-  igstk::Tracker::Pointer               m_Tracker;
-  igstk::TrackerConfigurationGUIBase  * m_TrackerConfigurationGUI;
-
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
@@ -185,6 +185,7 @@ private:
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation();
+  void UpdateTrackerAndTrackerToolList();
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
