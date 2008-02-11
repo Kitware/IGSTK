@@ -15,6 +15,7 @@
 
 =========================================================================*/
 #include "igstkPivotCalibrationNew.h"
+#include "igstkTransformObserver.h"
 
 /*
 #ifdef _MSC_VER
@@ -404,20 +405,33 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
       else 
       {
         numberOfAcquisitionAttempts++;
-        currentTransform = 
-          this->m_TrackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
-                     //For the transformation to be valid for our purposes it 
-                     //must be valid as defined by its internal time span, in 
-                     //addition IGSTK will not update the returned 
-                     //transformation if the tool is not detected and it will 
-                     //not generate an error event. This can result in the same 
-                     //transformation reported multiple times while its time 
-                     //span is still valid. As we don't want these repeated 
-                     //transforms we check that the time span is both valid with 
-                     //regard to the current time and that it is not equivalent 
-                     //to the previously reported transform's start time 
-                     //(expiration time is just start time plus a fixed constant 
-                     //for all transforms).
+      
+        // The following change is added so that the
+        // class compiles..NEEDS TO BE CHECKED FOR LOGICAL
+        // CORRECTNESS 
+        typedef igstk::TransformObserver   ObserverType;
+        ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+        coordSystemAObserver->ObserveTransformEventsFrom( m_TrackerTool );
+  
+        coordSystemAObserver->Clear();
+        m_TrackerTool->RequestGetTransformToParent();
+        if( coordSystemAObserver->GotTransform())
+          {
+          currentTransform = coordSystemAObserver->GetTransform();
+          }
+
+       //For the transformation to be valid for our purposes it 
+       //must be valid as defined by its internal time span, in 
+       //addition IGSTK will not update the returned 
+       //transformation if the tool is not detected and it will 
+       //not generate an error event. This can result in the same 
+       //transformation reported multiple times while its time 
+       //span is still valid. As we don't want these repeated 
+       //transforms we check that the time span is both valid with 
+       //regard to the current time and that it is not equivalent 
+       //to the previously reported transform's start time 
+       //(expiration time is just start time plus a fixed constant 
+       //for all transforms).
         if( currentTransform.IsValidAtTime(currentTime) && 
             currentTransform.GetStartTime()!= prevTime )
         {

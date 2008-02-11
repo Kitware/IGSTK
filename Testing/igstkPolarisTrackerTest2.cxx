@@ -175,17 +175,6 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     VectorType                position;
 
 
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    //Second option: use coordinate system convenience method
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotTransform())
@@ -212,18 +201,6 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    //Second option: use coordinate system convenience method
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotTransform())

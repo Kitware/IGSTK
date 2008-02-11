@@ -96,6 +96,7 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
   typedef igstk::TransformObserver   ObserverType;
 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
  
   std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
@@ -174,7 +175,7 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
   //Add observer to listen to transform events 
-  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool2 );
+  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
 
 
   //start tracking 
@@ -193,20 +194,27 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-
-    transform = trackerTool->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if( coordSystemAObserver->GotTransform() )
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-
-    transform = trackerTool2->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+      }
+ 
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if( coordSystemAObserver2->GotTransform() )
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
     }
   
   std::cout << "Stop Tracking" << std::endl;
@@ -223,18 +231,6 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     TransformType             transform;
     VectorType                position;
 
-
-    //There are two ways of accessing the transform
-    //First option: use GetCalibratedTransform method
-    transform = trackerTool->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    //Second option: use coordinate system convenience method
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotTransform())

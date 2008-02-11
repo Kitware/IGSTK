@@ -34,6 +34,8 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #include "igstkMicronTrackerTool.h"
 #include "igstkTransform.h"
 
+#include "igstkTransformObserver.h"
+
 class MicronTrackerTrackerTestCommand : public itk::Command 
 {
 public:
@@ -95,7 +97,8 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 
-
+  typedef igstk::TransformObserver   ObserverType;
+ 
   igstk::MicronTracker::Pointer  tracker;
 
   tracker = igstk::MicronTracker::New();
@@ -128,6 +131,10 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
+  //Add observer to listen to transform events 
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
+
 
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
   trackerTool2->SetLogger( logger );
@@ -136,6 +143,9 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   trackerTool2->RequestConfigure();
   trackerTool2->RequestAttachToTracker( tracker );
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
+
 
   //start tracking 
   tracker->RequestStartTracking();
@@ -144,44 +154,38 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<100; i++)
+  for(unsigned int i=0; i<400; i++)
     {
     tracker->RequestUpdateStatus();
 
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool calibrated raw transform:" 
+    coordSystemAObserver->Clear();
+    trackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+      {
+      transform = coordSystemAObserver->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool :" 
               << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
+      }
 
-    transform = trackerTool->GetRawTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool raw transform :" 
-              << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool2 :" 
+              << trackerTool2->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-
-    transform = 
-      trackerTool->GetCalibratedTransformWithRespectToReferenceTrackerTool();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool calibrated transform WRT reference:" 
-              << trackerTool->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
-
-    transform = trackerTool2->GetCalibratedTransform();
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      }
  
     }
   
@@ -196,21 +200,25 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<100; i++)
+  for(unsigned int i=0; i<400; i++)
     {
     tracker->RequestUpdateStatus();
 
     TransformType             transform;
     VectorType                position;
 
-    transform = trackerTool2->GetCalibratedTransform();
-
-    position = transform.GetTranslation();
-    std::cout << "Trackertool:" << trackerTool2->GetTrackerToolIdentifier() 
-              << "  Position = (" << position[0]
+    coordSystemAObserver2->Clear();
+    trackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+      {
+      transform = coordSystemAObserver2->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool2 :" 
+              << trackerTool2->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
-
+      }
     }
 
   std::cout << "RequestStopTracking()" << std::endl;
