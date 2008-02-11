@@ -18,6 +18,8 @@ PURPOSE.  See the above copyright notices for more information.
 #define __igstkTrackerConfigurationGUIBase_h
 
 #include "igstkTrackerConfiguration.h"
+#include "itksys/SystemTools.hxx"
+#include "itksys/Directory.hxx"
 
 namespace igstk
 {
@@ -53,8 +55,6 @@ public:
   void RemoveObserver( unsigned long tag );
   void RemoveAllObservers();
 
-  friend class TrackerConfiguration;
-
   TrackerConfigurationGUIBase();
   virtual ~TrackerConfigurationGUIBase();
 
@@ -63,11 +63,11 @@ protected:
   // Tracker specific GUI class has to implement this methods
   virtual void InitializeGUI() {};
   virtual void GetGUISetting() {};
+  TrackerConfiguration      m_TrackerConfiguration;
 
 private:
   
   TrackerType               m_TrackerType;
-  TrackerConfiguration      m_TrackerConfiguration;
   ::itk::Object::Pointer    m_Reporter;
 
 };
