@@ -22,6 +22,11 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEvents.h"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Directory.hxx"
+#include "igstkTransformObserver.h"
+
+#include "PolarisTrackerConfigurationGUI.h"
+#include "AuroraTrackerConfigurationGUI.h"
+#include "MicronTrackerConfigurationGUI.h"
 
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy()
@@ -415,8 +420,8 @@ void NeedleBiopsy::RequestConnectToTracker()
       {
       igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
       config.SetTrackerType( igstk::TrackerConfiguration::Aurora );
-      PolarisTrackerConfigurationGUI * gui;
-      m_TrackerConfigurationGUI = gui = new PolarisTrackerConfigurationGUI();
+      AuroraTrackerConfigurationGUI * gui;
+      m_TrackerConfigurationGUI = gui = new AuroraTrackerConfigurationGUI();
       m_TrackerConfigurationGUI->SetConfiguration( config );
       m_TrackerConfigurationGUI->RemoveAllObservers();
       m_TrackerConfigurationGUI->AddObserver(
@@ -428,8 +433,8 @@ void NeedleBiopsy::RequestConnectToTracker()
       {
       igstk::TrackerConfiguration config = igstk::TrackerConfiguration();
       config.SetTrackerType( igstk::TrackerConfiguration::Micron );
-      PolarisTrackerConfigurationGUI * gui;
-      m_TrackerConfigurationGUI = gui = new PolarisTrackerConfigurationGUI();
+      MicronTrackerConfigurationGUI * gui;
+      m_TrackerConfigurationGUI = gui = new MicronTrackerConfigurationGUI();
       m_TrackerConfigurationGUI->SetConfiguration( config );
       m_TrackerConfigurationGUI->RemoveAllObservers();
       m_TrackerConfigurationGUI->AddObserver(
@@ -450,93 +455,113 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
     GUIType::ConfigurationEvent *confEvent =
                                    ( GUIType::ConfigurationEvent *) & event;
 
-    //igstk::TrackerConfiguration  tc = confEvent->Get();
+    igstk::TrackerConfiguration  tc = confEvent->Get();
 
+    /*
     igstk::TrackerConfiguration  * tc = new igstk::TrackerConfiguration;
-    tc->SetTrackerType( igstk::TrackerConfiguration::Aurora );
+    tc->SetTrackerType( igstk::TrackerConfiguration::Polaris );
 
-    igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;    
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
     conf->m_Frequency = 30;
-
-    typedef igstk::NDITrackerToolConfiguration ToolConfigurationType;
-
-    ToolConfigurationType * tool = new ToolConfigurationType;
-    tool->m_Is5DOF        = 1;
-    tool->m_PortNumber    = 0;
-    tool->m_ChannelNumber = 0;
-    tool->m_HasSROM       = 0;
+    
+    igstk::NDITrackerToolConfiguration * tool = new igstk::NDITrackerToolConfiguration;
+    tool->m_WiredTool     = 0;
+    tool->m_Is5DOF        = 0;
+    //tool->PortNumber    = 0;
+    //tool->ChannelNumber = 0;
+    tool->m_HasSROM       = 1;
     tool->m_IsReference   = 0;
+    tool->m_SROMFile      = "C:/Research/NDI/Tool Definition Files/8700338.rom";
     conf->m_TrackerToolList.push_back( tool );
 
-    ToolConfigurationType * tool2 = new ToolConfigurationType;
-    tool2->m_Is5DOF        = 1;
-    tool2->m_PortNumber    = 0;
-    tool2->m_ChannelNumber = 1;
-    tool2->m_HasSROM       = 0;
-    tool2->m_IsReference   = 0;
+    igstk::NDITrackerToolConfiguration * tool2 = new igstk::NDITrackerToolConfiguration;
+    tool2->m_WiredTool      = 0;
+    tool2->m_Is5DOF        = 0;
+    //tool2->PortNumber    = 0;
+    //tool2->ChannelNumber = 1;
+    tool2->m_HasSROM       = 1;
+    tool2->m_IsReference   = 1;
+    tool2->m_SROMFile      = "C:/Research/NDI/Tool Definition Files/8700339.rom";
     conf->m_TrackerToolList.push_back( tool2 );
 
-    ToolConfigurationType * tool3 = new ToolConfigurationType;
-    tool3->m_Is5DOF        = 0;
-    tool3->m_PortNumber    = 1;
-    //tool->m_ChannelNumber = 1;
-    tool3->m_HasSROM       = 1;
-    tool3->m_SROMFile      =
-      "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
-    tool3->m_IsReference   = 0;
-    conf->m_TrackerToolList.push_back( tool3 );
+    /*
+    igstk::NDITrackerToolConfiguration * tool3 = new igstk::NDITrackerToolConfiguration;
+        tool3->Is5DOF        = 0;
+        tool3->PortNumber    = 1;
+        //tool->ChannelNumber = 1;
+        tool3->HasSROM       = 1;
+        tool3->SROMFile      = "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
+        tool3->IsReference   = 0;
+        conf->TrackerToolList.push_back( tool3 );*/
+    
+    //tc->SetNDITrackerConfiguration( conf );
 
-    tc->SetNDITrackerConfiguration( conf );
+
+    typedef igstk::TransformObserver ObserverType;
+    ObserverType::Pointer transformObserver = ObserverType::New();
 
     igstk::TrackerInitializer * initializer = new igstk::TrackerInitializer;
-    initializer->SetTrackerConfiguration( tc );
+    initializer->SetTrackerConfiguration( & tc );
 
     if ( initializer->RequestInitializeTracker() )
-      {
-      for(unsigned int i=0; i<100; i++)
+    { 
+      igstk::Tracker::Pointer     tracker = initializer->GetTracker();
+      igstk::TrackerTool::Pointer tool = initializer->GetNonReferenceToolList()[0];
+      igstk::TrackerTool::Pointer refTool = initializer->GetReferenceTool();
+      transformObserver->ObserveTransformEventsFrom( tool );
+      transformObserver->ObserveTransformEventsFrom( refTool );
+      
+      for(unsigned int i=0; i<400; i++)
         {
-        initializer->GetTracker()->RequestUpdateStatus();
+        tracker->RequestUpdateStatus();
 
         igstk::Transform                            transform;
         igstk::Transform::VectorType                position;
+        std::string                                 toolString;
 
-        for ( int i=0; i<initializer->GetNonReferenceToolList().size(); i++)
+        transformObserver->Clear();
+        tool->RequestComputeTransformTo( refTool );
+        if( transformObserver->GotTransform() )
           {
+          transform = transformObserver->GetTransform();
+          }        
+        position = transform.GetTranslation();
+        toolString = tool->GetTrackerToolIdentifier() ;
+        std::cout << "Trackertool:" << toolString
+          << "  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
 
-          if (initializer->HasReferenceTool())
-            {
-            // FIXME: Replace this dangerous call with the use of 
-            // a TransformObserver and a a call to 
-            //
-            //    RequestComputeTransformTo( referenceTrackerTool )
-            //
-            transform = initializer->GetNonReferenceToolList()[i]->
-              GetCalibratedTransformWithRespectToReferenceTrackerTool();
-            }
-          else
-            {
-            transform = initializer->GetNonReferenceToolList()[i]->
-              GetCalibratedTransform();
-            }
+        transformObserver->Clear();
+        refTool->RequestComputeTransformTo( tracker );
+        if( transformObserver->GotTransform() )
+        {
+          transform = transformObserver->GetTransform();
+        }        
+        position = transform.GetTranslation();
+        toolString = refTool->GetTrackerToolIdentifier() ;
+        std::cout << "Trackertool:" << toolString
+          << "  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
 
-          position = transform.GetTranslation();
-
-          std::string toolString = 
-            initializer->GetNonReferenceToolList()[i]->
-              GetTrackerToolIdentifier();
-
-          std::cout << "Trackertool:" << toolString
-            << "  Position = (" << position[0]
-          << "," << position[1] << "," << position[2]
-          << ")" << std::endl;
-          }
         }
       initializer->StopAndCloseTracker();
-      }
     }
+  }
 }
 
+
+void NeedleBiopsy::RequestDisconnetTracker()
+{
+
+}
+
+void NeedleBiopsy::ChangeActiveTrackerTool()
+{
+
+}
 
 void NeedleBiopsy::RequestRegistration()
 {
