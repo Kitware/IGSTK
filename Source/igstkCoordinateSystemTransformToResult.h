@@ -58,9 +58,25 @@ public:
   void Clear();
 
   /** Sets the transform, source, and destination coordinate systems. */
-  void Initialize(const Transform& trans, 
-                  const CoordinateSystem* src,
-                  const CoordinateSystem* dst);
+  void Initialize(const Transform& transform, 
+                  const CoordinateSystem* source,
+                  const CoordinateSystem* destination);
+
+  /** Sets the transform, source, and destination coordinate systems from two
+   * given objects that respectively own coordinate systems. */
+  template <class TSource, class TDestination>
+  void Initialize(const Transform& transform, 
+                  const TSource * sourceObject,
+                  const TDestination * destinationObject )
+  {
+  const CoordinateSystem * source =
+    Friends::CoordinateSystemHelper::GetCoordinateSystem( sourceObject );
+
+  const CoordinateSystem * destination =
+    Friends::CoordinateSystemHelper::GetCoordinateSystem( destinationObject );
+
+  this->Initialize( transform, source, destination );
+  }
 
   /** Returns the computed transform. */
   const Transform & GetTransform() const;
