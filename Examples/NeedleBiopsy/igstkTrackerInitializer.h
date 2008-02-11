@@ -44,6 +44,16 @@ public:
 
   TrackerInitializer( );
 
+  TrackerType GetTrackerType()
+    {
+    return m_TrackerType;
+    }
+
+  std::string GetTrackerTypeAsString()
+  {
+    return m_TrackerConfiguration->GetTrackerTypeAsString();
+  }
+
   void SetTrackerConfiguration( TrackerConfiguration * config )
     {
     m_TrackerConfiguration = config;
