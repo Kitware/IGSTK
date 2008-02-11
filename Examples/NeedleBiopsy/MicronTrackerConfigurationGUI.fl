@@ -121,7 +121,7 @@ if( fileDir )
     TrackerToolMarker->value(0);
     ReferenceToolMarker->value(1);
     }
-}} selected
+}}
         xywh {365 98 25 25}
       }
       Fl_Output TemplateFileDir {
@@ -136,5 +136,8 @@ if( fileDir )
   Function {InitializeGUI()} {open return_type {virtual void}
   } {}
   Function {GetGUISetting()} {open return_type {virtual void}
-  } {}
+  } {
+    code {m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Micron );} {selected
+    }
+  }
 } 

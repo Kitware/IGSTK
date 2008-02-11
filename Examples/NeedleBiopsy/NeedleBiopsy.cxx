@@ -72,6 +72,7 @@ NeedleBiopsy::NeedleBiopsy()
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
   m_TrackerInitializerList.clear();
+  m_Plan                  = new igstk::TreatmentPlan;
 
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
@@ -138,6 +139,10 @@ NeedleBiopsy::NeedleBiopsy()
   m_TrackerConfigurationObserver = LoadedObserverType::New();
   m_TrackerConfigurationObserver->SetCallbackFunction( this,
                                     &NeedleBiopsy::RequestInitializeTracker);
+
+  m_TrackerToolUpdateObserver    = LoadedObserverType::New();
+  m_TrackerToolUpdateObserver->SetCallbackFunction( this,
+                                                 &NeedleBiopsy::Tracking);
 
   m_ImageRepresentation.clear();
   for (int i=0; i<6; i++)
@@ -262,6 +267,9 @@ void NeedleBiopsy::ConnectImageRepresentation()
   m_FiducialPoint->RequestSetTransformAndParent( transform, m_WorldReference );
   m_Path->RequestSetTransformAndParent( transform, m_WorldReference );
 
+  m_Needle->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_NeedleTip->RequestSetTransformAndParent( transform, m_WorldReference );
+
   /** Reset and enable the view */
   for( int i=0; i<4; i++)
     {
@@ -331,19 +339,23 @@ void NeedleBiopsy::ReadTreatmentPlan()
   TPlanPointList->clear();
   TPlanPointList->add( "Entry" );
   TPlanPointList->add( "Target" );
+
+  m_TrackerLandmarksContainer.clear();
   char buf[10];
   for( int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
     {
     sprintf( buf, "Fiducial%i", i+1 );
     TPlanPointList->add( buf );
+    RegistrationType::LandmarkTrackerPointType p;
+    m_TrackerLandmarksContainer.push_back(p);
     }
 
   // Setting object position according to treatment plan
   m_EntryPoint->RequestSetTransformAndParent( 
-    PointToTransform( m_Plan->m_EntryPoint ), m_WorldReference);
+  PointToTransform( m_Plan->m_EntryPoint ), m_WorldReference);
 
   m_TargetPoint->RequestSetTransformAndParent( 
-    PointToTransform( m_Plan->m_TargetPoint ), m_WorldReference);
+  PointToTransform( m_Plan->m_TargetPoint ), m_WorldReference);
 
   this->UpdatePath();
 
@@ -401,6 +413,8 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
 
 void NeedleBiopsy::RequestConnectToTracker()
 {
+  RequestStopTracking();
+
   switch( ConnectToTrackerBtn->value() )
     {
     case 0:
@@ -456,20 +470,21 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 
     igstk::TrackerConfiguration  tc = confEvent->Get();
 
-    igstk::TrackerInitializer * initializer = new igstk::TrackerInitializer;
-    initializer->SetTrackerConfiguration( & tc );
+    m_TrackerInitializer = new igstk::TrackerInitializer;
+    m_TrackerInitializer->SetTrackerConfiguration( & tc );
 
-    if ( initializer->RequestInitializeTracker() )
+    if ( m_TrackerInitializer->RequestInitializeTracker() )
       { 
-      igstk::Tracker::Pointer     tracker = initializer->GetTracker();
-      igstk::TrackerTool::Pointer tool = 
-                                  initializer->GetNonReferenceToolList()[0];
-      igstk::TrackerTool::Pointer refTool = initializer->GetReferenceTool();
+      igstk::Tracker::Pointer    tracker = m_TrackerInitializer->GetTracker();
+      igstk::TrackerTool::Pointer tool  = 
+                          m_TrackerInitializer->GetNonReferenceToolList()[0];
+      igstk::TrackerTool::Pointer refTool = 
+                                     m_TrackerInitializer->GetReferenceTool();
       
       // Connect the scene graph with an identity transform first
       igstk::Transform transform;
       transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-      if ( initializer->HasReferenceTool() )
+      if ( m_TrackerInitializer->HasReferenceTool() )
         {
         refTool->RequestSetTransformAndParent(transform, m_WorldReference);
         }
@@ -477,12 +492,20 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
         {
         tracker->RequestSetTransformAndParent(transform, m_WorldReference);
         }
-      m_RegistrationTrackerTool = tool;
-
-      m_TrackerInitializerList.push_back( initializer );
-      UpdateTrackerAndTrackerToolList();
-      TrackerList->value(m_TrackerInitializerList.size()-1);
-      TrackerToolList->value(m_TrackerInitializerList.size()-1);
+      RegistrationWindow->show();
+      FiducialNumber->clear();
+      m_TrackerLandmarksContainer.clear();
+      char buf[8];
+      for ( int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
+        {
+          sprintf( buf, "%d", i+1 );
+          FiducialNumber->add(buf);
+          RegistrationType::LandmarkTrackerPointType p;
+          m_TrackerLandmarksContainer.push_back(p);
+        }
+      FiducialNumber->value(0);
+      TPlanPointList->value(2);
+      ChangeSelectedTPlanPoint();
       }
     }
 }
@@ -491,6 +514,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
 {
   TrackerList->clear();
   TrackerToolList->clear();
+  m_TrackerToolList.clear();
   int n = 0;
   std::string s;
   for ( int i=0; i<m_TrackerInitializerList.size(); i++)
@@ -511,6 +535,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
           s = s + buf + " [" + 
                   m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
           TrackerToolList->add( s.c_str() );
+          m_TrackerToolList.push_back( toolList[j] );
         }
     }
 
@@ -536,32 +561,105 @@ void NeedleBiopsy::RequestDisconnetTracker()
 
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
-  if (m_TrackerInitializerList.size() == 0)
+  if (m_TrackerToolList.size() != 0)
     {
-    // Disconnect all observer
-    }
-  else
-    {
-    // Hook up approperiate observer
-    }
+      for (int i=0; i<m_TrackerToolList.size(); i++)
+      {
+        m_TrackerToolList[i]->RemoveAllObservers();
+      }
+      m_ActiveTool = m_TrackerToolList[ TrackerToolList->value()];
 
+      m_ActiveTool->AddObserver(
+      igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
+      
+      igstk::Transform transform;
+      transform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+      m_Needle->RequestDetachFromParent();
+      m_NeedleTip->RequestDetachFromParent();
+      m_Needle->RequestSetTransformAndParent( transform, m_ActiveTool);
+      m_NeedleTip->RequestSetTransformAndParent( transform, m_ActiveTool);
+    }
 }
 
+void NeedleBiopsy::SetTrackerFiducialPoint()
+{
+  igstk::TrackerTool::Pointer tool = 
+                           m_TrackerInitializer->GetNonReferenceToolList()[0];
+
+  typedef igstk::TransformObserver ObserverType;
+  ObserverType::Pointer transformObserver = ObserverType::New();
+  transformObserver->ObserveTransformEventsFrom( tool );
+  transformObserver->Clear();
+  tool->RequestComputeTransformTo( m_WorldReference );
+  if ( transformObserver->GotTransform() )
+    {
+    int n = FiducialNumber->value();
+    int m = FiducialNumber->size();
+    m_TrackerLandmarksContainer[n] = 
+                       TransformToPoint( transformObserver->GetTransform() );
+    std::cout << m_TrackerLandmarksContainer[n] <<"\n";
+    if ( n < m )
+    {
+      FiducialNumber->value(n+1);
+      TPlanPointList->value(n+3);
+      ChangeSelectedTPlanPoint();
+    }
+    }
+  
+}
 void NeedleBiopsy::RequestRegistration()
 {
-  LandmarkPointContainerType::iterator it1, it2;
-  for( it1 = m_ImageLandmarksContainer.begin(),
-    it2 = m_TrackerLandmarksContainer.begin();
-    it1 != m_ImageLandmarksContainer.end(),
-    it2 != m_TrackerLandmarksContainer.end();
-  it1 ++ , it2 ++ )
+  for( int i=0; i< m_TrackerLandmarksContainer.size(); i++)
     {
-    m_LandmarkRegistration->RequestAddImageLandmarkPoint( *it1);
-    m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( *it2 );
+    m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
+                                               m_Plan->m_FiducialPoints[i] );
+    m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( 
+                                            m_TrackerLandmarksContainer[i] );
     }
+
   m_LandmarkRegistration->RequestComputeTransform();
-  m_LandmarkRegistration->RequestGetRMSError();
+
+  igstk::TransformObserver::Pointer lrtcb = igstk::TransformObserver::New();
+  lrtcb->ObserveTransformEventsFrom( m_LandmarkRegistration );
+  lrtcb->Clear();
+
   m_LandmarkRegistration->RequestGetTransformFromTrackerToImage();
+
+  if( lrtcb->GotTransform() )
+    {
+      RegistrationErrorObserver::Pointer lRmscb =  
+                                            RegistrationErrorObserver::New();
+      m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
+      m_LandmarkRegistration->RequestGetRMSError();
+      if( !lRmscb->GotRegistrationError() )
+      {
+        std::cout << lRmscb->GetRegistrationError();
+      }
+
+    igstk::Transform transform = lrtcb->GetTransform();
+    std::cout << transform <<"\n";
+    if ( m_TrackerInitializer->HasReferenceTool() )
+    {
+      m_TrackerInitializer->GetReferenceTool()
+        ->RequestSetTransformAndParent(transform, m_WorldReference);
+    }
+    else
+    {
+      m_TrackerInitializer->GetTracker()
+        ->RequestSetTransformAndParent(transform, m_WorldReference);
+    }
+
+    m_TrackerInitializerList.push_back( m_TrackerInitializer );
+    UpdateTrackerAndTrackerToolList();
+    TrackerList->value(m_TrackerInitializerList.size()-1);
+    TrackerToolList->value(m_TrackerInitializerList.size()-1);
+    ChangeActiveTrackerTool();
+    }
+  else
+  {
+    m_TrackerInitializer->StopAndCloseTracker();
+  }
+
 }
 
 void NeedleBiopsy::RequestStartTracking()
@@ -704,4 +802,28 @@ void NeedleBiopsy::UpdatePath()
     ViewerGroup->m_Views[i]->RequestAddObject( m_PathRepresentation[i] );
     }
 
+}
+
+void NeedleBiopsy::Tracking(const itk::EventObject & event )
+{
+  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::TransformObserver ObserverType;
+    ObserverType::Pointer transformObserver = ObserverType::New();
+    transformObserver->ObserveTransformEventsFrom( m_ActiveTool );
+    transformObserver->Clear();
+    m_ActiveTool->RequestComputeTransformTo( m_WorldReference );
+    if ( transformObserver->GotTransform() )
+      {
+      ImageSpatialObjectType::PointType point = 
+                      TransformToPoint( transformObserver->GetTransform() );
+
+      if( m_ImageSpatialObject->IsInside( point ) )
+      {
+        ImageSpatialObjectType::IndexType index;
+        m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
+        ResliceImage( index );
+        }
+      }
+  }
 }

@@ -30,7 +30,7 @@ class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
 if( fileName )
 {
   ReferenceToolSROMFile->value(fileName);
-}} selected
+}}
           xywh {345 391 25 25}
         }
         Fl_Choice ReferenceToolPort {
@@ -198,7 +198,7 @@ switch( SerialPort->value() )
     conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
   }
   
-  conf->m_Frequency = 30;
+ conf->m_Frequency = 30;
     
  conf->m_TrackerToolList.clear();
  
@@ -263,6 +263,8 @@ if(UseReferenceTool->value())
   conf->m_TrackerToolList.push_back( refTool );
 }
 
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Aurora );
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
+    }
   }
 } 

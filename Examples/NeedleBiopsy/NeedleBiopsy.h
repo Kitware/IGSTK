@@ -38,6 +38,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkTreatmentPlanIO.h"
 #include "igstkTrackerConfigurationGUIBase.h"
 #include "igstkTrackerInitializer.h"
+#include "igstkCoordinateSystemTransformToResult.h"
 
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
@@ -70,6 +71,7 @@ public:
   void RequestRegistration();
   void RequestStartTracking();
   void RequestStopTracking();
+  void SetTrackerFiducialPoint();
 
   /** Define observers for event communication */
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
@@ -112,9 +114,11 @@ private:
 
     
   igstk::Tracker::Pointer                         m_Tracker;
-  igstk::TrackerTool::Pointer                     m_RegistrationTrackerTool;
   igstk::TrackerConfigurationGUIBase            * m_TrackerConfigurationGUI;
+  igstk::TrackerInitializer                     * m_TrackerInitializer;
   std::vector< igstk::TrackerInitializer * >      m_TrackerInitializerList;
+  std::vector< igstk::TrackerTool::Pointer >      m_TrackerToolList;
+  igstk::TrackerTool::Pointer                     m_ActiveTool;
   
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
@@ -122,6 +126,7 @@ private:
   LoadedObserverType::Pointer               m_ViewPickerObserver;
   LoadedObserverType::Pointer               m_ViewResliceObserver;
   LoadedObserverType::Pointer               m_TrackerConfigurationObserver;
+  LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
 
   /** Ellipsoid spatial object, used to represent 
    *  the landmark point, tip of the probe. */
@@ -192,6 +197,7 @@ private:
   void Picking( const itk::EventObject & event );
   void ResliceImage( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
+  void Tracking( const itk::EventObject & event );
 
   void UpdateFiducialPoint();
   void UpdatePath();  

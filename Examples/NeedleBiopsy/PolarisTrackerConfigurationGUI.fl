@@ -30,7 +30,7 @@ class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfiguration
 if( fileName )
 {
   ReferenceToolSROMFile->value(fileName);
-}} selected
+}}
           xywh {345 391 25 25}
         }
         Fl_Choice ReferenceToolPort {
@@ -272,6 +272,8 @@ if(UseReferenceTool->value())
 
 }
 
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Polaris );
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
+    }
   }
 } 
