@@ -210,7 +210,7 @@ void AuroraTrackerTool::RequestSetPortNumber( unsigned int portNumber )
 
   const unsigned int MAXIMUM_PORT_NUMBER = 4;
 
-  if ( portNumber > MAXIMUM_PORT_NUMBER )
+  if ( portNumber >= MAXIMUM_PORT_NUMBER )
     {
     m_StateMachine.PushInput( m_InValidPortNumberInput );
     m_StateMachine.ProcessInputs();
