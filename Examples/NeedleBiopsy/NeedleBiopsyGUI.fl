@@ -28,7 +28,7 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             xywh {45 56 64 20} align 16
           }
           Fl_Choice TPlanPointList {
-            callback {ChangeSelectedTPlanPoint();} open selected
+            callback {ChangeSelectedTPlanPoint();} open
             xywh {34 108 100 20} down_box BORDER_BOX align 2
           } {}
         }
@@ -54,11 +54,12 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
               xywh {5 5 30 20}
             }
           }
-          Fl_Choice {} {open
+          Fl_Choice TrackerList {open
             xywh {45 300 80 20} down_box BORDER_BOX labeltype NO_LABEL
           } {}
           Fl_Button {} {
             label Disconnect
+            callback {RequestDisconnetTracker();}
             xywh {47 355 75 20} align 16
           }
         }
@@ -66,12 +67,21 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
           label {@2->} open
           xywh {20 454 130 135} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
-          Fl_Button {} {
+          Fl_Button TrackingBtn {
             label Tracking
+            callback {if(o->value())
+{
+  RequestStartTracking();
+}
+else
+{
+  RequestStopTracking();
+}} selected
             xywh {51 482 64 20}
           }
-          Fl_Choice {} {
-            label Tool open
+          Fl_Choice TrackerToolList {
+            label Tool
+            callback {ChangeActiveTrackerTool();} open
             xywh {48 546 75 20} down_box BORDER_BOX align 1
           } {}
         }
@@ -115,5 +125,13 @@ else
   Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
   } {}
   Function {RequestConnectToTracker()} {open return_type {virtual void}
+  } {}
+  Function {RequestDisconnetTracker()} {open return_type {virtual void}
+  } {}
+  Function {ChangeActiveTrackerTool()} {open return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {open return_type {virtual void}
+  } {}
+  Function {RequestStopTracking()} {open return_type {virtual void}
   } {}
 } 
