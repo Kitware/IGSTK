@@ -787,6 +787,9 @@ void Tracker::UpdateStatusSuccessProcessing( void )
             toolRawTransform, toolCalibrationTransform );
 
       (inputItr->second)->SetCalibratedTransform( toolCalibratedTransform );
+
+      //throw an event
+      (inputItr->second)->InvokeEvent( TrackerToolTransformUpdateEvent() );
         
       // if a reference tracker tool has been specified, then if the tracker
       // tool that is being updated is the selected reference tracker tool,

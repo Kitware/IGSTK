@@ -62,6 +62,9 @@ itkEventMacro( AttachingTrackerToolToTrackerEvent,         TrackerEvent);
 itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
 
 
+itkEventMacro( TrackerToolTransformUpdateEvent,            TrackerEvent);
+
+
 /** \class Tracker
  *  \brief Abstract superclass for concrete IGSTK Tracker classes.
  *
