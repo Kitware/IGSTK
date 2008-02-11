@@ -31,6 +31,8 @@
 #include "igstkView.h"
 #include "itkStdStreamLogOutput.h"
 
+#include "igstkTransformObserver.h"
+
 class OneViewAndTrackingNewUsingMicronTrackerImplementation : 
   public OneViewAndTrackingNewUsingMicronTrackerGUI
 {

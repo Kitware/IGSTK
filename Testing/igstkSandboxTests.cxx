@@ -28,13 +28,6 @@
 void RegisterTests()
 {
   // Register Sandbox tests
-  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
-  REGISTER_TEST(igstkCoordinateSystemTest);
-  REGISTER_TEST(igstkCoordinateSystemTest2);
-  REGISTER_TEST(igstkCoordinateSystemTest3);
-  REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
-  REGISTER_TEST(igstkCoordinateSystemEventTest);
-  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
@@ -55,13 +48,10 @@ void RegisterTests()
 #endif
 
 #ifdef IGSTKSandbox_USE_FLTK
-  REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
-  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkFLTKWidgetTest2);
-  REGISTER_TEST(igstkAnnotation2DTest2);
   REGISTER_TEST(igstkMouseTrackerToolTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 

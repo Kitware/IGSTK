@@ -71,14 +71,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
-  igstkSpatialObjectCoordinateSystemTest.cxx
-  igstkCoordinateSystemTest.cxx
-  igstkCoordinateSystemTest2.cxx
-  igstkCoordinateSystemTest3.cxx
-  igstkCoordinateSystemDelegatorTest.cxx
-  igstkCoordinateSystemEventTest.cxx
-  igstkSpatialObjectCoordinateSystemTest3.cxx
-  igstkGroupObjectTest.cxx
+   igstkGroupObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
@@ -115,12 +108,6 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     igstkPolarisTrackerToolTest.cxx
   )
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
-
-IF(IGSTK_TEST_AURORA_ATTACHED)
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-    igstkAuroraTrackerToolTest.cxx
-  )
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
@@ -199,10 +186,6 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
 igstkPolarisTrackerToolTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
-IF(IGSTK_TEST_AURORA_ATTACHED)
- ADD_TEST(igstkAuroraTrackerToolTest ${IGSTKSandbox_TESTS}
-igstkAuroraTrackerToolTest)
-
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -248,28 +231,6 @@ IF(IGSTKSandbox_USE_FLTK)
               )
 
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
-
-    ADD_TEST( igstkCoordinateSystemObjectWithViewTest
-              ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkCoordinateSystemObjectWithViewTest
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
-              )
-
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-              igstkCoordinateSystemObjectWithViewTest.cxx)
-
-    ADD_TEST( igstkCircularSimulatedTrackerTest
-              ${IGSTKSandbox_TESTS}
-              igstkCircularSimulatedTrackerTest
-              )
-
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-              igstkCircularSimulatedTrackerTest.cxx)
 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -329,15 +290,6 @@ IF(IGSTKSandbox_DATA_ROOT)
               ${IGSTKSandbox_DATA_ROOT}/E000192)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest.cxx)
-
-    ADD_TEST( igstkAnnotation2DTest2 ${IGSTKSandbox_TESTS}
-       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
-       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
-              igstkAnnotation2DTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkAnnotation2DTest2.cxx)
 
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest2
               ${IGSTKSandbox_TESTS}
@@ -425,15 +377,24 @@ SET(IGSTKTests_SRCS
   igstkSerialCommunicationTest.cxx
   igstkSpatialObjectTest.cxx
   igstkSpatialObjectRepresentationVisibilityTest.cxx
+  igstkCoordinateSystemObjectWithViewTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
   igstkStringEventTest.cxx
   igstkTimeStampTest.cxx
   igstkTokenTest.cxx
   igstkTrackerTest.cxx
+  igstkCircularSimulatedTrackerTest.cxx
   igstkTrackerToolTest.cxx
   igstkTransformTest.cxx
   igstkVTKLoggerOutputTest.cxx
+  igstkSpatialObjectCoordinateSystemTest.cxx
+  igstkCoordinateSystemTest.cxx
+  igstkCoordinateSystemTest2.cxx
+  igstkCoordinateSystemTest3.cxx
+  igstkCoordinateSystemDelegatorTest.cxx
+  igstkCoordinateSystemEventTest.cxx
+  igstkSpatialObjectCoordinateSystemTest3.cxx
  )
 
 IF (IGSTK_USE_FLTK)
@@ -469,6 +430,16 @@ ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
         )
 
+ ADD_TEST( igstkCoordinateSystemObjectWithViewTest
+              ${IGSTK_TESTS}
+              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCoordinateSystemObjectWithViewTest
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              )
 
 #-----------------------------------------------------------------------------
 # Tests need data input
@@ -545,6 +516,14 @@ IF (IGSTK_DATA_ROOT)
               igstkAnnotation2DTest
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest1ScreenShot.png)
+
+    ADD_TEST( igstkAnnotation2DTest2 ${IGSTK_TESTS}
+       --compare ${IGSTKSandbox_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
+       ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
+              igstkAnnotation2DTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
+
   ENDIF (IGSTK_USE_FLTK)
 
 ENDIF(IGSTK_DATA_ROOT)
@@ -564,6 +543,9 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerTest2LoggerOutput.txt
            ${IGSTK_TEST_AURORA_PORT_NUMBER}
            )
+
+ ADD_TEST(igstkAuroraTrackerToolTest ${IGSTK_TESTS} igstkAuroraTrackerToolTest)
+
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -679,6 +661,10 @@ ENDIF(IGSTK_USE_FLTK)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAuroraTrackerTest2.cxx
   )
+  SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
+    igstkAuroraTrackerToolTest.cxx
+  )
+#
 #ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 #IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
@@ -724,6 +710,7 @@ IF(IGSTK_USE_FLTK)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkAnnotation2DTest.cxx
+    igstkAnnotation2DTest2.cxx
     igstkCylinderObjectTest.cxx
     igstkEllipsoidObjectTest.cxx
     igstkFLTKTextBufferLogOutputTest.cxx
