@@ -63,6 +63,13 @@ MicronTrackerTool::MicronTrackerTool():m_StateMachine(this)
                            InValidMarkerName,
                            MarkerNameSpecified,
                            ReportInvalidRequest );     
+
+  // Inputs to the state machine
+  igstkSetInitialStateMacro( Idle );
+
+  m_StateMachine.SetReadyToRun();
+
+
 }
 
 /** Destructor */
