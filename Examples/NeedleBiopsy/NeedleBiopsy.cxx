@@ -469,7 +469,7 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       // Connect the scene graph with an identity transform first
       igstk::Transform transform;
       transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-      if ( initializer->m_HasReferenceTool )
+      if ( initializer->HasReferenceTool() )
         {
         refTool->RequestSetTransformAndParent(transform, m_WorldReference);
         }
