@@ -71,8 +71,7 @@ NeedleBiopsy::NeedleBiopsy()
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
-
-
+  
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
@@ -457,47 +456,6 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 
     igstk::TrackerConfiguration  tc = confEvent->Get();
 
-    /*
-    igstk::TrackerConfiguration  * tc = new igstk::TrackerConfiguration;
-    tc->SetTrackerType( igstk::TrackerConfiguration::Polaris );
-
-    igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;    
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
-    conf->m_Frequency = 30;
-    
-    igstk::NDITrackerToolConfiguration * tool = new igstk::NDITrackerToolConfiguration;
-    tool->m_WiredTool     = 0;
-    tool->m_Is5DOF        = 0;
-    //tool->PortNumber    = 0;
-    //tool->ChannelNumber = 0;
-    tool->m_HasSROM       = 1;
-    tool->m_IsReference   = 0;
-    tool->m_SROMFile      = "C:/Research/NDI/Tool Definition Files/8700338.rom";
-    conf->m_TrackerToolList.push_back( tool );
-
-    igstk::NDITrackerToolConfiguration * tool2 = new igstk::NDITrackerToolConfiguration;
-    tool2->m_WiredTool      = 0;
-    tool2->m_Is5DOF        = 0;
-    //tool2->PortNumber    = 0;
-    //tool2->ChannelNumber = 1;
-    tool2->m_HasSROM       = 1;
-    tool2->m_IsReference   = 1;
-    tool2->m_SROMFile      = "C:/Research/NDI/Tool Definition Files/8700339.rom";
-    conf->m_TrackerToolList.push_back( tool2 );
-
-    /*
-    igstk::NDITrackerToolConfiguration * tool3 = new igstk::NDITrackerToolConfiguration;
-        tool3->Is5DOF        = 0;
-        tool3->PortNumber    = 1;
-        //tool->ChannelNumber = 1;
-        tool3->HasSROM       = 1;
-        tool3->SROMFile      = "C:/Research/IGSTK/Sandbox-Bin/bin/debug/am6d-6.rom";
-        tool3->IsReference   = 0;
-        conf->TrackerToolList.push_back( tool3 );*/
-    
-    //tc->SetNDITrackerConfiguration( conf );
-
-
     typedef igstk::TransformObserver ObserverType;
     ObserverType::Pointer transformObserver = ObserverType::New();
 
@@ -547,15 +505,51 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
         << ")" << std::endl;
 
         }
-      initializer->StopAndCloseTracker();
+      m_TrackerInitializerList.push_back( initializer );
+      UpdateTrackerAndTrackerToolList();
     }
   }
 }
 
+void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
+{
+  TrackerList->clear();
+  TrackerToolList->clear();
+  int n = 0;
+  std::string s;
+  for ( int i=0; i<m_TrackerInitializerList.size(); i++)
+    {
+      char buf[10];
+      _itoa(i, buf, 10);
+      s = "Tracker ";
+      s = s + buf + ":" + 
+                       m_TrackerInitializerList[i]->GetTrackerTypeAsString();
+      TrackerList->add( s.c_str() );
+      std::vector< igstk::TrackerTool::Pointer > toolList = 
+                      m_TrackerInitializerList[i]->GetNonReferenceToolList();
+      for ( int j=0; j< toolList.size(); j++)
+        {
+          char buf[10];
+          _itoa(++n, buf, 10);
+          s = "Tool ";
+          s = s + buf + ":" + 
+                       m_TrackerInitializerList[i]->GetTrackerTypeAsString();
+          TrackerToolList->add( s.c_str() );
+        }
+    }
+
+}
 
 void NeedleBiopsy::RequestDisconnetTracker()
 {
-
+  RequestStopTracking();
+  int n = TrackerList->value();
+  m_TrackerInitializerList[n]->StopAndCloseTracker();
+  m_TrackerInitializerList.erase( m_TrackerInitializerList.begin() + n );
+  UpdateTrackerAndTrackerToolList();
+  TrackerList->value(0);
+  TrackerToolList->value(0);
+  ChangeActiveTrackerTool();
 }
 
 void NeedleBiopsy::ChangeActiveTrackerTool()
@@ -580,6 +574,27 @@ void NeedleBiopsy::RequestRegistration()
   m_LandmarkRegistration->RequestGetTransformFromTrackerToImage();
 }
 
+void NeedleBiopsy::RequestStartTracking()
+{
+  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+    {
+    m_TrackerInitializerList[i]->GetTracker()->RequestStartTracking();
+    }
+
+  TrackingBtn->label("Stop");
+  ControlGroup->redraw();
+}
+
+void NeedleBiopsy::RequestStopTracking()
+{
+  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  {
+    m_TrackerInitializerList[i]->GetTracker()->RequestStopTracking();
+  }
+
+  TrackingBtn->label("Tracking");
+  ControlGroup->redraw();
+}
 
 void NeedleBiopsy::ResliceImage( const itk::EventObject & event )
 {
