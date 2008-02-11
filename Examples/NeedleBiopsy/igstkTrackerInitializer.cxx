@@ -24,7 +24,8 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerInitializer::TrackerInitializer()
 {
-  m_ErrorMessage  = "";
+    m_ErrorMessage  = "";
+    m_HasReferenceTool = 0;
 }
 
 int TrackerInitializer::RequestInitializeTracker()
