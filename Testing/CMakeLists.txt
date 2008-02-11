@@ -208,11 +208,11 @@ ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 IF(IGSTKSandbox_USE_FLTK)
 
 # FIXME: When done debugging, register it inside of the test drivers.
-ADD_EXECUTABLE( igstkCTImageSpatialObjectReadingAndRepresentationTest4 igstkCTImageSpatialObjectReadingAndRepresentationTest4.cxx)
-TARGET_LINK_LIBRARIES( igstkCTImageSpatialObjectReadingAndRepresentationTest4 IGSTKSandbox )
-ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
-  ${CXX_TEST_PATH}/igstkCTImageSpatialObjectReadingAndRepresentationTest4
-  ${IGSTK_DATA_ROOT}/Input/E000192 )
+#ADD_EXECUTABLE( igstkCTImageSpatialObjectReadingAndRepresentationTest4 igstkCTImageSpatialObjectReadingAndRepresentationTest4.cxx)
+#TARGET_LINK_LIBRARIES( igstkCTImageSpatialObjectReadingAndRepresentationTest4 IGSTKSandbox )
+#ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest4
+#  ${CXX_TEST_PATH}/igstkCTImageSpatialObjectReadingAndRepresentationTest4
+#  ${IGSTK_DATA_ROOT}/Input/E000192 )
 # END OF FIXME
 
     ADD_TEST( igstkMouseTrackerToolTest ${IGSTKSandbox_TESTS} igstkMouseTrackerToolTest)
@@ -434,7 +434,7 @@ SET(IGSTKTests_SRCS
   igstkTrackerToolTest.cxx
   igstkTransformTest.cxx
   igstkVTKLoggerOutputTest.cxx
-  )
+ )
 
 IF (IGSTK_USE_FLTK)
 

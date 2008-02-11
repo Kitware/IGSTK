@@ -26,9 +26,9 @@ Configure file for IGSTKSandbox
 /* options defined by cmake */
 #cmakedefine IGSTK_USE_ATAMAI
 #cmakedefine IGSTK_USE_FLTK
-#cmakedefine IGSTKSandbox_USE_FLTK
-#cmakedefine IGSTKSandbox_USE_Qt
-#cmakedefine IGSTKSandbox_USE_MicronTracker
+#cmakedefine IGSTK_USE_FLTK
+#cmakedefine IGSTK_USE_Qt
+#cmakedefine IGSTK_USE_MicronTracker
 #cmakedefine IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS 
 #cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 

@@ -23,7 +23,10 @@ IF (IGSTK_USE_FLTK)
     TwoViews
     FourViewsTrackingWithCT
     FourViews
-    UltrasoundGuidedRFA
+# Comment the UltrasoundGuidedRFA example
+# since it requires the FlockOfBirds tracker
+# which is not yet fully tested
+#    UltrasoundGuidedRFA
     NeedleBiopsy
     DeckOfCardRobot
     View
@@ -38,10 +41,10 @@ IF (IGSTK_USE_FLTK)
   ENDIF ( WIN32 )
 ENDIF (IGSTK_USE_FLTK)
 
-IF (IGSTKSandbox_USE_Qt)
-  SUBDIRS( OneViewAndTrackingUsingQTWidget )
-    IF (IGSTKSandbox_USE_MicronTracker) 
-      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
-    ENDIF(IGSTKSandbox_USE_MicronTracker) 
-ENDIF (IGSTKSandbox_USE_Qt)
+IF (IGSTK_USE_Qt)
+#  SUBDIRS( OneViewAndTrackingUsingQTWidget )
+#    IF (IGSTK_USE_MicronTracker) 
+#      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
+#    ENDIF(IGSTK_USE_MicronTracker) 
+ENDIF (IGSTK_USE_Qt)
 

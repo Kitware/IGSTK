@@ -117,7 +117,7 @@ ENDIF( IGSTKSandbox_USE_FLTK_VAR EQUAL IGSTK_USE_FLTK_VAR )
 #
 # FIND Qt
 #
-OPTION(IGSTKSandbox_USE_Qt "Use Qt for GUI" OFF)
+OPTION(IGSTKSandbox_USE_Qt "Use Qt (The Fast Light Toolkit) for GUI" ON)
 IF(IGSTKSandbox_USE_Qt)
  # use what QVTK built with
  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
@@ -138,8 +138,57 @@ IF(IGSTKSandbox_USE_Qt)
  ENDIF(QT_USE_FILE)
 
  INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR})
-
 ENDIF(IGSTKSandbox_USE_Qt)
+
+SET( IGSTKSandbox_USE_Qt_VAR 0 )
+IF( IGSTKSandbox_USE_Qt )
+  SET( IGSTKSandbox_USE_Qt_VAR 1 )
+ENDIF( IGSTKSandbox_USE_Qt )
+
+SET( IGSTK_USE_Qt_VAR 0 )
+IF( IGSTK_USE_Qt )
+  SET( IGSTK_USE_Qt_VAR 1 )
+ENDIF( IGSTK_USE_Qt )
+
+IF( IGSTKSandbox_USE_Qt_VAR EQUAL IGSTK_USE_Qt_VAR )
+ELSE( IGSTKSandbox_USE_Qt_VAR EQUAL IGSTK_USE_Qt_VAR )
+  MESSAGE( WARNING " The CMake flag for using Qt is not matching between IGSTK and IGSTKSandbox")
+ENDIF( IGSTKSandbox_USE_Qt_VAR EQUAL IGSTK_USE_Qt_VAR )
+
+# Connect MicronTracker
+OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
+
+IF(IGSTKSandbox_USE_MicronTracker)
+  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h
+  "C:/Program Files/Claron Technology/MicronTracker/Dist"
+  DOC "Directory where the MTC.h file is located")
+  INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
+  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/MicronTracker/src )
+
+  FIND_LIBRARY( MTC_LIBRARY 
+    NAMES MTC MTC.dll 
+    PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
+    DOC "Full path to the MTC.dll file"
+    )
+  GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
+  LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+
+SET( IGSTKSandbox_USE_MicronTracker_VAR 0 )
+IF( IGSTKSandbox_USE_MicronTracker )
+  SET( IGSTKSandbox_USE_MicronTracker_VAR 1 )
+ENDIF( IGSTKSandbox_USE_MicronTracker )
+
+SET( IGSTK_USE_MicronTracker_VAR 0 )
+IF( IGSTK_USE_MicronTracker )
+  SET( IGSTK_USE_MicronTracker_VAR 1 )
+ENDIF( IGSTK_USE_MicronTracker )
+
+IF( IGSTKSandbox_USE_MicronTracker_VAR EQUAL IGSTK_USE_MicronTracker_VAR )
+ELSE( IGSTKSandbox_USE_MicronTracker_VAR EQUAL IGSTK_USE_MicronTracker_VAR )
+  MESSAGE( WARNING " The CMake flag for using MicronTracker is not matching between IGSTK and IGSTKSandbox")
+ENDIF( IGSTKSandbox_USE_MicronTracker_VAR EQUAL IGSTK_USE_MicronTracker_VAR )
 
 # Enable the option for building classes for sending transform data through sockets
 OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracker data through sockets" OFF)
@@ -175,25 +224,6 @@ IF(IGSTKSandbox_BUILD_EXAMPLES)
     SUBDIRS(Examples)
     SUBDIRS(IGSTK/Examples)
 ENDIF(IGSTKSandbox_BUILD_EXAMPLES)
-
-# Connect MicronTracker
-OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
-
-IF(IGSTKSandbox_USE_MicronTracker)
-  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h
-  "C:/Program Files/Claron Technology/MicronTracker/Dist"
-  DOC "Directory where the MTC.h file is located")
-  INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
-  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/MicronTracker/src )
-
-  FIND_LIBRARY( MTC_LIBRARY 
-    NAMES MTC MTC.dll 
-    PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
-    DOC "Full path to the MTC.dll file"
-    )
-  GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
-  LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
-ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # include Sandbox header files before the main library IGSTK
 INCLUDE_DIRECTORIES(

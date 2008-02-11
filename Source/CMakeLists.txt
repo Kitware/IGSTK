@@ -95,6 +95,22 @@ SET(IGSTK_HEADS
   igstkView.h
   igstkView2D.h
   igstkView3D.h
+  igstkViewProxy.h
+  igstkViewProxyBase.h
+  igstkLogger.h
+  igstkCoordinateSystem.h
+  igstkCoordinateSystemDelegator.h
+  igstkCoordinateSystemTransformToResult.h
+  igstkCoordinateSystemTransformToErrorResult.h
+  igstkCoordinateSystemInterfaceMacros.h
+
+  igstkCircularSimulatedTracker.h
+  igstkSimulatedTrackerTool.h
+  igstkSimulatedTracker.h
+  igstkNDITracker.h
+
+  igstkTransformObserver.h
+
 )
 
 IF(IGSTK_USE_FLTK)
@@ -103,8 +119,30 @@ IF(IGSTK_USE_FLTK)
       igstkFLTKTextBufferLogOutput.h
       igstkFLTKTextLogOutput.h
       igstkMouseTracker.h
+      igstkFLTKWidget.h
+      igstkFLTKWidget.h
+      igstkMouseTrackerTool.h
       )
 ENDIF(IGSTK_USE_FLTK)
+
+IF(IGSTK_USE_Qt)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkQMouseTracker.h
+      igstkQMouseTrackerTool.h
+      igstkQTWidget.h
+   )
+ENDIF(IGSTK_USE_Qt)
+
+IF(IGSTK_USE_MicronTracker)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkMicronTracker.h
+      igstkMicronTrackerTool.h
+     )
+ENDIF(IGSTK_USE_MicronTracker)
+
+
 
 # The implementation files
 
@@ -191,6 +229,19 @@ SET(IGSTK_SRCS
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
+  igstkViewProxyBase.cxx
+  igstkLogger.cxx 
+  igstkCoordinateSystem.cxx
+  igstkCoordinateSystemDelegator.cxx
+  igstkCoordinateSystemTransformToResult.cxx
+  igstkCoordinateSystemTransformToErrorResult.cxx
+
+  igstkCircularSimulatedTracker.cxx
+  igstkSimulatedTrackerTool.cxx
+  igstkSimulatedTracker.cxx
+  igstkNDITracker.cxx
+
+
 )
 
 IF(IGSTK_USE_FLTK)
@@ -199,8 +250,28 @@ IF(IGSTK_USE_FLTK)
       igstkMouseTracker.cxx
       igstkFLTKTextBufferLogOutput.cxx
       igstkFLTKTextLogOutput.cxx
+      igstkFLTKWidget.cxx
+      igstkMouseTrackerTool.cxx
       )
 ENDIF(IGSTK_USE_FLTK)
+
+IF(IGSTK_USE_Qt)
+  SET(IGSTK_SRCS
+    ${IGSTK_SRCS}
+    igstkQMouseTracker.cxx
+    igstkQMouseTrackerTool.cxx
+    igstkQTWidget.cxx
+    )
+ENDIF(IGSTK_USE_Qt)
+
+IF(IGSTK_USE_MicronTracker)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkMicronTracker.cxx
+      igstkMicronTrackerTool.cxx
+ 
+     )
+ENDIF(IGSTK_USE_MicronTracker)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS}
@@ -268,12 +339,6 @@ SET(IGSTKSandbox_HEADS
   igstkContourMeshObjectRepresentation.h
   igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
-  igstkCoordinateSystem.h
-  igstkCoordinateSystemDelegator.h
-  igstkCoordinateSystemTransformToResult.h
-  igstkCoordinateSystemTransformToErrorResult.h
-  igstkCircularSimulatedTracker.h
-  igstkSimulatedTrackerTool.h
   igstkDICOMGenericImageReader.h
   igstkGenericImageSpatialObject.h
   igstkLandmarkUltrasoundCalibration.h
@@ -283,12 +348,9 @@ SET(IGSTKSandbox_HEADS
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkQuickTimeGrabber.h
-  igstkSimulatedTracker.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
-  igstkLogger.h
-  igstkNDITracker.h
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -298,31 +360,12 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     )
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
-IF(IGSTKSandbox_USE_Qt)
-  SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkQMouseTracker.h
-      igstkQMouseTrackerTool.h
-      igstkQTWidget.h
-   )
-ENDIF(IGSTKSandbox_USE_Qt)
-
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkFLTKWidget.h
       igstkPivotCalibrationFLTKWidget.h
-      igstkMouseTrackerTool.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
-
-IF(IGSTKSandbox_USE_MicronTracker)
-  SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkMicronTracker.h
-      igstkMicronTrackerTool.h
-     )
-ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF( WIN32 )
   SET(IGSTKSandbox_HEADS
@@ -338,12 +381,6 @@ SET(IGSTKSandbox_SRCS
   igstkContourMeshObjectRepresentation.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
-  igstkCoordinateSystem.cxx
-  igstkCoordinateSystemDelegator.cxx
-  igstkCoordinateSystemTransformToResult.cxx
-  igstkCoordinateSystemTransformToErrorResult.cxx
-  igstkCircularSimulatedTracker.cxx
-  igstkSimulatedTrackerTool.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
   igstkLandmarkUltrasoundCalibration.cxx
@@ -355,11 +392,7 @@ SET(IGSTKSandbox_SRCS
   igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
-  igstkViewProxyBase.cxx
   igstkImageSliceRepresentation.txx
-  igstkLogger.cxx
-  igstkSimulatedTracker.cxx
-  igstkNDITracker.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -369,32 +402,12 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     )
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
-IF(IGSTKSandbox_USE_Qt)
-  SET(IGSTKSandbox_SRCS
-    ${IGSTKSandbox_SRCS}
-    igstkQMouseTracker.cxx
-    igstkQMouseTrackerTool.cxx
-    igstkQTWidget.cxx
-    )
-ENDIF(IGSTKSandbox_USE_Qt)
-
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-    igstkFLTKWidget.cxx
-    igstkMouseTrackerTool.cxx
-    igstkPivotCalibrationFLTKWidget.cxx
+   igstkPivotCalibrationFLTKWidget.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
-
-IF(IGSTKSandbox_USE_MicronTracker)
-  SET(IGSTKSandbox_SRCS
-      ${IGSTKSandbox_SRCS}
-      igstkMicronTracker.cxx
-      igstkMicronTrackerTool.cxx
- 
-     )
-ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF( WIN32 )
   SET(IGSTKSandbox_SRCS
@@ -403,7 +416,6 @@ IF( WIN32 )
       igstkWebCameraTrackerTool.cxx
      )
 ENDIF( WIN32 )
-
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
@@ -436,6 +448,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
   
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
 
@@ -444,5 +457,5 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
-    vtkIO vtkFiltering vtkCommon
-    ${EXTRA_LIBS} )
+    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS} )
+    
