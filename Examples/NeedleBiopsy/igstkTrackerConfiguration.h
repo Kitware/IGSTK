@@ -64,11 +64,16 @@ public:
     m_NDITrackerConfiguration = conf;
     }
 
+  int CheckValidility();
   virtual ~TrackerConfiguration();
 
 private:
-  
+  int CheckPolarisValidility();
+  int CheckAuroraValidility();
+  int CheckMicronValidility();
+
   TrackerType                  m_TrackerType;
+  std::string                  m_ValidilityErrorMessage;
 
   MicronTrackerConfiguration * m_MicronTrackerConfiguration;
   NDITrackerConfiguration    * m_NDITrackerConfiguration;
@@ -149,7 +154,7 @@ public:
   igstk::SerialCommunication::PortNumberType     m_COMPort;
   double                                         m_Frequency;
 
-  std::vector< NDITrackerToolConfiguration * >     m_TrackerToolList;
+  std::vector< NDITrackerToolConfiguration * >   m_TrackerToolList;
 
   NDITrackerConfiguration()
     {

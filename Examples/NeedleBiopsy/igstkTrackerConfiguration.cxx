@@ -23,6 +23,7 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerConfiguration::TrackerConfiguration()
 {
+  m_ValidilityErrorMessage = "";
 }
 
 void TrackerConfiguration::SetTrackerType( TrackerType trackerType )
@@ -58,17 +59,66 @@ std::string TrackerConfiguration::GetTrackerTypeAsString()
 /** Destructor */
 TrackerConfiguration::~TrackerConfiguration()
 {
-  /*
-  if (m_NDITrackerConfiguration)
+}
+
+int TrackerConfiguration::CheckValidility()
+{
+  switch( m_TrackerType )
   {
-    delete m_NDITrackerConfiguration;
+  case Polaris:
+    return CheckPolarisValidility();
+    break;
+  case Aurora:
+    return CheckAuroraValidility();
+    break;
+  case Micron:
+    return CheckMicronValidility();
+    break;
+  default:
+    m_ValidilityErrorMessage = "Unknown tracker type";
+    return 0;
+  }
+}
+
+int TrackerConfiguration::CheckAuroraValidility()
+{
+  m_ValidilityErrorMessage = "";
+
+  if ( m_NDITrackerConfiguration->m_Frequency <= 0)
+  {
+    m_ValidilityErrorMessage = "Invalid frequency, must be positive";
+    return 0;
   }
 
-  if (m_MicronTrackerConfiguration)
+  int n = m_NDITrackerConfiguration->m_TrackerToolList.size();
+  int ReferenceToolcount = 0;
+  for (int i=0; i<n; i++)
   {
-    delete m_MicronTrackerConfiguration;
+    NDITrackerToolConfiguration * conf = 
+                           m_NDITrackerConfiguration->m_TrackerToolList[i];
+
+    // check if port is used, only one reference tool, SROM file exists 
+    // To be implemented
+    
   }
-  */
+  return 1;
+}
+
+int TrackerConfiguration::CheckPolarisValidility()
+{
+  m_ValidilityErrorMessage = "";
+  // check if port is used, only one reference tool, SROM file exists 
+  // To be implemented
+  return 1;
+
+}
+
+int TrackerConfiguration::CheckMicronValidility()
+{
+  m_ValidilityErrorMessage = "";
+  // check calibration file, only one reference tool, template markers 
+  // To be implemented
+  return 1;
 }
 
 } // end of name space
