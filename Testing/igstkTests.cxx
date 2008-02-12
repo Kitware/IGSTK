@@ -142,13 +142,6 @@ void RegisterTests()
   REGISTER_TEST(igstkMouseTrackerToolTest);
   REGISTER_TEST(igstkCircularSimulatedTrackerTest);
 
-  // Tests depend on Qt
-#ifdef IGSTK_USE_Qt
-  REGISTER_TEST(igstkQTWidgetTest);
-  REGISTER_TEST(igstkQTWidgetTest2);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
-#endif
- 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAnnotation2DTest2);
@@ -161,7 +154,13 @@ void RegisterTests()
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
 #endif 
-  
 #endif
+  // Tests depend on Qt
+#ifdef IGSTK_USE_Qt
+  REGISTER_TEST(igstkQTWidgetTest);
+  REGISTER_TEST(igstkQTWidgetTest2);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
+#endif
+ 
   
 }
