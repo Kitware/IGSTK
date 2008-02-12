@@ -183,12 +183,12 @@ int main(int ac, char* av[] )
         // if the best we can do still has errors, generate the error images
         if (bestBaselineStatus)
           {
-          baseline->second = RegressionTestImage(testFilename,
-                                                 bestBaseline.c_str(),
-                                                 1,
-                                                 toleranceIntensity,
-                                                 toleranceRadius,
-                                                 toleranceNumberOfPixels);
+          RegressionTestImage(testFilename,
+                              bestBaseline.c_str(),
+                              1,
+                              toleranceIntensity,
+                              toleranceRadius,
+                              toleranceNumberOfPixels);
           }
 
         // output the matching baseline
