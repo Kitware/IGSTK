@@ -333,20 +333,6 @@ ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
         )
 
-IF(IGSTK_USE_FLTK)
- SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkCoordinateSystemEventTestViewTest.cxx)
- ADD_TEST( igstkCoordinateSystemObjectWithViewTest
-              ${IGSTK_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkCoordinateSystemObjectWithViewTest
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
-              )
-ENDIF(IGSTK_USE_FLTK)
-
 
 
 #-----------------------------------------------------------------------------
