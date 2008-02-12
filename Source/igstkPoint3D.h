@@ -24,6 +24,8 @@ PURPOSE.  See the above copyright notices for more information.
 #pragma warning( disable : 4284 )
 #endif
 
+#include "igstkMacros.h"
+#include "igstkEvents.h"
 
 #include "itkPoint.h"
 
@@ -67,7 +69,7 @@ private:
 };
 
 /** This event returns a point in a coordinate system. */
-igstkLoadedEventMacro( PointEvent, IGSTKEvent, Point3D );
+igstkLoadedEventMacro( IGSTKPointEvent, IGSTKEvent, Point3D );
 
 } // end namespace igstk
 

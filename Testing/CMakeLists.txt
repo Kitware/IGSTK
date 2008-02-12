@@ -71,7 +71,7 @@ INCLUDE_DIRECTORIES (
 
 # Add your new tests here
 SET(SandboxTests_SRCS
-   igstkGroupObjectTest.cxx
+  igstkGroupObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
@@ -200,85 +200,7 @@ IF(IGSTKSandbox_USE_FLTK)
 
     ADD_TEST( igstkMouseTrackerToolTest ${IGSTKSandbox_TESTS} igstkMouseTrackerToolTest)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkMouseTrackerToolTest.cxx)
-
-    ADD_TEST( igstkFLTKWidgetTest ${IGSTKSandbox_TESTS} igstkFLTKWidgetTest)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest.cxx)
-
-    # A first test to compare the one screenshot from a FLTKWidget
-    ADD_TEST( igstkFLTKWidgetTest2_1
-              ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 10
-              igstkFLTKWidgetTest2
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
-              )
-
-    # A second test to compare the second screenshot
-    ADD_TEST( igstkFLTKWidgetTest2_2
-              ${IGSTKSandbox_TESTS}
-              --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 10
-              igstkFLTKWidgetTest2
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
-              )
-
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS} igstkFLTKWidgetTest2.cxx)
-
 ENDIF(IGSTKSandbox_USE_FLTK)
-
-IF(IGSTKSandbox_USE_Qt)
-    ADD_TEST( igstkQTWidgetTest
-              ${IGSTKSandbox_TESTS}
-              igstkQTWidgetTest)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkQTWidgetTest.cxx)
-
-    ADD_TEST( igstkQTWidgetTest2
-              ${IGSTKSandbox_TESTS}
-              igstkQTWidgetTest2)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkQTWidgetTest2.cxx)
-
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3
-              ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkCTImageSpatialObjectReadingAndRepresentationTest3
-              ${IGSTK_DATA_ROOT}/Input/E000192
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
-              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
-ENDIF(IGSTKSandbox_USE_Qt)
-
-IF(IGSTKSandbox_USE_MicronTracker)
-    ADD_TEST( igstkMicronTrackerTest
-              ${IGSTKSandbox_TESTS}
-              igstkMicronTrackerTest
-              ${IGSTKSandbox_DATA_ROOT}/Input/CalibrationFiles
-              ${IGSTKSandbox_DATA_ROOT}/Input/MicronTracker.ini
-              ${IGSTKSandbox_DATA_ROOT}/Input/Markers
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkMicronTrackerTest.cxx)
-
-    ADD_TEST( igstkMicronTrackerToolTest
-              ${IGSTKSandbox_TESTS} igstkMicronTrackerToolTest )
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkMicronTrackerToolTest.cxx)
-
-ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 
 IF(IGSTKSandbox_DATA_ROOT)
@@ -398,7 +320,6 @@ SET(IGSTKTests_SRCS
  )
 
 IF (IGSTK_USE_FLTK)
-
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAxesObjectTest.cxx
     igstkBoxObjectTest.cxx
@@ -406,9 +327,26 @@ IF (IGSTK_USE_FLTK)
     igstkMouseTrackerTest.cxx
     igstkUltrasoundImageSimulatorTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
+    igstkFLTKWidgetTest.cxx
+    igstkFLTKWidgetTest2.cxx
   )
-
 ENDIF (IGSTK_USE_FLTK)
+
+
+IF(IGSTK_USE_MicronTracker)  
+  SET(IGSTKTests_SRCS
+    ${IGSTKTests_SRCS}
+    igstkMicronTrackerTest.cxx
+    igstkMicronTrackerToolTest.cxx)
+ENDIF(IGSTK_USE_MicronTracker)  
+
+IF(IGSTK_USE_Qt)  
+  SET(IGSTKTests_SRCS
+    ${IGSTKTests_SRCS}
+    igstkQTWidgetTest.cxx
+    igstkQTWidgetTest2.cxx
+   igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)  
+ENDIF(IGSTK_USE_Qt)  
 
 
 # Add testing command
@@ -524,9 +462,70 @@ IF (IGSTK_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
 
+  # A first test to compare the one screenshot from a FLTKWidget
+    ADD_TEST( igstkFLTKWidgetTest2_1
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 10
+              igstkFLTKWidgetTest2
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              )
+
+    # A second test to compare the second screenshot
+    ADD_TEST( igstkFLTKWidgetTest2_2
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 10
+              igstkFLTKWidgetTest2
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              )
+
   ENDIF (IGSTK_USE_FLTK)
 
 ENDIF(IGSTK_DATA_ROOT)
+
+IF(IGSTK_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerTest
+              ${IGSTK_TESTS}
+              igstkMicronTrackerTest
+              ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
+              ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
+              ${IGSTK_DATA_ROOT}/Input/Markers
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
+    ADD_TEST( igstkMicronTrackerToolTest
+              ${IGSTK_TESTS} igstkMicronTrackerToolTest )
+ENDIF(IGSTK_USE_MicronTracker)
+
+
+IF(IGSTK_USE_Qt)
+    ADD_TEST( igstkQTWidgetTest
+              ${IGSTK_TESTS}
+              igstkQTWidgetTest)
+    ADD_TEST( igstkQTWidgetTest2
+              ${IGSTK_TESTS}
+              igstkQTWidgetTest2)
+
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCTImageSpatialObjectReadingAndRepresentationTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+ENDIF(IGSTK_USE_Qt)
+
 
 #-----------------------------------------------------------------------------
 # Tests depend on external device

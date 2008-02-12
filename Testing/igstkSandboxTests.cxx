@@ -50,21 +50,8 @@ void RegisterTests()
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
-  REGISTER_TEST(igstkFLTKWidgetTest);
-  REGISTER_TEST(igstkFLTKWidgetTest2);
   REGISTER_TEST(igstkMouseTrackerToolTest);
 #endif /* IGSTKSandbox_USE_FLTK */
-
-#ifdef IGSTKSandbox_USE_Qt
-  REGISTER_TEST(igstkQTWidgetTest);
-  REGISTER_TEST(igstkQTWidgetTest2);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
-#endif /* IGSTKSandbox_USE_Qt */
-
-#ifdef IGSTKSandbox_USE_MicronTracker
-  REGISTER_TEST(igstkMicronTrackerTest);
-  REGISTER_TEST(igstkMicronTrackerToolTest);
-#endif /* IGSTKSandbox_USE_MicronTracker */
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest2);

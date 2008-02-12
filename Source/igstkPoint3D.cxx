@@ -50,7 +50,7 @@ Point3D::SetCoordinateSystem( const CoordinateSystem * coordinateSystem )
 }
 
 /* Get the coordinate system for this point */
-const Point3D::CoordinateSystem * 
+const CoordinateSystem * 
 Point3D::GetCoordinateSystem() const
 {
   return this->m_CoordinateSystem;

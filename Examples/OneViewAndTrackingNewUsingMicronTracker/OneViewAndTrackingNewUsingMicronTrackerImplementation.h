@@ -196,13 +196,31 @@ public:
   void GetTrackerToolTransform( int trackerToolNumber,
                                 TransformType & transform )
     {
+    typedef igstk::TransformObserver   ObserverType;
+  
     if ( trackerToolNumber == 1 )
       {
-      transform = m_TrackerTool->GetRawTransform();
+      ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+      coordSystemAObserver->ObserveTransformEventsFrom( m_TrackerTool );
+
+      coordSystemAObserver->Clear();
+      m_TrackerTool->RequestGetTransformToParent();
+      if (coordSystemAObserver->GotTransform())
+        {
+        transform = coordSystemAObserver->GetTransform();
+        }
       }
     else if ( trackerToolNumber == 2)
       {
-      transform = m_TrackerTool2->GetRawTransform();
+      ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+      coordSystemAObserver2->ObserveTransformEventsFrom( m_TrackerTool2 );
+
+      coordSystemAObserver2->Clear();
+      m_TrackerTool2->RequestGetTransformToParent();
+      if (coordSystemAObserver2->GotTransform())
+        {
+        transform = coordSystemAObserver2->GetTransform();
+        }
       }
     else
       {
