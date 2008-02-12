@@ -54,7 +54,6 @@ std::string TrackerConfiguration::GetTrackerTypeAsString()
     default:
       return "Not Defined";
     }
-
 }
 /** Destructor */
 TrackerConfiguration::~TrackerConfiguration()

@@ -374,6 +374,11 @@ void NeedleBiopsy::WriteTreatmentPlan()
 
 void NeedleBiopsy::ChangeSelectedTPlanPoint()
 {
+  if ( TPlanPointList->size() == 0)
+    {
+    return;
+    }
+
   ImageSpatialObjectType::PointType    point;
   int choice = TPlanPointList->value();
   if( choice == 0 )
@@ -388,7 +393,7 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
     {
     point = m_Plan->m_FiducialPoints[ choice-2];
     m_FiducialPoint->RequestSetTransformAndParent(
-      PointToTransform(point), m_WorldReference );
+                                 PointToTransform(point), m_WorldReference );
     }
 
   char buf[50];
@@ -561,6 +566,7 @@ void NeedleBiopsy::RequestDisconnetTracker()
 
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
+  RequestStopTracking();
   if (m_TrackerToolList.size() != 0)
     {
       for (int i=0; i<m_TrackerToolList.size(); i++)
@@ -579,6 +585,7 @@ void NeedleBiopsy::ChangeActiveTrackerTool()
       m_Needle->RequestSetTransformAndParent( transform, m_ActiveTool);
       m_NeedleTip->RequestSetTransformAndParent( transform, m_ActiveTool);
     }
+  RequestStartTracking();
 }
 
 void NeedleBiopsy::SetTrackerFiducialPoint()
@@ -609,6 +616,7 @@ void NeedleBiopsy::SetTrackerFiducialPoint()
 }
 void NeedleBiopsy::RequestRegistration()
 {
+  m_LandmarkRegistration->RequestResetRegistration();
   for( int i=0; i< m_TrackerLandmarksContainer.size(); i++)
     {
     m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
@@ -654,6 +662,7 @@ void NeedleBiopsy::RequestRegistration()
     TrackerList->value(m_TrackerInitializerList.size()-1);
     TrackerToolList->value(m_TrackerInitializerList.size()-1);
     ChangeActiveTrackerTool();
+    RequestStartTracking();
     }
   else
   {
@@ -670,6 +679,7 @@ void NeedleBiopsy::RequestStartTracking()
     }
 
   TrackingBtn->label("Stop");
+  TrackingBtn->value(1);
   ControlGroup->redraw();
 }
 
@@ -681,6 +691,7 @@ void NeedleBiopsy::RequestStopTracking()
   }
 
   TrackingBtn->label("Tracking");
+  TrackingBtn->value(0);
   ControlGroup->redraw();
 }
 

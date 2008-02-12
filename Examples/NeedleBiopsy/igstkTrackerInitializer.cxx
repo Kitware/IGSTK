@@ -28,6 +28,21 @@ TrackerInitializer::TrackerInitializer()
     m_HasReferenceTool = 0;
 }
 
+std::string TrackerInitializer::GetTrackerTypeAsString()
+{
+  switch( m_TrackerType )
+  {
+  case TrackerConfiguration::Polaris:
+    return "Polaris"; break;
+  case TrackerConfiguration::Aurora:
+    return "Aurora"; break;
+  case TrackerConfiguration::Micron:
+    return "Micron"; break;
+  default:
+    return "Not Defined";
+  }
+}
+
 int TrackerInitializer::RequestInitializeTracker()
 {
   if( m_TrackerConfiguration == NULL )

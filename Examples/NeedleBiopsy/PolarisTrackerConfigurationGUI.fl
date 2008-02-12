@@ -266,8 +266,11 @@ if(UseReferenceTool->value())
     refTool->m_SROMFile = ReferenceToolSROMFile->value();
     }
   
+  igstk::Transform toolCalibrationTransform;
+  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform;
+  
   refTool->m_IsReference = 1;
-
   conf->m_TrackerToolList.push_back( refTool );
 
 }

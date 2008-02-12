@@ -49,10 +49,7 @@ public:
     return m_TrackerType;
     }
 
-  std::string GetTrackerTypeAsString()
-  {
-    return m_TrackerConfiguration->GetTrackerTypeAsString();
-  }
+  std::string GetTrackerTypeAsString();
 
   void SetTrackerConfiguration( TrackerConfiguration * config )
     {

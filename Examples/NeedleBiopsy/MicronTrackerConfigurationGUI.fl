@@ -10,7 +10,7 @@ class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
   } {
     Fl_Window TrackerConfigurationWindow {
       label {Mcron Tracker Configuration} open
-      xywh {403 96 418 475} type Double
+      xywh {933 106 418 475} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Group ReferenceToolGroup {open
@@ -137,7 +137,57 @@ if( fileDir )
   } {}
   Function {GetGUISetting()} {open return_type {virtual void}
   } {
-    code {m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Micron );} {selected
+    code {igstk::MicronTrackerConfiguration * conf = new igstk::MicronTrackerConfiguration;
+
+conf->m_Frequency = 30;
+conf->m_CameraCalibrationFileDirectory = CalibrationFileDir->value();
+conf->m_InitializationFile = InitializationFile->value();
+conf->m_TemplatesDirectory = TemplateFileDir->value();
+    
+conf->m_TrackerToolList.clear();
+ 
+// Wired or Wireless tool, port & SROMs
+igstk::MicronTrackerToolConfiguration * tool = new igstk::MicronTrackerToolConfiguration;
+tool->m_MarkerName = TrackerToolMarker->text();
+tool->m_IsReference = 0;
+  
+// Calibration  
+igstk::Transform toolCalibrationTransform;
+
+igstk::Transform::VectorType translation;
+translation[0] = OffsetX->value();   // Tip offset
+translation[1] = OffsetY->value();
+translation[2] = OffsetZ->value();
+
+igstk::Transform::VersorType rotation;
+rotation.SetIdentity();
+if (SwitchZAxes->value())
+  {
+  rotation.Set(1.0, 0.0, 0.0, 0.0);
+  }
+ 
+toolCalibrationTransform.SetTranslationAndRotation( translation, rotation, 0.1, igstk::TimeStamp::GetLongestPossibleTime());
+
+tool->m_CalibrationTransform = toolCalibrationTransform;
+
+conf->m_TrackerToolList.push_back( tool );
+
+// Reference tool
+if(UseReferenceTool->value())
+{
+  igstk::MicronTrackerToolConfiguration * refTool = new igstk::MicronTrackerToolConfiguration; 
+  refTool->m_MarkerName = ReferenceToolMarker->text();
+  
+  igstk::Transform toolCalibrationTransform;
+  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform;
+   
+  refTool->m_IsReference = 1;
+  conf->m_TrackerToolList.push_back( refTool );
+}
+
+m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Micron);
+m_TrackerConfiguration.SetMicronTrackerConfiguration( conf );} {selected
     }
   }
 } 
