@@ -76,7 +76,6 @@ void RegisterTests()
   REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
   REGISTER_TEST(igstkCoordinateSystemEventTest);
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
-  REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
  
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
@@ -142,6 +141,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKWidgetTest2);
   REGISTER_TEST(igstkMouseTrackerToolTest);
   REGISTER_TEST(igstkCircularSimulatedTrackerTest);
+  REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
