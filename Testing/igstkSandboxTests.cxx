@@ -31,15 +31,10 @@ void RegisterTests()
   REGISTER_TEST(igstkGroupObjectTest);
   REGISTER_TEST(igstkLandmarkUltrasoundCalibrationTest);
   REGISTER_TEST(igstkSocketCommunicationTest);
-  REGISTER_TEST(igstkTransductionMacroTest);
   REGISTER_TEST(igstkGenericImageSpatialObjectTest);
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
-  REGISTER_TEST(igstkObjectRepresentationRemovalTest);
-  REGISTER_TEST(igstkTrackerToolReferenceTest);
-  REGISTER_TEST(igstkTrackerToolReferenceAndImageTest);
-
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
@@ -49,14 +44,9 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
-  REGISTER_TEST(igstkMouseTrackerToolTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
-  REGISTER_TEST(igstkPolarisTrackerTest2);
-  REGISTER_TEST(igstkPolarisTrackerTest3);
-  REGISTER_TEST(igstkPolarisTrackerTest4);
 #endif
 
 
