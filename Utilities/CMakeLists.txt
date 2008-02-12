@@ -7,6 +7,10 @@ IF( IGSTK_USE_ATAMAI )
     SET( IGSTK_USE_ATAMAI_CONFIG 1 )
 ENDIF( IGSTK_USE_ATAMAI )
 
+IF( IGSTKSandbox_USE_MicronTracker )
+    SUBDIRS( MicronTracker )
+ENDIF( IGSTKSandbox_USE_MicronTracker )
+
 #-----------------------------------------------------------------------------
 # IGSTK uses KWStyle for checking the coding style
 OPTION(IGSTK_USE_KWSTYLE "Run KWStyle in order to check for violations of the coding standard." OFF)
