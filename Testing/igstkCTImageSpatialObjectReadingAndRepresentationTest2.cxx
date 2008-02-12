@@ -172,6 +172,11 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   view2D->RequestStart();
   view2D->RequestResetCamera();
 
+  // Check for FLTK events before we start checking 
+  // IGSTK events. This should allow the widget to 
+  // be displayed first.
+  Fl::check(); 
+
   for( unsigned int i=0; i < 100; i++)
     {
     Fl::wait( 0.05 );
