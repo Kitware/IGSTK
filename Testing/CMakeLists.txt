@@ -194,7 +194,10 @@ IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
-  ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest)
+  ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+          )
 
   ADD_TEST( igstkPolarisTrackerTest2
               ${IGSTK_TESTS}
@@ -215,8 +218,7 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               0
               1
               )
-  ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS}
-igstkPolarisTrackerToolTest)
+  ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS} igstkPolarisTrackerToolTest 0)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 #-----------------------------------------------------------------------------
