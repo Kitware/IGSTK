@@ -64,8 +64,6 @@ ADD_TEST(igstkTransductionMacroTest ${IGSTK_TESTS} igstkTransductionMacroTest)
 ADD_TEST(igstkTrackerToolReferenceTest ${IGSTK_TESTS}
 igstkTrackerToolReferenceTest)
 
-ADD_TEST(igstkTrackerToolReferenceAndImageTest ${IGSTK_TESTS}
-igstkTrackerToolReferenceAndImageTest)
 ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTK_TESTS} igstkPrincipalAxisCalibrationTest)
 ADD_TEST(igstkSpatialObjectTest ${IGSTK_TESTS} igstkSpatialObjectTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
@@ -102,6 +100,9 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 # Tests need data input
 IF (IGSTK_DATA_ROOT) 
   
+  ADD_TEST(igstkTrackerToolReferenceAndImageTest ${IGSTK_TESTS} igstkTrackerToolReferenceAndImageTest
+          ${IGSTK_DATA_ROOT}/Input/E000192 )
+
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/USLiver)
 
