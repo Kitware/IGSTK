@@ -71,7 +71,7 @@ void RegisterTests()
 
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
   REGISTER_TEST(igstkCoordinateSystemTest);
-  REGISTER_TEST(igstkCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest2);
   REGISTER_TEST(igstkCoordinateSystemTest3);
   REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
   REGISTER_TEST(igstkCoordinateSystemEventTest);
