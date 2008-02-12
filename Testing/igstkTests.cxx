@@ -89,6 +89,11 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerTest);
 #endif
 
+#ifdef IGSTK_USE_MicronTracker
+  REGISTER_TEST(igstkMicronTrackerTest);
+  REGISTER_TEST(igstkMicronTrackerToolTest);
+#endif
+
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
@@ -104,7 +109,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
-#endif
+#endif 
 
   // Tests depend on FLTK
 #ifdef IGSTK_USE_FLTK
@@ -122,9 +127,17 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
-
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
+  REGISTER_TEST(igstkFLTKWidgetTest);
+  REGISTER_TEST(igstkFLTKWidgetTest2);
 
+  // Tests depend on Qt
+#ifdef IGSTK_USE_Qt
+  REGISTER_TEST(igstkQTWidgetTest);
+  REGISTER_TEST(igstkQTWidgetTest2);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
+#endif
+ 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAnnotation2DTest2);

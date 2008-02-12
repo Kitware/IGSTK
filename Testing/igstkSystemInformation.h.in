@@ -3,6 +3,10 @@
 
 #cmakedefine IGSTK_USE_FLTK
 
+#cmakedefine IGSTK_USE_MicronTracker
+
+#cmakedefine IGSTK_USE_Qt
+
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT
 #  undef IGSTK_DATA_ROOT

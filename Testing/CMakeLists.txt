@@ -345,8 +345,75 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
 
   ENDIF (IGSTK_DATA_ROOT)
+
+    ADD_TEST( igstkFLTKWidgetTest ${IGSTK_TESTS} igstkFLTKWidgetTest)
+  # A first test to compare the one screenshot from a FLTKWidget
+    ADD_TEST( igstkFLTKWidgetTest2_1
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 10
+              igstkFLTKWidgetTest2
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              )
+
+    # A second test to compare the second screenshot
+    ADD_TEST( igstkFLTKWidgetTest2_2
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkFLTKWidgetTest2Screenshot2.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 10
+              igstkFLTKWidgetTest2
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
+              )
+
             
 ENDIF(IGSTK_USE_FLTK)
+
+IF(IGSTK_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerTest
+              ${IGSTK_TESTS}
+              igstkMicronTrackerTest
+              ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
+              ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
+              ${IGSTK_DATA_ROOT}/Input/Markers
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
+    SET(Tests_SRCS ${Tests_SRCS}
+        igstkMicronTrackerTest.cxx)
+
+    ADD_TEST( igstkMicronTrackerToolTest
+              ${IGSTK_TESTS} igstkMicronTrackerToolTest )
+    SET(Tests_SRCS ${Tests_SRCS}
+        igstkMicronTrackerToolTest.cxx)
+
+ENDIF(IGSTK_USE_MicronTracker)
+
+IF(IGSTK_USE_Qt)
+    ADD_TEST( igstkQTWidgetTest
+              ${IGSTK_TESTS}
+              igstkQTWidgetTest)
+    ADD_TEST( igstkQTWidgetTest2
+              ${IGSTK_TESTS}
+              igstkQTWidgetTest2)
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest3
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCTImageSpatialObjectReadingAndRepresentationTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+ENDIF(IGSTK_USE_Qt)
+
 
 #-----------------------------------------------------------------------------
 # Set the source file
@@ -368,6 +435,8 @@ SET(BasicTests_SRCS
   igstkMRImageSpatialObjectTest.cxx
   igstkMultipleOutputTest.cxx    
   igstkPivotCalibrationTest.cxx
+
+
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSpatialObjectTest.cxx
   igstkSerialCommunicationTest.cxx
@@ -464,6 +533,8 @@ IF(IGSTK_USE_FLTK)
     igstkUltrasoundProbeObjectTest.cxx
     igstkSpatialObjectRepresentationVisibilityTest.cxx
     igstkCoordinateSystemObjectWithViewTest.cxx
+    igstkFLTKWidgetTest.cxx
+    igstkFLTKWidgetTest2.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS
@@ -478,6 +549,22 @@ IF(IGSTK_USE_FLTK)
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(IGSTK_USE_FLTK)
+
+IF(IGSTK_USE_MicronTracker)  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkMicronTrackerTest.cxx
+    igstkMicronTrackerToolTest.cxx)
+ENDIF(IGSTK_USE_MicronTracker)  
+
+IF(IGSTK_USE_Qt)  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+     igstkQTWidgetTest.cxx
+     igstkQTWidgetTest2.cxx
+     igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
+ENDIF(IGSTK_USE_Qt)
+ 
 
 #-----------------------------------------------------------------------------
 # Add testing executables
