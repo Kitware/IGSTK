@@ -57,6 +57,15 @@ ADD_TEST(igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImage
 ADD_TEST(igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )          
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
 ADD_TEST(igstkPivotCalibrationTest ${IGSTK_TESTS} igstkPivotCalibrationTest)
+ADD_TEST(igstkObjectRepresentationRemovalTest ${IGSTK_TESTS}
+igstkObjectRepresentationRemovalTest)
+ADD_TEST(igstkTransductionMacroTest ${IGSTK_TESTS} igstkTransductionMacroTest)
+
+ADD_TEST(igstkTrackerToolReferenceTest ${IGSTK_TESTS}
+igstkTrackerToolReferenceTest)
+
+ADD_TEST(igstkTrackerToolReferenceAndImageTest ${IGSTK_TESTS}
+igstkTrackerToolReferenceAndImageTest)
 ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTK_TESTS} igstkPrincipalAxisCalibrationTest)
 ADD_TEST(igstkSpatialObjectTest ${IGSTK_TESTS} igstkSpatialObjectTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
@@ -188,6 +197,28 @@ ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest)
+
+  ADD_TEST( igstkPolarisTrackerTest2
+              ${IGSTK_TESTS}
+              igstkPolarisTrackerTest2
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest2LoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              )
+    ADD_TEST( igstkPolarisTrackerTest3
+              ${IGSTK_TESTS}
+              igstkPolarisTrackerTest3
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              )
+    ADD_TEST( igstkPolarisTrackerTest4
+              ${IGSTK_TESTS}
+              igstkPolarisTrackerTest4
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
+              0
+              1
+              )
+  ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS}
+igstkPolarisTrackerToolTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
 #-----------------------------------------------------------------------------
@@ -306,6 +337,20 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
 
+    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest2
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCTImageSpatialObjectReadingAndRepresentationTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
+              ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+
+
+
     ADD_TEST( igstkCTImageSpatialObjectRepresentationWindowLevelTest 
               ${IGSTK_TESTS}
               --compare ${BASELINE}/igstkWindowLevelScreenShot01.png 
@@ -374,6 +419,7 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
               )
 
             
+    ADD_TEST( igstkMouseTrackerToolTest ${IGSTK_TESTS} igstkMouseTrackerToolTest)
 ENDIF(IGSTK_USE_FLTK)
 
 IF(IGSTK_USE_MicronTracker)
@@ -436,6 +482,11 @@ SET(BasicTests_SRCS
   igstkMultipleOutputTest.cxx    
   igstkPivotCalibrationTest.cxx
 
+  igstkObjectRepresentationRemovalTest.cxx
+  igstkTransductionMacroTest.cxx
+
+  igstkTrackerToolReferenceTest.cxx
+  igstkTrackerToolReferenceAndImageTest.cxx
 
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSpatialObjectTest.cxx
@@ -482,6 +533,10 @@ ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkPolarisTrackerTest.cxx
+    igstkPolarisTrackerTest2.cxx
+    igstkPolarisTrackerTest3.cxx
+    igstkPolarisTrackerTest4.cxx
+    igstkPolarisTrackerToolTest.cxx
   )
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
@@ -535,6 +590,7 @@ IF(IGSTK_USE_FLTK)
     igstkCoordinateSystemObjectWithViewTest.cxx
     igstkFLTKWidgetTest.cxx
     igstkFLTKWidgetTest2.cxx
+    igstkMouseTrackerToolTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS

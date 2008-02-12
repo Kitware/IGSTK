@@ -51,6 +51,9 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
 
+  REGISTER_TEST(igstkObjectRepresentationRemovalTest);
+  REGISTER_TEST(igstkTransductionMacroTest);
+
   REGISTER_TEST(igstkSpatialObjectTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkStateMachineErrorsTest);
@@ -63,6 +66,9 @@ void RegisterTests()
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
+
+  REGISTER_TEST(igstkTrackerToolReferenceTest);
+  REGISTER_TEST(igstkTrackerToolReferenceAndImageTest);
 
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
   REGISTER_TEST(igstkCoordinateSystemTest);
@@ -87,6 +93,10 @@ void RegisterTests()
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
+  REGISTER_TEST(igstkPolarisTrackerTest2);
+  REGISTER_TEST(igstkPolarisTrackerTest3);
+  REGISTER_TEST(igstkPolarisTrackerTest4);
+  REGISTER_TEST(igstkPolarisTrackerToolTest);
 #endif
 
 #ifdef IGSTK_USE_MicronTracker
@@ -130,6 +140,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkFLTKWidgetTest2);
+  REGISTER_TEST(igstkMouseTrackerToolTest);
 
   // Tests depend on Qt
 #ifdef IGSTK_USE_Qt
@@ -145,6 +156,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
