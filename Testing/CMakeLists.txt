@@ -600,6 +600,7 @@ IF(IGSTK_USE_FLTK)
       igstkVascularNetworkReaderTest.cxx
       igstkMeshObjectTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
+      igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
       igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
     ) 
