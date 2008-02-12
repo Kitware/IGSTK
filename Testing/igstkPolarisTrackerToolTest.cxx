@@ -33,7 +33,7 @@
 #include "igstkPolarisTrackerTool.h"
 
 
-int igstkPolarisTrackerToolTest( int argc, char ** argv )
+int igstkPolarisTrackerToolTest( int argc, char * argv[] )
 {
   
   igstk::RealTimeClock::Initialize();
