@@ -76,9 +76,6 @@ ADD_TEST(igstkTimeStampTest ${IGSTK_TESTS} igstkTimeStampTest)
 ADD_TEST(igstkTokenTest ${IGSTK_TESTS} igstkTokenTest)
 ADD_TEST(igstkTrackerToolTest ${IGSTK_TESTS} igstkTrackerToolTest)
 ADD_TEST(igstkTrackerTest ${IGSTK_TESTS} igstkTrackerTest)
-ADD_TEST(igstkCircularSimulatedTrackerTest ${IGSTK_TESTS}
-igstkCircularSimulatedTrackerTest)
-
 ADD_TEST(igstkSpatialObjectCoordinateSystemTest ${IGSTK_TESTS} igstkSpatialObjectCoordinateSystemTest)
 ADD_TEST(igstkCoordinateSystemTest ${IGSTK_TESTS} igstkCoordinateSystemTest)
 ADD_TEST(igstkCoordinateSystemTest2 ${IGSTK_TESTS} igstkCoordinateSystemTest2)
@@ -242,6 +239,7 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
   ADD_TEST(igstkMouseTrackerTest ${IGSTK_TESTS} igstkMouseTrackerTest)
   ADD_TEST(igstkUltrasoundProbeObjectTest ${IGSTK_TESTS} igstkUltrasoundProbeObjectTest)
+  ADD_TEST(igstkCircularSimulatedTrackerTest ${IGSTK_TESTS} igstkCircularSimulatedTrackerTest)
 
   ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest 
               ${IGSTK_TESTS}
@@ -498,7 +496,6 @@ SET(BasicTests_SRCS
   igstkTokenTest.cxx
   igstkTrackerToolTest.cxx
   igstkTrackerTest.cxx
-  igstkCircularSimulatedTrackerTest.cxx
   igstkTransformTest.cxx  
   igstkVTKLoggerOutputTest.cxx
   igstkSpatialObjectCoordinateSystemTest.cxx
@@ -591,6 +588,7 @@ IF(IGSTK_USE_FLTK)
     igstkFLTKWidgetTest.cxx
     igstkFLTKWidgetTest2.cxx
     igstkMouseTrackerToolTest.cxx
+    igstkCircularSimulatedTrackerTest.cxx
   )    
   IF(IGSTK_DATA_ROOT)
     SET(BasicTests_SRCS

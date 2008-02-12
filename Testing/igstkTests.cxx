@@ -62,7 +62,6 @@ void RegisterTests()
   REGISTER_TEST(igstkTimeStampTest);
   REGISTER_TEST(igstkTokenTest);
   REGISTER_TEST(igstkTrackerTest);
-  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkTrackerToolTest);
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
@@ -141,6 +140,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKWidgetTest);
   REGISTER_TEST(igstkFLTKWidgetTest2);
   REGISTER_TEST(igstkMouseTrackerToolTest);
+  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
 
   // Tests depend on Qt
 #ifdef IGSTK_USE_Qt
