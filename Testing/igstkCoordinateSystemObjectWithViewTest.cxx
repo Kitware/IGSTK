@@ -180,6 +180,10 @@ int igstkCoordinateSystemObjectWithViewTest( int argc, char * argv [] )
   view2D->RequestResetCamera();
   view2D->RequestStart();
 
+  // Check FLTK events first - helps views to show 
+  // up inside the FLTK widget. 
+  Fl::check(); 
+
   // Do manual redraws
   for(unsigned int i=0; i<200; i++)
     {
