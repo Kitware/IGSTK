@@ -174,8 +174,14 @@ int igstkCTImageSpatialObjectRepresentationWindowLevelTest(
  
   representation->SetWindowLevel( window, level );
 
-  // Do manual redraws
   view2D->RequestResetCamera();
+
+  // Check for FLTK events before we start checking 
+  // IGSTK events. This should allow the widget to 
+  // be displayed first.
+  Fl::check(); 
+
+  // Do manual redraws
   for( unsigned int i=0; i < 20; i++)
     {
     Fl::wait( 0.05 );
