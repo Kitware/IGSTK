@@ -214,15 +214,15 @@ VideoGrabber::VideoGrabber() :
   igstkAddTransitionMacro( Grabbing,
                            RequestNumberOfVideoFrames,
                            Grabbing,
-                           ReportVideoOutputPadding );
+                           ReportNumberOfVideoFrames );
   igstkAddTransitionMacro( Grabbing,
                            RequestTimeTag,
                            Grabbing,
-                           ReportVideoOutputPadding );
+                           ReportTimeTag );
   igstkAddTransitionMacro( GrabberActive,
                            RequestTimeTag,
                            GrabberActive,
-                           ReportVideoOutputPadding );
+                           ReportTimeTag );
 
   /** Initialize */
   igstkAddTransitionMacro( Idle,
