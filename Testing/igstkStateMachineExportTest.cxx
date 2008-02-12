@@ -64,10 +64,6 @@
 #include "igstkConeObjectRepresentation.h"
 #include "igstkTubeObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
-#include "igstkPivotCalibration.h"
-#include "igstkPrincipalAxisCalibration.h"
-#include "igstkToolCalibration.h"
-#include "igstkToolCalibrationReader.h"
 #include "igstkRealTimeClock.h"
 #include "igstkMR3DImageToUS3DImageRegistration.h"
 #include "igstkView.h"
@@ -296,8 +292,6 @@ typedef ImageSpatialObjectRepresentation< ImageSpatialObjectType >
                                         ImageSpatialObjectRepresentationType;
 
 typedef SpatialObjectReader<3,float>                SpatialObjectReaderType;
-typedef ToolCalibration                             CalibrationType;
-typedef ToolCalibrationReader< CalibrationType >    CalibrationReaderType;
 
 class ObjectRepresentationSurrogate : public ObjectRepresentation
 {
@@ -396,12 +390,6 @@ int main( int argc, char * argv [] )
                                                    outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory,
-                                                                    skipLoops );
-  igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory,
-                                                                    skipLoops );
-  igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration,
-                                                   outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration,
                                                    outputDirectory, skipLoops );
 

@@ -12,9 +12,6 @@ SET(IGSTK_HEADS
   igstkVascularNetworkReader.h
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
-  igstkToolCalibrationReader.h
-  igstkToolCalibration.h
-  igstkPivotCalibrationReader.h
   igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
@@ -51,10 +48,8 @@ SET(IGSTK_HEADS
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkObject.h
-  igstkPivotCalibration.h
   igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
-  igstkPrincipalAxisCalibration.h
   igstkPulseGenerator.h
   igstkRenderWindowInteractor.h
   igstkRealTimeClock.h
@@ -137,8 +132,6 @@ SET(IGSTK_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
-  igstkToolCalibration.cxx
-  igstkPivotCalibrationReader.cxx
   igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
@@ -171,11 +164,9 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
-  igstkPivotCalibration.cxx
   igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
-  igstkPrincipalAxisCalibration.cxx
   igstkPulseGenerator.cxx
   igstkRenderWindowInteractor.cxx
   igstkRealTimeClock.cxx

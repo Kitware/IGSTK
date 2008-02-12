@@ -27,13 +27,10 @@
 
 void RegisterTests()
 {
-  REGISTER_TEST(igstkToolCalibrationReaderTest);
-  REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
   REGISTER_TEST(igstkUSImageObjectTest);
   REGISTER_TEST(igstkUSImageObjectRepresentationTest);
   REGISTER_TEST(igstkUSImageReaderTest);
-  REGISTER_TEST(igstkToolCalibrationTest);
   REGISTER_TEST(igstkVesselObjectTest);
 
   REGISTER_TEST(igstkBasicTrackerTest);
@@ -48,8 +45,6 @@ void RegisterTests()
   REGISTER_TEST(igstkMRImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkMRImageSpatialObjectTest);
   REGISTER_TEST(igstkMultipleOutputTest);  
-  REGISTER_TEST(igstkPivotCalibrationTest);
-  REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
 
   REGISTER_TEST(igstkObjectRepresentationRemovalTest);
   REGISTER_TEST(igstkTransductionMacroTest);

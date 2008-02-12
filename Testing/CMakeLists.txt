@@ -43,7 +43,6 @@ INCLUDE_DIRECTORIES (
 ADD_TEST(igstkVesselObjectTest ${IGSTK_TESTS} igstkVesselObjectTest)
 ADD_TEST(igstkUSImageObjectTest ${IGSTK_TESTS} igstkUSImageObjectTest)
 ADD_TEST(igstkUSImageObjectRepresentationTest ${IGSTK_TESTS} igstkUSImageObjectRepresentationTest)
-ADD_TEST(igstkToolCalibrationTest ${IGSTK_TESTS} igstkToolCalibrationTest)
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
 ADD_TEST(igstkBinaryDataTest ${IGSTK_TESTS} igstkBinaryDataTest)
 ADD_TEST(igstkCommunicationTest ${IGSTK_TESTS} igstkCommunicationTest)
@@ -56,7 +55,6 @@ ADD_TEST(igstkLandmark3DRegistrationErrorEstimatorTest ${IGSTK_TESTS} igstkLandm
 ADD_TEST(igstkMRImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkMRImageSpatialObjectRepresentationTest )
 ADD_TEST(igstkMRImageSpatialObjectTest ${IGSTK_TESTS} igstkMRImageSpatialObjectTest )          
 ADD_TEST(igstkMultipleOutputTest ${IGSTK_TESTS} igstkMultipleOutputTest)
-ADD_TEST(igstkPivotCalibrationTest ${IGSTK_TESTS} igstkPivotCalibrationTest)
 ADD_TEST(igstkObjectRepresentationRemovalTest ${IGSTK_TESTS}
 igstkObjectRepresentationRemovalTest)
 ADD_TEST(igstkTransductionMacroTest ${IGSTK_TESTS} igstkTransductionMacroTest)
@@ -64,7 +62,6 @@ ADD_TEST(igstkTransductionMacroTest ${IGSTK_TESTS} igstkTransductionMacroTest)
 ADD_TEST(igstkTrackerToolReferenceTest ${IGSTK_TESTS}
 igstkTrackerToolReferenceTest)
 
-ADD_TEST(igstkPrincipalAxisCalibrationTest ${IGSTK_TESTS} igstkPrincipalAxisCalibrationTest)
 ADD_TEST(igstkSpatialObjectTest ${IGSTK_TESTS} igstkSpatialObjectTest)
 ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
@@ -105,18 +102,6 @@ IF (IGSTK_DATA_ROOT)
 
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/USLiver)
-
-  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS} 
-             igstkToolCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             )
-
-  ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS} 
-             igstkPivotCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             ) 
 
   ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
@@ -468,7 +453,6 @@ SET(BasicTests_SRCS
   igstkVesselObjectTest.cxx 
   igstkUSImageObjectTest.cxx 
   igstkUSImageObjectRepresentationTest.cxx 
-  igstkToolCalibrationTest 
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -481,7 +465,6 @@ SET(BasicTests_SRCS
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
   igstkMultipleOutputTest.cxx    
-  igstkPivotCalibrationTest.cxx
 
   igstkObjectRepresentationRemovalTest.cxx
   igstkTransductionMacroTest.cxx
@@ -489,7 +472,6 @@ SET(BasicTests_SRCS
   igstkTrackerToolReferenceTest.cxx
   igstkTrackerToolReferenceAndImageTest.cxx
 
-  igstkPrincipalAxisCalibrationTest.cxx
   igstkSpatialObjectTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkStateMachineErrorsTest.cxx
@@ -546,8 +528,6 @@ IF(IGSTK_DATA_ROOT)
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkUSImageReaderTest.cxx 
-    igstkToolCalibrationReaderTest.cxx 
-    igstkPivotCalibrationReaderTest.cxx 
     igstkMR3DImageToUS3DImageRegistrationTest.cxx 
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
