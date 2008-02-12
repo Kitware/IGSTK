@@ -258,15 +258,12 @@ SET(IGSTKTests_SRCS
   igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkSpatialObjectTest.cxx
-  igstkSpatialObjectRepresentationVisibilityTest.cxx
-  igstkCoordinateSystemObjectWithViewTest.cxx
   igstkStateMachineErrorsTest.cxx
   igstkStateMachineTest.cxx
   igstkStringEventTest.cxx
   igstkTimeStampTest.cxx
   igstkTokenTest.cxx
   igstkTrackerTest.cxx
-  igstkCircularSimulatedTrackerTest.cxx
   igstkTrackerToolTest.cxx
   igstkTransformTest.cxx
   igstkVTKLoggerOutputTest.cxx
@@ -293,6 +290,7 @@ IF (IGSTK_USE_FLTK)
     igstkUltrasoundProbeObjectTest.cxx
     igstkFLTKWidgetTest.cxx
     igstkFLTKWidgetTest2.cxx
+    igstkCircularSimulatedTrackerTest.cxx
     igstkMouseTrackerToolTest.cxx
   )
 ENDIF (IGSTK_USE_FLTK)
@@ -321,6 +319,8 @@ FOREACH(TestFiles ${IGSTKTests_SRCS})
 ENDFOREACH(TestFiles)
 
 # Add generic test that require input data
+
+SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkSpatialObjectRepresentationVisibilityTest.cxx)
 ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTK_TESTS}
             --compare ${IGSTKSandbox_BASELINE_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
@@ -333,6 +333,8 @@ ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
         )
 
+IF(IGSTK_USE_FLTK)
+ SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkCoordinateSystemEventTestViewTest.cxx)
  ADD_TEST( igstkCoordinateSystemObjectWithViewTest
               ${IGSTK_TESTS}
               --compare ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
@@ -343,6 +345,9 @@ ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
               igstkCoordinateSystemObjectWithViewTest
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
               )
+ENDIF(IGSTK_USE_FLTK)
+
+
 
 #-----------------------------------------------------------------------------
 # Tests need data input
