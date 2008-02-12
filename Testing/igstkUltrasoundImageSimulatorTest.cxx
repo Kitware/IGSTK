@@ -124,7 +124,7 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   // instantiate FLTK widget
   FLTKWidgetType * fltkWidget2D =
-                    new FLTKWidgetType( 10,10,280,280,"2D View");
+                    new FLTKWidgetType( 10,10,512,512,"2D View");
   fltkWidget2D->RequestSetView( view2D );
 
 
@@ -151,10 +151,9 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
   view2D->RequestStart();
 
   Fl::wait(1.0);
+  // Check FLTK events first to get the widget displayed before the view.
+  Fl::check();   
   igstk::PulseGenerator::CheckTimeouts();
-
-  igstk::PulseGenerator::CheckTimeouts();
-  Fl::check();
 
   // Save screenshots in a file
   std::string filename;
