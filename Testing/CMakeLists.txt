@@ -78,6 +78,12 @@ SET(SandboxTests_SRCS
   igstkLandmarkUltrasoundCalibrationTest.cxx
   igstkSocketCommunicationTest.cxx
   igstkVascularNetworkObjectTest.cxx
+
+  igstkPivotCalibrationTest.cxx
+  igstkPrincipalAxisCalibrationTest.cxx
+  igstkToolCalibrationTest.cxx
+  igstkToolCalibrationReaderTest.cxx
+  igstkPivotCalibrationReaderTest.cxx
  )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -134,6 +140,11 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
+ADD_TEST( igstkPivotCalibrationTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationTest)
+ADD_TEST( igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS}
+igstkPrincipalAxisCalibrationTest)
+ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTest)
+
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 ADD_TEST( igstkTrackerToolReferenceTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceTest)
@@ -163,8 +174,17 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
 igstkPolarisTrackerToolTest)
 ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
 
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
-
+ADD_TEST( igstkToolCalibrationReaderTest ${IGSTKSandbox_TESTS}
+             igstkToolCalibrationReaderTest
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
+             )
+ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS}
+             igstkPivotCalibrationReaderTest
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
+             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
+             )
+ 
 IF(IGSTKSandbox_USE_FLTK)
 
 # FIXME: When done debugging, register it inside of the test drivers.
@@ -241,7 +261,6 @@ SET(IGSTKTests_SRCS
   igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
-  igstkToolCalibrationTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
   igstkCommunicationTest.cxx
@@ -254,8 +273,6 @@ SET(IGSTKTests_SRCS
   igstkMRImageSpatialObjectRepresentationTest.cxx
   igstkMRImageSpatialObjectTest.cxx
   igstkMultipleOutputTest.cxx
-  igstkPivotCalibrationTest.cxx
-  igstkPrincipalAxisCalibrationTest.cxx
   igstkSerialCommunicationTest.cxx
   igstkSpatialObjectTest.cxx
   igstkStateMachineErrorsTest.cxx
@@ -341,17 +358,8 @@ IF (IGSTK_DATA_ROOT)
 
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest
             ${IGSTK_DATA_ROOT}/Input/USLiver )
-  ADD_TEST( igstkToolCalibrationReaderTest ${IGSTK_TESTS}
-             igstkToolCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             )
-  ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTK_TESTS}
-             igstkPivotCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             )
-  ADD_TEST(igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS}
+
+ ADD_TEST(igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS}
            igstkMR3DImageToUS3DImageRegistrationTest
            ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
@@ -676,9 +684,7 @@ IF(IGSTK_DATA_ROOT)
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkUSImageReaderTest.cxx
-    igstkPivotCalibrationReaderTest.cxx
-    igstkToolCalibrationReaderTest.cxx
-    igstkMR3DImageToUS3DImageRegistrationTest.cxx
+   igstkMR3DImageToUS3DImageRegistrationTest.cxx
     igstkCTImageReaderTest.cxx
     igstkCTImageSpatialObjectRepresentationTest.cxx
     igstkDICOMImageReaderErrorsTest.cxx

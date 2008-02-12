@@ -24,10 +24,7 @@ SET(IGSTK_HEADS
   igstkVascularNetworkReader.h
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
-  igstkToolCalibrationReader.h
-  igstkToolCalibration.h
-  igstkPivotCalibrationReader.h
-  igstkAnnotation2D.h
+ igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
   igstkBoxObject.h
@@ -63,9 +60,7 @@ SET(IGSTK_HEADS
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkObject.h
-  igstkPivotCalibration.h
-  igstkPrincipalAxisCalibration.h
-  igstkPolarisTracker.h
+ igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkPulseGenerator.h
   igstkRealTimeClock.h
@@ -163,10 +158,7 @@ SET(IGSTK_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
-  igstkToolCalibration.cxx
-  igstkToolCalibrationReader.txx
-  igstkPivotCalibrationReader.cxx
-  igstkAnnotation2D.cxx
+ igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
   igstkBoxObject.cxx
@@ -198,9 +190,7 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
-  igstkPivotCalibration.cxx
-  igstkPrincipalAxisCalibration.cxx
-  igstkObjectRepresentation.cxx
+ igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
   igstkPulseGenerator.cxx
@@ -336,6 +326,11 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+  igstkToolCalibrationReader.h
+  igstkToolCalibration.h
+  igstkPivotCalibrationReader.h
+  igstkPivotCalibration.h
+  igstkPrincipalAxisCalibration.h
   igstkContourMeshObjectRepresentation.h
   igstkContourObjectRepresentation.h
   igstkContourVascularNetworkObjectRepresentation.h
@@ -378,6 +373,12 @@ ENDIF( WIN32 )
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
+  igstkToolCalibration.cxx
+  igstkToolCalibrationReader.txx
+  igstkPivotCalibrationReader.cxx
+  igstkPivotCalibration.cxx
+  igstkPrincipalAxisCalibration.cxx
+ 
   igstkContourMeshObjectRepresentation.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
