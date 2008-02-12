@@ -286,7 +286,7 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
          ${IGSTK_DATA_ROOT}/Input/E000192 )
 
     ADD_TEST( igstkAnnotation2DTest2 ${IGSTK_TESTS}
-       --compare ${IGSTK_BASELINE_DIR}/igstkAnnotation2DTest2ScreenShot.png
+       --compare ${BASELINE}/igstkAnnotation2DTest2ScreenShot.png
        ${IGSTK_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
               igstkAnnotation2DTest2
               ${IGSTK_DATA_ROOT}/Input/E000192
