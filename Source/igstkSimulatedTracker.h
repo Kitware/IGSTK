@@ -64,8 +64,6 @@ protected:
 
   virtual ResultType InternalStopTracking( void );
 
-  virtual ResultType InternalDeactivateTools( void );
-
   virtual ResultType InternalClose( void );
 
   /** Verify tracker tool information */

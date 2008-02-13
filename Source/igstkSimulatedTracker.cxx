@@ -54,11 +54,6 @@ SimulatedTracker::ResultType SimulatedTracker::InternalStopTracking( void )
   return SUCCESS;
 }
 
-SimulatedTracker::ResultType SimulatedTracker::InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
 SimulatedTracker::ResultType SimulatedTracker::InternalClose( void )
 {
   return SUCCESS;

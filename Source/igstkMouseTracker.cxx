@@ -57,11 +57,6 @@ MouseTracker::ResultType MouseTracker::InternalStopTracking( void )
   return SUCCESS;
 }
 
-MouseTracker::ResultType MouseTracker::InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
 MouseTracker::ResultType MouseTracker::InternalClose( void )
 {
   return SUCCESS;

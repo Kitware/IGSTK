@@ -58,11 +58,6 @@ QMouseTracker::ResultType QMouseTracker::InternalStopTracking( void )
   return SUCCESS;
 }
 
-QMouseTracker::ResultType QMouseTracker::InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
 QMouseTracker::ResultType QMouseTracker::InternalClose( void )
 {
   return SUCCESS;
