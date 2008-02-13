@@ -27,13 +27,6 @@
 
 void RegisterTests()
 {
-
-// Register test  
-//  FIXME
-//  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
-//  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterTest);
-//  REGISTER_TEST(igstkFlockOfBirdsCommandInterpreterFBBTest);
-//  REGISTER_TEST(igstkFlockOfBirdsTrackerTest);
   REGISTER_TEST(igstkMR3DImageToUS3DImageRegistrationTest);
   REGISTER_TEST(igstkUSImageObjectTest);
   REGISTER_TEST(igstkUSImageObjectRepresentationTest);
@@ -53,6 +46,9 @@ void RegisterTests()
   REGISTER_TEST(igstkMRImageSpatialObjectTest);
   REGISTER_TEST(igstkMultipleOutputTest);  
 
+  REGISTER_TEST(igstkObjectRepresentationRemovalTest);
+  REGISTER_TEST(igstkTransductionMacroTest);
+
   REGISTER_TEST(igstkSpatialObjectTest);
   REGISTER_TEST(igstkSerialCommunicationTest);
   REGISTER_TEST(igstkStateMachineErrorsTest);
@@ -65,6 +61,17 @@ void RegisterTests()
   REGISTER_TEST(igstkTransformTest);  
   REGISTER_TEST(igstkVTKLoggerOutputTest);
 
+  REGISTER_TEST(igstkTrackerToolReferenceTest);
+  REGISTER_TEST(igstkTrackerToolReferenceAndImageTest);
+
+  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest);
+  REGISTER_TEST(igstkCoordinateSystemTest2);
+  REGISTER_TEST(igstkCoordinateSystemTest3);
+  REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
+  REGISTER_TEST(igstkCoordinateSystemEventTest);
+  REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
+ 
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -75,10 +82,20 @@ void RegisterTests()
 #ifdef IGSTK_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkAuroraTrackerTest2);
+  REGISTER_TEST(igstkAuroraTrackerToolTest);
 #endif
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
+  REGISTER_TEST(igstkPolarisTrackerTest2);
+  REGISTER_TEST(igstkPolarisTrackerTest3);
+  REGISTER_TEST(igstkPolarisTrackerTest4);
+  REGISTER_TEST(igstkPolarisTrackerToolTest);
+#endif
+
+#ifdef IGSTK_USE_MicronTracker
+  REGISTER_TEST(igstkMicronTrackerTest);
+  REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif
 
   // Tests depend on data
@@ -96,7 +113,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
-#endif
+#endif 
 
   // Tests depend on FLTK
 #ifdef IGSTK_USE_FLTK
@@ -114,20 +131,32 @@ void RegisterTests()
   REGISTER_TEST(igstkViewTest);
   REGISTER_TEST(igstkViewRefreshRateTest);
   REGISTER_TEST(igstkUltrasoundProbeObjectTest);
-
   REGISTER_TEST(igstkSpatialObjectRepresentationVisibilityTest);
+  REGISTER_TEST(igstkFLTKWidgetTest);
+  REGISTER_TEST(igstkFLTKWidgetTest2);
+  REGISTER_TEST(igstkMouseTrackerToolTest);
+  REGISTER_TEST(igstkCircularSimulatedTrackerTest);
+  REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
 
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
+  REGISTER_TEST(igstkAnnotation2DTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
 #endif 
-  
 #endif
+  // Tests depend on Qt
+#ifdef IGSTK_USE_Qt
+  REGISTER_TEST(igstkQTWidgetTest);
+  REGISTER_TEST(igstkQTWidgetTest2);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
+#endif
+ 
   
 }

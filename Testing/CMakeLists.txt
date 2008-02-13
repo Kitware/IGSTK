@@ -309,6 +309,7 @@ IF (IGSTK_USE_FLTK)
     igstkFLTKWidgetTest2.cxx
     igstkCircularSimulatedTrackerTest.cxx
     igstkMouseTrackerToolTest.cxx
+    igstkCoordinateSystemObjectWithViewTest.cxx
   )
 ENDIF (IGSTK_USE_FLTK)
 
@@ -426,6 +427,18 @@ IF (IGSTK_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
 
+    ADD_TEST( igstkCoordinateSystemObjectWithViewTest
+              ${IGSTK_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkCoordinateSystemTestScreenshot1.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCoordinateSystemObjectWithViewTest
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
+              )
+
+ 
   # A first test to compare the one screenshot from a FLTKWidget
     ADD_TEST( igstkFLTKWidgetTest2_1
               ${IGSTK_TESTS}
