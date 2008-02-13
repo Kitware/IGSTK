@@ -265,9 +265,17 @@ void PolarisTrackerTool::RequestSetPartNumber( const std::string & partNumber )
   igstkLogMacro( DEBUG, 
     "igstk::PolarisTrackerTool::RequestSetPartNumber called ...\n");
 
-  m_PartNumberToBeSet = partNumber;
-  m_StateMachine.PushInput( m_ValidPartNumberInput );
-  m_StateMachine.ProcessInputs();
+  if ( partNumber != "" )
+    { 
+    m_PartNumberToBeSet = partNumber;
+    m_StateMachine.PushInput( m_ValidPartNumberInput );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_InValidPartNumberInput );
+    m_StateMachine.ProcessInputs();
+    }
 }
 
 /** Report wireless tracker tool selected */ 

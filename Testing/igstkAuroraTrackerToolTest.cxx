@@ -36,9 +36,40 @@ int igstkAuroraTrackerToolTest( int, char * [] )
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
+  //select a 5DOF type
+  trackerTool->RequestSelect5DOFTrackerTool();
+
+  //Set invalid port number
+  unsigned int invalidPortNumber = 10;
+  trackerTool->RequestSetPortNumber( invalidPortNumber );
+
+  //Set valid port number
+  unsigned int validPortNumber = 10;
+  trackerTool->RequestSetPortNumber( validPortNumber );
+
+  //set invalid channel number
+  unsigned int invalidChannelNumber = 10;
+  trackerTool->RequestSetChannelNumber( invalidChannelNumber );
+
+  //set valid channel number
+  unsigned int validChannelNumber = 0;
+  trackerTool->RequestSetChannelNumber( validChannelNumber );
+
+  //set invalid part number
+  std::string inValidPartNumber= "";
+  trackerTool->RequestSetPartNumber( inValidPartNumber );
+
+  //set valid part number
+  std::string validPartNumber= "NDI-156-11";
+  trackerTool->RequestSetPartNumber( validPartNumber );
+
+  //set SROM filename
+  std::string invalidSROMFileName = "";
+  trackerTool->RequestSetSROMFileName( invalidSROMFileName );
+ 
   trackerTool->RequestConfigure();
 
-  std::cout << trackerTool << std::endl;
+  trackerTool->Print( std::cout );
 
   return EXIT_SUCCESS;
 }

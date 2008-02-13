@@ -180,6 +180,19 @@ AuroraTrackerTool::~AuroraTrackerTool()
 void AuroraTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+
+  os << indent << "PortNumber: "   << this->m_PortNumber << std::endl;
+  os << indent << "SROMFileName: " << this->m_SROMFileName << std::endl;
+  
+  if( this->m_PartNumberSpecified )
+    {
+    os << indent << "Part number: "  << this->m_PartNumber << std::endl;
+    }
+
+  if( this->IsTrackerTool5DOF() )
+    {
+    os << indent << "Channel number" << m_ChannelNumber << std::endl;
+    }
 }
 
 /** Request to set 5DOF tracker tool. */
@@ -269,9 +282,17 @@ void AuroraTrackerTool::RequestSetPartNumber( const std::string & partNumber )
   igstkLogMacro( DEBUG, 
     "igstk::AuroraTrackerTool::RequestSetPartNumber called ...\n");
 
-  m_PartNumberToBeSet = partNumber;
-  m_StateMachine.PushInput( m_ValidPartNumberInput );
-  m_StateMachine.ProcessInputs();
+  if ( partNumber != "" )
+    { 
+    m_PartNumberToBeSet = partNumber;
+    m_StateMachine.PushInput( m_ValidPartNumberInput );
+    m_StateMachine.ProcessInputs();
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_InValidPartNumberInput );
+    m_StateMachine.ProcessInputs();
+    }
 }
 
 /** Set valid port number */ 

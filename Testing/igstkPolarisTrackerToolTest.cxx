@@ -81,6 +81,10 @@ int igstkPolarisTrackerToolTest( int argc, char * argv[] )
     trackerTool->RequestSelectWiredTrackerTool();
     }
 
+  //try setting invalid port number ( the maximum is 11 )
+  unsigned int invalidPortNumber = 255;
+  trackerTool->RequestSetPortNumber( invalidPortNumber );
+
   // Set the port number 
   std::istringstream inputstream( argv[1] );
   
@@ -90,11 +94,18 @@ int igstkPolarisTrackerToolTest( int argc, char * argv[] )
 
   trackerTool->RequestSetPortNumber( portNumber );
 
+
   // Set the SROM filename if specified 
   if ( argc >= 3 )
     {
     std::string sromFile = argv[2];
     trackerTool->RequestSetSROMFileName( sromFile );
+    }
+  else
+    {
+    // set invalid SROM filename for testing
+    std::string invalidSROMFile = "";
+    trackerTool->RequestSetSROMFileName( invalidSROMFile );
     }
 
   // set a tool part number if specified
@@ -103,10 +114,17 @@ int igstkPolarisTrackerToolTest( int argc, char * argv[] )
     std::string  partNumber = argv[3];
     trackerTool->RequestSetPartNumber( partNumber );
     }
+  else
+    {
+    std::string invalidPartNumber = "";
+    trackerTool->RequestSetPartNumber( invalidPartNumber );
+
+    std::string validPartNumber = "NDI-112-11";
+    trackerTool->RequestSetPartNumber( validPartNumber );
+    }
 
   trackerTool->RequestConfigure();
 
-  std::cout << trackerTool << std::endl;
-
+  trackerTool->Print( std::cout );
   return EXIT_SUCCESS;
 }
