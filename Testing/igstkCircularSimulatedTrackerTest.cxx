@@ -94,7 +94,8 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   ToolObjectType::Pointer toolObject = ToolObjectType::New();
   toolObject->SetSize( 1.0, 1.0, 1.0 );
 
-  ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
+  ToolRepresentationType::Pointer 
+              toolRepresentation = ToolRepresentationType::New();
   toolRepresentation->RequestSetBoxObject( toolObject );
   toolRepresentation->SetColor( 1.0, 0.5, 0.5 );
 
@@ -105,7 +106,8 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   targetObject->SetRadius( 0.1 );
   targetObject->SetHeight( 2.0 );
 
-  TargetRepresentationType::Pointer targetRepresentation = TargetRepresentationType::New();
+  TargetRepresentationType::Pointer 
+            targetRepresentation = TargetRepresentationType::New();
   targetRepresentation->RequestSetCylinderObject( targetObject );
   targetRepresentation->SetColor( 0.5, 0.5, 1.0 );
 
@@ -121,7 +123,9 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   const double transformUncertainty = 1.0;
   cylinderTransform.SetTranslation(
-    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
+                         translation, 
+                         transformUncertainty,
+                         igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Connect the objects in the scene to a coordinate reference system.
   tracker->RequestSetTransformAndParent( identity, axesObject );

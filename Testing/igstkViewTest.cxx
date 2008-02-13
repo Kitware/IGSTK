@@ -228,144 +228,144 @@ int igstkViewTest( int, char * [] )
     cylinderRepresentation->SetLogger( logger );
 
 #ifdef TESTView3D
-    { // create a scope for the view3D
+      { // create a scope for the view3D
 
-    // Test the 3D view
-    View3DType::Pointer view3D = View3DType::New();
+      // Test the 3D view
+      View3DType::Pointer view3D = View3DType::New();
 
-    // Use a surrogate Widget to initialize the view
-    igstk::DefaultWidget dummyWidget2(300,300);
-    dummyWidget2.RequestSetView( view3D );
+      // Use a surrogate Widget to initialize the view
+      igstk::DefaultWidget dummyWidget2(300,300);
+      dummyWidget2.RequestSetView( view3D );
 
-    ObserverType::Pointer viewObserver2 = ObserverType::New();
+      ObserverType::Pointer viewObserver2 = ObserverType::New();
 
-    bEnd = false;
-    bResize = false;
+      bEnd = false;
+      bResize = false;
 
-    viewObserver2->SetView( view3D );
-    viewObserver2->SetEndFlag( &bEnd );
-    viewObserver2->SetResizeFlag( &bResize );
-    viewObserver2->ResetCounter();
+      viewObserver2->SetView( view3D );
+      viewObserver2->SetEndFlag( &bEnd );
+      viewObserver2->SetResizeFlag( &bResize );
+      viewObserver2->ResetCounter();
 
-    worldReference->SetSize(1.0,1.0,1.0);
+      worldReference->SetSize(1.0,1.0,1.0);
 
-    view3D->SetRefreshRate( 30 );
-    view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
-    view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
-    view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
-    view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
-    // Exercise GetNameOfClass() method
-    std::cout << view3D->View3DType::Superclass::GetNameOfClass()
-              << std::endl;
+      view3D->SetRefreshRate( 30 );
+      view3D->SetRendererBackgroundColor( 0.8, 0.9, 0.8 );
+      view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
+      view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
+      view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
+      // Exercise GetNameOfClass() method
+      std::cout << view3D->View3DType::Superclass::GetNameOfClass()
+                << std::endl;
 
-    // Exercise Print() and PrintSelf() method.
-    view3D->Print( std::cout );
+      // Exercise Print() and PrintSelf() method.
+      view3D->Print( std::cout );
 
-    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    view3D->RequestSetTransformAndParent( transform, worldReference );
+      transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+      view3D->RequestSetTransformAndParent( transform, worldReference );
 
-    // Add the ellipsoid and cylinder representations to the view
-    view3D->RequestAddObject( AxesRepresentation );
-    view3D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( cylinderRepresentation );
-    view3D->RequestStart();
+      // Add the ellipsoid and cylinder representations to the view
+      view3D->RequestAddObject( AxesRepresentation );
+      view3D->RequestAddObject( ellipsoidRepresentation );
+      view3D->RequestAddObject( cylinderRepresentation );
+      view3D->RequestStart();
 
-    while( !bEnd )
-      {
-      igstk::PulseGenerator::CheckTimeouts();
-      }
-    view3D->RequestStop();
+      while( !bEnd )
+        {
+        igstk::PulseGenerator::CheckTimeouts();
+        }
+      view3D->RequestStop();
 
-    // Provide code coverage for the Proxy
-    dummyWidget2.TestProxy();
+      // Provide code coverage for the Proxy
+      dummyWidget2.TestProxy();
 
-    // Exercise the screenshot option with a valid filename
-    view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
+      // Exercise the screenshot option with a valid filename
+      view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
 
-    } // end of view3D scope
+      } // end of view3D scope
 #endif
 
 #ifdef TESTView2D
     // create a scope to destroy the view2D at the end
-    {
-    View2DType::Pointer view2D = View2DType::New();
-    view2D->SetLogger( logger );
-
-    // Exercise GetNameOfClass() method
-    std::cout << view2D->View2DType::Superclass::GetNameOfClass()
-              << std::endl;
-
-    igstk::DefaultWidget dummyWidget(300,300);
-    dummyWidget.RequestSetView( view2D );
-
-    // Create an observer in order to count number of view redraws
-    ObserverType::Pointer viewObserver = ObserverType::New();
-
-    bEnd = false;
-    bResize = false;
-
-    viewObserver->SetView( view2D );
-    viewObserver->SetEndFlag( &bEnd );
-    viewObserver->SetResizeFlag( &bResize );
-    viewObserver->ResetCounter();
-
-
-    view2D->SetRefreshRate( 30 );
-    view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
-    view2D->RequestSetOrientation( View2DType::Axial );
-
-    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    view2D->RequestSetTransformAndParent( transform, worldReference );
-
-    // Add the ellipsoid and cylinder representations to the view
-    view2D->RequestAddObject( AxesRepresentation );
-    view2D->RequestAddObject( ellipsoidRepresentation );
-    view2D->RequestAddObject( cylinderRepresentation );
-
-    // Remove the ellipsoid from the view
-    view2D->RequestRemoveObject( ellipsoidRepresentation );
-    // Add it back
-    view2D->RequestAddObject( ellipsoidRepresentation );
-
-    // Exercise and test the Print() methods
-    view2D->Print( std::cout, 0 );
-
-    std::cout << *view2D << std::endl;
-
-    // Auto adjust the camera zoom factor
-    view2D->RequestResetCamera();
-
-    view2D->RequestStart();
-
-    while( !bEnd )
       {
-      igstk::PulseGenerator::CheckTimeouts();
-      }
-    view2D->RequestStop();
+      View2DType::Pointer view2D = View2DType::New();
+      view2D->SetLogger( logger );
 
-    // Now test resizing the window:
-    viewObserver->ResetCounter();
-    view2D->RequestStart();
+      // Exercise GetNameOfClass() method
+      std::cout << view2D->View2DType::Superclass::GetNameOfClass()
+                << std::endl;
 
-    while(1)
-      {
-      igstk::PulseGenerator::CheckTimeouts();
-      if( bEnd )
+      igstk::DefaultWidget dummyWidget(300,300);
+      dummyWidget.RequestSetView( view2D );
+
+      // Create an observer in order to count number of view redraws
+      ObserverType::Pointer viewObserver = ObserverType::New();
+
+      bEnd = false;
+      bResize = false;
+
+      viewObserver->SetView( view2D );
+      viewObserver->SetEndFlag( &bEnd );
+      viewObserver->SetResizeFlag( &bResize );
+      viewObserver->ResetCounter();
+
+
+      view2D->SetRefreshRate( 30 );
+      view2D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
+      view2D->RequestSetOrientation( View2DType::Axial );
+
+      transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+      view2D->RequestSetTransformAndParent( transform, worldReference );
+
+      // Add the ellipsoid and cylinder representations to the view
+      view2D->RequestAddObject( AxesRepresentation );
+      view2D->RequestAddObject( ellipsoidRepresentation );
+      view2D->RequestAddObject( cylinderRepresentation );
+
+      // Remove the ellipsoid from the view
+      view2D->RequestRemoveObject( ellipsoidRepresentation );
+      // Add it back
+      view2D->RequestAddObject( ellipsoidRepresentation );
+
+      // Exercise and test the Print() methods
+      view2D->Print( std::cout, 0 );
+
+      std::cout << *view2D << std::endl;
+
+      // Auto adjust the camera zoom factor
+      view2D->RequestResetCamera();
+
+      view2D->RequestStart();
+
+      while( !bEnd )
         {
-        break;
+        igstk::PulseGenerator::CheckTimeouts();
+        }
+      view2D->RequestStop();
+
+      // Now test resizing the window:
+      viewObserver->ResetCounter();
+      view2D->RequestStart();
+
+      while(1)
+        {
+        igstk::PulseGenerator::CheckTimeouts();
+        if( bEnd )
+          {
+          break;
+          }
+
+        // modify the render window
+        if ( bResize )
+          {
+          bResize = false;
+          }
         }
 
-      // modify the render window
-      if ( bResize )
-        {
-        bResize = false;
-        }
-      }
-
-    // Exercise the screenshot option with a valid filename
-    view2D->RequestStop();
-    view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.png");
-    } // end of view2D scope
+      // Exercise the screenshot option with a valid filename
+      view2D->RequestStop();
+      view2D->RequestSaveScreenShot("igstkViewTestScreenshot1.png");
+      } // end of view2D scope
 #endif
 
     }

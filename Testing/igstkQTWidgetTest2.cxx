@@ -1,4 +1,5 @@
 /*=========================================================================
+
   Program:   Image Guided Surgery Software Toolkit
   Module:    igstkQTWidgetTest2.cxx
   Language:  C++
@@ -44,7 +45,7 @@ int igstkQTWidgetTest2( int argc, char * argv[])
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -68,7 +69,7 @@ int igstkQTWidgetTest2( int argc, char * argv[])
     qtMainWindow->setFixedSize(601,301);
 
     typedef igstk::QTWidget      QTWidgetType;
-    typedef igstk::View2D  View2DType;
+    typedef igstk::View2D        View2DType;
 
     //Instantiate widget and view component
     QTWidgetType * qtWidget2D = new QTWidgetType();
@@ -152,9 +153,9 @@ int igstkQTWidgetTest2( int argc, char * argv[])
 
     qtMainWindow->show();
 
-    for( unsigned int i=0; i <= 50 ; i++ )
+    for( unsigned int i=0; i <= 50; i++ )
       {
-      QTest::qWait(10);      
+      QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
       }
     

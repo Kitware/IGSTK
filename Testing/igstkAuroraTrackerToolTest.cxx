@@ -32,7 +32,7 @@ int igstkAuroraTrackerToolTest( int, char * [] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::AuroraTrackerTool           TrackerToolType;
-  typedef TrackerToolType::TransformType        TransformType;
+  typedef TrackerToolType::TransformType     TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 

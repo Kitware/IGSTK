@@ -39,7 +39,7 @@ int igstkPolarisTrackerToolTest( int argc, char * argv[] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   if( argc < 2 )
     {
@@ -65,7 +65,7 @@ int igstkPolarisTrackerToolTest( int argc, char * argv[] )
                                        // VTK OutputWindow -> logger
 
   typedef igstk::PolarisTrackerTool      TrackerToolType;
-  typedef TrackerToolType::TransformType    TransformType;
+  typedef TrackerToolType::TransformType TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 

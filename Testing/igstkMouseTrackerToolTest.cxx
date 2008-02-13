@@ -29,8 +29,6 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-
-
 #include "igstkMouseTrackerTool.h"
 
 
@@ -39,7 +37,7 @@ int igstkMouseTrackerToolTest( int argc, char * argv[]  )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   LoggerType::Pointer   logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -56,7 +54,7 @@ int igstkMouseTrackerToolTest( int argc, char * argv[]  )
 
 
   typedef igstk::MouseTrackerTool           TrackerToolType;
-  typedef TrackerToolType::TransformType        TransformType;
+  typedef TrackerToolType::TransformType    TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 

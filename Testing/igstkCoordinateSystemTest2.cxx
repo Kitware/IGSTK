@@ -311,7 +311,7 @@ int igstkCoordinateSystemTest2(int argc, char* argv[])
   // Reset internal boolean flags.
   rootObserver->Clear();
 
-  std::cout << "Checking transform from root to E : " ;
+  std::cout << "Checking transform from root to E : ";
   TimeStampType now;
   now.SetStartTimeNowAndExpireAfter(0);
 

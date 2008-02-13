@@ -1,4 +1,3 @@
-
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
@@ -33,11 +32,10 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 {
   /** This test is mainly for code coverage on the event results. */
   typedef igstk::CoordinateSystem              CoordinateSystemType;
-  typedef igstk::CoordinateSystemTransformToResult
-                                                        TransformToResult;
-  typedef igstk::CoordinateSystemTransformToErrorResult
-                                                        ErrorResult;
-  typedef igstk::Transform                              TransformType;
+
+  typedef igstk::CoordinateSystemTransformToResult         TransformToResult;
+  typedef igstk::CoordinateSystemTransformToErrorResult    ErrorResult;
+  typedef igstk::Transform                                 TransformType;
 
   CoordinateSystemType::Pointer cs1 = CoordinateSystemType::New();
   CoordinateSystemType::Pointer cs2 = CoordinateSystemType::New();

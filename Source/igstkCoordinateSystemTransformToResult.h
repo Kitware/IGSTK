@@ -68,15 +68,15 @@ public:
   void Initialize(const Transform& transform, 
                   const TSource * sourceObject,
                   const TDestination * destinationObject )
-  {
-  const CoordinateSystem * source =
-    Friends::CoordinateSystemHelper::GetCoordinateSystem( sourceObject );
+    {
+    const CoordinateSystem * source =
+      Friends::CoordinateSystemHelper::GetCoordinateSystem( sourceObject );
 
-  const CoordinateSystem * destination =
-    Friends::CoordinateSystemHelper::GetCoordinateSystem( destinationObject );
+    const CoordinateSystem * destination =
+      Friends::CoordinateSystemHelper::GetCoordinateSystem( destinationObject );
 
-  this->Initialize( transform, source, destination );
-  }
+    this->Initialize( transform, source, destination );
+    }
 
   /** Returns the computed transform. */
   const Transform & GetTransform() const;

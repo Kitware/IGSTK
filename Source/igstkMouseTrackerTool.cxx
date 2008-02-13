@@ -48,11 +48,13 @@ void MouseTrackerTool::RequestSetMouseName( const MouseNameType & mouseName )
   this->SetTrackerToolIdentifier( m_MouseName ); 
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if 
+ *  the tracker tool * is configured */ 
 bool
 MouseTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, 
+     "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 

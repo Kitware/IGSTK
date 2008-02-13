@@ -193,7 +193,8 @@ MicronTracker::LoadMarkerTemplates( void )
   this->m_Markers->clearTemplates();
 
   if( this->m_MarkerTemplatesDirectory == "" ||
-      !itksys::SystemTools::FileExists( this->m_MarkerTemplatesDirectory.c_str() ) )
+    !itksys::SystemTools::FileExists( 
+     this->m_MarkerTemplatesDirectory.c_str() ) )
     {
     igstkLogMacro( CRITICAL, "Marker templates directory is not properly set");
     return FAILURE;
@@ -714,7 +715,8 @@ void MicronTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   os << indent << "Number of tools: " << this->m_NumberOfTools << std::endl;
   os << indent << "Camera calibration files directory: "
                << this->m_CameraCalibrationFilesDirectory << std::endl;
-  os << indent << "Initialization file: " << this->m_InitializationFile << std::endl;
+  os << indent << "Initialization file: " 
+               << this->m_InitializationFile << std::endl;
   os << indent << "Markers template directory: "
                << this->m_MarkerTemplatesDirectory << std::endl;
   os << indent << "Camera Light coolness value : "

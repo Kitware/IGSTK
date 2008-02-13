@@ -62,9 +62,8 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
   typedef igstk::Object::LoggerType               LoggerType;
   typedef itk::StdStreamLogOutput                 LogOutputType;
-  typedef igstk::SpatialObject        
-                                                  CoordinateSystem;
-  typedef CoordinateSystem::Pointer      CoordinateSystemPointer;
+  typedef igstk::SpatialObject                    CoordinateSystem;
+  typedef CoordinateSystem::Pointer               CoordinateSystemPointer;
 
   LoggerType::Pointer logger = LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
@@ -85,8 +84,10 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
   // Scope temp and temp2
   {
-  igstk::Transform randomTransform1 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
-  igstk::Transform randomTransform2 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
+  igstk::Transform randomTransform1 
+                   = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
+  igstk::Transform randomTransform2 
+                   = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
 
   CoordinateSystemPointer temp = CoordinateSystem::New();
   // temp->SetLogger( logger );
@@ -101,8 +102,10 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
 
   for (int i = 1; i < depth; i++)
     {
-    igstk::Transform randomTransform1 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
-    igstk::Transform randomTransform2 = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
+    igstk::Transform randomTransform1
+                     = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
+    igstk::Transform randomTransform2
+                     = SpatialObjectCoordinateSystemTest3::GetRandomTransform();
 
     CoordinateSystemPointer temp = CoordinateSystem::New();
     // temp->SetLogger( logger );
@@ -152,4 +155,3 @@ int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
   return EXIT_SUCCESS;
 
 }
-

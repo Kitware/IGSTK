@@ -268,15 +268,15 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
       coordSystemAObserver3->Clear();
       trackerTool3->RequestGetTransformToParent();
       if (coordSystemAObserver3->GotTransform())
-        {
-        transform = coordSystemAObserver3->GetTransform();
-        position = transform.GetTranslation();
-        std::cout << "Trackertool transform using observer:" 
-                << trackerTool3->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
+      {
+      transform = coordSystemAObserver3->GetTransform();
+      position = transform.GetTranslation();
+      std::cout << "Trackertool transform using observer:" 
+              << trackerTool3->GetTrackerToolIdentifier() 
+              << "\t\t  Position = (" << position[0]
+              << "," << position[1] << "," << position[2]
+              << ")" << std::endl;
+      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

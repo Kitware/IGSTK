@@ -114,7 +114,7 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   ::itk::MutexLock::Pointer  m_BufferLock;
 
-    /** The "Communication" instance */
+  /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;
 
   /** The baud rate to use */

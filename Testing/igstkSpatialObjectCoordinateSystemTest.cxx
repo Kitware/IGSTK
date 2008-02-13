@@ -45,121 +45,126 @@ public:
 protected:
 
 
-DummyTracker():m_StateMachine(this)
-{
-}
-
-~DummyTracker()
-{
-}
-
-ResultType InternalOpen( void )
-{
-  return SUCCESS;
-}
-
-ResultType InternalStartTracking( void )
-{
-  return SUCCESS;
-}
-
-ResultType InternalReset( void )
-{
-  return SUCCESS;
-}
-
-ResultType InternalStopTracking( void )
-{
-  return SUCCESS;
-}
-
-ResultType InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
-ResultType InternalClose( void )
-{
-  return SUCCESS;
-}
-
-ResultType 
-VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
-
-ResultType 
-AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
-
-ResultType 
-RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
-{
-  return SUCCESS;
-}
-
-ResultType 
-InternalUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
-
-  static double x = 0;
-  static double y = 0;
-  static double z = 0;
-
-  typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
-
-  TrackerToolsContainerType trackerToolContainer = this->GetTrackerToolContainer();
- 
-  ConstIteratorType inputItr = trackerToolContainer.begin();
-  ConstIteratorType inputEnd = trackerToolContainer.end();
- 
-  typedef igstk::Transform   TransformType;
-  TransformType transform;
-
-  transform.SetToIdentity( this->GetValidityTime() );
-
-  typedef TransformType::VectorType PositionType;
-  PositionType  position;
-  position[0] = x;
-  position[1] = y;
-  position[2] = z;
-
-  typedef TransformType::ErrorType  ErrorType;
-  ErrorType errorValue = 0.5; // +/- half millimeter Uncertainty
-
-  transform.SetTranslation( position, errorValue, this->GetValidityTime() );
-
-  // set the raw transform in all the tracker tools
-  while( inputItr != inputEnd )
+  DummyTracker():m_StateMachine(this)
     {
-    this->SetTrackerToolRawTransform( trackerToolContainer[inputItr->first], transform );
-    this->SetTrackerToolTransformUpdate( trackerToolContainer[inputItr->first], true );
-    ++inputItr;
     }
- 
-  x += 0.1;
-  y += 0.1;
-  z += 0.1;
 
-  return SUCCESS;
-}
+  ~DummyTracker()
+    {
+    }
 
-ResultType 
-InternalThreadedUpdateStatus( void )
-{
-  igstkLogMacro( DEBUG, "DummyTracker::InternalThreadedUpdateStatus called ...\n");
-  return SUCCESS;
-}
+  ResultType InternalOpen( void )
+    {
+    return SUCCESS;
+    }
 
-/** Print Self function */
-void PrintSelf( std::ostream& os, itk::Indent indent ) const
-{
-  Superclass::PrintSelf(os, indent);
-}
+  ResultType InternalStartTracking( void )
+    {
+    return SUCCESS;
+    }
+
+  ResultType InternalReset( void )
+    {
+    return SUCCESS;
+    }
+
+  ResultType InternalStopTracking( void )
+    {
+    return SUCCESS;
+    }
+
+  ResultType InternalDeactivateTools( void )
+    {
+    return SUCCESS;
+    }
+
+  ResultType InternalClose( void )
+    {
+    return SUCCESS;
+    }
+
+  ResultType 
+  VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
+
+  ResultType 
+  AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
+
+  ResultType 
+  RemoveTrackerToolFromInternalDataContainers
+  ( const TrackerToolType * trackerTool )
+    {
+    return SUCCESS;
+    }
+
+  ResultType 
+  InternalUpdateStatus( void )
+    {
+    igstkLogMacro( DEBUG, "DummyTracker::InternalUpdateStatus called ...\n");
+
+    static double x = 0;
+    static double y = 0;
+    static double z = 0;
+
+    typedef TrackerToolsContainerType::const_iterator  ConstIteratorType;
+
+    TrackerToolsContainerType 
+            trackerToolContainer = this->GetTrackerToolContainer();
+   
+    ConstIteratorType inputItr = trackerToolContainer.begin();
+    ConstIteratorType inputEnd = trackerToolContainer.end();
+   
+    typedef igstk::Transform   TransformType;
+    TransformType transform;
+
+    transform.SetToIdentity( this->GetValidityTime() );
+
+    typedef TransformType::VectorType PositionType;
+    PositionType  position;
+    position[0] = x;
+    position[1] = y;
+    position[2] = z;
+
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = 0.5; // +/- half millimeter Uncertainty
+
+    transform.SetTranslation( position, errorValue, this->GetValidityTime() );
+
+    // set the raw transform in all the tracker tools
+    while( inputItr != inputEnd )
+      {
+      this->SetTrackerToolRawTransform( 
+            trackerToolContainer[inputItr->first], transform );
+      this->SetTrackerToolTransformUpdate( 
+             trackerToolContainer[inputItr->first], true );
+      ++inputItr;
+      }
+   
+    x += 0.1;
+    y += 0.1;
+    z += 0.1;
+
+    return SUCCESS;
+    }
+
+  ResultType 
+  InternalThreadedUpdateStatus( void )
+    {
+    igstkLogMacro( DEBUG,
+                    "DummyTracker::InternalThreadedUpdateStatus called ...\n");
+    return SUCCESS;
+    }
+
+  /** Print Self function */
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const
+    {
+    Superclass::PrintSelf(os, indent);
+    }
 
 };
 
@@ -171,7 +176,7 @@ public:
 
   /** Standard class typedefs. */
   typedef CoordinateSystemObserver         Self;
-  typedef ::itk::Command                            Superclass;
+  typedef ::itk::Command                   Superclass;
   typedef ::itk::SmartPointer<Self>        Pointer;
   typedef ::itk::SmartPointer<const Self>  ConstPointer;
   
@@ -254,10 +259,12 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
 {
   typedef igstk::EllipsoidObject              EllipsoidObjectType;
   typedef igstk::EllipsoidObject::Pointer     EllipsoidObjectPointer;
+
   typedef igstk::SpatialObjectCoordinateSystemTest::CoordinateSystemObserver 
                                                                 ObserverType;
+
   typedef ObserverType::EventType             CoordinateSystemEventType;
-  typedef igstk::Object::LoggerType             LoggerType;
+  typedef igstk::Object::LoggerType           LoggerType;
   typedef itk::StdStreamLogOutput             LogOutputType;
   
   const double tol = 1e-15;
@@ -397,7 +404,8 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
                       igstk::Transform::TransformCompose(
                               transformE2ToE1.GetInverse(), viewToParent);
 
-    if (viewToEllipsoid2Obs.IsNumericallyEquivalent( viewToEllipsoid2, tol ) == true)
+    if (viewToEllipsoid2Obs.IsNumericallyEquivalent( 
+                          viewToEllipsoid2, tol ) == true)
       {
       std::cout << "passed." << std::endl;
       }
@@ -427,8 +435,11 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     {
     igstk::Transform trackerToEllipsoid1Obs = trackerObserver->GetTransform();
 
-    igstk::Transform trackerToEllipsoid = igstk::Transform::TransformCompose( viewToParent, trackerToParent);
-    if (trackerToEllipsoid1Obs.IsNumericallyEquivalent( trackerToEllipsoid, tol ) == true)
+    igstk::Transform 
+               trackerToEllipsoid = igstk::Transform::TransformCompose( 
+                                                 viewToParent, trackerToParent);
+    if (trackerToEllipsoid1Obs.IsNumericallyEquivalent( 
+                                     trackerToEllipsoid, tol ) == true)
       {
       std::cout << "passed." << std::endl;
       }
@@ -450,9 +461,10 @@ int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
     {
     igstk::Transform trackerToParentObs = trackerObserver->GetTransform();
 
-    if (trackerToParentObs.IsNumericallyEquivalent( trackerToParent, tol ) == true)
+    if (trackerToParentObs.IsNumericallyEquivalent( 
+                                trackerToParent, tol ) == true)
       {
-      std::cout << "passed." << std::endl;      
+      std::cout << "passed." << std::endl;
       }
     else
       {

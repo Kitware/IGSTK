@@ -47,22 +47,22 @@ MicronTrackerTool::MicronTrackerTool():m_StateMachine(this)
   igstkAddTransitionMacro( Idle,
                            ValidMarkerName,
                            MarkerNameSpecified,
-                           SetMarkerName );     
+                           SetMarkerName );
 
   igstkAddTransitionMacro( Idle,
                            InValidMarkerName,
                            Idle,
-                           ReportInvalidMarkerNameSpecified );     
+                           ReportInvalidMarkerNameSpecified );
 
   // Transitions from MarkerName specified
   igstkAddTransitionMacro( MarkerNameSpecified,
                            ValidMarkerName,
                            MarkerNameSpecified,
-                           ReportInvalidRequest );     
+                           ReportInvalidRequest );
   igstkAddTransitionMacro( MarkerNameSpecified,
                            InValidMarkerName,
                            MarkerNameSpecified,
-                           ReportInvalidRequest );     
+                           ReportInvalidRequest );
 
   // Inputs to the state machine
   igstkSetInitialStateMacro( Idle );

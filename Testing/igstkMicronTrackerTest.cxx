@@ -40,8 +40,8 @@ class MicronTrackerTrackerTestCommand : public itk::Command
 {
 public:
   typedef  MicronTrackerTrackerTestCommand   Self;
-  typedef  itk::Command                Superclass;
-  typedef itk::SmartPointer<Self>      Pointer;
+  typedef  itk::Command                      Superclass;
+  typedef itk::SmartPointer<Self>            Pointer;
   itkNewMacro( Self );
 protected:
   MicronTrackerTrackerTestCommand() {};
@@ -70,10 +70,10 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   MicronTrackerTrackerTestCommand::Pointer 
-                                my_command = MicronTrackerTrackerTestCommand::New();
+                     my_command = MicronTrackerTrackerTestCommand::New();
 
   if( argc < 5 )
     {
@@ -154,7 +154,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<400; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 
@@ -200,7 +200,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
 
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<400; i++)
+  for(unsigned int i=0; i<100; i++)
     {
     tracker->RequestUpdateStatus();
 

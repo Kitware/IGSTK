@@ -46,7 +46,7 @@ int igstkCoordinateSystemObjectWithViewTest( int argc, char * argv [] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType     LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();

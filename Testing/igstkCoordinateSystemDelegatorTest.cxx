@@ -32,7 +32,7 @@ int igstkCoordinateSystemDelegatorTest(int argc, char* argv[])
   typedef itk::StdStreamLogOutput           LogOutputType;
   typedef igstk::CoordinateSystemDelegator
                                             CoordinateSystemDelegator;
-  typedef CoordinateSystemDelegator::Pointer      
+  typedef CoordinateSystemDelegator::Pointer
                                             CoordinateSystemDelegatorPointer;
 
   LoggerType::Pointer logger = LoggerType::New();

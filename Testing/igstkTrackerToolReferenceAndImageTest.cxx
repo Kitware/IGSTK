@@ -112,14 +112,16 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   ToolObjectType::Pointer toolObject = ToolObjectType::New();
   toolObject->SetSize( 1.0, 1.0, 1.0 );
 
-  ToolRepresentationType::Pointer toolRepresentation = ToolRepresentationType::New();
+  ToolRepresentationType::Pointer 
+                    toolRepresentation = ToolRepresentationType::New();
   toolRepresentation->RequestSetBoxObject( toolObject );
   toolRepresentation->SetColor( 1.0, 0.5, 0.5 );
 
   ToolObjectType::Pointer referenceToolObject = ToolObjectType::New();
   referenceToolObject->SetSize( 1.0, 1.0, 1.0 );
 
-  ToolRepresentationType::Pointer referenceToolRepresentation = ToolRepresentationType::New();
+  ToolRepresentationType::Pointer 
+                  referenceToolRepresentation = ToolRepresentationType::New();
   referenceToolRepresentation->RequestSetBoxObject( referenceToolObject );
   referenceToolRepresentation->SetColor( 0.5, 1.0, 0.5 );
 
@@ -131,7 +133,8 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   targetObject->SetRadius( 0.1 );
   targetObject->SetHeight( 2.0 );
 
-  TargetRepresentationType::Pointer targetRepresentation = TargetRepresentationType::New();
+  TargetRepresentationType::Pointer 
+                  targetRepresentation = TargetRepresentationType::New();
   targetRepresentation->RequestSetCylinderObject( targetObject );
   targetRepresentation->SetColor( 0.5, 0.5, 1.0 );
 
@@ -147,12 +150,15 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   const double transformUncertainty = 1.0;
   cylinderTransform.SetTranslation(
-    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
 
   // Connect the objects in the scene to a coordinate reference system.
   tracker->RequestSetTransformAndParent( identity, axesObject );
   toolObject->RequestSetTransformAndParent( identity, trackerTool );
-  referenceToolObject->RequestSetTransformAndParent( identity, referenceTrackerTool );
+  referenceToolObject->RequestSetTransformAndParent( identity, 
+                                                      referenceTrackerTool );
   targetObject->RequestSetTransformAndParent( cylinderTransform, axesObject );
   view3D->RequestSetTransformAndParent( identity, axesObject );
 
@@ -163,7 +169,9 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   translation[2] = -2.0;
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   calibrationToolTransform.SetTranslation(
-    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
+                                  translation,
+                                  transformUncertainty,
+                                  igstk::TimeStamp::GetLongestPossibleTime() );
   trackerTool->SetCalibrationTransform( calibrationToolTransform );
 
   igstk::Transform calibrationReferenceToolTransform;
@@ -171,8 +179,12 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   translation[1] =    0;
   translation[2] =  2.0;
   calibrationToolTransform.SetTranslation(
-    translation, transformUncertainty, igstk::TimeStamp::GetLongestPossibleTime() );
-  referenceTrackerTool->SetCalibrationTransform( calibrationReferenceToolTransform );
+                                  translation,
+                                  transformUncertainty,
+                                  igstk::TimeStamp::GetLongestPossibleTime() );
+
+  referenceTrackerTool->SetCalibrationTransform( 
+                                    calibrationReferenceToolTransform );
 
   view3D->SetRefreshRate( 30 );
   view3D->SetRendererBackgroundColor( 0.8, 0.8, 0.9 );
@@ -311,7 +323,8 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   view3D->RequestStop();
   tracker->RequestStopTracking();
 
-  std::cout << "Transforms with respect to the reference tracker tool" << std::endl;
+  std::cout << "Transforms with respect to the reference tracker tool" 
+            << std::endl;
 
   tracker->RequestStartTracking();
   view3D->RequestStart();

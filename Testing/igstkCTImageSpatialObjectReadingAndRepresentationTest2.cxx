@@ -49,7 +49,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
     }
 
   typedef igstk::Object::LoggerType     LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
 
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -188,8 +188,6 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest2(
   std::string filename;
   filename = argv[2];
   view2D->RequestSaveScreenShot( filename );
-
-
 
   // Do manual redraws for each orientation while changing slice numbers
     {

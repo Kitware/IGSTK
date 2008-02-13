@@ -42,8 +42,8 @@ class PolarisTrackerTest2Command : public itk::Command
 {
 public:
   typedef  PolarisTrackerTest2Command   Self;
-  typedef  itk::Command                Superclass;
-  typedef itk::SmartPointer<Self>      Pointer;
+  typedef  itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>       Pointer;
   itkNewMacro( Self );
 protected:
   PolarisTrackerTest2Command() {};
@@ -73,7 +73,7 @@ int igstkPolarisTrackerTest2( int argc, char * argv[] )
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput       LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
 
   if( argc < 3 )
     {

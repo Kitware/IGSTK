@@ -39,15 +39,15 @@ class FLTKWidgetTest2 : public igstk::FLTKWidget
 {
   typedef igstk::FLTKWidget Superclass;
 
-  public:
+public:
   void resize( int x, int y, int width, int height )
     {
     Superclass::resize( x, y, width, height ); 
-    }    
+    }
 
-  FLTKWidgetTest2( int x, int y, int width, int height, const char * name) : Superclass( x, y, width, height,name )
+  FLTKWidgetTest2( int x, int y, int width, int height, const char * name) 
+       : Superclass( x, y, width, height,name )
     {
-
     } 
 };
 
@@ -69,7 +69,7 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
   bool bEnd = false;
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -129,7 +129,8 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     View2DType::Pointer view2D = View2DType::New();
 
     igstk::Transform identityTransform;
-    identityTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    identityTransform.SetToIdentity( 
+            igstk::TimeStamp::GetLongestPossibleTime());
 
     view2D->RequestSetTransformAndParent( identityTransform, worldReference );
    

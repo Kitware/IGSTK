@@ -1,4 +1,5 @@
 /*=========================================================================
+ 
   Program:   Image Guided Surgery Software Toolkit
   Module:    igstkQTWidgetTest.cxx
   Language:  C++
@@ -100,9 +101,8 @@ public:
 private:
   
   unsigned long       m_PulseCounter;
-  ::igstk::View *  m_View;
+  ::igstk::View *     m_View;
   bool *              m_End;
-
 };
 
 }
@@ -116,7 +116,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
   bool bEnd = false;
 
   typedef igstk::Object::LoggerType   LoggerType;
-  typedef itk::StdStreamLogOutput  LogOutputType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
   
   // logger object created for logging mouse activities
   LoggerType::Pointer   logger = LoggerType::New();
@@ -225,7 +225,7 @@ int igstkQTWidgetTest( int argc, char * argv[])
     
     while(1)
       {
-      QTest::qWait(10);      
+      QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
       if( bEnd )
         {
@@ -235,7 +235,6 @@ int igstkQTWidgetTest( int argc, char * argv[])
     
     delete qtWidget2D;
     delete qtMainWindow;
-
     }
   catch(...)
     {

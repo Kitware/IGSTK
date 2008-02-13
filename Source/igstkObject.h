@@ -114,7 +114,7 @@ private:
       {
       }
 
-      bool operator()( const igstk::Object::ObservedObjectTagPair& objTagPair )
+    bool operator()( const igstk::Object::ObservedObjectTagPair& objTagPair )
       {
       if (objTagPair.first == m_TargetObject)
         {
@@ -127,7 +127,7 @@ private:
       }
 
     private:
-      const itk::Object* m_TargetObject;
+    const itk::Object* m_TargetObject;
     };
 
 };

@@ -56,7 +56,7 @@ protected:
   SimulatedTrackerTool();
   ~SimulatedTrackerTool();
 
- /** Print object information */
+  /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
 private:

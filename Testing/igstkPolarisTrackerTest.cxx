@@ -153,8 +153,6 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
-
-
   // instantiate and attach wireless tracker tool
   std::cout << "Instantiate second tracker tool: " << std::endl;
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
@@ -214,9 +212,6 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
       }
-
-
-
     }
   
   std::cout << "RequestStopTracking()" << std::endl;

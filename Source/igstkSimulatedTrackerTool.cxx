@@ -48,11 +48,13 @@ void SimulatedTrackerTool::RequestSetName( const NameType & name )
   this->SetTrackerToolIdentifier( m_Name ); 
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool * is configured */ 
+/** The "CheckIfTrackerToolIsConfigured" method returns true if 
+ * the tracker tool * is configured */ 
 bool
 SimulatedTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG, "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, 
+        "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
@@ -70,7 +72,8 @@ SimulatedTrackerTool::RequestAttachToTracker( SimulatedTracker *  tracker )
 
 
 /** Print Self function */
-void SimulatedTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void 
+SimulatedTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 }

@@ -239,7 +239,7 @@ int main(int , char** )
 
   typedef igstk::MouseTrackerTool           TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
-  typedef igstk::TransformObserver           ObserverType;
+  typedef igstk::TransformObserver          ObserverType;
 
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();

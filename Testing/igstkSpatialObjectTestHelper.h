@@ -15,6 +15,15 @@
 
 =========================================================================*/
 
+#ifndef __igstkSpatialObjectTestHelper_h
+#define __igstkSpatialObjectTestHelper_h
+
+#if defined(_MSC_VER)
+//  Warning about: identifier was truncated to '255' characters
+//  in the debug information (MVC6.0 Debug)
+#pragma warning( disable : 4786 )
+#endif
+
 #include <iostream>
 
 #include "igstkConfigure.h"
@@ -315,3 +324,5 @@ private:
 };
 
 } // end namespace igstk
+
+#endif // __igstkSpatialObjectTestHelper_h
