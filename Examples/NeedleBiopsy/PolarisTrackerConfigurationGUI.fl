@@ -103,7 +103,7 @@ if( fileName )
           }
         }
         Fl_Round_Button SwitchZAxes {
-          label {Switch Z axis?}
+          label {Fip Z axis?} selected
           xywh {55 244 25 25} down_box ROUND_DOWN_BOX
         }
         Fl_Group {} {open
@@ -276,7 +276,6 @@ if(UseReferenceTool->value())
 }
 
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Polaris );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
-    }
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
   }
 } 

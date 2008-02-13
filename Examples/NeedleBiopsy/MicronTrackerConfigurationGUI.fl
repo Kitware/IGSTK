@@ -59,7 +59,7 @@ else
         }
         Fl_Round_Button SwitchZAxes {
           label {Switch Z axis?}
-          xywh {55 296 25 25} down_box ROUND_DOWN_BOX
+          xywh {55 296 25 25} down_box ROUND_DOWN_BOX value 1
         }
       }
       Fl_Button {} {
@@ -163,7 +163,8 @@ igstk::Transform::VersorType rotation;
 rotation.SetIdentity();
 if (SwitchZAxes->value())
   {
-  rotation.Set(1.0, 0.0, 0.0, 0.0);
+  //rotation.Set(1.0, 0.0, 0.0, 0.0);
+  rotation.SetRotationAroundY(-90);
   }
  
 toolCalibrationTransform.SetTranslationAndRotation( translation, rotation, 0.1, igstk::TimeStamp::GetLongestPossibleTime());

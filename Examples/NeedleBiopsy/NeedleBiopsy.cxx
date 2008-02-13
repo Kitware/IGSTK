@@ -31,6 +31,14 @@ PURPOSE.  See the above copyright notices for more information.
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy()
 {
+  // debugging
+  std::ofstream loggerFile;
+  loggerFile.open( "logMicron.txt" );
+  logger = LoggerType::New();
+  logOutput = LogOutputType::New();  
+  logOutput->SetStream( loggerFile );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( itk::Logger::DEBUG);
 
   /** Setup logger, for all other igstk components. */
   m_Logger   = LoggerType::New();
@@ -486,6 +494,11 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       igstk::TrackerTool::Pointer refTool = 
                                      m_TrackerInitializer->GetReferenceTool();
       
+      // debugging
+      logger->SetPriorityLevel( LoggerType::DEBUG );
+      //tracker->SetLogger( logger );
+      //tool->SetLogger( logger );
+
       // Connect the scene graph with an identity transform first
       igstk::Transform transform;
       transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
@@ -566,7 +579,9 @@ void NeedleBiopsy::RequestDisconnetTracker()
 
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
-  RequestStopTracking();
+  //RequestStopTracking();
+  //Sleep( 500 );
+
   if (m_TrackerToolList.size() != 0)
     {
       for (int i=0; i<m_TrackerToolList.size(); i++)
@@ -585,7 +600,7 @@ void NeedleBiopsy::ChangeActiveTrackerTool()
       m_Needle->RequestSetTransformAndParent( transform, m_ActiveTool);
       m_NeedleTip->RequestSetTransformAndParent( transform, m_ActiveTool);
     }
-  RequestStartTracking();
+  //RequestStartTracking();
 }
 
 void NeedleBiopsy::SetTrackerFiducialPoint()
@@ -639,13 +654,14 @@ void NeedleBiopsy::RequestRegistration()
                                             RegistrationErrorObserver::New();
       m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
       m_LandmarkRegistration->RequestGetRMSError();
-      if( !lRmscb->GotRegistrationError() )
+      if( lRmscb->GotRegistrationError() )
       {
-        std::cout << lRmscb->GetRegistrationError();
+        std::cout << "\nRegistration Error" << 
+                                  lRmscb->GetRegistrationError() << "\n";
       }
 
     igstk::Transform transform = lrtcb->GetTransform();
-    std::cout << transform <<"\n";
+    std::cout << transform << "\n";
     if ( m_TrackerInitializer->HasReferenceTool() )
     {
       m_TrackerInitializer->GetReferenceTool()
@@ -662,7 +678,7 @@ void NeedleBiopsy::RequestRegistration()
     TrackerList->value(m_TrackerInitializerList.size()-1);
     TrackerToolList->value(m_TrackerInitializerList.size()-1);
     ChangeActiveTrackerTool();
-    RequestStartTracking();
+    //RequestStartTracking();
     }
   else
   {
@@ -824,15 +840,20 @@ void NeedleBiopsy::Tracking(const itk::EventObject & event )
     transformObserver->ObserveTransformEventsFrom( m_ActiveTool );
     transformObserver->Clear();
     m_ActiveTool->RequestComputeTransformTo( m_WorldReference );
+    std::cout << "Tracking...\n";
     if ( transformObserver->GotTransform() )
       {
+      std::cout << "Got transform...\n";
       ImageSpatialObjectType::PointType point = 
                       TransformToPoint( transformObserver->GetTransform() );
+      std::cout<< transformObserver->GetTransform();
 
       if( m_ImageSpatialObject->IsInside( point ) )
-      {
+      { 
+        std::cout << "Is inside...\n";
         ImageSpatialObjectType::IndexType index;
         m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
+        std::cout << index << "\n";
         ResliceImage( index );
         }
       }

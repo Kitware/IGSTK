@@ -204,6 +204,12 @@ private:
   void ResliceImage( IndexType index );  
   void NullAction(const itk::EventObject & event ){};
 
+  // debugging
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput       LogOutputType;
+  LoggerType::Pointer   logger;
+  LogOutputType::Pointer logOutput; 
+
 };
 
 #endif
