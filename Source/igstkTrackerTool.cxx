@@ -34,11 +34,11 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
   const TimePeriodType longestPossibleTime = 
     igstk::TimeStamp::GetLongestPossibleTime();
 
-  m_RawTransform.SetToIdentity( longestPossibleTime );  
-  m_CalibratedTransform.SetToIdentity( longestPossibleTime );
-  m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
+  this->m_RawTransform.SetToIdentity( longestPossibleTime );  
+  this->m_CalibratedTransform.SetToIdentity( longestPossibleTime );
+  this->m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
 
-  m_Updated = false; // not yet updated
+  this->m_Updated = false; // not yet updated
 
   // States
   igstkAddStateMacro( Idle );
@@ -195,7 +195,7 @@ TrackerTool::RequestAttachToTracker( Tracker * tracker )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::RequestAttachToTracker called...\n");
 
-  m_TrackerToAttachTo = tracker;
+  this->m_TrackerToAttachTo = tracker;
   igstkPushInputMacro( AttachToolToTracker );
   this->m_StateMachine.ProcessInputs();
 
@@ -218,7 +218,7 @@ TrackerTool::SetTrackerToolIdentifier( const std::string identifier )
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::SetTrackerToolIdentifier called...\n");
-  m_TrackerToolIdentifier = identifier;
+  this->m_TrackerToolIdentifier = identifier;
 }
 
 /** The "GetTrackerToolIdentifier" method assigns an identifier 
@@ -228,7 +228,7 @@ TrackerTool::GetTrackerToolIdentifier( ) const
 {
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::GetTrackerToolIdentifier called...\n");
-  return m_TrackerToolIdentifier;
+  return this->m_TrackerToolIdentifier;
 }
 
 /** The "AttemptToConfigureProcessing" method attempts to configure 
@@ -240,9 +240,9 @@ void TrackerTool::AttemptToConfigureProcessing( void )
 
   bool  result = this->CheckIfTrackerToolIsConfigured();
   
-  m_StateMachine.PushInputBoolean( result,
-                                   m_ToolConfigurationSuccessInput,
-                                   m_ToolConfigurationFailureInput );
+  this->m_StateMachine.PushInputBoolean( result,
+                                   this->m_ToolConfigurationSuccessInput,
+                                   this->m_ToolConfigurationFailureInput );
 }
 
 /** The "AttemptToAttachTrackerToolToTracker" method attempts to attach the
@@ -252,7 +252,7 @@ void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  m_TrackerToAttachTo->RequestAttachTool( this );
+  this->m_TrackerToAttachTo->RequestAttachTool( this );
 }
 
 /** Push AttachmentToTrackerSuccess input to the tracker tool*/ 
@@ -283,10 +283,10 @@ void TrackerTool::AttemptToDetachTrackerToolFromTrackerProcessing( void )
     "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
   //implement a method in the tracker class to detach the tool
-  bool result = m_TrackerToAttachTo->RequestRemoveTool( this ); 
-  m_StateMachine.PushInputBoolean( result,
-                                   m_DetachmentFromTrackerSuccessInput,
-                                   m_DetachmentFromTrackerFailureInput );
+  bool result = this->m_TrackerToAttachTo->RequestRemoveTool( this ); 
+  this->m_StateMachine.PushInputBoolean( result,
+                                   this->m_DetachmentFromTrackerSuccessInput,
+                                   this->m_DetachmentFromTrackerFailureInput );
 }
 
 /** Report invalid request to attach the tracker tool. */ 
@@ -471,7 +471,7 @@ void TrackerTool::NoProcessing( void )
 void 
 TrackerTool::SetCalibrationTransform( const TransformType & transform )
 {
-  m_CalibrationTransform = transform;
+  this->m_CalibrationTransform = transform;
 }
 
 /** Method to set the raw transform for the tracker tool
@@ -479,7 +479,7 @@ TrackerTool::SetCalibrationTransform( const TransformType & transform )
 void 
 TrackerTool::SetRawTransform( const TransformType & transform )
 {
-  m_RawTransform = transform;
+  this->m_RawTransform = transform;
 }
 
 /** Method to set the calibrated raw transform for the tracker tool
@@ -487,7 +487,20 @@ TrackerTool::SetRawTransform( const TransformType & transform )
 void 
 TrackerTool::SetCalibratedTransform( const TransformType & transform )
 {
-  m_CalibratedTransform = transform;
+  this->m_CalibratedTransform = transform;
+
+  CoordinateSystemTransformToResult   transformCarrier;
+
+  transformCarrier.Initialize( 
+    this->m_CalibratedTransform,
+    this->GetCoordinateSystem(),
+    this->m_TrackerToAttachTo
+    );
+
+  CoordinateSystemTransformToEvent  transformEvent;
+  transformEvent.Set( transformCarrier );
+
+  this->InvokeEvent( transformEvent );
 }
 
 /** Print object information */
