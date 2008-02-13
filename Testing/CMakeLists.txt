@@ -40,7 +40,6 @@ INCLUDE_DIRECTORIES (
 
 #-----------------------------------------------------------------------------
 # Add testing command
-ADD_TEST(igstkVesselObjectTest ${IGSTK_TESTS} igstkVesselObjectTest)
 ADD_TEST(igstkUSImageObjectTest ${IGSTK_TESTS} igstkUSImageObjectTest)
 ADD_TEST(igstkUSImageObjectRepresentationTest ${IGSTK_TESTS} igstkUSImageObjectRepresentationTest)
 ADD_TEST(igstkBasicTrackerTest ${IGSTK_TESTS} igstkBasicTrackerTest)
@@ -299,19 +298,7 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
        ${IGSTK_DATA_ROOT}/Input/E000192Mod2
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
 
-    ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS} 
-          --compare ${BASELINE}/igstkVascularNetworkReaderTest.png 
-          ${IGSTK_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
-          --toleranceIntensity 10
-          --toleranceRadius 5
-          --toleranceNumberOfPixels 5
-          igstkVascularNetworkReaderTest 
-          ${IGSTK_DATA_ROOT}/Input/vessel.tre
-          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
-          ${IGSTK_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
-          )        
-
-    ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
+   ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest 
               ${IGSTK_TESTS}
               --compare ${BASELINE}/igstkViewScreenShot.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png 
@@ -450,7 +437,6 @@ ENDIF(IGSTK_USE_Qt)
 #-----------------------------------------------------------------------------
 # Set the source file
 SET(BasicTests_SRCS
-  igstkVesselObjectTest.cxx 
   igstkUSImageObjectTest.cxx 
   igstkUSImageObjectRepresentationTest.cxx 
   igstkBasicTrackerTest.cxx
@@ -580,7 +566,6 @@ IF(IGSTK_USE_FLTK)
       ${BasicTests_SRCS}
       igstkImageSpatialObjectRepresentationTest2.cxx  
       igstkImageSpatialObjectRepresentationTest3.cxx
-      igstkVascularNetworkReaderTest.cxx
       igstkMeshObjectTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx

@@ -31,7 +31,6 @@ void RegisterTests()
   REGISTER_TEST(igstkUSImageObjectTest);
   REGISTER_TEST(igstkUSImageObjectRepresentationTest);
   REGISTER_TEST(igstkUSImageReaderTest);
-  REGISTER_TEST(igstkVesselObjectTest);
 
   REGISTER_TEST(igstkBasicTrackerTest);
   REGISTER_TEST(igstkBinaryDataTest);
@@ -143,7 +142,6 @@ void RegisterTests()
   REGISTER_TEST(igstkAnnotation2DTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest3);
-  REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
