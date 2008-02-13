@@ -236,12 +236,6 @@ MicronTracker::ResultType MicronTracker::InternalOpen( void )
     return FAILURE;
     }
 
-  if( ! this->SetUpCameras() )
-    {
-    igstkLogMacro( CRITICAL, "Error setting up cameras ");
-    return FAILURE;
-    }
-
   return SUCCESS;
 }
 
@@ -414,8 +408,6 @@ MicronTracker
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");
-  this->m_Cameras->Detach();
-
   return SUCCESS;
 }
 
@@ -428,6 +420,14 @@ MicronTracker::ResultType MicronTracker::InternalStartTracking( void )
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
   //  set the appropriate input to the state machine)
+  //
+  
+  if( ! this->SetUpCameras() )
+    {
+    igstkLogMacro( CRITICAL, "Error setting up cameras ");
+    return FAILURE;
+    }
+
   return SUCCESS;
 }
 
@@ -437,11 +437,9 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::InternalStopTracking called ...\n");
 
-  // Send the command to stop tracking.
+  //Detach the cameras
+  this->m_Cameras->Detach();
 
-  // Report errors, if any, and return SUCCESS or FAILURE
-  // (the return value will be used by the superclass to
-  //  set the appropriate input to the state machine)
   return SUCCESS;
 }
 
@@ -706,18 +704,6 @@ RemoveTrackerToolFromInternalDataContainers
   this->m_ToolStatusContainer.erase( trackerToolIdentifier );
 
   return SUCCESS;
-}
-
-/** Needs to be called every time when exiting tracking state. */
-void MicronTracker::ExitTrackingStateProcessing( void )
-{
-  igstkLogMacro( DEBUG, "igstk::MicronTracker::ExitTrackingStateProcessing "
-                 "called ...\n");
-
-  //Exit tracking without terminating the tracking thread.
-  //Otherwise, everytime we start tracking, we will need to
-  //reattach the camera
-  this->ExitTrackingWithoutTerminatingTrackingThread();
 }
 
 /** Print Self function */

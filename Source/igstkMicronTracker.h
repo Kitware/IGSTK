@@ -134,9 +134,6 @@ protected:
   virtual ResultType AddTrackerToolToInternalDataContainers( const
                                      TrackerToolType * trackerTool );
 
-  /** Needs to be called every time when exiting tracking state. */ 
-  void ExitTrackingStateProcessing( void );
-
 private:
 
   MicronTracker(const Self&);   //purposely not implemented
