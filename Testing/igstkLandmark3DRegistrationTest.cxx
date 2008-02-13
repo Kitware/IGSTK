@@ -328,6 +328,77 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
               << std::endl;
     }
 
+  //set up another observer to get transform from tracker to image
+  igstk::TransformObserver::Pointer lrtcb2 = igstk::TransformObserver::New();
+
+  lrtcb2->ObserveTransformEventsFrom( landmarkRegister );
+
+  lrtcb2->Clear();
+
+  landmarkRegister->RequestGetTransformFromImageToTracker();
+
+  if( !lrtcb2->GotTransform() )
+    {
+    std::cerr << "LandmarkRegsistration class failed to throw a modified "
+              << "transform event" << std::endl;
+    return EXIT_FAILURE;
+    }
+        
+  transform = lrtcb2->GetTransform();
+  parameters[0] =    transform.GetRotation().GetX();
+  parameters[1] =    transform.GetRotation().GetY();
+  parameters[2] =    transform.GetRotation().GetZ();
+  parameters[3] =    transform.GetTranslation()[0];
+  parameters[4] =    transform.GetTranslation()[1];
+  parameters[5] =    transform.GetTranslation()[2];
+ 
+  VersorRigid3DTransformType::Pointer versorRigid3DTransform2
+                               = VersorRigid3DTransformType::New();
+    
+  versorRigid3DTransform2->SetParameters(parameters);
+
+  //Check if the transformation parameters were evaluated correctly
+   Landmark3DRegistrationType::PointsContainerConstIterator 
+                             mitr2 = mpointcontainer.begin();
+   Landmark3DRegistrationType::PointsContainerConstIterator 
+                          fitr2 = fpointcontainer.begin();
+
+  tolerance = 0.1;
+  failed = false;
+
+  while( fitr2 != fpointcontainer.end() )
+    {
+    std::cout << "  Tracker Landmark: " << *mitr2 << " image landmark " << *fitr2
+              << " Transformed image landmark : " <<
+    versorRigid3DTransform2->TransformPoint( *fitr2 )  << std::endl;
+
+    errortr = *mitr2 - versorRigid3DTransform2->TransformPoint( *fitr2 );
+
+    if( errortr.GetNorm() > tolerance )
+      {
+      failed = true;
+      }
+    ++mitr2;
+    ++fitr2;
+    }
+
+  if( failed )
+    {
+    // Hang heads in shame
+    std::cout << " Tracker landmarks transformed by the transform did not"
+              << " match closely enough with the image image landmarks."
+              << " The transform computed was: ";
+    versorRigid3DTransform2->Print(std::cout);
+    std::cout << "  [FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "  Landmark alignment using Rigid3D transform [PASSED]" 
+              << std::endl;
+    }
+
+
   // Setup an obsever to get the RMS error 
   Landmark3DRegistrationGetRMSErrorCallback::Pointer lRmscb =
                             Landmark3DRegistrationGetRMSErrorCallback::New();

@@ -82,6 +82,8 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   tracker->SetRadius( radiusInMillimeters );
   tracker->SetAngularSpeed( speedInDegreesPerSecond );
 
+  tracker->Print( std::cout );
+
   TrackerToolType::Pointer  trackerTool = TrackerToolType::New();
 
   trackerTool->RequestSetName("Circle1");
