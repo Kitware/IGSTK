@@ -80,7 +80,7 @@ ADD_TEST(igstkCoordinateSystemEventTest ${IGSTK_TESTS}
 igstkCoordinateSystemEventTest)
 ADD_TEST(igstkSpatialObjectCoordinateSystemTest3 ${IGSTK_TESTS}
 igstkSpatialObjectCoordinateSystemTest3)
-
+ADD_TEST(igstkSimulatedTrackerTest ${IGSTK_TESTS} igstkSimulatedTrackerTest)
 
 
 
@@ -476,6 +476,7 @@ SET(BasicTests_SRCS
   igstkCoordinateSystemDelegatorTest.cxx
   igstkCoordinateSystemEventTest.cxx
   igstkSpatialObjectCoordinateSystemTest3.cxx
+  igstkSimulatedTrackerTest.cxx
   
   igstkDefaultWidget.cxx
   )  
