@@ -40,28 +40,12 @@ public:
   friend class ::igstk::ViewProxy< DefaultWidget >;
 
   // Constructor must connect the Widget to the Proxy.
-  DefaultWidget(unsigned int width, unsigned int height):m_ProxyView(this)
-    {
-    this->m_Width = width;
-    this->m_Height = height;
-    }
+  DefaultWidget(unsigned int width, unsigned int height);
 
-  void RequestSetView( ViewType * view )
-    {
-    this->m_View = view;
-    this->m_ProxyView.Connect( this->m_View );
-    m_ProxyView.SetRenderWindowSize( 
-      this->m_View, this->m_Width, this->m_Height );
-    }
+  void RequestSetView( ViewType * view );
 
   // This method provides code coverage to the ProxyView
-  void TestProxy()
-    {
-    std::cout << this->m_ProxyView.GetNameOfClass() << std::endl;
-    const double px = 1.3;
-    const double py = 1.8;
-    this->m_ProxyView.SetPickedPointCoordinates( this->m_View, px, py );
-    }
+  void TestProxy();
 
 private:
   ProxyType           m_ProxyView;
@@ -70,9 +54,10 @@ private:
   unsigned int        m_Width;
   unsigned int        m_Height;
 
-  // Fake methods needed to satisfy the API exposed to the ViewProxy
-  void SetRenderer( vtkRenderer * ) {};
-  void SetRenderWindowInteractor( vtkRenderWindowInteractor * ) {};
+  // Satisfy the API exposed to the ViewProxy
+  void SetRenderer( vtkRenderer * );
+  void SetRenderWindowInteractor( vtkRenderWindowInteractor * iren );
+
 };
 
 }  // end igstk namespace

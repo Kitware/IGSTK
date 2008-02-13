@@ -490,6 +490,8 @@ SET(BasicTests_SRCS
   igstkCoordinateSystemDelegatorTest.cxx
   igstkCoordinateSystemEventTest.cxx
   igstkSpatialObjectCoordinateSystemTest3.cxx
+  
+  igstkDefaultWidget.cxx
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
