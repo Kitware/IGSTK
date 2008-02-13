@@ -19,12 +19,8 @@ SET(IGSTK_HEADS
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
   igstkMR3DImageToUS3DImageRegistration.h
-  igstkVascularNetworkObject.h
-  igstkVascularNetworkObjectRepresentation.h
-  igstkVascularNetworkReader.h
-  igstkVesselObject.h
-  igstkVesselObjectRepresentation.h
- igstkAnnotation2D.h
+
+igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
   igstkBoxObject.h
@@ -153,11 +149,6 @@ SET(IGSTK_SRCS
   igstkUSImageObjectRepresentation.cxx
   igstkUSImageReader.cxx
   igstkMR3DImageToUS3DImageRegistration.cxx
-  igstkVascularNetworkObject.cxx
-  igstkVascularNetworkObjectRepresentation.cxx
-  igstkVascularNetworkReader.cxx
-  igstkVesselObject.cxx
-  igstkVesselObjectRepresentation.cxx
  igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
@@ -346,6 +337,13 @@ SET(IGSTKSandbox_HEADS
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
+
+  igstkVascularNetworkObject.h
+  igstkVascularNetworkObjectRepresentation.h
+  igstkVascularNetworkReader.h
+  igstkVesselObject.h
+  igstkVesselObjectRepresentation.h
+ 
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -394,6 +392,12 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
   igstkImageSliceRepresentation.txx
+
+  igstkVascularNetworkObject.cxx
+  igstkVascularNetworkObjectRepresentation.cxx
+  igstkVascularNetworkReader.cxx
+  igstkVesselObject.cxx
+  igstkVesselObjectRepresentation.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)

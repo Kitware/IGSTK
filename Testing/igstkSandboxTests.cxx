@@ -37,6 +37,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationReaderTest);
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
+  REGISTER_TEST(igstkVesselObjectTest);
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
@@ -46,6 +47,7 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkVascularNetworkReaderTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 #ifdef IGSTK_TEST_POLARIS_ATTACHED

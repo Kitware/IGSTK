@@ -72,6 +72,7 @@ INCLUDE_DIRECTORIES (
 # Add your new tests here
 SET(SandboxTests_SRCS
   igstkGroupObjectTest.cxx
+  igstkVesselObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
@@ -146,6 +147,7 @@ igstkPrincipalAxisCalibrationTest)
 ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTest)
 
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
+ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 ADD_TEST( igstkTrackerToolReferenceTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceTest)
 ADD_TEST( igstkTrackerToolReferenceAndImageTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceAndImageTest)
@@ -208,6 +210,21 @@ IF(IGSTKSandbox_DATA_ROOT)
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkObliqueImageSpatialObjectRepresentationTest.cxx)
 
+    ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS} 
+          --compare ${BASELINE}/igstkVascularNetworkReaderTest.png 
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
+          --toleranceIntensity 10
+          --toleranceRadius 5
+          --toleranceNumberOfPixels 5
+          igstkVascularNetworkReaderTest 
+          ${IGSTK_DATA_ROOT}/Input/vessel.tre
+          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre 
+          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
+          )        
+    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+        igstkVascularNetworkReaderTest.cxx)
+
+
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
@@ -258,7 +275,6 @@ SET(IGSTKTests_SRCS
 #  igstkFlockOfBirdsCommandInterpreterTest.cxx
 #  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
 #  igstkFlockOfBirdsTrackerTest.cxx
-  igstkVesselObjectTest.cxx
   igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkBasicTrackerTest.cxx
@@ -594,18 +610,6 @@ IF(IGSTK_USE_FLTK)
        ${IGSTKSandbox_DATA_ROOT}/E000192Mod2
        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest3.png)
 
-    ADD_TEST( igstkVascularNetworkReaderTest ${IGSTK_TESTS}
-          --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png
-          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
-          --toleranceIntensity 10
-          --toleranceRadius 5
-          --toleranceNumberOfPixels 5
-          igstkVascularNetworkReaderTest
-          ${IGSTK_DATA_ROOT}/Input/vessel.tre
-          ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre
-          ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png
-          )
-
     ADD_TEST( igstkCTImageSpatialObjectReadingAndRepresentationTest1
               ${IGSTK_TESTS}
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
@@ -736,7 +740,6 @@ IF(IGSTK_USE_FLTK)
       ${IGSTKTests_SRCS}
       igstkImageSpatialObjectRepresentationTest2.cxx
       igstkImageSpatialObjectRepresentationTest3.cxx
-      igstkVascularNetworkReaderTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
       igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx
