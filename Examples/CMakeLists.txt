@@ -46,5 +46,8 @@ IF (IGSTK_USE_Qt)
 #    IF (IGSTK_USE_MicronTracker) 
 #      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
 #    ENDIF(IGSTK_USE_MicronTracker) 
+   IF (APPLE)
+     SUBDIRS(VideograbbingAndTrackingUsingQTWidget)
+   ENDIF(APPLE)
 ENDIF (IGSTK_USE_Qt)
 
