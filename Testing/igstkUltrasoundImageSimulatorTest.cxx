@@ -140,6 +140,11 @@ int igstkUltrasoundImageSimulatorTest( int argc, char * argv[] )
 
   imageRepresentation->SetWindowLevel( 255 / 2.0, 255 / 2.0 );
   imageRepresentation->RequestSetImageSpatialObject( usImage );
+
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  usImage->RequestSetTransformAndParent( identity, view2D );
+
   imageRepresentation->RequestSetOrientation( ImageRepresentationType::Axial );
 
   view2D->RequestSetOrientation( igstk::View2D::Axial );
