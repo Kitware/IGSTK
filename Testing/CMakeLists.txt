@@ -85,6 +85,9 @@ SET(SandboxTests_SRCS
   igstkToolCalibrationTest.cxx
   igstkToolCalibrationReaderTest.cxx
   igstkPivotCalibrationReaderTest.cxx
+
+  igstkDefaultWidget.h
+  igstkDefaultWidget.cxx
  )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -311,6 +314,9 @@ SET(IGSTKTests_SRCS
   igstkTransductionMacroTest.cxx
   igstkTrackerToolReferenceTest.cxx
   igstkTrackerToolReferenceAndImageTest.cxx
+
+  igstkDefaultWidget.h
+  igstkDefaultWidget.cxx
  )
 
 IF (IGSTK_USE_FLTK)
