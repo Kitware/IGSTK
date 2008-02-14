@@ -241,6 +241,7 @@ int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
   fpointcontainer.push_back(fixedPoint);
   landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
   movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+  mpointcontainer.push_back(movingPoint);
   landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
   OutputVectorType error;
