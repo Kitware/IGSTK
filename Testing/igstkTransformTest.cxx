@@ -232,11 +232,20 @@ int igstkTransformTest( int, char * [] )
       }
 
     // Testing the IsNumericallyEquivalent() method
+
+    rotation.Set(axis, angle);
+
+    translation[0] = -1000.0;
+    translation[1] = 5.0;
+    translation[2] = 9.0;
+    t1.SetTranslationAndRotation( 
+        translation, rotation, errorValue, validityPeriod );
+
     igstk::Transform tt  = t1;
     igstk::Transform ti  = tt.GetInverse();
     igstk::Transform tii = ti.GetInverse();
 
-    const double inverseTolerance = 1e-15;
+    const double inverseTolerance = 1e-12;
     if( ! tt.IsNumericallyEquivalent( tii, inverseTolerance ) )
       {
       std::cerr << "Error in GetInverse()^2/IsNumericallyEquivalent() pair";
