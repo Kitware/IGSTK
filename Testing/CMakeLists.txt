@@ -152,7 +152,6 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
-ADD_TEST( igstkTrackerToolReferenceTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceTest)
 ADD_TEST( igstkTrackerToolReferenceAndImageTest ${IGSTKSandbox_TESTS} igstkTrackerToolReferenceAndImageTest)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
@@ -313,7 +312,6 @@ SET(IGSTKTests_SRCS
   igstkObjectRepresentationRemovalTest.cxx
   igstkTransductionMacroTest.cxx
   igstkTrackerToolReferenceTest.cxx
-  igstkTrackerToolReferenceAndImageTest.cxx
 
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
@@ -373,6 +371,9 @@ ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
         )
 
+SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkTrackerToolReferenceImageTest.cxx)
+ADD_TEST(igstkTrackerToolReferenceAndImageTest ${IGSTK_TESTS} igstkTrackerToolReferenceAndImageTest
+          ${IGSTK_DATA_ROOT}/Input/E000192 )
 
 
 #-----------------------------------------------------------------------------
