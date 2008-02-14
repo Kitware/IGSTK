@@ -31,14 +31,6 @@ PURPOSE.  See the above copyright notices for more information.
 /** Constructor: Initializes all internal variables. */
 NeedleBiopsy::NeedleBiopsy()
 {
-  // debugging
-  std::ofstream loggerFile;
-  loggerFile.open( "logMicron.txt" );
-  logger = LoggerType::New();
-  logOutput = LogOutputType::New();  
-  logOutput->SetStream( loggerFile );
-  logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( itk::Logger::DEBUG);
 
   /** Setup logger, for all other igstk components. */
   m_Logger   = LoggerType::New();
@@ -494,11 +486,6 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       igstk::TrackerTool::Pointer refTool = 
                                      m_TrackerInitializer->GetReferenceTool();
       
-      // debugging
-      logger->SetPriorityLevel( LoggerType::DEBUG );
-      //tracker->SetLogger( logger );
-      //tool->SetLogger( logger );
-
       // Connect the scene graph with an identity transform first
       igstk::Transform transform;
       transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
