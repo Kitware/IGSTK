@@ -26,7 +26,7 @@
 
 int igstkSimulatedTrackerTest( int, char * [] )
 {
-  typedef igstk::SimulatedTracker TrackerType;
+  typedef igstk::SimulatedTracker     TrackerType;
   typedef igstk::SimulatedTrackerTool ToolType;
 
   TrackerType::Pointer tracker = TrackerType::New();
@@ -59,4 +59,4 @@ int igstkSimulatedTrackerTest( int, char * [] )
   tool->Print( std::cout );
 
   return EXIT_SUCCESS;
-};
+}

@@ -64,6 +64,6 @@ DefaultWidget
     renWin->BordersOn();
     renWin->SetWindowName( "IGSTK DefaultWidget" );
     }
-};
+}
 
 } // end namespace igstk

@@ -494,8 +494,7 @@ TrackerTool::SetCalibratedTransform( const TransformType & transform )
   transformCarrier.Initialize( 
     this->m_CalibratedTransform,
     this->GetCoordinateSystem(),
-    this->m_TrackerToAttachTo
-    );
+    this->m_TrackerToAttachTo);
 
   CoordinateSystemTransformToEvent  transformEvent;
   transformEvent.Set( transformCarrier );
