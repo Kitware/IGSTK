@@ -159,8 +159,11 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
     igstk::Transform final = registrationTransformObserver->GetTransform();
     VectorType finalT = final.GetTranslation();
     finalT += initialTransform.GetTranslation();
-    
-    if(finalT[0]>1 || finalT[1]>1 || finalT[2]>1)
+
+    TransformType::VectorType errorVector;
+    errorVector = finalT - translation;
+
+    if(fabs(errorVector[0])>1 || fabs(errorVector[1])>1 || fabs(errorVector[2])>1)
       {
       std::cout << "[FAILED] : " << std::endl;
       std::cout << "Final transform = " << finalT << std::endl;
