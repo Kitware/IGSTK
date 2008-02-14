@@ -112,6 +112,11 @@ int igstkMouseTrackerTest( int, char * [] )
   trackerTool->SetLogger( logger );
   std::string mouseName = "PS/s";
   trackerTool->RequestSetMouseName( mouseName );
+  if ( mouseName != trackerTool->GetMouseName() )
+    {
+    std::cerr << "MouseName did not match!" << std::endl;
+    return EXIT_FAILURE;
+    }
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker
