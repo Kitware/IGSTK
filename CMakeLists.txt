@@ -117,7 +117,7 @@ ENDIF( IGSTKSandbox_USE_FLTK_VAR EQUAL IGSTK_USE_FLTK_VAR )
 #
 # FIND Qt
 #
-OPTION(IGSTKSandbox_USE_Qt "Use Qt (The Fast Light Toolkit) for GUI" ON)
+OPTION(IGSTKSandbox_USE_Qt "Use Qt (The Fast Light Toolkit) for GUI" OFF)
 IF(IGSTKSandbox_USE_Qt)
  # use what QVTK built with
  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
