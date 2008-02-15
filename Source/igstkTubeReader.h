@@ -26,7 +26,6 @@
 
 #include "igstkTubeObject.h"
 #include "itkTubeSpatialObject.h"
-#include "igstkTubeGroupObject.h"
 
 namespace igstk
 {

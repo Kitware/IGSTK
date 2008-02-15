@@ -68,7 +68,6 @@ SET(IGSTK_HEADS
   igstkTubeReader.h
   igstkMeshReader.h
   igstkGroupObject.h
-  igstkTubeGroupObject.h
   igstkLogger.h
   igstkCoordinateSystem.h
   igstkCoordinateSystemDelegator.h
@@ -177,7 +176,6 @@ SET(IGSTK_SRCS
   igstkTubeReader.cxx
   igstkMeshReader.cxx
   igstkGroupObject.cxx
-  igstkTubeGroupObject.cxx
   igstkLogger.cxx
   igstkCoordinateSystem.cxx
   igstkCoordinateSystemDelegator.cxx
