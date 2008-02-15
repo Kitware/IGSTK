@@ -19,8 +19,7 @@ SET(IGSTK_HEADS
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
   igstkMR3DImageToUS3DImageRegistration.h
-
-igstkAnnotation2D.h
+  igstkAnnotation2D.h
   igstkAxesObject.h
   igstkAxesObjectRepresentation.h
   igstkBoxObject.h
@@ -82,7 +81,6 @@ igstkAnnotation2D.h
   igstkTubeReader.h
   igstkMeshReader.h
   igstkGroupObject.h
-  igstkTubeGroupObject.h
   igstkView.h
   igstkView2D.h
   igstkView3D.h
@@ -206,7 +204,6 @@ SET(IGSTK_SRCS
   igstkTubeReader.cxx
   igstkMeshReader.cxx
   igstkGroupObject.cxx
-  igstkTubeGroupObject.cxx
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
@@ -338,6 +335,9 @@ SET(IGSTKSandbox_HEADS
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
 
+
+  igstkTubeGroupObject.h
+
   igstkVascularNetworkObject.h
   igstkVascularNetworkObjectRepresentation.h
   igstkVascularNetworkReader.h
@@ -392,6 +392,8 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
   igstkImageSliceRepresentation.txx
+
+  igstkTubeGroupObject.cxx
 
   igstkVascularNetworkObject.cxx
   igstkVascularNetworkObjectRepresentation.cxx
