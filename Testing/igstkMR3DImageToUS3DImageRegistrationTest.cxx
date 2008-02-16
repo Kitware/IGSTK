@@ -163,7 +163,8 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
     TransformType::VectorType errorVector;
     errorVector = finalT - translation;
 
-    if(fabs(errorVector[0])>1 || fabs(errorVector[1])>1 || fabs(errorVector[2])>1)
+    if(fabs(errorVector[0])>1 || fabs(errorVector[1])>1 || 
+       fabs(errorVector[2])>1)
       {
       std::cout << "[FAILED] : " << std::endl;
       std::cout << "Final transform = " << finalT << std::endl;
