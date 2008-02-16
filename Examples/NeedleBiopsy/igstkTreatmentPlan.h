@@ -23,6 +23,18 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk
 {
 
+/** \class TreatmentPlan
+* 
+* \brief Defines a simple treatment plan for needle biopsy application
+*
+* This class define the treatment plan including: a entry point, a target 
+* point, together these two define the biopsy trajectory, and a list of 
+* fiducial points (in the image) for pair point landmark registration.
+*
+* These points can be defined prior to the surgery by going through 
+* pre-operative images.
+*/
+
 class TreatmentPlan
 {
 

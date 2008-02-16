@@ -23,6 +23,23 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk
 {
 
+/** \class TreatmentPlanIO
+* 
+* \brief Reader/Writer class for TreatmentPlan
+*
+* Sample format:
+---------------------------------------------------------------------
+# Entry point
+0.820425  -143.635  -186
+# Target point
+54.268    -108.513  -191
+# Fiducial points
+98.4887   -152.976  -181
+-1.89214  -148.996  -191
+-59.2006  -190.563  -191
+--------------------------------------------------------------------
+*/
+
 class TreatmentPlanIO
 {
 

@@ -40,6 +40,14 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkTrackerInitializer.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 
+/** \class NeedleBiopsy
+* 
+* \brief Implementation class for NeedleBiopsyGUI.
+*
+* This class implements the main application.
+*
+*/
+
 class NeedleBiopsy : public NeedleBiopsyGUI
 {
 public:
@@ -112,7 +120,7 @@ private:
   LandmarkPointContainerType                      m_ImageLandmarksContainer;
   LandmarkPointContainerType                      m_TrackerLandmarksContainer;
 
-    
+  /** Pointers for TrackerInitializer and related objects */
   igstk::Tracker::Pointer                         m_Tracker;
   igstk::TrackerConfigurationGUIBase            * m_TrackerConfigurationGUI;
   igstk::TrackerInitializer                     * m_TrackerInitializer;
@@ -160,7 +168,7 @@ private:
   igstk::Annotation2D::Pointer                    m_Annotation;
 
 
-  /** Utility functions */
+  /** Utility functions, conversion between points and transform */
   inline 
   igstk::Transform 
   PointToTransform( ImageSpatialObjectType::PointType point)
@@ -188,20 +196,20 @@ private:
     return point;
     }
 
+  /** Internal functions */
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation();
   void UpdateTrackerAndTrackerToolList();
+  void UpdateFiducialPoint();
+  void UpdatePath();  
+  void ResliceImage( IndexType index ); 
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
   void ResliceImage( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
-  void Tracking( const itk::EventObject & event );
-
-  void UpdateFiducialPoint();
-  void UpdatePath();  
-  void ResliceImage( IndexType index );  
+  void Tracking( const itk::EventObject & event ); 
   void NullAction(const itk::EventObject & event ){};
 
 };

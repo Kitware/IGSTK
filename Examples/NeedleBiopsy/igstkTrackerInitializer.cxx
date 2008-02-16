@@ -80,6 +80,7 @@ int TrackerInitializer::RequestInitializeTracker()
 
 }
 
+// FIXME: Add error events listener
 int TrackerInitializer::InitializePolarisTracker()
 {
   NDITrackerConfiguration * trackerConfig = 
@@ -151,6 +152,7 @@ int TrackerInitializer::InitializePolarisTracker()
 
 }
 
+// FIXME: Add error events listener
 int TrackerInitializer::InitializeAuroraTracker()
 {
   NDITrackerConfiguration * trackerConfig = 
@@ -228,6 +230,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 }
 
 #ifdef IGSTKSandbox_USE_MicronTracker
+// FIXME: Add error events listener
 int TrackerInitializer::InitializeMicronTracker()
 {
   MicronTrackerConfiguration * trackerConfig = 

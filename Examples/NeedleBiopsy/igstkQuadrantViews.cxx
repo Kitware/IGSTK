@@ -124,6 +124,7 @@ QuadrantViews::~QuadrantViews()
 }
 void QuadrantViews::RequestResliceImage(void)
 {
+  // Call back function for slider bars, to invoke the ReslicingEvent
   IndexType index;
 
   index[2]  = (int ) m_AxialSlider->value();

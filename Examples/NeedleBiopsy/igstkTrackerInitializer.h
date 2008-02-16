@@ -34,6 +34,18 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk
 {
 
+/** \class TrackerInitializer
+* 
+* \brief A convenient class for setting up trackers.
+*
+* This class provides a generic API to talk to different trackers. 
+* User needs to set the TrackerConfiguration first, after the 
+* RequestInitializeTracker returns success. You can call
+*     GetTracker()
+*     GetNonReferenceToolList()
+*     GetReferenceTool()
+* to get pointers to the initialized tracker and tracker tool objects.
+*/
 
 class TrackerInitializer
 {

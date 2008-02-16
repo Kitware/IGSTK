@@ -31,6 +31,28 @@
 
 namespace igstk {
 
+/** \class QuadrantViews
+* 
+* \brief Composite FLTK class defines the standard four viewer windows.
+*
+* This class provides a convenient way to define the commonly used quadrant 
+* views. It has three 2D views and one 3D view. From left to right and top to 
+* bottom they are: Axial, Sagittal, Coronal, and 3D. For convenience, arrays
+* of pointers are also provided for easy accessing of the Views and Widget 
+* objects. The index for those object is: Axial=0, Sagittal=1, Coronal=2, 
+* 3D=3.
+* 
+* There are also three slider bars for each 2D views, which can be used for
+* image reslicing. When moving the slider bar, a ReslicingEvent carrying
+* slice index (current value of the three slider bar) will be triggered. 
+* User can observe this event and pass the index to image representation
+* object to do reslicing.
+* 
+* For picking event, observer should be added directly to the internal View
+* objects.
+*
+*/
+
 class QuadrantViews : public Fl_Group {
 public:
 
@@ -42,20 +64,24 @@ public:
   typedef igstk::View2D        ViewType2D;
   typedef igstk::View3D        ViewType3D;
 
+  // Declare View objects
   ViewType2D::Pointer          m_DisplayAxial;
   ViewType2D::Pointer          m_DisplayCoronal;
   ViewType2D::Pointer          m_DisplaySagittal;
   ViewType3D::Pointer          m_Display3D;
 
+  // Declare FLTKWidget objects
   igstk::FLTKWidget * m_DisplayAxialWidget;
   igstk::FLTKWidget * m_DisplaySagittalWidget;
   igstk::FLTKWidget * m_DisplayCoronalWidget;
   igstk::FLTKWidget * m_Display3DWidget;
 
+  // Define slider bars
   Fl_Value_Slider * m_AxialSlider;
   Fl_Value_Slider * m_SagittalSlider;
   Fl_Value_Slider * m_CoronalSlider;
 
+  // Array of pointer to the View, Widget, and Slider bar
   std::vector< igstk::FLTKWidget * >   m_Displays;
   std::vector< ViewType::Pointer   >   m_Views;
   std::vector< Fl_Value_Slider   * >   m_Sliders;

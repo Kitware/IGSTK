@@ -23,7 +23,7 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerConfiguration::TrackerConfiguration()
 {
-  m_ValidilityErrorMessage = "";
+  m_ValidityErrorMessage = "";
 }
 
 void TrackerConfiguration::SetTrackerType( TrackerType trackerType )
@@ -60,32 +60,32 @@ TrackerConfiguration::~TrackerConfiguration()
 {
 }
 
-int TrackerConfiguration::CheckValidility()
+int TrackerConfiguration::CheckValidity()
 {
   switch( m_TrackerType )
   {
   case Polaris:
-    return CheckPolarisValidility();
+    return CheckPolarisValidity();
     break;
   case Aurora:
-    return CheckAuroraValidility();
+    return CheckAuroraValidity();
     break;
   case Micron:
-    return CheckMicronValidility();
+    return CheckMicronValidity();
     break;
   default:
-    m_ValidilityErrorMessage = "Unknown tracker type";
+    m_ValidityErrorMessage = "Unknown tracker type";
     return 0;
   }
 }
 
-int TrackerConfiguration::CheckAuroraValidility()
+int TrackerConfiguration::CheckAuroraValidity()
 {
-  m_ValidilityErrorMessage = "";
+  m_ValidityErrorMessage = "";
 
   if ( m_NDITrackerConfiguration->m_Frequency <= 0)
   {
-    m_ValidilityErrorMessage = "Invalid frequency, must be positive";
+    m_ValidityErrorMessage = "Invalid frequency, must be positive";
     return 0;
   }
 
@@ -103,18 +103,18 @@ int TrackerConfiguration::CheckAuroraValidility()
   return 1;
 }
 
-int TrackerConfiguration::CheckPolarisValidility()
+int TrackerConfiguration::CheckPolarisValidity()
 {
-  m_ValidilityErrorMessage = "";
+  m_ValidityErrorMessage = "";
   // check if port is used, only one reference tool, SROM file exists 
   // To be implemented
   return 1;
 
 }
 
-int TrackerConfiguration::CheckMicronValidility()
+int TrackerConfiguration::CheckMicronValidity()
 {
-  m_ValidilityErrorMessage = "";
+  m_ValidityErrorMessage = "";
   // check calibration file, only one reference tool, template markers 
   // To be implemented
   return 1;

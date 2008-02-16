@@ -33,7 +33,7 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
           } {}
         }
         Fl_Group {} {
-          label {@2->} open
+          label {@2->} open selected
           xywh {20 218 130 180} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Menu_Button ConnectToTrackerBtn {
@@ -61,10 +61,6 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             label Disconnect
             callback {RequestDisconnetTracker();}
             xywh {47 355 75 20} align 16
-          }
-          Fl_Value_Output {} {
-            label {TRE: }
-            xywh {85 310 38 20}
           }
         }
         Fl_Group {} {
@@ -120,7 +116,7 @@ RegistrationWindow->hide();}
         label {Fiducial::}
         callback {int n = FiducialNumber->value();
 TPlanPointList->value(n+3);
-ChangeSelectedTPlanPoint();} open selected
+ChangeSelectedTPlanPoint();} open
         xywh {98 10 65 25} down_box BORDER_BOX
       } {}
     }

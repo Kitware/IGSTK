@@ -28,18 +28,20 @@ PURPOSE.  See the above copyright notices for more information.
 #include "AuroraTrackerConfigurationGUI.h"
 #include "MicronTrackerConfigurationGUI.h"
 
-/** Constructor: Initializes all internal variables. */
+/** -----------------------------------------------------------------
+*     Constructor
+*  -----------------------------------------------------------------
+*/
 NeedleBiopsy::NeedleBiopsy()
 {
 
-  /** Setup logger, for all other igstk components. */
+  /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
   this->GetLogger()->SetTimeStampFormat( itk::LoggerBase::HUMANREADABLE );
   this->GetLogger()->SetHumanReadableFormat("%Y %b %d, %H:%M:%S");
   this->GetLogger()->SetPriorityLevel( LoggerType::INFO );
 
-  /** Direct the application log message to the std::cout
-    * and FLTK text display */
+  /** Direct the application log message to the std::cout */
   itk::StdStreamLogOutput::Pointer m_LogCoutOutput
                                            = itk::StdStreamLogOutput::New();
   m_LogCoutOutput->SetStream( std::cout );
@@ -60,13 +62,14 @@ NeedleBiopsy::NeedleBiopsy()
     }
   else
     {
-    //FIXME. should we return or not
+    //Return if fail to open the log file
     igstkLogMacro( DEBUG, "Problem opening Log file:"
                                                     << logFileName << "\n" );
     return;
     }
 
-  /** Initialize all member variables and set logger */
+  /** Initialize all member variables  */
+  
   m_ImageReader           = ImageReaderType::New();
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
@@ -74,6 +77,7 @@ NeedleBiopsy::NeedleBiopsy()
   m_TrackerInitializerList.clear();
   m_Plan                  = new igstk::TreatmentPlan;
 
+  /** Setting up spatial objects and their representations */
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
@@ -83,8 +87,8 @@ NeedleBiopsy::NeedleBiopsy()
 
   m_Needle                    = CylinderType::New();
   m_NeedleRepresentation      = CylinderRepresentationType::New();
-  m_Needle->SetRadius( 1.5 );   //   1.5 mm
-  m_Needle->SetHeight( 100 );   // 200.0 mm
+  m_Needle->SetRadius( 1.5 ); 
+  m_Needle->SetHeight( 100 );
   m_NeedleRepresentation->RequestSetCylinderObject( m_Needle );
   m_NeedleRepresentation->SetColor(0.0,1.0,0.0);
   m_NeedleRepresentation->SetOpacity(1.0);
@@ -128,22 +132,38 @@ NeedleBiopsy::NeedleBiopsy()
     m_PathRepresentation.push_back( rep );
     }
 
+  /** Creating observers and their call back functions */
 
+  /** This observes picking event from view */
   m_ViewPickerObserver = LoadedObserverType::New();
   m_ViewPickerObserver->SetCallbackFunction( this, &NeedleBiopsy::Picking );
 
+  /** This observes reslicing events from FourQuadrantView class */
   m_ViewResliceObserver = LoadedObserverType::New();
   m_ViewResliceObserver->SetCallbackFunction( this,
                                                 &NeedleBiopsy::ResliceImage);
 
+  /** 
+   *  This observer catches the tracker configuration sent out by
+   *  TrackerConfiguration GUI
+   */
   m_TrackerConfigurationObserver = LoadedObserverType::New();
   m_TrackerConfigurationObserver->SetCallbackFunction( this,
                                     &NeedleBiopsy::RequestInitializeTracker);
 
+  /** 
+   *  This observer listens to the TrackerToolTransformUpdateEvent from
+   *  TrackerTool class, notice this event doesn't carry any payload, it
+   *  only functions as a ticker here to trigger image representation class
+   *  to do image reslicing according to the current tooltip location.
+   *  Refer to:
+   *  NeedleBiopsy::Tracking()
+   */
   m_TrackerToolUpdateObserver    = LoadedObserverType::New();
   m_TrackerToolUpdateObserver->SetCallbackFunction( this,
                                                  &NeedleBiopsy::Tracking);
 
+  /** Create image slice representations  */
   m_ImageRepresentation.clear();
   for (int i=0; i<6; i++)
     {
@@ -153,12 +173,30 @@ NeedleBiopsy::NeedleBiopsy()
 
 }
 
-/** Destructor */
+/** -----------------------------------------------------------------
+*     Destructor
+*  -----------------------------------------------------------------
+*/
 NeedleBiopsy::~NeedleBiopsy()
 {
 }
 
 
+/** -----------------------------------------------------------------
+*      Loading images
+* This methods asks for folder directory contains a single dicom
+* series. If it loads the image successfully, it will try loading
+* the previously saved treatment plan, in the same parent directory
+* which should be named "folderName_TreatmentPlan.igstk".
+* See also:
+* Method:
+*        ReadTreatmentPlan()
+*        WriteTreatmentPlan()
+* Class:
+*        igstkTreatmentPlan
+*        igstkTreatmentPlanIO
+*  -----------------------------------------------------------------
+*/
 int NeedleBiopsy::RequestLoadImage()
 {
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
@@ -172,11 +210,21 @@ int NeedleBiopsy::RequestLoadImage()
     igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
     m_ImageReader->RequestReadImage();
 
+
+    /** 
+    * IGSTK uses event for inter-components communication.
+    * Event/observer model is used to replace the normal Get() method.
+    * CTImageObserver here is defined by Macro in header file:
+    * igstkObserverObjectMacro( CTImage,
+    *                           igstk::CTImageReader::ImageModifiedEvent,
+    *                           igstk::CTImageSpatialObject);
+    * Refer to igstkMacros.h for more detail about this macro.
+    */
     CTImageObserver::Pointer  m_CTImageObserver = CTImageObserver::New();
     m_ImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
                                                       m_CTImageObserver);
 
-    m_ImageReader->RequestGetImage();
+    m_ImageReader->RequestGetImage(); // This will invoke the event
 
     if(m_CTImageObserver->GotCTImage())
       {
@@ -200,17 +248,24 @@ int NeedleBiopsy::RequestLoadImage()
 
 }
 
-/** This method should be invoked by the State Machine
-*  only when the Image has been loaded and the Patient
-*  name has been verified */
+/** -----------------------------------------------------------------
+*  This method should be invoked only when the Image has been loaded
+*  -----------------------------------------------------------------
+*/
 void NeedleBiopsy::ConnectImageRepresentation()
 {
+  /** Setting up annotation and added to four views  */
   m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
   for( int i=0; i<4; i++)
     {
     ViewerGroup->m_Views[i]->RequestAddAnnotation2D( m_Annotation );
     }
 
+  /**
+  * Pass image spatial object to image slice representation and set
+  * the desired slice orientation for each representations, and then 
+  * add them to the views
+  */
   for( int i=0; i<6; i++)
     {
     m_ImageRepresentation[i]->RequestSetImageSpatialObject(
@@ -239,6 +294,14 @@ void NeedleBiopsy::ConnectImageRepresentation()
     ViewerGroup->m_Views[3]->RequestAddObject( m_ImageRepresentation[i+3] );
     }
 
+  /**
+  *  Add all the spatial object to the views
+  *  Notice the Copy() method is used for most of the representation
+  *  classes but not the path. This is because the underlying geometry
+  *  is fixed for those spatial object once it's created.But the path
+  *  will change it's shape, so we need to keep seperate pointer for
+  *  path representation in each view
+  */
   for ( int i=0; i<4; i++)
     {
     igstk::View::Pointer view =  ViewerGroup->m_Views[i];
@@ -250,7 +313,21 @@ void NeedleBiopsy::ConnectImageRepresentation()
     view->RequestAddObject( m_PathRepresentation[i] );
     }
 
-  /** Setting up the sence graph */
+  /** 
+  *  Here we connect the scene graph
+  *  Here we created a virtual world reference system(as the root) and
+  *  attached all the objects as its children.
+  *  This is for the convenience in the following implementation. You 
+  *  use any spatial object, view, tracker, or tracker tool as a 
+  *  reference system in IGSTK. And you can create your own class to
+  *  use the coordinate system API by using this macro:
+  *     igstkCoordinateSystemClassInterfaceMacro()
+  *  Refer to:
+  *      igstkCoordinateSystemInterfaceMacros.h
+  *  Class:
+  *      igstkCoordinateSystem
+  *      igstkCoordinateSystemDelegator
+  */
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
   for( int i=0; i<4; i++)
@@ -279,8 +356,11 @@ void NeedleBiopsy::ConnectImageRepresentation()
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
 
-  // Request information about the slices. The answers will be
-  // received in the form of events.
+  /** 
+   *  Request information about the slice bounds. The answers will be
+   *  received in the form of events. This will be used to initialize
+   *  the reslicing sliders and initial slice position
+   */
   SliceBoundsObserver::Pointer boundsObs = SliceBoundsObserver::New();
   for ( int i=0; i<3; i++)
     {
@@ -318,6 +398,25 @@ void NeedleBiopsy::ConnectImageRepresentation()
     m_ViewResliceObserver );
 }
 
+/** -----------------------------------------------------------------
+*  Here we read the treatment plan. In this simple example
+*  we assume there is one entry point, one target point, and at least
+*  3 fiducial points. Here is a sample format
+---------------------------------------------------------------------
+# Entry point
+0.820425  -143.635  -186
+# Target point
+54.268    -108.513  -191
+# Fiducial points
+98.4887   -152.976  -181
+-1.89214  -148.996  -191
+-59.2006  -190.563  -191
+--------------------------------------------------------------------
+* Refer to class:
+*        igstkTreatmentPlan
+*        igstkTreatmentPlanIO
+*  -----------------------------------------------------------------
+*/
 void NeedleBiopsy::ReadTreatmentPlan()
 {
   igstk::TreatmentPlanIO * reader = new igstk::TreatmentPlanIO;
@@ -335,7 +434,7 @@ void NeedleBiopsy::ReadTreatmentPlan()
       }
     }
 
-  // Populate the choice box
+  /** Populate the choice box */
   TPlanPointList->clear();
   TPlanPointList->add( "Entry" );
   TPlanPointList->add( "Target" );
@@ -363,6 +462,13 @@ void NeedleBiopsy::ReadTreatmentPlan()
   ChangeSelectedTPlanPoint();
 }
 
+/** -----------------------------------------------------------------
+*  Overwrite the current treatment plan to the file
+*  Refer to class:
+*        igstkTreatmentPlan
+*        igstkTreatmentPlanIO
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::WriteTreatmentPlan()
 {
   igstk::TreatmentPlanIO * writer = new igstk::TreatmentPlanIO;
@@ -371,14 +477,26 @@ void NeedleBiopsy::WriteTreatmentPlan()
   writer->RequestWrite();
 }
 
-
+/** -----------------------------------------------------------------
+*  When changing the selection in the choice box, this function 
+*  reslices images to the current point location, and also show the
+*  position in the annotation in blue. Whenever a point is selected
+*  in the choice box, the picking event will update this point's location
+*  See also:
+*         NeedleBiopsy::Picking
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::ChangeSelectedTPlanPoint()
 {
   if ( TPlanPointList->size() == 0)
     {
     return;
     }
-
+  
+  /** 
+   * Check which point is selected, the first two are entry and target 
+   * point
+   */
   ImageSpatialObjectType::PointType    point;
   int choice = TPlanPointList->value();
   if( choice == 0 )
@@ -396,12 +514,14 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
                                  PointToTransform(point), m_WorldReference );
     }
 
+  /** Display point position as annotation */
   char buf[50];
   sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
   m_Annotation->RequestSetAnnotationText(0, buf);
   m_Annotation->RequestSetFontColor(0, 0, 0, 1.0);
   m_Annotation->RequestSetFontSize(0, 12);
 
+  /** Reslice image to the selected point position */
   if( m_ImageSpatialObject->IsInside( point ) )
     {
     ImageSpatialObjectType::IndexType index;
@@ -413,9 +533,18 @@ void NeedleBiopsy::ChangeSelectedTPlanPoint()
     {
     igstkLogMacro( DEBUG,  "This point is not defined in the image...\n" )
     }
-
 }
 
+
+/** -----------------------------------------------------------------
+*  Choose to connect to a tracker
+*  A tracker specific GUI is initialized, and the observer is hooked
+*  to it to catch the configuration. When the "confirm" button is
+*  pressed, an event loaded with tracker configuration will be sent out.
+*  And it will trigger the RequestInitializeTracker(), which does the 
+*  actual tracker initialization
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestConnectToTracker()
 {
   RequestStopTracking();
@@ -462,9 +591,12 @@ void NeedleBiopsy::RequestConnectToTracker()
       break;
       }
     }
-
 }
 
+/** -----------------------------------------------------------------
+*  Call back function for ConfigurationEvent observer
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 {
   typedef igstk::TrackerConfigurationGUIBase  GUIType;
@@ -486,7 +618,7 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       igstk::TrackerTool::Pointer refTool = 
                                      m_TrackerInitializer->GetReferenceTool();
       
-      // Connect the scene graph with an identity transform first
+      /** Connect the scene graph with an identity transform first */
       igstk::Transform transform;
       transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
       if ( m_TrackerInitializer->HasReferenceTool() )
@@ -497,6 +629,8 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
         {
         tracker->RequestSetTransformAndParent(transform, m_WorldReference);
         }
+
+      /** Now who the registration window and initialize it */
       RegistrationWindow->show();
       FiducialNumber->clear();
       m_TrackerLandmarksContainer.clear();
@@ -508,6 +642,11 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
           RegistrationType::LandmarkTrackerPointType p;
           m_TrackerLandmarksContainer.push_back(p);
         }
+
+      /** 
+       *  Set the tracker and image fiducial landmark to the first point
+       *  and reslice the image to show this fiducial point
+       */
       FiducialNumber->value(0);
       TPlanPointList->value(2);
       ChangeSelectedTPlanPoint();
@@ -515,6 +654,12 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
     }
 }
 
+/** -----------------------------------------------------------------
+*  Call this method every time we successfully connect or disconnect to
+*  a tracker. This updates the available tracker and tracker tool
+*  in the GUI list as well as internal pointer list.
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
 {
   TrackerList->clear();
@@ -546,6 +691,11 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
 
 }
 
+/** -----------------------------------------------------------------
+*  Disconnect a tracker. After disconnecting it, set the active tool
+*  to the first available tool
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestDisconnetTracker()
 {
   RequestStopTracking();
@@ -564,10 +714,23 @@ void NeedleBiopsy::RequestDisconnetTracker()
     }
 }
 
+/** -----------------------------------------------------------------
+*  Hot switch the active tool, the one that drives the reslicing and
+*  needle display. The reslicing is done by using an observer listening
+*  to the TrackerToolTransformUpdateEvent, and the call back function
+*  will get the tool tip position in the image space and reslice image 
+*  to that point. Refer to:
+*       NeedleBiopsy::Tracking
+*  First, we stop the tracking and disconnect the observer from other tools
+*  Second, we connect observer to the selected tool
+*  Finally, we attach spatial objects representing the needle to this tool
+*           and restart the tracking again
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
-  //RequestStopTracking();
-  //Sleep( 500 );
+  RequestStopTracking();
+  Sleep( 500 );
 
   if (m_TrackerToolList.size() != 0)
     {
@@ -587,9 +750,17 @@ void NeedleBiopsy::ChangeActiveTrackerTool()
       m_Needle->RequestSetTransformAndParent( transform, m_ActiveTool);
       m_NeedleTip->RequestSetTransformAndParent( transform, m_ActiveTool);
     }
-  //RequestStartTracking();
+  RequestStartTracking();
 }
 
+/** -----------------------------------------------------------------
+*  Call back functions for registration window. Every time user clicks
+*  on the set fiducial point button, it will read from the recently
+*  initialized tracker's first non-reference tool. The reading will 
+*  serve as a tracker landmark point for registration. 
+*  This will automatic jump to the next fiducial point for user to set
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::SetTrackerFiducialPoint()
 {
   igstk::TrackerTool::Pointer tool = 
@@ -613,9 +784,18 @@ void NeedleBiopsy::SetTrackerFiducialPoint()
       TPlanPointList->value(n+3);
       ChangeSelectedTPlanPoint();
     }
-    }
-  
+    } 
 }
+
+/** -----------------------------------------------------------------
+*  Pair points 3D landmark registration
+*  Image landmarks are from treatment plan. Refer to:
+*         ReadTreatmentPlan
+*         Picking
+* tracker landmarks are set in the registration window. Refer to:
+*         SetTrackerFiducialPoint
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestRegistration()
 {
   m_LandmarkRegistration->RequestResetRegistration();
@@ -659,13 +839,17 @@ void NeedleBiopsy::RequestRegistration()
       m_TrackerInitializer->GetTracker()
         ->RequestSetTransformAndParent(transform, m_WorldReference);
     }
-
+    
+    /** 
+     * Only when a tracker is registered with the image, it will show up
+     * on the gui as available. Otherwise it will be disconnected
+     */
     m_TrackerInitializerList.push_back( m_TrackerInitializer );
     UpdateTrackerAndTrackerToolList();
     TrackerList->value(m_TrackerInitializerList.size()-1);
     TrackerToolList->value(m_TrackerInitializerList.size()-1);
     ChangeActiveTrackerTool();
-    //RequestStartTracking();
+    RequestStartTracking();
     }
   else
   {
@@ -674,6 +858,10 @@ void NeedleBiopsy::RequestRegistration()
 
 }
 
+/** -----------------------------------------------------------------
+*  Start tracking of all the connected trackers  
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestStartTracking()
 {
   for (int i=0; i<m_TrackerInitializerList.size(); i++)
@@ -686,6 +874,10 @@ void NeedleBiopsy::RequestStartTracking()
   ControlGroup->redraw();
 }
 
+/** -----------------------------------------------------------------
+*  Stop tracking of all the connected trackers  
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::RequestStopTracking()
 {
   for (int i=0; i<m_TrackerInitializerList.size(); i++)
@@ -698,6 +890,11 @@ void NeedleBiopsy::RequestStopTracking()
   ControlGroup->redraw();
 }
 
+/** -----------------------------------------------------------------
+*  Callback function for observer listening to the slider bar
+*  ReslicingEvent
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::ResliceImage( const itk::EventObject & event )
 {
 
@@ -710,6 +907,10 @@ void NeedleBiopsy::ResliceImage( const itk::EventObject & event )
     }
 }
 
+/** -----------------------------------------------------------------
+*  Methods for reslicing images given an index number  
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::ResliceImage ( IndexType index )
 {
   m_ImageRepresentation[0]->RequestSetSliceNumber( index[2] );
@@ -729,6 +930,14 @@ void NeedleBiopsy::ResliceImage ( IndexType index )
 }
 
 
+/** -----------------------------------------------------------------
+*  Callback function for picking event.
+*  Upon receiving a valid picking event, this method will change the 
+*  value of currently selected treatment plan point, reslice the image
+*  to that location, update the annotation with the new point position,
+*  and write the modified treatment plan to the file.
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::Picking( const itk::EventObject & event)
 {
   if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
@@ -766,15 +975,17 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
         m_Plan->m_FiducialPoints[ choice-2] = point;
         }
 
+      /** Update annotation */
       char buf[50];
       sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
       m_Annotation->RequestSetAnnotationText(0, buf);
       m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
       m_Annotation->RequestSetFontSize(0, 12);
 
-      // We don't need to rewrite the file every time we modify it
+      /** Wirte the updated plan to file */
       this->WriteTreatmentPlan();
 
+      /** Reslice image */
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
       igstkLogMacro( DEBUG, index <<"\n")
@@ -787,7 +998,11 @@ void NeedleBiopsy::Picking( const itk::EventObject & event)
     }
 }
 
-
+/** -----------------------------------------------------------------
+*  Every time we modify the entry point or target point, we need to
+*  rebuild the geometry of the path, and add them to the View again
+*---------------------------------------------------------------------
+*/
 void NeedleBiopsy::UpdatePath()
 {
   m_Path->Clear();
@@ -818,6 +1033,15 @@ void NeedleBiopsy::UpdatePath()
 
 }
 
+/** -----------------------------------------------------------------
+*  Callback function for TrackerToolTransformUpdateEvent
+*  This function computes the transform of the tooltip location in
+*  the image space (WorldReference is essential image coordinate system
+*  since image is attached to WorldReference using an identity transform),
+*  and reslice image to that tip location
+*---------------------------------------------------------------------
+*/
+
 void NeedleBiopsy::Tracking(const itk::EventObject & event )
 {
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
@@ -827,20 +1051,15 @@ void NeedleBiopsy::Tracking(const itk::EventObject & event )
     transformObserver->ObserveTransformEventsFrom( m_ActiveTool );
     transformObserver->Clear();
     m_ActiveTool->RequestComputeTransformTo( m_WorldReference );
-    std::cout << "Tracking...\n";
     if ( transformObserver->GotTransform() )
       {
-      std::cout << "Got transform...\n";
       ImageSpatialObjectType::PointType point = 
                       TransformToPoint( transformObserver->GetTransform() );
-      std::cout<< transformObserver->GetTransform();
 
       if( m_ImageSpatialObject->IsInside( point ) )
       { 
-        std::cout << "Is inside...\n";
         ImageSpatialObjectType::IndexType index;
         m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-        std::cout << index << "\n";
         ResliceImage( index );
         }
       }

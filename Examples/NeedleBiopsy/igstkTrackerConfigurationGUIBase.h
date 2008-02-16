@@ -24,6 +24,34 @@ PURPOSE.  See the above copyright notices for more information.
 namespace igstk
 {
 
+/** \class TrackerConfigurationGUIBase
+* 
+* \brief Base class for different tracker configuration GUIs.
+*
+* This is a base class defines common functionalities of different tracker
+* configuration GUIs.
+* 
+* SetConfiguration: 
+*        Will allow the GUI to initialize itself according the configuration 
+*        passed to it. sub-class should implement the InitializeGUI method 
+*        to achieve this.
+*
+* RequestGetConfiguration:
+*         This will invoke ConfigurationEvent with configuration as payload.
+*         User should setup an observer to listen to this event.
+*
+* GetGUISetting:
+*         User need to implement this methods in the sub-classes for tracker
+*         specific GUI. For example: For Aurora tracker, you need to specify
+*         port number for tracker tool; for Micron tracker, you need to 
+*         specify marker name. This methods will be called to update the 
+*         Internal configuration object before it's been send out in event.
+*
+* Refer to:
+*         PolarisTrackerConfigurationGUI.fl
+*         AuroraTrackerConfigurationGUI.fl
+*         MicronTrackerConfigurationGUI.fl
+*/
 class TrackerConfigurationGUIBase
 {
 

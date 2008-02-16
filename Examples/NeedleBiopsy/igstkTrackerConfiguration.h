@@ -28,6 +28,23 @@ class NDITrackerConfiguration;
 class NDITrackerToolConfiguration;
 
 
+/** \class TrackerConfiguration
+* 
+* \brief Aggregate class for different tracker configurations.
+*
+* This is a generic class encapsulates the complexity of different trackers.
+* It functions as an adapter between TrackerConfigurationGUI classes and
+* TrackerInitializer class.
+*
+* Currently, it has internal pointer to NDITrackers (Polaris and Aurora) and
+* MicronTracker. Which can be Set/Get using API methods.
+*
+* In this header files, we also defined classes for each supported trackers.
+* Each tracker configuration contains information for setting up the tracker.
+* It also keeps an internal list of TrackerToolConfiguration, which stores 
+* information for all the tracker tools.
+*
+*/
 class TrackerConfiguration
 {
 
@@ -42,6 +59,7 @@ public:
   TrackerType GetTrackerType() { return m_TrackerType; }
 
   void SetTrackerType( TrackerType trackerType );
+
   std::string GetTrackerTypeAsString();
 
   MicronTrackerConfiguration * GetMicronTrackerConfiguration()
@@ -64,16 +82,18 @@ public:
     m_NDITrackerConfiguration = conf;
     }
 
-  int CheckValidility();
+  // Check the validity of the configuration, not yet implemented
+  int CheckValidity();
+
   virtual ~TrackerConfiguration();
 
 private:
-  int CheckPolarisValidility();
-  int CheckAuroraValidility();
-  int CheckMicronValidility();
+  int CheckPolarisValidity();
+  int CheckAuroraValidity();
+  int CheckMicronValidity();
 
   TrackerType                  m_TrackerType;
-  std::string                  m_ValidilityErrorMessage;
+  std::string                  m_ValidityErrorMessage;
 
   MicronTrackerConfiguration * m_MicronTrackerConfiguration;
   NDITrackerConfiguration    * m_NDITrackerConfiguration;
