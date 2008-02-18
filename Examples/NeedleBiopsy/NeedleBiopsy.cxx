@@ -730,7 +730,7 @@ void NeedleBiopsy::RequestDisconnetTracker()
 void NeedleBiopsy::ChangeActiveTrackerTool()
 {
   RequestStopTracking();
-  Sleep( 500 );
+  itksys::SystemTools::Delay( 500 );
 
   if (m_TrackerToolList.size() != 0)
     {
