@@ -51,3 +51,14 @@ SET(IGSTK_USE_VTK_FILE "@USE_VTK_FILE@")
 
 # The Binary Directory of FLTK
 SET(IGSTK_FLTK_DIR "@FLTK_DIR@")
+
+# Qt option
+SET(IGSTK_USE_Qt "@IGSTK_USE_Qt@")
+
+# FLTK option
+SET(IGSTK_USE_FLTK "@IGSTK_USE_FLTK@")
+
+# MicronTracker option
+SET(IGSTK_USE_MicronTracker "@IGSTK_USE_MicronTracker@")
+
+
