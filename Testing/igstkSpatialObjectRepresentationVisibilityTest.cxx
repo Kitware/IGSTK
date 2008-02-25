@@ -371,9 +371,27 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     }
   
   tracker->RequestStopTracking();
-  tracker->RequestClose();
 
   view3D->RequestSaveScreenShot( screenShotFileName2 );
+  view3D->RequestStop();
+
+  view3D->RequestSetTransformAndParent( identityTransform, trackerTool );
+
+  viewObserver->SetNumberOfPulsesToStop( 50 );
+  viewObserver->Reset();
+
+  view3D->RequestStart();
+  tracker->RequestStartTracking();
+
+  while( !bEnd )
+    {
+    igstk::PulseGenerator::Sleep(20);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+  
+  tracker->RequestStopTracking();
+
+  tracker->RequestClose();
   view3D->RequestStop();
 
   delete widget;
