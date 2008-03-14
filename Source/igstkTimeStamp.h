@@ -62,6 +62,9 @@ public:
   /** Define the longest time period on the machine */
   static TimePeriodType GetLongestPossibleTime(); 
 
+  /** Get the zero time period on the machine */
+  static TimePeriodType GetZeroValue(); 
+
   /** Compute the intersection of two time stamps */
   static TimeStamp ComputeOverlap( TimeStamp t1, TimeStamp t2 );
 

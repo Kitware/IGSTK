@@ -36,6 +36,13 @@ TimeStamp::GetLongestPossibleTime()
   return itk::NumericTraits<double>::max();
 }
 
+double 
+TimeStamp::GetZeroValue()
+{
+  return itk::NumericTraits<double>::ZeroValue();
+}
+
+
 TimeStamp
 TimeStamp::ComputeOverlap( TimeStamp t1, TimeStamp t2 )
 {

@@ -581,7 +581,7 @@ void Tracker::AttachingTrackerToolSuccessProcessing( void )
   //tracker tool will become the parent of all the tracker tools.
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
-                  igstk::TimeStamp::GetLongestPossibleTime() );
+                  igstk::TimeStamp::GetZeroValue() );
 
   m_TrackerToolToBeAttached->RequestSetTransformAndParent( 
     identityTransform, this );
@@ -955,6 +955,12 @@ void Tracker::SetFrequencyProcessing( void )
                  "igstk::Tracker::SetFrequencyProcessing called ...\n");
 
   this->m_PulseGenerator->RequestSetFrequency( this->m_FrequencyToBeSet );
+
+  //Set the validity time of the transforms based on the tracker frequency
+  //Add a constant to avoid any flickering effect
+
+  const double nonFlickeringConstant = 10;
+  this->m_ValidityTime = (1.0/m_FrequencyToBeSet) + nonFlickeringConstant;
 }
 
 
