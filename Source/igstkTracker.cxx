@@ -326,7 +326,7 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
   // connect the reference tracker tool the tracker 
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
-                    igstk::TimeStamp::GetLongestPossibleTime() );
+                    igstk::TimeStamp::GetZeroValue() );
   
   if( trackerTool != NULL )
     {
