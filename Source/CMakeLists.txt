@@ -102,7 +102,7 @@ SET(IGSTK_HEADS
 
 )
 
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
     SET(IGSTK_HEADS
       ${IGSTK_HEADS}
       igstkFLTKTextBufferLogOutput.h
@@ -112,24 +112,24 @@ IF(IGSTK_USE_FLTK)
       igstkFLTKWidget.h
       igstkMouseTrackerTool.h
       )
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
-IF(IGSTK_USE_Qt)
+IF(IGSTKSandbox_USE_Qt)
   SET(IGSTK_HEADS
       ${IGSTK_HEADS}
       igstkQMouseTracker.h
       igstkQMouseTrackerTool.h
       igstkQTWidget.h
    )
-ENDIF(IGSTK_USE_Qt)
+ENDIF(IGSTKSandbox_USE_Qt)
 
-IF(IGSTK_USE_MicronTracker)
+IF(IGSTKSandbox_USE_Qt)
   SET(IGSTK_HEADS
       ${IGSTK_HEADS}
       igstkMicronTracker.h
       igstkMicronTrackerTool.h
      )
-ENDIF(IGSTK_USE_MicronTracker)
+ENDIF(IGSTKSandbox_USE_Qt)
 
 
 
@@ -222,7 +222,7 @@ SET(IGSTK_SRCS
 
 )
 
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
       igstkMouseTracker.cxx
@@ -231,25 +231,25 @@ IF(IGSTK_USE_FLTK)
       igstkFLTKWidget.cxx
       igstkMouseTrackerTool.cxx
       )
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
-IF(IGSTK_USE_Qt)
+IF(IGSTKSandbox_USE_Qt)
   SET(IGSTK_SRCS
     ${IGSTK_SRCS}
     igstkQMouseTracker.cxx
     igstkQMouseTrackerTool.cxx
     igstkQTWidget.cxx
     )
-ENDIF(IGSTK_USE_Qt)
+ENDIF(IGSTKSandbox_USE_Qt)
 
-IF(IGSTK_USE_MicronTracker)
+IF(IGSTKSandbox_USE_Qt)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
       igstkMicronTracker.cxx
       igstkMicronTrackerTool.cxx
  
      )
-ENDIF(IGSTK_USE_MicronTracker)
+ENDIF(IGSTKSandbox_USE_Qt)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS}

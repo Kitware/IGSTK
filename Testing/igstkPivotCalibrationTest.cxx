@@ -30,10 +30,19 @@
 #include "igstkSystemInformation.h"
 #include "igstkPivotCalibration.h"
 
-int igstkPivotCalibrationTest( int, char * [] )
+int igstkPivotCalibrationTest( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
+
+  if( argc < 2 )
+    {
+    std::cerr << " Usage: " << argv[0] << "\t" 
+                            << "Input_Data_Directory"  <<"\t" 
+                            << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   // Define type used in the pivot calibration class
   typedef igstk::PivotCalibration           PivotCalibrationType;
@@ -69,7 +78,7 @@ int igstkPivotCalibrationTest( int, char * [] )
   VersorType versor;
 
   // Open the calibration data file, which recorded the traker information
-  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string igstkDataDirectory = argv[1];
   std::string simulationFile = ( igstkDataDirectory + 
                                  "/Input/" + "PivotCalibration.txt");
   input.open( simulationFile.c_str() );

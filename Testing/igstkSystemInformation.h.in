@@ -1,36 +1,33 @@
-/*=========================================================================
+#ifndef __igstk_SystemInformation_h
+#define __igstk_SystemInformation_h
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkSystemInformation.h.in
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+#cmakedefine IGSTKSandbox_USE_FLTK
 
-  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+#cmakedefine IGSTKSandbox_USE_MicronTracker
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+#cmakedefine IGSTKSandbox_USE_Qt
 
-=========================================================================*/
-#ifndef __IGSTKSandbox_SystemInformation_h
-#define __IGSTKSandbox_SystemInformation_h
+#cmakedefine IGSTKSandbox_DATA_ROOT
+#ifdef IGSTKSandbox_DATA_ROOT
+#  undef IGSTKSandbox_DATA_ROOT
+#  define IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
+#else
+#  undef IGSTKSandbox_DATA_ROOT
+#endif
 
-#include "igstkSandboxConfigure.h"
+#define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
+#define IGSTKSandbox_TEST_OUTPUT_DIR "@IGSTKSandbox_TEST_OUTPUT_DIR@"
 
-#cmakedefine IGSTK_TEST_AURORA_ATTACHED
-#define IGSTK_TEST_AURORA_PORT_NUMBER \
-    igstk::SerialCommunication::PortNumber@IGSTK_TEST_AURORA_PORT_NUMBER@
+#cmakedefine IGSTKSandbox_TEST_AURORA_ATTACHED
+#define IGSTKSandbox_TEST_AURORA_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTKSandbox_TEST_AURORA_PORT_NUMBER@
 
-#cmakedefine IGSTK_TEST_POLARIS_ATTACHED
-#define IGSTK_TEST_POLARIS_PORT_NUMBER \
-    igstk::SerialCommunication::PortNumber@IGSTK_TEST_POLARIS_PORT_NUMBER@
+#cmakedefine IGSTKSandbox_TEST_POLARIS_ATTACHED
+#define IGSTKSandbox_TEST_POLARIS_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTKSandbox_TEST_POLARIS_PORT_NUMBER@
 
-#cmakedefine IGSTK_TEST_LOOPBACK_ATTACHED
-#define IGSTK_TEST_LOOPBACK_PORT_NUMBER \
-    igstk::SerialCommunication::PortNumber@IGSTK_TEST_LOOPBACK_PORT_NUMBER@
+#cmakedefine IGSTKSandbox_TEST_LOOPBACK_ATTACHED
+#define IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER \
+    igstk::SerialCommunication::PortNumber@IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER@
 
-
-#define IGSTK_TEST_OUTPUT_DIR "@IGSTKSandbox_TEST_OUTPUT_DIR@"
 #endif

@@ -7,7 +7,7 @@
   Version:   $Revision$
 
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+  See IGSTKSandboxCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -72,19 +72,19 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
  
   // Tests depend on device 
-#ifdef IGSTK_TEST_AURORA_ATTACHED 
+#ifdef IGSTKSandbox_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
-#elif defined IGSTK_TEST_POLARIS_ATTACHED 
+#elif defined IGSTKSandbox_TEST_POLARIS_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
 #endif
 
-#ifdef IGSTK_TEST_AURORA_ATTACHED
+#ifdef IGSTKSandbox_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkAuroraTrackerTest2);
   REGISTER_TEST(igstkAuroraTrackerToolTest);
 #endif
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
+#ifdef IGSTKSandbox_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest2);
   REGISTER_TEST(igstkPolarisTrackerTest3);
@@ -92,13 +92,13 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerToolTest);
 #endif
 
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif
 
   // Tests depend on data
-#ifdef IGSTK_DATA_ROOT
+#ifdef IGSTKSandbox_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
   REGISTER_TEST(igstkCTImageReaderTest);
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationTest);
@@ -115,7 +115,7 @@ void RegisterTests()
 #endif 
 
   // Tests depend on FLTK
-#ifdef IGSTK_USE_FLTK
+#ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkBoxObjectTest);
   REGISTER_TEST(igstkConeObjectTest);
@@ -137,7 +137,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
 
-#ifdef IGSTK_DATA_ROOT
+#ifdef IGSTKSandbox_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAnnotation2DTest2);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest2);
@@ -150,7 +150,7 @@ void RegisterTests()
 #endif 
 #endif
   // Tests depend on Qt
-#ifdef IGSTK_USE_Qt
+#ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);
   REGISTER_TEST(igstkQTWidgetTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
