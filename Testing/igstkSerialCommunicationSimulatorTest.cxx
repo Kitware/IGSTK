@@ -65,6 +65,15 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
+  if( argc < 2 )
+    {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" 
+              << "Data_Directory" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
@@ -79,7 +88,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   serialComm->OpenCommunication();
 
   // set the name of the actual data file
-  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string igstkDataDirectory = argv[2];
   std::string simulationFile = igstkDataDirectory + "/";
   simulationFile = simulationFile + "Input/polaris_stream_07_27_2005.txt";
   serialComm->SetFileName( simulationFile.c_str() );
@@ -89,12 +98,8 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
                            my_command = SerialCommunicationTestCommand::New();
 
   // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string testName = argv[0];
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";

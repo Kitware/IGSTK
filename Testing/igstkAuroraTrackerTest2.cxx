@@ -75,10 +75,11 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
 
-  if( argc < 3 )
+  if( argc < 5 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename " <<"\t"
+                            << "Auora port number" << "\t"
                             << "PortA_number" << "\t"
                             << "PortB_number" << "\t"
                             << "Order" << "\t"
@@ -112,7 +113,12 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
+
+  unsigned int igstk_Test_Aurora_Port_Number = atoi(argv[2]);
+  typedef igstk::SerialCommunication::PortNumberType  PortNumberType;
+  PortNumberType auroraPortNumber =  
+          PortNumberType( igstk_Test_Aurora_Port_Number );
+  serialComm->SetPortNumber( auroraPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
@@ -141,8 +147,8 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
   typedef igstk::AuroraTrackerTool          TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
-  unsigned int portANumber = atoi(argv[2]);
-  unsigned int portBNumber = atoi(argv[3]);
+  unsigned int portANumber = atoi(argv[3]);
+  unsigned int portBNumber = atoi(argv[4]);
   unsigned int order = atoi(argv[4]);
   unsigned int spliter = atoi(argv[5]);
 

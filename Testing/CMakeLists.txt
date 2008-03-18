@@ -62,7 +62,7 @@ ADD_TEST(igstkTrackerToolReferenceTest ${IGSTK_TESTS}
 igstkTrackerToolReferenceTest)
 
 ADD_TEST(igstkSpatialObjectTest ${IGSTK_TESTS} igstkSpatialObjectTest)
-ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest)
+ADD_TEST(igstkSerialCommunicationTest ${IGSTK_TESTS} igstkSerialCommunicationTest ${IGSTK_TEST_OUTPUT_DIR} )
 ADD_TEST(igstkStateMachineErrorsTest ${IGSTK_TESTS} igstkStateMachineErrorsTest)
 ADD_TEST(igstkStateMachineTest ${IGSTK_TESTS} igstkStateMachineTest)
 ADD_TEST(igstkStringEventTest ${IGSTK_TESTS} igstkStringEventTest )
@@ -113,17 +113,23 @@ IF (IGSTK_DATA_ROOT)
               ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
               ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom )
 
-  ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS} igstkNDICommandInterpreterSimulatedTest)
-  ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS} igstkNDICommandInterpreterStressTest)
+  ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
+igstkNDICommandInterpreterSimulatedTest ${IGSTK_TEST_OUTPUT_DIR}
+${IGSTK_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
+  ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS}
+igstkNDICommandInterpreterStressTest ${IGSTK_TEST_OUTPUT_DIR} ${IGSTK_DATA_ROOT}
+${IGSTK_TEST_POLARIS_PORT_NUMBER})
 
   ADD_TEST( igstkPolarisTrackerSimulatedTest
               ${IGSTK_TESTS}
               igstkPolarisTrackerSimulatedTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
-              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom )
+              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom 
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER})
  
-  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS} igstkSerialCommunicationSimulatorTest)
+  ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
+igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR})
   
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
@@ -174,13 +180,16 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
 ENDIF(IGSTK_TEST_AURORA_ATTACHED)
 
 IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
-  ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS} igstkNDICommandInterpreterTest)
+  ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS}
+igstkNDICommandInterpreterTest ${IGSTK_TEST_OUTPUT_DIR}
+${IGSTK_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
 ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
 
 IF(IGSTK_TEST_POLARIS_ATTACHED)
   ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
           )
 
   ADD_TEST( igstkPolarisTrackerTest2
@@ -188,17 +197,20 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               igstkPolarisTrackerTest2
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest2LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
               )
     ADD_TEST( igstkPolarisTrackerTest3
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest3
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
               )
     ADD_TEST( igstkPolarisTrackerTest4
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest4
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
               0
               1
               )

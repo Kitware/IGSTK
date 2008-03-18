@@ -64,6 +64,14 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
+  if( argc < 2 )
+    {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" << std::endl; 
+    return EXIT_FAILURE;
+    }
+
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
@@ -78,12 +86,8 @@ int igstkSerialCommunicationTest( int argc, char * argv[] )
                            my_command = SerialCommunicationTestCommand::New();
 
   // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string testName = argv[0];
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";

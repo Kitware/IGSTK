@@ -82,6 +82,17 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
+  if( argc < 4 )
+    {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" 
+              << "Port_number" 
+              << "Data_root" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
 #ifdef IGSTK_SIMULATOR_TEST
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 #else  /* IGSTK_SIMULATOR_TEST */
@@ -96,12 +107,8 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
     NDICommandInterpreterTestCommand::New();
    
   // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string testName = argv[0]; 
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";
@@ -128,7 +135,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
 
 #ifdef IGSTK_SIMULATOR_TEST
   // load a previously captured file
-  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string igstkDataDirectory = argv[3];
   std::string simulationFile = igstkDataDirectory + "/";
   simulationFile = simulationFile + 
     "Input/polaris_stream_08_31_2005_NDICommandInterpreter.txt";
@@ -140,8 +147,12 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   serialComm->SetCapture( true );
 #endif /* IGSTK_SIMULATOR_TEST */
 
-  serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);
+  unsigned int igstk_Test_Polaris_Port_Number = atoi(argv[2]);
+  typedef igstk::SerialCommunication::PortNumberType  PortNumberType;
+  PortNumberType polarisPortNumber =  
+                  PortNumberType( igstk_Test_Polaris_Port_Number );
 
+  serialComm->SetPortNumber(polarisPortNumber);
   serialComm->OpenCommunication();
 
   // NDICommandInterpreter will set the communication parameters itself
@@ -269,7 +280,7 @@ int igstkNDICommandInterpreterTest( int argc, char * argv[] )
   // -- write a virtual SROM to this port
   char data[1024]; // to hold the srom data
   memset( data, 0, 1024 );
-  std::string romDataRoot = IGSTK_DATA_ROOT;
+  std::string romDataRoot = argv[3];
   std::string romFileName = romDataRoot +
     "/Input/polaris_passive_pointer_1.rom";
   

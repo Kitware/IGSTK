@@ -139,16 +139,20 @@ int igstkFlockOfBirdsCommandInterpreterTest( int argc, char * argv[] )
     = igstk::SerialCommunication::New();
 #endif /* IGSTK_SIMULATOR_TEST */
 
+  if( argc < 2 )
+    {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" << std::endl; 
+    return EXIT_FAILURE;
+    }
+
   igstk::FlockOfBirdsCommandInterpreterTestCommand::Pointer my_command 
     = igstk::FlockOfBirdsCommandInterpreterTestCommand::New();
 
   // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string testName = argv[0];
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";

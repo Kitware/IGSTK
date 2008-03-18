@@ -74,12 +74,13 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
 
-  if( argc < 4 )
+  if( argc < 5 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
                             << "Simulation_filename "
                             << "MultiChannel_ROM_filename "
+                            << "SericalCommunication_PORT_Number"
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -109,7 +110,10 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[3]);
+  PortNumberType  auroraPortNumber = PortNumberType(portNumberIntegerValue); 
+  serialComm->SetPortNumber( auroraPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );

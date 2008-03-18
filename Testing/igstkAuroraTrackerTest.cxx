@@ -74,7 +74,7 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename " <<"\t"
@@ -108,7 +108,10 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_AURORA_PORT_NUMBER );
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[2]);
+  PortNumberType  auroraPortNumber = (PortNumberType) portNumberIntegerValue; 
+  serialComm->SetPortNumber( auroraPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );

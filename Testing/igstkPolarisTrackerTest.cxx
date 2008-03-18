@@ -73,11 +73,12 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
 
-  if( argc < 3 )
+  if( argc < 4 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
                             << "Wireless_SROM_filename "
+                            << "Port_Number"
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -107,7 +108,10 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_POLARIS_PORT_NUMBER );
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[3]);
+  PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
+  serialComm->SetPortNumber( polarisPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );

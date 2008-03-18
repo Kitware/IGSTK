@@ -78,6 +78,7 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
+                            << "SerialCommunication_PortNumber"
                             << "port_number1 "
                             << "port_number2 "
                             << std::endl;
@@ -114,7 +115,10 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
-  serialComm->SetPortNumber( IGSTK_TEST_POLARIS_PORT_NUMBER );
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[2]);
+  PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
+  serialComm->SetPortNumber( polarisPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
@@ -149,7 +153,7 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
   //Select wired tracker tool
   trackerTool->RequestSelectWiredTrackerTool();
   //Set the port number
-  unsigned int portNumber1 = atoi(argv[2]); 
+  unsigned int portNumber1 = atoi(argv[3]); 
   trackerTool->RequestSetPortNumber( portNumber1 );
   //Configure
   trackerTool->RequestConfigure();
@@ -166,7 +170,7 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
   //Select wired tracker tool
   trackerTool2->RequestSelectWiredTrackerTool();
   //Set the port number
-  unsigned int portNumber2 = atoi(argv[3]); 
+  unsigned int portNumber2 = atoi(argv[4]); 
   trackerTool2->RequestSetPortNumber( portNumber2 );
   //Configure
   trackerTool2->RequestConfigure();

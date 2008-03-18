@@ -90,13 +90,17 @@ int igstkFlockOfBirdsTrackerTest( int argc, char * argv[] )
   FlockOfBirdsTrackerTestCommand::Pointer my_command 
                                       = FlockOfBirdsTrackerTestCommand::New();
 
-  // logger object created 
-  std::string testName;
-  if (argc > 0)
+  if( argc < 2 )
     {
-    testName = argv[0];
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" << std::endl; 
+    return EXIT_FAILURE;
     }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+
+  // logger object created 
+  std::string testName = argv[0];
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";

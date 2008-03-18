@@ -82,6 +82,16 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
 
   igstk::RealTimeClock::Initialize();
 
+  if( argc < 4 )
+    {
+    std::cerr << "Error missing argument " << std::endl;
+    std::cerr << "Usage:  " << argv[0]  
+              << "Test_Output_Directory" 
+              << "Data_Directory" 
+              << "Polaris_Port_Number" << std::endl; 
+    return EXIT_FAILURE;
+    }
+
   typedef igstk::SerialCommunicationSimulator   CommunicationType;
 
   typedef igstk::NDICommandInterpreter      CommandInterpreterType;
@@ -92,12 +102,8 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     NDICommandInterpreterTestCommand::New();
    
   // logger object created 
-  std::string testName;
-  if (argc > 0)
-    {
-    testName = argv[0];
-    }
-  std::string outputDirectory = IGSTK_TEST_OUTPUT_DIR;
+  std::string testName = argv[0];
+  std::string outputDirectory = argv[1];
   std::string filename = outputDirectory +"/";
   filename = filename + testName;
   filename = filename + "LoggerOutput.txt";
@@ -123,13 +129,16 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   interpreter->AddObserver( igstk::NDIErrorEvent(), errorCommand );
 
   // load a previously captured file
-  std::string igstkDataDirectory = IGSTK_DATA_ROOT;
+  std::string igstkDataDirectory = argv[2];
   std::string simulationFile = igstkDataDirectory + "/";
   simulationFile = simulationFile + 
     "Input/polaris_stream_NDICommandInterpreterStress.txt";
   serialComm->SetFileName( simulationFile.c_str() );
 
-  serialComm->SetPortNumber(IGSTK_TEST_POLARIS_PORT_NUMBER);
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[3]);
+  PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
+  serialComm->SetPortNumber( polarisPortNumber );
 
   serialComm->OpenCommunication();
 
@@ -244,7 +253,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   // -- write a virtual SROM to this port
   char data[1024]; // to hold the srom data
   memset( data, 0, 1024 );
-  std::string romDataRoot = IGSTK_DATA_ROOT;
+  std::string romDataRoot = argv[2];
   std::string romFileName = romDataRoot +
     "/Input/polaris_passive_pointer_1.rom";
   
