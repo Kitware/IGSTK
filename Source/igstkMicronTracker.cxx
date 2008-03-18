@@ -549,6 +549,17 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
 
+  //reset the status of all the tracker tools
+  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
+
+  while( inputItr != inputEnd )
+    {
+    this->m_ToolStatusContainer[inputItr->first] = 0;
+    ++inputItr;
+    }
+
   // Grab frame
   if ( ! this->m_Cameras->grabFrame( this->m_SelectedCamera ) )
     {
