@@ -129,7 +129,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
       igstkMicronTracker.h
       igstkMicronTrackerTool.h
      )
-ENDIF(IGSTKSandbox_USE_Qt)
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 
 
@@ -249,7 +249,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
       igstkMicronTrackerTool.cxx
  
      )
-ENDIF(IGSTKSandbox_USE_Qt)
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS}
