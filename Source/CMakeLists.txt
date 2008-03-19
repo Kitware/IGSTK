@@ -123,7 +123,7 @@ IF(IGSTKSandbox_USE_Qt)
    )
 ENDIF(IGSTKSandbox_USE_Qt)
 
-IF(IGSTKSandbox_USE_Qt)
+IF(IGSTKSandbox_USE_MicronTracker)
   SET(IGSTK_HEADS
       ${IGSTK_HEADS}
       igstkMicronTracker.h
@@ -242,7 +242,7 @@ IF(IGSTKSandbox_USE_Qt)
     )
 ENDIF(IGSTKSandbox_USE_Qt)
 
-IF(IGSTKSandbox_USE_Qt)
+IF(IGSTKSandbox_USE_MicronTracker)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
       igstkMicronTracker.cxx
