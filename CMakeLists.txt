@@ -15,6 +15,12 @@ SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 IF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
 FIND_PATH(IGSTK_SOURCE_DIR igstkConfigure.h.in)
+IF(NOT IGSTK_SOURCE_DIR)
+  MESSAGE( FATAL_ERROR "To build the sandbox, IGSTK CVS source directory path is
+required. Please verify configuration")
+ENDIF(NOT IGSTK_SOURCE_DIR)
+
+
 
 # Disable MSVC 8 warnings
 IF(WIN32)

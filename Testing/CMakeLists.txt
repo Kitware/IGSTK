@@ -339,12 +339,12 @@ IF (IGSTKSandbox_USE_FLTK)
 ENDIF (IGSTKSandbox_USE_FLTK)
 
 
-IF(IGSTK_USE_MicronTracker)  
+IF(IGSTKSandbox_USE_MicronTracker)  
   SET(IGSTKTests_SRCS
     ${IGSTKTests_SRCS}
     igstkMicronTrackerTest.cxx
     igstkMicronTrackerToolTest.cxx)
-ENDIF(IGSTK_USE_MicronTracker)  
+ENDIF(IGSTKSandbox_USE_MicronTracker)  
 
 IF(IGSTKSandbox_USE_Qt)  
   SET(IGSTKTests_SRCS
