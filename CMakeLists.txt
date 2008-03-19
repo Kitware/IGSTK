@@ -80,6 +80,17 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 #
 OPTION(IGSTKSandbox_USE_Qt "Use Qt (The Fast Light Toolkit) for GUI" OFF)
 IF(IGSTKSandbox_USE_Qt)
+ # Check if VTK was built with GUISupport on
+ IF( NOT VTK_USE_GUISUPPORT )
+  MESSAGE(FATAL_ERROR "To build IGSTK with Qt support, you will need to use a VTK
+build with GUI support i.e VTK_USE_GUISUPPORT turned on in VTK configuration")
+ ENDIF( NOT VTK_USE_GUISUPPORT )
+
+ # Check if VTK was built with Qt on
+ IF( NOT VTK_USE_QVTK )
+  MESSAGE(FATAL_ERROR "To build IGSTK with Qt support, you will need to use a VTK
+build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
+ ENDIF( NOT VTK_USE_QVTK )
  # use what QVTK built with
  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
