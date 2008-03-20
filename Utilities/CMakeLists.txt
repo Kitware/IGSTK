@@ -51,3 +51,7 @@ IF(IGSTKSandbox_USE_MicronTracker )
     SUBDIRS( MicronTracker )
 ENDIF( IGSTKSandbox_USE_MicronTracker )
 
+IF(IGSTKSandbox_USE_vtkKWImage )
+    SUBDIRS( vtkKWImage )
+ENDIF( IGSTKSandbox_USE_vtkKWImage )
+
