@@ -98,12 +98,17 @@ public:
 
   /** This method returns 'true' is the current TimeStamp is still valid at the
    * time in milliseconds indicated in the argument. The purpose of this method
-   * is to evaluate what data objects are usable at a particula time snapshot.
+   * is to evaluate what data objects are usable at a particular time snapshot.
    * For example, this method will be used for selecting the display mode of
    * objects that are intended to be presented in a scene rendering at the time
    * specified in the argument.
    * */
   bool IsValidAtTime(  TimePeriodType milliseconds ) const;
+
+  /** This method returns 'true' is the current TimeStamp is valid at the
+   * time when this method is called. 
+   * */
+  bool IsValidNow( ) const;
 
   void Print(std::ostream& os, itk::Indent indent) const;
 

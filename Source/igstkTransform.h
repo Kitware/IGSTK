@@ -158,6 +158,13 @@ public:
    * */
   bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
 
+  /** Returns the validity status of the transform when it is called 
+  *
+  * \sa TimeStamp 
+  *
+  * */
+  bool IsValidNow() const;
+
 
   /** Export the content of the transformation in the format of a vtkMatrix4x4.
    * Users must allocate the matrix first and then pass it by reference to this

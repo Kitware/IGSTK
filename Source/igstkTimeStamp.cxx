@@ -116,6 +116,12 @@ TimeStamp
   return true;
 }
 
+bool 
+TimeStamp
+::IsValidNow() const
+{
+  return this->IsValidAtTime( RealTimeClock::GetTimeStamp() );
+}
 
 void 
 TimeStamp

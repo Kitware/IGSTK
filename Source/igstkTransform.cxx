@@ -153,6 +153,12 @@ Transform
   return m_TimeStamp.IsValidAtTime( timeToCheckInMilliseconds );
 }
 
+bool
+Transform
+::IsValidNow() const
+{
+  return m_TimeStamp.IsValidNow();
+}
 
 void 
 Transform
