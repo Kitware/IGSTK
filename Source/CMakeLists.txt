@@ -131,8 +131,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
-
-
 # The implementation files
 
 SET(IGSTK_SRCS
@@ -368,6 +366,13 @@ IF( WIN32 )
      )
 ENDIF( WIN32 )
 
+IF(IGSTKSandbox_USE_vtkKWImage)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkGenericImageReader.h
+     )
+ENDIF(IGSTKSandbox_USE_vtkKWImage)
+
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
@@ -424,6 +429,13 @@ IF( WIN32 )
      )
 ENDIF( WIN32 )
 
+IF(IGSTKSandbox_USE_vtkKWImage)
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkGenericImageReader.cxx
+     )
+ENDIF(IGSTKSandbox_USE_vtkKWImage)
+
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
 
@@ -455,6 +467,9 @@ IF(IGSTKSandbox_USE_MicronTracker)
   
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_vtkKWImage)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkKWImageu)
+ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
 # Adding the IGSTKSandbox library
 ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLatest_HEADS} ${IGSTKLatest_SRCS})
