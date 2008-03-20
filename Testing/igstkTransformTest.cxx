@@ -61,7 +61,7 @@ int igstkTransformTest( int, char * [] )
     VersorType rotation;
     rotation.Set(0.0, 0.0, 1.0, 0.0); // 90 degrees around Z
 
-    const double validityPeriod = 10.0; // milliseconds
+    const double validityPeriod = 100.0; // milliseconds
     
     igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
   
@@ -69,6 +69,13 @@ int igstkTransformTest( int, char * [] )
 
     t1.SetTranslationAndRotation( 
         translation, rotation, errorValue, validityPeriod );
+
+    if( !t1.IsValidNow() )
+    {
+      std::cerr << "Error in IsValidNow() test" << std::endl;
+      std::cerr << "Expected to be valid, but returned invalid" << std::endl;
+      return EXIT_FAILURE;
+    }
 
     VectorType translationSet = t1.GetTranslation();
     VersorType rotationSet    = t1.GetRotation();

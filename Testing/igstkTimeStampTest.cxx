@@ -46,6 +46,14 @@ int igstkTimeStampTest( int, char * [] )
 
       stamp.SetStartTimeNowAndExpireAfter( millisecondsToExpire );
 
+      if( !stamp.IsValidNow() )
+        {
+        std::cerr << "Error in IsValidNow()." << std::endl; 
+        std::cerr << "Expected value was 'true',";
+        std::cerr << "but returned 'false'" << std::endl;
+        return EXIT_FAILURE;
+        }
+
       std::cout << stamp << std::endl;
 
       const double startingTime   = stamp.GetStartTime();
