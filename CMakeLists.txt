@@ -115,6 +115,10 @@ ENDIF(IGSTKSandbox_USE_Qt)
 # Use vtkKWImage, this will enable igstkGenericImageReader/Writer classes
 OPTION(IGSTKSandbox_USE_vtkKWImage "Use vtkKWImage for generic image reading and writing" OFF)
 
+IF(IGSTKSandbox_USE_vtkKWImage)
+  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/vtkKWImage )
+ENDIF(IGSTKSandbox_USE_vtkKWImage)
+
 # Connect MicronTracker
 OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
 
