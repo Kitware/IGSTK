@@ -142,7 +142,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest
     ${IGSTKSandbox_TESTS}
     igstkPolarisTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000
+    localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
     )
 
   ADD_TEST( igstkVicraTrackerToolObserverToSocketRelayTest

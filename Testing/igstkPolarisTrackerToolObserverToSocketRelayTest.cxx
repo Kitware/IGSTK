@@ -34,10 +34,10 @@
 int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 {
 
-  if( argc < 4 )
+  if( argc < 5 )
     {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend" << std::endl;
+    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend polarisPortNumber" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -54,7 +54,10 @@ int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   igstk::SerialCommunication::Pointer 
                      serialComm = igstk::SerialCommunication::New();
 
-  serialComm->SetPortNumber( IGSTK_TEST_POLARIS_PORT_NUMBER );
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int portNumberIntegerValue = atoi(argv[4]);
+  PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
+  serialComm->SetPortNumber( polarisPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
