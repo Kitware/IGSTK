@@ -34,7 +34,6 @@ GenericImageReader::GenericImageReader()
 /* Destructor. */
 GenericImageReader::~GenericImageReader()
 {
-  delete m_ImageIO;
 }
 
 } // end namespace igstk
