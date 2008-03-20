@@ -112,6 +112,9 @@ build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
  INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR})
 ENDIF(IGSTKSandbox_USE_Qt)
 
+# Use vtkKWImage, this will enable igstkGenericImageReader/Writer classes
+OPTION(IGSTKSandbox_USE_vtkKWImage "Use vtkKWImage for generic image reading and writing" OFF)
+
 # Connect MicronTracker
 OPTION(IGSTKSandbox_USE_MicronTracker "Connect MicronTracker" OFF)
 
