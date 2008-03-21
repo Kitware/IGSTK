@@ -83,7 +83,8 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_SOURCE_DIR}/TestingLatest
   )
 
-# Add your new tests here
+
+# Add NEW Sandbox tests 
 SET(SandboxTests_SRCS
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
@@ -270,7 +271,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                @ONLY IMMEDIATE)
 
 
-#-----------------------------------------------------------------------------
+#######-----------------------------------------------------------------------
 # Now running IGSTK tests with the latest main library
 SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 
@@ -317,9 +318,6 @@ SET(IGSTKTests_SRCS
   igstkObjectRepresentationRemovalTest.cxx
   igstkTransductionMacroTest.cxx
   igstkTrackerToolReferenceTest.cxx
-
-  igstkDefaultWidget.h
-  igstkDefaultWidget.cxx
  )
 
 IF (IGSTKSandbox_USE_FLTK)
@@ -401,13 +399,15 @@ IF (IGSTK_DATA_ROOT)
               igstkAuroraTrackerSimulatedTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAuroraTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
-              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom              )
+              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom              
+              ${IGSTKSandbox_TEST_AURORA_PORT_NUMBER} )
 
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterSimulatedTest ${IGSTKSandbox_TEST_OUTPUT_DIR}
 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
   ADD_TEST(igstkNDICommandInterpreterStressTest ${IGSTK_TESTS}
-igstkNDICommandInterpreterStressTest ${IGSTKSandbox_TEST_OUTPUT_DIR})
+igstkNDICommandInterpreterStressTest ${IGSTKSandbox_TEST_OUTPUT_DIR}
+${IGSTK_TEST_POLARIS_PORT_NUMBER})
 
   ADD_TEST( igstkPolarisTrackerSimulatedTest
               ${IGSTK_TESTS}
@@ -415,6 +415,7 @@ igstkNDICommandInterpreterStressTest ${IGSTKSandbox_TEST_OUTPUT_DIR})
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
               )
 
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
@@ -504,7 +505,7 @@ igstkSerialCommunicationSimulatorTest ${IGSTKSandbox_TEST_OUTPUT_DIR})
 
 ENDIF(IGSTK_DATA_ROOT)
 
-IF(IGSTK_USE_MicronTracker)
+IF(IGSTKSandbox_USE_MicronTracker)
     ADD_TEST( igstkMicronTrackerTest
               ${IGSTK_TESTS}
               igstkMicronTrackerTest
@@ -514,7 +515,7 @@ IF(IGSTK_USE_MicronTracker)
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
     ADD_TEST( igstkMicronTrackerToolTest
               ${IGSTK_TESTS} igstkMicronTrackerToolTest )
-ENDIF(IGSTK_USE_MicronTracker)
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 
 IF(IGSTKSandbox_USE_Qt)
@@ -686,7 +687,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
-#IF(IGSTKSandbox_TEST_AURORA_ATTACHED)
+IF(IGSTKSandbox_TEST_AURORA_ATTACHED)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAuroraTrackerTest.cxx
   )
@@ -696,8 +697,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkAuroraTrackerToolTest.cxx
   )
-#
-#ENDIF(IGSTKSandbox_TEST_AURORA_ATTACHED)
+ENDIF(IGSTKSandbox_TEST_AURORA_ATTACHED)
 
 #IF(IGSTKSandbox_TEST_AURORA_ATTACHED OR IGSTKSandbox_TEST_POLARIS_ATTACHED)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
@@ -705,7 +705,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
   )
 #ENDIF(IGSTKSandbox_TEST_AURORA_ATTACHED OR IGSTKSandbox_TEST_POLARIS_ATTACHED)
 
-#IF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
+IF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
   SET(IGSTKTests_SRCS ${IGSTKTests_SRCS}
     igstkPolarisTrackerTest.cxx
     igstkPolarisTrackerTest2.cxx
@@ -713,7 +713,7 @@ ENDIF(IGSTKSandbox_USE_FLTK)
     igstkPolarisTrackerTest4.cxx
     igstkPolarisTrackerToolTest.cxx
   )
-#ENDIF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
+ENDIF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
 
 #-----------------------------------------------------------------------------
 # Testing source file need data input
@@ -768,6 +768,11 @@ IF(IGSTKSandbox_USE_FLTK)
   ENDIF(IGSTK_DATA_ROOT)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
+# add the default widget class implementation to the list so that 
+# gets copied
+SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkDefaultWidget.h)
+SET(IGSTKTests_SRCS ${IGSTKTests_SRCS} igstkDefaultWidget.cxx)
+ 
 #-----------------------------------------------------------------------------
 # Copy the source files if they are not a duplicated in the Sandbox
 FOREACH(SourceFile ${IGSTKTests_SRCS})
@@ -794,7 +799,8 @@ SOURCE_GROUP(TestsModified FILES ${TestsModifiedFiles})
 
 #-----------------------------------------------------------------------------
 # Add testing executables
-ADD_EXECUTABLE(igstkLatestTests ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
+ADD_EXECUTABLE(igstkLatestTests
+${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
 TARGET_LINK_LIBRARIES(igstkLatestTests IGSTKSandbox)
 
 ADD_EXECUTABLE(igstkStateMachineExportTest ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkStateMachineExportTest.cxx)
