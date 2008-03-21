@@ -111,7 +111,8 @@ IF (IGSTK_DATA_ROOT)
               igstkAuroraTrackerSimulatedTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkAuroraTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
-              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom )
+              ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom
+              ${IGSTK_TEST_AURORA_PORT_NUMBER} )
 
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterSimulatedTest ${IGSTK_TEST_OUTPUT_DIR}

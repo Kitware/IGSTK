@@ -111,7 +111,7 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   serialComm->SetLogger( logger );
 
   typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
-  unsigned int portNumberIntegerValue = atoi(argv[3]);
+  unsigned int portNumberIntegerValue = atoi(argv[4]);
   PortNumberType  auroraPortNumber = PortNumberType(portNumberIntegerValue); 
   serialComm->SetPortNumber( auroraPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
