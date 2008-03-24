@@ -1,19 +1,22 @@
 #ifndef __igstk_SystemInformation_h
 #define __igstk_SystemInformation_h
 
+
+/* options defined by cmake */
+#cmakedefine IGSTK_USE_ATAMAI
 #cmakedefine IGSTKSandbox_USE_FLTK
-
-#cmakedefine IGSTKSandbox_USE_MicronTracker
-
 #cmakedefine IGSTKSandbox_USE_Qt
+#cmakedefine IGSTKSandbox_USE_MicronTracker
+#cmakedefine IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS 
+#cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+#cmakedefine IGSTKSandbox_USE_vtkKWImage
 
-#cmakedefine IGSTKSandbox_DATA_ROOT
-#ifdef IGSTKSandbox_DATA_ROOT
-#  undef IGSTKSandbox_DATA_ROOT
-#  define IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
-#else
-#  undef IGSTKSandbox_DATA_ROOT
-#endif
+#cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
+
+#cmakedefine IGSTKSandbox_DATA_ROOT "@IGSTKSandbox_DATA_ROOT@"
+
+#cmakedefine IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
+
 
 #define IGSTKSandbox_BINARY_DIR "@IGSTKSandbox_BINARY_DIR@"
 #define IGSTKSandbox_TEST_OUTPUT_DIR "@IGSTKSandbox_TEST_OUTPUT_DIR@"
