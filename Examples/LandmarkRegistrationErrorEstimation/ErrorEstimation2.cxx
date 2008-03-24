@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    ErrorEstimation1.cxx
+  Module:    ErrorEstimation2.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -139,12 +139,19 @@ private:
 };
 
 
-int main( int argv, char * argc[] )
+int main( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
 
-  std::cout << "Landmark3DRegistrationErrorEstimator" << std::endl;
+  if ( argc < 4 )
+    {
+    std::cerr << "Missing command line arguments: " 
+              << argv[0] << "\tImageLandmark_input_file\t"
+              << "TrackerLandmark_input_file\t"
+              << "TargetPoints_input_file\t" << std::endl;
+    return EXIT_FAILURE;
+    }
 
 
   typedef igstk::Object::LoggerType             LoggerType;
@@ -183,80 +190,72 @@ int main( int argv, char * argc[] )
   vtkLoggerOutput->OverrideVTKWindow();
   // redirect messages from VTK OutputWindow -> logger
   vtkLoggerOutput->SetLogger(logger);
-
-
   landmarkRegister->SetLogger( logger );
 
 
-  // Define the 3D rigid body transformation 
-  typedef itk::Rigid3DTransform< double > Rigid3DTransformType;
+  std::ifstream inputImageLandmarkFileStream; 
+  std::string imageLandmarkFile = argv[1];
+  std::cout << "Reading image landmarks point file: " << imageLandmarkFile << std::endl;
+  inputImageLandmarkFileStream.open( imageLandmarkFile.c_str() );
+  if( inputImageLandmarkFileStream.fail() )
+    {
+    std::cerr << "Encountered a problem opening: " << imageLandmarkFile << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+  const int stringMaximumSize = 4096;
+  char parametersString[stringMaximumSize];
+  double x;
+  double y;
+  double z; 
 
-  Rigid3DTransformType::Pointer rigid3DTransform = 
-                                     Rigid3DTransformType::New();
+  while( !inputImageLandmarkFileStream.getline( parametersString, stringMaximumSize).eof()  )
+    {
+    if ( sscanf( parametersString, "%lf\t%lf\t%lf", &x, &y, &z) == 3 ) 
+        {
+        fixedPoint[0] =  x;
+        fixedPoint[1] =  y;
+        fixedPoint[2] =  z;
+        fpointcontainer.push_back(fixedPoint);
+        std::cout << "Read in image landmark: " << fixedPoint << std::endl;
+        }
+    }
 
-  Rigid3DTransformType::MatrixType mrotation;
+  std::ifstream inputTrackerLandmarkFileStream; 
+  std::string trackerLandmarkFile = argv[2];
+  std::cout << "Reading tracker landmarks point file: " << imageLandmarkFile << std::endl;
+  inputTrackerLandmarkFileStream.open( trackerLandmarkFile.c_str() );
+  if( inputTrackerLandmarkFileStream.fail() )
+    {
+    std::cerr << "Encountered a problem opening: " << trackerLandmarkFile << std::endl;
+    return EXIT_FAILURE;
+    }
+  while( ! inputTrackerLandmarkFileStream.getline( parametersString, stringMaximumSize).eof()  )
+    {
+    if ( sscanf( parametersString, "%lf\t%lf\t%lf", &x, &y, &z) == 3 ) 
+        {
+        movingPoint[0] =  x;
+        movingPoint[1] =  y;
+        movingPoint[2] =  z;
+        mpointcontainer.push_back(movingPoint);
+        std::cout << "Read in tracker landmark: " << movingPoint << std::endl;
+        }
+    }
 
-  mrotation.SetIdentity();
+  typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
+  PointsContainerConstIterator
+      fitr = fpointcontainer.begin();
+  PointsContainerConstIterator
+      mitr = mpointcontainer.begin();
 
-  // define rotation angle
-  const double angle = 40.0 * atan( 1.0f ) / 45.0;
-  const double sinth = sin( angle );
-  const double costh = cos( angle );
-
-  // Rotation around the Z axis
-  mrotation[0][0] =  costh;
-  mrotation[0][1] =  sinth;
-  mrotation[1][0] = -sinth;
-  mrotation[1][1] =  costh;
-
-  rigid3DTransform->SetRotationMatrix( mrotation );
-
-  // Apply translation
-
-  Rigid3DTransformType::TranslationType translation;
-  translation.Fill( 10.0f );
-  rigid3DTransform->SetTranslation(translation);
-
-  // Add 1st landmark
-  fixedPoint[0] =  25.0;
-  fixedPoint[1] =  1.0;
-  fixedPoint[2] =  15.0;
-  fpointcontainer.push_back(fixedPoint);
-  landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-  movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-  mpointcontainer.push_back(movingPoint);
-  landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
-
-
-  // Add 2nd landmark
-  fixedPoint[0] =  15.0;
-  fixedPoint[1] =  21.0;
-  fixedPoint[2] =  17.0;
-  fpointcontainer.push_back(fixedPoint);
-  landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-  movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-  mpointcontainer.push_back(movingPoint);
-  landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
-
-  // Add 3d landmark
-  fixedPoint[0] =  14.0;
-  fixedPoint[1] =  25.0;
-  fixedPoint[2] =  11.0;
-  fpointcontainer.push_back(fixedPoint);
-  landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-  movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-  mpointcontainer.push_back(movingPoint);
-  landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
-
-  // Add 4th landmark
-  fixedPoint[0] =  10.0;
-  fixedPoint[1] =  11.0;
-  fixedPoint[2] =  8.0;
-  fpointcontainer.push_back(fixedPoint);
-  landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-  movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
-  landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
-
+  while( fitr != fpointcontainer.end())
+    {
+    landmarkRegister->RequestAddImageLandmarkPoint( *fitr ); 
+    landmarkRegister->RequestAddTrackerLandmarkPoint( *mitr );
+    ++fitr; 
+    ++mitr;
+    }
+ 
   landmarkRegister->Print(std::cout);
  
   // Calculate transform
@@ -330,60 +329,55 @@ int main( int argv, char * argc[] )
   //
   // EndLatex
 
-  // BeginCodeSnippet
-  TargetPointType targetPoint;
-  targetPoint[0] =  10.0;
-  targetPoint[1] =  20.0;
-  targetPoint[2] =  8.0;
-  errorEstimator->RequestSetTargetPoint( targetPoint );
-  // EndCodeSnippet
-
-
-  // BeginLatex
-  //
-  // Finally, the registration error for the target
-  // point is estimated:
-  //
-  // EndLatex
-
-  // BeginCodeSnippet
-  ErrorType       targetRegistrationError;
-  errorEstimator->RequestEstimateTargetPointRegistrationError( );
-  // EndCodeSnippet
-
-
-  // Setup an observer to get the registration error 
-  //
-  // BeginLatex
-  //
-  // To receive the error value, an observer is set up to listen to
-  // an event loaded with error value as follows:
-  //
-  // EndLatex
-
-  // BeginCodeSnippet
-  ErrorEstimationGetErrorCallback::Pointer lrtcb =
-                          ErrorEstimationGetErrorCallback::New();
-
-  errorEstimator->AddObserver( igstk::LandmarkRegistrationErrorEvent(), lrtcb );
-  errorEstimator->RequestGetTargetPointRegistrationErrorEstimate();
-
-  if( !lrtcb->GetEventReceived() )
+  std::ifstream inputTargetLandmarkFileStream; 
+  std::string targetLandmarkFile = argv[3];
+  std::cout << "Reading target landmarks point file: " << targetLandmarkFile << std::endl;
+  inputTargetLandmarkFileStream.open( targetLandmarkFile.c_str() );
+  if( inputTargetLandmarkFileStream.fail() )
     {
-    std::cerr << "LandmarkRegsistrationErrorEstimator class failed to "
-              << "throw a landmark registration error event" << std::endl;
+    std::cerr << "Encountered a problem opening: " << targetLandmarkFile << std::endl;
     return EXIT_FAILURE;
     }
-
-  targetRegistrationError = lrtcb->GetError();
-  // EndCodeSnippet
  
-  std::cout << "Target registration error:";
-  std::cout << targetRegistrationError << std::endl;
+   while( ! inputTargetLandmarkFileStream.getline( parametersString, stringMaximumSize).eof()  )
+    {
+    LandmarkImagePointType targetPoint;
 
+    if ( sscanf( parametersString, "%lf\t%lf\t%lf", &x, &y, &z) == 3 ) 
+        {
+        targetPoint[0] =  x;
+        targetPoint[1] =  y;
+        targetPoint[2] =  z;
+        }
+
+    std::cout<< "Compute TRE for :"<< targetPoint << std::endl;
+
+    errorEstimator->RequestSetTargetPoint( targetPoint );
+
+    ErrorType       targetRegistrationError;
+    errorEstimator->RequestEstimateTargetPointRegistrationError( );
+    ErrorEstimationGetErrorCallback::Pointer lrtcb =
+                            ErrorEstimationGetErrorCallback::New();
+
+    errorEstimator->AddObserver( igstk::LandmarkRegistrationErrorEvent(), lrtcb );
+    errorEstimator->RequestGetTargetPointRegistrationErrorEstimate();
+
+    if( !lrtcb->GetEventReceived() )
+      {
+      std::cerr << "LandmarkRegsistrationErrorEstimator class failed to "
+                << "throw a landmark registration error event" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    targetRegistrationError = lrtcb->GetError();
+   
+    std::cout << "Target registration error:";
+    std::cout << targetRegistrationError << std::endl;
+
+    }
+
+ 
   errorEstimator->Print( std::cout );
-
- 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;

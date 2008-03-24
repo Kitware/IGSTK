@@ -3,3 +3,6 @@ PROJECT(LandmarkRegistrationErrorEstimationExample)
 ADD_EXECUTABLE(LandmarkRegistrationErrorEstimationExample ErrorEstimation1.cxx)
 TARGET_LINK_LIBRARIES(LandmarkRegistrationErrorEstimationExample IGSTKSandbox)
 
+ADD_EXECUTABLE(LandmarkRegistrationErrorEstimationExample2 ErrorEstimation2.cxx)
+TARGET_LINK_LIBRARIES(LandmarkRegistrationErrorEstimationExample2 IGSTKSandbox)
+
