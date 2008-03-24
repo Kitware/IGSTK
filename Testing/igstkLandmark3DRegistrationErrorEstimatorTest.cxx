@@ -271,10 +271,6 @@ int igstkLandmark3DRegistrationErrorEstimatorTest( int argv, char * argc[] )
   landmarkRegistrationErrorEstimator->RequestSetLandmarkRegistrationError( 
                                                     landmarkRegistrationError );
 
-  // Compute all error parameters necessary for target registration 
-  // error estimation
-  landmarkRegistrationErrorEstimator->RequestComputeErrorParameters();
-
   //Estimate target regsitration error 
   TargetPointType       targetPoint;
   targetPoint[0] =  10.0;
