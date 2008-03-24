@@ -18,6 +18,8 @@ PURPOSE.  See the above copyright notices for more information.
 #define __igstkGenericImageReader_h
 
 #include "igstkObject.h"
+#include "igstkMacros.h"
+#include "igstkStateMachine.h"
 
 // forward declaration.
 class vtkKWImage;
@@ -39,9 +41,30 @@ class GenericImageReader : public Object
 {
 
 public:
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro(GenericImageReader, Object)
     
-  typedef GenericImageReader                   Self;
-  typedef Object                               Superclass;
+  /** Type for representing the string of the directory 
+   *  from which the DICOM files will be read. */
+  typedef std::string    SourceNameType;
+
+  /** Method to pass the directory name containing the DICOM image data */
+  void RequestSetSource( const SourceNameType & source );
+
+  /** This method request image read */
+  void RequestReadImage();
+
+  /** Request to get the output image as an event */
+  void RequestGetImage();
+
+  /** Event type */
+  //igstkLoadedTemplatedObjectEventMacro( ImageModifiedEvent, IGSTKEvent, 
+  //  TImageSpatialObject);
+
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
+
+protected:
 
   /** Constructor. */
   GenericImageReader();
@@ -49,9 +72,39 @@ public:
   /** Destructor */
   ~GenericImageReader();
 
+  void SetImageSourceProcessing();
+  void ReportInvalidRequestProcessing();
+  void NoActionProcessing();
+  void ReportErrorProcessing();
+  void AttemptingToReadImageProcessing();
+  void ReportImageProcessing();
+  
+  
+
 private:
 
+  /** These two methods must be declared and note be implemented
+  *  in order to enforce the protocol of smart pointers. */
+  GenericImageReader(const Self&);    //purposely not implemented
+  void operator=(const Self&);        //purposely not implemented
+
   const vtkKWImageIO *  m_ImageIO;
+
+
+  /** List of States */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( ImageSourceSet );
+  igstkDeclareStateMacro( AttemptingToReadImage );
+  igstkDeclareStateMacro( ImageRead );
+
+  /** List of State Inputs */
+  igstkDeclareInputMacro( ImageSourceValid ); 
+  igstkDeclareInputMacro( ImageSourceInvalid );  
+  igstkDeclareInputMacro( ReadImage );
+  igstkDeclareInputMacro( ImageReadingSuccess );
+  igstkDeclareInputMacro( ImageReadingError );
+  igstkDeclareInputMacro( ResetReader );
+  igstkDeclareInputMacro( GetImage );
 
 };
 
