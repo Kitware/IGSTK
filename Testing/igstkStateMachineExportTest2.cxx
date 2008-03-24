@@ -38,6 +38,10 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkSandboxConfigure.h"
 
+#ifdef IGSTKSandbox_USE_vtkKWImage
+#include "igstkGenericImageReader.h"
+#endif
+
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
@@ -216,6 +220,11 @@ int main( int argc, char * argv [] )
   igstk::ExportStateMachineDescription( qtWidget2D, outputDirectory, skipLoops ); 
   delete qtWidget2D;
 #endif /* IGSTKSandbox_USE_QT */
+
+#ifdef IGSTKSandbox_USE_vtkKWImage
+  igstkTestExportStateMachine1( igstk::GenericImageReader,
+                                                 outputDirectory, skipLoops );
+#endif
 
   return EXIT_SUCCESS;
 }
