@@ -73,10 +73,6 @@ public:
   /** Method to set the landmark registration error */
   void RequestSetLandmarkRegistrationError ( const ErrorType & );
 
-  /** Method to request computation of error parameters used to estimate 
-   *  target registration error */
-  void RequestComputeErrorParameters();
-
   /** Method to request target registration estimation */
   void RequestEstimateTargetPointRegistrationError( );
 
@@ -117,17 +113,13 @@ private:
   /** Set landmark registration error */
   void SetLandmarkRegistrationErrorProcessing( );
     
-  /** Compute error parameters */
-  void ComputeErrorParametersProcessing( );
+  void ComputeErrorParameters( );
 
   /** Estimate target point registration error */
   void EstimateTargetPointRegistrationErrorProcessing( );
 
-  /** Report success in error parameter computation */
-  void ReportSuccessInErrorParametersComputationProcessing( );
-
-  /** Report failure in error parameter computation */
-  void ReportFailureInErrorParametersComputationProcessing( );
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequestProcessing();
 
   /** Report success in target point registration error estimation */  
   void ReportSuccessInTargetPointRegistrationErrorEstimationProcessing();
@@ -143,8 +135,6 @@ private:
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( LandmarkContainerSet );
   igstkDeclareStateMacro( LandmarkRegistrationErrorSet );
-  igstkDeclareStateMacro( AttemptingToComputeErrorParameters );
-  igstkDeclareStateMacro( ErrorParametersComputed );
   igstkDeclareStateMacro( TargetPointSet );
   igstkDeclareStateMacro( AttemptingToEstimateTargetRegstirationError );
   igstkDeclareStateMacro( TargetRegistrationErrorEstimated );
@@ -153,9 +143,6 @@ private:
   /** List of Inputs */
   igstkDeclareInputMacro( LandmarkContainer );
   igstkDeclareInputMacro( LandmarkRegistrationError );
-  igstkDeclareInputMacro( ComputeErrorParameters );
-  igstkDeclareInputMacro( ErrorParametersComputationSuccess );
-  igstkDeclareInputMacro( ErrorParametersComputationFailure );
   igstkDeclareInputMacro( TargetPoint );
   igstkDeclareInputMacro( EstimateTargetPointRegistrationError );
   igstkDeclareInputMacro( TargetPointRegistrationErrorEstimationSuccess );

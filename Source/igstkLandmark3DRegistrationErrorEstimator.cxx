@@ -39,8 +39,6 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddStateMacro ( Idle );
   igstkAddStateMacro ( LandmarkContainerSet );
   igstkAddStateMacro ( LandmarkRegistrationErrorSet );
-  igstkAddStateMacro ( AttemptingToComputeErrorParameters );
-  igstkAddStateMacro ( ErrorParametersComputed );
   igstkAddStateMacro ( TargetPointSet );
   igstkAddStateMacro ( AttemptingToEstimateTargetRegstirationError );  
   igstkAddStateMacro ( TargetRegistrationErrorEstimated );
@@ -48,9 +46,6 @@ Landmark3DRegistrationErrorEstimator::
   // Set the Input descriptors 
   igstkAddInputMacro( LandmarkContainer );
   igstkAddInputMacro( LandmarkRegistrationError );
-  igstkAddInputMacro( ComputeErrorParameters );
-  igstkAddInputMacro( ErrorParametersComputationSuccess );
-  igstkAddInputMacro( ErrorParametersComputationFailure );
   igstkAddInputMacro( TargetPoint ); 
   igstkAddInputMacro( EstimateTargetPointRegistrationError ); 
   igstkAddInputMacro( TargetPointRegistrationErrorEstimationSuccess ); 
@@ -58,42 +53,76 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddInputMacro( GetTargetPointRegistrationErrorEstimate ); 
 
   // Add the transitions
- 
+
+
+  //Transitions from Idle
   igstkAddTransitionMacro( Idle, 
                           LandmarkContainer,
                           LandmarkContainerSet,
                           SetLandmarkContainer );
 
+  igstkAddTransitionMacro( Idle, 
+                           LandmarkRegistrationError,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Idle, 
+                           TargetPoint,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Idle, 
+                           EstimateTargetPointRegistrationError,
+                           Idle,
+                           ReportInvalidRequest);
+
+
+  //Transitions from LandmarkContainerSet
   igstkAddTransitionMacro( LandmarkContainerSet,
                           LandmarkRegistrationError,
                           LandmarkRegistrationErrorSet, 
                           SetLandmarkRegistrationError );
 
+  igstkAddTransitionMacro( LandmarkContainerSet,
+                           TargetPoint,
+                           LandmarkContainerSet, 
+                           ReportInvalidRequest);
+
+  //Transitions from LandmarkRegistrationErrorSet
   igstkAddTransitionMacro( LandmarkRegistrationErrorSet,
-                          ComputeErrorParameters, 
-                          AttemptingToComputeErrorParameters,
-                          ComputeErrorParameters );
-
-  igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
-                          ErrorParametersComputationSuccess,
-                          ErrorParametersComputed,
-                          ReportSuccessInErrorParametersComputation );
-
-  igstkAddTransitionMacro( AttemptingToComputeErrorParameters,
-                          ErrorParametersComputationFailure,
-                          LandmarkRegistrationErrorSet,
-                          ReportFailureInErrorParametersComputation );
-
-  igstkAddTransitionMacro( ErrorParametersComputed,
                           TargetPoint,
                           TargetPointSet,
                           SetTargetPoint );
+  igstkAddTransitionMacro(LandmarkRegistrationErrorSet,
+                          LandmarkContainer,
+                          LandmarkRegistrationErrorSet,
+                          ReportInvalidRequest );
+  igstkAddTransitionMacro(LandmarkRegistrationErrorSet,
+                          EstimateTargetPointRegistrationError,
+                          LandmarkRegistrationErrorSet,
+                          ReportInvalidRequest );
 
+
+  //Transitions from TargetPointSet
   igstkAddTransitionMacro( TargetPointSet,
                           EstimateTargetPointRegistrationError, 
                           AttemptingToEstimateTargetRegstirationError,
                           EstimateTargetPointRegistrationError );
+  igstkAddTransitionMacro( TargetPointSet,
+                           TargetPoint, 
+                          TargetPointSet,
+                          SetTargetPoint );
+  igstkAddTransitionMacro( TargetPointSet,
+                           GetTargetPointRegistrationErrorEstimate, 
+                           TargetPointSet,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( TargetPointSet,
+                           LandmarkContainer, 
+                           TargetPointSet,
+                           ReportInvalidRequest );
+   
 
+  //Transitions from AttemptingToEstimateTargetRegstirationError
   igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
                           TargetPointRegistrationErrorEstimationSuccess,
                           TargetRegistrationErrorEstimated,
@@ -102,12 +131,19 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
                           TargetPointRegistrationErrorEstimationFailure,
                           TargetPointSet,
-                       ReportFailureInTargePointRegistrationErrorEstimation );
- 
+                          ReportFailureInTargePointRegistrationErrorEstimation );
+
+  //Transitions from TargetRegistrationErrorEstimated 
   igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
                           GetTargetPointRegistrationErrorEstimate,
                           TargetRegistrationErrorEstimated,
                           GetTargetPointRegistrationErrorEstimate );
+
+  igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
+                           TargetPoint,
+                           TargetPointSet,
+                           SetTargetPoint );
+
 
   // Select the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -409,18 +445,6 @@ void Landmark3DRegistrationErrorEstimator::
   
 }
 
-/** RequestComputeErrorParameters is a public method to request error 
- *  parameters computation */
-void
-Landmark3DRegistrationErrorEstimator::RequestComputeErrorParameters()
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
-                 "RequestComputeErrorParameters called...\n");
-
-  igstkPushInputMacro( ComputeErrorParameters );
-  this->m_StateMachine.ProcessInputs();
-}
-
 /** RequestEstimateTargetPointRegistrationError is a public method 
  *  to request error parameters computation */
 void
@@ -436,20 +460,17 @@ Landmark3DRegistrationErrorEstimator
 }
 
 
-/** The "ComputeErrorParametersParamters" method calculates all the rigid body
+/** The "ComputeErrorParameters" method calculates all the rigid body
  *  registration error parameters */
 void 
-Landmark3DRegistrationErrorEstimator:: ComputeErrorParametersProcessing()
+Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
-                 "ComputeErrorParametersProcessing called...\n");
+                 "ComputeErrorParameters called...\n");
 
   this->ComputeLandmarksCentroid();
   this->ComputeLandmarkPrincipalAxes();
   this->ComputeRMSDistanceLandmarksFromPrincipalAxes();
-
-  igstkPushInputMacro( ErrorParametersComputationSuccess );
-  this->m_StateMachine.ProcessInputs();
 }
 
 /** The "EstimateTargetRegistrationError" method estimates 
@@ -459,6 +480,9 @@ void Landmark3DRegistrationErrorEstimator
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "EstimateTargetRegistrationError called...\n");
+
+  //First, Compute the error parameters 
+  this->ComputeErrorParameters();
   
   typedef itk::Vector< double, 3 >                VectorType;
   typedef itk::Matrix< double, 3, 3 >             MatrixType; 
@@ -562,16 +586,6 @@ Landmark3DRegistrationErrorEstimator
   this->InvokeEvent( event );
 }
 
-/** The ReportFailureInErrorParametersComputation reports error in 
- *  error parameters computation */
-void
-Landmark3DRegistrationErrorEstimator
-::ReportFailureInErrorParametersComputationProcessing( )
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-                "ReportFailureInErrorParametersComputation called ...\n" );
-}
-
 /** The ReportFailureInTargePointRegistrationErrorEstimationProcessing 
  *  reports success in error parameters computation */
 void
@@ -580,17 +594,6 @@ Landmark3DRegistrationErrorEstimator
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
         "ReportFailureInTargePointRegistrationErrorEstimation called ...\n" );
-}
-
-
-/** The ReportSuccessInErrorParametersComputationProcessing reports success
- *  in error paramter computation */
-void
-Landmark3DRegistrationErrorEstimator
-::ReportSuccessInErrorParametersComputationProcessing( )
-{
-  igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
-        "ReportSuccessInErrorParametersComputationProcessing called ...\n" );
 }
 
 /** The ReportSuccessInTargetPointRegistrationErrorEstimation reports 
@@ -602,6 +605,14 @@ Landmark3DRegistrationErrorEstimator
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator"
                 "ReportSuccessInTargePointRegistrationErrorEstimation\
                 Processing called ...\n" );
+}
+
+/** Report that an invalid or suspicious operation has been requested. This 
+ * may mean that an error condition has arised in one of the components that
+ * interact with this class. */
+void Landmark3DRegistrationErrorEstimator::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
 }
 
 /** Print Self function */
