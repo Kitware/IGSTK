@@ -15,7 +15,7 @@ SUBDIRS(
   SpatialObjects
   )
 
-IF (IGSTK_USE_FLTK)
+IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingUsingFLTKWidget
     OneViewAndTrackingNewUsingFLTKWidget
@@ -39,15 +39,15 @@ IF (IGSTK_USE_FLTK)
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
   ENDIF ( WIN32 )
-ENDIF (IGSTK_USE_FLTK)
+ENDIF (IGSTKSandbox_USE_FLTK)
 
-IF (IGSTK_USE_Qt)
+IF (IGSTKSandbox_USE_Qt)
 #  SUBDIRS( OneViewAndTrackingUsingQTWidget )
-#    IF (IGSTK_USE_MicronTracker) 
+#    IF (IGSTKSandbox_USE_MicronTracker) 
 #      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
-#    ENDIF(IGSTK_USE_MicronTracker) 
+#    ENDIF(IGSTKSandbox_USE_MicronTracker) 
    IF (APPLE)
      SUBDIRS(VideograbbingAndTrackingUsingQTWidget)
    ENDIF(APPLE)
-ENDIF (IGSTK_USE_Qt)
+ENDIF (IGSTKSandbox_USE_Qt)
 

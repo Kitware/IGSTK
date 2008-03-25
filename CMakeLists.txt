@@ -157,7 +157,6 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("termios.h"       HAVE_TERMIOS_H)
 CHECK_INCLUDE_FILE("termio.h"        HAVE_TERMIO_H)
 
-
 # The IGSTKSandbox Library and any Utilities that it requires
 SUBDIRS(Utilities Source)
 
