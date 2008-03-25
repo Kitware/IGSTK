@@ -198,45 +198,6 @@ CONFIGURE_FILE("${IGSTK_SOURCE_DIR}/igstkConfigure.h.in"
                "${IGSTK_BINARY_DIR}/igstkConfigure.h")
 
 #-----------------------------------------------------------------------------
-# define the right names for the serial devices according to operating system
-
-IF(WIN32)
-  SET(IGSTK_SERIAL_PORT_0 "COM1:" CACHE STRING "Device name for serial port 0")
-  SET(IGSTK_SERIAL_PORT_1 "COM2:" CACHE STRING "Device name for serial port 1")
-  SET(IGSTK_SERIAL_PORT_2 "COM3:" CACHE STRING "Device name for serial port 2")
-  SET(IGSTK_SERIAL_PORT_3 "COM4:" CACHE STRING "Device name for serial port 3")
-  SET(IGSTK_SERIAL_PORT_4 "COM5:" CACHE STRING "Device name for serial port 4")
-  SET(IGSTK_SERIAL_PORT_5 "COM6:" CACHE STRING "Device name for serial port 5")
-  SET(IGSTK_SERIAL_PORT_6 "COM7:" CACHE STRING "Device name for serial port 6")
-  SET(IGSTK_SERIAL_PORT_7 "COM8:" CACHE STRING "Device name for serial port 7")
-ELSE(WIN32)
-  SET(IGSTK_SERIAL_PORT_0 "/dev/ttyS0" CACHE STRING
-      "Device name for serial port 0")
-  SET(IGSTK_SERIAL_PORT_1 "/dev/ttyS1" CACHE STRING
-      "Device name for serial port 1")
-  SET(IGSTK_SERIAL_PORT_2 "/dev/ttyS2" CACHE STRING
-      "Device name for serial port 2")
-  SET(IGSTK_SERIAL_PORT_3 "/dev/ttyS3" CACHE STRING
-      "Device name for serial port 3")
-  SET(IGSTK_SERIAL_PORT_4 "/dev/ttyS4" CACHE STRING
-      "Device name for serial port 4")
-  SET(IGSTK_SERIAL_PORT_5 "/dev/ttyS5" CACHE STRING
-      "Device name for serial port 5")
-  SET(IGSTK_SERIAL_PORT_6 "/dev/ttyS6" CACHE STRING
-      "Device name for serial port 6")
-  SET(IGSTK_SERIAL_PORT_7 "/dev/ttyS7" CACHE STRING
-      "Device name for serial port 7")
-ENDIF(WIN32)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_0)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_1)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_2)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_3)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_4)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_5)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_6)
-MARK_AS_ADVANCED(IGSTK_SERIAL_PORT_7)
-
-#-----------------------------------------------------------------------------
 # Help other projects use IGSTK.
 SET(IGSTK_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
 
