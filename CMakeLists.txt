@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 PROJECT( IGSTK )
 
 # version
-SET(IGSTK_VERSION_MAJOR "2")
+SET(IGSTK_VERSION_MAJOR "3")
 SET(IGSTK_VERSION_MINOR "0")
 SET(IGSTK_VERSION_PATCH "0")
 
@@ -294,6 +294,19 @@ INSTALL(FILES
     ${IGSTK_BINARY_DIR}/UseIGSTK.cmake
     DESTINATION ${IGSTK_INSTALL_PACKAGE_DIR}
     )
+
+#-----------------------------------------------------------------------------
+# Set up CPack support, to be able to distribute IGSTK 
+#
+INCLUDE(InstallRequiredSystemLibraries)
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "IGSTK ")
+SET(CPACK_PACKAGE_VENDOR "ISC")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${IGSTK_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${IGSTK_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "${IGSTK_VERSION_PATCH}")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "IGSTK-${IGSTK_VERSION_MAJOR}.${IGSTK_VERSION_MINOR}")
+INCLUDE(CPack)
+
 
 #-----------------------------------------------------------------------------
 # Add compiler flags IGSTK needs to work on this platform.  This must be
