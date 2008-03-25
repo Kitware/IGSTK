@@ -25,7 +25,7 @@ IF (IGSTKSandbox_USE_FLTK)
     FourViews
 # Comment the UltrasoundGuidedRFA example
 # since it requires the FlockOfBirds tracker
-# which is not yet fully tested
+# and it is not yet fully tested
 #    UltrasoundGuidedRFA
     NeedleBiopsy
     DeckOfCardRobot
