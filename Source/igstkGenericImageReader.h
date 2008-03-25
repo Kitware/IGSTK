@@ -88,7 +88,7 @@ private:
   GenericImageReader(const Self&);    //purposely not implemented
   void operator=(const Self&);        //purposely not implemented
 
-  const vtkKWImageIO *  m_ImageIO;
+  vtkKWImageIO *  m_ImageIO;
 
 
   /** List of States */

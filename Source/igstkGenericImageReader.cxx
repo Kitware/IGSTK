@@ -92,6 +92,7 @@ GenericImageReader::GenericImageReader() : m_StateMachine(this)
 /* Destructor. */
 GenericImageReader::~GenericImageReader()
 {
+  m_ImageIO->Delete();
 }
 
 /** Method to pass the directory name containing the DICOM image data */
