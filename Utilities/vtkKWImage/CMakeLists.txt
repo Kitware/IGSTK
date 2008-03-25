@@ -5,4 +5,13 @@ SET(vtkKWImage_SRC
     vtkKWImageIO.cxx
 )
 
-ADD_LIBRARY(igstkKWImageu ${vtkKWImage_SRC})
+SET(RequiredLibraries
+  ITKCommon
+  ITKBasicFilters
+  ITKIO
+  vtkIO
+  vtkImaging
+)
+
+ADD_LIBRARY(igstkKWImageu ${vtkKWImage_SRC} )
+TARGET_LINK_LIBRARIES(igstkKWImageu ${RequiredLibraries})
