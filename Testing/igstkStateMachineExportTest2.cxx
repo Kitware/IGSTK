@@ -31,7 +31,6 @@
 #include "itkExceptionObject.h"
 
 #include "igstkLandmarkUltrasoundCalibration.h"
-#include "igstkSocketCommunication.h"
 #include "igstkImageSpatialObjectRepresentation.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkSpatialObject.h"
@@ -57,6 +56,8 @@
 #include <QMainWindow>
 #include <QtTest/QTest>
 #endif
+
+#include "igstkSocketCommunication.h"
 
 namespace igstk 
 {
