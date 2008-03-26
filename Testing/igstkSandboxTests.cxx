@@ -45,6 +45,7 @@ void RegisterTests()
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
+  REGISTER_TEST(igstkAuroraTrackerToolObserverToSocketRelayTest );
   REGISTER_TEST(igstkVicraTrackerToolObserverToSocketRelayTest );
   REGISTER_TEST(igstkTransformSocketListenerTest );
 #endif
