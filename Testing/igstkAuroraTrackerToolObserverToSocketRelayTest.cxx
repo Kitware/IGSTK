@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkPolarisTrackerToolObserverToSocketRelayTest.cxx
+  Module:    igstkAuroraTrackerToolObserverToSocketRelayTest.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -27,11 +27,11 @@
 #include "igstkRealTimeClock.h"
 #include "igstkSystemInformation.h"
 #include "igstkSerialCommunication.h"
-#include "igstkPolarisTracker.h"
+#include "igstkAuroraTracker.h"
 #include "igstkSimulatedTrackerTool.h"
 #include "igstkTrackerToolObserverToSocketRelay.h"
 
-int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
+int igstkAuroraTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 {
 
   if( argc < 6 )
@@ -43,8 +43,8 @@ int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
 
   igstk::RealTimeClock::Initialize();
 
-  typedef igstk::PolarisTracker                         TrackerType;
-  typedef igstk::PolarisTrackerTool                     TrackerToolType;
+  typedef igstk::AuroraTracker                         TrackerType;
+  typedef igstk::AuroraTrackerTool                     TrackerToolType;
   typedef igstk::TrackerToolObserverToSocketRelay       ObserverType;
 
   TrackerType::Pointer      tracker      = TrackerType::New();
@@ -64,7 +64,7 @@ int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
 
-  serialComm->SetCaptureFileName( "RecordedStreamByPolarisTrackerTest.txt" );
+  serialComm->SetCaptureFileName( "RecordedStreamByAuroraTrackerTest.txt" );
   serialComm->SetCapture( true );
 
   serialComm->OpenCommunication();
@@ -75,8 +75,8 @@ int igstkPolarisTrackerToolObserverToSocketRelayTest( int argc, char * argv [] )
   tracker->RequestSetFrequency( frequency );
   tracker->RequestOpen();
 
-  trackerTool->RequestSelectWiredTrackerTool();
-  trackerTool->RequestSetPortNumber( 0 );
+  trackerTool->RequestSelect6DOFTrackerTool();
+  trackerTool->RequestSetPortNumber( portNumberIntegerValue );
   trackerTool->RequestConfigure();
 
   trackerTool->RequestAttachToTracker( tracker );

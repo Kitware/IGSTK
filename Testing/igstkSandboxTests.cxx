@@ -54,8 +54,4 @@ void RegisterTests()
   REGISTER_TEST(igstkVascularNetworkReaderTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
-#endif
-
-
 }
