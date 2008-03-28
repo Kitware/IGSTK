@@ -34,6 +34,7 @@
 #include "igstkSerialCommunication.h"
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
+#include "igstkAuroraTrackerTool.h"
 #include "igstkTransform.h"
 #include "igstkTransformObserver.h"
 
@@ -143,6 +144,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
+  //Add observer to listen to events throw by the tracker tool
+  trackerTool->AddObserver( itk::AnyEvent(), my_command);
   //Select wired tracker tool
   trackerTool->RequestSelectWiredTrackerTool();
   //Set the port number to zero
@@ -151,9 +154,7 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool->AddObserver( itk::AnyEvent(), my_command);
-  //Add observer to listen to transform events 
+ //Add observer to listen to transform events 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
@@ -161,6 +162,8 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   std::cout << "Instantiate second tracker tool: " << std::endl;
   TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
   trackerTool2->SetLogger( logger );
+  //Add observer to listen to events throw by the tracker tool
+  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
   //Select wireless tracker tool
   trackerTool2->RequestSelectWirelessTrackerTool();
   //Set the SROM file 
@@ -171,10 +174,24 @@ int igstkPolarisTrackerTest( int argc, char * argv[] )
   trackerTool2->RequestConfigure();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
-  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+ ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
   coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
+
+  // instantiate and attempt to attach aurora tracker tool. This attempt
+  // will fail since one is not allowed to attach aurora tracker tool to a 
+  // polaris tracker
+  std::cout << "Instantiate aurora tracker tool: " << std::endl;
+  typedef igstk::AuroraTrackerTool         AuroraTrackerToolType;
+  AuroraTrackerToolType::Pointer trackerTool3 = AuroraTrackerToolType::New();
+  trackerTool3->SetLogger( logger );
+  //Add observer to listen to events throw by the tracker tool
+  trackerTool3->AddObserver( itk::AnyEvent(), my_command);
+  //Select wireless tracker tool
+  trackerTool3->RequestSelect6DOFTrackerTool();
+  //Configure
+  trackerTool3->RequestConfigure();
+  //Attach to the tracker
+  trackerTool3->RequestAttachToTracker( tracker );
 
   //start tracking 
   tracker->RequestStartTracking();
