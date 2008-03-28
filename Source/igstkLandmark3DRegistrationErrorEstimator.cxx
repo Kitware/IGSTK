@@ -397,8 +397,8 @@ void Landmark3DRegistrationErrorEstimator::
   VectorType        normalizedPrincipalAxes3;
 
   normalizedPrincipalAxes1 = principalAxes1;
-  normalizedPrincipalAxes2 = principalAxes1;
-  normalizedPrincipalAxes3 = principalAxes1;
+  normalizedPrincipalAxes2 = principalAxes2;
+  normalizedPrincipalAxes3 = principalAxes3;
 
   normalizedPrincipalAxes1.Normalize();
   normalizedPrincipalAxes2.Normalize();
