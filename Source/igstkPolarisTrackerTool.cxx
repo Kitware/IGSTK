@@ -387,14 +387,4 @@ void PolarisTrackerTool::ReportInValidPartNumberSpecifiedProcessing( )
   this->InvokeEvent( InvalidPolarisPartNumberErrorEvent() );
 }
 
-/** The "RequestAttachToTracker" method attaches 
- * the tracker tool to a tracker. */
-void PolarisTrackerTool::RequestAttachToTracker( PolarisTracker *  tracker )
-{
-  // This delegation is done only to enforce type matching between
-  // TrackerTool and Tracker. It prevents the user from accidentally 
-  // mix TrackerTools and Trackers of different type;
-  this->TrackerTool::RequestAttachToTracker( tracker );
-}
-
 }

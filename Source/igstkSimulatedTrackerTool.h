@@ -47,10 +47,6 @@ public:
   /** Set tracker tool mouse name */
   virtual void RequestSetName( const NameType & Name ); 
 
-  /** The "RequestAttachToTracker" method attaches 
-   * the tracker tool to a tracker. */
-  virtual void RequestAttachToTracker( SimulatedTracker * );
-
 protected:
 
   SimulatedTrackerTool();

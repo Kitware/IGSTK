@@ -70,10 +70,6 @@ public:
   /** Request select 6DOF (six degrees of freedom) tracker tool */
   void RequestSelect6DOFTrackerTool( );
 
-  /** The "RequestAttachToTracker" method attaches the tracker tool to a
-   * tracker. */
-  virtual void RequestAttachToTracker( AuroraTracker * );
-
   /** Check if SROM file name specified. */
   bool IsSROMFileNameSpecified() const;
 

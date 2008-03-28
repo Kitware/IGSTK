@@ -51,10 +51,6 @@ public:
   /** Set tracker tool marker name */
   void RequestSetMarkerName( const std::string & markerName); 
 
-  /** The "RequestAttachToTracker" method attaches 
-   * the tracker tool to a tracker. */
-  virtual void RequestAttachToTracker( MicronTracker * );
-
 protected:
 
   MicronTrackerTool();

@@ -58,19 +58,6 @@ SimulatedTrackerTool::CheckIfTrackerToolIsConfigured( ) const
   return m_TrackerToolConfigured;
 }
 
-
-/** The "RequestAttachToTracker" method attaches 
- * the tracker tool to a tracker. */
-void 
-SimulatedTrackerTool::RequestAttachToTracker( SimulatedTracker *  tracker )
-{
-  // This delegation is done only to enforce type matching between
-  // TrackerTool and Tracker. It prevents the user from accidentally 
-  // mix TrackerTools and Trackers of different type;
-  this->TrackerTool::RequestAttachToTracker( tracker );
-}
-
-
 /** Print Self function */
 void 
 SimulatedTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const

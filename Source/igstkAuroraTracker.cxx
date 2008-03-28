@@ -67,6 +67,7 @@ AuroraTracker::ResultType AuroraTracker
 
   if ( auroraTrackerTool == NULL )
     {
+    igstkLogMacro ( DEBUG, "Tracker tool probably not aurora type " );
     return FAILURE;
     } 
 

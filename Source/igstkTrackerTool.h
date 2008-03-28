@@ -99,6 +99,10 @@ public:
   /** Access the unique identifier to the tracker tool */
   const std::string GetTrackerToolIdentifier( ) const;
 
+  /** The "RequestAttachToTracker" method attaches the tracker tool to a
+   * tracker. */
+  virtual void RequestAttachToTracker( TrackerType * );
+
 protected:
 
   TrackerTool(void);
@@ -110,10 +114,6 @@ protected:
 
   /** Set a unique identifier to the tracker tool */
   void SetTrackerToolIdentifier( const std::string identifier );
-
-  /** The "RequestAttachToTracker" method attaches the tracker tool to a
-   * tracker. */
-  virtual void RequestAttachToTracker( TrackerType * );
 
 private:
 

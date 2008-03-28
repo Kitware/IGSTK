@@ -75,7 +75,7 @@ PolarisTracker::ResultType PolarisTracker
 
   if ( polarisTrackerTool == NULL )
     {
-    igstkLogMacro ( DEBUG, "polarisTrackerTool pointer is null\n" );
+    igstkLogMacro ( DEBUG, "Tracker tool probably not polaris type " );
     return FAILURE;
     } 
 

@@ -388,6 +388,7 @@ MicronTracker
 
   if ( micronTrackerTool == NULL )
     {
+    igstkLogMacro ( DEBUG, "Tracker tool probably not Micron Tracker type " );
     return FAILURE;
     }
 

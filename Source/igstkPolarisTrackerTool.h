@@ -74,10 +74,6 @@ public:
   /** Request set the PartNumber */
   void RequestSetPartNumber( const std::string & toolId );
 
-  /** The "RequestAttachToTracker" method attaches the tracker tool to a
-   * tracker. */
-  virtual void RequestAttachToTracker( PolarisTracker * );
-
   /** Check if the tracker tool is wireless type */
   bool IsToolWirelessType() const;
 
