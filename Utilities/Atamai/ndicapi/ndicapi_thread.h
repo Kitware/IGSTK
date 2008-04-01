@@ -26,8 +26,9 @@ conditions are met:
    in the documentation or with other materials provided with the
    distribution.
 
-3) Modified copies of the source code must be clearly marked as such,
-   and must not be misrepresented as verbatim copies of the source code.
+3) The name of the Atamai Inc., nor of its principals or owners,
+   past or present, may be used to ensorse or promote products derived
+   from this software without specific prior written permission.
 
 THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE SOFTWARE "AS IS"
 WITHOUT EXPRESSED OR IMPLIED WARRANTY INCLUDING, BUT NOT LIMITED TO,
