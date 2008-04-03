@@ -9,13 +9,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(IGSTK_HEADS
-# FIXME: comment out the FlockOfBirds class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#  igstkFlockOfBirdsCommandInterpreter.h
-#  igstkFlockOfBirdsTracker.h
-#  igstkFlockOfBirdsTrackerTool.h
-  igstkUSImageObject.h
+ igstkUSImageObject.h
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
   igstkMR3DImageToUS3DImageRegistration.h
@@ -134,14 +128,7 @@ ENDIF(IGSTKSandbox_USE_MicronTracker)
 # The implementation files
 
 SET(IGSTK_SRCS
-# FIXME: comment out the FlockOfBirds class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#  igstkFlockOfBirdsCommandInterpreter.cxx
-#  igstkFlockOfBirdsTracker.cxx
-#  igstkFlockOfBirdsTrackerTool.cxx
-  igstkUSImageObject.cxx
+ igstkUSImageObject.cxx
   igstkUSImageObjectRepresentation.cxx
   igstkUSImageReader.cxx
   igstkMR3DImageToUS3DImageRegistration.cxx
@@ -312,6 +299,13 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+# FIXME: comment out the FlockOfBirds class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#  igstkFlockOfBirdsCommandInterpreter.h
+#  igstkFlockOfBirdsTracker.h
+#  igstkFlockOfBirdsTrackerTool.h
+ 
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -376,6 +370,14 @@ ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
+# FIXME: comment out the FlockOfBirds class just for the
+# time being. It requires major work to make it consistent 
+# with the new Tracker API
+#
+#  igstkFlockOfBirdsCommandInterpreter.cxx
+#  igstkFlockOfBirdsTracker.cxx
+#  igstkFlockOfBirdsTrackerTool.cxx
+ 
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx

@@ -86,6 +86,14 @@ INCLUDE_DIRECTORIES (
 
 # Add NEW Sandbox tests 
 SET(SandboxTests_SRCS
+# FIXME: comment out the FlockOfBirds tests just for the
+# time being. It requires major work to make it consistent
+# with the new Tracker API
+#
+#  igstkFlockOfBirdsCommandInterpreterTest.cxx
+#  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
+#  igstkFlockOfBirdsTrackerTest.cxx
+ 
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
@@ -288,14 +296,7 @@ SET(IGSTK_TESTS ${CXX_TEST_PATH}/igstkLatestTests)
 
 # You just need to add your new tests here
 SET(IGSTKTests_SRCS
-# FIXME: comment out the FlockOfBirds tests just for the
-# time being. It requires major work to make it consistent
-# with the new Tracker API
-#
-#  igstkFlockOfBirdsCommandInterpreterTest.cxx
-#  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
-#  igstkFlockOfBirdsTrackerTest.cxx
-  igstkUSImageObjectTest.cxx
+ igstkUSImageObjectTest.cxx
   igstkUSImageObjectRepresentationTest.cxx
   igstkBasicTrackerTest.cxx
   igstkBinaryDataTest.cxx
