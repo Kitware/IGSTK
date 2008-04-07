@@ -305,7 +305,10 @@ SET(IGSTKSandbox_HEADS
 #  igstkFlockOfBirdsCommandInterpreter.h
 #  igstkFlockOfBirdsTracker.h
 #  igstkFlockOfBirdsTrackerTool.h
- 
+
+# Reslicing component support
+  igstkImageReslicePlaneSpatialObject.h
+
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -378,6 +381,9 @@ SET(IGSTKSandbox_SRCS
 #  igstkFlockOfBirdsTracker.cxx
 #  igstkFlockOfBirdsTrackerTool.cxx
  
+# Reslicing component support
+  igstkImageReslicePlaneSpatialObject.cxx
+
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx
