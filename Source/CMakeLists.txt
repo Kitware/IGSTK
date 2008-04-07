@@ -329,7 +329,7 @@ SET(IGSTKSandbox_HEADS
   igstkSocketCommunication.h
   igstkVideoGrabber.h
   igstkImageSliceRepresentation.h
-
+  igstkImageResliceSpatialObjectRepresentation.h
 
   igstkTubeGroupObject.h
 
@@ -405,6 +405,7 @@ SET(IGSTKSandbox_SRCS
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
   igstkImageSliceRepresentation.txx
+  igstkImageResliceSpatialObjectRepresentation.txx
 
   igstkTubeGroupObject.cxx
 

@@ -111,6 +111,8 @@ SET(SandboxTests_SRCS
 
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
+
+  igstkImageResliceSpatialObjectRepresentationTest.cxx
  )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -183,6 +185,9 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
+
+ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
+ ${IGSTKSandbox_TESTS} igstkImageResliceSpatialObjectRepresentationTest)
 
 IF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
     ADD_TEST( igstkPolarisTrackerTest2
