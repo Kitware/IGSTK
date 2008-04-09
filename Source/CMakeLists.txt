@@ -302,9 +302,9 @@ SET(IGSTKSandbox_HEADS
 # FIXME: comment out the FlockOfBirds class just for the
 # time being. It requires major work to make it consistent 
 # with the new Tracker API
-#  igstkFlockOfBirdsCommandInterpreter.h
-#  igstkFlockOfBirdsTracker.h
-#  igstkFlockOfBirdsTrackerTool.h
+  igstkFlockOfBirdsCommandInterpreter.h
+  igstkFlockOfBirdsTracker.h
+  igstkFlockOfBirdsTrackerTool.h
 
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.h
@@ -377,9 +377,9 @@ SET(IGSTKSandbox_SRCS
 # time being. It requires major work to make it consistent 
 # with the new Tracker API
 #
-#  igstkFlockOfBirdsCommandInterpreter.cxx
-#  igstkFlockOfBirdsTracker.cxx
-#  igstkFlockOfBirdsTrackerTool.cxx
+  igstkFlockOfBirdsCommandInterpreter.cxx
+  igstkFlockOfBirdsTracker.cxx
+  igstkFlockOfBirdsTrackerTool.cxx
  
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.cxx

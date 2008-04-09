@@ -37,20 +37,20 @@ FlockOfBirdsTrackerTool::~FlockOfBirdsTrackerTool()
 }
 
 /** Check if the tracker tool is configured */
-virtual bool FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured()
+bool FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured() const
 {
   return true;
 }
 
 /** The "RequestAttachToTracker" method attaches 
  * the tracker tool to a tracker. */
-virtual void RequestAttachToTracker( FlockOfBirdsTracker *  tracker )
-{
-  // This delegation is done only to enforce type matching between
-  // TrackerTool and Tracker. It prevents the user from accidentally 
-  // mix TrackerTools and Trackers of different type;
-  this->TrackerTool::RequestAttachToTracker( tracker );
-}
+// void RequestAttachToTracker( FlockOfBirdsTracker *  tracker )
+// {
+//   // This delegation is done only to enforce type matching between
+//   // TrackerTool and Tracker. It prevents the user from accidentally 
+//   // mix TrackerTools and Trackers of different type;
+//   this->TrackerTool::RequestAttachToTracker( tracker );
+// }
 
 /** Print Self function */
 void FlockOfBirdsTrackerTool::PrintSelf( std::ostream& os, 

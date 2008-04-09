@@ -39,6 +39,7 @@ namespace igstk
  * \ingroup Tracker
  *
  */
+
 class FlockOfBirdsTracker : public Tracker
 {
 public:
@@ -102,9 +103,9 @@ protected:
   virtual ResultType VerifyTrackerToolInformation( 
     const TrackerToolType * trackerTool );
 
-  /** Add tracker tool to internal containers */
-  virtual ResultType AddTrackerToolToInternalDataContainers( 
-    const TrackerToolType * trackerTool );
+  /** Add tracker tool entry from internal containers */
+  virtual ResultType AddTrackerToolToInternalDataContainers( const
+    TrackerToolType * trackerTool );
 
   /** Remove tracker tool from internal containers */
   virtual ResultType RemoveTrackerToolFromInternalDataContainers( 
@@ -151,6 +152,23 @@ private:
 
   /** The buffers for holding tool transforms */
   TransformType m_TransformBuffer[NumberOfPorts];
+
+  /** A buffer to hold tool transforms */
+  typedef std::map< std::string, std::vector < double > >
+      TrackerToolTransformContainerType;
+
+  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+
+  /** Error map container */
+  typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
+  static ErrorCodeContainerType   m_ErrorCodeContainer;
+
+  /** boolean to indicate if error code list is created */
+  static bool m_ErrorCodeListCreated;
+
+  /** Container holding status of the tools */
+  std::map< std::string, int >  m_ToolStatusContainer;
+
 };
 
 }

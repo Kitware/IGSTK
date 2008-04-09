@@ -35,7 +35,8 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
     {
     this->m_PortEnabled[i] = 0;
     }
-
+/*
+//fix this
   for (unsigned int j = 0; j < NumberOfPorts; j++)
     { 
     FlockOfBirdsTrackerToolPointer tool = FlockOfBirdsTrackerToolType::New();
@@ -43,7 +44,7 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
     port->AddTool(tool);
     this->AddPort(port);
     }
-
+*/
   this->SetThreadingEnabled( true );
 
   m_BufferLock = itk::MutexLock::New();
@@ -144,6 +145,85 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   igstkLogMacro( DEBUG, 
                  "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
 
+  // This method and the InternalThreadedUpdateStatus are both called
+  // continuously in the Tracking state.  This method is called from
+  // the main thread, while InternalThreadedUpdateStatus is called
+  // from the thread that actually communicates with the device.
+  // A shared memory buffer is used to transfer information between
+  // the threads, and it must be locked when either thread is
+  // accessing it.
+  m_BufferLock->Lock();
+
+  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+
+  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
+
+  TrackerToolsContainerType trackerToolContainer =
+        this->GetTrackerToolContainer();
+
+  unsigned int toolId = 0;
+
+  while( inputItr != inputEnd )
+  {
+      // only report tools that are in view
+      if (! this->m_ToolStatusContainer[inputItr->first])
+      {
+          igstkLogMacro( DEBUG, "igstk::FlockOfBirdsTracker::InternalUpdateStatus: " <<
+              "tool " << inputItr->first << " is not in view\n");
+          // report to the tracker tool that the tracker is not available
+          this->ReportTrackingToolNotAvailable(
+              trackerToolContainer[inputItr->first]);
+
+          ++inputItr;
+          continue;
+      }
+      // report to the tracker tool that the tracker is Visible
+      this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
+
+      // create the transform
+      TransformType transform;
+
+      typedef TransformType::VectorType TranslationType;
+      TranslationType translation;
+
+      translation[0] = (inputItr->second)[0];
+      translation[1] = (inputItr->second)[1];
+      translation[2] = (inputItr->second)[2];
+
+      typedef TransformType::VersorType RotationType;
+      RotationType rotation;
+
+      rotation.Set( (inputItr->second)[3],
+          (inputItr->second)[4],
+          (inputItr->second)[5],
+          (inputItr->second)[6]);
+
+      // report error value
+      // Get error value from the tracker. TODO
+      typedef TransformType::ErrorType  ErrorType;
+      ErrorType errorValue = 0.0;
+
+      transform.SetToIdentity(this->GetValidityTime());
+      transform.SetTranslationAndRotation(translation, rotation, errorValue,
+         this->GetValidityTime());
+
+      // set the raw transform
+      this->SetTrackerToolRawTransform(
+          trackerToolContainer[inputItr->first], transform );
+
+      this->SetTrackerToolTransformUpdate(
+          trackerToolContainer[inputItr->first], true );
+
+      ++inputItr;
+      ++toolId;
+  }
+
+  m_BufferLock->Unlock();
+
+  return SUCCESS;
+
+  /* //old FOB code
   // Lock the buffer and copy the tracking information that was
   // set by the tracking thread (tracking information is for first
   // bird only for now).
@@ -160,6 +240,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   this->SetToolTransform(0, 0, transform);
 
   return SUCCESS;
+  */
 }
 
 /** Update the m_StatusBuffer and the transforms. 
@@ -230,9 +311,9 @@ void FlockOfBirdsTracker::DisableToolPorts( void )
 }
 
 /** Verify tracker tool information */
-virtual FlockOfBirdsTracker::ResultType
+FlockOfBirdsTracker::ResultType
 FlockOfBirdsTracker
-::VerifyTrackerToolInformation( TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
     "FlockOfBirdsTracker::VerifyTrackerToolInformation called...\n");
@@ -240,14 +321,53 @@ FlockOfBirdsTracker
 }
 
 /** Remove tracker tool from internal containers */
-virtual FlockOfBirdsTracker::ResultType
+FlockOfBirdsTracker::ResultType
 FlockOfBirdsTracker
-::RemoveTrackerToolFromInternalDataContainers( TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
     "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers"
     " called...\n");
-  return SUCCESS; 
+
+  const std::string trackerToolIdentifier =
+      trackerTool->GetTrackerToolIdentifier();
+
+  // remove the tool from the Transform buffer container
+  this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
+  this->m_ToolStatusContainer.erase( trackerToolIdentifier );
+
+  return SUCCESS;
+}
+
+FlockOfBirdsTracker::ResultType
+FlockOfBirdsTracker::
+AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+{
+    igstkLogMacro( DEBUG,
+        "igstk::FlockOfBirdsTracker::AddTrackerToolToInternalDataContainers "
+        "called ...\n");
+
+    if ( trackerTool == NULL )
+    {
+        return FAILURE;
+    }
+
+    const std::string trackerToolIdentifier =
+        trackerTool->GetTrackerToolIdentifier();
+
+    std::vector< double > transform;
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 1.0 );
+
+    this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
+    this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+
+    return SUCCESS;
 }
 
 /** Print Self function */
@@ -264,6 +384,5 @@ void FlockOfBirdsTracker::PrintSelf( std::ostream& os,
        << std::endl;
     }
 }
-
 
 } // end of namespace igstk
