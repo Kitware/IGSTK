@@ -32,7 +32,7 @@ PURPOSE.  See the above copyright notices for more information.
 *     Constructor
 *  -----------------------------------------------------------------
 */
-NeedleBiopsy::NeedleBiopsy()
+NeedleBiopsy::NeedleBiopsy() : m_LogFile()
 {
 
   /** Setup logger, for all igstk components. */
@@ -50,7 +50,6 @@ NeedleBiopsy::NeedleBiopsy()
   /** Direct the igstk components log message to the file. */
   itk::StdStreamLogOutput::Pointer m_LogFileOutput
                                            = itk::StdStreamLogOutput::New();
-  std::ofstream m_LogFile;
   std::string   logFileName;
   logFileName = "logNeedleBiopsy"
   + itksys::SystemTools::GetCurrentDateTime( "_%Y_%m_%d_%H_%M_%S" ) + ".txt";

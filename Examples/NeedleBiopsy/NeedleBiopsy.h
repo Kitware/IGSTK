@@ -167,6 +167,8 @@ private:
   /** Annotation is used for displaying 2D texts on View */
   igstk::Annotation2D::Pointer                    m_Annotation;
 
+  /** File for logger */
+  std::ofstream                                   m_LogFile;
 
   /** Utility functions, conversion between points and transform */
   inline 
