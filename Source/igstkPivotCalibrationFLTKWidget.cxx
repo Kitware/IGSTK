@@ -38,21 +38,21 @@ Fl_Group( x, y, w, h, label )
 {
           //setup the UI
   this->m_toolDescription = new Fl_Output( 
-    static_cast<int>(TOOL_DESCRIPTION_X_SCALE*w+0.5),
-    static_cast<int>(TOOL_DESCRIPTION_Y_SCALE*h+0.5),
+    static_cast<int>(x+TOOL_DESCRIPTION_X_SCALE*w+0.5),
+    static_cast<int>(y+TOOL_DESCRIPTION_Y_SCALE*h+0.5),
     static_cast<int>(TOOL_DESCRIPTION_W_SCALE*w+0.5),
     static_cast<int>(TOOL_DESCRIPTION_H_SCALE*h+0.5) );
   
-  this->m_progress = new Fl_Progress( static_cast<int>(PROGRESS_X_SCALE*w+0.5),
-                                      static_cast<int>(PROGRESS_Y_SCALE*h+0.5),
+  this->m_progress = new Fl_Progress( static_cast<int>(x+PROGRESS_X_SCALE*w+0.5),
+                                      static_cast<int>(y+PROGRESS_Y_SCALE*h+0.5),
                                       static_cast<int>(PROGRESS_W_SCALE*w+0.5),
                                       static_cast<int>(PROGRESS_H_SCALE*h+0.5) );
   this->m_progress->minimum(0.0);
   this->m_progress->maximum(1.0);
   this->m_progress->selection_color(FL_DARK_BLUE);
 
-  this->m_calibrateButton = new Fl_Button( static_cast<int>(BUTTON_X_SCALE*w+0.5),
-                                           static_cast<int>(BUTTON_Y_SCALE*h+0.5),
+  this->m_calibrateButton = new Fl_Button( static_cast<int>(x+BUTTON_X_SCALE*w+0.5),
+                                           static_cast<int>(y+BUTTON_Y_SCALE*h+0.5),
                                            static_cast<int>(BUTTON_W_SCALE*w+0.5),
                                            static_cast<int>(BUTTON_H_SCALE*h+0.5),
                                            "Calibrate" );
@@ -60,8 +60,8 @@ Fl_Group( x, y, w, h, label )
   this->m_calibrateButton->callback( ( Fl_Callback* ) ( Self::RequestComputeCalibrationCB ), 
                                       this);
 
-  this->m_output = new Fl_Multiline_Output( static_cast<int>(OUTPUT_X_SCALE*w+0.5),
-                                            static_cast<int>(OUTPUT_Y_SCALE*h+0.5),
+  this->m_output = new Fl_Multiline_Output( static_cast<int>(x+OUTPUT_X_SCALE*w+0.5),
+                                            static_cast<int>(y+OUTPUT_Y_SCALE*h+0.5),
                                             static_cast<int>(OUTPUT_W_SCALE*w+0.5),
                                             static_cast<int>(OUTPUT_H_SCALE*h+0.5) );
   end();
