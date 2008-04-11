@@ -408,7 +408,7 @@ ${IGSTK_TEST_POLARIS_PORT_NUMBER})
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
-              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
+              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
               )
 
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
