@@ -17,7 +17,6 @@ SUBDIRS(
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
-    OneViewAndTrackingUsingFLTKWidget
     OneViewAndTrackingNewUsingFLTKWidget
     PivotCalibrationFLTKWidget
     TwoViews
@@ -34,7 +33,6 @@ IF (IGSTKSandbox_USE_FLTK)
     Logging
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
-    SUBDIRS( OneViewAndTrackingUsingMicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
   ENDIF(IGSTKSandbox_USE_MicronTracker) 
   IF ( WIN32 )
