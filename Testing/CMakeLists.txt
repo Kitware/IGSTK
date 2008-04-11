@@ -189,30 +189,6 @@ ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetw
 ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
  ${IGSTKSandbox_TESTS} igstkImageResliceSpatialObjectRepresentationTest)
 
-IF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
-    ADD_TEST( igstkPolarisTrackerTest2
-              ${IGSTKSandbox_TESTS}
-              igstkPolarisTrackerTest2
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest2LoggerOutput.txt
-              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
-              )
-    ADD_TEST( igstkPolarisTrackerTest3
-              ${IGSTKSandbox_TESTS}
-              igstkPolarisTrackerTest3
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
-              ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
-              )
-    ADD_TEST( igstkPolarisTrackerTest4
-              ${IGSTKSandbox_TESTS}
-              igstkPolarisTrackerTest4
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
-              0
-              1
-              )
-  ADD_TEST(igstkPolarisTrackerToolTest ${IGSTKSandbox_TESTS}
-igstkPolarisTrackerToolTest)
-ENDIF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
-
 ADD_TEST( igstkToolCalibrationReaderTest ${IGSTKSandbox_TESTS}
              igstkToolCalibrationReaderTest
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
@@ -587,23 +563,28 @@ IF(IGSTKSandbox_TEST_POLARIS_ATTACHED)
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
-              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom)
+              ${IGSTKSandbox_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
+)
    ADD_TEST( igstkPolarisTrackerTest2
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest2
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest2LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
               )
     ADD_TEST( igstkPolarisTrackerTest3
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest3
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest3LoggerOutput.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom
+              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
               )
     ADD_TEST( igstkPolarisTrackerTest4
               ${IGSTK_TESTS}
               igstkPolarisTrackerTest4
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkPolarisTrackerTest4LoggerOutput.txt
+              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
               0
               1
               )
