@@ -74,8 +74,46 @@ public:
     m_Tracker->SetLogger( m_Logger );
 
     m_Communication = CommunicationType::New();
+    m_PortNumber = 0;
+    }
+
+  void SetUpCommunication()
+    {
     m_Communication->SetLogger( m_Logger );
-    m_Communication->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  igstk::SerialCommunication::PortNumberType portNumber;
+
+  switch( m_PortNumber )
+  {
+  case 0:
+    portNumber = igstk::SerialCommunication::PortNumber0;
+    break;
+  case 1:
+    portNumber = igstk::SerialCommunication::PortNumber1;
+    break;
+  case 2:
+    portNumber = igstk::SerialCommunication::PortNumber2;
+    break;
+  case 3:
+    portNumber = igstk::SerialCommunication::PortNumber3;
+    break;
+  case 4:
+    portNumber = igstk::SerialCommunication::PortNumber4;
+    break;
+  case 5:
+    portNumber = igstk::SerialCommunication::PortNumber5;
+    break;
+  case 6:
+    portNumber = igstk::SerialCommunication::PortNumber6;
+    break;
+  case 7:
+    portNumber = igstk::SerialCommunication::PortNumber7;
+    break;
+  default:
+    std::cerr << "Invalid serial communication port number: " << std::endl;
+  break;
+  }
+    
+    m_Communication->SetPortNumber( portNumber );
     m_Communication->SetParity( igstk::SerialCommunication::NoParity );
     m_Communication->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
     m_Communication->SetDataBits( igstk::SerialCommunication::DataBits8 );
@@ -92,6 +130,11 @@ public:
 
     //enable interaction by default
     InteractionButton->set();
+    }
+
+  void SetPortNumber(unsigned int portNumber)
+    {
+    m_PortNumber = portNumber;
     }
 
   ~OneViewAndTrackingNewUsingFLTKWidgetImplementation()
@@ -151,6 +194,8 @@ private:
   bool                    m_Tracking;
   
   std::ofstream           m_LogFile;
+
+  unsigned int            m_PortNumber;
 };
 
 #endif

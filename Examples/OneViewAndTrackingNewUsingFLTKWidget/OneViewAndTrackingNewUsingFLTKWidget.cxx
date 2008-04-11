@@ -33,12 +33,20 @@
 #include "igstkPolarisTrackerTool.h"
 
 
-int main(int , char** )
+int main(int argc, char* argv[] )
 { 
 
   igstk::RealTimeClock::Initialize();
 
   OneViewAndTrackingNewUsingFLTKWidgetImplementation   application;
+
+  if( argc > 1 )
+    {
+    unsigned int portNumber = atoi( argv[1] );
+    application.SetPortNumber( portNumber );
+    }  
+  
+  application.SetUpCommunication();
 
   // define a tracker tool type
   typedef igstk::PolarisTrackerTool      TrackerToolType;
