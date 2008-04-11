@@ -42,9 +42,7 @@ FIND_PROGRAM(DOT
   [HKEY_LOCAL_MACHINE\\SOFTWARE\\ATT\\Graphviz;InstallPath]/bin
 )
 
-IF(DOT-NOTFOUND)
-  MESSAGE(STATUS "Dot (graphiz tool) not found")
-ELSE(DOT-NOTFOUND)
+IF(DOT)
   FILE(GLOB STATE_MACHINE_DOT_FILES "${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR}/*.dot")
 
     FOREACH(dotfile ${STATE_MACHINE_DOT_FILES})
@@ -66,7 +64,7 @@ ELSE(DOT-NOTFOUND)
 
     ADD_CUSTOM_TARGET(StateMachineDiagrams ALL DEPENDS ${DOT_PNG_DEPS})
 
-ENDIF(DOT-NOTFOUND)
+ENDIF(DOT)
 
 
 #-----------------------------------------------------------------------------
