@@ -491,6 +491,8 @@ void SerialCommunication::OpenPortSuccessProcessing( void )
   igstkLogMacro( DEBUG, "SerialCommunication::OpenPortSuccessProcessing"
                  " called ...\n");
 
+  m_ReturnValue = SUCCESS;
+
   // Open a file for writing data stream.
   if( m_Capture )
     {
