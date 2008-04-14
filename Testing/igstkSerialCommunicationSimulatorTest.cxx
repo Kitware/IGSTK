@@ -65,12 +65,12 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
     std::cerr << "Error missing argument " << std::endl;
     std::cerr << "Usage:  " << argv[0]  
               << "Test_Output_Directory" 
-              << "Data_Directory" << std::endl;
+              << "Simulated data"<< std::endl;
     return EXIT_FAILURE;
     }
 
@@ -88,9 +88,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   serialComm->OpenCommunication();
 
   // set the name of the actual data file
-  std::string igstkDataDirectory = argv[2];
-  std::string simulationFile = igstkDataDirectory + "/";
-  simulationFile = simulationFile + "Input/polaris_stream_07_27_2005.txt";
+  std::string simulationFile = argv[2];
   serialComm->SetFileName( simulationFile.c_str() );
   serialComm->GetFileName();
 

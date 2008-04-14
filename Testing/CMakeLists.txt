@@ -130,7 +130,8 @@ ${IGSTK_TEST_POLARIS_PORT_NUMBER})
               ${IGSTK_TEST_POLARIS_PORT_NUMBER})
  
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
-igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR})
+igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}  
+              ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt} )
   
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
