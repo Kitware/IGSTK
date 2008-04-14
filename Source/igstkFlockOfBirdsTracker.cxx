@@ -74,7 +74,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
 
-  this->InternalActivateTools(); //seba: see who activated this before?
+  this->InternalActivateTools(); //seba: who activated this before?
   return SUCCESS;
 }
 
@@ -83,7 +83,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalClose called ...\n");
 
-  this->InternalDeactivateTools();//seba: see who activated this before?
+  this->InternalDeactivateTools();//seba: who activated this before?
 
   m_CommandInterpreter->Close();
 
@@ -158,8 +158,71 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   // A shared memory buffer is used to transfer information between
   // the threads, and it must be locked when either thread is
   // accessing it.
+
+  m_CommandInterpreter->Point();
+  m_CommandInterpreter->Update();
+
+  float offset[3];
+  m_CommandInterpreter->GetPosition(offset);
+
+  float quaternion[4];
+  m_CommandInterpreter->GetQuaternion(quaternion);
+
+  // set the translation
+  typedef TransformType::VectorType TranslationType;
+  TranslationType translation;
+
+  translation[0] = offset[0];
+  translation[1] = offset[1];
+  translation[2] = offset[2];
+
+  // set the rotation
+  typedef TransformType::VersorType RotationType;
+  RotationType rotation;
+  rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
+
+  // Lock the buffer and change the value of the transform in the
+  // buffer. The amount of code between the "Lock" and "Unlock" 
+  // should be as small as possible.
   m_BufferLock->Lock();
 
+  m_TransformBuffer[0].SetToIdentity(this->GetValidityTime());
+  m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
+        this->GetValidityTime());
+
+  TransformType transform = m_TransformBuffer[0];
+
+  m_BufferLock->Unlock();
+
+  // copy the transform to the tool
+//  this->SetToolTransform(0, 0, transform);
+// now this should look like:
+
+   TrackerToolsContainerType trackerToolContainer =
+       this->GetTrackerToolContainer();
+ 
+   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+ 
+   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+ 
+   this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
+ 
+   typedef TransformType::ErrorType  ErrorType;
+ 
+   ErrorType errorValue = 0.0;
+ 
+//    transform.SetToIdentity(this->GetValidityTime());
+//    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+//        this->GetValidityTime());
+ 
+   // set the raw transform
+   this->SetTrackerToolRawTransform(
+      trackerToolContainer[inputItr->first], transform );
+ 
+   this->SetTrackerToolTransformUpdate(
+      trackerToolContainer[inputItr->first], true );
+
+/*
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
 
   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
@@ -188,7 +251,10 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
       this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
       // create the transform
-      TransformType transform;
+   //   TransformType transform;
+
+       TransformType transform = inputItr->second;// m_TransformBuffer[0];
+
 
       typedef TransformType::VectorType TranslationType;
       TranslationType translation;
@@ -226,27 +292,9 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   }
 
   m_BufferLock->Unlock();
-
+*/
   return SUCCESS;
 
-  /* //old FOB code
-  // Lock the buffer and copy the tracking information that was
-  // set by the tracking thread (tracking information is for first
-  // bird only for now).
-  // The amount of code between the "Lock" and "Unlock" should
-  // be as small as possible: just a copy from the buffer and
-  // nothing else.
-  m_BufferLock->Lock();
-
-  TransformType transform = m_TransformBuffer[0];
-
-  m_BufferLock->Unlock();
-
-  // copy the transform to the tool
-  this->SetToolTransform(0, 0, transform);
-
-  return SUCCESS;
-  */
 }
 
 /** Update the m_StatusBuffer and the transforms. 
