@@ -35,16 +35,16 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
     {
     this->m_PortEnabled[i] = 0;
     }
-/*
+
 //fix this
-  for (unsigned int j = 0; j < NumberOfPorts; j++)
-    { 
-    FlockOfBirdsTrackerToolPointer tool = FlockOfBirdsTrackerToolType::New();
-    TrackerPortPointer port = TrackerPortType::New();
-    port->AddTool(tool);
-    this->AddPort(port);
-    }
-*/
+//   for (unsigned int j = 0; j < NumberOfPorts; j++)
+//     { 
+//     FlockOfBirdsTrackerToolPointer tool = FlockOfBirdsTrackerToolType::New();
+//     TrackerPortPointer port = TrackerPortType::New();
+//     port->AddTool(tool);
+//     this->AddPort(port);
+//     }
+
   this->SetThreadingEnabled( true );
 
   m_BufferLock = itk::MutexLock::New();
@@ -73,6 +73,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
+
+  this->InternalActivateTools(); //seba: see who activated this before?
   return SUCCESS;
 }
 
@@ -80,7 +82,11 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalClose called ...\n");
+
+  this->InternalDeactivateTools();//seba: see who activated this before?
+
   m_CommandInterpreter->Close();
+
   return SUCCESS;
 }
 
