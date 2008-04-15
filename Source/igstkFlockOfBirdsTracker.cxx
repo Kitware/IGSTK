@@ -141,8 +141,9 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
       // only report tools that are in view
       if (! this->m_ToolStatusContainer[inputItr->first])
       {
-          igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
+          igstkLogMacro( INFO, "igstk::MicronTracker::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " is not in view\n");
+
           // report to the tracker tool that the tracker is not available
           this->ReportTrackingToolNotAvailable(
               trackerToolContainer[inputItr->first]);
@@ -204,19 +205,6 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
           "called ...\n");
 
-    // Send the commands to the device that will get the transforms
-    // for all of the tools.
-    // Lock the buffer that this method shares with InternalUpdateStatus
-    m_BufferLock->Lock();
-
-    //reset the status of all the tracker tools
-    typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
-    InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
-
-    this->m_ToolStatusContainer[inputItr->first] = 0;
-
-   //Get position and pose information
-
     m_CommandInterpreter->Point();
     m_CommandInterpreter->Update();
 
@@ -226,17 +214,35 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     float quaternion[4];
     m_CommandInterpreter->GetQuaternion(quaternion);
 
-    std::vector< double > transform;
-    transform.push_back( offset[0] );
-    transform.push_back( offset[1] );
-    transform.push_back( offset[2] );
-    transform.push_back( quaternion[0] );
-    transform.push_back( quaternion[1] );
-    transform.push_back( quaternion[2] );
-    transform.push_back( quaternion[3] );
+    // set the translation
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
 
-    this->m_ToolTransformBuffer[ inputItr->first] = transform;
-    this->m_ToolStatusContainer[ inputItr->first] = 1;
+    translation[0] = offset[0];
+    translation[1] = offset[1];
+    translation[2] = offset[2];
+
+    // set the rotation
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
+    rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
+
+    // Lock the buffer and change the value of the transform in the
+    // buffer. The amount of code between the "Lock" and "Unlock" 
+    // should be as small as possible.
+    m_BufferLock->Lock();
+
+    std::vector< double > transform;
+    transform.push_back( translation[0] );
+    transform.push_back( translation[1] );
+    transform.push_back( translation[2] );
+    transform.push_back( rotation.GetX() );
+    transform.push_back( rotation.GetY() );
+    transform.push_back( rotation.GetZ() );
+    transform.push_back( rotation.GetW() );
+
+    this->m_ToolTransformBuffer[0] = transform;
+    this->m_ToolStatusContainer[0] = 1;
 
     m_BufferLock->Unlock();
 
@@ -280,8 +286,17 @@ FlockOfBirdsTracker
     "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers"
     " called...\n");
 
-  const std::string trackerToolIdentifier =
-      trackerTool->GetTrackerToolIdentifier();
+   const std::string trackerToolIdentifier =
+       trackerTool->GetTrackerToolIdentifier();
+
+  std::vector< double > transform;
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 1.0 );
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
@@ -304,7 +319,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     }
 
     const std::string trackerToolIdentifier =
-        trackerTool->GetTrackerToolIdentifier();
+         trackerTool->GetTrackerToolIdentifier();
 
     std::vector< double > transform;
     transform.push_back( 0.0 );
