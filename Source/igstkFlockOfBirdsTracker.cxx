@@ -151,47 +151,83 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
   igstkLogMacro( DEBUG, 
                  "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
 
-  /// Lock the buffer and copy the tracking information that was
-  // set by the tracking thread (tracking information is for first
-  // bird only for now).
-  // The amount of code between the "Lock" and "Unlock" should
-  // be as small as possible: just a copy from the buffer and
-  // nothing else.
+  // This method and the InternalThreadedUpdateStatus are both called
+  // continuously in the Tracking state.  This method is called from
+  // the main thread, while InternalThreadedUpdateStatus is called
+  // from the thread that actually communicates with the device.
+  // A shared memory buffer is used to transfer information between
+  // the threads, and it must be locked when either thread is
+  // accessing it.
   m_BufferLock->Lock();
-
-  TransformType transform = m_TransformBuffer[0];
-
-  m_BufferLock->Unlock();
-
-  // copy the transform to the tool
-//  this->SetToolTransform(0, 0, transform);
-
-  TrackerToolsContainerType trackerToolContainer =
-     this->GetTrackerToolContainer();
 
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
 
   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
 
-  this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
+  TrackerToolsContainerType trackerToolContainer =
+      this->GetTrackerToolContainer();
 
-  typedef TransformType::ErrorType  ErrorType;
+  unsigned int toolId = 0;
 
-  ErrorType errorValue = 0.0;
+  while( inputItr != inputEnd )
+  {
+      // only report tools that are in view
+      if (! this->m_ToolStatusContainer[inputItr->first])
+      {
+          igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalUpdateStatus: " <<
+              "tool " << inputItr->first << " is not in view\n");
+          // report to the tracker tool that the tracker is not available
+          this->ReportTrackingToolNotAvailable(
+              trackerToolContainer[inputItr->first]);
 
-  //    transform.SetToIdentity(this->GetValidityTime());
-  //    transform.SetTranslationAndRotation(translation, rotation, errorValue,
-  //        this->GetValidityTime());
+          ++inputItr;
+          continue;
+      }
+      // report to the tracker tool that the tracker is Visible
+      this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
-  // set the raw transform
-  this->SetTrackerToolRawTransform(
-      trackerToolContainer[inputItr->first], transform );
+      // create the transform
+      TransformType transform;
 
-  this->SetTrackerToolTransformUpdate(
-     trackerToolContainer[inputItr->first], true );
+      typedef TransformType::VectorType TranslationType;
+      TranslationType translation;
+
+      translation[0] = (inputItr->second)[0];
+      translation[1] = (inputItr->second)[1];
+      translation[2] = (inputItr->second)[2];
+
+      typedef TransformType::VersorType RotationType;
+      RotationType rotation;
+
+      rotation.Set( (inputItr->second)[3],
+          (inputItr->second)[4],
+          (inputItr->second)[5],
+          (inputItr->second)[6]);
+
+      // report error value
+      // Get error value from the tracker. TODO
+      typedef TransformType::ErrorType  ErrorType;
+      ErrorType errorValue = 0.0;
+
+      transform.SetToIdentity(this->GetValidityTime());
+      transform.SetTranslationAndRotation(translation, rotation, errorValue,
+          this->GetValidityTime());
+
+      // set the raw transform
+      this->SetTrackerToolRawTransform(
+          trackerToolContainer[inputItr->first], transform );
+
+      this->SetTrackerToolTransformUpdate(
+          trackerToolContainer[inputItr->first], true );
+
+      ++inputItr;
+      ++toolId;
+  }
+
+  m_BufferLock->Unlock();
 
   return SUCCESS;
-
 }
 
 /** Update the m_StatusBuffer and the transforms. 
@@ -203,6 +239,17 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
           "called ...\n");
 
+    // Send the commands to the device that will get the transforms
+    // for all of the tools.
+    // Lock the buffer that this method shares with InternalUpdateStatus
+    m_BufferLock->Lock();
+
+    //reset the status of all the tracker tools
+    typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+    InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+
+    this->m_ToolStatusContainer[inputItr->first] = 0;
+
     m_CommandInterpreter->Point();
     m_CommandInterpreter->Update();
 
@@ -212,27 +259,26 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     float quaternion[4];
     m_CommandInterpreter->GetQuaternion(quaternion);
 
-    // set the translation
-    typedef TransformType::VectorType TranslationType;
-    TranslationType translation;
-
-    translation[0] = offset[0];
-    translation[1] = offset[1];
-    translation[2] = offset[2];
-
     // set the rotation
     typedef TransformType::VersorType RotationType;
     RotationType rotation;
-    rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
+    rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);    
 
-    // Lock the buffer and change the value of the transform in the
-    // buffer. The amount of code between the "Lock" and "Unlock" 
-    // should be as small as possible.
-    m_BufferLock->Lock();
+//     m_TransformBuffer[0].SetToIdentity(this->GetValidityTime());
+//     m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
+//        this->GetValidityTime());
 
-    m_TransformBuffer[0].SetToIdentity(this->GetValidityTime());
-    m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
-       this->GetValidityTime());
+    std::vector< double > transform;
+    transform.push_back( offset[0] );
+    transform.push_back( offset[1] );
+    transform.push_back( offset[2] );
+    transform.push_back( quaternion[0] );
+    transform.push_back( quaternion[1] );
+    transform.push_back( quaternion[2] );
+    transform.push_back( quaternion[3] );
+
+    this->m_ToolTransformBuffer[ inputItr->first] = transform;
+    this->m_ToolStatusContainer[ inputItr->first] = 1;
 
     m_BufferLock->Unlock();
 
