@@ -30,20 +30,6 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
 {
-  m_NumberOfTools = 0;
-  for (unsigned int i = 0; i < NumberOfPorts; i++)
-    {
-    this->m_PortEnabled[i] = 0;
-    }
-
-//fix this
-//   for (unsigned int j = 0; j < NumberOfPorts; j++)
-//     { 
-//     FlockOfBirdsTrackerToolPointer tool = FlockOfBirdsTrackerToolType::New();
-//     TrackerPortPointer port = TrackerPortType::New();
-//     port->AddTool(tool);
-//     this->AddPort(port);
-//     }
 
   this->SetThreadingEnabled( true );
 
@@ -73,8 +59,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
-
-  this->InternalActivateTools(); //not sure where to call this
   return SUCCESS;
 }
 
@@ -82,8 +66,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
 FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalClose called ...\n");
-
-  this->InternalDeactivateTools(); //not sure where to call this
 
   m_CommandInterpreter->Close();
 
@@ -96,18 +78,6 @@ FlockOfBirdsTracker::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, 
                "FlockOfBirdsTracker::InternalActivateTools called ...\n");
-  
-  this->EnableToolPorts();
-
-  m_NumberOfTools = 0;
-
-  for(unsigned int i = 0; i < NumberOfPorts; i++)
-    { 
-    if( this->m_PortEnabled[i] )
-      {
-      m_NumberOfTools++;
-      }
-    }
   return SUCCESS;
 }
 
@@ -115,8 +85,6 @@ FlockOfBirdsTracker::InternalActivateTools( void )
 FlockOfBirdsTracker::ResultType 
 FlockOfBirdsTracker::InternalDeactivateTools( void )
 {
-  this->DisableToolPorts();
-
   return SUCCESS;
 }
 
@@ -167,8 +135,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   TrackerToolsContainerType trackerToolContainer =
       this->GetTrackerToolContainer();
-
-  unsigned int toolId = 0;
 
   while( inputItr != inputEnd )
   {
@@ -222,7 +188,6 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
           trackerToolContainer[inputItr->first], true );
 
       ++inputItr;
-      ++toolId;
   }
 
   m_BufferLock->Unlock();
@@ -250,6 +215,8 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 
     this->m_ToolStatusContainer[inputItr->first] = 0;
 
+   //Get position and pose information
+
     m_CommandInterpreter->Point();
     m_CommandInterpreter->Update();
 
@@ -258,15 +225,6 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 
     float quaternion[4];
     m_CommandInterpreter->GetQuaternion(quaternion);
-
-    // set the rotation
-    typedef TransformType::VersorType RotationType;
-    RotationType rotation;
-    rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);    
-
-//     m_TransformBuffer[0].SetToIdentity(this->GetValidityTime());
-//     m_TransformBuffer[0].SetTranslationAndRotation(translation, rotation, 0,
-//        this->GetValidityTime());
 
     std::vector< double > transform;
     transform.push_back( offset[0] );
@@ -290,10 +248,10 @@ void FlockOfBirdsTracker::EnableToolPorts()
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::EnableToolPorts called...\n");
 
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    this->m_PortEnabled[port] = 1;
-    }
+//   for (unsigned int port = 0; port < NumberOfPorts; port++)
+//     {
+//     this->m_PortEnabled[port] = 1;
+//     }
 
 }
 
@@ -301,11 +259,6 @@ void FlockOfBirdsTracker::EnableToolPorts()
 void FlockOfBirdsTracker::DisableToolPorts( void )
 {
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::DisableToolPorts called...\n");
-  
-  for (unsigned int port = 0; port < NumberOfPorts; port++)
-    {
-    this->m_PortEnabled[port] = 0;
-    }
 }
 
 /** Verify tracker tool information */
@@ -373,14 +326,6 @@ void FlockOfBirdsTracker::PrintSelf( std::ostream& os,
                                      itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  unsigned int i;
-
-  for( i = 0; i < NumberOfPorts; ++i )
-    {
-    os << indent << "Port " << i << " Enabled: " << m_PortEnabled[i] 
-       << std::endl;
-    }
 }
 
 } // end of namespace igstk

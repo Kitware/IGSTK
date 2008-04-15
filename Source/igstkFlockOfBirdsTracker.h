@@ -49,9 +49,6 @@ public:
 
 public:
 
-  /** Number of ports to allow */
-  itkStaticConstMacro( NumberOfPorts, unsigned int, 1 );
-
   /** Command Interpreter */
   typedef igstk::FlockOfBirdsCommandInterpreter CommandInterpreterType;
 
@@ -134,9 +131,6 @@ private:
 
   /** Disable all enabled tool ports. */
   void DisableToolPorts( void );
-
-  /** Information about which tool ports are enabled. */
-  int m_PortEnabled[NumberOfPorts];
 
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
