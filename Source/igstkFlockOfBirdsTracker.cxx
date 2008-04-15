@@ -319,7 +319,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     }
 
     const std::string trackerToolIdentifier =
-         trackerTool->GetTrackerToolIdentifier();
+        trackerTool->GetTrackerToolIdentifier();
 
     std::vector< double > transform;
     transform.push_back( 0.0 );
