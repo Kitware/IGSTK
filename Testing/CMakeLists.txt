@@ -113,6 +113,8 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.cxx
 
   igstkImageResliceSpatialObjectRepresentationTest.cxx
+
+ # igstkImageReslicePlaneSpatialObjectTest.cxx
  )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -188,6 +190,8 @@ ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetw
 
 ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
  ${IGSTKSandbox_TESTS} igstkImageResliceSpatialObjectRepresentationTest)
+
+#ADD_TEST( igstkImageReslicePlaneSpatialObjectTest ${IGSTKSandbox_TESTS} igstkImageReslicePlaneSpatialObjectTest)
 
 ADD_TEST( igstkToolCalibrationReaderTest ${IGSTKSandbox_TESTS}
              igstkToolCalibrationReaderTest
