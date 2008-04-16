@@ -27,12 +27,18 @@ namespace igstk
 
 /** \class ImageReslicePlaneSpatialObject
  * 
- * \brief This class computes image reslicing plane parameters.  
+ * \brief This class generates reslicing plane equation.  
  *
  * The computed plane is used by igstkImageResliceSpatialObjectRepresentation
  * class to generate a resliced image representation.
  *
  * The class provides three modes of reslicing i.e Orthogonal, OffOrthogonal and Oblique. 
+ *
+ * Orthogonal mode ....
+ *
+ * OffOrthogonal mode ....
+ *
+ * Oblique mode .....
  *
  * In orthogonal mode, three types of orientation are defined: Axial, Coronal and Sagital. 
  * For this mode, the tool tip spatial object provides the reslicing plane postion and orientation
@@ -49,6 +55,7 @@ namespace igstk
  * \ingroup SpatialObject
  */
 
+template < class TImageSpatialObject > 
 class ImageReslicePlaneSpatialObject 
 : public SpatialObject
 {
@@ -56,11 +63,13 @@ class ImageReslicePlaneSpatialObject
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ImageReslicePlaneSpatialObject, SpatialObject )
+  igstkStandardTemplatedClassTraitsMacro( ImageReslicePlaneSpatialObject, SpatialObject )
 
 public:
 
   /** Typedefs */
+  typedef TImageSpatialObject                    ImageSpatialObjectType;
+
   /** Reslicing modes */
   typedef enum
     { 
@@ -88,6 +97,15 @@ public:
   /** Request the state machine to attempt to set orientation type */
   void RequestSetOrientationType( OrientationType orientationType ); 
 
+  /** Request set image spatial object*/ 
+  void RequestSetImageSpatialObject( ImageSpatialObjectType imageSpatialObject ); 
+
+  /** Request compute reslicing plane */
+  void RequestComputeReslicingPlane( ); 
+
+  /** Request Get reslcing plane equation */
+  void RequestGetReslicingPlane();
+
 protected:
 
   ImageReslicePlaneSpatialObject( void );
@@ -103,11 +121,14 @@ private:
   igstkDeclareInputMacro( InValidReslicingMode );
   igstkDeclareInputMacro( ValidOrientationType );
   igstkDeclareInputMacro( InValidOrientationType );
+  igstkDeclareInputMacro( ValidImageSpatialObject );
+  igstkDeclareInputMacro( InValidImageSpatialObject );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ReslicingModeSet );
   igstkDeclareStateMacro( OrientationTypeSet );
+  igstkDeclareStateMacro( ImageSpatialObjectSet );
 
   /** Internal itkSpatialObject */
 
@@ -117,14 +138,25 @@ private:
   /** Set the reslcing mode */
   void SetReslicingModeProcessing( void );
 
+  /** Set the image spatial object */
+  void SetImageSpatialObjectProcessing( void );
+
   /** Report invalid reslicing mode */
   void ReportInvalidReslicingModeProcessing( void );
 
   /** Report invalid orientation type */
   void ReportInvalidOrientationTypeProcessing( void );
 
+  /** Report invalid image spatial object type */
+  void ReportInvalidImageSpatialObjectProcessing( void );
+
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
+
+  /** Methods to compute reslcing plane for the different modes*/
+  void ComputeOrthgonalReslicingPlane();
+  void ComputeObliqueReslicingPlane();
+  void ComputeOffOrthgonalReslicingPlane();
 
   /** Variables for managing reslicing mode */
   ReslicingMode     m_ReslicingModeToBeSet;
@@ -133,6 +165,10 @@ private:
   /** Variables for managing orientation type */
   OrientationType     m_OrientationTypeToBeSet;
   OrientationType     m_OrientationType;
+
+  /** Variables for managing image spatial object type */
+  ImageSpatialObjectType     m_ImageSpatialObjectToBeSet;
+  ImageSpatialObjectType     m_ImageSpatialObject;
 };
 
 } // end namespace igstk
