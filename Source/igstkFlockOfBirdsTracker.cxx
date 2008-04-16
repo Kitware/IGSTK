@@ -205,6 +205,22 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
           "called ...\n");
 
+    // Send the commands to the device that will get the transforms
+    // for all of the tools.
+    // Lock the buffer that this method shares with InternalUpdateStatus
+    m_BufferLock->Lock();
+
+    //reset the status of all the tracker tools
+    typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+    InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+    InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
+
+    while( inputItr != inputEnd )
+    {
+        this->m_ToolStatusContainer[inputItr->first] = 0;
+        ++inputItr;
+    }
+
     m_CommandInterpreter->Point();
     m_CommandInterpreter->Update();
 
@@ -227,11 +243,6 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     RotationType rotation;
     rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
 
-    // Lock the buffer and change the value of the transform in the
-    // buffer. The amount of code between the "Lock" and "Unlock" 
-    // should be as small as possible.
-    m_BufferLock->Lock();
-
     std::vector< double > transform;
     transform.push_back( translation[0] );
     transform.push_back( translation[1] );
@@ -241,8 +252,13 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     transform.push_back( rotation.GetZ() );
     transform.push_back( rotation.GetW() );
 
-    this->m_ToolTransformBuffer[0] = transform;
-    this->m_ToolStatusContainer[0] = 1;
+    inputItr = this->m_ToolTransformBuffer.begin();
+
+    if( inputItr != this->m_ToolTransformBuffer.end() )
+    {
+        this->m_ToolTransformBuffer[inputItr->first] = transform;
+        this->m_ToolStatusContainer[inputItr->first] = 1;
+    }
 
     m_BufferLock->Unlock();
 

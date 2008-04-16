@@ -29,17 +29,49 @@ namespace igstk
 /** Constructor (initializes FlockOfBirds-specific tool values) */
 FlockOfBirdsTrackerTool::FlockOfBirdsTrackerTool():m_StateMachine(this)
 {
+    m_TrackerToolConfigured = false;
+
+    // States
+    igstkAddStateMacro( Idle );
+    igstkAddStateMacro( BirdNameSpecified );
+
+    // Set the input descriptors
+    igstkAddInputMacro( ValidBirdName );
+    igstkAddInputMacro( InValidBirdName );
+
+
+    // Add transitions
+    //
+    // Transitions from idle state
+    igstkAddTransitionMacro( Idle,
+        ValidBirdName,
+        BirdNameSpecified,
+        SetBirdName );
+
+    igstkAddTransitionMacro( Idle,
+        InValidBirdName,
+        Idle,
+        ReportInvalidBirdNameSpecified );
+
+    // Transitions from MarkerName specified
+    igstkAddTransitionMacro( BirdNameSpecified,
+        ValidBirdName,
+        BirdNameSpecified,
+        ReportInvalidRequest );
+    igstkAddTransitionMacro( BirdNameSpecified,
+        InValidBirdName,
+        BirdNameSpecified,
+        ReportInvalidRequest );
+
+    // Inputs to the state machine
+    igstkSetInitialStateMacro( Idle );
+
+    m_StateMachine.SetReadyToRun();
 }
 
 /** Destructor */
 FlockOfBirdsTrackerTool::~FlockOfBirdsTrackerTool()
 {
-}
-
-/** Check if the tracker tool is configured */
-bool FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured() const
-{
-  return true;
 }
 
 /** The "RequestAttachToTracker" method attaches 
@@ -52,12 +84,71 @@ bool FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured() const
 //   this->TrackerTool::RequestAttachToTracker( tracker );
 // }
 
-/** Print Self function */
-void FlockOfBirdsTrackerTool::PrintSelf( std::ostream& os, 
-                                         itk::Indent indent ) const
+/** Request set marker name */
+void FlockOfBirdsTrackerTool::RequestSetBirdName( const std::string& birdName )
 {
-  Superclass::PrintSelf(os, indent);
+    igstkLogMacro( DEBUG, 
+         "igstk::FlockOfBirdsTrackerTool::RequestSetBirdName called ...\n");
+    if ( birdName == "" )
+    {
+        m_StateMachine.PushInput( m_InValidBirdNameInput );
+        m_StateMachine.ProcessInputs();
+    }
+    else 
+    {
+        m_BirdNameToBeSet = birdName;
+        m_StateMachine.PushInput( m_ValidBirdNameInput );
+        m_StateMachine.ProcessInputs();
+    }
 }
 
+/** Set valid marker name */ 
+void FlockOfBirdsTrackerTool::SetBirdNameProcessing( )
+{
+    igstkLogMacro( DEBUG, 
+         "igstk::FlockOfBirdsTrackerTool::SetBirdNameProcessing called ...\n");
+
+    this->m_BirdName = m_BirdNameToBeSet;
+
+    m_TrackerToolConfigured = true;
+
+    // For MicronTracker, marker name is used as a unique identifier
+    this->SetTrackerToolIdentifier( m_BirdName ); 
+}
+
+/** Report Invalid marker name*/ 
+void FlockOfBirdsTrackerTool::ReportInvalidBirdNameSpecifiedProcessing( )
+{
+    igstkLogMacro( DEBUG, 
+    "igstk::FlockOfBirdsTrackerTool::ReportInvalidBirdNameSpecifiedProcessing "
+         "called ...\n");
+
+    igstkLogMacro( CRITICAL, "Invalid bird name specified ");
+}
+
+void FlockOfBirdsTrackerTool::ReportInvalidRequestProcessing()
+{
+   igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
+}
+
+/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
+* tool is configured */ 
+bool
+FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured( ) const
+{
+   igstkLogMacro( DEBUG, 
+          "igstk::FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+   return m_TrackerToolConfigured;
+}
+
+/** Print Self function */
+void FlockOfBirdsTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+    Superclass::PrintSelf(os, indent);
+
+    os << indent << "Bird name : "        << m_BirdName << std::endl;
+    os << indent << "TrackerToolConfigured:"
+       << m_TrackerToolConfigured << std::endl;
+}
 
 }

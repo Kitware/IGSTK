@@ -41,21 +41,50 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( FlockOfBirdsTrackerTool, TrackerTool )
 
+  /** Get Tracker tool bird name */
+  igstkGetStringMacro( BirdName );
+
+  /** Set tracker tool bird name */
+  void RequestSetBirdName( const std::string & birdName); 
+
 protected:
 
   FlockOfBirdsTrackerTool();
   ~FlockOfBirdsTrackerTool();
 
-
-  virtual bool CheckIfTrackerToolIsConfigured() const;
-
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
 private:
 
   FlockOfBirdsTrackerTool(const Self&);    //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
+
+  /** States for the State Machine */
+  igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( BirdNameSpecified );
+
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro( ValidBirdName );
+  igstkDeclareInputMacro( InValidBirdName );
+
+  /** Get boolean variable to check if the tracker tool is 
+  * configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured() const;
+
+  /** Report Invalid bird name specified*/ 
+  void ReportInvalidBirdNameSpecifiedProcessing( );
+
+  /** Report any invalid request to the logger */
+  void ReportInvalidRequestProcessing();
+
+  /** Set bird name */
+  void SetBirdNameProcessing();
+
+  std::string     m_BirdName;
+  std::string     m_BirdNameToBeSet;
+
+  bool            m_TrackerToolConfigured;
 
 };  
 
