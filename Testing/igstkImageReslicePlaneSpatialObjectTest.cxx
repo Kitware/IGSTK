@@ -61,6 +61,18 @@ int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
 
   planeSpatialObject->Print( std::cout );
 
+  // Perform orthogonal reslicing
+  planeSpatialObject->RequestSetReslicingMode( igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Orthogonal );
+
+  // Select axial orientation
+  planeSpatialObject->RequestSetOrientationType( igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Axial );
+
+  // Set input image spatial object
+  //
+  //
+  // Set input tool spatial object
+  //
+
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
     return EXIT_FAILURE;

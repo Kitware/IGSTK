@@ -47,6 +47,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddInputMacro( InValidOrientationType );
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( InValidImageSpatialObject );
+  igstkAddInputMacro( ValidToolSpatialObject );
+  igstkAddInputMacro( InValidToolSpatialObject );
 
 
   // List of state machine transitions
@@ -64,6 +66,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   //From OrientationTypeSet
   igstkAddTransitionMacro( OrientationTypeSet, ValidImageSpatialObject, ImageSpatialObjectSet, SetImageSpatialObject );
   igstkAddTransitionMacro( OrientationTypeSet, InValidImageSpatialObject, OrientationTypeSet, ReportInvalidImageSpatialObject );
+
+  //From ImageSpatialObjectSet
+  igstkAddTransitionMacro( ImageSpatialObjectSet, ValidToolSpatialObject,
+ToolSpatialObjectSet, SetToolSpatialObject );
+  igstkAddTransitionMacro( ImageSpatialObjectSet, InValidToolSpatialObject,
+ImageSpatialObjectSet, ReportInvalidToolSpatialObject );
+ 
   
 
   igstkSetInitialStateMacro( Initial );
@@ -167,6 +176,49 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ReportInvalidImageSpatialObjectProcessing called...\n");
 }
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::RequestSetImageSpatialObject called...\n");
+
+  m_ToolSpatialObjectToBeSet = toolSpatialObject;
+
+  if( !m_ToolSpatialObjectToBeSet )
+    {
+    m_StateMachine.PushInput( m_InValidToolSpatialObjectInput );
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_ValidToolSpatialObjectInput );
+    }
+
+  m_StateMachine.ProcessInputs();
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::SetToolSpatialObjectProcessing( )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::SetToolSpatialObjectProcessing called...\n");
+
+  m_ToolSpatialObject = m_ToolSpatialObjectToBeSet;
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::ReportInvalidToolSpatialObjectProcessing( )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::ReportInvalidToolSpatialObjectProcessing called...\n");
+}
+
 
 /** Request compute reslicing plane */
 template < class TImageSpatialObject >

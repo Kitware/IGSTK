@@ -73,17 +73,19 @@ public:
   typedef typename ImageSpatialObjectType::ConstPointer 
                                            ImageSpatialObjectConstPointer;
 
+  typedef SpatialObject                          ToolSpatialObjectType;
+  typedef SpatialObjectType::ConstPointer        ToolSpatialObjectConstPointer;
+
   /** Reslicing modes */
-  typedef enum
+  enum ReslicingMode
     { 
     Orthogonal, 
     OffOrthogonal, 
     Oblique 
-    } 
-  ReslicingMode;
+    }; 
 
   /** Orthogonal orientation types */
-  typedef enum
+  enum OrientationType
     { 
     Axial, 
     Sagittal, 
@@ -91,8 +93,7 @@ public:
     Perpendicular,
     OffAxial,
     OffSagittal
-    } 
-  OrientationType;
+    };
 
   /** Request the state machine to attempt to set the reslicing mode*/
   void RequestSetReslicingMode( ReslicingMode reslicingMode ); 
@@ -102,6 +103,9 @@ public:
 
   /** Request set image spatial object*/ 
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * imageSpatialObject ); 
+
+  /** Request set tool spatial object */
+  void RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject );
 
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
@@ -131,12 +135,15 @@ private:
   igstkDeclareInputMacro( InValidOrientationType );
   igstkDeclareInputMacro( ValidImageSpatialObject );
   igstkDeclareInputMacro( InValidImageSpatialObject );
+  igstkDeclareInputMacro( ValidToolSpatialObject );
+  igstkDeclareInputMacro( InValidToolSpatialObject );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ReslicingModeSet );
   igstkDeclareStateMacro( OrientationTypeSet );
   igstkDeclareStateMacro( ImageSpatialObjectSet );
+  igstkDeclareStateMacro( ToolSpatialObjectSet );
 
   /** Internal itkSpatialObject */
 
@@ -149,6 +156,9 @@ private:
   /** Set the image spatial object */
   void SetImageSpatialObjectProcessing( void );
 
+  /** Set the tool spatial object */
+  void SetToolSpatialObjectProcessing( void );
+
   /** Report invalid reslicing mode */
   void ReportInvalidReslicingModeProcessing( void );
 
@@ -157,6 +167,9 @@ private:
 
   /** Report invalid image spatial object type */
   void ReportInvalidImageSpatialObjectProcessing( void );
+
+  /** Report invalid tool spatial object type */
+  void ReportInvalidToolSpatialObjectProcessing( void );
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -177,6 +190,10 @@ private:
   /** Variables for managing image spatial object type */
   ImageSpatialObjectConstPointer     m_ImageSpatialObjectToBeSet;
   ImageSpatialObjectConstPointer     m_ImageSpatialObject;
+
+  /** Variables for managing tool spatial object type */
+  ToolSpatialObjectConstPointer     m_ToolSpatialObjectToBeSet;
+  ToolSpatialObjectConstPointer     m_ToolSpatialObject;
 };
 
 } // end namespace igstk
