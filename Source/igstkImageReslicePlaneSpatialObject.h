@@ -21,6 +21,7 @@
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
 #include "igstkImageSpatialObject.h"
+#include "igstkStateMachine.h"
 
 namespace igstk
 {
@@ -56,8 +57,7 @@ namespace igstk
  */
 
 template < class TImageSpatialObject > 
-class ImageReslicePlaneSpatialObject 
-: public SpatialObject
+class ImageReslicePlaneSpatialObject : public SpatialObject
 {
 
 public:
@@ -69,6 +69,9 @@ public:
 
   /** Typedefs */
   typedef TImageSpatialObject                    ImageSpatialObjectType;
+
+  typedef typename ImageSpatialObjectType::ConstPointer 
+                                           ImageSpatialObjectConstPointer;
 
   /** Reslicing modes */
   typedef enum
@@ -98,7 +101,7 @@ public:
   void RequestSetOrientationType( OrientationType orientationType ); 
 
   /** Request set image spatial object*/ 
-  void RequestSetImageSpatialObject( ImageSpatialObjectType imageSpatialObject ); 
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * imageSpatialObject ); 
 
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
@@ -108,13 +111,18 @@ public:
 
 protected:
 
+  /** Constructor */
   ImageReslicePlaneSpatialObject( void );
+
+  /** Destructor */
   ~ImageReslicePlaneSpatialObject( void );
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
+  ImageReslicePlaneSpatialObject(const Self&);   //purposely not implemented
+  void operator=(const Self&);   //purposely not implemented
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidReslicingMode );
@@ -167,10 +175,14 @@ private:
   OrientationType     m_OrientationType;
 
   /** Variables for managing image spatial object type */
-  ImageSpatialObjectType     m_ImageSpatialObjectToBeSet;
-  ImageSpatialObjectType     m_ImageSpatialObject;
+  ImageSpatialObjectConstPointer     m_ImageSpatialObjectToBeSet;
+  ImageSpatialObjectConstPointer     m_ImageSpatialObject;
 };
 
 } // end namespace igstk
+
+#ifndef IGSTK_MANUAL_INSTANTIATION
+#include "igstkImageReslicePlaneSpatialObject.txx"
+#endif
 
 #endif // __igstkImageReslicePlaneSpatialObject_h

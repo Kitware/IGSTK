@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImageReslicePlaneSpatialObject.cxx
+  Module:    igstkImageReslicePlaneSpatialObject.txx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,6 +14,10 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
+#ifndef __igstkImageReslicePlaneSpatialObject_txx
+#define __igstkImageReslicePlaneSpatialObject_txx
+
 #include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkEvents.h"
 
@@ -125,7 +129,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 template < class TImageSpatialObject >
 void 
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::RequestSetImageSpatialObject( ImageSpatialObjectType imageSpatialObject )
+::RequestSetImageSpatialObject( const ImageSpatialObjectType * imageSpatialObject )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::RequestSetImageSpatialObject called...\n");
@@ -278,3 +282,5 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 }
 
 } // end namespace igstk
+
+#endif
