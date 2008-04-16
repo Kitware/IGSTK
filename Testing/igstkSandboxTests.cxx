@@ -44,6 +44,8 @@ void RegisterTests()
 
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest);
 
+  REGISTER_TEST(igstkImageReslicePlaneSpatialObjectTest);
+
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
