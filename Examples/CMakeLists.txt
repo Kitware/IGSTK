@@ -26,8 +26,9 @@ IF (IGSTKSandbox_USE_FLTK)
 # since it requires the FlockOfBirds tracker
 # and it is not yet fully tested
 #    UltrasoundGuidedRFA
-    NeedleBiopsy
-    NeedleBiopsyNew    
+   NeedleBiopsy
+# NeedleBiopsyNew example is not added yet
+#    NeedleBiopsyNew    
     DeckOfCardRobot
     View
     Logging
