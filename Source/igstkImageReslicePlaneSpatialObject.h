@@ -74,7 +74,7 @@ public:
                                            ImageSpatialObjectConstPointer;
 
   typedef SpatialObject                          ToolSpatialObjectType;
-  typedef SpatialObjectType::ConstPointer        ToolSpatialObjectConstPointer;
+  typedef ToolSpatialObjectType::ConstPointer        ToolSpatialObjectConstPointer;
 
   /** Reslicing modes */
   enum ReslicingMode
