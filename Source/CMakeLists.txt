@@ -306,6 +306,11 @@ SET(IGSTKSandbox_HEADS
 #  igstkFlockOfBirdsTracker.h
 #  igstkFlockOfBirdsTrackerTool.h
 
+# New FOB code
+   igstkFlockOfBirdsCommandInterpreter.h
+   igstkFlockOfBirdsTrackerNew.h
+   igstkFlockOfBirdsTrackerToolNew.h
+
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.h
 
@@ -380,6 +385,11 @@ SET(IGSTKSandbox_SRCS
 #  igstkFlockOfBirdsCommandInterpreter.cxx
 #  igstkFlockOfBirdsTracker.cxx
 #  igstkFlockOfBirdsTrackerTool.cxx
+
+# NEW FOB code
+   igstkFlockOfBirdsCommandInterpreter.cxx
+   igstkFlockOfBirdsTrackerNew.cxx
+   igstkFlockOfBirdsTrackerToolNew.cxx
  
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.txx
