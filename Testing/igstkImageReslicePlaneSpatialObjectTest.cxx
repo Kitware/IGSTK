@@ -26,6 +26,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
+#include "igstkTubeObject.h"
 
 int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
 {
@@ -68,10 +69,15 @@ int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
   planeSpatialObject->RequestSetOrientationType( igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Axial );
 
   // Set input image spatial object
-  //
+  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New(); 
+  planeSpatialObject->RequestSetImageSpatialObject( imageSpatialObject );
+
   //
   // Set input tool spatial object
   //
+  typedef igstk::TubeObject                          ToolSpatialObjectType;
+  ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  
+  planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
