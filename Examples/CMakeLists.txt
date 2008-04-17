@@ -28,7 +28,7 @@ IF (IGSTKSandbox_USE_FLTK)
 #    UltrasoundGuidedRFA
    NeedleBiopsy
 # NeedleBiopsyNew example is not added yet
-#    NeedleBiopsyNew    
+    NeedleBiopsyNew    
     DeckOfCardRobot
     View
     Logging
