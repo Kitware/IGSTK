@@ -960,7 +960,7 @@ void Tracker::SetFrequencyProcessing( void )
   //Add a constant to avoid any flickering effect
 
   const double nonFlickeringConstant = 10;
-  this->m_ValidityTime = (1.0/m_FrequencyToBeSet) + nonFlickeringConstant;
+  this->m_ValidityTime = (1000/m_FrequencyToBeSet) + nonFlickeringConstant;
 }
 
 
