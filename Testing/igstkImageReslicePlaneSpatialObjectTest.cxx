@@ -74,7 +74,6 @@ int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
 
   //
   // Set input tool spatial object
-  //
   typedef igstk::TubeObject                          ToolSpatialObjectType;
   ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );

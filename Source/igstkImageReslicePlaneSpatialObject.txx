@@ -244,7 +244,20 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                        ::ReportInvalidToolSpatialObjectProcessing called...\n");
 }
 
-/** Request receive the tool spatial object transform with respect to the Image coordinate system */
+template < class TImageSpatialObject >
+void
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::RequestGetToolTransformWRTImageCoordinateSystem()
+{
+  igstkLogMacro( DEBUG,
+                 "igstk::ImageReslicePlaneSpatialObject::\
+                 RequestGetToolTransformWRTImageCoordinateSystem called ...\n");
+  
+  igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Request to receive the tool transform with respect to the Image coordinate system */
 template < class TImageSpatialObject >
 void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
@@ -253,9 +266,23 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,
                  "igstk::ImageReslicePlaneSpatialObject::\
                  RequestGetToolTransformWRTImageCoordinateSystemProcessing called ...\n");
+
+  /*
+  typedef igstk::Friends::CoordinateSystemHelper 
+                          CoordinateSystemHelperType;
+
+  const CoordinateSystem* ImageSpatialObjectCoordinateSystem = 
+    CoordinateSystemHelperType::GetCoordinateSystem( m_ImageSpatialObject );
+
+  CoordinateSystem * ImageSpatialObjectCoordinateSystemNC =
+          const_cast< CoordinateSystem *>(ImageSpatialObjectCoordinateSystem);
+ 
+  ToolSpatialObjectType toolSpatialObject;
+  toolSpatialObject = const_cast< ToolSpatialObjectType *>( m_ToolSpatialObject); 
+  toolSpatialObject->RequestComputeTransformTo(
+ImageSpatialObjectCoordinateSystemNC ); 
+  */
   
-  igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
-  this->m_StateMachine.ProcessInputs();
 }
 
 /** Receive the tool spatial object transform with respect to the Image
