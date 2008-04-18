@@ -112,8 +112,13 @@ PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n,
                                                igstk::TrackerTool * trackerTool )
 {
               //update the description of the current tool 
-  std::ostringstream toolDescription;
-  toolDescription.str("");
+//  std::ostringstream toolDescription;
+//  toolDescription.str("");
+
+    const std::string trackerToolIdentifier =
+          trackerTool->GetTrackerToolIdentifier();
+
+    this->m_toolDescription->value(trackerToolIdentifier.c_str());
 
   // FIXME : this->m_toolDescription->value(toolDescription.str().c_str());
   // Get name from the TrackerTool itself.
