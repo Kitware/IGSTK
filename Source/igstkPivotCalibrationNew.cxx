@@ -270,6 +270,7 @@ PivotCalibrationNew::RequestInitialize( unsigned int n,
                  "RequestInitialize called...\n");
   this->m_TmpRequiredNumberOfTransformations = n;
   this->m_TmpTracker = tracker;
+  this->m_TmpTrackerTool = trackerTool;
   igstkPushInputMacro( Initialize );
   this->m_StateMachine.ProcessInputs();
 }
@@ -392,7 +393,7 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
            !acquired) 
     {
       this->m_Tracker->RequestUpdateStatus();
-      currentTime = igstk::RealTimeClock::GetTimeStamp();
+      
                            //an internal tracker error occured, we can't recover      
       if( this->m_ErrorObserver->ErrorOccured() ) 
       {        
@@ -414,6 +415,7 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
         coordSystemAObserver->ObserveTransformEventsFrom( m_TrackerTool );
   
         coordSystemAObserver->Clear();
+
         m_TrackerTool->RequestGetTransformToParent();
         if( coordSystemAObserver->GotTransform())
           {
@@ -432,6 +434,9 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
        //to the previously reported transform's start time 
        //(expiration time is just start time plus a fixed constant 
        //for all transforms).
+
+        currentTime = igstk::RealTimeClock::GetTimeStamp();
+
         if( currentTransform.IsValidAtTime(currentTime) && 
             currentTransform.GetStartTime()!= prevTime )
         {
