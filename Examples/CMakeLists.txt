@@ -19,6 +19,7 @@ IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingNewUsingFLTKWidget
     PivotCalibrationFLTKWidget
+    PivotCalibrationFLTKWidgetUsingFOBTracker    
     TwoViews
     FourViewsTrackingWithCT
     FourViews
@@ -26,8 +27,7 @@ IF (IGSTKSandbox_USE_FLTK)
 # since it requires the FlockOfBirds tracker
 # and it is not yet fully tested
 #    UltrasoundGuidedRFA
-   NeedleBiopsy
-# NeedleBiopsyNew example is not added yet
+    NeedleBiopsy
     NeedleBiopsyNew    
     DeckOfCardRobot
     View
