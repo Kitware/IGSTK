@@ -72,11 +72,11 @@ public:
   /** Typedefs */
   typedef TImageSpatialObject                    ImageSpatialObjectType;
 
-  typedef typename ImageSpatialObjectType::ConstPointer 
-                                           ImageSpatialObjectConstPointer;
+  typedef typename ImageSpatialObjectType::ConstPointer
+                                                 ImageSpatialObjectConstPointer;
 
   typedef SpatialObject                          ToolSpatialObjectType;
-  typedef ToolSpatialObjectType::ConstPointer        ToolSpatialObjectConstPointer;
+  typedef ToolSpatialObjectType::Pointer         ToolSpatialObjectPointer;
 
   /** Reslicing modes */
   enum ReslicingMode
@@ -206,8 +206,8 @@ private:
   ImageSpatialObjectConstPointer     m_ImageSpatialObject;
 
   /** Variables for managing tool spatial object type */
-  ToolSpatialObjectConstPointer     m_ToolSpatialObjectToBeSet;
-  ToolSpatialObjectConstPointer     m_ToolSpatialObject;
+  ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
+  ToolSpatialObjectPointer     m_ToolSpatialObject;
   
   /** Image reslice plane */
   vtkPlane *                        m_ImageReslicePlane;

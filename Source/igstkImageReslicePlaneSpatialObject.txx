@@ -210,7 +210,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::RequestSetImageSpatialObject called...\n");
 
-  m_ToolSpatialObjectToBeSet = toolSpatialObject;
+  m_ToolSpatialObjectToBeSet = const_cast< ToolSpatialObjectType *>(toolSpatialObject);
 
   if( !m_ToolSpatialObjectToBeSet )
     {
@@ -267,7 +267,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                  "igstk::ImageReslicePlaneSpatialObject::\
                  RequestGetToolTransformWRTImageCoordinateSystemProcessing called ...\n");
 
-  /*
   typedef igstk::Friends::CoordinateSystemHelper 
                           CoordinateSystemHelperType;
 
@@ -276,13 +275,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
   CoordinateSystem * ImageSpatialObjectCoordinateSystemNC =
           const_cast< CoordinateSystem *>(ImageSpatialObjectCoordinateSystem);
- 
-  ToolSpatialObjectType toolSpatialObject;
-  toolSpatialObject = const_cast< ToolSpatialObjectType *>( m_ToolSpatialObject); 
-  toolSpatialObject->RequestComputeTransformTo(
-ImageSpatialObjectCoordinateSystemNC ); 
-  */
-  
+
+  m_ToolSpatialObject->RequestComputeTransformTo( ImageSpatialObjectCoordinateSystemNC ); 
 }
 
 /** Receive the tool spatial object transform with respect to the Image
@@ -351,17 +345,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     {
     case Axial:
       {
-      m_ImageReslicePlane->SetNormal( 0.0, 0.0 , 0.0 );
+      m_ImageReslicePlane->SetNormal( 0.0, 0.0 , 1.0 );
       break;
       }
     case Coronal:
       {
-      m_ImageReslicePlane->SetNormal( 0.0, 0.0 , 0.0 );
+      m_ImageReslicePlane->SetNormal( 0.0, 1.0 , 0.0 );
       break;
       }
     case Sagittal:
       {
-      m_ImageReslicePlane->SetNormal( 0.0, 0.0 , 0.0 );
+      m_ImageReslicePlane->SetNormal( 1.0, 0.0 , 0.0 );
       break;
       }
     default:
