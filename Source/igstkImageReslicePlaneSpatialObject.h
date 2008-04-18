@@ -23,6 +23,8 @@
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
 
+#include "vtkPlane.h"
+
 namespace igstk
 {
 
@@ -41,7 +43,7 @@ namespace igstk
  *
  * Oblique mode .....
  *
- * In orthogonal mode, three types of orientation are defined: Axial, Coronal and Sagital. 
+ * In orthogonal mode, three types of orientation are defined: Axial, Coronal and Sagittal. 
  * For this mode, the tool tip spatial object provides the reslicing plane postion and orientation
  * information is extraced from the input image spatial object.
  *
@@ -110,8 +112,11 @@ public:
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
 
-  /** Request Get reslcing plane equation */
-  void RequestGetReslicingPlane();
+  /** Request Get reslicing plane equation */
+  vtkPlane * RequestGetReslicingPlane();
+
+  /** Request Get tool transform with respect to image coordinate system */
+  void RequestGetToolTransformWRTImageCoordinateSystem();
 
 protected:
 
@@ -137,6 +142,8 @@ private:
   igstkDeclareInputMacro( InValidImageSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
+  igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
+  igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
@@ -144,6 +151,7 @@ private:
   igstkDeclareStateMacro( OrientationTypeSet );
   igstkDeclareStateMacro( ImageSpatialObjectSet );
   igstkDeclareStateMacro( ToolSpatialObjectSet );
+  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Internal itkSpatialObject */
 
@@ -174,6 +182,12 @@ private:
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
 
+  /** Request get tool transform with respect to image coordinate system */ 
+  void RequestGetToolTransformWRTImageCoordinateSystemProcessing( void );
+
+  /** Receive tool transform with respect to image coordinate system */ 
+  void ReceiveToolTransformWRTImageCoordinateSystemProcessing( void );
+
   /** Methods to compute reslcing plane for the different modes*/
   void ComputeOrthgonalReslicingPlane();
   void ComputeObliqueReslicingPlane();
@@ -194,6 +208,17 @@ private:
   /** Variables for managing tool spatial object type */
   ToolSpatialObjectConstPointer     m_ToolSpatialObjectToBeSet;
   ToolSpatialObjectConstPointer     m_ToolSpatialObject;
+  
+  /** Image reslice plane */
+  vtkPlane *                        m_ImageReslicePlane;
+
+  // Event macro setup to receive the tool spatial object transform
+  // with respect to the image coordinate system
+  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
+
+  // Tool transform with respect to the image coordinate system
+  Transform m_ToolTransformWRTImageCoordinateSystem;
+  
 };
 
 } // end namespace igstk
