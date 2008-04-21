@@ -95,10 +95,10 @@ protected:
   std::string                                m_FileNameToBeSet;
   std::string                                m_FileName;
 
-  itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
-  itkEventMacro( ObjectReadingErrorEvent,        IGSTKErrorEvent   );
-  itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
-  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReadingErrorEvent );
+  igstkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
+  igstkEventMacro( ObjectReadingErrorEvent,        IGSTKErrorEvent   );
+  igstkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
+  igstkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReadingErrorEvent );
 
   virtual void AttemptReadObjectProcessing();
 

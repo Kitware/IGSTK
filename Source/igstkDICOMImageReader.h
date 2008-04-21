@@ -39,31 +39,31 @@ virtual const type & Get##name () const \
 }
 
 
-itkEventMacro( DICOMModalityEvent,                                StringEvent);
-itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
-itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
+igstkEventMacro( DICOMModalityEvent,                             StringEvent);
+igstkEventMacro( DICOMPatientNameEvent,                          StringEvent);
+igstkEventMacro( DICOMImageReaderEvent,                          StringEvent);
 
 // Invalid request error event 
-itkEventMacro( DICOMImageReaderErrorEvent, IGSTKErrorWithStringEvent );
-itkEventMacro( DICOMInvalidRequestErrorEvent,
+igstkEventMacro( DICOMImageReaderErrorEvent, IGSTKErrorWithStringEvent );
+igstkEventMacro( DICOMInvalidRequestErrorEvent,
                DICOMImageReaderErrorEvent );
 
 // Events to handle errors with the ImageDirectory name
-itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
+igstkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
               DICOMImageReaderErrorEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
+igstkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
               DICOMImageReaderErrorEvent );
-itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
+igstkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
               DICOMImageReaderErrorEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
+igstkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
               DICOMImageReaderErrorEvent );
 
 // Image series filename generation error event
-itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
+igstkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
               DICOMImageReaderErrorEvent );
 
 //Image reading error
-itkEventMacro(DICOMImageReadingErrorEvent,
+igstkEventMacro(DICOMImageReadingErrorEvent,
               DICOMImageReaderErrorEvent );
   
 

@@ -23,12 +23,14 @@
 namespace igstk
 {
 
-itkEventMacro( PolarisTrackerToolEvent,StringEvent);
-itkEventMacro( PolarisTrackerToolErrorEvent, TrackerToolErrorEvent);
-itkEventMacro( InvalidPolarisPortNumberErrorEvent,PolarisTrackerToolErrorEvent);
-itkEventMacro( InvalidPolarisSROMFilenameErrorEvent,
-               PolarisTrackerToolErrorEvent);
-itkEventMacro( InvalidPolarisPartNumberErrorEvent,PolarisTrackerToolErrorEvent);
+igstkEventMacro( PolarisTrackerToolEvent,StringEvent);
+igstkEventMacro( PolarisTrackerToolErrorEvent, TrackerToolErrorEvent);
+igstkEventMacro( InvalidPolarisPortNumberErrorEvent,
+                                                PolarisTrackerToolErrorEvent);
+igstkEventMacro( InvalidPolarisSROMFilenameErrorEvent,
+                                                PolarisTrackerToolErrorEvent);
+igstkEventMacro( InvalidPolarisPartNumberErrorEvent,
+                                                PolarisTrackerToolErrorEvent);
 
 class PolarisTracker;
 

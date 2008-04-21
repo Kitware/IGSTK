@@ -105,10 +105,10 @@ protected:
   ~TubeReader();
 
   // Generic event produced from this class
-  itkEventMacro( TubeReaderEvent,IGSTKEvent);
+  igstkEventMacro( TubeReaderEvent,IGSTKEvent);
   
   //SpatialObject reading error
-  itkEventMacro( TubeReadingErrorEvent, IGSTKErrorEvent );
+  igstkEventMacro( TubeReadingErrorEvent, IGSTKErrorEvent );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

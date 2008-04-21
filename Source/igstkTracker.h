@@ -37,32 +37,32 @@
 namespace igstk
 {
 
-itkEventMacro( TrackerEvent,                               StringEvent);
-itkEventMacro( TrackerErrorEvent,                          IGSTKErrorWithStringEvent);
+igstkEventMacro( TrackerEvent,                             StringEvent);
+igstkEventMacro( TrackerErrorEvent,                IGSTKErrorWithStringEvent);
 
-itkEventMacro( TrackerOpenEvent,                           TrackerEvent);
-itkEventMacro( TrackerOpenErrorEvent,                      TrackerErrorEvent);
+igstkEventMacro( TrackerOpenEvent,                         TrackerEvent);
+igstkEventMacro( TrackerOpenErrorEvent,                    TrackerErrorEvent);
 
-itkEventMacro( TrackerCloseEvent,                          TrackerEvent);
-itkEventMacro( TrackerCloseErrorEvent,                     TrackerErrorEvent);
+igstkEventMacro( TrackerCloseEvent,                        TrackerEvent);
+igstkEventMacro( TrackerCloseErrorEvent,                   TrackerErrorEvent);
 
-itkEventMacro( TrackerInitializeEvent,                     TrackerEvent);
-itkEventMacro( TrackerInitializeErrorEvent,                TrackerErrorEvent);
+igstkEventMacro( TrackerInitializeEvent,                   TrackerEvent);
+igstkEventMacro( TrackerInitializeErrorEvent,              TrackerErrorEvent);
 
-itkEventMacro( TrackerStartTrackingEvent,                  TrackerEvent);
-itkEventMacro( TrackerStartTrackingErrorEvent,             TrackerErrorEvent);
+igstkEventMacro( TrackerStartTrackingEvent,                TrackerEvent);
+igstkEventMacro( TrackerStartTrackingErrorEvent,           TrackerErrorEvent);
 
-itkEventMacro( TrackerStopTrackingEvent,                   TrackerEvent);
-itkEventMacro( TrackerStopTrackingErrorEvent,              TrackerErrorEvent);
+igstkEventMacro( TrackerStopTrackingEvent,                 TrackerEvent);
+igstkEventMacro( TrackerStopTrackingErrorEvent,            TrackerErrorEvent);
 
-itkEventMacro( TrackerUpdateStatusEvent,                   TrackerEvent);
-itkEventMacro( TrackerUpdateStatusErrorEvent,              TrackerErrorEvent);
+igstkEventMacro( TrackerUpdateStatusEvent,                 TrackerEvent);
+igstkEventMacro( TrackerUpdateStatusErrorEvent,            TrackerErrorEvent);
 
-itkEventMacro( AttachingTrackerToolToTrackerEvent,         TrackerEvent);
-itkEventMacro( AttachingTrackerToolToTrackerErrorEvent,    TrackerErrorEvent);
+igstkEventMacro( AttachingTrackerToolToTrackerEvent,       TrackerEvent);
+igstkEventMacro( AttachingTrackerToolToTrackerErrorEvent,  TrackerErrorEvent);
 
 
-itkEventMacro( TrackerToolTransformUpdateEvent,            TrackerEvent);
+igstkEventMacro( TrackerToolTransformUpdateEvent,            TrackerEvent);
 
 
 /** \class Tracker

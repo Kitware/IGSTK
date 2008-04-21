@@ -28,25 +28,28 @@
 namespace igstk
 {
 
-itkEventMacro( TrackerToolEvent,StringEvent);
-itkEventMacro( TrackerToolErrorEvent,IGSTKErrorWithStringEvent);
-itkEventMacro( TrackerToolConfigurationEvent,TrackerToolEvent);
-itkEventMacro( TrackerToolConfigurationErrorEvent,TrackerToolErrorEvent);
+igstkEventMacro( TrackerToolEvent, StringEvent);
+igstkEventMacro( TrackerToolErrorEvent, IGSTKErrorWithStringEvent);
+igstkEventMacro( TrackerToolConfigurationEvent,TrackerToolEvent);
+igstkEventMacro( TrackerToolConfigurationErrorEvent,TrackerToolErrorEvent);
 
-itkEventMacro( InvalidRequestToAttachTrackerToolErrorEvent,
+igstkEventMacro( InvalidRequestToAttachTrackerToolErrorEvent,
                TrackerToolErrorEvent);
 
-itkEventMacro( InvalidRequestToDetachTrackerToolErrorEvent,
+igstkEventMacro( InvalidRequestToDetachTrackerToolErrorEvent,
                TrackerToolErrorEvent);
 
-itkEventMacro( TrackerToolAttachmentToTrackerEvent,TrackerToolEvent);
-itkEventMacro( TrackerToolAttachmentToTrackerErrorEvent,TrackerToolErrorEvent);
-itkEventMacro( TrackerToolDetachmentFromTrackerEvent,TrackerToolEvent);
-itkEventMacro( TrackerToolDetachmentFromTrackerErrorEvent,TrackerToolErrorEvent);
-itkEventMacro( TrackerToolMadeTransitionToTrackedStateEvent,TrackerToolEvent);
-itkEventMacro( TrackerToolNotAvailableToBeTrackedEvent,TrackerToolEvent);
-itkEventMacro( ToolTrackingStartedEvent,TrackerToolEvent);
-itkEventMacro( ToolTrackingStoppedEvent,TrackerToolEvent);
+igstkEventMacro( TrackerToolAttachmentToTrackerEvent,TrackerToolEvent);
+igstkEventMacro( TrackerToolAttachmentToTrackerErrorEvent,
+                                                       TrackerToolErrorEvent);
+igstkEventMacro( TrackerToolDetachmentFromTrackerEvent,TrackerToolEvent);
+igstkEventMacro( TrackerToolDetachmentFromTrackerErrorEvent,
+                                                       TrackerToolErrorEvent);
+igstkEventMacro( TrackerToolMadeTransitionToTrackedStateEvent,
+                                                            TrackerToolEvent);
+igstkEventMacro( TrackerToolNotAvailableToBeTrackedEvent,TrackerToolEvent);
+igstkEventMacro( ToolTrackingStartedEvent,TrackerToolEvent);
+igstkEventMacro( ToolTrackingStoppedEvent,TrackerToolEvent);
 
 class Tracker;
 
