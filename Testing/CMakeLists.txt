@@ -195,8 +195,14 @@ ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetw
 IF(IGSTKSandbox_USE_Qt)
  ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
               ${IGSTKSandbox_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkImageResliceSpatialObjectRepresentationTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 )
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 

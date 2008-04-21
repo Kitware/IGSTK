@@ -49,10 +49,10 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   igstk::RealTimeClock::Initialize();
 
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
-    std::cerr << " Missing arguments: " << argv[0]  \
-              << "\t Input image" << std::endl; 
+    std::cerr << " Missing arguments: " << argv[0] << "CTImage " \
+              << "Output image file for a screenshot" << std::endl; 
     return EXIT_FAILURE;
     }
   typedef short    PixelType;
@@ -120,11 +120,64 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   // Set input image spatial object
   ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New(); 
   imageSpatialObject = ctImageObserver->GetCTImage();
-
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
+
+    typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
+                                        RepresentationType;
+
+  RepresentationType::Pointer  representation =  RepresentationType::New(); 
+  representation->SetLogger( logger );
+  representation->RequestSetImageSpatialObject( imageSpatialObject );
+  //View
+  typedef igstk::View2D  View2DType;
+  View2DType::Pointer view2D = View2DType::New();
+  view2D->SetLogger( logger );
+    
+  view2D->RequestResetCamera();
+  view2D->RequestAddObject( representation );
+   
+  // Create an QT minimal GUI
+  QApplication app(argc, argv);
+  QMainWindow  * qtMainWindow = new QMainWindow();
+  qtMainWindow->setFixedSize(512,512);
+
+  typedef igstk::QTWidget      QTWidgetType;
+
+  QTWidgetType * qtWidget2D = 
+                      new QTWidgetType();
+  qtWidget2D->RequestSetView( view2D );
+  qtWidget2D->SetLogger( logger );
+  qtMainWindow->setCentralWidget( qtWidget2D );
+  view2D->RequestSetTransformAndParent( identity, worldReference );
+  view2D->SetRefreshRate( 40 );
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  qtMainWindow->show();
+
+  for( unsigned int i=0; i < 100; i++)
+    {
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+
+  //Request refreshing stop to take a screenshot
+  view2D->RequestStop();
+      
+  /* Save screenshots in a file */
+  std::string filename;
+  filename = argv[2]; 
+  std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
+  view2D->RequestSaveScreenShot( filename );
+
+
+  //Instantiate and use reslice plane spatial object
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
   planeSpatialObject->SetLogger( logger );
+
+  //Set it to the representation
+  representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
 
   // Select Orthogonal reslicing mode
   planeSpatialObject->RequestSetReslicingMode( 
@@ -158,45 +211,6 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
   vtkPlane * plane = planeSpatialObject->RequestGetReslicingPlane();
 
-  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                        RepresentationType;
-
-  RepresentationType::Pointer  representation =  RepresentationType::New(); 
-  representation->SetLogger( logger );
-  representation->RequestSetImageSpatialObject( imageSpatialObject );
-  representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
-  //View
-  typedef igstk::View2D  View2DType;
-  View2DType::Pointer view2D = View2DType::New();
-  view2D->SetLogger( logger );
-    
-  view2D->RequestResetCamera();
-  view2D->RequestAddObject( representation );
-   
-  // Create an QT minimal GUI
-  QApplication app(argc, argv);
-  QMainWindow  * qtMainWindow = new QMainWindow();
-  qtMainWindow->setFixedSize(512,512);
-
-  typedef igstk::QTWidget      QTWidgetType;
-
-  QTWidgetType * qtWidget2D = 
-                      new QTWidgetType();
-  qtWidget2D->RequestSetView( view2D );
-  qtWidget2D->SetLogger( logger );
-  qtMainWindow->setCentralWidget( qtWidget2D );
-  view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 40 );
-  view2D->RequestStart();
-  view2D->RequestResetCamera();
-
-  qtMainWindow->show();
-
-  for( unsigned int i=0; i < 100; i++)
-    {
-    QTest::qWait(10);
-    igstk::PulseGenerator::CheckTimeouts();
-    }
 
   //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<10; i++)
