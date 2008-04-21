@@ -146,11 +146,11 @@ public:
   igstkLoadedEventMacro( VideoClipRectangleEvent, IGSTKEvent, 
                          VideoClipRectangle );
   
-  itkEventMacro(GrabbingStartedEvent, IGSTKEvent);
+  igstkEventMacro(GrabbingStartedEvent, IGSTKEvent);
   
   /** Error events */
-  //itkEventMacro(InvalidRequestErrorEvent, StringEvent);
-  itkEventMacro(VideoGrabberErrorEvent, StringEvent);
+  //igstkEventMacro(InvalidRequestErrorEvent, StringEvent);
+  igstkEventMacro(VideoGrabberErrorEvent, StringEvent);
   
 protected:
   VideoGrabber();

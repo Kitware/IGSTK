@@ -30,30 +30,30 @@
 namespace igstk
 {
 
-itkEventMacro( DICOMModalityEvent,             StringEvent);
-itkEventMacro( DICOMPatientNameEvent,          StringEvent);
-itkEventMacro( DICOMGenericImageReaderEvent,   StringEvent);
+igstkEventMacro( DICOMModalityEvent,             StringEvent);
+igstkEventMacro( DICOMPatientNameEvent,          StringEvent);
+igstkEventMacro( DICOMGenericImageReaderEvent,   StringEvent);
 
 // Invalid request error event 
-itkEventMacro( DICOMInvalidRequestErrorEvent,
+igstkEventMacro( DICOMInvalidRequestErrorEvent,
                DICOMGenericImageReaderEvent );
 
 // Events to handle errors with the ImageDirectory name
-itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
+igstkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
               DICOMGenericImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
+igstkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
               DICOMGenericImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
+igstkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
               DICOMGenericImageReaderEvent );
-itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
+igstkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
               DICOMGenericImageReaderEvent );
 
 // Image series filename generation error event
-itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
+igstkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
               DICOMGenericImageReaderEvent );
 
 //Image reading error
-itkEventMacro(DICOMImageReadingErrorEvent,
+igstkEventMacro(DICOMImageReadingErrorEvent,
               DICOMGenericImageReaderEvent );
   
 

@@ -222,10 +222,10 @@ protected:
   bool ParseXML();
 
   /** Event types */
-  itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
-  itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
-  itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
-  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
+  igstkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
+  igstkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
+  igstkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
+  igstkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
 
   /** Type for the name of the parameters */
   typedef std::string  ParameterNameType;
