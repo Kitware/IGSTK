@@ -393,6 +393,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   tracker->RequestClose();
   view3D->RequestStop();
+  viewObserver->SetView(NULL);
 
   delete widget;
 
