@@ -350,16 +350,39 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png
               )
 
-    ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest
+    ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest )
+
+    ADD_TEST(igstkMeshObjectTestLiver    ${IGSTK_TESTS} 
+              --compare ${BASELINE}/igstkMeshLiver.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
               ${IGSTK_DATA_ROOT}/Input/liver.msh  
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png
               )
 
-    ADD_TEST(igstkMeshObjectTest2    ${IGSTK_TESTS} igstkMeshObjectTest
+    ADD_TEST(igstkMeshObjectTestLineCells ${IGSTK_TESTS}
+              --compare ${BASELINE}/igstkMeshLineCells.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLineCells.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
               ${IGSTK_DATA_ROOT}/Input/lineCells.msh  
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLineCells.png
               )
   
-    ADD_TEST(igstkMeshObjectTest3    ${IGSTK_TESTS} igstkMeshObjectTest
-              ${IGSTK_DATA_ROOT}/Input/tetrahedraCells.msh  
+    ADD_TEST(igstkMeshObjectTestTetrCells ${IGSTK_TESTS} 
+              --compare ${BASELINE}/igstkMeshTetrahedraCells.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshTetrahedraCells.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
+              ${IGSTK_DATA_ROOT}/Input/tetrahedraCells.msh
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshTetrahedraCells.png  
               )
   
     ADD_TEST( igstkImageSpatialObjectRepresentationTest ${IGSTK_TESTS} 
@@ -582,6 +605,7 @@ IF(IGSTK_USE_FLTK)
       igstkImageSpatialObjectRepresentationTest2.cxx  
       igstkImageSpatialObjectRepresentationTest3.cxx
       igstkMeshObjectTest.cxx
+      igstkMeshObjectTest2.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
       igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx

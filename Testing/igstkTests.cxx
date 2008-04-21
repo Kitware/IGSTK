@@ -125,6 +125,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
   REGISTER_TEST(igstkMeshObjectTest);
+  REGISTER_TEST(igstkMeshObjectTest2);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkMouseTrackerTest);

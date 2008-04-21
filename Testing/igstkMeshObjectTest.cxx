@@ -32,8 +32,6 @@
 #include "igstkMeshObject.h"
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkSpatialObjectTestHelper.h"
-#include "igstkMeshReader.h"
-
 
 int igstkMeshObjectTest( int argc, char * argv [] )
 {
@@ -64,23 +62,6 @@ int igstkMeshObjectTest( int argc, char * argv [] )
   object->AddTetrahedronCell(0,0,1,2,3);
   object->AddTriangleCell(1,0,1,2);
    
-  if( argc > 1 )
-    {
-    typedef igstk::MeshReader    ReaderType;
-
-    ReaderType::Pointer  reader = ReaderType::New();
-
-    std::string filename = argv[1];
-    reader->RequestSetFileName( filename );
-    reader->RequestReadObject();
-    representation->RequestSetMeshObject( reader->GetOutput() );
-    }
-  else
-    {
-    representation->RequestSetMeshObject( object );
-    }
-
-
   testHelper.TestRepresentationProperties();
   testHelper.ExercisePrintSelf();
   testHelper.TestTransform();
