@@ -19,8 +19,13 @@
 
 
 #include "igstkImageResliceSpatialObjectRepresentation.h"
-
 #include "igstkEvents.h"
+
+#include "vtkImageActor.h"
+#include "vtkImageMapToWindowLevelColors.h"
+#include "vtkLookupTable.h"
+#include "vtkImageMapToColors.h"
+#include "vtkMath.h"
 
 namespace igstk
 {
@@ -30,10 +35,29 @@ template < class TImageSpatialObject >
 ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
 ::ImageResliceSpatialObjectRepresentation():m_StateMachine(this)
 {
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
+
+  // Create classes for displaying images
+  m_ImageActor = vtkImageActor::New();
+  this->AddActor( m_ImageActor );
+
+  m_MapColors  = vtkImageMapToColors::New();
+  m_LUT        = vtkLookupTable::New();
+  m_ImageData  = NULL;
+
+  // Set default values for window and level
+  m_Level = 0;
+  m_Window = 2000;
+  
+  // Create the observer to VTK image events 
+  m_VTKImageObserver = VTKImageObserver::New();
+  m_ImageTransformObserver = ImageTransformObserver::New();
+
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( InValidImageSpatialObject );
   igstkAddInputMacro( ValidReslicePlaneSpatialObject);
   igstkAddInputMacro( InValidReslicePlaneSpatialObject  );
+  igstkAddInputMacro( ConnectVTKPipeline  );
 
   igstkAddStateMacro( Initial  );
   igstkAddStateMacro( ImageSpatialObjectSet );
@@ -53,7 +77,16 @@ SetReslicePlaneSpatialObject);
 InValidReslicePlaneSpatialObject, 
                            ImageSpatialObjectSet,
 ReportInvalidReslicePlaneSpatialObject );
-  
+  igstkAddTransitionMacro( ImageSpatialObjectSet, ConnectVTKPipeline,
+                           ImageSpatialObjectSet, ConnectVTKPipeline );
+ 
+  //From ReslicePlaneSpatialObjectSet
+  igstkAddTransitionMacro( ReslicePlaneSpatialObjectSet, ConnectVTKPipeline,
+                           ReslicePlaneSpatialObjectSet, ConnectVTKPipeline );
+ 
+  //From ReslicePlaneSpatialObjectSet
+  igstkAddTransitionMacro( ReslicePlaneSpatialObjectSet, ConnectVTKPipeline,
+                           ReslicePlaneSpatialObjectSet, ConnectVTKPipeline );
  
   igstkSetInitialStateMacro( Initial );
 
@@ -67,6 +100,72 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
 ::~ImageResliceSpatialObjectRepresentation()
 {
 
+}
+
+/** Create the vtk Actors */
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::CreateActors()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::CreateActors called...\n");
+
+  // to avoid duplicates we clean the previous actors
+  this->DeleteActors();
+
+  m_ImageActor = vtkImageActor::New();
+  m_ImageActor->SetPosition(0,0,0);
+  m_ImageActor->SetOrientation(0,0,0);
+    
+  this->AddActor( m_ImageActor );
+
+  //convert RGB to HSV
+  double hue = 0.0;
+  double saturation = 0.0;
+  double value = 1.0;
+
+  vtkMath::RGBToHSV( this->GetRed(),
+                     this->GetGreen(),
+                     this->GetBlue(),
+                     &hue,&saturation,&value );
+
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LUT->SetSaturationRange (saturation, saturation);
+  m_LUT->SetAlphaRange (m_Opacity, m_Opacity);
+  m_LUT->SetHueRange (hue, hue);
+  m_LUT->SetValueRange (0, value);
+  m_LUT->SetRampToLinear();
+
+  m_MapColors->SetLookupTable( m_LUT );
+
+  igstkPushInputMacro( ConnectVTKPipeline );
+  m_StateMachine.ProcessInputs(); 
+}
+
+/** Overloaded DeleteActor function */
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::DeleteActors( )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+                        ::DeleteActors called...\n");
+  
+  this->Superclass::DeleteActors();
+  
+  m_ImageActor = NULL;
+
+}
+ 
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::ConnectVTKPipelineProcessing() 
+{
+  m_MapColors->SetInput( m_ImageData );
+  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->InterpolateOn();
 }
 
 template < class TImageSpatialObject >
@@ -101,6 +200,56 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                        ::SetImageSpatialObjectProcessing called...\n");
 
   m_ImageSpatialObject = m_ImageSpatialObjectToBeSet;
+
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                     m_VTKImageObserver );
+
+  m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
+                                     m_ImageTransformObserver );
+
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  
+  // This method gets a VTK image data from the private method of the
+  // ImageSpatialObject and stores it in the representation by invoking the
+  // private SetImage method.
+  //
+  // 
+  this->m_VTKImageObserver->Reset();
+
+  this->m_ImageSpatialObject->RequestGetVTKImage();
+
+  if( this->m_VTKImageObserver->GotVTKImage() ) 
+    {
+    this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+    if( this->m_ImageData )
+      {
+      this->m_ImageData->Update();
+      }
+    this->m_MapColors->SetInput( this->m_ImageData );
+    }
+
+  this->m_ImageTransformObserver->Reset();
+
+  this->m_ImageSpatialObject->RequestGetImageTransform();
+
+  if( this->m_ImageTransformObserver->GotImageTransform() ) 
+    {
+    const CoordinateSystemTransformToResult transformCarrier =
+      this->m_ImageTransformObserver->GetImageTransform();
+    this->m_ImageTransform = transformCarrier.GetTransform();
+
+    // Image Actor takes care of the image origin position internally.
+    this->m_ImageActor->SetPosition(0,0,0); 
+
+    vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
+
+    this->m_ImageTransform.ExportTransform( *imageTransformMatrix );
+
+    this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
+    imageTransformMatrix->Delete();
+    }
+
+  this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
 }
 
 template < class TImageSpatialObject >
@@ -145,6 +294,9 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                        ::SetReslicePlaneSpatialObjectProcessing called...\n");
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
+
+
+  /** Reslicing should be done here!!!! */
 }
 
 template < class TImageSpatialObject >
