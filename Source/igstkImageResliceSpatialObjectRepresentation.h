@@ -21,6 +21,7 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
+#include "igstkImageReslicePlaneSpatialObject.h"
 
 #include "vtkImageMapToWindowLevelColors.h"
 #include "vtkImageReslice.h"
@@ -28,6 +29,7 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkCamera.h"
+#include "vtkPlane.h"
 
 namespace igstk
 {
@@ -35,7 +37,7 @@ namespace igstk
 
 /** \class ImageResliceSpatialObjectRepresentation
  *
- * \brief This class represents an oblique image object.
+ * \brief This class generates representation of resliced image plane. 
  *
  * \ingroup ObjectRepresentation
  */
@@ -49,20 +51,33 @@ public:
   igstkStandardTemplatedClassTraitsMacro(
                                 ImageResliceSpatialObjectRepresentation,ObjectRepresentation )
 
+public:
+
+  /** Typedefs */
+  typedef TImageSpatialObject                 ImageSpatialObjectType;
+  typedef typename ImageSpatialObjectType::Pointer
+                                              ImageSpatialObjectPointer;
+
+  typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
+                                                   ReslicePlaneSpatialObjectType;
+
+  typedef typename ReslicePlaneSpatialObjectType::Pointer
+                                              ReslicePlaneSpatialObjectPointer;
+  
+  typedef Transform                           TransformType;
+
+  void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
+                                                             planeSpatialObject);
+
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * image );
+
   /** Create the vtkActors */
   virtual void CreateActors() { } ;
 
-
-public:
-
-  typedef TImageSpatialObject                 ImageSpatialObjectType;
-
-  typedef Transform                           TransformType;
-
-  typedef typename ImageSpatialObjectType::ConstPointer
-                                              ImageSpatialObjectConstPointer;
-
-  typedef typename ImageSpatialObjectType::PointType  PointType;
+  /** Update the visual representation with changes in the geometry */
+  virtual void RequestUpdateRepresentation( 
+    const TimeStamp & time, 
+    const CoordinateSystem* cs ) { };
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -80,16 +95,44 @@ private:
   ImageResliceSpatialObjectRepresentation(const Self&);
   void operator=(const Self&);   //purposely not implemented
 
-  /** Internal itkSpatialObject */
-  ImageSpatialObjectConstPointer          m_ImageSpatialObject;
-
   virtual void UpdateRepresentationProcessing() { };
 private:
 
   /** Inputs to the State Machine */
+  igstkDeclareInputMacro( ValidImageSpatialObject );
+  igstkDeclareInputMacro( InValidImageSpatialObject );
+  igstkDeclareInputMacro( ValidReslicePlaneSpatialObject );
+  igstkDeclareInputMacro( InValidReslicePlaneSpatialObject );
 
   /** States for the State Machine */
+  igstkDeclareStateMacro( Initial );
+  igstkDeclareStateMacro( ImageSpatialObjectSet );
+  igstkDeclareStateMacro( ReslicePlaneSpatialObjectSet );
 
+  /** Set the image spatial object */
+  void SetImageSpatialObjectProcessing( void );
+
+  /** Set the reslice plane spatial object */
+  void SetReslicePlaneSpatialObjectProcessing( void );
+
+  /** Report invalid image spatial object type */
+  void ReportInvalidImageSpatialObjectProcessing( void );
+
+  /** Report invalid tool spatial object type */
+  void ReportInvalidReslicePlaneSpatialObjectProcessing( void );
+
+  /** Report invalid request */
+  void ReportInvalidRequestProcessing( void );
+
+
+  /** Variables for managing image spatial object type */
+  ImageSpatialObjectPointer     m_ImageSpatialObjectToBeSet;
+  ImageSpatialObjectPointer     m_ImageSpatialObject;
+
+  /** Variables for maanging reslice plane spatial object */
+  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
+  
 };
 
 } // end namespace igstk

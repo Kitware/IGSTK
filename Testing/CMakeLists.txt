@@ -112,11 +112,15 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
 
-  igstkImageResliceSpatialObjectRepresentationTest.cxx
-
   igstkImageReslicePlaneSpatialObjectTest.cxx
  )
 
+IF(IGSTKSandbox_USE_Qt)
+  SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationTest.cxx)
+ENDIF(IGSTKSandbox_USE_Qt)
+ 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
@@ -188,10 +192,18 @@ ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
-ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
- ${IGSTKSandbox_TESTS} igstkImageResliceSpatialObjectRepresentationTest)
+IF(IGSTKSandbox_USE_Qt)
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
+              ${IGSTKSandbox_TESTS}
+              igstkImageResliceSpatialObjectRepresentationTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 )
+ENDIF(IGSTKSandbox_USE_Qt)
 
-ADD_TEST( igstkImageReslicePlaneSpatialObjectTest ${IGSTKSandbox_TESTS} igstkImageReslicePlaneSpatialObjectTest)
+
+ADD_TEST( igstkImageReslicePlaneSpatialObjectTest ${IGSTKSandbox_TESTS} 
+          igstkImageReslicePlaneSpatialObjectTest
+          ${IGSTK_DATA_ROOT}/Input/E000192
+        )
 
 ADD_TEST( igstkToolCalibrationReaderTest ${IGSTKSandbox_TESTS}
              igstkToolCalibrationReaderTest
