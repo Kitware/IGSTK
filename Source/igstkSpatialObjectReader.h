@@ -96,9 +96,9 @@ protected:
   std::string                                m_FileName;
 
   itkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
-  itkEventMacro( ObjectReadingErrorEvent,        ObjectReaderEvent );
+  itkEventMacro( ObjectReadingErrorEvent,        IGSTKErrorEvent   );
   itkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
-  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReaderEvent );
+  itkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReadingErrorEvent );
 
   virtual void AttemptReadObjectProcessing();
 

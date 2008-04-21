@@ -129,7 +129,7 @@ igstkLoadedObjectEventMacro(
  * spatial object is not yet ready at the provider.  For example, when a
  * GroupObject is queried for a child or when a VascularNetwork is queried for
  * a Vessel using an Id. */
-igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKEvent );
+igstkEventMacro( SpatialObjectNotAvailableEvent, IGSTKErrorEvent );
 
 } // end namespace igstk
 

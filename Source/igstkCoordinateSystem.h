@@ -297,7 +297,9 @@ private:
 //  
 //   Macros defining events related to the CoordinateSystem.
 //
-igstkEventMacro( CoordinateSystemSetParentError, IGSTKEvent );
+igstkEventMacro( CoordinateSystemErrorEvent, IGSTKErrorEvent );
+igstkEventMacro( CoordinateSystemSetParentError, CoordinateSystemErrorEvent );
+
 /** This event should be invoked when RequestSetTransformAndParent is called 
  *  with a NULL parent.
  */

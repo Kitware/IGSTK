@@ -131,10 +131,11 @@ public:
   
   /** Landmark registration events */
   igstkEventMacro( TransformInitializerEvent,       IGSTKEvent );
+  igstkEventMacro( TransformInitializerErrorEvent,  IGSTKErrorEvent );
 
   /** TransformComputationFailureEvent event will be invoked if the transform
       computation fails */
-  igstkEventMacro( TransformComputationFailureEvent,TransformInitializerEvent );
+  igstkEventMacro( TransformComputationFailureEvent,TransformInitializerErrorEvent );
 
   /** TransformComputationSuccessEvent event will be invoked if the transform
       computation is succesful */ 

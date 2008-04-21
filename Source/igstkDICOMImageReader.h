@@ -44,26 +44,27 @@ itkEventMacro( DICOMPatientNameEvent,                             StringEvent);
 itkEventMacro( DICOMImageReaderEvent,                             StringEvent);
 
 // Invalid request error event 
+itkEventMacro( DICOMImageReaderErrorEvent, IGSTKErrorWithStringEvent );
 itkEventMacro( DICOMInvalidRequestErrorEvent,
-               DICOMImageReaderEvent );
+               DICOMImageReaderErrorEvent );
 
 // Events to handle errors with the ImageDirectory name
 itkEventMacro(DICOMImageDirectoryEmptyErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
 itkEventMacro(DICOMImageDirectoryDoesNotExistErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
 itkEventMacro(DICOMImageDirectoryIsNotDirectoryErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
 itkEventMacro(DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
 
 // Image series filename generation error event
 itkEventMacro(DICOMImageSeriesFileNamesGeneratingErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
 
 //Image reading error
 itkEventMacro(DICOMImageReadingErrorEvent,
-              DICOMImageReaderEvent );
+              DICOMImageReaderErrorEvent );
   
 
 /** \class DICOMImageReader

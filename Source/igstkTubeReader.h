@@ -108,7 +108,7 @@ protected:
   itkEventMacro( TubeReaderEvent,IGSTKEvent);
   
   //SpatialObject reading error
-  itkEventMacro( TubeReadingErrorEvent, TubeReaderEvent );
+  itkEventMacro( TubeReadingErrorEvent, IGSTKErrorEvent );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

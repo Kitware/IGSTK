@@ -108,7 +108,7 @@ protected:
   itkEventMacro( MeshReaderEvent,IGSTKEvent );
   
   //SpatialObject reading error
-  itkEventMacro( MeshReadingErrorEvent, MeshReaderEvent );
+  itkEventMacro( MeshReadingErrorEvent, IGSTKErrorEvent );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 

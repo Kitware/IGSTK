@@ -114,7 +114,7 @@ public:
   igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent, 
                                              IGSTKEvent, ImageType);
 
-  igstkEventMacro( ImageNotAvailableEvent, IGSTKEvent );
+  igstkEventMacro( ImageNotAvailableEvent, IGSTKErrorEvent );
 
 protected:
 

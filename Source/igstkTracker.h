@@ -38,7 +38,7 @@ namespace igstk
 {
 
 itkEventMacro( TrackerEvent,                               StringEvent);
-itkEventMacro( TrackerErrorEvent,                          TrackerEvent);
+itkEventMacro( TrackerErrorEvent,                          IGSTKErrorWithStringEvent);
 
 itkEventMacro( TrackerOpenEvent,                           TrackerEvent);
 itkEventMacro( TrackerOpenErrorEvent,                      TrackerErrorEvent);

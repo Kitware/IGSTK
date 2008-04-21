@@ -167,18 +167,19 @@ private: \
 };
 
 igstkEventMacro( IGSTKEvent,               itk::UserEvent );
+igstkEventMacro( IGSTKErrorEvent,          IGSTKEvent );
 igstkEventMacro( PulseEvent,               IGSTKEvent );
 igstkEventMacro( RefreshEvent,             IGSTKEvent );
 igstkEventMacro( CompletedEvent,           IGSTKEvent );
-igstkEventMacro( InputOutputErrorEvent,    IGSTKEvent );
-igstkEventMacro( InputOutputTimeoutEvent,  IGSTKEvent );
-igstkEventMacro( OpenPortErrorEvent,       IGSTKEvent );
-igstkEventMacro( ClosePortErrorEvent,      IGSTKEvent );
-igstkEventMacro( InvalidRequestErrorEvent, IGSTKEvent );
+igstkEventMacro( InputOutputErrorEvent,    IGSTKErrorEvent );
+igstkEventMacro( InputOutputTimeoutEvent,  IGSTKErrorEvent );
+igstkEventMacro( OpenPortErrorEvent,       IGSTKErrorEvent );
+igstkEventMacro( ClosePortErrorEvent,      IGSTKErrorEvent );
+igstkEventMacro( InvalidRequestErrorEvent, IGSTKErrorEvent );
 igstkEventMacro( TransformNotAvailableEvent, InvalidRequestErrorEvent );
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
-igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKEvent, 
+igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKErrorEvent, 
                        EventHelperType::DoubleType );
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
 igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
@@ -190,6 +191,8 @@ igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
 igstkLoadedEventMacro( DoubleTypeEvent, IGSTKEvent,
                        EventHelperType::DoubleType );
 
+igstkLoadedEventMacro( IGSTKErrorWithStringEvent, IGSTKErrorEvent, 
+                       EventHelperType::StringType );
 
 igstkEventMacro( AxialSliceBoundsEvent,      IntegerBoundsEvent );
 igstkEventMacro( SagittalSliceBoundsEvent,   IntegerBoundsEvent );
