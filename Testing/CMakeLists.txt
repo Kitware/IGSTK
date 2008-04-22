@@ -716,6 +716,39 @@ IF(IGSTKSandbox_USE_FLTK)
               ${IGSTK_DATA_ROOT}/Input/MRLiver
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
 
+    ADD_TEST(igstkMeshObjectTestLiver    ${IGSTK_TESTS} 
+              --compare  ${IGSTK_DATA_ROOT}/Baseline/igstkMeshLiver.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshLiver.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
+              ${IGSTK_DATA_ROOT}/Input/liver.msh  
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshLiver.png
+              )
+
+    ADD_TEST(igstkMeshObjectTestLineCells ${IGSTK_TESTS}
+              --compare  ${IGSTK_DATA_ROOT}/Baseline/igstkMeshLineCells.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshLineCells.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
+              ${IGSTK_DATA_ROOT}/Input/lineCells.msh  
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshLineCells.png
+              )
+  
+    ADD_TEST(igstkMeshObjectTestTetrCells ${IGSTK_TESTS} 
+              --compare  ${IGSTK_DATA_ROOT}/Baseline/igstkMeshTetrahedraCells.png 
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshTetrahedraCells.png 
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5 
+              igstkMeshObjectTest2
+              ${IGSTK_DATA_ROOT}/Input/tetrahedraCells.msh
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkMeshTetrahedraCells.png  
+              )
+
   ENDIF (IGSTK_DATA_ROOT)
 
 ENDIF(IGSTKSandbox_USE_FLTK)
@@ -799,6 +832,7 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
       igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
+      igstkMeshObjectTest2.cxx
     )
   ENDIF(IGSTK_DATA_ROOT)
 ENDIF(IGSTKSandbox_USE_FLTK)
