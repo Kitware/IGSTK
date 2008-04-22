@@ -59,6 +59,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
+
   return SUCCESS;
 }
 
@@ -167,10 +168,26 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
       typedef TransformType::VersorType RotationType;
       RotationType rotation;
 
-      rotation.Set( (inputItr->second)[3],
-          (inputItr->second)[4],
-          (inputItr->second)[5],
-          (inputItr->second)[6]);
+      const double normsquared =
+          (inputItr->second)[3]*(inputItr->second)[3] +
+          (inputItr->second)[4]*(inputItr->second)[4] +
+          (inputItr->second)[5]*(inputItr->second)[5] +
+          (inputItr->second)[6]*(inputItr->second)[6];
+
+      // don't allow null quaternions
+      if (normsquared < 1e-6)
+      {
+          rotation.Set(0.0, 0.0, 0.0, 1.0);
+          igstkLogMacro( WARNING, "igstk::FlockOfBirdsTracker::InternUpdateStatus: bad "
+              "quaternion, norm=" << sqrt(normsquared) << "\n");
+      }
+      else
+      {
+          rotation.Set((inputItr->second)[3],
+                       (inputItr->second)[4],
+                       (inputItr->second)[5],
+                       (inputItr->second)[6]);
+      }
 
       // report error value
       // Get error value from the tracker. TODO
@@ -205,8 +222,6 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
           "called ...\n");
 
-    // Send the commands to the device that will get the transforms
-    // for all of the tools.
     // Lock the buffer that this method shares with InternalUpdateStatus
     m_BufferLock->Lock();
 
@@ -230,27 +245,14 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     float quaternion[4];
     m_CommandInterpreter->GetQuaternion(quaternion);
 
-    // set the translation
-    typedef TransformType::VectorType TranslationType;
-    TranslationType translation;
-
-    translation[0] = offset[0];
-    translation[1] = offset[1];
-    translation[2] = offset[2];
-
-    // set the rotation
-    typedef TransformType::VersorType RotationType;
-    RotationType rotation;
-    rotation.Set(quaternion[0],-quaternion[3],quaternion[2],quaternion[1]);
-
-    std::vector< double > transform;
-    transform.push_back( translation[0] );
-    transform.push_back( translation[1] );
-    transform.push_back( translation[2] );
-    transform.push_back( rotation.GetX() );
-    transform.push_back( rotation.GetY() );
-    transform.push_back( rotation.GetZ() );
-    transform.push_back( rotation.GetW() );
+     std::vector< double > transform;
+     transform.push_back( offset[0] );
+     transform.push_back( offset[1] );
+     transform.push_back( offset[2] );
+     transform.push_back( quaternion[0] ); // correct order?
+     transform.push_back( quaternion[3] );
+     transform.push_back( quaternion[2] );
+     transform.push_back( quaternion[1] );
 
     inputItr = this->m_ToolTransformBuffer.begin();
 
