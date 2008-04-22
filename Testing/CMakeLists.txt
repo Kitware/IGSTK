@@ -24,7 +24,9 @@ SET( IGSTKSandbox_TEST_POLARIS_PORT_NUMBER 0 CACHE STRING
 OPTION(IGSTKSandbox_TEST_LOOPBACK_ATTACHED "Serial Loopback is attached" OFF)
 SET( IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
-
+OPTION(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED "Serial Loopback is attached" OFF)
+SET( IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER 1 CACHE STRING
+     "Serial port number (0, 1, 2, 3)" )
 
 SET(IGSTK_DATA_ROOT ${IGSTK_SOURCE_DIR}/Testing/Data)
 
@@ -93,7 +95,10 @@ SET(SandboxTests_SRCS
 #  igstkFlockOfBirdsCommandInterpreterTest.cxx
 #  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
 #  igstkFlockOfBirdsTrackerTest.cxx
- 
+
+# New test contributed by  Sebastian.Ordas 
+  igstkFlockOfBirdsTrackerTest2.cxx
+
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
@@ -221,6 +226,15 @@ ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS}
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
              )
+
+IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
+ADD_TEST( igstkFlockOfBirdTest2
+              ${IGSTKSandbox_TESTS}
+              igstkFlockOfBirdTest2
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFlockOfBirdTest2LoggerOutput.txt
+              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
+              )
+ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
  
 IF(IGSTKSandbox_USE_FLTK)
 # FIXME: When done debugging, register it inside of the test drivers.

@@ -1,19 +1,20 @@
 /*=========================================================================
 
-  Program:   Image Guided Surgery Software Toolkit
-  Module:    $ $
-  Language:  C++
-  Date:      $ $
-  Version:   $ $
+Program:   Image Guided Surgery Software Toolkit
+Module:    igstkFlockOfBirdsTrackerTest2.cxx
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
 
-  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
-  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+
 #if defined(_MSC_VER)
 //  Warning about: identifier was truncated to '255' characters 
 //  in the debug information (MVC6.0 Debug)
@@ -74,10 +75,11 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
+                            << "Serial_communication_port"
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -113,7 +115,9 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
   serialComm->SetLogger( logger );
 
   typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
-  serialComm->SetPortNumber( igstk::SerialCommunication::PortNumber0 );
+  unsigned int fobNumberIntegerValue = atoi(argv[2]);
+  PortNumberType  fobPortNumber = PortNumberType(fobNumberIntegerValue); 
+  serialComm->SetPortNumber( fobPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
   serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );

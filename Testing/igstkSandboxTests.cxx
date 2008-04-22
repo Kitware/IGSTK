@@ -61,4 +61,5 @@ void RegisterTests()
   REGISTER_TEST(igstkVascularNetworkReaderTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
+  REGISTER_TEST(igstkFlockOfBirdsTrackerTest2);
 }
