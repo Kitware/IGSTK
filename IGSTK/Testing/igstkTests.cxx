@@ -147,6 +147,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
+  REGISTER_TEST(igstkMeshObjectTest2);
 #endif 
 #endif
   // Tests depend on Qt
