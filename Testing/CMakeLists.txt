@@ -228,9 +228,9 @@ ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS}
              )
 
 IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
-ADD_TEST( igstkFlockOfBirdTest2
+ADD_TEST( igstkFlockOfBirdsTrackerTest2
               ${IGSTKSandbox_TESTS}
-              igstkFlockOfBirdTest2
+              igstkFlockOfBirdsTrackerTest2
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFlockOfBirdTest2LoggerOutput.txt
               ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
