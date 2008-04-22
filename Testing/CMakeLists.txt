@@ -238,6 +238,7 @@ IF(IGSTK_USE_FLTK)
   ADD_TEST(igstkBoxObjectTest     ${IGSTK_TESTS} igstkBoxObjectTest)
   ADD_TEST(igstkAxesObjectTest    ${IGSTK_TESTS} igstkAxesObjectTest)
   ADD_TEST(igstkTubeObjectTest ${IGSTK_TESTS} igstkTubeObjectTest)
+  ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest )
   ADD_TEST(igstkMouseTrackerTest ${IGSTK_TESTS} igstkMouseTrackerTest)
   ADD_TEST(igstkUltrasoundProbeObjectTest ${IGSTK_TESTS} igstkUltrasoundProbeObjectTest)
   ADD_TEST(igstkCircularSimulatedTrackerTest ${IGSTK_TESTS} igstkCircularSimulatedTrackerTest)
@@ -349,8 +350,6 @@ ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkWindowLevelScreenShot01.png
               )
-
-    ADD_TEST(igstkMeshObjectTest    ${IGSTK_TESTS} igstkMeshObjectTest )
 
     ADD_TEST(igstkMeshObjectTestLiver    ${IGSTK_TESTS} 
               --compare ${BASELINE}/igstkMeshLiver.png 
@@ -590,6 +589,7 @@ IF(IGSTK_USE_FLTK)
     igstkUltrasoundImageSimulatorTest.cxx
     igstkViewTest.cxx
     igstkViewRefreshRateTest.cxx
+    igstkMeshObjectTest.cxx
     igstkMouseTrackerTest.cxx
     igstkUltrasoundProbeObjectTest.cxx
     igstkSpatialObjectRepresentationVisibilityTest.cxx
@@ -604,7 +604,6 @@ IF(IGSTK_USE_FLTK)
       ${BasicTests_SRCS}
       igstkImageSpatialObjectRepresentationTest2.cxx  
       igstkImageSpatialObjectRepresentationTest3.cxx
-      igstkMeshObjectTest.cxx
       igstkMeshObjectTest2.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest.cxx
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
