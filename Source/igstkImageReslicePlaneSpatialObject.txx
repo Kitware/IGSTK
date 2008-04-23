@@ -39,6 +39,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddStateMacro( ReslicingModeSet );
   igstkAddStateMacro( OrientationTypeSet );
   igstkAddStateMacro( ImageSpatialObjectSet );
+  igstkAddStateMacro( ToolSpatialObjectSet );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   // List of state machine inputs
@@ -208,7 +209,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-                       ::RequestSetImageSpatialObject called...\n");
+                       ::RequestSetToolSpatialObject called...\n");
 
   m_ToolSpatialObjectToBeSet = const_cast< ToolSpatialObjectType *>(toolSpatialObject);
 
@@ -247,11 +248,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::RequestGetToolTransformWRTImageCoordinateSystem()
+::RequestUpdateToolTransform()
 {
   igstkLogMacro( DEBUG,
                  "igstk::ImageReslicePlaneSpatialObject::\
-                 RequestGetToolTransformWRTImageCoordinateSystem called ...\n");
+                 RequestUpdateToolTransform called ...\n");
   
   igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
   this->m_StateMachine.ProcessInputs();
@@ -289,9 +290,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   this->m_ToolTransformWRTImageCoordinateSystem =
       this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
 
-  igstkLogMacro( DEBUG, 
-    "Received Tool spatial object Transform " <<
-this->m_ToolTransformWRTImageCoordinateSystem );
+  igstkLogMacro( DEBUG, "Received Tool spatial object Transform " 
+                 << this->m_ToolTransformWRTImageCoordinateSystem );
 }
 
 /** Request compute reslicing plane */
@@ -302,6 +302,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::RequestComputeReslicingPlane called...\n");
+
+  //Update the tool transform
+  this->RequestUpdateToolTransform();
 
   switch( m_ReslicingMode )
     {
@@ -334,13 +337,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ComputeOrthgonalReslicingPlane called...\n");
+ 
+  Transform::VectorType   translation;
+  translation = 
+        m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
-
-  //Set plane origin 
-  
-  
-  m_ImageReslicePlane->SetOrigin( 0.0, 0.0 , 0.0 );
-
+  m_ImageReslicePlane->SetOrigin( translation[0],
+                                  translation[1],
+                                  translation[2] );
   switch( m_OrientationType )
     {
     case Axial:

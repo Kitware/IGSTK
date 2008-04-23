@@ -29,6 +29,8 @@ class vtkImageActor;
 class vtkImageMapToWindowLevelColors;
 class vtkLookupTable;
 class vtkImageMapToColors;
+class vtkImageReslice;
+class vtkMatrix4x4;
 
 namespace igstk
 {
@@ -70,11 +72,6 @@ public:
 
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * image );
 
- /** Update the visual representation with changes in the geometry */
-  virtual void RequestUpdateRepresentation( 
-    const TimeStamp & time, 
-    const CoordinateSystem* cs ) { };
-
   /** Set the Window Level for the representation */
   void SetWindowLevel( double window, double level );
 
@@ -112,7 +109,6 @@ private:
   ImageResliceSpatialObjectRepresentation(const Self&);
   void operator=(const Self&);   //purposely not implemented
 
-  virtual void UpdateRepresentationProcessing() { };
 private:
 
   /** Inputs to the State Machine */
@@ -145,11 +141,16 @@ private:
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
 
+  /** Update the visual representation with changes in the geometry */
+  virtual void UpdateRepresentationProcessing();
+
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;
   vtkImageActor                        * m_ImageActor;
   vtkLookupTable                       * m_LUT;
   vtkImageMapToColors                  * m_MapColors;
+  vtkImageReslice                      * m_ImageReslice;
+  vtkMatrix4x4                         * m_ResliceAxes;
 
   /** Variables that store window and level values for 2D image display */
   double                                 m_Level;

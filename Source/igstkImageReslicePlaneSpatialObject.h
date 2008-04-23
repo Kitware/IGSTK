@@ -115,8 +115,8 @@ public:
   /** Request Get reslicing plane equation */
   vtkPlane * RequestGetReslicingPlane();
 
-  /** Request Get tool transform with respect to image coordinate system */
-  void RequestGetToolTransformWRTImageCoordinateSystem();
+  /** Request update tool transform WRT image coordinate system */
+  void RequestUpdateToolTransform();
 
 protected:
 
