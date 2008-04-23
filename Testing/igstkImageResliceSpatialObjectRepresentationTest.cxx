@@ -176,10 +176,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
   planeSpatialObject->SetLogger( logger );
 
-  //Set it to the representation
-  representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
-
-  // Select Orthogonal reslicing mode
+   // Select Orthogonal reslicing mode
   planeSpatialObject->RequestSetReslicingMode( 
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Orthogonal );
 
@@ -209,8 +206,9 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
                           igstk::TimeStamp::GetLongestPossibleTime() );
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
-  vtkPlane * plane = planeSpatialObject->RequestGetReslicingPlane();
 
+ //Set to the reslice plane to the representation
+  representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
 
   //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<10; i++)
