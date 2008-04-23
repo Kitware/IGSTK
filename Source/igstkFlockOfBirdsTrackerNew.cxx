@@ -246,13 +246,14 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
     m_CommandInterpreter->GetQuaternion(quaternion);
 
      std::vector< double > transform;
+
+     transform.push_back( quaternion[0] ); 
+     transform.push_back( quaternion[1] );
+     transform.push_back( quaternion[2] );
+     transform.push_back( quaternion[3] );
      transform.push_back( offset[0] );
      transform.push_back( offset[1] );
      transform.push_back( offset[2] );
-     transform.push_back( quaternion[0] ); // correct order?
-     transform.push_back( quaternion[3] );
-     transform.push_back( quaternion[2] );
-     transform.push_back( quaternion[1] );
 
     inputItr = this->m_ToolTransformBuffer.begin();
 
