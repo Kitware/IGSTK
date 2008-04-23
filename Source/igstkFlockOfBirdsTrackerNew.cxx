@@ -309,13 +309,13 @@ FlockOfBirdsTracker
        trackerTool->GetTrackerToolIdentifier();
 
   std::vector< double > transform;
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
   transform.push_back( 1.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
@@ -341,13 +341,13 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
         trackerTool->GetTrackerToolIdentifier();
 
     std::vector< double > transform;
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
     transform.push_back( 1.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
+    transform.push_back( 0.0 );
 
     this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
     this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
