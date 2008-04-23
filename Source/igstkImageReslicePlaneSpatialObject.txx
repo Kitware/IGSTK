@@ -21,6 +21,11 @@
 #include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkEvents.h"
 
+#include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
+#include "vtkPlane.h"
+#include "vtkMath.h"
+
 namespace igstk
 { 
 
@@ -33,6 +38,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 
   //Default orientation type
   m_OrientationType = Axial;
+
+  m_ImageData = NULL;
+
+  //Create reslice axes matrix
+  m_ResliceAxes = vtkMatrix4x4::New();
+
+  // Create the observer to VTK image events 
+  m_VTKImageObserver = VTKImageObserver::New();
 
   //List of states
   igstkAddStateMacro( Initial );
@@ -109,6 +122,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 template < class TImageSpatialObject >
 ImageReslicePlaneSpatialObject<TImageSpatialObject>::~ImageReslicePlaneSpatialObject()  
 {
+  if( ! m_ResliceAxes )
+    {
+    m_ResliceAxes->Delete();
+    m_ResliceAxes = NULL;
+    }
 }
 
 template < class TImageSpatialObject >
@@ -192,6 +210,18 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                        ::SetImageSpatialObjectProcessing called...\n");
 
   m_ImageSpatialObject = m_ImageSpatialObjectToBeSet;
+
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                     m_VTKImageObserver );
+
+  this->m_VTKImageObserver->Reset();
+
+  this->m_ImageSpatialObject->RequestGetVTKImage();
+
+  if( this->m_VTKImageObserver->GotVTKImage() ) 
+    {
+    this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+    }
 }
 
 template < class TImageSpatialObject >
@@ -342,24 +372,91 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   translation = 
         m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
-  m_ImageReslicePlane->SetOrigin( translation[0],
-                                  translation[1],
-                                  translation[2] );
+  double planeCenter[3];
+  planeCenter[0] = translation[0];
+  planeCenter[1] = translation[1];
+  planeCenter[2] = translation[2];
+
+  /* Compute input image bounds */
+  double imageSpacing[3];
+  m_ImageData->GetSpacing( imageSpacing );
+
+  double imageOrigin[3];
+  m_ImageData->GetOrigin( imageOrigin );
+  int imageExtent[6];
+  m_ImageData->GetWholeExtent( imageExtent );
+
+  double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+
+  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+      {
+      if ( bounds[i] > bounds[i+1] )
+        {
+        double t = bounds[i+1];
+        bounds[i+1] = bounds[i];
+        bounds[i] = t;
+        }
+      }
+
+  //Determine two points using the bounds and 
+  double point1[3];
+  double point2[3];
+  double planeNormal[3];
+
   switch( m_OrientationType )
     {
     case Axial:
       {
-      m_ImageReslicePlane->SetNormal( 0.0, 0.0 , 1.0 );
+      planeNormal[0] = 0.0;
+      planeNormal[1] = 0.0;
+      planeNormal[2] = 1.0;
+
+      point1[0] = bounds[1];
+      point1[1] = planeCenter[1];
+      point1[2] = bounds[4];
+
+      point2[0] = bounds[0];
+      point2[1] = planeCenter[1];
+      point2[2] = bounds[5];
+   
       break;
       }
     case Coronal:
       {
-      m_ImageReslicePlane->SetNormal( 0.0, 1.0 , 0.0 );
+      planeNormal[0] = 0.0;
+      planeNormal[1] = 1.0;
+      planeNormal[2] = 0.0;
+
+      point1[0] = bounds[1];
+      point1[1] = bounds[2];
+      point1[2] = planeCenter[2];
+
+      point2[0] = bounds[0];
+      point2[1] = bounds[3];
+      point2[2] = planeCenter[2];
+
       break;
       }
     case Sagittal:
       {
-      m_ImageReslicePlane->SetNormal( 1.0, 0.0 , 0.0 );
+
+      planeNormal[0] = 1.0;
+      planeNormal[1] = 0.0;
+      planeNormal[2] = 0.0;
+
+      point1[0] = bounds[1];
+      point1[1] = bounds[2];
+      point1[2] = planeCenter[2];
+
+      point2[0] = planeCenter[0];
+      point2[1] = bounds[2];
+      point2[2] = bounds[5];
+
       break;
       }
     default:
@@ -368,6 +465,42 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       break;
       }
     }
+
+  m_ImageReslicePlane->SetOrigin( planeCenter[0],
+                                  planeCenter[1],
+                                  planeCenter[2] );
+
+  m_ImageReslicePlane->SetNormal( planeNormal[0],
+                                  planeNormal[1],
+                                  planeNormal[2] );
+
+  //Using the two points define two coordinate axes
+  double axes1[3];
+  axes1[0] = point1[0] - planeCenter[0]; 
+  axes1[1] = point1[1] - planeCenter[1]; 
+  axes1[2] = point1[2] - planeCenter[2]; 
+
+  double axes2[3];
+  axes2[0] = point2[0] - planeCenter[0]; 
+  axes2[1] = point2[1] - planeCenter[1]; 
+  axes2[2] = point2[2] - planeCenter[2]; 
+
+  //Normalize the axes
+  double planeSizeX = vtkMath::Normalize(axes1);
+  double planeSizeY = vtkMath::Normalize(axes2);
+
+  // Generate the reslicing matrix
+  m_ResliceAxes->Identity();
+  for ( unsigned int i = 0; i < 3; i++ )
+     {
+     m_ResliceAxes->SetElement(0,i,axes1[i]);
+     m_ResliceAxes->SetElement(1,i,axes2[i]);
+     m_ResliceAxes->SetElement(2,i,planeNormal[i]);
+     }
+
+  m_ResliceAxes->SetElement(0, 3, planeCenter[0]);
+  m_ResliceAxes->SetElement(1, 3, planeCenter[1]);
+  m_ResliceAxes->SetElement(2, 3, planeCenter[2]);
 }
 
 /**Compute oblique reslicing plane */
@@ -399,6 +532,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::RequestGetReslicingPlane called...\n");
   return m_ImageReslicePlane;
+}
+
+/** Request Get reslicing axes matrix */
+template < class TImageSpatialObject >
+vtkMatrix4x4 *
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::RequestGetReslicingMatrix()
+{
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::RequestGetReslicingPlane called...\n");
+  return m_ResliceAxes;
 }
 
 /** Report invalid reslicing mode */

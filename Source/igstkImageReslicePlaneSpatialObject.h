@@ -23,7 +23,9 @@
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
 
-#include "vtkPlane.h"
+class vtkPlane;
+class vtkMatrix4x4;
+class vtkImageData;
 
 namespace igstk
 {
@@ -115,6 +117,9 @@ public:
   /** Request Get reslicing plane equation */
   vtkPlane * RequestGetReslicingPlane();
 
+  /** Request Get reslicing matrix */
+  vtkMatrix4x4 * RequestGetReslicingMatrix();
+
   /** Request update tool transform WRT image coordinate system */
   void RequestUpdateToolTransform();
 
@@ -128,6 +133,12 @@ protected:
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
+ /** Observer macro that will received a event with an image as payload and
+   * will store it internally. This will be the receptor of the event sent by
+   * the ImageSpatialObject when an image is requested. */
+   igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
+                       EventHelperType::VTKImagePointerType );
 
 private:
   ImageReslicePlaneSpatialObject(const Self&);   //purposely not implemented
@@ -212,13 +223,21 @@ private:
   /** Image reslice plane */
   vtkPlane *                        m_ImageReslicePlane;
 
+  /** Image reslicing matrix */
+  vtkMatrix4x4 *                    m_ResliceAxes; 
+
+  /** vtk image data */
+  vtkImageData *                      m_ImageData;
+
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
   igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
 
   // Tool transform with respect to the image coordinate system
   Transform m_ToolTransformWRTImageCoordinateSystem;
-  
+
+  /** Observer to the VTK image events */
+  typename VTKImageObserver::Pointer         m_VTKImageObserver;
 };
 
 } // end namespace igstk

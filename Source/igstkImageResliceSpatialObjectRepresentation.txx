@@ -28,6 +28,7 @@
 #include "vtkMath.h"
 #include "vtkImageReslice.h"
 #include "vtkMatrix4x4.h"
+#include "vtkImageData.h"
 
 namespace igstk
 {
@@ -118,6 +119,18 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
     {
     m_LUT->Delete();
     m_LUT = NULL;
+    }
+
+  if( m_ImageReslice )
+    {
+    m_ImageReslice->Delete();
+    m_ImageReslice = NULL;
+    }
+
+  if( m_ResliceAxes )
+    {
+    m_ResliceAxes->Delete();
+    m_ResliceAxes = NULL;
     }
 }
 
@@ -317,62 +330,17 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   /** Get reslicing plane */
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+  m_ResliceAxes = m_ReslicePlaneSpatialObject->RequestGetReslicingMatrix();
 
-  vtkPlane * plane = m_ReslicePlaneSpatialObject->RequestGetReslicingPlane();
-  
-  /* Generate the reslicing matrix:  To generate the reslicing matrix,
-     use the plane parameters and the input image bounds */
-
-  /* Get plane origin */ 
-  double planeOrigin[3];
-  plane->GetOrigin( planeOrigin );
-
-  /* Get plane normal */
-  double planeNormal[3]; 
-  plane->GetNormal ( planeNormal );
-
-  /* Compute input image bounds */
-  double imageSpacing[3];
-  m_ImageData->GetSpacing( imageSpacing );
-
-  double imageOrigin[3];
-  m_ImageData->GetOrigin( imageOrigin );
-
-  int imageExtent[6];
-  m_ImageData->GetWholeExtent( imageExtent );
-
-  double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
-                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
-                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
-                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
-                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
-                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
-
-  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
-      {
-      if ( bounds[i] > bounds[i+1] )
-        {
-        double t = bounds[i+1];
-        bounds[i+1] = bounds[i];
-        bounds[i] = t;
-        }
-      }
-
+  m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetInput( this->m_MapColors->GetOutput() ); 
   m_ImageReslice->SetBackgroundColor( 128.0, 128.0, 128.0, 0 );
   m_ImageReslice->AutoCropOutputOn();
   m_ImageReslice->SetOptimization( 1 );
 
-  m_ResliceAxes->Identity();
-  m_ResliceAxes->SetElement(0, 3, plane->GetOrigin()[0]);
-  m_ResliceAxes->SetElement(1, 3, plane->GetOrigin()[0]);
-  m_ResliceAxes->SetElement(2, 3, plane->GetOrigin()[0]);
-
-  m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
   m_ImageReslice->SetOutputDimensionality( 2 );
   m_ImageReslice->SetOutputOrigin( 0, 0, 0 );
-
   m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
 }
 
