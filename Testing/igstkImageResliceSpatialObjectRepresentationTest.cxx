@@ -72,7 +72,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
-  logger->SetPriorityLevel( LoggerType::CRITICAL );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
 
   // Create an igstk::VTKLoggerOutput and then test it.
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
@@ -151,7 +151,9 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   qtMainWindow->setCentralWidget( qtWidget2D );
   view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetRefreshRate( 40 );
+
   view2D->RequestStart();
+
   view2D->RequestResetCamera();
 
   qtMainWindow->show();
@@ -173,6 +175,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
 
 
   //Instantiate and use reslice plane spatial object
+  std::cout << "Attach a reslice plane spatial object ....." << std::endl;
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
   planeSpatialObject->SetLogger( logger );
 
@@ -209,9 +212,8 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
 
  //Set to the reslice plane to the representation
   representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
-
   //Iteratively change the tool transform to reslice
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<4; i++)
       {
       translation[0] =    0;
       translation[1] =    0;

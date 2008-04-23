@@ -41,6 +41,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 
   m_ImageData = NULL;
 
+  //Create vtk plane 
+  m_ImageReslicePlane = vtkPlane::New();
+
   //Create reslice axes matrix
   m_ResliceAxes = vtkMatrix4x4::New();
 
@@ -126,6 +129,12 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>::~ImageReslicePlaneSpatialOb
     {
     m_ResliceAxes->Delete();
     m_ResliceAxes = NULL;
+    }
+
+  if( ! m_ImageReslicePlane )
+    {
+    m_ImageReslicePlane->Delete();
+    m_ImageReslicePlane = NULL;
     }
 }
 
@@ -380,11 +389,23 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   /* Compute input image bounds */
   double imageSpacing[3];
   m_ImageData->GetSpacing( imageSpacing );
-
+  std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
+                                 << imageSpacing[1] << ","
+                                 << imageSpacing[2] << ")" << std::endl;
   double imageOrigin[3];
   m_ImageData->GetOrigin( imageOrigin );
+  std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
+                                 << imageOrigin[1] << ","
+                                 << imageOrigin[2] << ")" << std::endl;
+
   int imageExtent[6];
   m_ImageData->GetWholeExtent( imageExtent );
+  std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
+                                << imageExtent[1] << ","
+                                << imageExtent[2] << ","
+                                << imageExtent[3] << ","
+                                << imageExtent[4] << ","
+                                << imageExtent[5] << ")" << std::endl;
 
   double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
                        imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
@@ -402,6 +423,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
         bounds[i] = t;
         }
       }
+
+  std::cout << "Image bounds: " << "(" << bounds[0] << "," 
+                                << bounds[1] << ","
+                                << bounds[2] << ","
+                                << bounds[3] << ","
+                                << bounds[4] << ","
+                                << bounds[5] << ")" << std::endl;
 
   //Determine two points using the bounds and 
   double point1[3];
@@ -470,10 +498,18 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                   planeCenter[1],
                                   planeCenter[2] );
 
+  std::cout << "Plane center: " << "(" << planeCenter[0] << "," 
+                                 << planeCenter[1] << ","
+                                 << planeCenter[2] << ")" << std::endl;
+ 
   m_ImageReslicePlane->SetNormal( planeNormal[0],
                                   planeNormal[1],
                                   planeNormal[2] );
 
+  std::cout << "Plane normal: " << "(" << planeNormal[0] << "," 
+                                 << planeNormal[1] << ","
+                                 << planeNormal[2] << ")" << std::endl;
+  
   //Using the two points define two coordinate axes
   double axes1[3];
   axes1[0] = point1[0] - planeCenter[0]; 

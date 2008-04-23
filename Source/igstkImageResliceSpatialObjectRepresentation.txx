@@ -38,7 +38,8 @@ template < class TImageSpatialObject >
 ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
 ::ImageResliceSpatialObjectRepresentation():m_StateMachine(this)
 {
-  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  m_ImageSpatialObject = NULL;
+  m_ReslicePlaneSpatialObject= NULL;
 
   m_ImageActor = vtkImageActor::New();
   this->AddActor( m_ImageActor );
@@ -48,7 +49,11 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
   m_ImageData  = NULL;
 
   m_ImageReslice  = vtkImageReslice::New();
+
   m_ResliceAxes   = vtkMatrix4x4::New(); 
+  m_ResliceAxes->Identity();
+
+  m_ImageReslice->SetResliceAxes( m_ResliceAxes );
 
   // Set default values for window and level
   m_Level = 0;
@@ -181,11 +186,9 @@ void
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::DeleteActors( )
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
                         ::DeleteActors called...\n");
-  
   this->Superclass::DeleteActors();
-  
   m_ImageActor = NULL;
 
 }
@@ -196,7 +199,8 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
   m_MapColors->SetInput( m_ImageData );
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_ImageReslice->SetInput ( m_MapColors->GetOutput() );
+  m_ImageActor->SetInput( m_ImageReslice->GetOutput() );
   m_ImageActor->InterpolateOn();
 
 }
@@ -233,6 +237,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                        ::SetImageSpatialObjectProcessing called...\n");
 
   m_ImageSpatialObject = m_ImageSpatialObjectToBeSet;
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
@@ -240,8 +245,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
                                      m_ImageTransformObserver );
 
-  this->RequestSetSpatialObject( m_ImageSpatialObject );
-  
   // This method gets a VTK image data from the private method of the
   // ImageSpatialObject and stores it in the representation by invoking the
   // private SetImage method.
@@ -259,6 +262,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
       this->m_ImageData->Update();
       }
     this->m_MapColors->SetInput( this->m_ImageData );
+    this->m_ImageReslice->SetInput( m_MapColors->GetOutput() );
     }
 
   this->m_ImageTransformObserver->Reset();
@@ -282,7 +286,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     imageTransformMatrix->Delete();
     }
 
-  this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+  this->m_ImageActor->SetInput( this->m_ImageReslice->GetOutput() );
 }
 
 template < class TImageSpatialObject >
@@ -351,18 +355,20 @@ void
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageSpatialObjectRepresentation\
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
                        ::UpdateRepresentationProcessing called...\n");
   if( m_ImageData )
     {
     m_MapColors->SetInput( m_ImageData );
     }
 
-  /* Updated reslicing: Recompute the reslicing plane */ 
-  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
-  vtkPlane * plane = m_ReslicePlaneSpatialObject->RequestGetReslicingPlane();
-
-  /*..... */
+  /* Updated reslicing: */ 
+  if( m_ReslicePlaneSpatialObject )
+    {
+    m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+    m_ResliceAxes = m_ReslicePlaneSpatialObject->RequestGetReslicingMatrix();
+    m_ImageReslice->SetResliceAxes( m_ResliceAxes );
+    }
 }
 
 template < class TImageSpatialObject >
