@@ -142,7 +142,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
       // only report tools that are in view
       if (! this->m_ToolStatusContainer[inputItr->first])
       {
-          igstkLogMacro( INFO, "igstk::MicronTracker::InternalUpdateStatus: " <<
+          igstkLogMacro( INFO, "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " is not in view\n");
 
           // report to the tracker tool that the tracker is not available
