@@ -42,6 +42,9 @@ namespace ImageResliceSpatialObjectRepresentationTest
 {
 igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+
+igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent, 
+                       ::igstk::EventHelperType::VTKImagePointerType );
 }
 
 int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] )
@@ -120,6 +123,73 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   // Set input image spatial object
   ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New(); 
   imageSpatialObject = ctImageObserver->GetCTImage();
+
+  //Determine the image parameters
+  //first access the VTK image data
+  typedef ImageResliceSpatialObjectRepresentationTest::VTKImageObserver 
+                                                        VTKImageObserverType;
+  
+  VTKImageObserverType::Pointer vtkImageObserver = VTKImageObserverType::New();
+
+  imageSpatialObject->AddObserver( ::igstk::VTKImageModifiedEvent(), 
+                                     vtkImageObserver );
+  vtkImageObserver->Reset();
+  imageSpatialObject->RequestGetVTKImage();
+
+  if( !vtkImageObserver->GotVTKImage() ) 
+    {
+    std::cout << "No VTKImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkImageData * imageData = vtkImageObserver->GetVTKImage();
+
+  /* Compute image bounds */
+  double imageSpacing[3];
+  imageData->GetSpacing( imageSpacing );
+  std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
+                                 << imageSpacing[1] << ","
+                                 << imageSpacing[2] << ")" << std::endl;
+  double imageOrigin[3];
+  imageData->GetOrigin( imageOrigin );
+  std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
+                                 << imageOrigin[1] << ","
+                                 << imageOrigin[2] << ")" << std::endl;
+
+  int imageExtent[6];
+  imageData->GetWholeExtent( imageExtent );
+  std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
+                                << imageExtent[1] << ","
+                                << imageExtent[2] << ","
+                                << imageExtent[3] << ","
+                                << imageExtent[4] << ","
+                                << imageExtent[5] << ")" << std::endl;
+
+  double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+
+  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+      {
+      if ( bounds[i] > bounds[i+1] )
+        {
+        double t = bounds[i+1];
+        bounds[i+1] = bounds[i];
+        bounds[i] = t;
+        }
+      }
+
+  std::cout << "Image bounds: " << "(" << bounds[0] << "," 
+                                << bounds[1] << ","
+                                << bounds[2] << ","
+                                << bounds[3] << ","
+                                << bounds[4] << ","
+                                << bounds[5] << ")" << std::endl;
+
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
 
@@ -173,7 +243,6 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
-
   //Instantiate and use reslice plane spatial object
   std::cout << "Attach a reslice plane spatial object ....." << std::endl;
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
@@ -200,7 +269,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   igstk::Transform::VersorType    rotation;
   translation[0] =    0;
   translation[1] =    0;
-  translation[2] = -1.0;
+  translation[2] =  bounds[4];
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   const double transformUncertainty = 1.0;
   toolTransform.SetTranslation(
@@ -212,12 +281,18 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
 
  //Set to the reslice plane to the representation
   representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
+
+  view2D->RequestStart();
+
+  view2D->RequestResetCamera();
+
+  qtMainWindow->show();
   //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<4; i++)
       {
       translation[0] =    0;
       translation[1] =    0;
-      translation[2] =    i;
+      translation[2] =    bounds[4] + i*imageSpacing[2];
       toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
@@ -225,7 +300,11 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
+      std::cout << "Slice Number: " << i << std::endl;
+      std::cout << "ToolTransform set: " << toolTransform << std::endl;
       }
+
+  view2D->RequestStop();
 
   delete qtWidget2D;
   delete qtMainWindow;
