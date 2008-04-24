@@ -273,6 +273,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                        ::SetToolSpatialObjectProcessing called...\n");
 
   m_ToolSpatialObject = m_ToolSpatialObjectToBeSet;
+  this->ObserveToolTransformWRTImageCoordinateSystemInput( this->m_ToolSpatialObject );
 }
 
 template < class TImageSpatialObject >
@@ -326,11 +327,11 @@ void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::ReceiveToolTransformWRTImageCoordinateSystemProcessing()
 {
-  this->m_ToolTransformWRTImageCoordinateSystem =
-      this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
-
   igstkLogMacro( DEBUG, "Received Tool spatial object Transform " 
                  << this->m_ToolTransformWRTImageCoordinateSystem );
+
+  this->m_ToolTransformWRTImageCoordinateSystem =
+      this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
 }
 
 /** Request compute reslicing plane */
@@ -380,6 +381,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   Transform::VectorType   translation;
   translation = 
         m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+
 
   double planeCenter[3];
   planeCenter[0] = translation[0];
