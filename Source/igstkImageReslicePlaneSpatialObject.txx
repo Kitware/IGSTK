@@ -95,6 +95,16 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ReportInvalidImageSpatialObject );
 
   //From ImageSpatialObjectSet
+  igstkAddTransitionMacro( ImageSpatialObjectSet,
+                           ValidOrientationType,
+                           ImageSpatialObjectSet,
+                           SetOrientationType );
+
+  igstkAddTransitionMacro( ImageSpatialObjectSet,
+                           InValidOrientationType,
+                           ImageSpatialObjectSet,
+                           ReportInvalidOrientationType );
+
   igstkAddTransitionMacro( ImageSpatialObjectSet, 
                            ValidToolSpatialObject,
                            ToolSpatialObjectSet, 
@@ -106,6 +116,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ReportInvalidToolSpatialObject );
 
   //From ToolSpatialObjectSet
+  igstkAddTransitionMacro( ToolSpatialObjectSet,
+                           ValidOrientationType,
+                           ToolSpatialObjectSet,
+                           SetOrientationType );
+
+  igstkAddTransitionMacro( ToolSpatialObjectSet,
+                           InValidOrientationType,
+                           ToolSpatialObjectSet,
+                           ReportInvalidOrientationType );
+
+
   igstkAddTransitionMacro( ToolSpatialObjectSet,
                            GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
@@ -433,9 +454,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                 << bounds[4] << ","
                                 << bounds[5] << ")" << std::endl;
 
-  //Determine two points using the bounds and 
+  //Determine two points and coordinate axes origin 
   double point1[3];
   double point2[3];
+  double origin[3];
   double planeNormal[3];
 
   switch( m_OrientationType )
@@ -446,13 +468,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[1] = 0.0;
       planeNormal[2] = 1.0;
 
+      origin[0] = bounds[0];
+      origin[1] = bounds[2];
+      origin[2] = planeCenter[2];
+ 
       point1[0] = bounds[1];
-      point1[1] = planeCenter[1];
-      point1[2] = bounds[4];
+      point1[1] = bounds[2];
+      point1[2] = planeCenter[2];
 
       point2[0] = bounds[0];
-      point2[1] = planeCenter[1];
-      point2[2] = bounds[5];
+      point2[1] = bounds[3];
+      point2[2] = planeCenter[2];
    
       break;
       }
@@ -462,13 +488,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[1] = 1.0;
       planeNormal[2] = 0.0;
 
+      origin[0] = bounds[0];
+      origin[1] = planeCenter[1];
+      origin[2] = bounds[4];
+
       point1[0] = bounds[1];
-      point1[1] = bounds[2];
-      point1[2] = planeCenter[2];
+      point1[1] = planeCenter[1];
+      point1[2] = bounds[4];
 
       point2[0] = bounds[0];
-      point2[1] = bounds[3];
-      point2[2] = planeCenter[2];
+      point2[1] = planeCenter[1];
+      point2[2] = bounds[5];
 
       break;
       }
@@ -479,9 +509,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[1] = 0.0;
       planeNormal[2] = 0.0;
 
-      point1[0] = bounds[1];
-      point1[1] = bounds[2];
-      point1[2] = planeCenter[2];
+      origin[0] = planeCenter[0];
+      origin[1] = bounds[2];
+      origin[2] = bounds[4];
+
+      point1[0] = planeCenter[0];
+      point1[1] = bounds[3];
+      point1[2] = bounds[4];
 
       point2[0] = planeCenter[0];
       point2[1] = bounds[2];
@@ -514,14 +548,19 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   
   //Using the two points define two coordinate axes
   double axes1[3];
-  axes1[0] = point1[0] - planeCenter[0]; 
-  axes1[1] = point1[1] - planeCenter[1]; 
-  axes1[2] = point1[2] - planeCenter[2]; 
+  axes1[0] = point1[0] - origin[0]; 
+  axes1[1] = point1[1] - origin[1]; 
+  axes1[2] = point1[2] - origin[2]; 
+
+  std::cout << "Axes1: (" << axes1[0] << "," << axes1[1] << "," << axes1[2] << ")" << std::endl;
+ 
 
   double axes2[3];
-  axes2[0] = point2[0] - planeCenter[0]; 
-  axes2[1] = point2[1] - planeCenter[1]; 
-  axes2[2] = point2[2] - planeCenter[2]; 
+  axes2[0] = point2[0] - origin[0]; 
+  axes2[1] = point2[1] - origin[1]; 
+  axes2[2] = point2[2] - origin[2]; 
+
+  std::cout << "Axes2: (" << axes2[0] << "," << axes2[1] << "," << axes2[2] << ")" << std::endl;
 
   //Normalize the axes
   double planeSizeX = vtkMath::Normalize(axes1);
@@ -536,9 +575,24 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
      m_ResliceAxes->SetElement(2,i,planeNormal[i]);
      }
 
-  m_ResliceAxes->SetElement(0, 3, planeCenter[0]);
-  m_ResliceAxes->SetElement(1, 3, planeCenter[1]);
-  m_ResliceAxes->SetElement(2, 3, planeCenter[2]);
+  m_ResliceAxes->SetElement(0, 3, origin[0]);
+  m_ResliceAxes->SetElement(1, 3, origin[1]);
+  m_ResliceAxes->SetElement(2, 3, origin[2]);
+
+  std::cout.precision(3);
+  std::cout << "ResliceAxes matrix: \n" 
+            << "(" << m_ResliceAxes->GetElement(0,0) << ","
+            << m_ResliceAxes->GetElement(0,1) << ","
+            << m_ResliceAxes->GetElement(0,2) << ","
+            << m_ResliceAxes->GetElement(0,3) << "\n"
+            << m_ResliceAxes->GetElement(1,0) << ","
+            << m_ResliceAxes->GetElement(1,1) << ","
+            << m_ResliceAxes->GetElement(1,2) << ","
+            << m_ResliceAxes->GetElement(1,3) << "\n"
+            << m_ResliceAxes->GetElement(2,0) << ","
+            << m_ResliceAxes->GetElement(2,1) << ","
+            << m_ResliceAxes->GetElement(2,2) << ","
+            << m_ResliceAxes->GetElement(2,3) << ")" << std::endl;
 }
 
 /**Compute oblique reslicing plane */

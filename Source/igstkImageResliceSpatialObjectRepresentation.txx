@@ -192,7 +192,44 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor = NULL;
 
 }
- 
+
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetWindowLevel( double window, double level )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::SetWindowLevel called...\n");
+
+  m_Window = window;
+  m_Level = level;
+
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+}
+
+/** Set the opacity */
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetOpacity(float alpha)
+{
+  if(m_Opacity == alpha)
+    {
+    return;
+    }
+  m_Opacity = alpha;
+
+  // Update all the actors
+  ActorsListType::iterator it = m_Actors.begin();
+  while(it != m_Actors.end())
+    {
+    vtkImageActor * va = static_cast<vtkImageActor*>(*it);
+    va->SetOpacity(m_Opacity); 
+    it++;
+    }
+}
+
+
 template < class TImageSpatialObject >
 void
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
