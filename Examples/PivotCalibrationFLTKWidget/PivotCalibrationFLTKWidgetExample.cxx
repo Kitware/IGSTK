@@ -78,11 +78,6 @@ PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample()
   this->m_tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
                                 this->m_errorObserver );
 
-
-                 // create tracket tool at connect it to tracker
-  this->m_tool = igstk::PolarisTrackerTool::New();
-  this->m_tool->RequestConfigure();
-  this->m_tool->RequestAttachToTracker( this->m_tracker );
 }
 
 void
@@ -90,48 +85,48 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
 {
               //gather the information from the UI
   typedef igstk::SerialCommunication::PortNumberType PortNumberType;
-
   PortNumberType comPort =
    static_cast<PortNumberType> ( this->m_comPortChoice->value() );
-
   unsigned int toolPort =
-            static_cast<unsigned int>( this->m_toolPortSlider->value() );
+            static_cast<unsigned int>( this->m_toolPortChoice->value() );
   unsigned int delay =
             static_cast<unsigned int>( this->m_delaySlider->value() );
   unsigned int numberOfFrames =
             static_cast<unsigned int>( this->m_numberOfFramesSlider->value() );
   std::string sromFileName = this->m_SROMFileNameTextField->value();
 
-         //if already initialized, shutdown everything and reinitialize
+      //check that the user entered valid data, wireless tool requires an
+      //SROM file
+  if( sromFileName.empty() && toolPort == 0 )
+  {
+    fl_alert( "Missing SROM file for wireless tool." );
+    fl_beep( FL_BEEP_ERROR );
+    return;
+  }
+
+              //if already initialized, shutdown everything and reinitialize
   if( this->m_initialized )
-    {
+  {
     this->m_initialized = false;
     this->m_tracker->RequestStopTracking();
     if( this->m_errorObserver->Error() )
-      {
+    {
       this->m_errorObserver->ClearError();
       return;
-      }
+    }
     this->m_tracker->RequestClose();
     if( this->m_errorObserver->Error() )
-      {
+    {
       this->m_errorObserver->ClearError();
       return;
-      }
+    }
     this->m_serialCommunication->CloseCommunication();
     if( this->m_errorObserver->Error() )
-      {
+    {
       this->m_errorObserver->ClearError();
       return;
-      }
-            //(re)initialize tracker
-    this->m_tracker->RequestReset();
-    if( this->m_errorObserver->Error() )
-      {
-      this->m_errorObserver->ClearError();
-      return;
-      }
     }
+  }
 
   this->m_serialCommunication->SetPortNumber( comPort );
   this->m_serialCommunication->SetParity( PARITY );
@@ -141,40 +136,63 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   this->m_serialCommunication->SetHardwareHandshake( HAND_SHAKE );
 
 
-  //attach SROM if given by user
-  if( !sromFileName.empty() )
+                 // create tracked tool and configure it
+  this->m_tool = igstk::PolarisTrackerTool::New();
+         //different configuration for wired and wireless tools
+         //toolPort == 0 is wireless all others are actual ports
+  if( toolPort == 0) 
+  {
+    this->m_tool->RequestSelectWirelessTrackerTool();
+    this->m_tool->RequestSetSROMFileName(sromFileName);
+  }
+  else  //we have a wired tool
+  {
+    this->m_tool->RequestSelectWiredTrackerTool();
+                 //the physical ports start at 1, inside IGSTK we refer to 
+                //them from 0
+    this->m_tool->RequestSetPortNumber( toolPort - 1 );            
+               //SROM file is optional 
+    if ( !sromFileName.empty() )
     {
-    //UI tool ports begin at 1 while internally igstk starts
-    //at 0
-    this->m_tool->RequestSetSROMFileName( sromFileName );
+      this->m_tool->RequestSetSROMFileName(sromFileName);
     }
+  }
+  this->m_tool->RequestConfigure();
 
-  //open serial communication
+         //open serial communication
   this->m_serialCommunication->OpenCommunication();
   if( this->m_errorObserver->Error() )
-    {
+  {
     this->m_errorObserver->ClearError();
     return;
-    }
+  }
   this->m_tracker->SetCommunication( this->m_serialCommunication );
 
-  //open tracker communication
+           //open tracker communication
   this->m_tracker->RequestOpen();
   if( this->m_errorObserver->Error() )
-    {
+  {
     this->m_errorObserver->ClearError();
     return;
-    }
-
-  //start tracking
+  }
+                      //attach the tracker tool
+  this->m_tool->RequestAttachToTracker( this->m_tracker );
+  if( this->m_errorObserver->Error() )
+  {
+    this->m_errorObserver->ClearError();
+    return;
+  }
+               //start tracking
   this->m_tracker->RequestStartTracking();
   if( this->m_errorObserver->Error() )
-    {
+  {
     this->m_errorObserver->ClearError();
     return;
-    }
+  }
 
   this->m_initialized = true;
+
+
   this->m_pivotCalibrationFLTKWidget->RequestSetDelay( delay );
 
   igstk::Tracker * genericTracker = this->m_tracker.GetPointer();
@@ -265,4 +283,9 @@ PivotCalibrationFLTKWidgetExample
       std::pair<std::string,std::string>(
       igstk::TrackerUpdateStatusErrorEvent().GetEventName(),
      "Error updating transformations from tracker." ) );
+
+  this->m_ErrorEvent2ErrorMessage.insert(
+      std::pair<std::string,std::string>(
+      igstk::AttachingTrackerToolToTrackerErrorEvent().GetEventName(),
+     "Error attaching tool to tracker." ) );
 }
