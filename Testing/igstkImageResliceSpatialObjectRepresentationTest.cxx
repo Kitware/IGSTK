@@ -198,6 +198,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
 
   RepresentationType::Pointer  representation =  RepresentationType::New(); 
   representation->SetLogger( logger );
+  representation->SetWindowLevel( 1559, -244 );
   representation->RequestSetImageSpatialObject( imageSpatialObject );
   //View
   typedef igstk::View2D  View2DType;
@@ -267,8 +268,8 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   igstk::Transform toolTransform;
   igstk::Transform::VectorType    translation;
   igstk::Transform::VersorType    rotation;
-  translation[0] =    0;
-  translation[1] =    0;
+  translation[0] =    0.5 * (bounds[0] + bounds[1] );
+  translation[1] =    0.5 * (bounds[2] + bounds[3] );
   translation[2] =  bounds[4];
   rotation.Set(0.0, 0.0, 0.0, 1.0);
   const double transformUncertainty = 1.0;
@@ -283,15 +284,13 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
 
   view2D->RequestStart();
-
   view2D->RequestResetCamera();
-
   qtMainWindow->show();
   //Iteratively change the tool transform to reslice
-  for(unsigned int i=0; i<4; i++)
+  for(unsigned int i=0; i<imageExtent[5]; i++)
       {
-      translation[0] =    0;
-      translation[1] =    0;
+      translation[0] =    0.5 * (bounds[0] + bounds[1] );
+      translation[1] =    0.5 * (bounds[2] + bounds[3] );
       translation[2] =    bounds[4] + i*imageSpacing[2];
       toolTransform.SetTranslation(
                           translation,
@@ -300,11 +299,77 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Slice Number: " << i << std::endl;
-      std::cout << "ToolTransform set: " << toolTransform << std::endl;
       }
-
   view2D->RequestStop();
+
+  /* Change slice orientation to sagittal */
+  std::cout << "Sagittal view: " << std::endl;
+  planeSpatialObject->RequestSetOrientationType(
+           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Sagittal );
+
+  translation[0] =    bounds[0];
+  translation[1] =    0.5 * (bounds[2] + bounds[3] );
+  translation[2] =    0.5 * (bounds[4] + bounds[5] );
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+  qtMainWindow->show();
+  //Iteratively change the tool transf1rm to reslice
+  for(unsigned int i=0; i<imageExtent[1]; i++)
+      {
+      translation[0] =    bounds[0] + i*imageSpacing[0];
+      translation[1] =    0.5 * (bounds[2] + bounds[3] );
+      translation[2] =    0.5 * (bounds[4] + bounds[5] );
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+      QTest::qWait(10);
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+  view2D->RequestStop();
+
+  /* Change slice orientation to sagittal */
+  std::cout << "Coronal view: " << std::endl;
+  planeSpatialObject->RequestSetOrientationType(
+           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
+
+  translation[0] =    0.5 * (bounds[0] + bounds[1] );
+  translation[1] =    bounds[2];
+  translation[2] =    0.5 * (bounds[4] + bounds[5] );
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+  qtMainWindow->show();
+  //Iteratively change the tool transf1rm to reslice
+  for(unsigned int i=0; i<imageExtent[3]; i++)
+      {
+      translation[0] =    0.5 * (bounds[0] + bounds[1] );
+      translation[1] =    bounds[2] + i*imageSpacing[1];
+      translation[2] =    0.5 * (bounds[4] + bounds[5] );
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+      QTest::qWait(10);
+      igstk::PulseGenerator::CheckTimeouts();
+      }
+  view2D->RequestStop();
+
 
   delete qtWidget2D;
   delete qtMainWindow;
