@@ -377,6 +377,9 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
   this->m_ReasonForCalibrationFailure.clear();
   unsigned long observerID = this->m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(), 
                                                            this->m_ErrorObserver);
+            //observe the specified tool
+  igstk::TransformObserver::Pointer toolObserver = igstk::TransformObserver::New();
+  toolObserver->ObserveTransformEventsFrom( this->m_TrackerTool );
 
                //the following lines are part of the hack that allows us to 
                //check if a transformation is valid based on its time stamps
@@ -410,17 +413,16 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
         // The following change is added so that the
         // class compiles..NEEDS TO BE CHECKED FOR LOGICAL
         // CORRECTNESS 
-        typedef igstk::TransformObserver   ObserverType;
-        ObserverType::Pointer coordSystemAObserver = ObserverType::New();
-        coordSystemAObserver->ObserveTransformEventsFrom( m_TrackerTool );
+        //typedef igstk::TransformObserver   ObserverType;
+        //ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+        //coordSystemAObserver->ObserveTransformEventsFrom( m_TrackerTool );
   
-        coordSystemAObserver->Clear();
-
-        m_TrackerTool->RequestGetTransformToParent();
-        if( coordSystemAObserver->GotTransform())
-          {
-          currentTransform = coordSystemAObserver->GetTransform();
-          }
+        toolObserver->Clear();
+        this->m_TrackerTool->RequestGetTransformToParent();
+        if( toolObserver->GotTransform())
+        {
+          currentTransform = toolObserver->GetTransform();
+        }
 
        //For the transformation to be valid for our purposes it 
        //must be valid as defined by its internal time span, in 

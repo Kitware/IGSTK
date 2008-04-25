@@ -111,18 +111,12 @@ PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n,
                                                igstk::Tracker * tracker, 
                                                igstk::TrackerTool * trackerTool )
 {
-              //update the description of the current tool 
-//  std::ostringstream toolDescription;
-//  toolDescription.str("");
-
+              //show the description of the current tool on the UI
     const std::string trackerToolIdentifier =
           trackerTool->GetTrackerToolIdentifier();
 
     this->m_toolDescription->value(trackerToolIdentifier.c_str());
 
-  // FIXME : this->m_toolDescription->value(toolDescription.str().c_str());
-  // Get name from the TrackerTool itself.
-  //
             //try to initialize
   this->m_pivotCalibration->RequestInitialize( n, tracker, trackerTool ); 
 }
@@ -146,7 +140,7 @@ PivotCalibrationFLTKWidget::RequestComputeCalibration()
     msg<<"Data acquisition starts in "<<(int)(i/1000)<<" seconds."; 
     this->m_output->value(msg.str().c_str());
     Fl::check();
-    Fl::wait(0.001);
+    PulseGenerator::Sleep(1000);
     }
 
   this->m_output->value("");
