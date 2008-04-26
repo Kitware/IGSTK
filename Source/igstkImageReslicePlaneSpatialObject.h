@@ -80,6 +80,8 @@ public:
   typedef SpatialObject                          ToolSpatialObjectType;
   typedef ToolSpatialObjectType::Pointer         ToolSpatialObjectPointer;
 
+  typedef unsigned int                           SliceNumberType;
+
   /** Reslicing modes */
   enum ReslicingMode
     { 
@@ -110,6 +112,9 @@ public:
 
   /** Request set tool spatial object */
   void RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject );
+
+  /** Request Set Slice number */
+  void RequestSetSliceNumber( SliceNumberType sliceNumber );
 
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
@@ -153,8 +158,12 @@ private:
   igstkDeclareInputMacro( InValidImageSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
+  igstkDeclareInputMacro( SetSliceNumber );
+  igstkDeclareInputMacro( ValidSliceNumber );
+  igstkDeclareInputMacro( InValidSliceNumber );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
+  igstkDeclareInputMacro( ComputeReslicePlane );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
@@ -162,7 +171,9 @@ private:
   igstkDeclareStateMacro( OrientationTypeSet );
   igstkDeclareStateMacro( ImageSpatialObjectSet );
   igstkDeclareStateMacro( ToolSpatialObjectSet );
+  igstkDeclareStateMacro( ValidSliceNumberSet );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
+  igstkDeclareStateMacro( AttemptingToSetSliceNumber );
 
   /** Internal itkSpatialObject */
 
@@ -172,6 +183,13 @@ private:
   /** Set the reslcing mode */
   void SetReslicingModeProcessing( void );
 
+  /** Set slice number */
+  void AttemptSetSliceNumberProcessing( void );
+  void SetSliceNumberProcessing( void );
+ 
+  /** Reslice plance compute methold */
+  void ComputeReslicePlaneProcessing();
+ 
   /** Set the image spatial object */
   void SetImageSpatialObjectProcessing( void );
 
@@ -189,6 +207,9 @@ private:
 
   /** Report invalid tool spatial object type */
   void ReportInvalidToolSpatialObjectProcessing( void );
+
+  /** Report invalid slice number*/
+  void ReportInvalidSliceNumberProcessing( void );
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -238,6 +259,10 @@ private:
 
   /** Observer to the VTK image events */
   typename VTKImageObserver::Pointer         m_VTKImageObserver;
+
+  /** setting slice number */
+  SliceNumberType      m_SliceNumberToBeSet;
+  SliceNumberType      m_SliceNumber;
 };
 
 } // end namespace igstk

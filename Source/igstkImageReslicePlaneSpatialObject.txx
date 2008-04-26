@@ -41,6 +41,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 
   m_ImageData = NULL;
 
+  m_ImageSpatialObject = NULL;
+
+  m_ToolSpatialObject = NULL; 
+
   //Create vtk plane 
   m_ImageReslicePlane = vtkPlane::New();
 
@@ -50,6 +54,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   // Create the observer to VTK image events 
   m_VTKImageObserver = VTKImageObserver::New();
 
+  //slice number
+  m_SliceNumber = 0;
+
   //List of states
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ReslicingModeSet );
@@ -57,6 +64,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddStateMacro( ImageSpatialObjectSet );
   igstkAddStateMacro( ToolSpatialObjectSet );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
+  igstkAddStateMacro( AttemptingToSetSliceNumber );
+  igstkAddStateMacro( ValidSliceNumberSet);
 
   // List of state machine inputs
   igstkAddInputMacro( ValidReslicingMode );
@@ -67,8 +76,12 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddInputMacro( InValidImageSpatialObject );
   igstkAddInputMacro( ValidToolSpatialObject );
   igstkAddInputMacro( InValidToolSpatialObject );
+  igstkAddInputMacro( SetSliceNumber );
+  igstkAddInputMacro ( ValidSliceNumber );
+  igstkAddInputMacro ( InValidSliceNumber );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
+  igstkAddInputMacro( ComputeReslicePlane );
 
 
   // List of state machine transitions
@@ -78,10 +91,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddTransitionMacro( Initial, InValidReslicingMode, Initial, ReportInvalidReslicingMode );
   igstkAddTransitionMacro( Initial, ValidOrientationType, Initial, ReportInvalidRequest);
   igstkAddTransitionMacro( Initial, InValidOrientationType, Initial, ReportInvalidRequest);
+  igstkAddTransitionMacro( Initial, SetSliceNumber, Initial, ReportInvalidRequest);
 
   //From ReslicingModeSet
   igstkAddTransitionMacro( ReslicingModeSet, ValidOrientationType, OrientationTypeSet, SetOrientationType );
   igstkAddTransitionMacro( ReslicingModeSet, InValidOrientationType, ReslicingModeSet, ReportInvalidOrientationType);
+  igstkAddTransitionMacro( ReslicingModeSet, SetSliceNumber,
+                           ReslicingModeSet, ReportInvalidRequest );  
 
   //From OrientationTypeSet
   igstkAddTransitionMacro( OrientationTypeSet,
@@ -93,6 +109,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            InValidImageSpatialObject, 
                            OrientationTypeSet,
                            ReportInvalidImageSpatialObject );
+
+  igstkAddTransitionMacro( OrientationTypeSet, SetSliceNumber,
+                           OrientationTypeSet, ReportInvalidRequest );  
+
 
   //From ImageSpatialObjectSet
   igstkAddTransitionMacro( ImageSpatialObjectSet,
@@ -114,6 +134,37 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            InValidToolSpatialObject,
                            ImageSpatialObjectSet,
                            ReportInvalidToolSpatialObject );
+  
+  igstkAddTransitionMacro( ImageSpatialObjectSet, SetSliceNumber,
+                           AttemptingToSetSliceNumber, AttemptSetSliceNumber );  
+
+  // From AttemptingToSetSliceNumber
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber,
+                           ValidSliceNumberSet,  SetSliceNumber ); 
+  igstkAddTransitionMacro( AttemptingToSetSliceNumber, InValidSliceNumber,
+                           ImageSpatialObjectSet,  ReportInvalidSliceNumber ); 
+
+
+  // From ValidSliceNumberSet
+  igstkAddTransitionMacro( ValidSliceNumberSet,
+                           ComputeReslicePlane,
+                           ValidSliceNumberSet,
+                           ComputeReslicePlane );
+
+  igstkAddTransitionMacro( ValidSliceNumberSet,
+                           SetSliceNumber,
+                           AttemptingToSetSliceNumber,
+                           AttemptSetSliceNumber );
+
+  igstkAddTransitionMacro( ValidSliceNumberSet,
+                           ValidOrientationType,
+                           ValidSliceNumberSet,
+                           SetOrientationType );
+
+  igstkAddTransitionMacro( ValidSliceNumberSet,
+                           InValidOrientationType,
+                           ValidSliceNumberSet,
+                           ReportInvalidOrientationType );
 
   //From ToolSpatialObjectSet
   igstkAddTransitionMacro( ToolSpatialObjectSet,
@@ -131,6 +182,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
                            RequestGetToolTransformWRTImageCoordinateSystem );
+
+  igstkAddTransitionMacro( ToolSpatialObjectSet,
+                           ComputeReslicePlane,
+                           ToolSpatialObjectSet,
+                           ComputeReslicePlane );
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
@@ -173,6 +229,83 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
   //FIXME: Check conditions for InValidReslicing mode
   m_StateMachine.ProcessInputs();
 }
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject<TImageSpatialObject>
+::RequestSetSliceNumber( SliceNumberType sliceNumber )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::RequestSetSliceNumber called...\n");
+
+  m_SliceNumberToBeSet = sliceNumber;
+  m_StateMachine.PushInput( m_SetSliceNumberInput );
+
+  m_StateMachine.ProcessInputs();
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::AttemptSetSliceNumberProcessing()
+{
+
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::AttemptSetSliceNumberProcessing called...\n");
+  if( m_ImageData )
+    {
+
+    SliceNumberType minSlice = 0;
+    SliceNumberType maxSlice = 0;
+    
+    int ext[6];
+
+    m_ImageData->Update();
+    m_ImageData->GetExtent( ext );
+
+    switch( m_OrientationType )
+      {
+      case Axial:
+        minSlice = ext[4];
+        maxSlice = ext[5];
+        break;
+      case Sagittal:
+        minSlice = ext[0];
+        maxSlice = ext[1];
+        break;
+      case Coronal:
+        minSlice = ext[2];
+        maxSlice = ext[3];
+        break;
+      }
+
+    if( m_SliceNumberToBeSet >= minSlice && m_SliceNumberToBeSet <= maxSlice )
+      {
+      igstkPushInputMacro( ValidSliceNumber );
+      }
+    else
+      {
+      igstkPushInputMacro( InValidSliceNumber );
+      }
+
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::SetSliceNumberProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::SetSliceNumber called...\n");
+
+  m_SliceNumber = m_SliceNumberToBeSet;
+
+  
+  
+}
+
 
 template < class TImageSpatialObject >
 void 
@@ -261,6 +394,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {  
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ReportInvalidImageSpatialObjectProcessing called...\n");
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::ReportInvalidSliceNumberProcessing( )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::ReportInvalidSliceNumberProcessing called...\n");
 }
 
 template < class TImageSpatialObject >
@@ -364,8 +506,23 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::RequestComputeReslicingPlane called...\n");
 
-  //Update the tool transform
-  this->RequestUpdateToolTransform();
+  igstkPushInputMacro( ComputeReslicePlane );
+  m_StateMachine.ProcessInputs();
+
+}
+
+   
+/** Compute reslicing plane */
+template < class TImageSpatialObject >
+void
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::ComputeReslicePlaneProcessing()
+{
+  //Update the tool transform if tool spatial object provided
+  if ( m_ToolSpatialObject ) 
+    {
+    this->RequestUpdateToolTransform();
+    }
 
   switch( m_ReslicingMode )
     {
@@ -387,7 +544,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     default:
       break;
     }
-
 } 
 
 /**Compute orthgonal reslicing plane */
@@ -399,16 +555,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ComputeOrthgonalReslicingPlane called...\n");
  
-  Transform::VectorType   translation;
-  translation = 
-        m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
-
-
-  double planeCenter[3];
-  planeCenter[0] = translation[0];
-  planeCenter[1] = translation[1];
-  planeCenter[2] = translation[2];
-
   /* Compute input image bounds */
   double imageSpacing[3];
   m_ImageData->GetSpacing( imageSpacing );
@@ -453,6 +599,53 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                 << bounds[3] << ","
                                 << bounds[4] << ","
                                 << bounds[5] << ")" << std::endl;
+  // Set the plance center1 
+  double planeCenter[3];
+
+  //If a tool spatial object is set ( automatic reslicing)x , then the 
+  //the plane center will be set to the tool postion in 3D space.
+  if( m_ToolSpatialObject )
+    {
+    Transform::VectorType   translation;
+    translation = 
+        m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+    planeCenter[0] = translation[0];
+    planeCenter[1] = translation[1];
+    planeCenter[2] = translation[2];
+    }
+  else
+    {
+    // Otherwise, use the slice number and image bounds to set the center
+    switch( m_OrientationType )
+    {
+    case Axial:
+      {
+      planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
+      planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
+      planeCenter[2] = imageOrigin[2] + imageSpacing[2]*m_SliceNumber;
+      break; 
+      }
+    case Sagittal:
+      {
+      planeCenter[0] = imageOrigin[0] + imageSpacing[0]*m_SliceNumber;
+      planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
+      planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
+      break;
+      }
+    case Coronal:
+      {
+      planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
+      planeCenter[1] = imageOrigin[1] + imageSpacing[1]*m_SliceNumber;
+      planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
+      break;
+      }
+    default:
+      {
+      std::cerr << "Invalid orientaiton" << std::endl;
+      break;
+      }
+    }
+  }
 
   //Determine two points and coordinate axes origin 
   double point1[3];
@@ -472,12 +665,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[0] = 0.0;
       planeNormal[1] = 0.0;
       planeNormal[2] = 1.0;
-
-      /*
-      origin[0] = bounds[0];
-      origin[1] = bounds[2];
-      origin[2] = planeCenter[2];
-      */
 
       origin[0] = bounds[0];
       origin[1] = bounds[2];
