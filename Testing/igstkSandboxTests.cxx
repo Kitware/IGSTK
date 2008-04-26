@@ -44,6 +44,7 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest);
+  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest2);
 #endif
 
   REGISTER_TEST(igstkImageReslicePlaneSpatialObjectTest);
