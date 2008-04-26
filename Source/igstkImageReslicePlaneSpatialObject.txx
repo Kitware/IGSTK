@@ -670,6 +670,38 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ComputeOffOrthgonalReslicingPlane called...\n");
+
+  /* Declare the three axes */
+  itk::Vector< double, 3 > axes1;
+  itk::Vector< double, 3 > axes2;
+  itk::Vector< double, 3 > axes3;
+
+
+  /* The first axes will be determined from the toolVector */
+  //We need to get the probe vector in the image coordinate system
+  itk::Vector < double, 3 > toolVector;
+
+  axes1 = toolVector;
+
+  switch( m_OrientationType )
+    {
+    case OffAxial:
+      {
+
+      break;
+      }
+    case OffSagittal:
+      {
+
+      break;
+      }
+
+    case Perpendicular:
+      {
+
+      break;
+      }
+    }
 }
 
 /** Request Get reslcing plane equation */
