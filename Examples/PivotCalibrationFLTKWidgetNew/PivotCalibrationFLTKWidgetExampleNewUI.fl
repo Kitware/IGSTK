@@ -1,0 +1,78 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class PivotCalibrationFLTKWidgetExampleNewUI {open
+} {
+  Function {PivotCalibrationFLTKWidgetExampleNewUI()} {open
+  } {
+    Fl_Window m_mainWindow {
+      label {Pivot Calibration Widget Example} open selected
+      private xywh {525 187 410 529} type Double labelsize 30 align 5 visible
+    } {
+      Fl_Group {} {
+        label Settings
+        private xywh {5 28 395 142} box ENGRAVED_BOX align 5
+      } {
+        Fl_Button m_initializeButton {
+          label Initialize
+          callback {InitializeTrackingAndCalibration();}
+          private xywh {45 121 100 24}
+        }
+        Fl_Value_Slider m_delaySlider {
+          label {Delay [sec]:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();}
+          tooltip {Delay before starting data acquisition} xywh {91 37 87 18} type Horizontal align 4 maximum 30 step 1 value 5
+        }
+        Fl_Value_Slider m_numberOfFramesSlider {
+          label {\# of frames:}
+          callback {this->m_pivotCalibrationFLTKWidget->RequestReset();}
+          tooltip {Number of frames (transformations) to acquire} xywh {92 82 87 18} type Horizontal align 4 minimum 300 maximum 1800 step 1 value 300
+        }
+        Fl_Menu_Button ConnectToTrackerBtn {
+          label Connect
+          callback {RequestConnectToTracker();} open
+          xywh {215 40 145 20} align 20
+        } {
+          MenuItem {} {
+            label Polaris
+            xywh {10 10 30 20} divider
+          }
+          MenuItem {} {
+            label Aurora
+            xywh {15 15 30 20} divider
+          }
+          MenuItem {} {
+            label Micron
+            xywh {15 15 30 20} divider
+          }
+          MenuItem {} {
+            label FlockOfBirds
+            xywh {15 15 30 20}
+          }
+        }
+        Fl_Choice TrackerList {open
+          xywh {215 75 150 20} down_box BORDER_BOX labeltype NO_LABEL
+        } {}
+      }
+      Fl_Box m_pivotCalibrationFLTKWidget {
+        label {Pivot Calibration FLTK Widget}
+        xywh {5 200 395 320} box ENGRAVED_FRAME align 5
+        code0 {\#include <igstkPivotCalibrationFLTKWidget.h>}
+        class {igstk::PivotCalibrationFLTKWidget}
+      }
+    }
+  }
+  Function {Show()} {open return_type void
+  } {
+    code {this->m_mainWindow->show();} {}
+  }
+  Function {InitializeTrackingAndCalibration()} {return_type {virtual void}
+  } {}
+  Function {RequestDisconnectTracker()} {open return_type {virtual void}
+  } {}
+  Function {RequestConnectToTracker()} {open return_type {virtual void}
+  } {}
+} 

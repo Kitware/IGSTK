@@ -1,0 +1,181 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class FlockOfBirdsTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {FlockOfBirdsTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window TrackerConfigurationWindow {
+      label {FlockOfBirds Tracker Configuration} open selected
+      xywh {827 416 319 60} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Choice SerialPort {
+        label {Serial Port Number: } open
+        xywh {145 13 75 25} down_box BORDER_BOX
+      } {}
+      Fl_Button {} {
+        label Confirm
+        callback {GetGUISetting();
+RequestGetConfiguration();
+TrackerConfigurationWindow->hide();}
+        xywh {235 13 70 25}
+      }
+    }
+    code {TrackerConfigurationWindow->show();} {}
+  }
+  Function {~FlockOfBirdsTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {InitializeGUI()} {open return_type {virtual void}
+  } {
+    code {//Initialize tracker configuration window
+SerialPort->clear();
+TrackerToolPort->clear();
+ReferenceToolPort->clear();
+TrackerToolChannel->clear();
+
+char buf[8];
+for( int i = 0; i < 8; i++ )
+{
+  sprintf( buf, "COM %d", i+1 );
+  SerialPort->add( buf );
+}
+// only one tool
+for( int i = 0; i < 1; i++ )
+{
+  sprintf( buf, "%d", i+1 );
+  TrackerToolPort->add( buf );
+  ReferenceToolPort->add( buf );
+}
+
+// no channel
+for ( int i=0; i<0; i++ )
+{
+  sprintf( buf, "%d", i );
+  TrackerToolChannel->add( buf );
+
+}
+
+
+SerialPort->value(0);
+TrackerToolPort->value(0);
+ReferenceToolPort->value(1);
+TrackerToolChannel->value(0);
+
+OffsetX->value( 135 );
+OffsetY->value( 13 );
+OffsetZ->value( -38 );} {}
+  }
+  Function {GetGUISetting()} {open return_type {virtual void}
+  } {
+    code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+
+//Serial Port
+switch( SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    break;
+  case 1 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber1;
+    break;
+  case 2 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber2;      
+    break;
+  case 3 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    break;
+  case 4 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber4;
+    break;
+  case 5 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber5;
+    break;
+  case 6 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber6;
+    break;
+  case 7 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber7;
+    break;
+  default:
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+  }
+  
+ conf->m_Frequency = 30;
+    
+ conf->m_TrackerToolList.clear();
+ 
+ // Wired or Wireless tool, port & SROMs
+ igstk::AscensionTrackerToolConfiguration * tool = new igstk::AscensionTrackerToolConfiguration;
+ 
+ if( Is6DOFTrackerTool->value() )
+   {
+//   tool->m_Is5DOF   = 0;
+   tool->m_PortNumber = TrackerToolPort->value();
+   }
+ else
+   {
+//   tool->m_Is5DOF = 1;
+   tool->m_PortNumber = TrackerToolPort->value();
+//   tool->m_ChannelNumber = TrackerToolChannel->value();
+   }
+   
+if(itksys::SystemTools::FileExists(TrackerToolSROMFile->value()))
+  {
+//  tool->m_HasSROM = 1;
+//  tool->m_SROMFile = TrackerToolSROMFile->value();
+  }
+
+tool->m_IsReference = 0;
+  
+// Calibration  
+igstk::Transform toolCalibrationTransform;
+
+igstk::Transform::VectorType translation;
+translation[0] = OffsetX->value();   // Tip offset
+translation[1] = OffsetY->value();
+translation[2] = OffsetZ->value();
+
+igstk::Transform::VersorType rotation;
+rotation.SetIdentity();
+
+ 
+if (SwitchZAxes->value())
+  {
+  rotation.Set(1.0, 0.0, 0.0, 0.0);
+  }
+ 
+toolCalibrationTransform.SetTranslationAndRotation( translation, rotation, 0.1, igstk::TimeStamp::GetLongestPossibleTime());
+
+tool->m_CalibrationTransform = toolCalibrationTransform;
+
+conf->m_TrackerToolList.push_back( tool );
+
+// Reference tool
+if(UseReferenceTool->value())
+{
+  igstk::AscensionTrackerToolConfiguration * refTool = new igstk::AscensionTrackerToolConfiguration; 
+ // refTool->m_Is5DOF   = 0;
+  refTool->m_PortNumber = ReferenceToolPort->value();
+   
+  if(itksys::SystemTools::FileExists(ReferenceToolSROMFile->value()))
+    {
+   // refTool->m_HasSROM = 1;
+   // refTool->m_SROMFile = ReferenceToolSROMFile->value();
+    }
+  
+  igstk::Transform toolCalibrationTransform;
+  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform;
+   
+  refTool->m_IsReference = 1;
+  conf->m_TrackerToolList.push_back( refTool );
+}
+
+m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::FlockOfBirds );
+m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );} {}
+  }
+} 
