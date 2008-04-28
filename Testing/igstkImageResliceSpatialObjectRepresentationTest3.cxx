@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImageResliceSpatialObjectRepresentationTest2.cxx
+  Module:    igstkImageResliceSpatialObjectRepresentationTest3.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -36,7 +36,7 @@
 #include "igstkView2D.h"
 #include "igstkQTWidget.h"
 
-namespace ImageResliceSpatialObjectRepresentationTest2
+namespace ImageResliceSpatialObjectRepresentationTest3
 {
 igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
@@ -45,8 +45,8 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
                        ::igstk::EventHelperType::VTKImagePointerType );
 }
 
-/** This test demonstrates how to perform orthogonal reslicing using slice number (manual reslicing) */
-int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv [] )
+/** This test demonstrates how to perform orthogonal reslicing using mouse position(manual reslicing) */
+int igstkImageResliceSpatialObjectRepresentationTest3( int argc , char * argv [] )
 {
   igstk::RealTimeClock::Initialize();
 
@@ -97,7 +97,7 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   reader->SetLogger( logger );
 
   //set up CT image observer
-  typedef ImageResliceSpatialObjectRepresentationTest2::CTImageObserver 
+  typedef ImageResliceSpatialObjectRepresentationTest3::CTImageObserver 
                                                         CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
@@ -125,7 +125,7 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
 
   //Determine the image parameters
   //first access the VTK image data
-  typedef ImageResliceSpatialObjectRepresentationTest2::VTKImageObserver 
+  typedef ImageResliceSpatialObjectRepresentationTest3::VTKImageObserver 
                                                         VTKImageObserverType;
   
   VTKImageObserverType::Pointer vtkImageObserver = VTKImageObserverType::New();
@@ -152,6 +152,35 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
                                 << imageExtent[3] << ","
                                 << imageExtent[4] << ","
                                 << imageExtent[5] << ")" << std::endl;
+
+  double imageSpacing[3];
+  imageData->GetSpacing( imageSpacing );
+
+  double imageOrigin[3];
+  imageData->GetOrigin( imageOrigin );
+ 
+  double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+
+    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+        {
+        if ( bounds[i] > bounds[i+1] )
+          {
+          double t = bounds[i+1];
+          bounds[i+1] = bounds[i];
+          bounds[i] = t;
+          }
+        }
+
+  double imageCenter[3];
+
+  imageCenter[0] = 0.5*( bounds[0] + bounds[1] );
+  imageCenter[1] = 0.5*( bounds[2] + bounds[3] );
+  imageCenter[2] = 0.5*( bounds[4] + bounds[5] );
 
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
@@ -200,9 +229,9 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Axial );
   planeSpatialObject->RequestSetImageSpatialObject( imageSpatialObject );
 
-  typedef ResliceSpatialObjectType::SliceNumberType SliceNumberType;
 
-  planeSpatialObject->RequestSetSliceNumber( imageExtent[4] );
+  double position[] = { imageCenter[0], imageCenter[1], imageCenter[2] };
+  planeSpatialObject->RequestSetMousePosition( position );
 
  //Set to the reslice plane to the representation
   representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
@@ -213,10 +242,15 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<imageExtent[5]; i++)
       {
-      planeSpatialObject->RequestSetSliceNumber( i );
+      position[0] = imageCenter[0];
+      position[1] = imageCenter[1];
+      position[2] = imageOrigin[2] + imageSpacing[2]*i; 
+      planeSpatialObject->RequestSetMousePosition( position );
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Axial slice number: " << i << std::endl;
+      std::cout << "Axial mouse position : (" << position[0]  
+                                             << "," << position[1] 
+                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 
@@ -225,7 +259,11 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   planeSpatialObject->RequestSetOrientationType(
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Sagittal );
 
-  planeSpatialObject->RequestSetSliceNumber( imageExtent[0] );
+  position[0] = imageOrigin[0];
+  position[1] = imageCenter[1];
+  position[2] = imageCenter[2];
+ 
+  planeSpatialObject->RequestSetMousePosition( position );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
@@ -233,10 +271,16 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[1]; i++)
       {
-      planeSpatialObject->RequestSetSliceNumber( i );
+      position[0] = imageOrigin[0] + imageSpacing[2]*i;
+      position[1] = imageCenter[1];
+      position[2] = imageCenter[2];
+      planeSpatialObject->RequestSetMousePosition( position );
+
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Sagittal slice number: " << i << std::endl;
+      std::cout << "Sagittal mouse position : (" << position[0]  
+                                             << "," << position[1] 
+                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 
@@ -244,18 +288,29 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   std::cout << "Coronal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
-  planeSpatialObject->RequestSetSliceNumber( imageExtent[2] );  
+
+  position[0] = imageCenter[0];
+  position[1] = imageOrigin[1];
+  position[2] = imageCenter[2];
+  planeSpatialObject->RequestSetMousePosition( position );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
   qtMainWindow->show();
+
   //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[3]; i++)
       {
-      planeSpatialObject->RequestSetSliceNumber( i );
+      position[0] = imageCenter[0];
+      position[1] = imageOrigin[1] + imageSpacing[1]*i;
+      position[2] = imageCenter[2];
+      planeSpatialObject->RequestSetMousePosition( position );
+
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Sagittal slice number: " << i << std::endl;
+      std::cout << "Coronal mouse position : (" << position[0]  
+                                             << "," << position[1] 
+                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 
