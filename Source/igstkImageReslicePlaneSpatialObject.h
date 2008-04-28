@@ -116,6 +116,9 @@ public:
   /** Request Set Slice number */
   void RequestSetSliceNumber( SliceNumberType sliceNumber );
 
+  /** Request set reslicing mouse position */
+  void RequestSetMousePosition( double  mousePostion[3] );
+
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
 
@@ -161,6 +164,9 @@ private:
   igstkDeclareInputMacro( SetSliceNumber );
   igstkDeclareInputMacro( ValidSliceNumber );
   igstkDeclareInputMacro( InValidSliceNumber );
+  igstkDeclareInputMacro( SetMousePosition );
+  igstkDeclareInputMacro( ValidMousePosition );
+  igstkDeclareInputMacro( InValidMousePosition );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ComputeReslicePlane );
@@ -172,8 +178,10 @@ private:
   igstkDeclareStateMacro( ImageSpatialObjectSet );
   igstkDeclareStateMacro( ToolSpatialObjectSet );
   igstkDeclareStateMacro( ValidSliceNumberSet );
-  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   igstkDeclareStateMacro( AttemptingToSetSliceNumber );
+  igstkDeclareStateMacro( ValidMousePositionSet );
+  igstkDeclareStateMacro( AttemptingToSetMousePosition );
+  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Internal itkSpatialObject */
 
@@ -186,6 +194,10 @@ private:
   /** Set slice number */
   void AttemptSetSliceNumberProcessing( void );
   void SetSliceNumberProcessing( void );
+
+  /** Set mouse position */
+  void AttemptSetMousePositionProcessing( void );
+  void SetMousePositionProcessing( void );
  
   /** Reslice plance compute methold */
   void ComputeReslicePlaneProcessing();
@@ -210,6 +222,9 @@ private:
 
   /** Report invalid slice number*/
   void ReportInvalidSliceNumberProcessing( void );
+
+  /** Report invalid mouse position */
+  void ReportInvalidMousePositionProcessing( void );
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -260,9 +275,15 @@ private:
   /** Observer to the VTK image events */
   typename VTKImageObserver::Pointer         m_VTKImageObserver;
 
-  /** setting slice number */
+  /** Slice number member variables */
   SliceNumberType      m_SliceNumberToBeSet;
   SliceNumberType      m_SliceNumber;
+  bool                 m_SliceNumberSetFlag;
+
+  /** mouse position member variables */
+  double                 m_MousePositionToBeSet[3];
+  double                 m_MousePosition[3];
+  bool                   m_MousePostionSetFlag;
 };
 
 } // end namespace igstk

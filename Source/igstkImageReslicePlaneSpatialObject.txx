@@ -40,9 +40,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   m_OrientationType = Axial;
 
   m_ImageData = NULL;
-
   m_ImageSpatialObject = NULL;
-
   m_ToolSpatialObject = NULL; 
 
   //Create vtk plane 
@@ -56,6 +54,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 
   //slice number
   m_SliceNumber = 0;
+  m_SliceNumberSetFlag = false;
+
+  //mouse position 
+  m_MousePosition[0] = 0;
+  m_MousePosition[1] = 0;
+  m_MousePosition[2] = 0;
+  m_MousePostionSetFlag = false;
 
   //List of states
   igstkAddStateMacro( Initial );
@@ -66,6 +71,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   igstkAddStateMacro( AttemptingToSetSliceNumber );
   igstkAddStateMacro( ValidSliceNumberSet);
+  igstkAddStateMacro( AttemptingToSetMousePosition );
+  igstkAddStateMacro( ValidMousePositionSet);
+
+
 
   // List of state machine inputs
   igstkAddInputMacro( ValidReslicingMode );
@@ -79,6 +88,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddInputMacro( SetSliceNumber );
   igstkAddInputMacro ( ValidSliceNumber );
   igstkAddInputMacro ( InValidSliceNumber );
+  igstkAddInputMacro( SetMousePosition );
+  igstkAddInputMacro ( ValidMousePosition );
+  igstkAddInputMacro ( InValidMousePosition );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ComputeReslicePlane );
@@ -92,12 +104,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddTransitionMacro( Initial, ValidOrientationType, Initial, ReportInvalidRequest);
   igstkAddTransitionMacro( Initial, InValidOrientationType, Initial, ReportInvalidRequest);
   igstkAddTransitionMacro( Initial, SetSliceNumber, Initial, ReportInvalidRequest);
+  igstkAddTransitionMacro( Initial, SetMousePosition, Initial, ReportInvalidRequest);
 
   //From ReslicingModeSet
   igstkAddTransitionMacro( ReslicingModeSet, ValidOrientationType, OrientationTypeSet, SetOrientationType );
   igstkAddTransitionMacro( ReslicingModeSet, InValidOrientationType, ReslicingModeSet, ReportInvalidOrientationType);
-  igstkAddTransitionMacro( ReslicingModeSet, SetSliceNumber,
-                           ReslicingModeSet, ReportInvalidRequest );  
+  igstkAddTransitionMacro( ReslicingModeSet, SetSliceNumber, ReslicingModeSet, ReportInvalidRequest );  
+  igstkAddTransitionMacro( ReslicingModeSet, SetMousePosition, ReslicingModeSet, ReportInvalidRequest );  
 
   //From OrientationTypeSet
   igstkAddTransitionMacro( OrientationTypeSet,
@@ -111,6 +124,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ReportInvalidImageSpatialObject );
 
   igstkAddTransitionMacro( OrientationTypeSet, SetSliceNumber,
+                           OrientationTypeSet, ReportInvalidRequest );  
+
+  igstkAddTransitionMacro( OrientationTypeSet, SetMousePosition,
                            OrientationTypeSet, ReportInvalidRequest );  
 
 
@@ -138,11 +154,21 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddTransitionMacro( ImageSpatialObjectSet, SetSliceNumber,
                            AttemptingToSetSliceNumber, AttemptSetSliceNumber );  
 
+  igstkAddTransitionMacro( ImageSpatialObjectSet, SetMousePosition,
+                           AttemptingToSetMousePosition, AttemptSetMousePosition );  
+
+
   // From AttemptingToSetSliceNumber
   igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber,
                            ValidSliceNumberSet,  SetSliceNumber ); 
   igstkAddTransitionMacro( AttemptingToSetSliceNumber, InValidSliceNumber,
                            ImageSpatialObjectSet,  ReportInvalidSliceNumber ); 
+
+  // From AttemptingToSetMousePosition
+  igstkAddTransitionMacro( AttemptingToSetMousePosition, ValidMousePosition,
+                           ValidMousePositionSet,  SetMousePosition ); 
+  igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
+                           ImageSpatialObjectSet,  ReportInvalidMousePosition ); 
 
 
   // From ValidSliceNumberSet
@@ -165,6 +191,28 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            InValidOrientationType,
                            ValidSliceNumberSet,
                            ReportInvalidOrientationType );
+
+  // From ValidMousePositionSet
+  igstkAddTransitionMacro( ValidMousePositionSet,
+                           ComputeReslicePlane,
+                           ValidMousePositionSet,
+                           ComputeReslicePlane );
+
+  igstkAddTransitionMacro( ValidMousePositionSet,
+                           SetMousePosition,
+                           AttemptingToSetMousePosition,
+                           AttemptSetMousePosition );
+
+  igstkAddTransitionMacro( ValidMousePositionSet,
+                           ValidOrientationType,
+                           ValidMousePositionSet,
+                           SetOrientationType );
+
+  igstkAddTransitionMacro( ValidMousePositionSet,
+                           InValidOrientationType,
+                           ValidMousePositionSet,
+                           ReportInvalidOrientationType );
+
 
   //From ToolSpatialObjectSet
   igstkAddTransitionMacro( ToolSpatialObjectSet,
@@ -301,10 +349,134 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                         ::SetSliceNumber called...\n");
 
   m_SliceNumber = m_SliceNumberToBeSet;
-
   
-  
+  //turn on the flag
+  m_SliceNumberSetFlag = true;
 }
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject<TImageSpatialObject>
+::RequestSetMousePosition( double mousePosition[3] )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::RequestSetMousePosition called...\n");
+
+  m_MousePositionToBeSet[0] = mousePosition[0];
+  m_MousePositionToBeSet[1] = mousePosition[1];
+  m_MousePositionToBeSet[2] = mousePosition[2];
+
+  m_StateMachine.PushInput( m_SetMousePositionInput );
+
+  m_StateMachine.ProcessInputs();
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::AttemptSetMousePositionProcessing()
+{
+
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::AttemptSetMousePositionProcessing called...\n");
+  if( m_ImageData )
+    {
+
+    int ext[6];
+
+    m_ImageData->Update();
+    m_ImageData->GetExtent( ext );
+
+    //Compute image bounds
+    double imageSpacing[3];
+    m_ImageData->GetSpacing( imageSpacing );
+
+    double imageOrigin[3];
+    m_ImageData->GetOrigin( imageOrigin );
+
+    int imageExtent[6];
+    m_ImageData->GetWholeExtent( imageExtent );
+
+    double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+
+    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+        {
+        if ( bounds[i] > bounds[i+1] )
+          {
+          double t = bounds[i+1];
+          bounds[i+1] = bounds[i];
+          bounds[i] = t;
+          }
+        }
+
+    std::cout << "Image bounds: " << "(" << bounds[0] << "," 
+                                  << bounds[1] << ","
+                                  << bounds[2] << ","
+                                  << bounds[3] << ","
+                                  << bounds[4] << ","
+                                  << bounds[5] << ")" << std::endl;
+
+    bool validPosition = false; 
+
+    switch( m_OrientationType )
+      {
+      case Axial:
+        if( m_MousePositionToBeSet[2] >= bounds[4] && 
+            m_MousePositionToBeSet[2] <= bounds[5] )
+          {
+          validPosition = true;
+          }
+          break;
+      case Sagittal:
+        if( m_MousePositionToBeSet[0] >= bounds[0] && 
+            m_MousePositionToBeSet[0] <= bounds[1] )
+          {
+          validPosition = true;
+          }
+        break;
+      case Coronal:
+        if( m_MousePositionToBeSet[1] >= bounds[2] && 
+            m_MousePositionToBeSet[1] <= bounds[3] )
+          {
+          validPosition = true;
+          }
+        break;
+      }
+
+    if( validPosition )
+      {
+      igstkPushInputMacro( ValidMousePosition );
+      }
+    else
+      {
+      igstkPushInputMacro( InValidMousePosition );
+      }
+
+    m_StateMachine.ProcessInputs();
+    }
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::SetMousePositionProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::SetMousePosition called...\n");
+
+  m_MousePosition[0] = m_MousePositionToBeSet[0];
+  m_MousePosition[1] = m_MousePositionToBeSet[1];
+  m_MousePosition[2] = m_MousePositionToBeSet[2];
+
+  //turn on the flag
+  m_MousePostionSetFlag = true;
+}
+
 
 
 template < class TImageSpatialObject >
@@ -403,6 +575,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {  
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ReportInvalidSliceNumberProcessing called...\n");
+}
+
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::ReportInvalidMousePositionProcessing( )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::ReportInvalidMousePositionProcessing called...\n");
 }
 
 template < class TImageSpatialObject >
@@ -602,7 +783,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   // Set the plance center1 
   double planeCenter[3];
 
-  //If a tool spatial object is set ( automatic reslicing)x , then the 
+  //If a tool spatial object is set ( automatic reslicing) , then the 
   //the plane center will be set to the tool postion in 3D space.
   if( m_ToolSpatialObject )
     {
@@ -615,19 +796,35 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     }
   else
     {
-    // Otherwise, use the slice number and image bounds to set the center
+    // Otherwise, use the slice number or mouse postion and image bounds to set the center
     switch( m_OrientationType )
     {
     case Axial:
       {
       planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
       planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
-      planeCenter[2] = imageOrigin[2] + imageSpacing[2]*m_SliceNumber;
+     
+      if( m_SliceNumberSetFlag )
+        {
+        planeCenter[2] = imageOrigin[2] + imageSpacing[2]*m_SliceNumber;
+        }
+      else
+        {
+        planeCenter[2] = m_MousePosition[2]; 
+        }
       break; 
       }
     case Sagittal:
       {
-      planeCenter[0] = imageOrigin[0] + imageSpacing[0]*m_SliceNumber;
+      if( m_SliceNumberSetFlag )
+        {
+        planeCenter[0] = imageOrigin[0] + imageSpacing[0]*m_SliceNumber;
+        }
+      else
+        {
+        planeCenter[0] = m_MousePosition[0];
+        }
+
       planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
       planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
       break;
@@ -635,7 +832,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     case Coronal:
       {
       planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
-      planeCenter[1] = imageOrigin[1] + imageSpacing[1]*m_SliceNumber;
+
+      if( m_SliceNumberSetFlag )
+        {
+        planeCenter[1] = imageOrigin[1] + imageSpacing[1]*m_SliceNumber;
+        }
+      else
+        {
+        planeCenter[1] = m_MousePosition[1];
+        }
       planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
       break;
       }
