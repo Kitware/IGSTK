@@ -19,7 +19,8 @@ IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingNewUsingFLTKWidget
     PivotCalibrationFLTKWidget
-    PivotCalibrationFLTKWidgetUsingFOBTracker    
+    PivotCalibrationFLTKWidgetNew
+#    PivotCalibrationFLTKWidgetUsingFOBTracker    
     TwoViews
     FourViewsTrackingWithCT
     FourViews
