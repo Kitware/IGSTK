@@ -134,8 +134,17 @@ IF(IGSTKSandbox_USE_MicronTracker)
     PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
     DOC "Full path to the MTC.dll file"
     )
-  GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
-  LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
+
+  IF(MTC_INCLUDE_DIRECTORY)
+   INCLUDE(${IGSTK_SOURCE_DIR}/CMake/ExtractMTCVersion.cmake)
+    IF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 2.6 )
+      MESSAGE( FATAL_ERROR " Your MTC version is
+  ${MTCMajorVersion}.${MTCMinorVersion}. Version 2.6 or later should be used")
+    ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 2.6 )
+    
+    GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
+    LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
+  ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # Enable the option for building classes for sending transform data through sockets
