@@ -59,6 +59,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
   igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
+  m_CommandInterpreter->SetHemisphere(FB_FORWARD);
 
   return SUCCESS;
 }
@@ -139,6 +140,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   while( inputItr != inputEnd )
   {
+      // fixme: m_ToolStatusContainer is not reporting correctly
+      /*
       // only report tools that are in view
       if (! this->m_ToolStatusContainer[inputItr->first])
       {
@@ -152,6 +155,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
           ++inputItr;
           continue;
       }
+      */
       // report to the tracker tool that the tracker is Visible
       this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
@@ -247,13 +251,17 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 
      std::vector< double > transform;
 
-     transform.push_back( quaternion[0] ); 
-     transform.push_back( quaternion[1] );
-     transform.push_back( quaternion[2] );
-     transform.push_back( quaternion[3] );
-     transform.push_back( offset[0] );
+     transform.push_back( offset[0] ); 
      transform.push_back( offset[1] );
      transform.push_back( offset[2] );
+
+     // fob quaternion q0, q1, q2, and q3 where q0
+     // is the scaler component
+     // itk versor: void Set( T x, T y, T z, T w );
+     transform.push_back( quaternion[0] );
+     transform.push_back( -quaternion[3] );
+     transform.push_back( quaternion[2] );
+     transform.push_back( quaternion[1] );
 
     inputItr = this->m_ToolTransformBuffer.begin();
 
