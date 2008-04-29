@@ -132,6 +132,9 @@ IF(IGSTKSandbox_USE_Qt)
     ${SandboxTests_SRCS}
   igstkImageResliceSpatialObjectRepresentationTest3.cxx)
 
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationTest4.cxx)
 
 ENDIF(IGSTKSandbox_USE_Qt)
  
@@ -226,6 +229,12 @@ IF(IGSTKSandbox_USE_Qt)
  ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest3
               ${IGSTKSandbox_TESTS}
               igstkImageResliceSpatialObjectRepresentationTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
+
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest4
+              ${IGSTKSandbox_TESTS}
+              igstkImageResliceSpatialObjectRepresentationTest4
               ${IGSTK_DATA_ROOT}/Input/E000192 
          )
 

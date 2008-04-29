@@ -46,6 +46,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest2);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest3);
+  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest4);
 #endif
 
   REGISTER_TEST(igstkImageReslicePlaneSpatialObjectTest);
