@@ -98,7 +98,10 @@ public:
     Coronal, 
     Perpendicular,
     OffAxial,
-    OffSagittal
+    OffSagittal,
+    ObliqueAxial,
+    ObliqueSagittal,
+    ObliqueCoronal
     };
 
   /** Request the state machine to attempt to set the reslicing mode*/

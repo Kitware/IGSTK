@@ -26,6 +26,8 @@
 #include "vtkPlane.h"
 #include "vtkMath.h"
 
+#include "itkVersor.h"
+
 namespace igstk
 { 
 
@@ -498,9 +500,57 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
                        ::RequestSetOrientationType called...\n");
 
   m_OrientationTypeToBeSet = orientationType;
-  m_StateMachine.PushInput( m_ValidOrientationTypeInput );
 
-  //FIXME: Check conditions for InValidOrientation type 
+  bool validOrientation = true;
+
+  if( m_ReslicingMode == Orthogonal )
+    {
+    if( m_OrientationTypeToBeSet == Perpendicular ||
+         m_OrientationTypeToBeSet == OffSagittal ||
+         m_OrientationTypeToBeSet == OffAxial  ||
+         m_OrientationTypeToBeSet == ObliqueAxial ||
+         m_OrientationTypeToBeSet == ObliqueSagittal ||
+         m_OrientationTypeToBeSet == ObliqueCoronal )
+      {
+      validOrientation = false;
+      }
+    }
+
+  if( m_ReslicingMode == Oblique )
+    {
+    if( m_OrientationTypeToBeSet  == Perpendicular ||
+         m_OrientationTypeToBeSet == OffSagittal ||
+         m_OrientationTypeToBeSet == OffAxial  ||
+         m_OrientationTypeToBeSet == Axial ||
+         m_OrientationTypeToBeSet == Sagittal ||
+         m_OrientationTypeToBeSet == Coronal )
+      {
+      validOrientation = false;
+      }
+    }
+
+  if( m_ReslicingMode == OffOrthogonal )
+    {
+    if( m_OrientationTypeToBeSet  == ObliqueAxial ||
+         m_OrientationTypeToBeSet == ObliqueSagittal ||
+         m_OrientationTypeToBeSet == ObliqueCoronal  ||
+         m_OrientationTypeToBeSet == Axial ||
+         m_OrientationTypeToBeSet == Sagittal ||
+         m_OrientationTypeToBeSet == Coronal )
+      {
+      validOrientation = false;
+      }
+    }
+       
+  if ( validOrientation )
+    {
+    m_StateMachine.PushInput( m_ValidOrientationTypeInput );
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_InValidOrientationTypeInput );
+    }
+
   m_StateMachine.ProcessInputs();
 }
 
@@ -1052,6 +1102,55 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ComputeObliqueReslicingPlane called...\n");
+
+  //For Oblique reslicing, a 6DOF tool should be used.
+  if( !m_ToolSpatialObject )
+    {
+    std::cerr << "Tool spatial object is not specified. For Oblique \
+                  reslicing mode,a tool spatialobject is required." << std::endl;
+    return;
+    }
+
+  Transform::VectorType   translation;
+  translation = 
+      m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+
+  double planeCenter[3];
+  planeCenter[0] = translation[0];
+  planeCenter[1] = translation[1];
+  planeCenter[2] = translation[2];
+
+  Transform::VersorType   toolVersor;
+  toolVersor = m_ToolTransformWRTImageCoordinateSystem.GetRotation(); 
+
+  //From the rotation versor, define the reslice axes.
+  typedef ::itk::Versor<double>::MatrixType           MatrixType; 
+
+  MatrixType rotationMatrix = toolVersor.GetMatrix();
+  std::cout << "RotationMatrix=" << rotationMatrix << std::endl; 
+
+
+  switch( m_OrientationType )
+  {
+  case ObliqueAxial:
+    {
+
+    }
+    break;
+  case ObliqueCoronal:
+    {
+
+    }
+    break;
+  case ObliqueSagittal:
+    {
+
+    }
+    break;
+  default:
+    break;
+  }
+
 }
 
 /**Compute off-orthgonal reslicing plane */
