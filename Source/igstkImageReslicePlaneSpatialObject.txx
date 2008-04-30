@@ -508,9 +508,9 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
     if( m_OrientationTypeToBeSet == Perpendicular ||
          m_OrientationTypeToBeSet == OffSagittal ||
          m_OrientationTypeToBeSet == OffAxial  ||
-         m_OrientationTypeToBeSet == ObliqueAxial ||
-         m_OrientationTypeToBeSet == ObliqueSagittal ||
-         m_OrientationTypeToBeSet == ObliqueCoronal )
+         m_OrientationTypeToBeSet == PlaneOrientationWithZAxesNormal ||
+         m_OrientationTypeToBeSet == PlaneOrientationWithXAxesNormal ||
+         m_OrientationTypeToBeSet == PlaneOrientationWithYAxesNormal )
       {
       validOrientation = false;
       }
@@ -531,9 +531,9 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
 
   if( m_ReslicingMode == OffOrthogonal )
     {
-    if( m_OrientationTypeToBeSet  == ObliqueAxial ||
-         m_OrientationTypeToBeSet == ObliqueSagittal ||
-         m_OrientationTypeToBeSet == ObliqueCoronal  ||
+    if( m_OrientationTypeToBeSet  == PlaneOrientationWithZAxesNormal ||
+         m_OrientationTypeToBeSet == PlaneOrientationWithXAxesNormal ||
+         m_OrientationTypeToBeSet == PlaneOrientationWithYAxesNormal  ||
          m_OrientationTypeToBeSet == Axial ||
          m_OrientationTypeToBeSet == Sagittal ||
          m_OrientationTypeToBeSet == Coronal )
@@ -1129,20 +1129,44 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   MatrixType rotationMatrix = toolVersor.GetMatrix();
   std::cout << "RotationMatrix=" << rotationMatrix << std::endl; 
 
+  double origin[3]; 
+
+  /* FIXME: Similar to the orthgonal reslicing, the origin should be setup taking
+     into account the orientation type. But for now, let us set it to the 
+     planeCenter */
+
+  origin[0] = planeCenter[0]; 
+  origin[1] = planeCenter[1]; 
+  origin[2] = planeCenter[2]; 
+ 
+  double axisX[3];
+  axisX[0] = rotationMatrix[0][0]; 
+  axisX[1] = rotationMatrix[0][1]; 
+  axisX[2] = rotationMatrix[0][2]; 
+
+  double axisY[3];
+  axisY[0] = rotationMatrix[1][0]; 
+  axisY[1] = rotationMatrix[1][1]; 
+  axisY[2] = rotationMatrix[1][2]; 
+
+  double axisZ[3];
+  axisZ[0] = rotationMatrix[2][0]; 
+  axisZ[1] = rotationMatrix[2][1]; 
+  axisZ[2] = rotationMatrix[2][2]; 
 
   switch( m_OrientationType )
   {
-  case ObliqueAxial:
+  case PlaneOrientationWithZAxesNormal:
     {
 
     }
     break;
-  case ObliqueCoronal:
+  case PlaneOrientationWithYAxesNormal:
     {
 
     }
     break;
-  case ObliqueSagittal:
+  case PlaneOrientationWithXAxesNormal:
     {
 
     }
@@ -1151,6 +1175,38 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     break;
   }
 
+  //Normalize the axes
+  vtkMath::Normalize(axisX);
+  vtkMath::Normalize(axisY);
+  vtkMath::Normalize(axisZ);
+
+  m_ResliceAxes->Identity();
+  for ( unsigned int i = 0; i < 3; i++ )
+     {
+     m_ResliceAxes->SetElement(i,0,axisX[i]);
+     m_ResliceAxes->SetElement(i,1,axisY[i]);
+     m_ResliceAxes->SetElement(i,2,axisZ[i]);
+     m_ResliceAxes->SetElement(i,3,origin[i]);
+     }
+ 
+  std::cout.precision(3);
+  std::cout << "ResliceAxes matrix: \n" 
+            << "(" << m_ResliceAxes->GetElement(0,0) << ","
+            << m_ResliceAxes->GetElement(0,1) << ","
+            << m_ResliceAxes->GetElement(0,2) << ","
+            << m_ResliceAxes->GetElement(0,3) << "\n"
+            << m_ResliceAxes->GetElement(1,0) << ","
+            << m_ResliceAxes->GetElement(1,1) << ","
+            << m_ResliceAxes->GetElement(1,2) << ","
+            << m_ResliceAxes->GetElement(1,3) << "\n"
+            << m_ResliceAxes->GetElement(2,0) << ","
+            << m_ResliceAxes->GetElement(2,1) << ","
+            << m_ResliceAxes->GetElement(2,2) << ","
+            << m_ResliceAxes->GetElement(2,3) << "\n"
+            << m_ResliceAxes->GetElement(3,0) << ","
+            << m_ResliceAxes->GetElement(3,1) << ","
+            << m_ResliceAxes->GetElement(3,2) << ","
+            << m_ResliceAxes->GetElement(3,3) << ")" << std::endl;
 }
 
 /**Compute off-orthgonal reslicing plane */

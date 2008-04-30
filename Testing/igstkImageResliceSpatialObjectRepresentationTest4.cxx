@@ -241,12 +241,6 @@ int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv []
   //Request refreshing stop to take a screenshot
   view2D->RequestStop();
       
-  /* Save screenshots in a file */
-  std::string filename;
-  filename = argv[2]; 
-  std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
-  view2D->RequestSaveScreenShot( filename );
-
   //Instantiate and use reslice plane spatial object
   std::cout << "Attach a reslice plane spatial object ....." << std::endl;
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
@@ -258,7 +252,7 @@ int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv []
 
   // Select Oblique axial orientation
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::ObliqueAxial );
+           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::PlaneOrientationWithZAxesNormal );
 
   planeSpatialObject->RequestSetImageSpatialObject( imageSpatialObject );
 
@@ -275,12 +269,18 @@ int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv []
   translation[0] =    0.5 * (bounds[0] + bounds[1] );
   translation[1] =    0.5 * (bounds[2] + bounds[3] );
   translation[2] =  bounds[4];
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
   const double transformUncertainty = 1.0;
   toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
@@ -306,19 +306,25 @@ int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv []
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
-  std::cout << "Sagittal view: " << std::endl;
+  /* Change slice orientation to plane orienation with x axes normal*/
+  std::cout << "Plane orienation with x axes normal : " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::ObliqueSagittal );
+           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::PlaneOrientationWithXAxesNormal );
 
   translation[0] =    bounds[0];
   translation[1] =    0.5 * (bounds[2] + bounds[3] );
   translation[2] =    0.5 * (bounds[4] + bounds[5] );
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
   toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0,1.0);
+  toolTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestStart();
@@ -340,17 +346,22 @@ int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv []
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
-  std::cout << "Coronal view: " << std::endl;
+  /* Change slice orientation to plane orientaion with y axes normal */
+  std::cout << "Plane orientation with Y axes normal: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::ObliqueCoronal );
+           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::PlaneOrientationWithYAxesNormal );
 
   translation[0] =    0.5 * (bounds[0] + bounds[1] );
   translation[1] =    bounds[2];
   translation[2] =    0.5 * (bounds[4] + bounds[5] );
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
   toolTransform.SetTranslation(
                           translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetRotation(
+                          rotation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );

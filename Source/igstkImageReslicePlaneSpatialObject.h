@@ -99,9 +99,9 @@ public:
     Perpendicular,
     OffAxial,
     OffSagittal,
-    ObliqueAxial,
-    ObliqueSagittal,
-    ObliqueCoronal
+    PlaneOrientationWithZAxesNormal,
+    PlaneOrientationWithXAxesNormal,
+    PlaneOrientationWithYAxesNormal
     };
 
   /** Request the state machine to attempt to set the reslicing mode*/
