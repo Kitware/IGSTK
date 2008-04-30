@@ -10,49 +10,16 @@ class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
   } {
     Fl_Window TrackerConfigurationWindow {
       label {Aurora Tracker Configuration} open
-      xywh {827 104 418 475} type Double
+      xywh {276 265 418 234} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
         label {Serial Port Number: } open
         xywh {213 13 75 25} down_box BORDER_BOX
       } {}
-      Fl_Group ReferenceToolGroup {open
-        xywh {30 326 355 100} box ENGRAVED_BOX deactivate
-      } {
-        Fl_Output ReferenceToolSROMFile {
-          label {SROM File:}
-          xywh {110 391 230 25}
-        }
-        Fl_Button {} {
-          label {...}
-          callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
-if( fileName )
-{
-  ReferenceToolSROMFile->value(fileName);
-}}
-          xywh {345 391 25 25}
-        }
-        Fl_Choice ReferenceToolPort {
-          label {Port:}
-          xywh {205 350 45 25} down_box BORDER_BOX
-        } {}
-      }
-      Fl_Round_Button UseReferenceTool {
-        label {Use Reference Tool ?}
-        callback {if( UseReferenceTool->value() )
-{
-  ReferenceToolGroup->activate();
-}
-else
-{
-  ReferenceToolGroup->deactivate();
-}}
-        xywh {30 291 25 25} down_box ROUND_DOWN_BOX
-      }
       Fl_Group TrackerToolGroup {
         label {Tracker Tool} open
-        xywh {29 65 356 213} box ENGRAVED_BOX
+        xywh {29 65 356 98} box ENGRAVED_BOX
       } {
         Fl_Output TrackerToolSROMFile {
           label {SROM File:}
@@ -71,27 +38,6 @@ if( fileName )
           label {Port:}
           xywh {225 85 45 25} down_box BORDER_BOX
         } {}
-        Fl_Group {} {
-          label {Tool Tip Offset}
-          xywh {30 168 355 70} box ENGRAVED_BOX
-        } {
-          Fl_Value_Input OffsetX {
-            label {X:}
-            xywh {70 198 55 25}
-          }
-          Fl_Value_Input OffsetY {
-            label {Y:}
-            xywh {190 198 55 25}
-          }
-          Fl_Value_Input OffsetZ {
-            label {Z:}
-            xywh {315 198 55 25}
-          }
-        }
-        Fl_Round_Button SwitchZAxes {
-          label {Flip Z axis?} selected
-          xywh {55 244 25 25} down_box ROUND_DOWN_BOX
-        }
         Fl_Group {} {open
           xywh {31 74 170 35}
         } {
@@ -116,7 +62,7 @@ if( fileName )
         callback {GetGUISetting();
 RequestGetConfiguration();
 TrackerConfigurationWindow->hide();}
-        xywh {315 439 70 25}
+        xywh {315 190 70 25}
       }
     }
     code {TrackerConfigurationWindow->show();} {}
@@ -128,7 +74,6 @@ TrackerConfigurationWindow->hide();}
     code {//Initialize tracker configuration window
 SerialPort->clear();
 TrackerToolPort->clear();
-ReferenceToolPort->clear();
 TrackerToolChannel->clear();
 
 char buf[8];
@@ -142,7 +87,6 @@ for( int i = 0; i < 4; i++ )
 {
   sprintf( buf, "%d", i+1 );
   TrackerToolPort->add( buf );
-  ReferenceToolPort->add( buf );
 }
 
 
@@ -156,12 +100,7 @@ for ( int i=0; i<2; i++ )
 
 SerialPort->value(0);
 TrackerToolPort->value(0);
-ReferenceToolPort->value(1);
-TrackerToolChannel->value(0);
-
-OffsetX->value( 0.0 );
-OffsetY->value( 0.0 );
-OffsetZ->value( 0.0 );} {}
+TrackerToolChannel->value(0);} {}
   }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {
@@ -225,49 +164,10 @@ if(itksys::SystemTools::FileExists(TrackerToolSROMFile->value()))
 
 tool->m_IsReference = 0;
   
-// Calibration  
-igstk::Transform toolCalibrationTransform;
-
-igstk::Transform::VectorType translation;
-translation[0] = OffsetX->value();   // Tip offset
-translation[1] = OffsetY->value();
-translation[2] = OffsetZ->value();
-
-igstk::Transform::VersorType rotation;
-rotation.SetIdentity();
-if (SwitchZAxes->value())
-  {
-  rotation.Set(1.0, 0.0, 0.0, 0.0);
-  }
- 
-toolCalibrationTransform.SetTranslationAndRotation( translation, rotation, 0.1, igstk::TimeStamp::GetLongestPossibleTime());
-
-tool->m_CalibrationTransform = toolCalibrationTransform;
-
 conf->m_TrackerToolList.push_back( tool );
 
-// Reference tool
-if(UseReferenceTool->value())
-{
-  igstk::NDITrackerToolConfiguration * refTool = new igstk::NDITrackerToolConfiguration; 
-  refTool->m_Is5DOF   = 0;
-  refTool->m_PortNumber = ReferenceToolPort->value();
-   
-  if(itksys::SystemTools::FileExists(ReferenceToolSROMFile->value()))
-    {
-    refTool->m_HasSROM = 1;
-    refTool->m_SROMFile = ReferenceToolSROMFile->value();
-    }
-  
-  igstk::Transform toolCalibrationTransform;
-  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
-  refTool->m_CalibrationTransform = toolCalibrationTransform;
-   
-  refTool->m_IsReference = 1;
-  conf->m_TrackerToolList.push_back( refTool );
-}
-
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::Aurora );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
+    }
   }
 } 
