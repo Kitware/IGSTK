@@ -1,22 +1,55 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class FlockOfBirdsTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+class FlockOfBirdsTrackerConfigurationGUI {open selected : {public igstk::TrackerConfigurationGUIBase}
 } {
   Function {FlockOfBirdsTrackerConfigurationGUI()} {open
   } {
     Fl_Window TrackerConfigurationWindow {
       label {FlockOfBirds Tracker Configuration} open
-      xywh {827 416 319 60} type Double
+      xywh {501 385 319 60} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
         label {Serial Port Number: } open
         xywh {145 13 75 25} down_box BORDER_BOX
-      } {}
+      } {
+        menuitem {} {
+          label COM1
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label COM2
+          xywh {10 10 100 20}
+        }
+        menuitem {} {
+          label COM3
+          xywh {20 20 100 20}
+        }
+        menuitem {} {
+          label COM4
+          xywh {30 30 100 20}
+        }
+        menuitem {} {
+          label COM5
+          xywh {40 40 100 20}
+        }
+        menuitem {} {
+          label COM6
+          xywh {50 50 100 20}
+        }
+        menuitem {} {
+          label COM7
+          xywh {60 60 100 20}
+        }
+        menuitem {} {
+          label COM8
+          xywh {70 70 100 20}
+        }
+      }
       Fl_Button {} {
         label Confirm
         callback {GetGUISetting();
@@ -29,20 +62,6 @@ TrackerConfigurationWindow->hide();}
   }
   Function {~FlockOfBirdsTrackerConfigurationGUI()} {open return_type virtual
   } {}
-  Function {InitializeGUI()} {open return_type {virtual void}
-  } {
-    code {//Initialize tracker configuration window
-SerialPort->clear();
-
-char buf[8];
-for( int i = 0; i < 8; i++ )
-{
-  sprintf( buf, "COM %d", i+1 );
-  SerialPort->add( buf );
-}
-
-SerialPort->value(0);} {}
-  }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {
     code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
@@ -87,7 +106,6 @@ switch( SerialPort->value() )
  conf->m_TrackerToolList.push_back( tool );
 
  m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::FlockOfBirds );
- m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );} {selected
-    }
+ m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );} {}
   }
 } 

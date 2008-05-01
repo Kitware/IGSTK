@@ -1,10 +1,10 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+class MicronTrackerConfigurationGUI {open selected : {public igstk::TrackerConfigurationGUIBase}
 } {
   Function {MicronTrackerConfigurationGUI()} {open
   } {
@@ -69,7 +69,7 @@ if( fileDir )
       }
     TrackerToolMarker->value(0);
     }
-}} selected
+}}
         xywh {365 98 25 25}
       }
       Fl_Output TemplateFileDir {
@@ -84,8 +84,6 @@ if( fileDir )
     code {TrackerConfigurationWindow->show();} {}
   }
   Function {~MicronTrackerConfigurationGUI()} {open return_type virtual
-  } {}
-  Function {InitializeGUI()} {open return_type {virtual void}
   } {}
   Function {GetGUISetting()} {open return_type {virtual void}
   } {

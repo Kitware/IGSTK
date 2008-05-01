@@ -63,8 +63,7 @@ public:
 
   virtual void SetConfiguration( TrackerConfigurationNew config )
     {
-    m_TrackerConfiguration = config;
-    InitializeGUI();
+    m_TrackerConfiguration = config;    
     }
 
   virtual void RequestGetConfiguration()
@@ -89,8 +88,7 @@ public:
 protected:
   
   // Tracker specific GUI class has to implement this methods
-  virtual void InitializeGUI() {};
-  virtual void GetGUISetting() {};
+  virtual void GetGUISetting()=0;
   TrackerConfigurationNew      m_TrackerConfiguration;
 
 private:
