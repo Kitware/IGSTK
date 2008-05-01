@@ -19,13 +19,6 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#ifdef ConnectObjectToRepresentationMacro
-#undef ConnectObjectToRepresentationMacro
-#endif
-
-#define ConnectObjectToRepresentationMacro( object, representation ) \
-  representation->RequestSetImageSpatialObject( object );
-
 
 #include "igstkImageSpatialObject.h"
 #include "igstkImageSpatialObjectRepresentation.h"
@@ -50,9 +43,6 @@ int igstkImageSpatialObjectTest( int , char* [] )
   // The helper constructor intializes all the elements needed for the test.
   //
   TestHelperType  testHelper;
-
-  ObjectType         * object         = testHelper.GetSpatialObject();
-  RepresentationType * representation = testHelper.GetRepresentation();
 
   //
   //  Tests that are specific to this type of SpatialObject

@@ -35,9 +35,6 @@
 int igstkUSImageObjectTest( int , char* [] )
 {
 
-  typedef signed short    PixelType;
-  const unsigned int      Dimension = 3;
-
   typedef igstk::USImageObject                   ObjectType;
   typedef igstk::USImageObjectRepresentation     RepresentationType;
 
@@ -51,6 +48,8 @@ int igstkUSImageObjectTest( int , char* [] )
 
   ObjectType         * object         = testHelper.GetSpatialObject();
   RepresentationType * representation = testHelper.GetRepresentation();
+
+  ConnectObjectToRepresentationMacro( object, representation );
 
   //
   //  Tests that are specific to this type of SpatialObject

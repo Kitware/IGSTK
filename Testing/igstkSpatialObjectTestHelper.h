@@ -35,6 +35,14 @@
 #include "igstkDefaultWidget.h"
 #include "igstkTransformObserver.h"
 
+#ifdef ConnectObjectToRepresentationMacro
+#undef ConnectObjectToRepresentationMacro
+#endif
+
+#define ConnectObjectToRepresentationMacro( object, representation ) \
+  representation->RequestSetImageSpatialObject( object );
+
+
 namespace igstk
 {
 
