@@ -725,8 +725,6 @@ void Tracker::AttemptToUpdateStatusProcessing( void )
   InputConstIterator inputItr = m_TrackerTools.begin();
   InputConstIterator inputEnd = m_TrackerTools.end();
 
-  unsigned int toolId = 0;
-
   while( inputItr != inputEnd )
     {
     (inputItr->second)->SetUpdated(false);
