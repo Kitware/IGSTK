@@ -414,12 +414,26 @@ void Tracker::RequestUpdateStatus( void )
 void Tracker::RequestSetFrequency( double frequencyInHz )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::RequestSetFrequency called ...\n");
-  if( frequencyInHz > 0.0 )
+  if( this->ValidateSpecifiedFrequency( frequencyInHz ) )
     {
     this->m_FrequencyToBeSet = frequencyInHz;
     igstkPushInputMacro( ValidFrequency );
     m_StateMachine.ProcessInputs();
     }
+}
+
+/** The "ValidateFrequency" method checks if the specified frequency is 
+ * valid for the tracking device that is being used. This method is to be 
+ * overridden in the derived tracking-device specific classes to take 
+ * into account the maximum frequency possible in the tracking device */
+Tracker::ResultType
+Tracker::ValidateSpecifiedFrequency( double frequencyInHz )
+{
+  if ( frequencyInHz < 0.0 )
+    {
+    return FAILURE;
+    } 
+  return SUCCESS;
 }
 
 /** The "AttemptToOpen" method attempts to open communication with a

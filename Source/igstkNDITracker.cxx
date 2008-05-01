@@ -482,6 +482,17 @@ RemoveTrackerToolFromInternalDataContainers
   return SUCCESS;
 }
 
+/**The "ValidateSpecifiedFrequency" method checks if the specified
+  * frequency is valid for the tracking device that is being used. */
+NDITracker::ResultType
+NDITracker::ValidateSpecifiedFrequency( double frequencyInHz )
+{
+  if ( frequencyInHz < 0.0 )
+    {
+    return FAILURE;
+    } 
+  return SUCCESS;
+}
 
 /** Print Self function */
 void NDITracker::PrintSelf( std::ostream& os, itk::Indent indent ) const

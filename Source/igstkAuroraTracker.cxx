@@ -331,6 +331,20 @@ AuroraTracker::ResultType AuroraTracker
   return SUCCESS;
 }
 
+/**The "ValidateSpecifiedFrequency" method checks if the specified
+  * frequency is valid for the tracking device that is being used. */
+AuroraTracker::ResultType 
+AuroraTracker::ValidateSpecifiedFrequency( double frequencyInHz )
+{
+  const double MAXIMUM_FREQUENCY = 50;
+  if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
+    {
+    return FAILURE;
+    } 
+  return SUCCESS;
+}
+
+
 /** Print Self function */
 void AuroraTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
