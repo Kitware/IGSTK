@@ -177,6 +177,7 @@ igstkEventMacro( OpenPortErrorEvent,       IGSTKErrorEvent );
 igstkEventMacro( ClosePortErrorEvent,      IGSTKErrorEvent );
 igstkEventMacro( InvalidRequestErrorEvent, IGSTKErrorEvent );
 igstkEventMacro( TransformNotAvailableEvent, InvalidRequestErrorEvent );
+igstkEventMacro( TransformExpiredErrorEvent, TransformNotAvailableEvent );
 
 igstkLoadedEventMacro( PointEvent, IGSTKEvent, EventHelperType::PointType );
 igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKErrorEvent, 
