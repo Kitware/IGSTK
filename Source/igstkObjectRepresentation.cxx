@@ -412,6 +412,8 @@ void ObjectRepresentation::MakeObjectsInvisibleProcessing()
   igstkLogMacro( WARNING, 
     "MakeObjectsInvisibleProcessing at " << this->m_TimeToRender );
 
+  this->InvokeEvent( TransformExpiredErrorEvent() );
+
   ActorsListType::iterator it = this->m_Actors.begin();
   while(it != this->m_Actors.end())
     {
