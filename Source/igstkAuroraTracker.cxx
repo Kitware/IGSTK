@@ -98,7 +98,7 @@ AuroraTracker::ResultType AuroraTracker
   // search ports with uninitialized handles
   bool foundTool = false;
 
-  for( int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
+  for( unsigned int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
     {
     commandInterpreter->PHSR(
     CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
