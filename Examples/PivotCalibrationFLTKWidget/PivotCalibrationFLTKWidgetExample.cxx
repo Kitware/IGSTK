@@ -283,9 +283,4 @@ PivotCalibrationFLTKWidgetExample
       std::pair<std::string,std::string>(
       igstk::TrackerUpdateStatusErrorEvent().GetEventName(),
      "Error updating transformations from tracker." ) );
-
-  this->m_ErrorEvent2ErrorMessage.insert(
-      std::pair<std::string,std::string>(
-      igstk::AttachingTrackerToolToTrackerErrorEvent().GetEventName(),
-     "Error attaching tool to tracker." ) );
 }
