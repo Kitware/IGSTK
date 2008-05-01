@@ -4,7 +4,7 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class AuroraTrackerConfigurationGUI {open selected : {public igstk::TrackerConfigurationGUIBase}
+class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
   Function {AuroraTrackerConfigurationGUI()} {open
   } {
@@ -14,7 +14,7 @@ class AuroraTrackerConfigurationGUI {open selected : {public igstk::TrackerConfi
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
-        label {Serial Port Number: } open
+        label {Serial Port Number: }
         xywh {213 13 75 25} down_box BORDER_BOX
       } {
         menuitem {} {
@@ -51,8 +51,8 @@ class AuroraTrackerConfigurationGUI {open selected : {public igstk::TrackerConfi
         }
       }
       Fl_Group TrackerToolGroup {
-        label {Tracker Tool} open
-        xywh {29 65 356 98} box ENGRAVED_BOX
+        label {Tracker Tool} open selected
+        xywh {29 65 356 98} box ENGRAVED_BOX align 5
       } {
         Fl_Output TrackerToolSROMFile {
           label {SROM File:}
@@ -68,7 +68,7 @@ if( fileName )
           xywh {350 119 25 25}
         }
         Fl_Choice TrackerToolPort {
-          label {Port:} open
+          label {Port:}
           xywh {225 85 45 25} down_box BORDER_BOX
         } {
           menuitem {} {

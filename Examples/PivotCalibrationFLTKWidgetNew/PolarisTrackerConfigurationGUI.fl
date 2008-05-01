@@ -10,8 +10,8 @@ class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfiguration
   } {
     Fl_Window TrackerConfigurationWindow {
       label {Polaris Tracker Configuration}
-      xywh {439 334 418 217} type Double
-      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+      xywh {439 334 418 217} type Double hide
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"}
     } {
       Fl_Choice SerialPort {
         label {Serial Port Number: } open
@@ -52,7 +52,7 @@ class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfiguration
       }
       Fl_Group TrackerToolGroup {
         label {Tracker Tool} open
-        xywh {30 65 355 98} box ENGRAVED_BOX
+        xywh {30 65 355 98} box ENGRAVED_BOX align 5
       } {
         Fl_Output TrackerToolSROMFile {
           label {SROM File:}
@@ -210,7 +210,6 @@ tool->m_IsReference = 0;
 conf->m_TrackerToolList.push_back( tool );
 
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::Polaris );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
-    }
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
   }
 } 
