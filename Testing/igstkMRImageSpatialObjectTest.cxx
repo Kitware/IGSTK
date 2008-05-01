@@ -19,6 +19,13 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#ifdef ConnectObjectToRepresentationMacro
+#undef ConnectObjectToRepresentationMacro
+#endif
+
+#define ConnectObjectToRepresentationMacro( object, representation ) \
+  representation->RequestSetImageSpatialObject( object );
+
 
 #include "igstkMRImageSpatialObject.h"
 #include "igstkMRImageSpatialObjectRepresentation.h"
