@@ -123,6 +123,60 @@ private:
   bool *                     m_End;
 };
 
+class RepresentationObserver : public ::itk::Command 
+{
+public:
+
+  typedef  RepresentationObserver     Self;
+  typedef  ::itk::Command             Superclass;
+  typedef  ::itk::SmartPointer<Self>  Pointer;
+  itkNewMacro( Self );
+
+protected:
+
+  RepresentationObserver() 
+    {
+    this->m_TransformExpired = false;
+    }
+public:
+
+  void Reset()
+    {
+    this->m_TransformExpired = false;
+    }
+
+  void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+    std::cerr << "Execute( const * ) should not be called" << std::endl;
+    }
+
+  void SetObjectRepresentation( ::igstk::Object * representation )
+    {
+    if( representation )
+      {
+      representation->AddObserver( ::igstk::TransformExpiredErrorEvent(), this );
+      }
+    this->Reset();
+    }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    if( ::igstk::TransformExpiredErrorEvent().CheckEvent( &event ) )
+      {
+      this->m_TransformExpired = true;
+      }
+    }
+
+  bool GetTransformExpired() const
+    {
+    this->m_TransformExpired;
+    }
+
+private:
+  bool           m_TransformExpired;
+};
+
+
 } // end of VisibilityObjectTest namespace
 
 } // end namespace igstk
@@ -207,6 +261,15 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   ellipsoidRepresentation3->SetOpacity( 1.0 );
   
  
+  typedef ::igstk::VisibilityObjectTest::RepresentationObserver  RepresentationObserverType;
+  RepresentationObserverType::Pointer representationObserver1 = RepresentationObserverType::New();
+  RepresentationObserverType::Pointer representationObserver2 = RepresentationObserverType::New();
+  RepresentationObserverType::Pointer representationObserver3 = RepresentationObserverType::New();
+
+  representationObserver1->SetObjectRepresentation( ellipsoidRepresentation1 );
+  representationObserver2->SetObjectRepresentation( ellipsoidRepresentation2 );
+  representationObserver3->SetObjectRepresentation( ellipsoidRepresentation3 );
+
   typedef igstk::View3D  View3DType;
 
   View3DType::Pointer view3D = View3DType::New();
@@ -396,6 +459,14 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   viewObserver->SetView(NULL);
 
   delete widget;
+
+  if( !representationObserver1->GetTransformExpired() ||
+       representationObserver2->GetTransformExpired() ||
+       representationObserver3->GetTransformExpired() )
+    {
+    std::cerr << "Failure to capture the TransformExpiredErrorEvent properly" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
