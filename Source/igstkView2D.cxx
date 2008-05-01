@@ -20,7 +20,7 @@
 namespace igstk {
 
 /** Constructor */
-View2D::View2D() : m_StateMachine(this), View()
+View2D::View2D() : m_StateMachine(this)
 {
   vtkInteractorStyleImage * interactorStyle = vtkInteractorStyleImage::New();
   this->SetInteractorStyle( interactorStyle );

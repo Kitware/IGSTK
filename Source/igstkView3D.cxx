@@ -21,7 +21,7 @@
 namespace igstk {
 
 /** Constructor */
-View3D::View3D( ) : m_StateMachine(this) , View()
+View3D::View3D( ) : m_StateMachine(this)
 {
   vtkInteractorStyleTrackballCamera * interactorStyle = 
                                      vtkInteractorStyleTrackballCamera::New();
