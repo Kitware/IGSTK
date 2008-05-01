@@ -169,7 +169,7 @@ public:
 
   bool GetTransformExpired() const
     {
-    this->m_TransformExpired;
+    return this->m_TransformExpired;
     }
 
 private:
