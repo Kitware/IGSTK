@@ -984,7 +984,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[2] = 0.0;
 
       origin[0] = planeCenter[0];
-      origin[1] = bounds[2];
+      origin[1] = bounds[3];
       origin[2] = bounds[5];
 
       point1[0] = planeCenter[0];
@@ -1111,84 +1111,53 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     return;
     }
 
-  Transform::VectorType   translation;
-  translation = 
-      m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  //Generate orientation transforms
+  Transform orientationTransform;
 
-  double planeCenter[3];
-  planeCenter[0] = translation[0];
-  planeCenter[1] = translation[1];
-  planeCenter[2] = translation[2];
+  Transform::VectorType     translation;
+  translation[0] = 0.0;
+  translation[1] = 0.0;
+  translation[2] = 0.0;
+  const double transformUncertainty = 1.0;
+  orientationTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          ::igstk::TimeStamp::GetLongestPossibleTime() );
 
-  Transform::VersorType   toolVersor;
-  toolVersor = m_ToolTransformWRTImageCoordinateSystem.GetRotation(); 
-
-  //From the rotation versor, define the reslice axes.
-  typedef ::itk::Versor<double>::MatrixType           MatrixType; 
-
-  MatrixType rotationMatrix = toolVersor.GetMatrix();
-  std::cout << "RotationMatrix=" << rotationMatrix << std::endl; 
-
-  double origin[3]; 
-
-  /* FIXME: Similar to the orthgonal reslicing, the origin should be setup taking
-     into account the orientation type. But for now, let us set it to the 
-     planeCenter */
-
-  origin[0] = planeCenter[0]; 
-  origin[1] = planeCenter[1]; 
-  origin[2] = planeCenter[2]; 
- 
-  double axisX[3];
-  axisX[0] = rotationMatrix[0][0]; 
-  axisX[1] = rotationMatrix[0][1]; 
-  axisX[2] = rotationMatrix[0][2]; 
-
-  double axisY[3];
-  axisY[0] = rotationMatrix[1][0]; 
-  axisY[1] = rotationMatrix[1][1]; 
-  axisY[2] = rotationMatrix[1][2]; 
-
-  double axisZ[3];
-  axisZ[0] = rotationMatrix[2][0]; 
-  axisZ[1] = rotationMatrix[2][1]; 
-  axisZ[2] = rotationMatrix[2][2]; 
+  Transform::VersorType  rotation;
 
   switch( m_OrientationType )
   {
   case PlaneOrientationWithZAxesNormal:
     {
-
+    //equivalent to the matrix we use for Axial
+    //set the versors
+    rotation.Set(0.0, 0.0, 0.0, 1.0);
     }
     break;
   case PlaneOrientationWithYAxesNormal:
     {
-
+    //equivalent to the matrix we use for Coronal
+    rotation.Set(0.0, 0.0, 0.0, 1.0);
     }
     break;
   case PlaneOrientationWithXAxesNormal:
     {
-
+    //equivalent to the matrix we use for Sagittal
+    rotation.Set(0.0, 0.0, 0.0, 1.0);
     }
     break;
   default:
     break;
   }
-
-  //Normalize the axes
-  vtkMath::Normalize(axisX);
-  vtkMath::Normalize(axisY);
-  vtkMath::Normalize(axisZ);
-
-  m_ResliceAxes->Identity();
-  for ( unsigned int i = 0; i < 3; i++ )
-     {
-     m_ResliceAxes->SetElement(i,0,axisX[i]);
-     m_ResliceAxes->SetElement(i,1,axisY[i]);
-     m_ResliceAxes->SetElement(i,2,axisZ[i]);
-     m_ResliceAxes->SetElement(i,3,origin[i]);
-     }
  
+  orientationTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          ::igstk::TimeStamp::GetLongestPossibleTime() );
+  Transform combinedTransform;
+  combinedTransform.TransformCompose( orientationTransform, m_ToolTransformWRTImageCoordinateSystem );
+
   std::cout.precision(3);
   std::cout << "ResliceAxes matrix: \n" 
             << "(" << m_ResliceAxes->GetElement(0,0) << ","
