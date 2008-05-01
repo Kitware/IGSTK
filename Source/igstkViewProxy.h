@@ -57,6 +57,8 @@ public:
     this->m_Widget = widget;
     }
 
+  virtual ~ViewProxy() {}
+    
   /** Connect the widget with the view */
   void Connect ( View * view )
     {
