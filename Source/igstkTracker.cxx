@@ -585,8 +585,6 @@ void Tracker::AttachingTrackerToolSuccessProcessing( void )
 
   m_TrackerToolToBeAttached->RequestSetTransformAndParent( 
     identityTransform, this );
-
-  this->InvokeEvent( AttachingTrackerToolToTrackerEvent() );
 }
 
 /** Post-processing after attaching a tracker tool to the tracker
@@ -598,8 +596,6 @@ void Tracker::AttachingTrackerToolFailureProcessing( void )
 
   // report to the tracker tool that the attachment has failed
   m_TrackerToolToBeAttached->RequestReportFailedTrackerToolAttachment();
-
-  this->InvokeEvent( AttachingTrackerToolToTrackerErrorEvent() );
 }
  
 /** The "AttemptToStopTracking" method attempts to stop tracking. */

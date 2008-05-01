@@ -58,11 +58,7 @@ igstkEventMacro( TrackerStopTrackingErrorEvent,            TrackerErrorEvent);
 igstkEventMacro( TrackerUpdateStatusEvent,                 TrackerEvent);
 igstkEventMacro( TrackerUpdateStatusErrorEvent,            TrackerErrorEvent);
 
-igstkEventMacro( AttachingTrackerToolToTrackerEvent,       TrackerEvent);
-igstkEventMacro( AttachingTrackerToolToTrackerErrorEvent,  TrackerErrorEvent);
-
-
-igstkEventMacro( TrackerToolTransformUpdateEvent,            TrackerEvent);
+igstkEventMacro( TrackerToolTransformUpdateEvent,          TrackerEvent);
 
 
 /** \class Tracker
