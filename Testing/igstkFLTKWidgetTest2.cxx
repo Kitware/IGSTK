@@ -66,8 +66,6 @@ int igstkFLTKWidgetTest2( int argc, char * argv[] )
     }
 
 
-  bool bEnd = false;
-
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
   
