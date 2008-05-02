@@ -385,8 +385,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   std::string screenShotFileName1 = argv[1]; 
   std::string screenShotFileName2 = argv[2];
 
-  bool screenShotTaken = false;
-
   //
   //  Now visualize the object 3 under tracking
   //
@@ -422,6 +420,8 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   tracker->RequestStartTracking();
 
+  bool screenShotTaken = false;
+
   while( !bEnd )
     {
     igstk::PulseGenerator::Sleep(20);
@@ -434,21 +434,34 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
     }
   
   tracker->RequestStopTracking();
-
-  view3D->RequestSaveScreenShot( screenShotFileName2 );
+  tracker->RequestClose();
   view3D->RequestStop();
 
+  // 
+  // Now attach the View to the Tracker tool, in order to illustrate
+  // how a display "from the point of view of the tracker tool" can
+  // easily be obtained.
+  //
   view3D->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   viewObserver->SetNumberOfPulsesToStop( 50 );
   viewObserver->Reset();
 
   view3D->RequestStart();
+
+  tracker->RequestOpen();
   tracker->RequestStartTracking();
+
+  screenShotTaken = false;
 
   while( !bEnd )
     {
     igstk::PulseGenerator::Sleep(20);
+    if ( ! screenShotTaken )  
+        {
+        view3D->RequestSaveScreenShot( screenShotFileName2 );
+        screenShotTaken = true;
+        }
     igstk::PulseGenerator::CheckTimeouts();
     }
   
@@ -460,12 +473,16 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   delete widget;
 
-  if( !representationObserver1->GetTransformExpired() ||
+  if(  representationObserver1->GetTransformExpired() ||
        representationObserver2->GetTransformExpired() ||
-       representationObserver3->GetTransformExpired() )
+      !representationObserver3->GetTransformExpired() )
     {
     std::cerr << "Failure to capture the TransformExpiredErrorEvent properly" << std::endl;
     return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "Success catching TransformExpiredErrorEvent()" << std::endl;
     }
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )

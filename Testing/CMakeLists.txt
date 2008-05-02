@@ -252,20 +252,19 @@ IF(IGSTK_USE_FLTK)
               --toleranceNumberOfPixels 5 
               igstkSpatialObjectRepresentationVisibilityTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTestb.png
           )
 
   ADD_TEST( igstkSpatialObjectRepresentationVisibilityTest2 
               ${IGSTK_TESTS}
-              --compare
-${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png 
-                        ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png 
+              --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png 
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2b.png 
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5 
               igstkSpatialObjectRepresentationVisibilityTest
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2b.png
           )
 
     ADD_TEST( igstkCoordinateSystemObjectWithViewTest
