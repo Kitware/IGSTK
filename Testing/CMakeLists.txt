@@ -347,14 +347,14 @@ IGSTKTesting(${CXX_TEST_PATH}/igstkLatestTests
              1 
              ${IGSTK_DATA_ROOT}
              ${IGSTKSandbox_BINARY_DIR}
-             ${IGSTKSandbox_TEST_AURORA_ATTACHED}
+             IGSTKSandbox_TEST_AURORA_ATTACHED
              ${IGSTKSandbox_TEST_AURORA_PORT_NUMBER}
-             ${IGSTKSandbox_TEST_POLARIS_ATTACHED}
+             IGSTKSandbox_TEST_POLARIS_ATTACHED
              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
-             ${IGSTKSandbox_TEST_LOOPBACK_ATTACHED}
+             IGSTKSandbox_TEST_LOOPBACK_ATTACHED
              ${IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER}
-             ${IGSTKSandbox_USE_FLTK}
-             ${IGSTKSandbox_USE_Qt}
-             ${IGSTKSandbox_USE_MicronTracker}
+             IGSTKSandbox_USE_FLTK
+             IGSTKSandbox_USE_Qt
+             IGSTKSandbox_USE_MicronTracker
              )
 
