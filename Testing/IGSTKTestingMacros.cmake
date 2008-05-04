@@ -189,7 +189,7 @@ ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
 # Tests depend on external device
-IF(IGSTK_TEST_AURORA_ATTACHED)
+IF(${IGSTK_TEST_AURORA_ATTACHED})
   ADD_TEST(igstkAuroraTrackerTest
            ${IGSTK_TESTS}
            igstkAuroraTrackerTest
@@ -205,15 +205,15 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
 
  ADD_TEST(igstkAuroraTrackerToolTest ${IGSTK_TESTS} igstkAuroraTrackerToolTest)
 
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+ENDIF(${IGSTK_TEST_AURORA_ATTACHED})
 
-IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+IF(${IGSTK_TEST_AURORA_ATTACHED} OR ${IGSTK_TEST_POLARIS_ATTACHED})
   ADD_TEST(igstkNDICommandInterpreterTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterTest ${IGSTK_TEST_OUTPUT_DIR}
 ${IGSTK_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
-ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+ENDIF(${IGSTK_TEST_AURORA_ATTACHED} OR ${IGSTK_TEST_POLARIS_ATTACHED})
 
-IF(IGSTK_TEST_POLARIS_ATTACHED)
+IF(${IGSTK_TEST_POLARIS_ATTACHED})
   ADD_TEST(igstkPolarisTrackerTest ${IGSTK_TESTS} igstkPolarisTrackerTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
@@ -243,11 +243,11 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
               1
               )
   ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS} igstkPolarisTrackerToolTest 0)
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
 
 #-----------------------------------------------------------------------------
 # Tests that depend on FLTK
-IF(IGSTK_USE_FLTK)
+IF(${IGSTK_USE_FLTK})
   ADD_TEST(igstkCylinderObjectTest ${IGSTK_TESTS} igstkCylinderObjectTest)
   ADD_TEST(igstkEllipsoidObjectTest ${IGSTK_TESTS} igstkEllipsoidObjectTest)
   ADD_TEST(igstkFLTKTextBufferLogOutputTest ${IGSTK_TESTS} igstkFLTKTextBufferLogOutputTest)
@@ -454,9 +454,9 @@ IF(IGSTK_USE_FLTK)
 
             
     ADD_TEST( igstkMouseTrackerToolTest ${IGSTK_TESTS} igstkMouseTrackerToolTest)
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(${IGSTK_USE_FLTK})
 
-IF(IGSTK_USE_MicronTracker)
+IF(${IGSTK_USE_MicronTracker})
     ADD_TEST( igstkMicronTrackerTest
               ${IGSTK_TESTS}
               igstkMicronTrackerTest
@@ -472,9 +472,9 @@ IF(IGSTK_USE_MicronTracker)
     SET(Tests_SRCS ${Tests_SRCS}
         igstkMicronTrackerToolTest.cxx)
 
-ENDIF(IGSTK_USE_MicronTracker)
+ENDIF(${IGSTK_USE_MicronTracker})
 
-IF(IGSTK_USE_Qt)
+IF(${IGSTK_USE_Qt})
     ADD_TEST( igstkQTWidgetTest
               ${IGSTK_TESTS}
               igstkQTWidgetTest)
@@ -492,7 +492,7 @@ IF(IGSTK_USE_Qt)
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
-ENDIF(IGSTK_USE_Qt)
+ENDIF(${IGSTK_USE_Qt})
 
 
 #-----------------------------------------------------------------------------
@@ -543,7 +543,7 @@ SET(BasicTests_SRCS
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
-IF(IGSTK_TEST_AURORA_ATTACHED)
+IF(${IGSTK_TEST_AURORA_ATTACHED})
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkAuroraTrackerTest.cxx
   )
@@ -554,15 +554,15 @@ IF(IGSTK_TEST_AURORA_ATTACHED)
     igstkAuroraTrackerToolTest.cxx
   )
  
-ENDIF(IGSTK_TEST_AURORA_ATTACHED)
+ENDIF(${IGSTK_TEST_AURORA_ATTACHED})
 
-IF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+IF(${IGSTK_TEST_AURORA_ATTACHED} OR ${IGSTK_TEST_POLARIS_ATTACHED})
   SET(BasicTests_SRCS ${BasicTests_SRCS}
-    igstkNDICommandInterpreterTest
+    igstkNDICommandInterpreterTest.cxx
   )
-ENDIF(IGSTK_TEST_AURORA_ATTACHED OR IGSTK_TEST_POLARIS_ATTACHED)
+ENDIF(${IGSTK_TEST_AURORA_ATTACHED} OR ${IGSTK_TEST_POLARIS_ATTACHED})
 
-IF(IGSTK_TEST_POLARIS_ATTACHED)
+IF(${IGSTK_TEST_POLARIS_ATTACHED})
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkPolarisTrackerTest.cxx
     igstkPolarisTrackerTest2.cxx
@@ -570,7 +570,7 @@ IF(IGSTK_TEST_POLARIS_ATTACHED)
     igstkPolarisTrackerTest4.cxx
     igstkPolarisTrackerToolTest.cxx
   )
-ENDIF(IGSTK_TEST_POLARIS_ATTACHED)
+ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
 
 #-----------------------------------------------------------------------------
 # Testing source file need data input
@@ -597,7 +597,7 @@ ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
 # Testing source file depend on FLTK
-IF(IGSTK_USE_FLTK)  
+IF(${IGSTK_USE_FLTK})  
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkAnnotation2DTest.cxx
@@ -636,22 +636,22 @@ IF(IGSTK_USE_FLTK)
       igstkImageSpatialObjectRepresentationTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(${IGSTK_USE_FLTK})
 
-IF(IGSTK_USE_MicronTracker)  
+IF(${IGSTK_USE_MicronTracker})  
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkMicronTrackerTest.cxx
     igstkMicronTrackerToolTest.cxx)
-ENDIF(IGSTK_USE_MicronTracker)  
+ENDIF(${IGSTK_USE_MicronTracker})  
 
-IF(IGSTK_USE_Qt)  
+IF(${IGSTK_USE_Qt})  
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
      igstkQTWidgetTest.cxx
      igstkQTWidgetTest2.cxx
      igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
-ENDIF(IGSTK_USE_Qt)
+ENDIF(${IGSTK_USE_Qt})
  
 
 IF(${SANDBOX_BUILD})

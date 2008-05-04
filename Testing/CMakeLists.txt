@@ -29,14 +29,14 @@ IGSTKTesting(${CXX_TEST_PATH}/igstkTests
              ${SANDBOX_BUILD}
              ${IGSTK_DATA_ROOT}
              ${IGSTK_BINARY_DIR}
-             ${IGSTK_TEST_AURORA_ATTACHED}
+             IGSTK_TEST_AURORA_ATTACHED
              ${IGSTK_TEST_AURORA_PORT_NUMBER}
-             ${IGSTK_TEST_POLARIS_ATTACHED}
+             IGSTK_TEST_POLARIS_ATTACHED
              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
-             ${IGSTK_TEST_LOOPBACK_ATTACHED}
+             IGSTK_TEST_LOOPBACK_ATTACHED
              ${IGSTK_TEST_LOOPBACK_PORT_NUMBER}
-             ${IGSTK_USE_FLTK}
-             ${IGSTK_USE_Qt}
-             ${IGSTK_USE_MicronTracker}
+             IGSTK_USE_FLTK
+             IGSTK_USE_Qt
+             IGSTK_USE_MicronTracker
              )
 
