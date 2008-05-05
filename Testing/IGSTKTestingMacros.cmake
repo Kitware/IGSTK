@@ -36,8 +36,7 @@ MACRO(IGSTKTesting
       IGSTK_USE_MicronTracker
     )
 
-
-SET(IGSTK_TESTS ${EXECUTABLE_NAME})
+SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
 
 IF(IGSTK_DATA_ROOT)
   SET(BASELINE ${IGSTK_DATA_ROOT}/Baseline)
@@ -671,9 +670,9 @@ IF(${SANDBOX_BUILD})
 # Copy the .NoDartCoverage file to the duplicate testing directory
  CONFIGURE_FILE( ${IGSTK_SOURCE_DIR}/Testing/.NoDartCoverage ${IGSTK_TESTS_LATEST}/.NoDartCoverage COPYONLY)
  SOURCE_GROUP(TestsModified FILES ${TestsModifiedFiles})
- ADD_EXECUTABLE(igstkTests ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
+ ADD_EXECUTABLE(${EXECUTABLE_NAME} ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/igstkTests.cxx ${IGSTKLatestTests_SRCS})
 ELSE(${SANDBOX_BUILD})
-  ADD_EXECUTABLE(igstkTests igstkTests.cxx ${BasicTests_SRCS})
+  ADD_EXECUTABLE(${EXECUTABLE_NAME} igstkTests.cxx ${BasicTests_SRCS})
   ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
   ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
   TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
@@ -686,7 +685,7 @@ ELSE(${SANDBOX_BUILD})
   TARGET_LINK_LIBRARIES(igstkStateMachineExportTest ${LIBRARY_NAME})
 ENDIF(${SANDBOX_BUILD})
 
-TARGET_LINK_LIBRARIES(igstkTests ${LIBRARY_NAME})
+TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${LIBRARY_NAME})
 
 #-----------------------------------------------------------------------------
 # Configure a header needed by igstkSystemInformation.

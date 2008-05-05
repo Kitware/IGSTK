@@ -24,7 +24,7 @@ INCLUDE(${IGSTK_SOURCE_DIR}/Testing/IGSTKTestingMacros.cmake)
 
 #invoke the macro with the appropriatae arguments 
 SET(SANDBOX_BUILD 0)
-IGSTKTesting(${CXX_TEST_PATH}/igstkTests
+IGSTKTesting(igstkTests
              IGSTK
              ${SANDBOX_BUILD}
              ${IGSTK_DATA_ROOT}
