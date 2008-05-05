@@ -59,6 +59,7 @@ public:
 
 } // end of Friend namespace
 
+
 /** \class TubeReader
  * 
  * \brief This class reads 3D Tube in the metaIO format.
@@ -90,8 +91,10 @@ public:
   typedef igstk::TubeObject                  TubeType;
   typedef itk::TubeSpatialObject<3>          TubeSpatialObjectType;
 
-  /** Return the output as a group */
-  const TubeType * GetOutput() const;
+  /** Event type */
+  igstkEventMacro( TubeReaderEvent,ObjectReaderEvent )
+  igstkEventMacro( TubeReadingErrorEvent, ObjectReadingErrorEvent )
+  igstkLoadedObjectEventMacro( TubeModifiedEvent, TubeReaderEvent, TubeType )
 
   /** Declare the TubeReaderToTubeSpatialObject class to be a friend 
    *  in order to give it access to the private method 
@@ -104,18 +107,15 @@ protected:
   TubeReader();
   ~TubeReader();
 
-  // Generic event produced from this class
-  igstkEventMacro( TubeReaderEvent,IGSTKEvent);
-  
-  //SpatialObject reading error
-  igstkEventMacro( TubeReadingErrorEvent, IGSTKErrorEvent );
-
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** This method request Object read. This method is intended to be
    *  invoked ONLY by the State Machine of the superclass. */
   void AttemptReadObjectProcessing();
+
+  /** This method will invoke the TubeModifiedEvent */
+  void ReportObjectProcessing();
 
   /** Connect the ITK TubeSpatialObject to the output TubeSpatialObject */
   void ConnectTube();

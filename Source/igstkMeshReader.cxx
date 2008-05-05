@@ -62,14 +62,16 @@ void MeshReader::AttemptReadObjectProcessing()
   delete children;
 
   this->ConnectMesh();
+
 }
 
-/** Return the output as a group */
-const MeshReader::MeshObjectType *
-MeshReader::GetOutput() const
+void MeshReader::ReportObjectProcessing()
 {
-  return m_MeshObject;
+  MeshModifiedEvent  event;
+  event.Set( this->m_MeshObject );
+  this->InvokeEvent( event );
 }
+
  
 // FIXME : This must be replaced with StateMachine logic
 MeshReader::MeshType * 

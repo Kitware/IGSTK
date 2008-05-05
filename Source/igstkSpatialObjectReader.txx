@@ -46,6 +46,7 @@ SpatialObjectReader< TDimension, TPixelType >
   igstkAddInputMacro( ObjectFileNameIsEmpty );
   igstkAddInputMacro( ObjectFileNameIsDirectory );
   igstkAddInputMacro( ObjectFileNameDoesNotExist );
+  igstkAddInputMacro( GetOutput );
 
   // Transitions from Idle State
   igstkAddTransitionMacro( Idle, ObjectFileNameValid,
@@ -61,6 +62,8 @@ SpatialObjectReader< TDimension, TPixelType >
   igstkAddTransitionMacro( Idle, ObjectReadingError,
                            Idle, ReportInvalidRequest );
   igstkAddTransitionMacro( Idle, ObjectReadingSuccess,
+                           Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle, GetOutput,
                            Idle, ReportInvalidRequest );
 
   // Transitions from ObjectFileNameRead State
@@ -78,6 +81,8 @@ SpatialObjectReader< TDimension, TPixelType >
                            Idle, ReportInvalidRequest );
   igstkAddTransitionMacro( ObjectFileNameRead, ObjectFileNameDoesNotExist,
                            Idle, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectFileNameRead, GetOutput,
+                           ObjectFileNameRead, ReportInvalidRequest );
 
   // Transitions from ObjectRead State
   igstkAddTransitionMacro( ObjectRead, ObjectFileNameValid,
@@ -96,6 +101,8 @@ SpatialObjectReader< TDimension, TPixelType >
                            ObjectRead, ReportInvalidRequest );
   igstkAddTransitionMacro( ObjectRead, ObjectReadingError,
                            ObjectRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectRead, GetOutput,
+                           ObjectRead, ReportObject );
 
 
   // Transitions from ObjectAttemptingRead State
@@ -116,6 +123,8 @@ SpatialObjectReader< TDimension, TPixelType >
   // if we are waiting, reading an object, we ignore a redundant request for 
   // reading the object. We are already responding to a previous read request.
   igstkAddTransitionMacro( ObjectAttemptingRead, ReadObjectRequest,
+                           ObjectAttemptingRead, ReportInvalidRequest );
+  igstkAddTransitionMacro( ObjectAttemptingRead, GetOutput,
                            ObjectAttemptingRead, ReportInvalidRequest );
 
 
@@ -230,6 +239,14 @@ void SpatialObjectReader<TDimension,TPixelType>
   this->m_StateMachine.PushInput( this->m_ObjectReadingSuccessInput );
 }
 
+/** Read the spatialobject file */
+template <unsigned int TDimension, typename TPixelType>
+void SpatialObjectReader<TDimension,TPixelType>
+::ReportObjectProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::\
+                                ReportObjectProcessing called...\n");
+}
 
 /** Request to read the object file */
 template <unsigned int TDimension, typename TPixelType>
@@ -239,6 +256,17 @@ void SpatialObjectReader<TDimension,TPixelType>
   igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::\
                         RequestReadObject called...\n");
   this->m_StateMachine.PushInput( this->m_ReadObjectRequestInput);
+  this->m_StateMachine.ProcessInputs();
+}
+
+/** Request to read the object file */
+template <unsigned int TDimension, typename TPixelType>
+void SpatialObjectReader<TDimension,TPixelType>
+::RequestGetOutput()
+{
+  igstkLogMacro( DEBUG, "igstk::SpatialObjectReader::\
+                                RequestGetOutput called...\n");
+  this->m_StateMachine.PushInput( this->m_GetOutputInput);
   this->m_StateMachine.ProcessInputs();
 }
 

@@ -70,14 +70,16 @@ void TubeReader::AttemptReadObjectProcessing()
     it++;
     }
   delete children;
+
 }
 
-/** Return the output as a group */
-const TubeReader::TubeType *
-TubeReader::GetOutput() const
+void TubeReader::ReportObjectProcessing()
 {
-  return m_Tube;
+  TubeModifiedEvent  event;
+  event.Set( this->m_Tube );
+  this->InvokeEvent( event );
 }
+
 
 void TubeReader::ConnectTube() 
 {

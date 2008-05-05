@@ -34,7 +34,7 @@ namespace igstk
  * \brief This class reads spatial object data stored in files.
  * 
  * This class reads spatial object data stored in files and provide pointers to
- * the spatial object data for use in an ITK pipeline. This class is templated
+ * the spatial object data for use in an ITK pipeline. This class is template
  * over the dimension of the object to read
  *
  * \image html  igstkSpatialObjectReader.png 
@@ -82,6 +82,17 @@ public:
   /** This method request Object read */
   void RequestReadObject();
 
+  /** This method will invoke a event from derived reader class, such as:
+    * MeshModifiedEvent for igstkMeshReader
+    * TubeModifiedEvent for igstkTubeReader
+    */
+  void RequestGetOutput();
+
+  igstkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
+  igstkEventMacro( ObjectReadingErrorEvent,        IGSTKErrorEvent   );
+  igstkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
+  igstkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReadingErrorEvent );
+
 protected:
 
   SpatialObjectReader( void );
@@ -95,12 +106,9 @@ protected:
   std::string                                m_FileNameToBeSet;
   std::string                                m_FileName;
 
-  igstkEventMacro( ObjectReaderEvent,              IGSTKEvent        );
-  igstkEventMacro( ObjectReadingErrorEvent,        IGSTKErrorEvent   );
-  igstkEventMacro( ObjectReadingSuccessEvent,      ObjectReaderEvent );
-  igstkEventMacro( ObjectInvalidRequestErrorEvent, ObjectReadingErrorEvent );
-
   virtual void AttemptReadObjectProcessing();
+
+  virtual void ReportObjectProcessing();
 
 private:
 
@@ -119,6 +127,7 @@ private:
   igstkDeclareInputMacro( ObjectFileNameIsEmpty ); 
   igstkDeclareInputMacro( ObjectFileNameIsDirectory ); 
   igstkDeclareInputMacro( ObjectFileNameDoesNotExist ); 
+  igstkDeclareInputMacro( GetOutput ); 
 
   /** Error related state inputs */
   igstkDeclareInputMacro( ObjectReadingError );

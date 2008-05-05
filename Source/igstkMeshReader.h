@@ -42,9 +42,9 @@ public:
   template < class TReader, class TMeshSpatialObject >
   static void 
   ConnectMesh(  TReader * reader, 
-                TMeshSpatialObject * imageSpatialObject )
+                TMeshSpatialObject * meshSpatialObject )
     {
-    imageSpatialObject->SetMesh( reader->GetITKMesh() );  
+    meshSpatialObject->SetMesh( reader->GetITKMesh() );  
     }
 
 }; // end of MeshReaderToMeshSpatialObject class
@@ -87,14 +87,17 @@ public:
   typedef SpatialObjectType::ConstPointer    SpatialObjectTypeConstPointer;
   typedef igstk::MeshObject                  MeshObjectType;
 
+  /** Event type */
+  igstkEventMacro( MeshReaderEvent,ObjectReaderEvent )
+  igstkEventMacro( MeshReadingErrorEvent, ObjectReadingErrorEvent )
+  igstkLoadedObjectEventMacro( MeshModifiedEvent, MeshReaderEvent, 
+                                                              MeshObjectType )
+
 protected:
 
   typedef MeshObjectType::MeshType           MeshType;
 
 public:
-
-  /** Return the output as a group */
-  const MeshObjectType * GetOutput() const;
 
   /** Declare the MeshReaderToMeshSpatialObject class to be a friend 
    *  in order to give it access to the private method GetITKMesh(). */
@@ -105,17 +108,15 @@ protected:
   MeshReader( void );
   ~MeshReader( void );
 
-  igstkEventMacro( MeshReaderEvent,IGSTKEvent );
-  
-  //SpatialObject reading error
-  igstkEventMacro( MeshReadingErrorEvent, IGSTKErrorEvent );
-
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
   /** This method tries to read the Object. This method is invoked by the State
    * Machine of the superclass. */
   void AttemptReadObjectProcessing();
+
+  /** This method will invoke the MeshModifiedEvent */
+  void ReportObjectProcessing();
 
   /** Connect the ITK mesh to the output MeshSpatialObject */
   void ConnectMesh();
