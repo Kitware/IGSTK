@@ -70,6 +70,8 @@ void RegisterTests()
   REGISTER_TEST(igstkCoordinateSystemDelegatorTest);
   REGISTER_TEST(igstkCoordinateSystemEventTest);
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
+  REGISTER_TEST(igstkSimulatedTrackerTest);
+
  
   // Tests depend on device 
 #ifdef IGSTKSandbox_TEST_AURORA_ATTACHED 
