@@ -88,11 +88,23 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   reader->RequestSetFileName( filenameWithCorruptedContent );
   reader->RequestReadObject();
 
-  typedef ReaderType::TubeType TubeType;
+  // Attach an observer
+  igstkObserverObjectMacro( TubeObject, igstk::TubeReader::TubeModifiedEvent,
+    igstk::TubeObject);
+  TubeObjectObserver::Pointer observer = TubeObjectObserver::New();
 
-  TubeType::ConstPointer tube = reader->GetOutput();
+  reader->AddObserver(igstk::TubeReader::TubeModifiedEvent(),observer);
 
-  tube->Print( std::cout );
+  reader->RequestGetOutput();
+
+  if(!observer->GotTubeObject())
+  {
+    std::cout << "No MeshObject!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  observer->GetTubeObject()->Print( std::cout );
 
   return EXIT_SUCCESS;
 }

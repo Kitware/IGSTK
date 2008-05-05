@@ -81,12 +81,26 @@ int igstkMeshReaderTest( int argc, char * argv [] )
   std::string filenameThatExists = argv[1];
   reader->RequestSetFileName( filenameThatExists );
 
-  typedef ReaderType::MeshObjectType   MeshObjectType;
-  MeshObjectType::ConstPointer mesh = reader->GetOutput();
-  mesh->Print( std::cout );
-
   // Request to read the object from the file
   reader->RequestReadObject();
+
+  // Attach an observer
+  igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
+    igstk::MeshObject);
+  MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+
+  reader->AddObserver(igstk::MeshReader::MeshModifiedEvent(),observer);
+
+  reader->RequestGetOutput();
+
+  if(!observer->GotMeshObject())
+  {
+    std::cout << "No MeshObject!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  observer->GetMeshObject()->Print( std::cout );
   
   // Now reading a corrupted file
   std::string filenameWithCorruptedContent = argv[2];

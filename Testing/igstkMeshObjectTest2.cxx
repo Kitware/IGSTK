@@ -121,6 +121,12 @@ namespace igstk
 
   } // end of VisibilityObjectTest namespace
 
+ /* namespace MeshObjectTest2
+  {
+    igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
+      igstk::MeshObject);
+  } // end of MeshObjectTest2 namespace
+ */
 } // end namespace igstk
 
 
@@ -172,8 +178,38 @@ int igstkMeshObjectTest2( int argc, char * argv [] )
   std::string filename = argv[1];
   reader->RequestSetFileName( filename );
   reader->RequestReadObject();
-  spatialObject = (ObjectType * ) reader->GetOutput();
+  
+  // Attach an observer
+  igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
+                                                          igstk::MeshObject);
+  MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+ 
+  reader->AddObserver(igstk::MeshReader::MeshModifiedEvent(),observer);
 
+  try
+    {
+    reader->RequestGetOutput();
+    }
+  catch( ... )
+    {
+    std::cerr << "ERROR: An exception was thrown while reading the MeshObject"
+      << std::endl;
+    std::cerr << "This should not have happened. The StateMachine should have" 
+      << std::endl;
+    std::cerr << "caught that exception and converted it into a SM Input " 
+      << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if(!observer->GotMeshObject())
+    {
+    std::cout << "No MeshObject!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+  spatialObject = observer->GetMeshObject();
+  
   representation->RequestSetMeshObject( spatialObject );
    representation->SetColor(1,0,0);
 
