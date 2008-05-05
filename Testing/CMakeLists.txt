@@ -342,7 +342,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
 #######-----------------------------------------------------------------------
 # Now running IGSTK tests with the latest main library
 INCLUDE(${IGSTK_SOURCE_DIR}/Testing/IGSTKTestingMacros.cmake)
-IGSTKTesting(${CXX_TEST_PATH}/igstkLatestTests
+IGSTKTesting(igstkLatestTests
              IGSTKSandbox
              1 
              ${IGSTK_DATA_ROOT}
