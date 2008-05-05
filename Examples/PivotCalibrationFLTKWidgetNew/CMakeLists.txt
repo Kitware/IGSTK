@@ -13,6 +13,7 @@ SET(PivotCalibrationFLTKWidgetExampleNew_SRCS
   igstkTrackerInitializerNew.cxx
   igstkTrackerConfigurationNew.cxx
   igstkTrackerConfigurationGUIBase.cxx
+  IGSTKErrorObserver.cxx
   main.cxx
   )
 
@@ -21,6 +22,7 @@ SET(PivotCalibrationFLTKWidgetExampleNew_HDRS
     igstkTrackerInitializerNew.h
     igstkTrackerConfigurationNew.h
     igstkTrackerConfigurationGUIBase.h
+    IGSTKErrorObserver.h
 )
 
 INCLUDE_DIRECTORIES(

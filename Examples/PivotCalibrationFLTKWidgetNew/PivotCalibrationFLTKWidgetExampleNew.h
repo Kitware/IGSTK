@@ -45,6 +45,8 @@ public:
 
   void RequestInitializeTracker( const itk::EventObject & event );
 
+  void RequestDisconnectTracker();
+
 private:
 
   PivotCalibrationFLTKWidgetExample(const Self&); // purposely not implemented

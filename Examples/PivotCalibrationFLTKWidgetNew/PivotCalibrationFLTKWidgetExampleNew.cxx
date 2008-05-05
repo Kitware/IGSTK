@@ -94,6 +94,20 @@ void PivotCalibrationFLTKWidgetExample::RequestConnectToTracker()
 }
 
 /** -----------------------------------------------------------------
+*  Choose to disconnect a tracker
+*---------------------------------------------------------------------
+*/
+void PivotCalibrationFLTKWidgetExample::RequestDisconnectTracker()
+{
+    if (m_TrackerInitializer)
+    {
+        m_TrackerInitializer->RequestStopAndDisconnectTracker();
+        this->m_initialized = false;
+        TrackerList->clear();
+    }
+}
+
+/** -----------------------------------------------------------------
 *  Call back function for ConfigurationEvent observer
 *---------------------------------------------------------------------
 */
@@ -140,6 +154,8 @@ PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample(): m_initia
     m_TrackerConfigurationObserver = LoadedObserverType::New();
     m_TrackerConfigurationObserver->SetCallbackFunction( this,
          &PivotCalibrationFLTKWidgetExample::RequestInitializeTracker);
+
+    m_TrackerInitializer = NULL;
 }
 
 /** -----------------------------------------------------------------

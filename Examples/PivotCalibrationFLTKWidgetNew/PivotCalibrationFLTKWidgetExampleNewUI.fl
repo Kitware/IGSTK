@@ -9,8 +9,8 @@ class PivotCalibrationFLTKWidgetExampleNewUI {open
   Function {PivotCalibrationFLTKWidgetExampleNewUI()} {open
   } {
     Fl_Window m_mainWindow {
-      label {Pivot Calibration Widget Example} open selected
-      private xywh {525 187 410 529} type Double labelsize 30 align 5 visible
+      label {Pivot Calibration Widget Example} open
+      private xywh {293 159 410 529} type Double labelsize 30 align 5 hide
     } {
       Fl_Group {} {
         label Settings
@@ -19,7 +19,7 @@ class PivotCalibrationFLTKWidgetExampleNewUI {open
         Fl_Button m_initializeButton {
           label Initialize
           callback {InitializeTrackingAndCalibration();}
-          private xywh {45 121 100 24}
+          private xywh {20 111 160 28}
         }
         Fl_Value_Slider m_delaySlider {
           label {Delay [sec]:}
@@ -56,6 +56,11 @@ class PivotCalibrationFLTKWidgetExampleNewUI {open
         Fl_Choice TrackerList {open
           xywh {215 75 150 20} down_box BORDER_BOX labeltype NO_LABEL
         } {}
+        Fl_Button {} {
+          label Disconnect
+          callback {RequestDisconnectTracker();} selected
+          xywh {215 110 145 29} align 16
+        }
       }
       Fl_Box m_pivotCalibrationFLTKWidget {
         label {Pivot Calibration FLTK Widget}

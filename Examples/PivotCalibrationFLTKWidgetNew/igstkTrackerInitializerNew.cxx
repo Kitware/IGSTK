@@ -1,10 +1,10 @@
 /*=========================================================================
 
 Program:   Image Guided Surgery Software Toolkit
-Module:    igstkTrackerInitializerNew.cxx
+Module:    $$
 Language:  C++
-Date:      $Date$
-Version:   $Revision$
+Date:      $$
+Version:   $$
 
 Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
@@ -24,93 +24,11 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 TrackerInitializerNew::TrackerInitializerNew()
 {
-    m_ErrorMessage  = "";
+    m_ErrorMessage = "";
     m_HasReferenceTool = 0;
 
     //create error observer
-    this->m_errorObserver = TrackingErrorObserver::New();
-}
-
-void
-TrackerInitializerNew::TrackingErrorObserver::Execute(
-    itk::Object *caller,
-    const itk::EventObject & event )
-{
-    std::map<std::string,std::string>::iterator it;
-    std::string className = event.GetEventName();
-    it = this->m_ErrorEvent2ErrorMessage.find( className );
-    if( it != this->m_ErrorEvent2ErrorMessage.end() )
-    {
-        this->m_ErrorOccured = true;
-        fl_alert( (*it).second.c_str() );
-        fl_beep( FL_BEEP_ERROR );
-    }
-}
-
-void
-TrackerInitializerNew::TrackingErrorObserver::Execute(
-    const itk::Object *caller,
-    const itk::EventObject & event )
-{
-    const itk::Object * constCaller = caller;
-    this->Execute( constCaller, event );
-}
-
-void
-TrackerInitializerNew::TrackingErrorObserver::ClearError()
-{
-    this->m_ErrorOccured = false;
-}
-
-bool
-TrackerInitializerNew::TrackingErrorObserver::Error()
-{
-    return this->m_ErrorOccured;
-}
-
-TrackerInitializerNew
-::TrackingErrorObserver::TrackingErrorObserver()
-: m_ErrorOccured( false )
-{
-    //serial communication errors
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::OpenPortErrorEvent().GetEventName(), "Error opening com port." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::ClosePortErrorEvent().GetEventName(), "Error closing com port." ) );
-
-    //tracker errors
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerOpenErrorEvent().GetEventName(),
-        "Error opening tracker communication." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerInitializeErrorEvent().GetEventName(),
-        "Error initializing tracker." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerStartTrackingErrorEvent().GetEventName(),
-        "Error starting tracking." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerStopTrackingErrorEvent().GetEventName(),
-        "Error stopping tracking." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerCloseErrorEvent().GetEventName(),
-        "Error closing tracker communication." ) );
-
-    this->m_ErrorEvent2ErrorMessage.insert(
-        std::pair<std::string,std::string>(
-        igstk::TrackerUpdateStatusErrorEvent().GetEventName(),
-        "Error updating transformations from tracker." ) );
+    this->m_ErrorObserver = IGSTKErrorObserver::New();
 }
 
 std::string TrackerInitializerNew::GetTrackerTypeAsString()
@@ -128,6 +46,48 @@ std::string TrackerInitializerNew::GetTrackerTypeAsString()
   default:
     return "Not Defined";
   }
+}
+
+
+/** -----------------------------------------------------------------
+*  Stops and Disconnect a tracker. After disconnecting it, set the active tool
+*  to the first available tool
+*---------------------------------------------------------------------
+*/
+int TrackerInitializerNew::RequestStopAndDisconnectTracker()
+{
+    m_Tracker->RequestStopTracking();
+    if ( this->m_ErrorObserver->Error() )
+    {
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
+    }
+
+    m_Tracker->RequestClose();
+    if ( this->m_ErrorObserver->Error() )
+    {
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
+    }
+
+    if ( m_TrackerType == TrackerConfigurationNew::Aurora || 
+         m_TrackerType == TrackerConfigurationNew::Polaris || 
+         m_TrackerType == TrackerConfigurationNew::FlockOfBirds)
+    {
+        m_Communication->CloseCommunication();
+        if ( this->m_ErrorObserver->Error() )
+        {
+          this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+          this->m_ErrorObserver->ClearError();
+          std::cerr << m_ErrorMessage << "\n";
+          return 0;
+        }
+    }
+  return 1;
 }
 
 int TrackerInitializerNew::RequestInitializeTracker()
@@ -171,7 +131,7 @@ int TrackerInitializerNew::RequestInitializeTracker()
 
 }
 
-// FIXME: Add error events listener
+// FIXME: check error events listener
 int TrackerInitializerNew::InitializePolarisTracker()
 {
   NDITrackerConfiguration * trackerConfig = 
@@ -181,9 +141,9 @@ int TrackerInitializerNew::InitializePolarisTracker()
 
   //observe errors generated by the serial communication
   m_Communication->AddObserver( igstk::OpenPortErrorEvent(),
-                                              this->m_errorObserver );
+                                          this->m_ErrorObserver );
   m_Communication->AddObserver( igstk::ClosePortErrorEvent(),
-                                          this->m_errorObserver );
+                                          this->m_ErrorObserver );
 
   m_Communication->SetPortNumber( trackerConfig->m_COMPort );
   m_Communication->SetParity( SerialCommunication::NoParity );
@@ -193,9 +153,11 @@ int TrackerInitializerNew::InitializePolarisTracker()
   m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
 
   m_Communication->OpenCommunication();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-    this->m_errorObserver->ClearError();
+    this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+    this->m_ErrorObserver->ClearError();
+    std::cerr << m_ErrorMessage << "\n";
     return 0;
   }
 
@@ -203,25 +165,25 @@ int TrackerInitializerNew::InitializePolarisTracker()
 
   //observe errors generated by the tracker
   m_Tracker->AddObserver( igstk::TrackerOpenErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
   m_Tracker->AddObserver( igstk::TrackerInitializeErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
   m_Tracker->AddObserver( igstk::TrackerStartTrackingErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
   m_Tracker->AddObserver( igstk::TrackerStopTrackingErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
   m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
   m_Tracker->AddObserver( igstk::TrackerCloseErrorEvent(),
-                                this->m_errorObserver );
-  m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
-                                this->m_errorObserver );
+                                this->m_ErrorObserver );
 
   m_PolarisTracker->SetCommunication( m_Communication );
   m_PolarisTracker->RequestOpen();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
     {
-    this->m_errorObserver->ClearError();
+    this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+    this->m_ErrorObserver->ClearError();
+    std::cerr << m_ErrorMessage << "\n";
     return 0;
     }
 
@@ -252,9 +214,11 @@ int TrackerInitializerNew::InitializePolarisTracker()
       }
     
     tool->RequestAttachToTracker( m_PolarisTracker );
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
@@ -275,17 +239,19 @@ int TrackerInitializerNew::InitializePolarisTracker()
 
   //start tracking
   m_Tracker->RequestStartTracking();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
     {
-     this->m_errorObserver->ClearError();
-     return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
     }
 
   return 1;
 
 }
 
-// FIXME: Add error events listener
+// FIXME: check error events listener
 int TrackerInitializerNew::InitializeAuroraTracker()
 {
   NDITrackerConfiguration * trackerConfig = 
@@ -295,9 +261,9 @@ int TrackerInitializerNew::InitializeAuroraTracker()
 
   //observe errors generated by the serial communication
   m_Communication->AddObserver( igstk::OpenPortErrorEvent(),
-      this->m_errorObserver );
+      this->m_ErrorObserver );
   m_Communication->AddObserver( igstk::ClosePortErrorEvent(),
-      this->m_errorObserver );
+      this->m_ErrorObserver );
 
   m_Communication->SetPortNumber( trackerConfig->m_COMPort );
   m_Communication->SetParity( SerialCommunication::NoParity );
@@ -307,19 +273,38 @@ int TrackerInitializerNew::InitializeAuroraTracker()
   m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
   
   m_Communication->OpenCommunication();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-      this->m_errorObserver->ClearError();
-      return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
   }
 
   m_Tracker = m_AuroraTracker = AuroraTracker::New();
+
+  //observe errors generated by the tracker
+  m_Tracker->AddObserver( igstk::TrackerOpenErrorEvent(),
+                                this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerInitializeErrorEvent(),
+                                this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerStartTrackingErrorEvent(),
+                                this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerStopTrackingErrorEvent(),
+                                this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
+                                this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerCloseErrorEvent(),
+                                this->m_ErrorObserver );
+
   m_AuroraTracker->SetCommunication( m_Communication );
   m_AuroraTracker->RequestOpen();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-      this->m_errorObserver->ClearError();
-      return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
   }
 
   m_TrackerToolList.clear();
@@ -354,9 +339,11 @@ int TrackerInitializerNew::InitializeAuroraTracker()
       }
 
     tool->RequestAttachToTracker( m_AuroraTracker );
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
@@ -375,16 +362,18 @@ int TrackerInitializerNew::InitializeAuroraTracker()
 
   m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-      this->m_errorObserver->ClearError();
-      return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
   }
 
   return 1;
 }
 
-// FIXME: Add error events listener
+// FIXME: check error events listener
 int TrackerInitializerNew::InitializeFlockOfBirdsTracker()
 {
    AscensionTrackerConfiguration * trackerConfig = 
@@ -394,9 +383,9 @@ int TrackerInitializerNew::InitializeFlockOfBirdsTracker()
 
     //observe errors generated by the serial communication
     m_Communication->AddObserver( igstk::OpenPortErrorEvent(),
-        this->m_errorObserver );
+        this->m_ErrorObserver );
     m_Communication->AddObserver( igstk::ClosePortErrorEvent(),
-        this->m_errorObserver );
+        this->m_ErrorObserver );
 
     m_Communication->SetPortNumber( trackerConfig->m_COMPort );
     m_Communication->SetParity( SerialCommunication::NoParity );
@@ -405,26 +394,39 @@ int TrackerInitializerNew::InitializeFlockOfBirdsTracker()
     m_Communication->SetStopBits( SerialCommunication::StopBits1 );
     m_Communication->SetHardwareHandshake( SerialCommunication::HandshakeOff);
 
-// FIXME: see if we want to log data
-//     m_Communication->SetLogger(m_Logger);
-//     
-//     m_Communication->SetCaptureFileName( "InitializeFlockOfBirdsTrackerLog.txt" );
-//     m_Communication->SetCapture( true );
-
     m_Communication->OpenCommunication();
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
     m_Tracker = m_FlockOfBirdsTracker = FlockOfBirdsTracker::New();
+
+    //observe errors generated by the tracker
+    m_Tracker->AddObserver( igstk::TrackerOpenErrorEvent(),
+                                    this->m_ErrorObserver );
+    m_Tracker->AddObserver( igstk::TrackerInitializeErrorEvent(),
+                                    this->m_ErrorObserver );
+    m_Tracker->AddObserver( igstk::TrackerStartTrackingErrorEvent(),
+                                    this->m_ErrorObserver );
+    m_Tracker->AddObserver( igstk::TrackerStopTrackingErrorEvent(),
+                                    this->m_ErrorObserver );
+    m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
+                                    this->m_ErrorObserver );
+    m_Tracker->AddObserver( igstk::TrackerCloseErrorEvent(),
+                                    this->m_ErrorObserver );
+
     m_FlockOfBirdsTracker->SetCommunication( m_Communication );
 
     m_FlockOfBirdsTracker->RequestOpen();
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
@@ -441,21 +443,35 @@ int TrackerInitializerNew::InitializeFlockOfBirdsTracker()
         tool->RequestConfigure();
 
         tool->RequestAttachToTracker( m_FlockOfBirdsTracker );
-        if( this->m_errorObserver->Error() )
+        if( this->m_ErrorObserver->Error() )
         {
-            this->m_errorObserver->ClearError();
-            return 0;
+           this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+           this->m_ErrorObserver->ClearError();
+           std::cerr << m_ErrorMessage << "\n";
+           return 0;
         }
 
+        if ( toolConfig->m_IsReference )
+        {
+        m_FlockOfBirdsTracker->RequestSetReferenceTool( tool );
+        m_ReferenceTool = tool;
+        m_HasReferenceTool = 1;
+        }
+        else
+        {
         TrackerTool::Pointer t = tool.GetPointer();
         m_TrackerToolList.push_back( t );
+        }
     }
 
     m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
+
     m_Tracker->RequestStartTracking();
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
@@ -463,13 +479,27 @@ int TrackerInitializerNew::InitializeFlockOfBirdsTracker()
 }
 
 #ifdef IGSTKSandbox_USE_MicronTracker
-// FIXME: Add error events listener
+// FIXME: check error events listener
 int TrackerInitializerNew::InitializeMicronTracker()
 {
   MicronTrackerConfiguration * trackerConfig = 
     m_TrackerConfiguration->GetMicronTrackerConfiguration();
 
   m_Tracker = m_MicronTracker = MicronTracker::New();
+
+  //observe errors generated by the tracker
+  m_Tracker->AddObserver( igstk::TrackerOpenErrorEvent(),
+                                    this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerInitializeErrorEvent(),
+                                    this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerStartTrackingErrorEvent(),
+                                    this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerStopTrackingErrorEvent(),
+                                    this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
+                                    this->m_ErrorObserver );
+  m_Tracker->AddObserver( igstk::TrackerCloseErrorEvent(),
+                                    this->m_ErrorObserver );
   
   m_MicronTracker->SetCameraCalibrationFilesDirectory( 
     trackerConfig->m_CameraCalibrationFileDirectory );
@@ -481,10 +511,12 @@ int TrackerInitializerNew::InitializeMicronTracker()
     trackerConfig->m_TemplatesDirectory );
 
   m_MicronTracker->RequestOpen();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-      this->m_errorObserver->ClearError();
-      return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
   }
 
   m_TrackerToolList.clear();
@@ -499,9 +531,11 @@ int TrackerInitializerNew::InitializeMicronTracker()
     tool->RequestConfigure();
 
     tool->RequestAttachToTracker( m_MicronTracker );
-    if( this->m_errorObserver->Error() )
+    if( this->m_ErrorObserver->Error() )
     {
-        this->m_errorObserver->ClearError();
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
         return 0;
     }
 
@@ -520,10 +554,12 @@ int TrackerInitializerNew::InitializeMicronTracker()
 
   m_Tracker->RequestSetFrequency( trackerConfig->m_Frequency );
   m_Tracker->RequestStartTracking();
-  if( this->m_errorObserver->Error() )
+  if( this->m_ErrorObserver->Error() )
   {
-      this->m_errorObserver->ClearError();
-      return 0;
+        this->m_ErrorObserver->GetErrorMessage(m_ErrorMessage);
+        this->m_ErrorObserver->ClearError();
+        std::cerr << m_ErrorMessage << "\n";
+        return 0;
   }
 
   return 1;
