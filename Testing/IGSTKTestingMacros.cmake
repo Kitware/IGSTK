@@ -167,10 +167,6 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
   ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
        ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
-  ADD_TEST( igstkTubeVesselReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/vessel.tre 
-       ${IGSTK_DATA_ROOT}/Input/vesselCorruptedOnPurpose.tre  
-       ${IGSTK_DATA_ROOT}/Input/vesselWithoutReadPermissions.tre )
   ADD_TEST( igstkTubeReaderTest ${IGSTK_TESTS} igstkTubeReaderTest 
        ${IGSTK_DATA_ROOT}/Input/Tube.tre 
        ${IGSTK_DATA_ROOT}/Input/TubeCorruptedOnPurpose.tre  
