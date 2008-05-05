@@ -193,7 +193,24 @@ public:
       meshReader->RequestSetFileName(filename);
       meshReader->RequestReadObject();
 
-      igstk::MeshObject::ConstPointer mesh = meshReader->GetOutput();
+      // Attach an observer
+      igstkObserverObjectMacro( MeshObject, 
+        igstk::MeshReader::MeshModifiedEvent,
+        igstk::MeshObject);
+
+      MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+
+      meshReader->AddObserver( igstk::MeshReader::MeshModifiedEvent(),
+        observer);
+
+      meshReader->RequestGetOutput();
+
+      igstk::MeshObject::ConstPointer mesh;
+
+      if(observer->GotMeshObject())
+      {
+         mesh = observer->GetMeshObject();
+      }
 
       igstk::Transform identity;
       identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
