@@ -53,6 +53,10 @@ public:
                      igstk::VesselObjectModifiedEvent,
                      igstk::VesselObject)
   
+  igstkObserverObjectMacro( MeshObject, 
+                     igstk::MeshReader::MeshModifiedEvent,
+                     igstk::MeshObject);
+
   FourViewsImplementation()
     {
     this->Display3D = ViewType3D::New();
@@ -193,12 +197,7 @@ public:
       meshReader->RequestSetFileName(filename);
       meshReader->RequestReadObject();
 
-      // Attach an observer
-      igstkObserverObjectMacro( MeshObject, 
-        igstk::MeshReader::MeshModifiedEvent,
-        igstk::MeshObject);
-
-      MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+       MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
 
       meshReader->AddObserver( igstk::MeshReader::MeshModifiedEvent(),
         observer);
