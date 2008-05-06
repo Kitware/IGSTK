@@ -24,7 +24,7 @@ void IGSTKErrorObserver::Execute(itk::Object *caller, const itk::EventObject & e
                //listening to an event that wasn't entered into the map of events we listen to
   if(it == this->errorEvent2ErrorMessage.end()) {
     std::string logicalErrorMessage = std::string("ErrorObserver: listening to an event (") + className + std::string(") which is not one of the expected events.");
-    throw std::exception(logicalErrorMessage.c_str());
+    itkExceptionMacro(<< logicalErrorMessage.c_str());
   }
   this->errorOccured = true;
   this->errorMessage = (*it).second;
