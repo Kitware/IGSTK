@@ -24,6 +24,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+igstkObserverObjectMacro( TubeObject, 
+                          igstk::TubeReader::TubeModifiedEvent,
+                          igstk::TubeObject);
+
 int igstkTubeReaderTest( int argc, char * argv [] )
 {
 
@@ -89,8 +93,6 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   reader->RequestReadObject();
 
   // Attach an observer
-  igstkObserverObjectMacro( TubeObject, igstk::TubeReader::TubeModifiedEvent,
-    igstk::TubeObject);
   TubeObjectObserver::Pointer observer = TubeObjectObserver::New();
 
   reader->AddObserver(igstk::TubeReader::TubeModifiedEvent(),observer);

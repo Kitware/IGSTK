@@ -121,15 +121,11 @@ namespace igstk
 
   } // end of VisibilityObjectTest namespace
 
- /* namespace MeshObjectTest2
-  {
-    igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
-      igstk::MeshObject);
-  } // end of MeshObjectTest2 namespace
- */
 } // end namespace igstk
 
-
+igstkObserverObjectMacro( MeshObject, 
+                         igstk::MeshReader::MeshModifiedEvent,
+                         igstk::MeshObject);
 
 int igstkMeshObjectTest2( int argc, char * argv [] )
 {
@@ -180,8 +176,6 @@ int igstkMeshObjectTest2( int argc, char * argv [] )
   reader->RequestReadObject();
   
   // Attach an observer
-  igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
-                                                          igstk::MeshObject);
   MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
  
   reader->AddObserver(igstk::MeshReader::MeshModifiedEvent(),observer);

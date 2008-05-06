@@ -24,6 +24,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+igstkObserverObjectMacro( MeshObject, 
+                          igstk::MeshReader::MeshModifiedEvent,
+                          igstk::MeshObject);
+
 int igstkMeshReaderTest( int argc, char * argv [] )
 {
 
@@ -85,8 +89,6 @@ int igstkMeshReaderTest( int argc, char * argv [] )
   reader->RequestReadObject();
 
   // Attach an observer
-  igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
-    igstk::MeshObject);
   MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
 
   reader->AddObserver(igstk::MeshReader::MeshModifiedEvent(),observer);
