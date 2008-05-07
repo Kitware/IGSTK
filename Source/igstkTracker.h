@@ -157,10 +157,6 @@ protected:
   /** typedef for times used by the tracker */
   typedef Transform::TimePeriodType         TimePeriodType;
 
- /** Set the time period over which a tool transform should be considered
-   *  valid. */
-  igstkSetMacro( ValidityTime, TimePeriodType );
-
   /** Get the validity time. */
   igstkGetMacro( ValidityTime, TimePeriodType );
 

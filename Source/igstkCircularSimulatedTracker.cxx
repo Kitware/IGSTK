@@ -32,7 +32,10 @@ CircularSimulatedTracker::CircularSimulatedTracker():m_StateMachine(this)
   this->m_Angle = 0.0;
   this->m_AngularSpeed = 0.01;   // degrees per second
   this->m_TimeOfLastUpdate = RealTimeClock::GetTimeStamp();
-  this->SetValidityTime(1000.0); // one second (1000 milliseconds).
+
+  double validityTime = 1000.0;
+  double trackerFrequency = 1000.0 / (validityTime - 10);  
+  this->RequestSetFrequency(trackerFrequency ); 
 }
 
 CircularSimulatedTracker::~CircularSimulatedTracker()

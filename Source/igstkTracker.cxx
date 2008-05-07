@@ -301,8 +301,12 @@ Tracker::Tracker(void) :  m_StateMachine( this )
 
   // This is the time period for which transformation should be
   // considered valid.  After this time, they expire.  This time
-  // is in milliseconds.
-  const TimePeriodType DEFAULT_VALIDITY_TIME = 400;
+  // is in milliseconds. The default validity time is computed 
+  // from the default refresh rate and nonflickering constant
+  const double nonFlickeringConstant = 10;
+
+  const TimePeriodType DEFAULT_VALIDITY_TIME = 
+                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant ;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used

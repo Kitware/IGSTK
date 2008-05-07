@@ -30,7 +30,10 @@ namespace igstk
 MouseTracker::MouseTracker():m_StateMachine(this)
 {
   m_ScaleFactor = 1.0;
-  this->SetValidityTime(100.0);
+
+  double validityTime = 100.0;
+  double trackerFrequency = 1000.0 / (validityTime - 10);  
+  this->RequestSetFrequency(trackerFrequency ); 
 }
 
 MouseTracker::~MouseTracker()
