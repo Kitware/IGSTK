@@ -166,8 +166,6 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<400; i++)
     {
-    tracker->RequestUpdateStatus();
-
     TransformType             transform;
     VectorType                position;
 
