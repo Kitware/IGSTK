@@ -381,11 +381,6 @@ int igstkBasicTrackerTest( int, char * [] )
   tracker->RequestStartTracking(); // for failure
   tracker->RequestStartTracking(); // for success
 
-  tracker->RequestUpdateStatus();  // for failure
-  tracker->RequestUpdateStatus();  // for success
-
-  tracker->RequestUpdateStatus();
-
   tracker->RequestReset(); // for failure
   tracker->RequestReset(); // for success
 

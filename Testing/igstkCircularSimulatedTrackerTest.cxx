@@ -83,6 +83,7 @@ int igstkCircularSimulatedTrackerTest( int , char * [] )
   tracker->GetRadius(); // coverage
   tracker->SetAngularSpeed( speedInDegreesPerSecond );
   tracker->GetAngularSpeed(); // coverage;
+  tracker->RequestSetFrequency( 100.0 );
 
   tracker->Print( std::cout );
 

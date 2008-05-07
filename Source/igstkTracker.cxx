@@ -291,7 +291,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   m_PulseGenerator = PulseGenerator::New();
 
   m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & Tracker::RequestUpdateStatus );
+  m_PulseObserver->SetCallbackFunction( this, & Tracker::UpdateStatus );
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   // This is update rate for sending tracking information to the
@@ -403,11 +403,11 @@ void Tracker::RequestStopTracking( void )
 }
 
 
-/** The "RequestUpdateStatus" method is used for updating the status of 
- *  ports and tools when the tracker is in tracking state. */
-void Tracker::RequestUpdateStatus( void )
+/** The "UpdateStatus" method is used for updating the status of 
+ *  tools when the tracker is in tracking state. */
+void Tracker::UpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::RequestUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatus called ...\n");
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
@@ -833,7 +833,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
   this->InvokeEvent( TrackerUpdateStatusEvent() );  
 }
 
-/** This method is called when a call to RequestUpdateStatus failed */
+/** This method is called when a UpdateStatus failed */
 void Tracker::UpdateStatusFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Tracker::UpdateStatusFailureProcessing "

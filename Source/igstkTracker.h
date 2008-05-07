@@ -128,9 +128,6 @@ public:
   /** The "RequestStopTracking" stops tracker from tracking the tools. */
   void RequestStopTracking( void );
   
-  /** The "RequestUpdateStatus" method is used for updating the status of 
-  ports and tools when the tracker is in tracking state. */
-  void RequestUpdateStatus( void );
 
   /** The "RequestSetFrequency" method defines the frequency at which the
    * Transform information will be queried from the Tracker device. Note that
@@ -193,6 +190,7 @@ protected:
       This method is to be implemented by a descendant class 
       and responsible for device-specific processing */
   virtual ResultType InternalStopTracking( void ) = 0;
+
 
   /** The "InternalUpdateStatus" method updates tracker status.
       This method is to be implemented by a descendant class 
@@ -360,6 +358,11 @@ private:
 
   /** Thread function for tracking */
   static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
+
+  /** The "UpdateStatus" method is used for updating the status of 
+      tools when the tracker is in tracking state. It is a callback
+      method that gets invoked when a pulse event is observed */
+  void UpdateStatus( void );
 
   /** The "AttemptToOpenProcessing" method attempts to open communication with a
       tracking device. */

@@ -43,7 +43,6 @@ int igstkSimulatedTrackerTest( int, char * [] )
   tracker->RequestStopTracking();
   tracker->RequestSetReferenceTool( tool );
   tracker->RequestStartTracking();
-  tracker->RequestUpdateStatus();
   tracker->RequestReset();
 
   tool->RequestDetachFromTracker();

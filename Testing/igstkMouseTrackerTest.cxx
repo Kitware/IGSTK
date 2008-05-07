@@ -134,8 +134,6 @@ int igstkMouseTrackerTest( int, char * [] )
 
   for(unsigned int i=0; i<20; i++)
     {
-    tracker->RequestUpdateStatus();
-
     TransformType             transform;
     VectorType                position;
 
