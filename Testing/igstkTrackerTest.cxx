@@ -68,6 +68,10 @@ public:
   typedef Superclass::TransformType           TransformType;
   typedef Superclass::ResultType              ResultType;
 
+  double GetTransformValidityTime()
+  {
+    return this->GetValidityTime();
+  }
 
 protected:
 
@@ -223,6 +227,24 @@ int igstkTrackerTest( int, char * [] )
   TrackerType::Pointer tracker = TrackerType::New();
 
   tracker->RequestOpen();
+
+  double defaultValidityTime = tracker->GetTransformValidityTime();
+  std::cout << "Default validity time: " << defaultValidityTime << std::endl;
+
+  double trackerFrequency = 1;
+  double validityTimeShouldBe = (1000.0/trackerFrequency) + 10;
+
+  tracker->RequestSetFrequency( trackerFrequency );
+
+  double validityTimeReturned = tracker->GetTransformValidityTime();
+
+  if( fabs( validityTimeShouldBe - validityTimeReturned ) > 1e-5 )
+    {
+    std::cerr << "Error in RequestSetFrequency()/GetValidityTime() " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   tracker->RequestSetFrequency( 30 );
 
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();

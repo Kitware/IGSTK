@@ -100,7 +100,6 @@ int igstkMouseTrackerTest( int, char * [] )
     return EXIT_FAILURE;
     }
 
-
   tracker->Print( std::cout );
   tracker->RequestOpen();
 
