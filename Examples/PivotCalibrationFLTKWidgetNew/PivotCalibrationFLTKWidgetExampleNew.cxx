@@ -104,6 +104,7 @@ void PivotCalibrationFLTKWidgetExample::RequestDisconnectTracker()
         m_TrackerInitializer->RequestStopAndDisconnectTracker();
         this->m_initialized = false;
         TrackerList->clear();
+        TrackerList->value(0);
     }
 }
 
