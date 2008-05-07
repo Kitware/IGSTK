@@ -171,7 +171,6 @@ int igstkFlockOfBirdsTrackerTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<10; i++)
     {
-    tracker->RequestUpdateStatus();
     unsigned int port = 0;
     unsigned int channel = 0;
     TransformType             transform;

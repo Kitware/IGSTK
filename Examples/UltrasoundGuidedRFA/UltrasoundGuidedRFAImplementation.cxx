@@ -455,8 +455,6 @@ void UltrasoundGuidedRFAImplementation
     return;
     }
 
-  m_Tracker->RequestUpdateStatus();
-
   typedef igstk::Transform            TransformType;
   typedef TransformType::VectorType   VectorType;
 

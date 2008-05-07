@@ -327,7 +327,6 @@ PivotCalibrationNew::InitializeProcessing()
               //should not generate an error
   unsigned long observerID = this->m_TmpTracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(), 
                                                               this->m_ErrorObserver );
-  this->m_TmpTracker->RequestUpdateStatus();                  
   this->m_TmpTracker->RemoveObserver( observerID );
                       //if the tracker isn't in tracking state the observer 
                       //has been notified
@@ -395,9 +394,6 @@ PivotCalibrationNew::ComputeCalibrationProcessing()
     while( numberOfAcquisitionAttempts < PivotCalibrationNew::MAXIMAL_RETRIES && 
            !acquired) 
     {
-      this->m_Tracker->RequestUpdateStatus();
-      
-                           //an internal tracker error occured, we can't recover      
       if( this->m_ErrorObserver->ErrorOccured() ) 
       {        
         this->m_ErrorObserver->GetErrorMessage( this->m_ReasonForCalibrationFailure );

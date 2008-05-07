@@ -99,10 +99,6 @@ MainWindow::~MainWindow()
 void MainWindow::idleProcessing()
 {
   igstk::PulseGenerator::CheckTimeouts();
-  if(mIsTracking)
-  {
-    mTracker->RequestUpdateStatus();
-  }
 }
 
 void MainWindow::addUsPlane()

@@ -651,7 +651,6 @@ void FourViewsTrackingWithCT::AddTrackerLandmarkProcessing()
 void FourViewsTrackingWithCT::GetTrackerTransform()
 {
   igstkLogMacro2( m_Logger, DEBUG, "Tracker::GetToolTransform called...\n" )
-  m_Tracker->RequestUpdateStatus();
   /* FIXME
   m_Tracker->GetToolTransform( 
                       TRACKER_TOOL_PORT, 0, m_TrackerLandmarkTransformToBeSet );
