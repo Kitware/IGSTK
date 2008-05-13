@@ -351,7 +351,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
   toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
+                          igstk::TimeStamp::GetZeroValue() );
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestStart();
@@ -366,7 +366,7 @@ int igstkImageResliceSpatialObjectRepresentationTest( int argc , char * argv [] 
       toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
+                          igstk::TimeStamp::GetZeroValue() );
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
       QTest::qWait(10);
       igstk::PulseGenerator::CheckTimeouts();

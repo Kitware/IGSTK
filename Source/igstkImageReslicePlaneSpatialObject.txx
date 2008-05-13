@@ -726,6 +726,16 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
   this->m_ToolTransformWRTImageCoordinateSystem =
       this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
+
+  //Set the validity time stamp of the image spatial object transform to 
+  //validity time of the tool spatial object.
+
+  Transform::TimePeriodType startTime = 
+         this->m_ToolTransformWRTImageCoordinateSystem.GetStartTime();
+
+  Transform::TimePeriodType expirationTime =
+         this->m_ToolTransformWRTImageCoordinateSystem.GetExpirationTime();
+
 }
 
 /** Request compute reslicing plane */
@@ -1111,7 +1121,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     return;
     }
 
-  //Generate orientation transforms
+  /* To generate the three orientations of the oblique view, compose
+     the tool transform with respect to the image with the three orthogonal
+     orientations */   
+
+  //Generate the orientation transforms
   Transform orientationTransform;
 
   Transform::VectorType     translation;
@@ -1126,25 +1140,65 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
   Transform::VersorType  rotation;
 
+  ::itk::Versor<double>::MatrixType   orientationMatrix;
+
   switch( m_OrientationType )
   {
   case PlaneOrientationWithZAxesNormal:
     {
     //equivalent to the matrix we use for Axial
     //set the versors
-    rotation.Set(0.0, 0.0, 0.0, 1.0);
+
+    orientationMatrix[0][0] = 1.0;
+    orientationMatrix[1][0] = 0.0;
+    orientationMatrix[2][0] = 0.0;
+
+    orientationMatrix[0][1] = 0.0;
+    orientationMatrix[1][1] = 1.0;
+    orientationMatrix[2][1] = 0.0;
+
+    orientationMatrix[0][2] = 0.0;
+    orientationMatrix[1][2] = 0.0;
+    orientationMatrix[2][2] = 1.0;
+ 
+    rotation.Set( orientationMatrix );
     }
     break;
   case PlaneOrientationWithYAxesNormal:
     {
     //equivalent to the matrix we use for Coronal
-    rotation.Set(0.0, 0.0, 0.0, 1.0);
+    orientationMatrix[0][0] = 1.0;
+    orientationMatrix[1][0] = 0.0;
+    orientationMatrix[2][0] = 0.0;
+
+    orientationMatrix[0][1] = 0.0;
+    orientationMatrix[1][1] = 0.0;
+    orientationMatrix[2][1] = -1.0;
+
+    orientationMatrix[0][2] = 0.0;
+    orientationMatrix[1][2] = 1.0;
+    orientationMatrix[2][2] = 0.0;
+
+    rotation.Set( orientationMatrix );
     }
     break;
   case PlaneOrientationWithXAxesNormal:
     {
     //equivalent to the matrix we use for Sagittal
-    rotation.Set(0.0, 0.0, 0.0, 1.0);
+    orientationMatrix[0][0] = 0.0;
+    orientationMatrix[1][0] = 1.0;
+    orientationMatrix[2][0] = 0.0;
+
+    orientationMatrix[0][1] = 0.0;
+    orientationMatrix[1][1] = 0.0;
+    orientationMatrix[2][1] = -1.0;
+
+    orientationMatrix[0][2] = -1.0;
+    orientationMatrix[1][2] = 0.0;
+    orientationMatrix[2][2] = 0.0;
+
+    rotation.Set( orientationMatrix );
+
     }
     break;
   default:
@@ -1155,9 +1209,29 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                           rotation,
                           transformUncertainty,
                           ::igstk::TimeStamp::GetLongestPossibleTime() );
-  Transform combinedTransform;
-  combinedTransform.TransformCompose( orientationTransform, m_ToolTransformWRTImageCoordinateSystem );
 
+  Transform combinedTransform;
+  combinedTransform = Transform::TransformCompose( orientationTransform, m_ToolTransformWRTImageCoordinateSystem );
+
+  Transform::VectorType combinedTranslation = 
+                            combinedTransform.GetTranslation();
+  Transform::VersorType combinedRotation =
+                            combinedTransform.GetRotation();
+
+ ::itk::Versor<double>::MatrixType combinedRotationMatrix 
+                          = combinedRotation.GetMatrix(); 
+ 
+  m_ResliceAxes->Identity();
+
+  for ( unsigned int i = 0; i < 3; i++ )
+     {
+     m_ResliceAxes->SetElement(i,0,combinedRotationMatrix[i][0]);
+     m_ResliceAxes->SetElement(i,1,combinedRotationMatrix[i][1]);
+     m_ResliceAxes->SetElement(i,2,combinedRotationMatrix[i][2]);
+     m_ResliceAxes->SetElement(i,3,combinedTranslation[i]);
+     }
+ 
+ 
   std::cout.precision(3);
   std::cout << "ResliceAxes matrix: \n" 
             << "(" << m_ResliceAxes->GetElement(0,0) << ","
@@ -1272,6 +1346,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     "igstk::ImageReslicePlaneSpatialObject::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
+}
+
+/** Get tool transform */
+template < class TImageSpatialObject >
+Transform
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::GetToolTransform( ) const
+{
+  return this->m_ToolTransformWRTImageCoordinateSystem;
 }
 
 /** Print object information */

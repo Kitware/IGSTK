@@ -103,6 +103,9 @@ protected:
    igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
      CoordinateSystemTransformToResult );
 
+  /** Verify time stamp. Use the reslicing tool transform to verify 
+    * the time stamp */
+  virtual bool VerifyTimeStamp() const;
 
 private:
 

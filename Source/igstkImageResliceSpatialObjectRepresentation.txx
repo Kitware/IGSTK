@@ -430,7 +430,31 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
+/** Print Self function */
+template < class TImageSpatialObject >
+bool
+ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
+::VerifyTimeStamp( ) const
+{
+  std::cout << "ImageResliceSpatialObjectRepresentation::VerifyTimeStamp" << std::endl;
 
+  if( this->m_ReslicePlaneSpatialObject.IsNull() )
+    {
+    return false;
+    }
+
+  if( this->GetRenderTimeStamp().GetExpirationTime() <
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+    this->GetRenderTimeStamp().GetStartTime() >
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+    {
+    return false;
+    }
+  else
+    {
+    return true;
+    }
+}
 
 /** Print Self function */
 template < class TImageSpatialObject >

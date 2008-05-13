@@ -134,6 +134,9 @@ public:
   /** Request update tool transform WRT image coordinate system */
   void RequestUpdateToolTransform();
 
+  /** Get tool transform */
+  Transform GetToolTransform() const;
+
 protected:
 
   /** Constructor */
