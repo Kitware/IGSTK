@@ -131,7 +131,15 @@ protected:
 
   /** Request the state machine to set a Spatial Object */
   void RequestSetSpatialObject( const SpatialObject * spatialObject );
-  
+
+  /** Verify the time stamp. A default implementation is provided that checks
+    * if the spatial object transform is within the Rendering time period.
+    * This method could be overridden in derived classes that can use other 
+    * criteria to verify the time stamp. */
+  virtual bool VerifyTimeStamp() const; 
+
+  /** Get Time stamp for the time at which the next rendering will take place */
+  TimeStamp GetRenderTimeStamp() const;
   
 private:
 

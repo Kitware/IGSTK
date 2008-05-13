@@ -377,14 +377,11 @@ void ObjectRepresentation::ReceiveTransformNotAvailableProcessing()
   this->RequestVerifyTimeStampAndUpdateVisibility();
 }
 
-/** Receive No Transform Available message from the SpatialObject via a
- * transduction macro. */
+/** This method checks the time stamp of the transform
+   *  and modifies the visibility of the objects accordingly. */
 void ObjectRepresentation::RequestVerifyTimeStampAndUpdateVisibility()
 {
-  if( this->m_TimeToRender.GetExpirationTime() <
-    this->m_SpatialObjectTransform.GetStartTime() ||
-    this->m_TimeToRender.GetStartTime() >
-    this->m_SpatialObjectTransform.GetExpirationTime() )
+  if( ! this->VerifyTimeStamp() )
     {
     this->m_VisibilityStateMachine.PushInput( this->m_InvalidTimeStampInput );
     this->m_VisibilityStateMachine.ProcessInputs();
@@ -398,7 +395,22 @@ void ObjectRepresentation::RequestVerifyTimeStampAndUpdateVisibility()
   this->UpdateRepresentationProcessing();
 }
 
-
+/** Verify time stamp */
+bool ObjectRepresentation::VerifyTimeStamp() const
+{
+  if( this->m_TimeToRender.GetExpirationTime() <
+    this->m_SpatialObjectTransform.GetStartTime() ||
+    this->m_TimeToRender.GetStartTime() >
+    this->m_SpatialObjectTransform.GetExpirationTime() )
+    {
+    return false;
+    }
+  else
+    {
+    return true;
+    }
+}
+ 
 /** Null operation for a State Machine transition */
 void ObjectRepresentation::NoProcessing()
 {
@@ -477,6 +489,12 @@ void ObjectRepresentation
 ::SetActorInvisibleProcessing()
 {
   this->m_VisibilitySetActor->VisibilityOff();
+}
+
+TimeStamp ObjectRepresentation
+::GetRenderTimeStamp() const
+{
+  return this->m_TimeToRender;
 }
 
 } // end namespace igstk
