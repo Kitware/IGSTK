@@ -351,6 +351,18 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     ${IGSTKSandbox_HEADS}
     igstkTrackerToolObserverToSocketRelay.h
     )
+  IF(IGSTKSandbox_USE_OpenIGTLink)
+    INCLUDE_DIRECTORIES(
+      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/libs/newmat
+      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src
+      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src/igtlutil
+      )
+
+    SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.h
+      )
+  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -431,6 +443,13 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     ${IGSTKSandbox_SRCS}
     igstkTrackerToolObserverToSocketRelay.cxx
     )
+
+  IF(IGSTKSandbox_USE_OpenIGTLink)
+    SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
+      )
+  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -498,5 +517,5 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
-    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS} )
+    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS} OpenIGTLinkLib)
     
