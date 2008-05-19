@@ -82,6 +82,8 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}/Testing
   ${IGSTKSandbox_SOURCE_DIR}/SourceLatest
   ${IGSTKSandbox_SOURCE_DIR}/TestingLatest
+  ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src
+  ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src/igtlutil  
   )
 
 
@@ -146,6 +148,13 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     igstkVicraTrackerToolObserverToSocketRelayTest.cxx
     igstkTransformSocketListenerTest.cxx
     )
+  IF(IGSTKSandbox_USE_OpenIGTLink)
+    SET(SandboxTests_SRCS
+      ${SandboxTests_SRCS}
+      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      igstkOpenIGTLinkTest.cxx
+      )
+  ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
@@ -195,6 +204,18 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     localhost 16666 1000
     )
 
+  IF(IGSTKSandbox_USE_OpenIGTLink)
+    ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTKSandbox_TESTS}
+      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
+      ${TRACKER_FREQUENCY}
+      )
+    ADD_TEST( igstkOpenIGTLinkTest
+      ${IGSTKSandbox_TESTS}
+      igstkOpenIGTLinkTest
+      1 c localhost)
+  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
