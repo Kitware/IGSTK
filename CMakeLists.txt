@@ -159,6 +159,12 @@ OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tes
 #
 OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
 
+#
+# Use OpenIGTLink protocol 
+#
+OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" ON)
+
+
 #-----------------------------------------------------------------------------
 # check for header files that we need
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
