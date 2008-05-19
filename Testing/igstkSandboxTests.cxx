@@ -57,6 +57,10 @@ void RegisterTests()
   REGISTER_TEST(igstkAuroraTrackerToolObserverToSocketRelayTest );
   REGISTER_TEST(igstkVicraTrackerToolObserverToSocketRelayTest );
   REGISTER_TEST(igstkTransformSocketListenerTest );
+#ifdef IGSTKSandbox_USE_OpenIGTLink
+  REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
+  REGISTER_TEST( igstkOpenIGTLinkTest );
+#endif  
 #endif
 
 #ifdef IGSTKSandbox_USE_FLTK
