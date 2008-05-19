@@ -55,3 +55,6 @@ IF(IGSTKSandbox_USE_vtkKWImage )
     SUBDIRS( vtkKWImage )
 ENDIF( IGSTKSandbox_USE_vtkKWImage )
 
+IF( IGSTKSandbox_USE_OpenIGTLink )
+    SUBDIRS( OpenIGTLink )
+ENDIF( IGSTKSandbox_USE_OpenIGTLink )
