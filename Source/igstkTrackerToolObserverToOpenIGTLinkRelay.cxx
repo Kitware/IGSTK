@@ -1,0 +1,236 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+// Disabling warning C4355: 'this' : used in base member initializer list
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4355 )
+#endif
+
+#include "igstkTrackerToolObserverToOpenIGTLinkRelay.h"
+#include "igstkCoordinateSystemTransformToResult.h"
+
+#include "igstkEvents.h"
+#include "igstkTrackerTool.h"
+#include "vtkMatrix4x4.h"
+
+namespace igstk
+{
+
+/** Constructor */
+TrackerToolObserverToOpenIGTLinkRelay::TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
+{
+  this->m_Observer = ObserverType::New();
+  this->m_Observer->SetCallbackFunction( this, & Self::ResendTransformThroughOpenIGTLink );
+
+  this->m_Matrix = vtkMatrix4x4::New();
+
+  this->m_WaitingForNextRequestFromOpenIGTLink = false;
+
+  this->m_Acquisition = new AcquisitionTrackingSimulator;
+  this->m_Transfer  = new TransferOpenIGTLink;
+
+}
+
+TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
+{
+  this->m_Observer = NULL; // FIXME also disconnect as an observer
+
+//  this->m_SocketController->Delete();
+//  this->m_SocketCommunicator->Delete();
+  this->m_Matrix->Delete();
+
+//  this->m_SocketController = NULL;
+//  this->m_SocketCommunicator = NULL;
+  this->m_Matrix = NULL;
+
+  this->m_Acquisition->Stop();
+  this->m_Transfer->Stop();
+  this->m_Transfer->Disconnect();
+
+  delete this->m_Acquisition;
+  delete this->m_Transfer;
+  this->m_Acquisition = NULL;
+  this->m_Transfer = NULL;
+  this->m_FramesPerSecond = 1.0;
+
+}
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetPort( int port )
+{
+  this->m_Port = port;
+}
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetFramesPerSecond( double fps )
+{
+  this->m_FramesPerSecond = fps;
+}
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetHostName( const char * hostname )
+{
+  this->m_HostName = hostname;
+}
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetTrackerTool( const TrackerTool * trackerTool )
+{
+  this->m_TrackerTool = trackerTool;
+  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent(), this->m_Observer );
+}
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
+{
+  char * hostname = const_cast< char * >( this->m_HostName.c_str() );
+
+  std::cout << "Trying to connect to host = " << hostname << std::endl;
+  std::cout << "In port = " << this->m_Port << std::endl;
+
+  /*
+  if( !this->m_SocketCommunicator->ConnectTo( hostname, this->m_Port ) )
+    {
+    std::cerr << "Client error: Could not connect to the server." << std::endl;
+    }
+    */
+
+  //this->m_Tag = 0;
+  this->m_Tag = 17;
+  this->m_WaitingForNextRequestFromOpenIGTLink = false;
+
+
+  this->m_Acquisition->SetPostProcessThread(dynamic_cast<Thread*>(this->m_Transfer));
+  this->m_Acquisition->SetFrameRate(this->m_FramesPerSecond);
+  // this->m_Acquisition->SetFrameRate(1);
+
+  this->m_Transfer->SetClientMode(hostname, this->m_Port);
+
+  this->m_Transfer->SetAcquisitionThread(this->m_Acquisition);
+  this->m_Acquisition->Run();
+  this->m_Transfer->Run();
+}
+
+/*
+void
+TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::Object * caller, const itk::EventObject & event )
+{
+  std::cout << "TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink() " << std::endl;
+
+  if( this->m_WaitingForNextRequestFromOpenIGTLink )
+    {
+    return;
+    }
+
+  //
+  // We send 12 parameters: 3x3 from the rotation matrix plus 3 from the
+  // translation vector.
+  //
+  const int numberOfParametersToSend = 12;
+
+
+  const CoordinateSystemTransformToEvent * transformEvent =
+    dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
+
+  if( transformEvent )
+    {
+    igstk::CoordinateSystemTransformToResult transformCarrier = 
+      transformEvent->Get();
+
+    igstk::Transform transform = transformCarrier.GetTransform();
+
+    std::cout << "Sending transform " << transform << std::endl;
+
+    transform.ExportTransform( *(this->m_Matrix) );
+
+    unsigned int counter = 0;
+    double dataToBeSent[ numberOfParametersToSend ];
+
+    for (unsigned int i = 0; i < 4; i++)
+      {
+      for (unsigned int j = 0; j < 3; j++)
+        {
+        dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
+        }
+      }
+
+    // Hack for demo
+    dataToBeSent[11] += 1000;
+
+    if( !this->m_SocketCommunicator->Send( dataToBeSent, numberOfParametersToSend, 1, this->m_Tag ) )
+      {
+      std::cerr << "Client error: Error sending data." << std::endl;
+      }
+
+    //this->m_Tag++;
+
+    this->m_WaitingForNextRequestFromOpenIGTLink = true;
+
+    char confirmation;
+
+    if (!this->m_SocketCommunicator->Receive( &confirmation, 1, 1, this->m_Tag))
+      {
+      this->m_WaitingForNextRequestFromOpenIGTLink = true;
+      }
+    else
+      {
+      this->m_WaitingForNextRequestFromOpenIGTLink = false;
+      }
+    }
+
+}
+*/
+
+
+void
+TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::Object * caller, const itk::EventObject & event )
+{
+  std::cout << "TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink() " << std::endl;
+
+  const CoordinateSystemTransformToEvent * transformEvent =
+    dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
+
+  if( transformEvent )
+    {
+    igstk::CoordinateSystemTransformToResult transformCarrier = 
+      transformEvent->Get();
+
+    igstk::Transform transform = transformCarrier.GetTransform();
+
+    std::cout << "Sending transform " << transform << std::endl;
+
+    transform.ExportTransform( *(this->m_Matrix) );
+
+    this->m_Acquisition->SetMatrix(*this->m_Matrix);
+    }
+}
+
+
+/** Print Self function */
+void TrackerToolObserverToOpenIGTLinkRelay::PrintSelf( std::ostream& os, itk::Indent indent ) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent << "Port: " << this->m_Port << std::endl;
+  os << indent << "Hostname: " << this->m_HostName << std::endl;
+  os << indent << "Tag: " << this->m_Tag << std::endl;
+}
+
+}
