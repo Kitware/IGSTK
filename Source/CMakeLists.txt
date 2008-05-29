@@ -505,6 +505,10 @@ IF(IGSTKSandbox_USE_MicronTracker)
   
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_OpenIGTLink)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLinkLib)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
+
 IF(IGSTKSandbox_USE_vtkKWImage)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkKWImageu)
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
@@ -517,5 +521,5 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
-    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS} OpenIGTLinkLib)
+    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS})
     
