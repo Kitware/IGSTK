@@ -58,6 +58,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   m_SliceNumber = 0;
   m_SliceNumberSetFlag = false;
 
+  //tool spatial object check flag
+  m_ToolSpatialObject  = false;
+
   //mouse position 
   m_MousePosition[0] = 0;
   m_MousePosition[1] = 0;
@@ -93,6 +96,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddInputMacro( SetMousePosition );
   igstkAddInputMacro ( ValidMousePosition );
   igstkAddInputMacro ( InValidMousePosition );
+  igstkAddInputMacro( GetSliceNumberBounds );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ComputeReslicePlane );
@@ -159,6 +163,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddTransitionMacro( ImageSpatialObjectSet, SetMousePosition,
                            AttemptingToSetMousePosition, AttemptSetMousePosition );  
 
+  igstkAddTransitionMacro( ImageSpatialObjectSet, GetSliceNumberBounds,
+                           ImageSpatialObjectSet, ReportSliceNumberBounds );
 
   // From AttemptingToSetSliceNumber
   igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber,
@@ -237,6 +243,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ComputeReslicePlane,
                            ToolSpatialObjectSet,
                            ComputeReslicePlane );
+  igstkAddTransitionMacro( ToolSpatialObjectSet, GetSliceNumberBounds,
+                           ToolSpatialObjectSet, ReportSliceNumberBounds );
+
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
@@ -343,6 +352,65 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 }
 
 template < class TImageSpatialObject >
+void
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::RequestGetSliceNumberBounds() 
+{
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::RequestGetSliceNumberBounds called...\n");
+ 
+  igstkPushInputMacro( GetSliceNumberBounds );
+  m_StateMachine.ProcessInputs();
+}
+
+template < class TImageSpatialObject >
+void
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::ReportSliceNumberBoundsProcessing() 
+{
+  igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
+                        ::ReportSliceNumberBoundsProcessing called...\n");
+ 
+  int ext[6];
+
+  m_ImageData->Update();
+  m_ImageData->GetExtent( ext );
+
+  EventHelperType::IntegerBoundsType bounds;
+
+  switch( m_OrientationType )
+    {
+    case Axial:
+      {
+      bounds.minimum = ext[4];
+      bounds.maximum = ext[5];
+      AxialSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    case Sagittal:
+      {
+      bounds.minimum = ext[0];
+      bounds.maximum = ext[1];
+      SagittalSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    case Coronal:
+      {
+      bounds.minimum = ext[2];
+      bounds.maximum = ext[3];
+      CoronalSliceBoundsEvent event;
+      event.Set( bounds );
+      this->InvokeEvent( event );
+      break;
+      }
+    }
+}
+
+template < class TImageSpatialObject >
 void 
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::SetSliceNumberProcessing()
@@ -416,12 +484,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
           }
         }
 
+    /*
     std::cout << "Image bounds: " << "(" << bounds[0] << "," 
                                   << bounds[1] << ","
                                   << bounds[2] << ","
                                   << bounds[3] << ","
                                   << bounds[4] << ","
                                   << bounds[5] << ")" << std::endl;
+    */
 
     bool validPosition = false; 
 
@@ -668,6 +738,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
   m_ToolSpatialObject = m_ToolSpatialObjectToBeSet;
   this->ObserveToolTransformWRTImageCoordinateSystemInput( this->m_ToolSpatialObject );
+  m_ToolSpatialObjectSet = true;
 }
 
 template < class TImageSpatialObject >
@@ -799,23 +870,33 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   /* Compute input image bounds */
   double imageSpacing[3];
   m_ImageData->GetSpacing( imageSpacing );
+  
+  /* 
   std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
-                                 << imageSpacing[1] << ","
-                                 << imageSpacing[2] << ")" << std::endl;
+                                 << imageSpacing[1] << "," 
+                                 << imageSpacing[2] << ")" << std::endl;  
+  */
+
   double imageOrigin[3];
   m_ImageData->GetOrigin( imageOrigin );
+
+  /*
   std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
                                  << imageOrigin[1] << ","
                                  << imageOrigin[2] << ")" << std::endl;
+  */
 
   int imageExtent[6];
   m_ImageData->GetWholeExtent( imageExtent );
+
+  /*
   std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
                                 << imageExtent[1] << ","
                                 << imageExtent[2] << ","
                                 << imageExtent[3] << ","
                                 << imageExtent[4] << ","
                                 << imageExtent[5] << ")" << std::endl;
+  */
 
   double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
                        imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
@@ -833,6 +914,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
         bounds[i] = t;
         }
       }
+
 
   std::cout << "Image bounds: " << "(" << bounds[0] << "," 
                                 << bounds[1] << ","
@@ -963,7 +1045,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
       origin[0] = bounds[0];
       origin[1] = planeCenter[1];
-      origin[2] = bounds[5];
+      origin[2] = bounds[4];
 
       point1[0] = bounds[1];
       point1[1] = planeCenter[1];
@@ -994,8 +1076,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       planeNormal[2] = 0.0;
 
       origin[0] = planeCenter[0];
-      origin[1] = bounds[3];
-      origin[2] = bounds[5];
+      origin[1] = bounds[2];
+      origin[2] = bounds[4];
 
       point1[0] = planeCenter[0];
       point1[1] = bounds[3];
@@ -1028,17 +1110,21 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                   planeCenter[1],
                                   planeCenter[2] );
 
+  /*
   std::cout << "Plane center: " << "(" << planeCenter[0] << "," 
                                  << planeCenter[1] << ","
                                  << planeCenter[2] << ")" << std::endl;
+  */
  
   m_ImageReslicePlane->SetNormal( planeNormal[0],
                                   planeNormal[1],
                                   planeNormal[2] );
 
+  /*
   std::cout << "Plane normal: " << "(" << planeNormal[0] << "," 
                                  << planeNormal[1] << ","
                                  << planeNormal[2] << ")" << std::endl;
+  */
   
   //Using the two points define two coordinate axes
   double axes1[3];
@@ -1055,10 +1141,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   double planeSizeX = vtkMath::Normalize(axes1);
   double planeSizeY = vtkMath::Normalize(axes2);
 
+
+  /*
   std::cout << "Axes1: (" << axes1[0] << "," << axes1[1] << "," << axes1[2] << ")" << std::endl;
   std::cout << "Axes2: (" << axes2[0] << "," << axes2[1] << "," << axes2[2] << ")" << std::endl;
   std::cout << "PlaneNormal: (" << planeNormal[0] << "," << planeNormal[1] << ","
             << planeNormal[2] << ")" << std::endl;
+  */
 
 
   /*
@@ -1084,6 +1173,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
      m_ResliceAxes->SetElement(i,3,origin[i]);
      }
  
+
   std::cout.precision(3);
   std::cout << "ResliceAxes matrix: \n" 
             << "(" << m_ResliceAxes->GetElement(0,0) << ","
@@ -1231,7 +1321,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
      m_ResliceAxes->SetElement(i,3,combinedTranslation[i]);
      }
  
- 
+
+  /* 
   std::cout.precision(3);
   std::cout << "ResliceAxes matrix: \n" 
             << "(" << m_ResliceAxes->GetElement(0,0) << ","
@@ -1250,6 +1341,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
             << m_ResliceAxes->GetElement(3,1) << ","
             << m_ResliceAxes->GetElement(3,2) << ","
             << m_ResliceAxes->GetElement(3,3) << ")" << std::endl;
+  */
 }
 
 /**Compute off-orthgonal reslicing plane */
@@ -1355,6 +1447,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::GetToolTransform( ) const
 {
   return this->m_ToolTransformWRTImageCoordinateSystem;
+}
+
+/** Check if tool spatial object is set to drive the reslicing*/
+template < class TImageSpatialObject >
+bool
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::IsToolSpatialObjectSet( ) 
+{
+  return this->m_ToolSpatialObjectSet;
 }
 
 /** Print object information */

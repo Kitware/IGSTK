@@ -436,19 +436,26 @@ bool
 ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
 ::VerifyTimeStamp( ) const
 {
-  std::cout << "ImageResliceSpatialObjectRepresentation::VerifyTimeStamp" << std::endl;
-
   if( this->m_ReslicePlaneSpatialObject.IsNull() )
     {
     return false;
     }
 
-  if( this->GetRenderTimeStamp().GetExpirationTime() <
-    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
-    this->GetRenderTimeStamp().GetStartTime() >
-    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+  /* if a tool spatial object is driving the reslicing, compare the 
+     tool spatial object transform with the view render time*/
+  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
     {
-    return false;
+    if( this->GetRenderTimeStamp().GetExpirationTime() <
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+      this->GetRenderTimeStamp().GetStartTime() >
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+      {
+      return false;
+      }
+    else
+      {
+      return true;
+      }
     }
   else
     {

@@ -122,6 +122,9 @@ public:
   /** Request set reslicing mouse position */
   void RequestSetMousePosition( double  mousePostion[3] );
 
+  /** Request get image slice number bounds */
+  void RequestGetSliceNumberBounds();
+
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane( ); 
 
@@ -136,6 +139,10 @@ public:
 
   /** Get tool transform */
   Transform GetToolTransform() const;
+
+  /** Inquiry if a tool spatial object is set for reslicing */
+  bool  IsToolSpatialObjectSet();
+
 
 protected:
 
@@ -173,6 +180,7 @@ private:
   igstkDeclareInputMacro( SetMousePosition );
   igstkDeclareInputMacro( ValidMousePosition );
   igstkDeclareInputMacro( InValidMousePosition );
+  igstkDeclareInputMacro( GetSliceNumberBounds );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ComputeReslicePlane );
@@ -241,6 +249,9 @@ private:
   /** Receive tool transform with respect to image coordinate system */ 
   void ReceiveToolTransformWRTImageCoordinateSystemProcessing( void );
 
+  /** Report image slice number bounds */
+  void ReportSliceNumberBoundsProcessing( void );
+
   /** Methods to compute reslcing plane for the different modes*/
   void ComputeOrthgonalReslicingPlane();
   void ComputeObliqueReslicingPlane();
@@ -290,6 +301,9 @@ private:
   double                 m_MousePositionToBeSet[3];
   double                 m_MousePosition[3];
   bool                   m_MousePostionSetFlag;
+
+  /** flag indicating tool spatial object used for reslicing */
+  bool                   m_ToolSpatialObjectSet;
 };
 
 } // end namespace igstk
