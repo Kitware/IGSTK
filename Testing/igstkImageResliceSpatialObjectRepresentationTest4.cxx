@@ -48,7 +48,7 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
 }
 
 
-/** This test demonstrates how to perform orthogonal reslicing using a tool
+/** This test demonstrates how to perform oblique reslicing using a tool
  * spatial object ( automatic reslicing ) */
 int igstkImageResliceSpatialObjectRepresentationTest4( int argc , char * argv [] )
 {

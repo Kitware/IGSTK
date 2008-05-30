@@ -210,7 +210,6 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   view2D->RequestStart();
   view2D->RequestResetCamera();
   qtMainWindow->show();
-  //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<imageExtent[5]; i++)
       {
       planeSpatialObject->RequestSetSliceNumber( i );
@@ -230,7 +229,6 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   view2D->RequestStart();
   view2D->RequestResetCamera();
   qtMainWindow->show();
-  //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[1]; i++)
       {
       planeSpatialObject->RequestSetSliceNumber( i );
@@ -240,7 +238,7 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
+  /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
@@ -249,7 +247,6 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   view2D->RequestStart();
   view2D->RequestResetCamera();
   qtMainWindow->show();
-  //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[3]; i++)
       {
       planeSpatialObject->RequestSetSliceNumber( i );
@@ -258,7 +255,6 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
       std::cout << "Sagittal slice number: " << i << std::endl;
       }
   view2D->RequestStop();
-
 
   delete qtWidget2D;
   delete qtMainWindow;
