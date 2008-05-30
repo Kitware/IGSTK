@@ -59,7 +59,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   m_SliceNumberSetFlag = false;
 
   //tool spatial object check flag
-  m_ToolSpatialObject  = false;
+  m_ToolSpatialObjectSet  = false;
 
   //mouse position 
   m_MousePosition[0] = 0;

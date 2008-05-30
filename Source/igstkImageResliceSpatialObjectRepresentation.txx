@@ -436,6 +436,9 @@ bool
 ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
 ::VerifyTimeStamp( ) const
 {
+  igstkLogMacro( DEBUG, 
+    "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
+
   if( this->m_ReslicePlaneSpatialObject.IsNull() )
     {
     return false;
