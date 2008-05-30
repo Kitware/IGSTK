@@ -150,7 +150,7 @@ int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, axesObject );
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  vtkPlane * plane = planeSpatialObject->RequestGetReslicingPlane();
+  vtkPlane * plane = planeSpatialObject->GetReslicingPlane();
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {

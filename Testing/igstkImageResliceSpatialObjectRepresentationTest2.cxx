@@ -220,6 +220,7 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   view2D->RequestStop();
 
   /* Change slice orientation to sagittal */
+
   std::cout << "Sagittal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Sagittal );
@@ -239,6 +240,7 @@ int igstkImageResliceSpatialObjectRepresentationTest2( int argc , char * argv []
   view2D->RequestStop();
 
   /* Change slice orientation to coronal */
+  
   std::cout << "Coronal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
            igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
