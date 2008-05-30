@@ -375,7 +375,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetInput( this->m_MapColors->GetOutput() ); 
-  m_ImageReslice->SetBackgroundColor( 128.0, 128.0, 128.0, 0 );
+  //m_ImageReslice->SetBackgroundColor( 255.0, 0.0, 0.0, 0 );
   m_ImageReslice->AutoCropOutputOn();
   m_ImageReslice->SetOptimization( 1 );
 
@@ -391,9 +391,12 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                          << "," << origin[2] << std::endl;
 
   //m_ImageReslice->SetOutputOrigin(origin[0], origin[1], origin[2]);
-  //m_ImageReslice->SetOutputOrigin(-255, -255, 0);
-
   //m_ImageReslice->SetOutputExtent( -512,512 , -512, 512, 0, 0);
+
+  m_ImageReslice->Update();
+
+  m_ImageReslice->GetOutput()->Print(std::cout);
+
   m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
 }
 
