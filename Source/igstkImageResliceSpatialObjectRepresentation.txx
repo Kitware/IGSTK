@@ -379,9 +379,21 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->AutoCropOutputOn();
   m_ImageReslice->SetOptimization( 1 );
 
+  //FIXME: the output image parameters need to be "intelligently" set
   m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
   m_ImageReslice->SetOutputDimensionality( 2 );
-  m_ImageReslice->SetOutputOrigin( 0, 0, 0 );
+ 
+  vtkPlane * reslicePlane = m_ReslicePlaneSpatialObject->GetReslicingPlane(); 
+  double origin[3];
+  reslicePlane->GetOrigin( origin );
+  std::cout << "Origin=" << origin[0] 
+                         << "," << origin[1] 
+                         << "," << origin[2] << std::endl;
+
+  //m_ImageReslice->SetOutputOrigin(origin[0], origin[1], origin[2]);
+  //m_ImageReslice->SetOutputOrigin(-255, -255, 0);
+
+  //m_ImageReslice->SetOutputExtent( -512,512 , -512, 512, 0, 0);
   m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
 }
 

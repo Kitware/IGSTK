@@ -1106,9 +1106,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       }
     }
 
+ /*
   m_ImageReslicePlane->SetOrigin( planeCenter[0],
                                   planeCenter[1],
-                                  planeCenter[2] );
+                                  planeCenter[2] ); */
+
+  m_ImageReslicePlane->SetOrigin( origin[0],
+                                  origin[1],
+                                  origin[2] ); 
 
   /*
   std::cout << "Plane center: " << "(" << planeCenter[0] << "," 
@@ -1386,14 +1391,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     }
 }
 
-/** Request Get reslcing plane equation */
+/** Get reslcing plane equation */
 template < class TImageSpatialObject >
 vtkPlane *
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::RequestGetReslicingPlane()
+::GetReslicingPlane()
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-                       ::RequestGetReslicingPlane called...\n");
+                       ::GetReslicingPlane called...\n");
   return m_ImageReslicePlane;
 }
 

@@ -129,7 +129,7 @@ public:
   void RequestComputeReslicingPlane( ); 
 
   /** Request Get reslicing plane equation */
-  vtkPlane * RequestGetReslicingPlane();
+  vtkPlane * GetReslicingPlane();
 
   /** Request Get reslicing matrix */
   vtkMatrix4x4 * RequestGetReslicingMatrix();
