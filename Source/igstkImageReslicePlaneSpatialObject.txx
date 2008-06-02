@@ -200,6 +200,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ValidSliceNumberSet,
                            ReportInvalidOrientationType );
 
+  igstkAddTransitionMacro( ValidSliceNumberSet,
+                           GetToolTransformWRTImageCoordinateSystem,
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem,
+                           RequestGetToolTransformWRTImageCoordinateSystem );
+
   // From ValidMousePositionSet
   igstkAddTransitionMacro( ValidMousePositionSet,
                            ComputeReslicePlane,
@@ -221,6 +226,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ValidMousePositionSet,
                            ReportInvalidOrientationType );
 
+  igstkAddTransitionMacro( ValidMousePositionSet,
+                           GetToolTransformWRTImageCoordinateSystem,
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem,
+                           RequestGetToolTransformWRTImageCoordinateSystem );
 
   //From ToolSpatialObjectSet
   igstkAddTransitionMacro( ToolSpatialObjectSet,
@@ -243,15 +252,24 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ComputeReslicePlane,
                            ToolSpatialObjectSet,
                            ComputeReslicePlane );
+
+  igstkAddTransitionMacro( ToolSpatialObjectSet, SetSliceNumber,
+                           AttemptingToSetSliceNumber, AttemptSetSliceNumber );  
+
+  igstkAddTransitionMacro( ToolSpatialObjectSet, SetMousePosition,
+                           AttemptingToSetMousePosition, AttemptSetMousePosition );  
+
   igstkAddTransitionMacro( ToolSpatialObjectSet, GetSliceNumberBounds,
                            ToolSpatialObjectSet, ReportSliceNumberBounds );
-
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
                            ToolTransformWRTImageCoordinateSystem,
                            ToolSpatialObjectSet,
                            ReceiveToolTransformWRTImageCoordinateSystem );
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, GetSliceNumberBounds,
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportSliceNumberBounds );
  
   igstkSetInitialStateMacro( Initial );
   this->m_StateMachine.SetReadyToRun();
@@ -1114,6 +1132,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   m_ImageReslicePlane->SetOrigin( origin[0],
                                   origin[1],
                                   origin[2] ); 
+  std::cout << "Plane origin: " << "(" << origin[0] << "," 
+                                 << origin[1] << ","
+                                 << origin[2] << ")" << std::endl;
 
   /*
   std::cout << "Plane center: " << "(" << planeCenter[0] << "," 
@@ -1130,6 +1151,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                  << planeNormal[1] << ","
                                  << planeNormal[2] << ")" << std::endl;
   */
+  m_ImageReslicePlane->Print( std::cout );
   
   //Using the two points define two coordinate axes
   double axes1[3];
