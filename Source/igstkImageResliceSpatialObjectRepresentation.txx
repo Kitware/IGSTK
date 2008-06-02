@@ -375,27 +375,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetInput( this->m_MapColors->GetOutput() ); 
-  //m_ImageReslice->SetBackgroundColor( 255.0, 0.0, 0.0, 0 );
+  m_ImageReslice->SetBackgroundColor( 255.0, 0.0, 0.0, 0 );
+  m_ImageReslice->SetOutputDimensionality( 2 );
   m_ImageReslice->AutoCropOutputOn();
   m_ImageReslice->SetOptimization( 1 );
-
-  //FIXME: the output image parameters need to be "intelligently" set
-  m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
-  m_ImageReslice->SetOutputDimensionality( 2 );
- 
-  vtkPlane * reslicePlane = m_ReslicePlaneSpatialObject->GetReslicingPlane(); 
-  double origin[3];
-  reslicePlane->GetOrigin( origin );
-  std::cout << "Origin=" << origin[0] 
-                         << "," << origin[1] 
-                         << "," << origin[2] << std::endl;
-
-  //m_ImageReslice->SetOutputOrigin(origin[0], origin[1], origin[2]);
-  //m_ImageReslice->SetOutputExtent( -512,512 , -512, 512, 0, 0);
-
-  m_ImageReslice->Update();
-
-  m_ImageReslice->GetOutput()->Print(std::cout);
+  m_ImageReslice->TransformInputSamplingOn();
 
   m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
 }
