@@ -167,7 +167,7 @@ private:
   ErrorType                         m_TargetPointRegistrationError;
   
   /** Landmark configuration */
-  VersorType                        m_LandmarkPrincipalAxes;
+  itk::Matrix<double,3,3>           m_LandmarkPrincipalAxes;
 
   /** RMS distance from the landmarks to the principal axes of the 
    *  landmark configuration */

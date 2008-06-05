@@ -27,6 +27,9 @@
 #include "itkSymmetricEigenAnalysis.h"
 #include "vnl/vnl_math.h"
 
+#include "vnl/algo/vnl_real_eigensystem.h"
+#include "vnl/algo/vnl_symmetric_eigensystem.h"
+
 namespace igstk
 { 
 /** Constructor */
@@ -274,60 +277,9 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
     ++pointItr;
     }
 
-  // Expand the matrix 
-  AugmentedMatrixType              augmentedCovarianceMatrix;
-        
-  augmentedCovarianceMatrix[0][0] =  covarianceMatrix[0][0] 
-                                     + covarianceMatrix[1][1] 
-                                     + covarianceMatrix[2][2];
-  augmentedCovarianceMatrix[1][1] =  covarianceMatrix[0][0] 
-                                     - covarianceMatrix[1][1] 
-                                     - covarianceMatrix[2][2];
-  augmentedCovarianceMatrix[2][2] = -covarianceMatrix[0][0] 
-                                     + covarianceMatrix[1][1] 
-                                     - covarianceMatrix[2][2];
-  augmentedCovarianceMatrix[3][3] = -covarianceMatrix[0][0] 
-                                    - covarianceMatrix[1][1] 
-                                    +covarianceMatrix[2][2];
-        
-  // off-diagonal elements
-  augmentedCovarianceMatrix[0][1] = augmentedCovarianceMatrix[1][0] = 
-                                    covarianceMatrix[1][2] 
-                                    -covarianceMatrix[2][1];
-  augmentedCovarianceMatrix[0][2] = augmentedCovarianceMatrix[2][0] = 
-                                    covarianceMatrix[2][0] 
-                                    -covarianceMatrix[0][2];
-  augmentedCovarianceMatrix[0][3] = augmentedCovarianceMatrix[3][0] = 
-                                    covarianceMatrix[0][1] 
-                                    -covarianceMatrix[1][0];
-
-  augmentedCovarianceMatrix[1][2] = augmentedCovarianceMatrix[2][1] = 
-                                    covarianceMatrix[0][1] 
-                                    +covarianceMatrix[1][0];
-  augmentedCovarianceMatrix[1][3] = augmentedCovarianceMatrix[3][1] = 
-                                    covarianceMatrix[2][0] 
-                                    +covarianceMatrix[0][2];
-  augmentedCovarianceMatrix[2][3] = augmentedCovarianceMatrix[3][2] = 
-                                    covarianceMatrix[1][2] 
-                                    +covarianceMatrix[2][1];
-  
-  AugmentedMatrixType                    eigenVectors;
-  AugmentedVectorType                    eigenValues;
-
-  typedef itk::SymmetricEigenAnalysis< 
-          AugmentedMatrixType,  
-          AugmentedVectorType,
-          AugmentedMatrixType > SymmetricEigenAnalysisType;
-
-  SymmetricEigenAnalysisType symmetricEigenSystem(4);
-        
-  symmetricEigenSystem.ComputeEigenValuesAndVectors
-              ( augmentedCovarianceMatrix, eigenValues, eigenVectors );
-
-  this->m_LandmarkPrincipalAxes.Set( eigenVectors[3][1],
-                   eigenVectors[3][2],
-                   eigenVectors[3][3],
-                   eigenVectors[3][0]  );
+  // Compute principal moments and axes
+  vnl_symmetric_eigensystem<double> eigen( covarianceMatrix.GetVnlMatrix() );
+  this->m_LandmarkPrincipalAxes = eigen.V.transpose();
 }
 
 /** Compute landmark centroid */
@@ -381,14 +333,11 @@ void Landmark3DRegistrationErrorEstimator::
   VectorType                                      principalAxes2;
   VectorType                                      principalAxes3;
     
-  // Convert versor to a matrix
-  principalAxesMatrix = this->m_LandmarkPrincipalAxes.GetMatrix();
- 
   for ( unsigned int i=0; i<3; i++ ) 
     {
-    principalAxes1[i] = principalAxesMatrix[0][i]; 
-    principalAxes2[i] = principalAxesMatrix[1][i]; 
-    principalAxes3[i] = principalAxesMatrix[2][i]; 
+    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0]; 
+    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1]; 
+    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2]; 
     }
   
   // Normalize the principal axes 
@@ -501,14 +450,11 @@ void Landmark3DRegistrationErrorEstimator
 
   differenceVector = this->m_TargetPoint - this->m_LandmarkCentroid;
 
-  // Convert versor to a matrix
-  principalAxesMatrix = this->m_LandmarkPrincipalAxes.GetMatrix();
- 
   for ( unsigned int i=0; i<3; i++ ) 
     {
-    principalAxes1[i] = principalAxesMatrix[0][i]; 
-    principalAxes2[i] = principalAxesMatrix[1][i]; 
-    principalAxes3[i] = principalAxesMatrix[2][i]; 
+    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0]; 
+    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1]; 
+    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2]; 
     }
   
   // Normalize the principal axes 
