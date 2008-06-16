@@ -562,83 +562,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   //transitions from AttemtingToStart state
 
   igstkAddTransitionMacro(AttemptingToStart,
-                          MicronStart,
-                          AttemptingToStartMicron,
-                          MicronStart);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          Succeeded,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          Failed,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetTracker,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetTools,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetReferenceTool,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerShutdown,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerStart,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          PolarisVicraInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          PolarisHybridInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToStart,
-                          AuroraInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToStart,
-                          MicronInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToStart,
-                          AscensionInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerStop,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  //transitions from AttemptingToStartMicron state
-
-  igstkAddTransitionMacro(AttemptingToStartMicron,
                           Succeeded,
                           Started,
                           ReportStartSuccess);
@@ -1039,34 +962,57 @@ TrackerController::TrackerInitializeProcessing()
 void 
 TrackerController::TrackerStartProcessing()
 {  
+    StartFailureEvent evt;
+    unsigned long observerID;
+    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
+                                             this->m_ErrorObserver );
 
-  if( this->m_TmpTrackerConfiguration == NULL )
-  {
-    this->m_ErrorMessage = "Null tracker configuration received.";
-    igstkPushInputMacro( Failed );
-  }
-  else 
-  {
+    m_Tracker->RequestStartTracking();
 
-    if( dynamic_cast<MicronTrackerConfiguration *>
-      ( this->m_TmpTrackerConfiguration ) )
+    if( this->m_ErrorObserver->ErrorOccured() )
     {
-      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
-      igstkPushInputMacro( MicronStart );
-    }           //Ascension isn't supported right now, fix this later
-    /*else if( dynamic_cast<AscensionTrackerConfiguration *>
-    ( this->m_TmpTrackerConfiguration ) )
-    {
-    this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
-    igstkPushInputMacro( AscensionInitialize );
-    }*/
-    else
-    {
-      this->m_ErrorMessage = "Unknown tracker configuration type.";
+      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+      this->m_ErrorObserver->ClearError();
+      m_Tracker->RemoveObserver( observerID );
+      //m_Tracker->RequestClose();
+      evt.Set( this->m_ErrorMessage );
+      this->InvokeEvent( evt );
       igstkPushInputMacro( Failed );
     }
-  }
- this->m_StateMachine.ProcessInputs();
+    else
+    {
+      m_Tracker->RemoveObserver(observerID);
+      igstkPushInputMacro( Succeeded );
+    }
+
+    this->m_StateMachine.ProcessInputs();
+ // if( this->m_TmpTrackerConfiguration == NULL )
+ // {
+ //   this->m_ErrorMessage = "Null tracker configuration received.";
+ //   igstkPushInputMacro( Failed );
+ // }
+ // else 
+ // {
+
+ //   if( dynamic_cast<MicronTrackerConfiguration *>
+ //     ( this->m_TmpTrackerConfiguration ) )
+ //   {
+ //     this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+ //     igstkPushInputMacro( MicronStart );
+ //   }           //Ascension isn't supported right now, fix this later
+ //   /*else if( dynamic_cast<AscensionTrackerConfiguration *>
+ //   ( this->m_TmpTrackerConfiguration ) )
+ //   {
+ //   this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+ //   igstkPushInputMacro( AscensionInitialize );
+ //   }*/
+ //   else
+ //   {
+ //     this->m_ErrorMessage = "Unknown tracker configuration type.";
+ //     igstkPushInputMacro( Failed );
+ //   }
+ // }
+ //this->m_StateMachine.ProcessInputs();
 }
 
 void 
@@ -1651,7 +1597,7 @@ void TrackerController::MicronInitializeProcessing()
   }
   this->m_StateMachine.ProcessInputs();
 }
-
+/*
 void TrackerController::MicronStartProcessing()
 {
     StartFailureEvent evt;
@@ -1680,8 +1626,9 @@ void TrackerController::MicronStartProcessing()
 
     this->m_StateMachine.ProcessInputs();
 }
-
-void TrackerController::MicronStopProcessing()
+*/
+/*
+void TrackerController::TrackerStopProcessing()
 {
     StopFailureEvent evt;
     unsigned long observerID;
@@ -1708,7 +1655,7 @@ void TrackerController::MicronStopProcessing()
 
     this->m_StateMachine.ProcessInputs();
 }
-
+*/
 FlockOfBirdsTrackerTool::Pointer 
 TrackerController::InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration )

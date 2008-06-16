@@ -144,12 +144,15 @@ private:
   igstkDeclareStateMacro( AttemptingToShutdown );
   
   igstkDeclareStateMacro( AttemptingToInitializePolarisVicra );
+  igstkDeclareStateMacro( AttemptingToStartPolarisVicra );
   igstkDeclareStateMacro( AttemptingToInitializePolarisHybrid );
+  igstkDeclareStateMacro( AttemptingToStartPolarisHybrid );
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
+  igstkDeclareStateMacro( AttemptingToStartAurora );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
   igstkDeclareStateMacro( AttemptingToStartMicron );
-  igstkDeclareStateMacro( AttemptingToStopMicron );
   igstkDeclareStateMacro( AttemptingToInitializeAscension );  
+  igstkDeclareStateMacro( AttemptingToStartAscension );
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( Started );
 
@@ -183,9 +186,6 @@ private:
   void PolarisHybridInitializeProcessing();
   void AuroraInitializeProcessing();
   void MicronInitializeProcessing();
-
-  void MicronStartProcessing();
-  void MicronStopProcessing();
 
   void AscensionInitializeProcessing();
   void GetTrackerProcessing();
