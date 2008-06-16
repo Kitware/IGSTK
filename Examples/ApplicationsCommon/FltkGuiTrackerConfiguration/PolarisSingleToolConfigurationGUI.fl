@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -124,7 +124,7 @@ if( fileName )
       Fl_Button {} {
         label Confirm
         callback {RequestGetConfiguration();
-TrackerConfigurationWindow->hide();} selected
+TrackerConfigurationWindow->hide();}
         xywh {315 439 70 25}
       }
     }
@@ -135,6 +135,7 @@ TrackerConfigurationWindow->hide();} selected
   Function {InitializeGUI()} {open return_type {virtual void}
   } {
     code {//Initialize tracker configuration window
+
 SerialPort->clear();
 TrackerToolPort->clear();
 ReferenceToolPort->clear();
@@ -160,7 +161,8 @@ ReferenceToolPort->value(1);
 
 OffsetX->value( 0.0 );
 OffsetY->value( 0.0 );
-OffsetZ->value( 0.0 );} {}
+OffsetZ->value( 0.0 );} {selected
+    }
   }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {
