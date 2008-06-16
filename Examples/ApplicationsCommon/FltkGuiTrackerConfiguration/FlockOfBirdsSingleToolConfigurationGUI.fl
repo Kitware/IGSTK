@@ -1,0 +1,109 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class FlockOfBirdsTrackerConfigurationGUI {open selected : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {FlockOfBirdsTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window TrackerConfigurationWindow {
+      label {FlockOfBirds Tracker Configuration} open
+      xywh {501 385 319 60} type Double hide
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"}
+    } {
+      Fl_Choice SerialPort {
+        label {Serial Port Number: } open
+        xywh {145 13 75 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label COM1
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label COM2
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label COM3
+          xywh {20 20 100 20}
+        }
+        MenuItem {} {
+          label COM4
+          xywh {30 30 100 20}
+        }
+        MenuItem {} {
+          label COM5
+          xywh {40 40 100 20}
+        }
+        MenuItem {} {
+          label COM6
+          xywh {50 50 100 20}
+        }
+        MenuItem {} {
+          label COM7
+          xywh {60 60 100 20}
+        }
+        MenuItem {} {
+          label COM8
+          xywh {70 70 100 20}
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {RequestGetConfiguration();
+TrackerConfigurationWindow->hide();}
+        xywh {235 13 70 25}
+      }
+    }
+  }
+  Function {~FlockOfBirdsTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {GetGUISetting()} {open return_type {virtual void}
+  } {
+    code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+
+//Serial Port
+switch( SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    break;
+  case 1 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber1;
+    break;
+  case 2 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber2;      
+    break;
+  case 3 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    break;
+  case 4 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber4;
+    break;
+  case 5 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber5;
+    break;
+  case 6 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber6;
+    break;
+  case 7 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber7;
+    break;
+  default:
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+  }
+  
+ conf->m_Frequency = 30;
+    
+ conf->m_TrackerToolList.clear();
+ 
+ igstk::AscensionTrackerToolConfiguration * tool = new igstk::AscensionTrackerToolConfiguration;
+
+ conf->m_TrackerToolList.push_back( tool );
+
+ m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::FlockOfBirds );
+ m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );} {}
+  }
+} 
