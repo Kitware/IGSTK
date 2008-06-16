@@ -18,8 +18,7 @@ SUBDIRS(
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
     OneViewAndTrackingNewUsingFLTKWidget
-    PivotCalibrationFLTKWidget
-    PivotCalibrationFLTKWidgetNew    
+#    PivotCalibrationFLTKWidgetNew    
     TwoViews
     FourViewsTrackingWithCT
     FourViews
@@ -28,8 +27,8 @@ IF (IGSTKSandbox_USE_FLTK)
 # and it is not yet fully tested
 #    UltrasoundGuidedRFA
     NeedleBiopsy
-    NeedleBiopsyNew
     NeedleBiopsyWithReslicing
+    NeedleBiopsyUnimodality
     DeckOfCardRobot
     View
     Logging
