@@ -379,8 +379,39 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->SetOutputDimensionality( 2 );
   m_ImageReslice->AutoCropOutputOn();
   m_ImageReslice->SetOptimization( 1 );
-  m_ImageReslice->TransformInputSamplingOn();
 
+  //Set the output image parameters
+  m_ImageReslice->TransformInputSamplingOff();
+
+  double outputOrigin[3];
+  outputOrigin[0] = m_ResliceAxes->GetElement(0,3); 
+  outputOrigin[1] = m_ResliceAxes->GetElement(1,3); 
+  outputOrigin[2] = m_ResliceAxes->GetElement(2,3); 
+
+  std::cout << "Output data ReslicedImageOrigin: " << outputOrigin[0] << "," 
+                                         << outputOrigin[1] << ","
+                                         << outputOrigin[2] << std::endl;
+
+
+  m_ImageReslice->SetOutputOrigin( outputOrigin[0],
+                                   outputOrigin[1],
+                                   outputOrigin[2] );
+
+
+  //FIXME
+  unsigned int outputExtent[4];
+  outputExtent[0] = 0;
+  outputExtent[1] = 511;
+  outputExtent[2] = 0;
+  outputExtent[3] = 511;
+
+  m_ImageReslice->SetOutputExtent( outputExtent[0],
+                                   outputExtent[1],
+                                   outputExtent[2],
+                                   outputExtent[3],
+                                   0, 
+                                   0);
+  
   m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
 }
 
@@ -403,7 +434,106 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     {
     m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
     m_ResliceAxes = m_ReslicePlaneSpatialObject->RequestGetReslicingMatrix();
+
+    std::cout.precision(3);
+    std::cout << "Returned ResliceAxes matrix: \n" 
+            << "(" << m_ResliceAxes->GetElement(0,0) << ","
+            << m_ResliceAxes->GetElement(0,1) << ","
+            << m_ResliceAxes->GetElement(0,2) << ","
+            << m_ResliceAxes->GetElement(0,3) << "\n"
+            << m_ResliceAxes->GetElement(1,0) << ","
+            << m_ResliceAxes->GetElement(1,1) << ","
+            << m_ResliceAxes->GetElement(1,2) << ","
+            << m_ResliceAxes->GetElement(1,3) << "\n"
+            << m_ResliceAxes->GetElement(2,0) << ","
+            << m_ResliceAxes->GetElement(2,1) << ","
+            << m_ResliceAxes->GetElement(2,2) << ","
+            << m_ResliceAxes->GetElement(2,3) << "\n"
+            << m_ResliceAxes->GetElement(3,0) << ","
+            << m_ResliceAxes->GetElement(3,1) << ","
+            << m_ResliceAxes->GetElement(3,2) << ","
+            << m_ResliceAxes->GetElement(3,3) << ")" << std::endl;
+
+
     m_ImageReslice->SetResliceAxes( m_ResliceAxes );
+
+    double outputOrigin[3];
+    outputOrigin[0] = m_ResliceAxes->GetElement(0,3); 
+    outputOrigin[1] = m_ResliceAxes->GetElement(1,3); 
+    outputOrigin[2] = m_ResliceAxes->GetElement(2,3); 
+
+    std::cout << "Output data ReslicedImageOrigin: " << outputOrigin[0] << "," 
+                                           << outputOrigin[1] << ","
+                                           << outputOrigin[2] << std::endl;
+
+
+    m_ImageReslice->SetOutputOrigin( outputOrigin[0],
+                                     outputOrigin[1],
+                                     outputOrigin[2] );
+
+
+    //FIXME
+    unsigned int outputExtent[4];
+    outputExtent[0] = 0;
+    outputExtent[1] = 511;
+    outputExtent[2] = 0;
+    outputExtent[3] = 511;
+
+    m_ImageReslice->SetOutputExtent( outputExtent[0],
+                                     outputExtent[1],
+                                     outputExtent[2],
+                                     outputExtent[3],
+                                     0, 
+                                     0);
+   
+    //REMOVE THIS
+    m_ImageReslice->Update();
+    vtkImageData * imageData = m_ImageReslice->GetOutput(); 
+
+    std::cout << "Resliced image output: " << std::endl;
+    imageData->Print( std::cout );
+
+    int ext[6];
+
+    imageData->Update();
+    imageData->GetExtent( ext );
+
+    //Compute image bounds
+    double imageSpacing[3];
+    imageData->GetSpacing( imageSpacing );
+
+    double imageOrigin[3];
+    imageData->GetOrigin( imageOrigin );
+    std::cout << "ReslicedImageOrigin: " << imageOrigin[0] << "," 
+                                         << imageOrigin[1] << ","
+                                         << imageOrigin[2] << std::endl;
+
+    int imageExtent[6];
+    imageData->GetWholeExtent( imageExtent );
+
+    double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+
+    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+        {
+        if ( bounds[i] > bounds[i+1] )
+          {
+          double t = bounds[i+1];
+          bounds[i+1] = bounds[i];
+          bounds[i] = t;
+          }
+        }
+
+    std::cout << "Resliced`Image bounds: " << "(" << bounds[0] << "," 
+                                  << bounds[1] << ","
+                                  << bounds[2] << ","
+                                  << bounds[3] << ","
+                                  << bounds[4] << ","
+                                  << bounds[5] << ")" << std::endl;
     }
 }
 
