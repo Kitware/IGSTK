@@ -20,7 +20,10 @@ TrackerConfiguration::~TrackerConfiguration()
     delete (*it);
   }
   this->m_TrackerToolList.clear();
-  delete this->m_ReferenceTool;  
+  if ( m_ReferenceTool )
+  {
+      delete this->m_ReferenceTool;
+  }
 }
 
 

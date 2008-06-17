@@ -52,7 +52,8 @@ MicronTrackerConfiguration::InternalAddTool( const
   }
   else
   {
-    delete this->m_ReferenceTool;
+    if (this->m_ReferenceTool)
+      delete this->m_ReferenceTool;
     this->m_ReferenceTool = new MicronToolConfiguration( *wirelessTool );
   }
   this->InvokeEvent( AddToolSuccessEvent() );

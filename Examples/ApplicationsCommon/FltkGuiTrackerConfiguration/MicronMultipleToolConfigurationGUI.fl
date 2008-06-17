@@ -109,12 +109,13 @@ m_Configuration->RequestAddTool( &tool );
 if( this->m_ConfigurationErrorOccured )
 {
   m_Configuration->Delete();
+  m_Configuration = NULL;
   this->m_ConfigurationErrorOccured = false;
   return;
 }
 
 m_AddedToolsList->add(tool.GetMarkerName().c_str());
-m_AddedToolsList->value(0);} selected
+m_AddedToolsList->value(0);}
           xywh {25 230 105 25}
         }
         Fl_Button m_SetReferenceToolBtn {
@@ -154,10 +155,16 @@ m_ReferenceToolLabel->value(tool.GetMarkerName().c_str());}
         }
         Fl_Button m_ResetBtn {
           label Reset
-          callback {m_ReferenceToolLabel->value("");
+          callback {m_ReferenceToolLabel->value(" ");
 m_AddedToolsList->clear();
 m_AddedToolsList->redraw();
 m_AddedToolsList->value(0);
+
+if (m_Configuration != NULL)
+{
+  m_Configuration->Delete();
+  m_Configuration = NULL;
+}
 
 InitializeConfiguration();}
           xywh {285 265 115 25}
@@ -177,14 +184,16 @@ m_InitializationFile->value("c:/Program Files/Claron Technology/MicronTracker/MT
 InitializeConfiguration();
 m_MultipleToolSelectionGroup->deactivate();} {}
   }
-  Function {~MicronMultipleToolTrackerConfigurationGUI()} {return_type virtual
+  Function {~MicronMultipleToolTrackerConfigurationGUI()} {open return_type virtual
   } {
     code {if (m_Configuration != NULL)
 {
   m_Configuration->Delete();
-}} {}
+}
+m_Configuration = NULL;} {selected
+    }
   }
-  Function {GetConfiguration()} {return_type {virtual igstk::TrackerConfiguration *}
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
     code {if (!m_Configuration)
 {
@@ -210,20 +219,18 @@ return m_Configuration;} {}
   decl {igstk::MicronTrackerConfiguration * m_Configuration;} {}
   Function {InitializeConfiguration()} {open private return_type void
   } {
-    code {if (m_Configuration)
-m_Configuration->Delete();
-
-m_Configuration = new igstk::MicronTrackerConfiguration();
-
-m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
-m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
-
+    code {if (m_Configuration == NULL)
+{
+ m_Configuration = new igstk::MicronTrackerConfiguration();
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
+}
          //get the desired tracker referesh rate
 m_Configuration->RequestSetFrequency( this->m_RefreshRateSlider->value() );
-
 if( this->m_ConfigurationErrorOccured )
 {
   m_Configuration->Delete();
+  m_Configuration = NULL;
   this->m_ConfigurationErrorOccured = false;
 }} {}
   }
