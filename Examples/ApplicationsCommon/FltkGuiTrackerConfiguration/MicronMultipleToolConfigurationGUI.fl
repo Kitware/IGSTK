@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -17,7 +17,7 @@ class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerCo
   } {
     Fl_Window m_TrackerConfigurationWindow {
       label {Micron Tracker Configuration}
-      xywh {8 28 427 373} type Double
+      xywh {8 30 427 373} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Output m_CalibrationFileDir {
