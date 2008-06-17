@@ -193,6 +193,8 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
 
   for(unsigned int i=0; i<20; i++)
     {
+    igstk::PulseGenerator::CheckTimeouts();
+
     TransformType             transform;
     VectorType                position;
 
@@ -201,10 +203,13 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     if( coordSystemAObserver->GotTransform() )
       {
       transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() ) 
+        {
+        position = transform.GetTranslation();
+        std::cout << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
  
     coordSystemAObserver2->Clear();
@@ -212,10 +217,13 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     if( coordSystemAObserver2->GotTransform() )
       {
       transform = coordSystemAObserver2->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
     }
   
@@ -228,6 +236,8 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
 
   for(unsigned int i=0; i<20; i++)
     {
+    igstk::PulseGenerator::CheckTimeouts();
+
     TransformType             transform;
     VectorType                position;
 
@@ -236,10 +246,13 @@ int igstkPolarisTrackerTest4( int argc, char * argv[] )
     if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
     }
  

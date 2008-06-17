@@ -206,7 +206,10 @@ int igstkTrackerToolReferenceTest( int , char * [] )
       std::cout << source << std::endl;
       std::cout << destination << std::endl;
       igstk::Transform transform = transformObserver->GetTransform();
-      std::cout << transform << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        std::cout << transform << std::endl;
+        }
       }
     }
 
@@ -235,7 +238,10 @@ int igstkTrackerToolReferenceTest( int , char * [] )
       std::cout << source << std::endl;
       std::cout << destination << std::endl;
       igstk::Transform transform = transformObserver->GetTransform();
-      std::cout << transform << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        std::cout << transform << std::endl;
+        }
       }
 
     }
@@ -273,7 +279,10 @@ int igstkTrackerToolReferenceTest( int , char * [] )
       std::cout << source << std::endl;
       std::cout << destination << std::endl;
       igstk::Transform transform = transformObserver->GetTransform();
-      std::cout << transform << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        std::cout << transform << std::endl;
+        }
       }
     }
 
@@ -300,7 +309,10 @@ int igstkTrackerToolReferenceTest( int , char * [] )
       const ReferenceSystemType * source = payload.GetSource();
       const ReferenceSystemType * destination = payload.GetDestination();
       igstk::Transform transform = transformObserver->GetTransform();
-      std::cout << transform << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        std::cout << transform << std::endl;
+        }
       }
     }
     
