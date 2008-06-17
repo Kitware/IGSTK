@@ -9,7 +9,8 @@ decl {\#include "igstkAscensionTrackerConfiguration.h"} {public
 
 class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {FlockOfBirdsSingleToolConfigurationGUI()} {} {
+  Function {FlockOfBirdsSingleToolConfigurationGUI():m_Configuration(NULL)} {open
+  } {
     Fl_Window m_TrackerConfigurationWindow {
       label {FlockOfBirds Tracker Configuration} open
       xywh {501 385 319 60} type Double
@@ -63,43 +64,56 @@ class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfi
   } {}
   Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
-    code {/*
-igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+    code {if (m_Configuration == NULL)
+{
+ m_Configuration = new igstk::AscensionTrackerConfiguration();
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
+}
 
+
+//m_Configuration->SetCameraCalibrationFileDirectory( this->m_CalibrationFileDir->value() );
+//m_Configuration->SetInitializationFile( this->m_InitializationFile->value() ); 
+//m_Configuration->SetTemplatesDirectory( this->m_TemplateFileDir->value() );
+
+
+//igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+
+/*
 //Serial Port
 switch( SerialPort->value() ) 
   {
   case 0 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber0;
     break;
   case 1 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber1;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber1;
     break;
   case 2 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber2;      
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber2;      
     break;
   case 3 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber3;
     break;
   case 4 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber4;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber4;
     break;
   case 5 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber5;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber5;
     break;
   case 6 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber6;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber6;
     break;
   case 7 : 
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber7;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber7;
     break;
   default:
-    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber0;
   }
   
- conf->m_Frequency = 30;
+ m_Configuration->m_Frequency = 30;
     
- conf->m_TrackerToolList.clear();
+ m_Configuration->m_TrackerToolList.clear();
  
  igstk::AscensionTrackerToolConfiguration * tool = new igstk::AscensionTrackerToolConfiguration;
 

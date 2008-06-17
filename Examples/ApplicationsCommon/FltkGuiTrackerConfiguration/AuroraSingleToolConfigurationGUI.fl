@@ -4,8 +4,7 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-decl {\#include "igstkAuroraTrackerConfiguration.h"} {selected
-} 
+decl {\#include "igstkAuroraTrackerConfiguration.h"} {} 
 
 class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
@@ -139,6 +138,7 @@ if( fileName )
 conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
 conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
 
+
 //Serial Port
 switch( this->m_SerialPort->value() ) 
   {
@@ -204,7 +204,8 @@ switch( this->m_SerialPort->value() )
     this->m_ConfigurationErrorOccured = false;
     return NULL;
   }
-  return conf;} {}
+  return conf;} {selected
+    }
   }
   Function {Show()} {return_type {virtual void}
   } {

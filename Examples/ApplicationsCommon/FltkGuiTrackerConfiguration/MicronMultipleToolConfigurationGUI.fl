@@ -13,10 +13,10 @@ decl {\#include "igstkMicronTrackerConfiguration.h"} {public
 
 class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open
+  Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open selected
   } {
     Fl_Window m_TrackerConfigurationWindow {
-      label {Micron Tracker Configuration} open
+      label {Micron Tracker Configuration}
       xywh {8 28 427 373} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
@@ -184,14 +184,13 @@ m_InitializationFile->value("c:/Program Files/Claron Technology/MicronTracker/MT
 InitializeConfiguration();
 m_MultipleToolSelectionGroup->deactivate();} {}
   }
-  Function {~MicronMultipleToolTrackerConfigurationGUI()} {open return_type virtual
+  Function {~MicronMultipleToolTrackerConfigurationGUI()} {return_type virtual
   } {
     code {if (m_Configuration != NULL)
 {
   m_Configuration->Delete();
 }
-m_Configuration = NULL;} {selected
-    }
+m_Configuration = NULL;} {}
   }
   Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
