@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -13,11 +13,11 @@ decl {\#include "igstkMicronTrackerConfiguration.h"} {public
 
 class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open selected
+  Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open
   } {
     Fl_Window m_TrackerConfigurationWindow {
-      label {Micron Tracker Configuration}
-      xywh {8 30 427 373} type Double
+      label {Micron Tracker Configuration} open
+      xywh {445 492 427 373} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Output m_CalibrationFileDir {
@@ -26,7 +26,12 @@ class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerCo
       }
       Fl_Button {} {
         label {...}
-        callback {char * fileDir = fl_dir_chooser("Calibration file directory","c:/Program Files/Claron Technology/MicronTracker/CalibrationFiles");}
+        callback {char * fileDir = fl_dir_chooser("Calibration file directory","c:/Program Files/Claron Technology/MicronTracker/CalibrationFiles");
+
+if (fileDir)
+{
+  this->m_CalibrationFileDir->value(fileDir);
+}}
         xywh {365 49 25 25}
       }
       Fl_Output m_InitializationFile {
@@ -35,7 +40,11 @@ class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerCo
       }
       Fl_Button {} {
         label {...}
-        callback {char * fileName = fl_file_chooser("Initialization file","*.*","c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");}
+        callback {char * fileName = fl_file_chooser("Initialization file","*.*","c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");
+if (fileName)
+{
+  this->m_InitializationFile->value(fileName);
+}}
         xywh {365 89 25 25}
       }
       Fl_Button {} {
@@ -68,7 +77,7 @@ if( fileDir )
 if (bToolsAvailable)
 {
   m_MultipleToolSelectionGroup->activate();
-}}
+}} selected
         xywh {365 128 25 25} labelsize 8
       }
       Fl_Output m_TemplateFileDir {
