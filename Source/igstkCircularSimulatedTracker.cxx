@@ -67,12 +67,6 @@ CircularSimulatedTracker::InternalStopTracking( void )
 }
 
 CircularSimulatedTracker::ResultType
-CircularSimulatedTracker::InternalDeactivateTools( void )
-{
-  return SUCCESS;
-}
-
-CircularSimulatedTracker::ResultType
 CircularSimulatedTracker::InternalClose( void )
 {
   return SUCCESS;

@@ -143,11 +143,6 @@ protected:
     return SUCCESS;
     }
 
-  ResultType InternalDeactivateTools( void )
-    {
-    return SUCCESS;
-    }
-
   ResultType InternalClose( void )
     {
     return SUCCESS;

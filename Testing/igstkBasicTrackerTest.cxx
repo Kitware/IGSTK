@@ -156,17 +156,6 @@ protected:
     return SUCCESS;
     }
 
-  Tracker::ResultType InternalDeactivateTools( void )
-    {
-    static bool success = false;
-    if( !success )
-      {
-      success = true;
-      return FAILURE;
-      }
-    return SUCCESS;
-    }
-
   Tracker::ResultType InternalStartTracking( void )
     {
     static bool success = false;
