@@ -1,7 +1,6 @@
 #include "igstkTrackerConfigurationGUIBase.h"
 #include "igstkTrackerConfiguration.h"
 #include <FL/fl_ask.h>
-//#include "PivotCalibrationFLTKWidgetExample.h"
 #include "NeedleBiopsyUnimodality.h"
 
 namespace igstk

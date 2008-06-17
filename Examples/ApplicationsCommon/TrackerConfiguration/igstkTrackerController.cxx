@@ -943,13 +943,13 @@ TrackerController::TrackerInitializeProcessing()
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
-    }           //Ascension isn't supported right now, fix this later
-    /*else if( dynamic_cast<AscensionTrackerConfiguration *>
+    }
+    else if( dynamic_cast<AscensionTrackerConfiguration *>
     ( this->m_TmpTrackerConfiguration ) )
     {
-    this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
-    igstkPushInputMacro( AscensionInitialize );
-    }*/
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( AscensionInitialize );
+    }
     else
     {
       this->m_ErrorMessage = "Unknown tracker configuration type.";
@@ -986,33 +986,6 @@ TrackerController::TrackerStartProcessing()
     }
 
     this->m_StateMachine.ProcessInputs();
- // if( this->m_TmpTrackerConfiguration == NULL )
- // {
- //   this->m_ErrorMessage = "Null tracker configuration received.";
- //   igstkPushInputMacro( Failed );
- // }
- // else 
- // {
-
- //   if( dynamic_cast<MicronTrackerConfiguration *>
- //     ( this->m_TmpTrackerConfiguration ) )
- //   {
- //     this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
- //     igstkPushInputMacro( MicronStart );
- //   }           //Ascension isn't supported right now, fix this later
- //   /*else if( dynamic_cast<AscensionTrackerConfiguration *>
- //   ( this->m_TmpTrackerConfiguration ) )
- //   {
- //   this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
- //   igstkPushInputMacro( AscensionInitialize );
- //   }*/
- //   else
- //   {
- //     this->m_ErrorMessage = "Unknown tracker configuration type.";
- //     igstkPushInputMacro( Failed );
- //   }
- // }
- //this->m_StateMachine.ProcessInputs();
 }
 
 void 
@@ -1597,65 +1570,7 @@ void TrackerController::MicronInitializeProcessing()
   }
   this->m_StateMachine.ProcessInputs();
 }
-/*
-void TrackerController::MicronStartProcessing()
-{
-    StartFailureEvent evt;
-    unsigned long observerID;
 
-    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
-                                             this->m_ErrorObserver );
-
-    m_Tracker->RequestStartTracking();
-
-    if( this->m_ErrorObserver->ErrorOccured() )
-    {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      m_Tracker->RemoveObserver( observerID );
-      //m_Tracker->RequestClose();
-      evt.Set( this->m_ErrorMessage );
-      this->InvokeEvent( evt );
-      igstkPushInputMacro( Failed );
-    }
-    else
-    {
-      m_Tracker->RemoveObserver(observerID);
-      igstkPushInputMacro( Succeeded );
-    }
-
-    this->m_StateMachine.ProcessInputs();
-}
-*/
-/*
-void TrackerController::TrackerStopProcessing()
-{
-    StopFailureEvent evt;
-    unsigned long observerID;
-
-    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
-                                             this->m_ErrorObserver );
-    m_Tracker->RequestStopTracking();
-
-    if( this->m_ErrorObserver->ErrorOccured() )
-    {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      m_Tracker->RemoveObserver( observerID );
-      //m_Tracker->RequestClose();
-      evt.Set( this->m_ErrorMessage );
-      this->InvokeEvent( evt );
-      igstkPushInputMacro( Failed );
-    }
-    else
-    {
-      m_Tracker->RemoveObserver(observerID);
-      igstkPushInputMacro( Succeeded );
-    }
-
-    this->m_StateMachine.ProcessInputs();
-}
-*/
 FlockOfBirdsTrackerTool::Pointer 
 TrackerController::InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration )
@@ -1673,13 +1588,6 @@ TrackerController::InitializeAscensionTool(
 void 
 TrackerController::AscensionInitializeProcessing()
 {
-/*
-  if( !InitializeSerialCommunication() )
-  {
-    igstkPushInputMacro( Failed );
-  }
-  else
-  {
                                   //create tracker
     igstk::FlockOfBirdsTracker::Pointer tracker = igstk::FlockOfBirdsTracker::New();
     this->m_Tracker = tracker; 
@@ -1737,6 +1645,7 @@ TrackerController::AscensionInitializeProcessing()
         trackerTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( trackerTool );
       }
+      /*
       tracker->RequestStartTracking();
       if( this->m_ErrorObserver->ErrorOccured() )
       {
@@ -1752,10 +1661,11 @@ TrackerController::AscensionInitializeProcessing()
         tracker->RemoveObserver(observerID);
         igstkPushInputMacro( Succeeded );
       }
+      */
     }
-  }
+
   this->m_StateMachine.ProcessInputs();
-  */
+
 }
 
 void 

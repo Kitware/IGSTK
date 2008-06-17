@@ -4,14 +4,16 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class FlockOfBirdsTrackerConfigurationGUI {open selected : {public igstk::TrackerConfigurationGUIBase}
+decl {\#include "igstkAscensionTrackerConfiguration.h"} {public
+} 
+
+class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {FlockOfBirdsTrackerConfigurationGUI()} {open
-  } {
-    Fl_Window TrackerConfigurationWindow {
+  Function {FlockOfBirdsSingleToolConfigurationGUI()} {} {
+    Fl_Window m_TrackerConfigurationWindow {
       label {FlockOfBirds Tracker Configuration} open
-      xywh {501 385 319 60} type Double hide
-      code0 {\#include "igstkTrackerConfigurationGUIBase.h"}
+      xywh {501 385 319 60} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
         label {Serial Port Number: } open
@@ -52,17 +54,17 @@ class FlockOfBirdsTrackerConfigurationGUI {open selected : {public igstk::Tracke
       }
       Fl_Button {} {
         label Confirm
-        callback {RequestGetConfiguration();
-TrackerConfigurationWindow->hide();}
+        callback {UpdateParentConfiguration();}
         xywh {235 13 70 25}
       }
     }
   }
-  Function {~FlockOfBirdsTrackerConfigurationGUI()} {open return_type virtual
+  Function {~FlockOfBirdsSingleToolConfigurationGUI()} {return_type virtual
   } {}
-  Function {GetGUISetting()} {open return_type {virtual void}
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
-    code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+    code {/*
+igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
 
 //Serial Port
 switch( SerialPort->value() ) 
@@ -104,6 +106,19 @@ switch( SerialPort->value() )
  conf->m_TrackerToolList.push_back( tool );
 
  m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::FlockOfBirds );
- m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );} {}
+ m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );
+ */
+ 
+ return m_Configuration;} {selected
+    }
   }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->hide();} {}
+  }
+  decl {igstk::AscensionTrackerConfiguration * m_Configuration;} {}
 } 

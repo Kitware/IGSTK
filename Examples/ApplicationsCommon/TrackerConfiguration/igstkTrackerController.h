@@ -180,14 +180,14 @@ private:
   void TrackerInitializeProcessing();
   void TrackerStartProcessing();
   void TrackerStopProcessing();
-
   void TrackerShutdownProcessing();
+  
   void PolarisVicraInitializeProcessing();
   void PolarisHybridInitializeProcessing();
   void AuroraInitializeProcessing();
   void MicronInitializeProcessing();
-
   void AscensionInitializeProcessing();
+
   void GetTrackerProcessing();
   void GetToolsProcessing();
   void GetReferenceToolProcessing();

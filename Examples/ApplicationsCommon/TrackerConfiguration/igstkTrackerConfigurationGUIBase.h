@@ -7,8 +7,6 @@
 class NeedleBiopsyUnimodality;
 
 
-//#include "PivotCalibrationFLTKWidgetExample.h"
-
 namespace igstk
 {
 
