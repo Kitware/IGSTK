@@ -237,6 +237,8 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
 
   for(unsigned int i=0; i<100; i++)
     {
+    igstk::PulseGenerator::CheckTimeouts(); 
+
     TransformType             transform;
     VectorType                position;
 
@@ -245,12 +247,15 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
     if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool transform using observer:" 
-              << trackerTool->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool transform using observer:" 
+                << trackerTool->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
 
     if( spliter )
@@ -260,12 +265,15 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
       if (coordSystemAObserver2->GotTransform())
         {
         transform = coordSystemAObserver2->GetTransform();
-        position = transform.GetTranslation();
-        std::cout << "Trackertool transform using observer:" 
-                << trackerTool2->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
+        if ( transform.IsValidNow() )
+          {
+          position = transform.GetTranslation();
+          std::cout << "Trackertool transform using observer:" 
+                  << trackerTool2->GetTrackerToolIdentifier() 
+                  << "\t\t  Position = (" << position[0]
+                  << "," << position[1] << "," << position[2]
+                  << ")" << std::endl;
+          }
         }
       }
 
@@ -274,12 +282,15 @@ int igstkAuroraTrackerTest2( int argc, char * argv[] )
       if (coordSystemAObserver3->GotTransform())
       {
       transform = coordSystemAObserver3->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool transform using observer:" 
-              << trackerTool3->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool transform using observer:" 
+                << trackerTool3->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
     }
   

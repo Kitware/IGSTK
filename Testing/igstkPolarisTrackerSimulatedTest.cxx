@@ -205,6 +205,7 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<400; i++)
     {
+    igstk::PulseGenerator::CheckTimeouts(); 
 
     TransformType             transform;
     VectorType                position;
@@ -214,12 +215,15 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
     if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool :" 
-              << trackerTool->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool :" 
+                << trackerTool->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+         }
       }
 
     coordSystemAObserver2->Clear();
@@ -227,12 +231,15 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
     if (coordSystemAObserver2->GotTransform())
       {
       transform = coordSystemAObserver2->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool2:" 
-              << trackerTool2->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool2:" 
+                << trackerTool2->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
 
     coordSystemAObserver3->Clear();
@@ -240,12 +247,15 @@ int igstkPolarisTrackerSimulatedTest( int argc, char * argv[] )
     if (coordSystemAObserver3->GotTransform())
       {
       transform = coordSystemAObserver3->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool3:" 
-              << trackerTool3->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool3:" 
+                << trackerTool3->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
     }
   

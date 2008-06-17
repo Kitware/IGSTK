@@ -166,6 +166,8 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   for(unsigned int i=0; i<400; i++)
     {
+    igstk::PulseGenerator::CheckTimeouts(); 
+
     TransformType             transform;
     VectorType                position;
 
@@ -174,12 +176,15 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
     if (coordSystemAObserver->GotTransform())
       {
       transform = coordSystemAObserver->GetTransform();
-      position = transform.GetTranslation();
-      std::cout << "Trackertool transform using observer:" 
-              << trackerTool->GetTrackerToolIdentifier() 
-              << "\t\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;
+      if ( transform.IsValidNow() )
+        {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool transform using observer:" 
+                << trackerTool->GetTrackerToolIdentifier() 
+                << "\t\t  Position = (" << position[0]
+                << "," << position[1] << "," << position[2]
+                << ")" << std::endl;
+        }
       }
     }
   
