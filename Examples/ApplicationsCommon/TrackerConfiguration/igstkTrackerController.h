@@ -23,9 +23,6 @@
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
-#ifdef IGSTKSandbox_USE_MicronTracker
-#include "igstkMicronTrackerConfiguration.h"
-#endif
 #include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkStateMachine.h"
@@ -38,8 +35,12 @@
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
-#include "igstkMicronTrackerTool.h"
 #include "igstkFlockOfBirdsTrackerToolNew.h"
+
+#ifdef IGSTKSandbox_USE_MicronTracker
+#include "igstkMicronTrackerConfiguration.h"
+#include "igstkMicronTrackerTool.h"
+#endif
 
 
 namespace igstk
