@@ -20,9 +20,6 @@ public:
   igstkSetMacro( BirdName, std::string );
   igstkGetMacro( BirdName, std::string );
 
-  igstkSetMacro( PortNumber, int );
-  igstkGetMacro( PortNumber, int );
-
   virtual std::string GetToolTypeAsString();
 
 protected:

@@ -24,8 +24,12 @@
 
 #include "igstkPolarisTracker.h"
 #include "igstkAuroraTracker.h"
+
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
-#include "igstkFlockOfBirdsTracker.h"
+#endif
+
+#include "igstkFlockOfBirdsTrackerNew.h"
 
 #include "igstkCalibrationIO.h"
 
@@ -55,7 +59,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToStart );
   igstkAddStateMacro( AttemptingToStop );
 
-  igstkAddStateMacro( AttemptingToStartMicron );
   igstkAddStateMacro( Started );  
 
                    //define the state machine's inputs
@@ -583,69 +586,69 @@ TrackerController::TrackerController() : m_StateMachine( this )
                           Started,
                           ReportStartSuccess);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           Failed,
                           Initialized,
                           ReportStartFailure);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           GetTracker,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           GetTools,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           GetReferenceTool,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           TrackerInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           TrackerShutdown,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           TrackerStart,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           PolarisVicraInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           PolarisHybridInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
   
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           AuroraInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
   
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           MicronInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
   
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           AscensionInitialize,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToStartMicron,
+  igstkAddTransitionMacro(AttemptingToStart,
                           TrackerStop,
-                          AttemptingToStartMicron,
+                          AttemptingToStart,
                           ReportInvalidRequest);
 
         //transitions from Started state
@@ -877,10 +880,10 @@ TrackerController::RequestStop(
 {
   igstkLogMacro( DEBUG, 
                  "igstkTrackerController::RequestStop called...\n" );
-  this->m_TmpTrackerConfiguration = 
+    this->m_TmpTrackerConfiguration = 
     const_cast<TrackerConfiguration *>(configuration);
-  igstkPushInputMacro( TrackerStop );
-  this->m_StateMachine.ProcessInputs();
+    igstkPushInputMacro( TrackerStop );
+    this->m_StateMachine.ProcessInputs();
 }
 
 void
@@ -955,12 +958,14 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
     }
+    #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
     }
+    #endif
     else if( dynamic_cast<AscensionTrackerConfiguration *>
     ( this->m_TmpTrackerConfiguration ) )
     {
@@ -1022,12 +1027,12 @@ TrackerController::TrackerStopProcessing()
     this->m_Tracker->RemoveObserver(observerID);
     evt.Set( this->m_ErrorMessage );
     this->InvokeEvent( evt );
-  igstkPushInputMacro( Failed );
+    igstkPushInputMacro( Failed );
   }
   else
   {
     this->m_Tracker->RemoveObserver(observerID);
-  igstkPushInputMacro( Succeeded );
+    igstkPushInputMacro( Succeeded );
   }
 
   this->m_StateMachine.ProcessInputs();
@@ -1125,6 +1130,9 @@ TrackerController::InitializeSerialCommunication()
     this->m_ErrorObserver->ClearError();
     return false;
   }
+
+  this->m_SerialCommunication->Print(std::cout);
+
   return true;
 }
 
@@ -1468,7 +1476,7 @@ TrackerController::AuroraInitializeProcessing()
 }
 
 
-
+#ifdef IGSTKSandbox_USE_MicronTracker
 MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration )
 {
@@ -1499,10 +1507,12 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
   trackerTool->RequestConfigure();
   return trackerTool;
 }
+#endif
 
 
 void TrackerController::MicronInitializeProcessing()
 {
+  #ifdef IGSTKSandbox_USE_MicronTracker
                   //create tracker
   igstk::MicronTracker::Pointer tracker = igstk::MicronTracker::New();
   this->m_Tracker = tracker; 
@@ -1565,28 +1575,33 @@ void TrackerController::MicronInitializeProcessing()
       trackerTool->RequestAttachToTracker( tracker );
       tracker->RequestSetReferenceTool( trackerTool );
     }
-  /*
-    tracker->RequestStartTracking();
-    if( this->m_ErrorObserver->ErrorOccured() )
-    {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      m_Tracker->RemoveObserver( observerID );
-      m_Tracker->RequestClose();
-      igstkPushInputMacro( Failed );
-    }
+ 
+    //tracker->RequestStartTracking();
+    //if( this->m_ErrorObserver->ErrorOccured() )
+    //{
+    //  this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    //  this->m_ErrorObserver->ClearError();
+    //  m_Tracker->RemoveObserver( observerID );
+    //  m_Tracker->RequestClose();
+    //  igstkPushInputMacro( Failed );
+    //}
   
-    else
-    {
-      tracker->RemoveObserver(observerID);
-      igstkPushInputMacro( Succeeded );
-    }
-  */
+    //else
+    //{
+    //  tracker->RemoveObserver(observerID);
+    //  igstkPushInputMacro( Succeeded );
+    //}
+
     m_Tracker->RemoveObserver(observerID);
     igstkPushInputMacro( Succeeded );
   }
   this->m_StateMachine.ProcessInputs();
+#else
+  igstkPushInputMacro( Failed );
+  this->m_StateMachine.ProcessInputs();
+#endif
 }
+
 
 FlockOfBirdsTrackerTool::Pointer 
 TrackerController::InitializeAscensionTool(
@@ -1594,9 +1609,27 @@ TrackerController::InitializeAscensionTool(
 {
   FlockOfBirdsTrackerTool::Pointer trackerTool = FlockOfBirdsTrackerTool::New();
 
-  //SET SOME IDENTIFIER
+  trackerTool->RequestSetBirdName("bird0");
+/*
+  igstk::CalibrationIO * reader = new igstk::CalibrationIO;
+
+  std::string fileName = toolConfiguration->GetCalibrationFileName();
+
+  if (itksys::SystemTools::FileExists( fileName.c_str() ) )
+  {
+    reader->SetFileName( fileName );
+    if ( reader->RequestRead( ) )
+    {
+      trackerTool->SetCalibrationTransform( reader->GetCalibrationTransform() );
+      trackerTool->RequestConfigure();
+      return trackerTool;
+    }
+  }
+*/
+   //SET SOME IDENTIFIER
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
+
 
   trackerTool->RequestConfigure();
   return trackerTool;
@@ -1605,6 +1638,14 @@ TrackerController::InitializeAscensionTool(
 void 
 TrackerController::AscensionInitializeProcessing()
 {
+  if( !InitializeSerialCommunication() )
+  {
+    igstkPushInputMacro( Failed );
+  }
+  else
+  {
+    this->m_SerialCommunication->Print(std::cout, 0);
+
                                   //create tracker
     igstk::FlockOfBirdsTracker::Pointer tracker = igstk::FlockOfBirdsTracker::New();
     this->m_Tracker = tracker; 
@@ -1620,6 +1661,8 @@ TrackerController::AscensionInitializeProcessing()
                                                      this->m_ErrorObserver );
 
     tracker->SetCommunication( this->m_SerialCommunication );
+
+    tracker->Print(std::cout);
 
     tracker->RequestOpen();
     if( this->m_ErrorObserver->ErrorOccured() )
@@ -1679,8 +1722,10 @@ TrackerController::AscensionInitializeProcessing()
         igstkPushInputMacro( Succeeded );
       }
       */
+      m_Tracker->RemoveObserver(observerID);
+      igstkPushInputMacro( Succeeded );
     }
-
+  }
   this->m_StateMachine.ProcessInputs();
 
 }

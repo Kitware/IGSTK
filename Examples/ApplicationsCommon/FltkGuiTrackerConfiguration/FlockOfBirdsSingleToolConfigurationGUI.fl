@@ -16,7 +16,7 @@ class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfi
       xywh {501 385 319 60} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
-      Fl_Choice SerialPort {
+      Fl_Choice m_SerialPort {
         label {Serial Port Number: } open
         xywh {145 13 75 25} down_box BORDER_BOX
       } {
@@ -64,66 +64,73 @@ class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfi
   } {}
   Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
-    code {if (m_Configuration == NULL)
-{
- m_Configuration = new igstk::AscensionTrackerConfiguration();
- m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
- m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
-}
+    code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+
+conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
 
 
-//m_Configuration->SetCameraCalibrationFileDirectory( this->m_CalibrationFileDir->value() );
-//m_Configuration->SetInitializationFile( this->m_InitializationFile->value() ); 
-//m_Configuration->SetTemplatesDirectory( this->m_TemplateFileDir->value() );
-
-
-//igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
-
-/*
 //Serial Port
-switch( SerialPort->value() ) 
+switch( this->m_SerialPort->value() ) 
   {
   case 0 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
     break;
   case 1 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber1;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber1 );
     break;
   case 2 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber2;      
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber2 );
     break;
   case 3 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber3 );
     break;
   case 4 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber4;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber4 );
     break;
   case 5 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber5;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber5 );
     break;
   case 6 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber6;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber6 );
     break;
   case 7 : 
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber7;
+    conf->SetCOMPort( igstk::SerialCommunication::PortNumber7 );
     break;
-  default:
-    m_Configuration->m_COMPort = igstk::SerialCommunication::PortNumber0;
   }
   
- m_Configuration->m_Frequency = 30;
+  if( this->m_ConfigurationErrorOccured )
+  {
+     conf->Delete();
+     this->m_ConfigurationErrorOccured = false;
+     return NULL;
+  }
     
- m_Configuration->m_TrackerToolList.clear();
- 
- igstk::AscensionTrackerToolConfiguration * tool = new igstk::AscensionTrackerToolConfiguration;
+          //get the desired tracker referesh rate
+  conf->RequestSetFrequency( 40 );
 
- conf->m_TrackerToolList.push_back( tool );
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
 
- m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::FlockOfBirds );
- m_TrackerConfiguration.SetAscensionTrackerConfiguration( conf );
- */
- 
- return m_Configuration;} {selected
+           //get the tracker tool information
+  igstk::AscensionToolConfiguration toolConfig;
+
+  toolConfig.SetBirdName("bird0");
+
+  conf->RequestAddTool( &toolConfig );   
+
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+  return conf;} {selected
     }
   }
   Function {Show()} {return_type {virtual void}

@@ -16,7 +16,7 @@ class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerCo
   Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open
   } {
     Fl_Window m_TrackerConfigurationWindow {
-      label {Micron Tracker Configuration} open
+      label {Micron Tracker Configuration}
       xywh {445 492 427 373} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
@@ -77,7 +77,7 @@ if( fileDir )
 if (bToolsAvailable)
 {
   m_MultipleToolSelectionGroup->activate();
-}} selected
+}}
         xywh {365 128 25 25} labelsize 8
       }
       Fl_Output m_TemplateFileDir {
@@ -92,8 +92,8 @@ if (bToolsAvailable)
         label {Refresh rate [Hz]:}
         xywh {132 22 105 15} type Horizontal align 4 minimum 1 maximum 48 step 1 value 15
       }
-      Fl_Group m_MultipleToolSelectionGroup {open
-        xywh {9 211 411 103} box SHADOW_BOX
+      Fl_Group m_MultipleToolSelectionGroup {
+        xywh {9 211 411 103} box BORDER_BOX
       } {
         Fl_Button m_AddToolBtn {
           label {Add Tool}
@@ -176,22 +176,27 @@ if (m_Configuration != NULL)
 }
 
 InitializeConfiguration();}
-          xywh {285 265 115 25}
+          xywh {285 265 115 25} deactivate
         }
       }
       Fl_Button {} {
         label Confirm
-        callback {UpdateParentConfiguration();}
+        callback {//get the desired tracker referesh rate
+m_Configuration->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+if( this->m_ConfigurationErrorOccured )
+{
+  m_Configuration->Delete();
+  m_Configuration = NULL;
+  this->m_ConfigurationErrorOccured = false;
+}
+
+UpdateParentConfiguration();}
         xywh {305 340 98 25}
       }
     }
-    code {//delete me ...
-m_CalibrationFileDir->value("c:/Program Files/Claron Technology/MicronTracker/CalibrationFiles");
-m_InitializationFile->value("c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");
-
-
-InitializeConfiguration();
-m_MultipleToolSelectionGroup->deactivate();} {}
+    code {InitializeConfiguration();
+m_MultipleToolSelectionGroup->deactivate();} {selected
+    }
   }
   Function {~MicronMultipleToolTrackerConfigurationGUI()} {return_type virtual
   } {
@@ -216,7 +221,7 @@ m_Configuration = NULL;} {}
 
 return m_Configuration;} {}
   }
-  Function {Show()} {return_type {virtual void}
+  Function {Show()} {open return_type {virtual void}
   } {
     code {this->m_TrackerConfigurationWindow->show();} {}
   }
@@ -232,14 +237,6 @@ return m_Configuration;} {}
  m_Configuration = new igstk::MicronTrackerConfiguration();
  m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
  m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
-}
-         //get the desired tracker referesh rate
-m_Configuration->RequestSetFrequency( this->m_RefreshRateSlider->value() );
-if( this->m_ConfigurationErrorOccured )
-{
-  m_Configuration->Delete();
-  m_Configuration = NULL;
-  this->m_ConfigurationErrorOccured = false;
 }} {}
   }
 } 

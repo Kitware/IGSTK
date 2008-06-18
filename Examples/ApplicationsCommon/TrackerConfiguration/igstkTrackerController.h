@@ -18,10 +18,14 @@
 #ifndef __igstkTrackerController_h
 #define __igstkTrackerController_h
 
+#include "igstkSandboxConfigure.h"
+
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
+#endif
 #include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkStateMachine.h"
@@ -35,7 +39,7 @@
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
 #include "igstkMicronTrackerTool.h"
-#include "igstkFlockOfBirdsTrackerTool.h"
+#include "igstkFlockOfBirdsTrackerToolNew.h"
 
 
 namespace igstk
@@ -153,7 +157,7 @@ protected:
 
 private:
 
-     /** List of state machine states */
+  /** List of state machine states */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( AttemptingToInitialize );
   igstkDeclareStateMacro( AttemptingToStart );
@@ -161,15 +165,10 @@ private:
   igstkDeclareStateMacro( AttemptingToShutdown );
   
   igstkDeclareStateMacro( AttemptingToInitializePolarisVicra );
-  igstkDeclareStateMacro( AttemptingToStartPolarisVicra );
   igstkDeclareStateMacro( AttemptingToInitializePolarisHybrid );
-  igstkDeclareStateMacro( AttemptingToStartPolarisHybrid );
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
-  igstkDeclareStateMacro( AttemptingToStartAurora );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
-  igstkDeclareStateMacro( AttemptingToStartMicron );
   igstkDeclareStateMacro( AttemptingToInitializeAscension );  
-  igstkDeclareStateMacro( AttemptingToStartAscension );
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( Started );
 
@@ -229,14 +228,10 @@ private:
     const PolarisWiredToolConfiguration *toolConfiguration );
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
-  
+#ifdef IGSTKSandbox_USE_MicronTracker
   MicronTrackerTool::Pointer InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration );
-  MicronTrackerTool::Pointer StartMicronTool(
-    const MicronToolConfiguration *toolConfiguration );
-  MicronTrackerTool::Pointer StopMicronTool(
-    const MicronToolConfiguration *toolConfiguration );
-
+#endif
   FlockOfBirdsTrackerTool::Pointer InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration );
 
