@@ -777,8 +777,8 @@ const char* NDICommandInterpreter::Command(const char* command)
       }
 
     /* change m_Tracking  if either TSTOP or INIT is sent  */ 
-    if (cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0) ||
-        cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0))
+    if( ( cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0) ) ||
+        ( cp[1] == 'I' && (strncmp(cp, "INIT",  4) == 0) )    )
       {
       m_Tracking = 0;
       m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);

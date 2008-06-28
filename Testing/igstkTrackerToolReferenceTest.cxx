@@ -308,6 +308,8 @@ int igstkTrackerToolReferenceTest( int , char * [] )
         transformObserver->GetTransformBetweenCoordinateSystems();
       const ReferenceSystemType * source = payload.GetSource();
       const ReferenceSystemType * destination = payload.GetDestination();
+      std::cout << source << std::endl;
+      std::cout << destination << std::endl;
       igstk::Transform transform = transformObserver->GetTransform();
       if ( transform.IsValidNow() )
         {
