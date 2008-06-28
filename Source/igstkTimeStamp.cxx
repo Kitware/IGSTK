@@ -17,6 +17,7 @@
 
 #include "igstkTimeStamp.h"
 #include "igstkRealTimeClock.h"
+#include <typeinfo>
 
 namespace igstk
 {

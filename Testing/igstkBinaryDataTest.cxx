@@ -22,6 +22,7 @@
 #endif
 
 #include <iostream>
+#include <cstring>
 #include "igstkBinaryData.h"
 #include "igstkRealTimeClock.h"
 
