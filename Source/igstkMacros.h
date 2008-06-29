@@ -19,6 +19,7 @@
 
 #include "igstkLogger.h"
 #include "itkCommand.h"
+#include <cstdlib>
 
 /** \file igstkMacros.h defines standard system-wide macros, constants, 
  * and other  common parameters in the IGSTK Library. 
