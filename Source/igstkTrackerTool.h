@@ -62,8 +62,8 @@ class Tracker;
   *  and error associated with the measurement used.
   *
   *
-  *  \image html  igstkTrackerTool.png  "TrackerTool State Machine Diagram"
-  *  \image latex igstkTrackerTool.eps  "TrackerTool State Machine Diagram" 
+  *  \image html  igstkDummyTrackerTool.png  "TrackerTool State Machine Diagram"
+  *  \image latex igstkDummyTrackerTool.eps  "TrackerTool State Machine Diagram" 
   *
   *  \ingroup Tracker
   * 
