@@ -123,6 +123,21 @@ protected:
     {
     }
 
+  void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops )
+    {
+    this->Tracker::ExportStateMachineDescription( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr, bool skipLoops )
+    {
+    this->Tracker::ExportStateMachineDescriptionToLTS( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToSCXML( OutputStreamType & ostr, bool skipLoops )
+    {
+    this->Tracker::ExportStateMachineDescriptionToSCXML( ostr, skipLoops );
+    }
+
   ResultType InternalOpen( void )
     {
     return SUCCESS;
