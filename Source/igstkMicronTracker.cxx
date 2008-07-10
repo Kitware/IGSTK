@@ -406,7 +406,6 @@ MicronTracker
   return FAILURE;
 }
 
-/** Detach camera. */
 MicronTracker::ResultType MicronTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalClose called ...\n");
@@ -439,7 +438,7 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
   igstkLogMacro( DEBUG,
     "igstk::MicronTracker::InternalStopTracking called ...\n");
 
-  //Detach the cameras
+  //Detach the camera
   this->m_Cameras->Detach();
 
   return SUCCESS;
@@ -449,6 +448,10 @@ MicronTracker::ResultType MicronTracker::InternalStopTracking( void )
 MicronTracker::ResultType MicronTracker::InternalReset( void )
 {
   igstkLogMacro( DEBUG, "igstk::MicronTracker::InternalReset called ...\n");
+  
+  //Detach the camera
+  this->m_Cameras->Detach();
+
   return SUCCESS;
 }
 
