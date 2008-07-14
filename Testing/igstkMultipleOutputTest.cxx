@@ -23,7 +23,7 @@
 
 #include <iostream>
 #include <fstream>
-
+#include <cstdlib>
 #include "igstkMultipleOutput.h"
 #include "igstkRealTimeClock.h"
 

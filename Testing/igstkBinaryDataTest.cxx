@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
 #include "igstkBinaryData.h"
 #include "igstkRealTimeClock.h"
 

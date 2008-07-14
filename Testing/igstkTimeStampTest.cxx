@@ -24,6 +24,7 @@
 #include <math.h>
 #include <iostream>
 #include "igstkTimeStamp.h"
+#include <cstdlib>
 
 int igstkTimeStampTest( int, char * [] )
 { 
