@@ -13,6 +13,9 @@ SET(IGSTK_VERSION_PATCH "0")
 SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
+# Build with shared libraries
+OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF) 
+
 # Add the testing directories
 OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
 
@@ -229,7 +232,9 @@ CMAKE_EXPORT_BUILD_SETTINGS(${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake)
 # IGSTK_INSTALL_PACKAGE_DIR      - package/export configuration files
 
 IF(NOT IGSTK_INSTALL_BIN_DIR)
-  SET(IGSTK_INSTALL_BIN_DIR "bin")
+   SET(IGSTK_INSTALL_BIN_DIR
+      ${CMAKE_INSTALL_PREFIX}/bin
+   )
 ENDIF(NOT IGSTK_INSTALL_BIN_DIR)
 
 IF(NOT IGSTK_INSTALL_LIB_DIR)
