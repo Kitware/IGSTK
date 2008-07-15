@@ -26,7 +26,7 @@ class View;
 
 /** \class ViewProxyBase
  *
- *  \Brief A base class for widget type templated proxy classes. 
+ *  \brief A base class for widget type templated proxy classes. 
  *
  *  A proxy class designed to access private member data of 
  *  the view class. This class is a friend class of the View
