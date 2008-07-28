@@ -62,9 +62,9 @@ public: \
       } \
     else \
       { \
-      Transform internalTransform = this->GetInternalTransform(); \
-      Transform transformToParentWithInternalTransform = \
-                               Transform::TransformCompose( \
+      ::igstk::Transform internalTransform = this->GetInternalTransform(); \
+      ::igstk::Transform transformToParentWithInternalTransform = \
+                               ::igstk::Transform::TransformCompose( \
                                               transformToParent, \
                                               internalTransform ); \
       m_CoordinateSystemDelegator->RequestSetTransformAndParent( \
@@ -81,9 +81,9 @@ protected: \
     { \
     return false; \
     } \
-  virtual Transform GetInternalTransform() const \
+  virtual ::igstk::Transform GetInternalTransform() const \
     { \
-    Transform identity; \
+    ::igstk::Transform identity; \
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() ); \
     return identity; \
     } \
@@ -95,7 +95,7 @@ protected: \
                        m_CoordinateSystemDelegator.GetPointer() ); \
     } \
 private: \
-  CoordinateSystemDelegator::Pointer \
+  ::igstk::CoordinateSystemDelegator::Pointer \
                                   m_CoordinateSystemDelegator; \
   typedef ::itk::ReceptorMemberCommand< Self > CoordinateSystemObserverType; \
   CoordinateSystemObserverType::Pointer m_CoordinateSystemObserver; \
@@ -116,7 +116,7 @@ private: \
   m_CoordinateSystemObserver->SetCallbackFunction(this, \
                                                    &Self::ObserverCallback); \
   m_CoordinateSystemDelegator = \
-                          CoordinateSystemDelegator::New(); \
+                          ::igstk::CoordinateSystemDelegator::New(); \
   m_CoordinateSystemDelegator->AddObserver( \
     CoordinateSystemTransformToNullTargetEvent() \
     , m_CoordinateSystemObserver ); \
