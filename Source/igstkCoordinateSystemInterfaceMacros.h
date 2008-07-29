@@ -52,7 +52,7 @@ public: \
     m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
   template < class TParentPointer > \
-  void RequestSetTransformAndParent( const Transform & transformToParent, \
+  void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent, \
                                      TParentPointer parent ) \
     { \
     if ( this->IsInternalTransformRequired() == false ) \
@@ -71,7 +71,7 @@ public: \
                           transformToParentWithInternalTransform, parent); \
       }\
     } \
-  bool IsCoordinateSystem(const CoordinateSystem* inCS) const \
+  bool IsCoordinateSystem(const ::igstk::CoordinateSystem* inCS) const  \
     { \
     return m_CoordinateSystemDelegator-> \
       IsCoordinateSystem( inCS ); \
@@ -87,7 +87,7 @@ protected: \
     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() ); \
     return identity; \
     } \
-  const CoordinateSystem* GetCoordinateSystem() const \
+  const ::igstk::CoordinateSystem* GetCoordinateSystem() const  \
     { \
     return \
       igstk::Friends::CoordinateSystemHelper:: \
