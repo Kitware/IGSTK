@@ -118,22 +118,22 @@ private: \
   m_CoordinateSystemDelegator = \
                           ::igstk::CoordinateSystemDelegator::New(); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemTransformToNullTargetEvent() \
+    ::igstk::CoordinateSystemTransformToNullTargetEvent()   \
     , m_CoordinateSystemObserver ); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemTransformToDisconnectedEvent() \
+    ::igstk::CoordinateSystemTransformToDisconnectedEvent() \
     , m_CoordinateSystemObserver ); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemNullParentEvent() \
+    ::igstk::CoordinateSystemNullParentEvent() \
     , m_CoordinateSystemObserver ); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemThisParentEvent() \
+    ::igstk::CoordinateSystemThisParentEvent() \
     , m_CoordinateSystemObserver ); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemParentCycleEvent() \
+    ::igstk::CoordinateSystemParentCycleEvent() \
     , m_CoordinateSystemObserver ); \
   m_CoordinateSystemDelegator->AddObserver( \
-    CoordinateSystemTransformToEvent() \
+    ::igstk::CoordinateSystemTransformToEvent() \
     , m_CoordinateSystemObserver ); \
   std::stringstream tempStream; \
   tempStream << this->GetNameOfClass() << " 0x"; \
