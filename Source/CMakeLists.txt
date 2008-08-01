@@ -352,12 +352,6 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
     igstkTrackerToolObserverToSocketRelay.h
     )
   IF(IGSTKSandbox_USE_OpenIGTLink)
-    INCLUDE_DIRECTORIES(
-      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/libs/newmat
-      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src
-      ${IGSTKSandbox_SOURCE_DIR}/Utilities/OpenIGTLink/src/igtlutil
-      )
-
     SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkTrackerToolObserverToOpenIGTLinkRelay.h
@@ -506,7 +500,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLinkLib)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 IF(IGSTKSandbox_USE_vtkKWImage)
