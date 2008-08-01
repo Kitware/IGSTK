@@ -13,6 +13,7 @@ SUBDIRS(
   PrincipalAxisCalibration
   PivotCalibrationReader
   SpatialObjects
+  ApplicationsCommon
   )
 
 IF (IGSTKSandbox_USE_FLTK)
