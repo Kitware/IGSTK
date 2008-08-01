@@ -174,10 +174,22 @@ OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tes
 #
 OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
 
+
 #
 # Use OpenIGTLink protocol 
 #
 OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" ON)
+IF(IGSTKSandbox_USE_OpenIGTLink)
+  #
+  #  FIND OpenIGTLink 
+  #
+  FIND_PACKAGE(OpenIGTLink)
+  IF (OpenIGTLink_USE_FILE)
+    INCLUDE (${OpenIGTLink_USE_FILE})
+  ELSE (OpenIGTLink_USE_FILE)
+    MESSAGE( FATAL_ERROR "This application requires OpenIGTLink. One of these components is missing. Please verify configuration")
+  ENDIF (OpenIGTLink_USE_FILE)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 
 #-----------------------------------------------------------------------------
