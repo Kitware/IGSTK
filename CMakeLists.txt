@@ -178,7 +178,7 @@ OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference s
 #
 # Use OpenIGTLink protocol 
 #
-OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" ON)
+OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)
 IF(IGSTKSandbox_USE_OpenIGTLink)
   #
   #  FIND OpenIGTLink 
