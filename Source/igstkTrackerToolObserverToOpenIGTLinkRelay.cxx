@@ -37,11 +37,9 @@ TrackerToolObserverToOpenIGTLinkRelay::TrackerToolObserverToOpenIGTLinkRelay():m
 
   this->m_Matrix = vtkMatrix4x4::New();
 
-  this->m_WaitingForNextRequestFromOpenIGTLink = false;
-
-  this->m_Acquisition = new AcquisitionTrackingSimulator;
-  this->m_Transfer  = new TransferOpenIGTLink;
-
+  this->m_Socket = igtl::ClientSocket::New(); 
+  this->m_TransformMessage = igtl::TransformMessage::New();
+  this->m_TransformMessage->SetDeviceName("Tracker");
 }
 
 TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
@@ -56,16 +54,11 @@ TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
 //  this->m_SocketCommunicator = NULL;
   this->m_Matrix = NULL;
 
-  this->m_Acquisition->Stop();
-  this->m_Transfer->Stop();
-  this->m_Transfer->Disconnect();
-
-  delete this->m_Acquisition;
-  delete this->m_Transfer;
-  this->m_Acquisition = NULL;
-  this->m_Transfer = NULL;
   this->m_FramesPerSecond = 1.0;
 
+  this->m_Socket->CloseSocket();
+  this->m_Socket->Delete();
+  this->m_TransformMessage->Delete();
 }
 
 
@@ -115,89 +108,16 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
 
   //this->m_Tag = 0;
   this->m_Tag = 17;
-  this->m_WaitingForNextRequestFromOpenIGTLink = false;
 
 
-  this->m_Acquisition->SetPostProcessThread(dynamic_cast<Thread*>(this->m_Transfer));
-  this->m_Acquisition->SetFrameRate(this->m_FramesPerSecond);
-  // this->m_Acquisition->SetFrameRate(1);
-
-  this->m_Transfer->SetClientMode(hostname, this->m_Port);
-
-  this->m_Transfer->SetAcquisitionThread(this->m_Acquisition);
-  this->m_Acquisition->Run();
-  this->m_Transfer->Run();
+  int r = this->m_Socket->ConnectToServer(hostname, this->m_Port);
+  if (r != 0)
+    {
+    std::cerr << "Cannot connect to the server." << std::endl;
+    exit(0);
+    }
 }
 
-/*
-void
-TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::Object * caller, const itk::EventObject & event )
-{
-  std::cout << "TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink() " << std::endl;
-
-  if( this->m_WaitingForNextRequestFromOpenIGTLink )
-    {
-    return;
-    }
-
-  //
-  // We send 12 parameters: 3x3 from the rotation matrix plus 3 from the
-  // translation vector.
-  //
-  const int numberOfParametersToSend = 12;
-
-
-  const CoordinateSystemTransformToEvent * transformEvent =
-    dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
-
-  if( transformEvent )
-    {
-    igstk::CoordinateSystemTransformToResult transformCarrier = 
-      transformEvent->Get();
-
-    igstk::Transform transform = transformCarrier.GetTransform();
-
-    std::cout << "Sending transform " << transform << std::endl;
-
-    transform.ExportTransform( *(this->m_Matrix) );
-
-    unsigned int counter = 0;
-    double dataToBeSent[ numberOfParametersToSend ];
-
-    for (unsigned int i = 0; i < 4; i++)
-      {
-      for (unsigned int j = 0; j < 3; j++)
-        {
-        dataToBeSent[counter++] = this->m_Matrix->GetElement( j, i );
-        }
-      }
-
-    // Hack for demo
-    dataToBeSent[11] += 1000;
-
-    if( !this->m_SocketCommunicator->Send( dataToBeSent, numberOfParametersToSend, 1, this->m_Tag ) )
-      {
-      std::cerr << "Client error: Error sending data." << std::endl;
-      }
-
-    //this->m_Tag++;
-
-    this->m_WaitingForNextRequestFromOpenIGTLink = true;
-
-    char confirmation;
-
-    if (!this->m_SocketCommunicator->Receive( &confirmation, 1, 1, this->m_Tag))
-      {
-      this->m_WaitingForNextRequestFromOpenIGTLink = true;
-      }
-    else
-      {
-      this->m_WaitingForNextRequestFromOpenIGTLink = false;
-      }
-    }
-
-}
-*/
 
 
 void
@@ -219,7 +139,18 @@ TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::O
 
     transform.ExportTransform( *(this->m_Matrix) );
 
-    this->m_Acquisition->SetMatrix(*this->m_Matrix);
+    igtl::Matrix4x4 matrix;
+
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++)
+        matrix[i][j] = (float) this->m_Matrix->GetElement(i, j);
+
+    this->m_TransformMessage->SetMatrix(matrix);
+    this->m_TransformMessage->Pack();
+
+    int interval = (int) (1000.0 / this->m_FramesPerSecond);
+    igtl::Sleep(interval); // wait
+    this->m_Socket->Send(this->m_TransformMessage->GetPackPointer(), this->m_TransformMessage->GetPackSize());
     }
 }
 
