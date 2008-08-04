@@ -23,10 +23,10 @@
 #include "igstkStateMachine.h"
 #include "igstkTrackerTool.h"
 
-// #include "vtkSocketCommunicator.h"
-// #include "vtkSocketController.h"
-#include "AcquisitionTrackingSimulator.h"
-#include "TransferOpenIGTLink.h"
+#include "igtlOSUtil.h"
+#include "igtlTransformMessage.h"
+#include "igtlClientSocket.h"
+
 
 namespace igstk
 {
@@ -80,12 +80,6 @@ private:
 
   TrackerTool::ConstPointer   m_TrackerTool;
 
-//  vtkSocketController       * m_SocketController;
-
-//  vtkSocketCommunicator     * m_SocketCommunicator;
-
-  bool                        m_WaitingForNextRequestFromOpenIGTLink;
-
   vtkMatrix4x4              * m_Matrix;
 
   unsigned int                m_Tag;
@@ -94,9 +88,11 @@ private:
 
   std::string                 m_HostName;
 
-  AcquisitionTrackingSimulator *m_Acquisition;
-  TransferOpenIGTLink *m_Transfer;
   double m_FramesPerSecond;
+
+  igtl::ClientSocket::Pointer m_Socket;
+
+  igtl::TransformMessage::Pointer m_TransformMessage;
 
 };
 
