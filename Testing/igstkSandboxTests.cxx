@@ -59,7 +59,6 @@ void RegisterTests()
   REGISTER_TEST(igstkTransformSocketListenerTest );
 #ifdef IGSTKSandbox_USE_OpenIGTLink
   REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
-  REGISTER_TEST( igstkOpenIGTLinkTest );
 #endif  
 #endif
 
