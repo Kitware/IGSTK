@@ -1484,6 +1484,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
  
   trackerTool->RequestSetMarkerName( toolConfiguration->GetMarkerName() );
 
+  /*
   igstk::CalibrationIO * reader = new igstk::CalibrationIO;
 
   std::string fileName = toolConfiguration->GetCalibrationFileName();
@@ -1498,7 +1499,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
       return trackerTool;
     }
   }
-
+ */
   // if we could not find the attached calibration file
   // we set a default identity transformation
   trackerTool->SetCalibrationTransform( 
