@@ -24,10 +24,36 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "Tracking.h"
+#include "igstkAuroraTrackerConfiguration.h"
+
+
 int main(int , char** )
 { 
+    igstk::RealTimeClock::Initialize();
 
-  std::cout << "TrackerConfiguration.\n";
 
-  return EXIT_SUCCESS;
+    Tracking *tr = new Tracking;
+    igstk::AuroraTrackerConfiguration *config = new igstk::AuroraTrackerConfiguration;
+    config->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    config->RequestSetFrequency( 30 );
+
+    igstk::AuroraToolConfiguration auroraToolConfig;
+    auroraToolConfig.SetChannelNumber( 0);     // ask patrick about channel/port issue
+    auroraToolConfig.SetPortNumber( 0 );
+    //auroraToolConfig.SetSROMFile( "path/filename" );
+
+    config->RequestAddTool( &auroraToolConfig );   
+
+    tr->SetTrackerConfiguration(config);
+    tr->InitializeTracking();
+    tr->StartTracking();
+
+    while (1)
+    {
+    igstk::PulseGenerator::Sleep(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+
+    return EXIT_SUCCESS;
 }
