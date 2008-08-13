@@ -3,6 +3,7 @@ PROJECT(TrackerConfiguration)
   
 SET(TrackerConfiguration_SRCS
   main.cxx
+  Tracking.cxx
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
   igstkAscensionTrackerConfiguration.cxx
