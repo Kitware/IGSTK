@@ -161,6 +161,10 @@ private:
   LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
   CancelObserverType::Pointer               m_TrackerConfigurationCancelObserver;
 
+
+  igstk::Transform                                m_CurrentTransform;
+
+
   /** Log file */
   std::ofstream                                   m_LogFile;  
 

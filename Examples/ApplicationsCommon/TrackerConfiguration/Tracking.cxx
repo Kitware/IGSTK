@@ -55,6 +55,8 @@ Tracking::Tracking() :
   this->GetLogger()->SetPriorityLevel( LoggerType::DEBUG);
 
   /** Direct the application log message to the std::cout */
+
+
   itk::StdStreamLogOutput::Pointer m_LogCoutOutput
                                            = itk::StdStreamLogOutput::New();
   m_LogCoutOutput->SetStream( std::cout );
@@ -98,8 +100,8 @@ Tracking::Tracking() :
    *  Tracking::TrackingCallback()
    */
   m_TrackerToolUpdateObserver    = LoadedObserverType::New();
-  m_TrackerToolUpdateObserver->SetCallbackFunction( this,
-                                                 &Tracking::TrackingCallback );
+  m_TrackerToolUpdateObserver->SetCallbackFunction( this, &Tracking::TrackingCallback );
+
 }
 
 /** -----------------------------------------------------------------
@@ -301,16 +303,18 @@ void Tracking::TrackingCallback(const itk::EventObject & event )
     transformObserver->Clear();
     
     m_WorkingTool->RequestComputeTransformTo( m_WorldReference );
-
    
     if ( transformObserver->GotTransform() )
     {
         igstk::Transform transform = transformObserver->GetTransform();
 
+//        if ( transform.IsValidNow() )
+        {
         vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
         transform.ExportTransform( *matrix );
         matrix->Print(cout);
         matrix->Delete();
+        }
     }
   }
 }
@@ -373,6 +377,8 @@ Tracking::TrackerControllerObserver::Execute( itk::Object *caller, const itk::Ev
   else if ( evt2 )
   {
     this->m_Parent->m_Tracker = evt2->Get();
+    this->m_Parent->m_Tracker->RequestSetTransformAndParent(this->m_Parent->m_CurrentTransform, 
+                                                            this->m_Parent->m_WorldReference);
   }
   else if ( evt3 )
   {
