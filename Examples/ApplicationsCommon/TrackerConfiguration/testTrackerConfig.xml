@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<tracking_system type = "aurora">
+    <send_to_ip> 255.255.255.0</send_to_ip>  
+    <communication> 
+      <com_port>0</com_port>
+      <baud_rate>115200</baud_rate> 
+      <data_bits>8</data_bits>
+      <parity>N</parity> 
+      <stop_bits>1</stop_bits> 
+      <hand_shake>0</hand_shake> 
+    </communication>
+    <tool>
+      <name> reference frame </name> 
+      <control_box_port>0</control_box_port>
+      <control_box_channel>0</control_box_channel>
+      <srom_file>"E:/users/zivy/needle5D.rom"</srom_file>
+      <ip_port>1000</ip_port> 
+    </tool>
+    <tool>
+      <name> bayonet probe </name> 
+      <control_box_port>1</control_box_port>
+      <control_box_channel>1</control_box_channel>
+      <srom_file>"E:/users/zivy/needle5D.rom"</srom_file>
+      <calibration_file>"E:/users/zivy/bayonetCalibration.xml"</calibration_file>
+      <ip_port>1001</ip_port> 
+    </tool>
+</tracking_system>
