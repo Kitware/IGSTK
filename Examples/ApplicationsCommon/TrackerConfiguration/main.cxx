@@ -26,34 +26,42 @@
 
 #include "Tracking.h"
 #include "igstkAuroraTrackerConfiguration.h"
+#include "igstkTrackerConfigurationParser.h"
 
 
-int main(int , char** )
+
+int main(int argc, char** argv)
 { 
+    if (argc != 2)
+    {
+        cerr << "Usage: TrackerConfiguration configXMLFile\n";
+        return 1;
+    }
+
     igstk::RealTimeClock::Initialize();
 
-
+    igstkTrackerConfigurationParser *parser = igstkTrackerConfigurationParser::New();
+    parser->SetFileName(argv[1]);
+    bool updated = parser->CreateConfiguration();
+    if (! updated)
+    {
+        cerr << "Creating tracker configuration failed.\n";
+        return 2;
+    }
+ 
     Tracking *tr = new Tracking;
-    igstk::AuroraTrackerConfiguration *config = new igstk::AuroraTrackerConfiguration;
-    config->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
-    config->RequestSetFrequency( 30 );
-
-    igstk::AuroraToolConfiguration auroraToolConfig;
-    auroraToolConfig.SetChannelNumber( 0);     // ask patrick about channel/port issue
-    auroraToolConfig.SetPortNumber( 0 );
-    //auroraToolConfig.SetSROMFile( "path/filename" );
-
-    config->RequestAddTool( &auroraToolConfig );   
-
-    tr->SetTrackerConfiguration(config);
+    tr->SetTrackerConfiguration(parser->GetTrackerConfig());
     tr->InitializeTracking();
     tr->StartTracking();
-
+    
     while (1)
     {
     igstk::PulseGenerator::Sleep(10);
     igstk::PulseGenerator::CheckTimeouts();
     }
 
+
+    parser->Delete();
+    delete tr;
     return EXIT_SUCCESS;
 }
