@@ -430,7 +430,9 @@ TransformFileReader::ReadProcessing()
     !itksys::SystemTools::FileExists( this->m_FileName.c_str() ) ||
     itksys::SystemTools::FileIsDirectory( this->m_FileName.c_str() ) )
   {
-    this->m_ReadFailureErrorMessage = "File does not exist or is a directory";
+    std::ostringstream msg;
+    msg<<"File ("<<this->m_FileName<<") does not exist or is a directory";
+    this->m_ReadFailureErrorMessage = msg.str();
     igstkPushInputMacro( Failure );    
   }
   else
