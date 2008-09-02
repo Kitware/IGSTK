@@ -35,10 +35,12 @@ public:
     virtual bool BuildConfiguration() {return false;};
     void SetParser(vtkXMLDataParser *p) {this->Parser = p;};
     igstk::TrackerConfiguration *GetTrackerConfiguration() {return TrackerConfig;};    
+    char *GetHostName() {return HostName;};
 
 protected:
     char *ReadElementValue(vtkXMLDataElement *element);
     char *ElementValue;
+    char *HostName;
     igstk::TrackerConfiguration *TrackerConfig;    
     vtkXMLDataParser *Parser;
 
