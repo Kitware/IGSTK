@@ -35,9 +35,7 @@ Tracking::Tracking() :
 
   this->m_TrackerControllerObserver = TrackerControllerObserver::New();
   this->m_TrackerControllerObserver->SetParent( this );
-
-  this->m_TrackerController->AddObserver(igstk::TrackerController::RequestTrackerEvent(),
-    this->m_TrackerControllerObserver );
+  this->m_TrackerController->AddObserver(igstk::TrackerController::RequestTrackerEvent(), this->m_TrackerControllerObserver );
 
   /*
   this->m_TrackerController->AddObserver(igstk::TrackerController::RequestReferenceToolEvent(),
@@ -45,8 +43,13 @@ Tracking::Tracking() :
 
   */
 
-  this->m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
-    this->m_TrackerControllerObserver );
+  this->m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(), this->m_TrackerControllerObserver );
+
+
+  this->m_Socket = igtl::ClientSocket::New(); 
+  this->m_TransformMessage = igtl::TransformMessage::New();
+  this->m_TransformMessage->SetDeviceName("Tracker");
+
   
   /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
@@ -104,6 +107,8 @@ Tracking::Tracking() :
 
 }
 
+
+
 /** -----------------------------------------------------------------
 *     Destructor
 *  -----------------------------------------------------------------
@@ -112,14 +117,17 @@ Tracking::~Tracking()
 {
     if ( m_TrackerConfiguration )
     {
-      m_TrackerConfiguration->Delete();
+        m_TrackerConfiguration->Delete();
     }
+
+    this->m_Socket->CloseSocket();
+    this->m_Socket->Delete();
+    this->m_TransformMessage->Delete();
 }
 
 
 
-void Tracking::SetTrackerConfiguration(
-            igstk::TrackerConfiguration *configuration )
+void Tracking::SetTrackerConfiguration(igstk::TrackerConfiguration *configuration)
 {
   /*if ( m_TrackerConfiguration )
   {
@@ -129,7 +137,6 @@ void Tracking::SetTrackerConfiguration(
           //hide the GUI we used to get the configuration
  // this->m_TrackerConfigurationGUI[this->m_TrackingSystemChoice->value()]->Hide();
 }
-
 
 
 
@@ -170,6 +177,20 @@ void Tracking::InitializeTracking()
       
   igstk::Transform transform;
   transform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+
+
+  char * hostname = const_cast< char * >( this->m_HostName.c_str() );
+
+  std::cout << "Trying to connect to host = " << hostname << std::endl;
+  std::cout << "In port = " << this->m_Port << std::endl;
+
+  int r = this->m_Socket->ConnectToServer(hostname, this->m_Port);
+  if (r != 0)
+  {
+      std::cerr << "Cannot connect to the server." << std::endl;
+      exit(0);
+  }
+
  
 //  m_ObjectTool->RequestDetachFromParent();
 //  m_ObjectTool->RequestSetTransformAndParent( transform, m_WorkingTool);
@@ -226,10 +247,11 @@ void Tracking::StartTracking()
     return;
   }
 
-  /*TrackingBtn->label("Stop");
-  TrackingBtn->value(1);
-  ControlGroup->redraw();*/
+
 }
+
+
+
 /** -----------------------------------------------------------------
 * Stops tracking but keeps the tracker connected to the 
 * communication port
@@ -282,6 +304,25 @@ void Tracking::DisconnectTracker()
 }
 
 
+void Tracking::SetPort(int port)
+{
+  this->m_Port = port;
+}
+
+
+
+void Tracking::SetFramesPerSecond(double fps)
+{
+  this->m_FramesPerSecond = fps;
+}
+
+
+
+void Tracking::SetHostName(const char * hostname)
+{
+  this->m_HostName = hostname;
+}
+
 
 
 /** -----------------------------------------------------------------
@@ -308,11 +349,26 @@ void Tracking::TrackingCallback(const itk::EventObject & event )
     {
         igstk::Transform transform = transformObserver->GetTransform();
 
-//        if ( transform.IsValidNow() )
+//      if ( transform.IsValidNow() )
         {
         vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
         transform.ExportTransform( *matrix );
-        matrix->Print(cout);
+
+        igtl::Matrix4x4 m;
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                m[i][j] = (float) matrix->GetElement(i, j);
+
+        this->m_TransformMessage->SetMatrix(m);
+        this->m_TransformMessage->Pack();
+
+        int interval = (int) (1000.0 / this->m_FramesPerSecond);
+        igtl::Sleep(interval); // wait
+        this->m_Socket->Send(this->m_TransformMessage->GetPackPointer(), this->m_TransformMessage->GetPackSize());
+
+
+//      matrix->Print(cout);
         matrix->Delete();
         }
     }
@@ -321,23 +377,22 @@ void Tracking::TrackingCallback(const itk::EventObject & event )
 
 
 
-void 
-Tracking::TrackerControllerObserver::SetParent(
-  Tracking *p ) 
+void Tracking::TrackerControllerObserver::SetParent(Tracking *p) 
 {
   this->m_Parent = p;
 }
 
-void 
-Tracking::TrackerControllerObserver::Execute( const itk::Object *caller, 
-                                                             const itk::EventObject & event )
+
+
+void Tracking::TrackerControllerObserver::Execute( const itk::Object *caller, const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);
 }
+
+
   
-void 
-Tracking::TrackerControllerObserver::Execute( itk::Object *caller, const itk::EventObject & event )
+void Tracking::TrackerControllerObserver::Execute( itk::Object *caller, const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeFailureEvent *evt1a =
     dynamic_cast< const igstk::TrackerController::InitializeFailureEvent * > (&event);
