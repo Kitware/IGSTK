@@ -32,9 +32,9 @@
 
 int main(int argc, char** argv)
 { 
-    if (argc != 2)
+    if (argc < 3 || argc > 4)
     {
-        cerr << "Usage: TrackerConfiguration configXMLFile\n";
+        cerr << "Usage: TrackerConfiguration configXMLFile framesPerSeconds [portNumber (default: 18944)]\n";
         return 1;
     }
 
@@ -45,12 +45,24 @@ int main(int argc, char** argv)
     bool updated = parser->CreateConfiguration();
     if (! updated)
     {
-        cerr << "Creating tracker configuration failed.\n";
+        cerr << "Creating tracker configuration failed with xml file: " << argv[1] << endl;
         return 2;
+    }
+
+    double fps = atof(argv[2]);
+
+    int port = 18944;
+    if (argc == 4)
+    {
+        port = atoi(argv[3]);
     }
  
     Tracking *tr = new Tracking;
     tr->SetTrackerConfiguration(parser->GetTrackerConfig());
+    tr->SetPort(port);
+    tr->SetFramesPerSecond(fps);
+
+    tr->SetHostName(parser->GetHostName());
     tr->InitializeTracking();
     tr->StartTracking();
     
