@@ -78,7 +78,11 @@ bool igstk::igstkAuroraTrackerConfigurationComposer::BuildConfiguration()
 
 void igstk::igstkAuroraTrackerConfigurationComposer::ProcessSendToIp(vtkXMLDataElement *next)
 {
-
+    std::string host(this->ReadElementValue(next));
+    int size = host.size();
+    this->HostName = new char [size+1]; 
+    strcpy(this->HostName, host.c_str());
+    this->HostName[size] = '\0';
 }
 
 
