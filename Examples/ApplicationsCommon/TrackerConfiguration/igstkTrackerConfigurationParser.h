@@ -42,6 +42,10 @@ public:
 
     vtkGetObjectMacro(TrackerConfig, igstk::TrackerConfiguration);
 
+    vtkGetStringMacro(HostName);
+    vtkSetStringMacro(HostName);
+
+
     // True: Update successful
     // False: Update failed
     bool CreateConfiguration();
@@ -49,6 +53,7 @@ public:
 protected:
     igstk::TrackerConfiguration *TrackerConfig;    
     igstk::igstkTrackerConfigurationComposer *Composer;
+    char *HostName;
 
     igstkTrackerConfigurationParser();
     virtual ~igstkTrackerConfigurationParser();
