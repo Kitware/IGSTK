@@ -23,13 +23,14 @@
 
 
 vtkStandardNewMacro (igstkTrackerConfigurationParser);
-vtkCxxRevisionMacro (igstkTrackerConfigurationParser, "1.1" );
+vtkCxxRevisionMacro (igstkTrackerConfigurationParser, "1.2" );
 
  
 igstkTrackerConfigurationParser::igstkTrackerConfigurationParser()
 {
     this->TrackerConfig = NULL;    
     this->Composer = NULL;
+    this->HostName = NULL;
 }
 
 
@@ -44,6 +45,11 @@ igstkTrackerConfigurationParser::~igstkTrackerConfigurationParser()
     if (this->Composer)
     {
         delete this->Composer; 
+    }
+
+    if (this->HostName)
+    {
+        delete this->HostName; 
     }
 }
 
@@ -75,6 +81,7 @@ bool igstkTrackerConfigurationParser::CreateConfiguration()
     else
     {
         this->TrackerConfig = this->Composer->GetTrackerConfiguration();    
+        this->SetHostName(this->Composer->GetHostName());
     }
  
     return true;
