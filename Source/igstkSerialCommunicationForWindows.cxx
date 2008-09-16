@@ -61,14 +61,15 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 
   if (portNumber >= 0 && portNumber < 8)
     {
-    const char *deviceNames[] = { "COM1:",
-                                  "COM2:",
-                                  "COM3:",
-                                  "COM4:",
-                                  "COM5:",
-                                  "COM6:",
-                                  "COM7:",
-                                  "COM8:" };
+    const char *deviceNames[] = { IGSTK_SERIAL_PORT_0,
+                                  IGSTK_SERIAL_PORT_1,
+                                  IGSTK_SERIAL_PORT_2,
+                                  IGSTK_SERIAL_PORT_3,
+                                  IGSTK_SERIAL_PORT_4,
+                                  IGSTK_SERIAL_PORT_5,
+                                  IGSTK_SERIAL_PORT_6,
+                                  IGSTK_SERIAL_PORT_7  };
+
     device = deviceNames[portNumber];
     }
 
