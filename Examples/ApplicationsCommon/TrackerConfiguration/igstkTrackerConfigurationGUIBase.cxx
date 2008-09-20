@@ -17,7 +17,7 @@
 
 #include "igstkTrackerConfigurationGUIBase.h"
 #include "igstkTrackerConfiguration.h"
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 #include "NeedleBiopsyUnimodality.h"
 
 namespace igstk
