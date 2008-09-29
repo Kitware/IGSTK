@@ -252,8 +252,6 @@ int main(int , char** )
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
-  // EndCodeSnippet
-  //
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
