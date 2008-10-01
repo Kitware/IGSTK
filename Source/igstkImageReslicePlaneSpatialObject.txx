@@ -23,10 +23,11 @@
 
 #include "vtkImageData.h"
 #include "vtkMatrix4x4.h"
-#include "vtkPlane.h"
+#include "vtkPlaneSource.h"
 #include "vtkMath.h"
+#include "vtkTransform.h"
 
-#include "itkVersor.h"
+//#include "itkVersor.h"
 
 namespace igstk
 { 
@@ -46,13 +47,20 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   m_ToolSpatialObject = NULL; 
 
   //Create vtk plane 
-  m_ImageReslicePlane = vtkPlane::New();
+  m_ImageReslicePlane = vtkPlaneSource::New();
+  m_ImageReslicePlane->SetOrigin(0,0,0);
+  m_ImageReslicePlane->SetCenter(0,0,0);
 
   //Create reslice axes matrix
   m_ResliceAxes = vtkMatrix4x4::New();
 
+  //Create reslice transform
+  //m_ResliceTransform = vtkTransform::New();
+  //m_ResliceTransform->Identity();
+
   // Create the observer to VTK image events 
   m_VTKImageObserver = VTKImageObserver::New();
+  m_ImageTransformObserver = ImageTransformObserver::New();
 
   //slice number
   m_SliceNumber = 0;
@@ -80,7 +88,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddStateMacro( ValidMousePositionSet);
 
 
-
   // List of state machine inputs
   igstkAddInputMacro( ValidReslicingMode );
   igstkAddInputMacro( InValidReslicingMode );
@@ -91,16 +98,15 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddInputMacro( ValidToolSpatialObject );
   igstkAddInputMacro( InValidToolSpatialObject );
   igstkAddInputMacro( SetSliceNumber );
-  igstkAddInputMacro ( ValidSliceNumber );
-  igstkAddInputMacro ( InValidSliceNumber );
+  igstkAddInputMacro( ValidSliceNumber );
+  igstkAddInputMacro( InValidSliceNumber );
   igstkAddInputMacro( SetMousePosition );
-  igstkAddInputMacro ( ValidMousePosition );
-  igstkAddInputMacro ( InValidMousePosition );
+  igstkAddInputMacro( ValidMousePosition );
+  igstkAddInputMacro( InValidMousePosition );
   igstkAddInputMacro( GetSliceNumberBounds );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ComputeReslicePlane );
-
 
   // List of state machine transitions
 
@@ -119,15 +125,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   igstkAddTransitionMacro( ReslicingModeSet, SetMousePosition, ReslicingModeSet, ReportInvalidRequest );  
 
   //From OrientationTypeSet
-  igstkAddTransitionMacro( OrientationTypeSet,
-                           ValidImageSpatialObject,
-                           ImageSpatialObjectSet,
-                           SetImageSpatialObject );
+  igstkAddTransitionMacro( OrientationTypeSet, ValidImageSpatialObject,
+                           ImageSpatialObjectSet, SetImageSpatialObject );
 
-  igstkAddTransitionMacro( OrientationTypeSet, 
-                           InValidImageSpatialObject, 
-                           OrientationTypeSet,
-                           ReportInvalidImageSpatialObject );
+  igstkAddTransitionMacro( OrientationTypeSet, InValidImageSpatialObject, 
+                           OrientationTypeSet, ReportInvalidImageSpatialObject );
 
   igstkAddTransitionMacro( OrientationTypeSet, SetSliceNumber,
                            OrientationTypeSet, ReportInvalidRequest );  
@@ -169,12 +171,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
   // From AttemptingToSetSliceNumber
   igstkAddTransitionMacro( AttemptingToSetSliceNumber, ValidSliceNumber,
                            ValidSliceNumberSet,  SetSliceNumber ); 
+
   igstkAddTransitionMacro( AttemptingToSetSliceNumber, InValidSliceNumber,
                            ImageSpatialObjectSet,  ReportInvalidSliceNumber ); 
 
   // From AttemptingToSetMousePosition
   igstkAddTransitionMacro( AttemptingToSetMousePosition, ValidMousePosition,
                            ValidMousePositionSet,  SetMousePosition ); 
+
   igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
                            ImageSpatialObjectSet,  ReportInvalidMousePosition ); 
 
@@ -242,7 +246,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
                            ToolSpatialObjectSet,
                            ReportInvalidOrientationType );
 
-
   igstkAddTransitionMacro( ToolSpatialObjectSet,
                            GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
@@ -279,11 +282,18 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>::ImageReslicePlaneSpatialOb
 template < class TImageSpatialObject >
 ImageReslicePlaneSpatialObject<TImageSpatialObject>::~ImageReslicePlaneSpatialObject()  
 {
-  if( ! m_ResliceAxes )
-    {
-    m_ResliceAxes->Delete();
-    m_ResliceAxes = NULL;
-    }
+  //if( ! m_ResliceAxes )
+  //  {
+  //  m_ResliceAxes->Delete();
+  //  m_ResliceAxes = NULL;
+  //  }
+
+  //if( ! m_ResliceTransform )
+  //  {
+  //  m_ResliceTransform->Delete();
+  //  m_ResliceTransform = NULL;
+  //  }
+  
 
   if( ! m_ImageReslicePlane )
     {
@@ -291,6 +301,7 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>::~ImageReslicePlaneSpatialOb
     m_ImageReslicePlane = NULL;
     }
 }
+
 
 template < class TImageSpatialObject >
 void 
@@ -319,6 +330,14 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
   m_StateMachine.PushInput( m_SetSliceNumberInput );
 
   m_StateMachine.ProcessInputs();
+}
+
+/** Null Operation for a State Machine Transition */
+template < class TImageSpatialObject >
+void 
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::NoProcessing()
+{
 }
 
 template < class TImageSpatialObject >
@@ -389,9 +408,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
                         ::ReportSliceNumberBoundsProcessing called...\n");
  
-  int ext[6];
-
   m_ImageData->Update();
+
+  int ext[6];
   m_ImageData->GetExtent( ext );
 
   EventHelperType::IntegerBoundsType bounds;
@@ -470,12 +489,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   if( m_ImageData )
     {
 
-    int ext[6];
-
     m_ImageData->Update();
+
+    int ext[6];
     m_ImageData->GetExtent( ext );
 
-    //Compute image bounds
     double imageSpacing[3];
     m_ImageData->GetSpacing( imageSpacing );
 
@@ -486,11 +504,11 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     m_ImageData->GetWholeExtent( imageExtent );
 
     double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
-                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+                        imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                        imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                        imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                        imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                        imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
 
     for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
         {
@@ -501,15 +519,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
           bounds[i] = t;
           }
         }
-
-    /*
-    std::cout << "Image bounds: " << "(" << bounds[0] << "," 
-                                  << bounds[1] << ","
-                                  << bounds[2] << ","
-                                  << bounds[3] << ","
-                                  << bounds[4] << ","
-                                  << bounds[5] << ")" << std::endl;
-    */
 
     bool validPosition = false; 
 
@@ -594,8 +603,8 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
   if( m_ReslicingMode == Orthogonal )
     {
     if( m_OrientationTypeToBeSet == Perpendicular ||
-         m_OrientationTypeToBeSet == OffSagittal ||
-         m_OrientationTypeToBeSet == OffAxial  ||
+         m_OrientationTypeToBeSet == OffCoronal ||
+         m_OrientationTypeToBeSet == OffSagittal  ||
          m_OrientationTypeToBeSet == PlaneOrientationWithZAxesNormal ||
          m_OrientationTypeToBeSet == PlaneOrientationWithXAxesNormal ||
          m_OrientationTypeToBeSet == PlaneOrientationWithYAxesNormal )
@@ -607,8 +616,8 @@ ImageReslicePlaneSpatialObject<TImageSpatialObject>
   if( m_ReslicingMode == Oblique )
     {
     if( m_OrientationTypeToBeSet  == Perpendicular ||
-         m_OrientationTypeToBeSet == OffSagittal ||
-         m_OrientationTypeToBeSet == OffAxial  ||
+         m_OrientationTypeToBeSet == OffCoronal ||
+         m_OrientationTypeToBeSet == OffSagittal  ||
          m_OrientationTypeToBeSet == Axial ||
          m_OrientationTypeToBeSet == Sagittal ||
          m_OrientationTypeToBeSet == Coronal )
@@ -687,13 +696,37 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
 
+  m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
+                                     m_ImageTransformObserver );
+
   this->m_VTKImageObserver->Reset();
 
   this->m_ImageSpatialObject->RequestGetVTKImage();
 
   if( this->m_VTKImageObserver->GotVTKImage() ) 
     {
-    this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+      m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+      m_ImageData->GetDimensions(m_ImageDimension);
+      m_ImageData->GetOrigin(m_ImageOrigin);
+      m_ImageData->GetSpacing(m_ImageSpacing);
+      m_ImageData->GetWholeExtent( m_ImageExtent );
+
+      m_ImageBounds[0] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[0]; //xmin
+      m_ImageBounds[1] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[1]; //xmax
+      m_ImageBounds[2] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[2]; //ymin
+      m_ImageBounds[3] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[3]; //ymax
+      m_ImageBounds[4] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[4]; //zmin
+      m_ImageBounds[5] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[5]; //zmax
+
+      for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+      {
+        if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
+        {
+          double t = m_ImageBounds[i+1];
+          m_ImageBounds[i+1] = m_ImageBounds[i];
+          m_ImageBounds[i] = t;
+        }
+      }
     }
 }
 
@@ -771,17 +804,17 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::RequestUpdateToolTransform()
+::RequestUpdateToolTransformWRTImageCoordinateSystem()
 {
   igstkLogMacro( DEBUG,
                  "igstk::ImageReslicePlaneSpatialObject::\
-                 RequestUpdateToolTransform called ...\n");
+                 RequestUpdateToolTransformWRTImageCoordinateSystem called ...\n");
   
   igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
   this->m_StateMachine.ProcessInputs();
 }
 
-/** Request to receive the tool transform with respect to the Image coordinate system */
+/** Request to receive the tool transform WRT image coordinate system */
 template < class TImageSpatialObject >
 void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
@@ -810,21 +843,23 @@ void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::ReceiveToolTransformWRTImageCoordinateSystemProcessing()
 {
-  igstkLogMacro( DEBUG, "Received Tool spatial object Transform " 
+  igstkLogMacro( DEBUG, "ReceiveToolTransformWRTImageCoordinateSystemProcessing " 
                  << this->m_ToolTransformWRTImageCoordinateSystem );
 
   this->m_ToolTransformWRTImageCoordinateSystem =
-      this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
+    this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
+
+  Transform::VectorType translation =
+    this->m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
   //Set the validity time stamp of the image spatial object transform to 
   //validity time of the tool spatial object.
 
-  Transform::TimePeriodType startTime = 
-         this->m_ToolTransformWRTImageCoordinateSystem.GetStartTime();
+//  Transform::TimePeriodType startTime = 
+//         this->m_ToolTransformWRTImageCoordinateSystem.GetStartTime();
 
-  Transform::TimePeriodType expirationTime =
-         this->m_ToolTransformWRTImageCoordinateSystem.GetExpirationTime();
-
+//  Transform::TimePeriodType expirationTime =
+//         this->m_ToolTransformWRTImageCoordinateSystem.GetExpirationTime();
 }
 
 /** Request compute reslicing plane */
@@ -841,7 +876,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
 }
 
-   
 /** Compute reslicing plane */
 template < class TImageSpatialObject >
 void
@@ -851,14 +885,14 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   //Update the tool transform if tool spatial object provided
   if ( m_ToolSpatialObject ) 
     {
-    this->RequestUpdateToolTransform();
+    this->RequestUpdateToolTransformWRTImageCoordinateSystem();
     }
 
   switch( m_ReslicingMode )
     {
     case Orthogonal:
       {
-      this->ComputeOrthgonalReslicingPlane();
+      this->ComputeOrthogonalReslicingPlane();
       break;
       }
     case Oblique:
@@ -880,79 +914,20 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 template < class TImageSpatialObject >
 void
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::ComputeOrthgonalReslicingPlane( )
+::ComputeOrthogonalReslicingPlane( )
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-                       ::ComputeOrthgonalReslicingPlane called...\n");
- 
-  /* Compute input image bounds */
-  double imageSpacing[3];
-  m_ImageData->GetSpacing( imageSpacing );
-  
-  /* 
-  std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
-                                 << imageSpacing[1] << "," 
-                                 << imageSpacing[2] << ")" << std::endl;  
-  */
+                       ::ComputeOrthogonalReslicingPlane called...\n");
 
-  double imageOrigin[3];
-  m_ImageData->GetOrigin( imageOrigin );
-
-  /*
-  std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
-                                 << imageOrigin[1] << ","
-                                 << imageOrigin[2] << ")" << std::endl;
-  */
-
-  int imageExtent[6];
-  m_ImageData->GetWholeExtent( imageExtent );
-
-  /*
-  std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
-                                << imageExtent[1] << ","
-                                << imageExtent[2] << ","
-                                << imageExtent[3] << ","
-                                << imageExtent[4] << ","
-                                << imageExtent[5] << ")" << std::endl;
-  */
-
-  double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
-                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
-                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
-                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
-                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
-                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
-
-  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
-      {
-      if ( bounds[i] > bounds[i+1] )
-        {
-        double t = bounds[i+1];
-        bounds[i+1] = bounds[i];
-        bounds[i] = t;
-        }
-      }
-
-
-  std::cout << "Image bounds: " << "(" << bounds[0] << "," 
-                                << bounds[1] << ","
-                                << bounds[2] << ","
-                                << bounds[3] << ","
-                                << bounds[4] << ","
-                                << bounds[5] << ")" << std::endl;
-  // Set the plance center1 
-  double planeCenter[3];
-
-  //If a tool spatial object is set ( automatic reslicing) , then the 
+  //If a tool spatial object is set (automatic reslicing) , then the 
   //the plane center will be set to the tool postion in 3D space.
   if( m_ToolSpatialObject )
     {
     Transform::VectorType   translation;
-    translation = 
-        m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
-    planeCenter[0] = translation[0];
-    planeCenter[1] = translation[1];
-    planeCenter[2] = translation[2];
+    translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+    m_PlaneCenter[0] = translation[0];
+    m_PlaneCenter[1] = translation[1];
+    m_PlaneCenter[2] = translation[2];
     }
   else
     {
@@ -961,16 +936,16 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     {
     case Axial:
       {
-      planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
-      planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
+      m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+      m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
      
       if( m_SliceNumberSetFlag )
         {
-        planeCenter[2] = imageOrigin[2] + imageSpacing[2]*m_SliceNumber;
+        m_PlaneCenter[2] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_SliceNumber;
         }
       else
         {
-        planeCenter[2] = m_MousePosition[2]; 
+        m_PlaneCenter[2] = m_MousePosition[2]; 
         }
       break; 
       }
@@ -978,30 +953,30 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       {
       if( m_SliceNumberSetFlag )
         {
-        planeCenter[0] = imageOrigin[0] + imageSpacing[0]*m_SliceNumber;
+        m_PlaneCenter[0] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_SliceNumber;
         }
       else
         {
-        planeCenter[0] = m_MousePosition[0];
+        m_PlaneCenter[0] = m_MousePosition[0];
         }
 
-      planeCenter[1] = 0.5*(bounds[2] + bounds[3]);
-      planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
+      m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+      m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
       break;
       }
     case Coronal:
       {
-      planeCenter[0] = 0.5*(bounds[0] + bounds[1]);
+      m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
 
       if( m_SliceNumberSetFlag )
         {
-        planeCenter[1] = imageOrigin[1] + imageSpacing[1]*m_SliceNumber;
+        m_PlaneCenter[1] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_SliceNumber;
         }
       else
         {
-        planeCenter[1] = m_MousePosition[1];
+        m_PlaneCenter[1] = m_MousePosition[1];
         }
-      planeCenter[2] = 0.5*(bounds[4] + bounds[5]);
+      m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
       break;
       }
     default:
@@ -1011,109 +986,43 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       }
     }
   }
-
-  //Determine two points and coordinate axes origin 
-  double point1[3];
-  double point2[3];
-  double origin[3];
-  double planeNormal[3];
-
-  /**Delete this */
-  double m_AxisX[3]; 
-  double m_AxisY[3]; 
-  double m_AxisZ[3]; 
-
+  
   switch( m_OrientationType )
     {
     case Axial:
       {
-      planeNormal[0] = 0.0;
-      planeNormal[1] = 0.0;
-      planeNormal[2] = 1.0;
+      m_PlaneNormal[0] = 0.0;
+      m_PlaneNormal[1] = 0.0;
+      m_PlaneNormal[2] = 1.0;
 
-      origin[0] = bounds[0];
-      origin[1] = bounds[2];
-      origin[2] = planeCenter[2];
- 
-      point1[0] = bounds[1];
-      point1[1] = bounds[2];
-      point1[2] = planeCenter[2];
+      m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
+      m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
 
-      point2[0] = bounds[0];
-      point2[1] = bounds[3];
-      point2[2] = planeCenter[2];
-   
-      m_AxisX[0] = 1;
-      m_AxisX[1] = 0;
-      m_AxisX[2] = 0;
-      m_AxisY[0] = 0;
-      m_AxisY[1] = 1;
-      m_AxisY[2] = 0;
-      m_AxisZ[0] = 0;
-      m_AxisZ[1] = 0;
-      m_AxisZ[2] = 1;
- 
       break;
       }
     case Coronal:
       {
-      planeNormal[0] = 0.0;
-      planeNormal[1] = 1.0;
-      planeNormal[2] = 0.0;
+      m_PlaneNormal[0] = 0.0;
+      m_PlaneNormal[1] = 1.0;
+      m_PlaneNormal[2] = 0.0;
 
-      origin[0] = bounds[0];
-      origin[1] = planeCenter[1];
-      origin[2] = bounds[4];
-
-      point1[0] = bounds[1];
-      point1[1] = planeCenter[1];
-      point1[2] = bounds[5];
-
-      point2[0] = bounds[0];
-      point2[1] = planeCenter[1];
-      point2[2] = bounds[4];
-
-      m_AxisX[0] = 1;
-      m_AxisX[1] = 0;
-      m_AxisX[2] = 0;
-      m_AxisY[0] = 0;
-      m_AxisY[1] = 0;
-      m_AxisY[2] = -1;
-      m_AxisZ[0] = 0;
-      m_AxisZ[1] = 1;
-      m_AxisZ[2] = 0;
- 
+      m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
+      m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
  
       break;
       }
     case Sagittal:
       {
+      m_PlaneNormal[0] = 1.0;
+      m_PlaneNormal[1] = 0.0;
+      m_PlaneNormal[2] = 0.0;
 
-      planeNormal[0] = 1.0;
-      planeNormal[1] = 0.0;
-      planeNormal[2] = 0.0;
-
-      origin[0] = planeCenter[0];
+  /*    origin[0] = planeCenter[0];
       origin[1] = bounds[2];
-      origin[2] = bounds[4];
+      origin[2] = bounds[4];*/
 
-      point1[0] = planeCenter[0];
-      point1[1] = bounds[3];
-      point1[2] = bounds[5];
-
-      point2[0] = planeCenter[0];
-      point2[1] = bounds[2];
-      point2[2] = bounds[4];
-
-      m_AxisX[0] = 0;
-      m_AxisX[1] = 1;
-      m_AxisX[2] = 0;
-      m_AxisY[0] = 0;
-      m_AxisY[1] = 0;
-      m_AxisY[2] = -1;
-      m_AxisZ[0] = -1;
-      m_AxisZ[1] = 0;
-      m_AxisZ[2] = 0;
+      m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
+      m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
 
       break;
       }
@@ -1124,101 +1033,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       }
     }
 
- /*
-  m_ImageReslicePlane->SetOrigin( planeCenter[0],
-                                  planeCenter[1],
-                                  planeCenter[2] ); */
-
-  m_ImageReslicePlane->SetOrigin( origin[0],
-                                  origin[1],
-                                  origin[2] ); 
-  std::cout << "Plane origin: " << "(" << origin[0] << "," 
-                                 << origin[1] << ","
-                                 << origin[2] << ")" << std::endl;
-
-  /*
-  std::cout << "Plane center: " << "(" << planeCenter[0] << "," 
-                                 << planeCenter[1] << ","
-                                 << planeCenter[2] << ")" << std::endl;
-  */
+  m_ImageReslicePlane->SetCenter( m_PlaneCenter[0],
+                                  m_PlaneCenter[1],
+                                  m_PlaneCenter[2] );
  
-  m_ImageReslicePlane->SetNormal( planeNormal[0],
-                                  planeNormal[1],
-                                  planeNormal[2] );
-
-  /*
-  std::cout << "Plane normal: " << "(" << planeNormal[0] << "," 
-                                 << planeNormal[1] << ","
-                                 << planeNormal[2] << ")" << std::endl;
-  */
-  m_ImageReslicePlane->Print( std::cout );
-  
-  //Using the two points define two coordinate axes
-  double axes1[3];
-  axes1[0] = point1[0] - origin[0]; 
-  axes1[1] = point1[1] - origin[1]; 
-  axes1[2] = point1[2] - origin[2]; 
-
-  double axes2[3];
-  axes2[0] = point2[0] - origin[0]; 
-  axes2[1] = point2[1] - origin[1]; 
-  axes2[2] = point2[2] - origin[2]; 
-
-  //Normalize the axes
-  double planeSizeX = vtkMath::Normalize(axes1);
-  double planeSizeY = vtkMath::Normalize(axes2);
-
-
-  /*
-  std::cout << "Axes1: (" << axes1[0] << "," << axes1[1] << "," << axes1[2] << ")" << std::endl;
-  std::cout << "Axes2: (" << axes2[0] << "," << axes2[1] << "," << axes2[2] << ")" << std::endl;
-  std::cout << "PlaneNormal: (" << planeNormal[0] << "," << planeNormal[1] << ","
-            << planeNormal[2] << ")" << std::endl;
-  */
-
-
-  /*
-  m_ResliceAxes->Identity();
-  for ( unsigned int i = 0; i < 3; i++ )
-     {
-     m_ResliceAxes->SetElement(0,i,axes1[i]);
-     m_ResliceAxes->SetElement(1,i,axes2[i]);
-     m_ResliceAxes->SetElement(2,i,planeNormal[i]);
-     }
-
-  m_ResliceAxes->SetElement(0, 3, origin[0]);
-  m_ResliceAxes->SetElement(1, 3, origin[1]);
-  m_ResliceAxes->SetElement(2, 3, origin[2]);
-  */
-
-  m_ResliceAxes->Identity();
-  for ( unsigned int i = 0; i < 3; i++ )
-     {
-     m_ResliceAxes->SetElement(i,0,m_AxisX[i]);
-     m_ResliceAxes->SetElement(i,1,m_AxisY[i]);
-     m_ResliceAxes->SetElement(i,2,m_AxisZ[i]);
-     m_ResliceAxes->SetElement(i,3,origin[i]);
-     }
- 
-
-  std::cout.precision(3);
-  std::cout << "ResliceAxes matrix: \n" 
-            << "(" << m_ResliceAxes->GetElement(0,0) << ","
-            << m_ResliceAxes->GetElement(0,1) << ","
-            << m_ResliceAxes->GetElement(0,2) << ","
-            << m_ResliceAxes->GetElement(0,3) << "\n"
-            << m_ResliceAxes->GetElement(1,0) << ","
-            << m_ResliceAxes->GetElement(1,1) << ","
-            << m_ResliceAxes->GetElement(1,2) << ","
-            << m_ResliceAxes->GetElement(1,3) << "\n"
-            << m_ResliceAxes->GetElement(2,0) << ","
-            << m_ResliceAxes->GetElement(2,1) << ","
-            << m_ResliceAxes->GetElement(2,2) << ","
-            << m_ResliceAxes->GetElement(2,3) << "\n"
-            << m_ResliceAxes->GetElement(3,0) << ","
-            << m_ResliceAxes->GetElement(3,1) << ","
-            << m_ResliceAxes->GetElement(3,2) << ","
-            << m_ResliceAxes->GetElement(3,3) << ")" << std::endl;
+  m_ImageReslicePlane->SetNormal( m_PlaneNormal[0],
+                                  m_PlaneNormal[1],
+                                  m_PlaneNormal[2] );
 }
 
 /**Compute oblique reslicing plane */
@@ -1238,17 +1059,49 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     return;
     }
 
-  /* To generate the three orientations of the oblique view, compose
-     the tool transform with respect to the image with the three orthogonal
-     orientations */   
+  /* Compute input image bounds */
+  double imageSpacing[3];
+  m_ImageData->GetSpacing( imageSpacing );
+
+  double imageOrigin[3];
+  m_ImageData->GetOrigin( imageOrigin );
+
+  int imageExtent[6];
+  m_ImageData->GetWholeExtent( imageExtent );
+ 
+  double bounds[] = {  imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
+                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]
+                    };//zmax
+
+  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+  {
+    if ( bounds[i] > bounds[i+1] )
+    {
+      double t = bounds[i+1];
+      bounds[i+1] = bounds[i];
+      bounds[i] = t;
+    }
+  }
+
+  double planeCenter[3];
+  Transform::VectorType  translation;
+
+  translation = 
+    m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+
+  planeCenter[0] = translation[0];
+  planeCenter[1] = translation[1];
+  planeCenter[2] = translation[2];
+
+  double planeNormal[3];
 
   //Generate the orientation transforms
   Transform orientationTransform;
-
-  Transform::VectorType     translation;
-  translation[0] = 0.0;
-  translation[1] = 0.0;
-  translation[2] = 0.0;
+  translation.Fill(0.0);
   const double transformUncertainty = 1.0;
   orientationTransform.SetTranslation(
                           translation,
@@ -1263,56 +1116,83 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   {
   case PlaneOrientationWithZAxesNormal:
     {
+
+      planeNormal[0] = 0.0;
+      planeNormal[1] = 0.0;
+      planeNormal[2] = 1.0;
+
+      planeCenter[0] = 0.5*(bounds[0]+bounds[1]);
+      planeCenter[1] = 0.5*(bounds[2]+bounds[3]);
+
+
     //equivalent to the matrix we use for Axial
     //set the versors
 
-    orientationMatrix[0][0] = 1.0;
-    orientationMatrix[1][0] = 0.0;
+    orientationMatrix[0][0] = 0.0;
+    orientationMatrix[1][0] = 1.0;
     orientationMatrix[2][0] = 0.0;
 
-    orientationMatrix[0][1] = 0.0;
-    orientationMatrix[1][1] = 1.0;
+    orientationMatrix[0][1] = -1.0;
+    orientationMatrix[1][1] = 0.0;
     orientationMatrix[2][1] = 0.0;
 
     orientationMatrix[0][2] = 0.0;
     orientationMatrix[1][2] = 0.0;
     orientationMatrix[2][2] = 1.0;
+
  
     rotation.Set( orientationMatrix );
     }
     break;
   case PlaneOrientationWithYAxesNormal:
     {
-    //equivalent to the matrix we use for Coronal
-    orientationMatrix[0][0] = 1.0;
-    orientationMatrix[1][0] = 0.0;
-    orientationMatrix[2][0] = 0.0;
 
-    orientationMatrix[0][1] = 0.0;
-    orientationMatrix[1][1] = 0.0;
-    orientationMatrix[2][1] = -1.0;
+      planeNormal[0] = 0.0;
+      planeNormal[1] = 1.0;
+      planeNormal[2] = 0.0;
 
-    orientationMatrix[0][2] = 0.0;
-    orientationMatrix[1][2] = 1.0;
-    orientationMatrix[2][2] = 0.0;
+      planeCenter[0] = 0.5*(bounds[0]+bounds[1]);
+      planeCenter[2] = 0.5*(bounds[4]+bounds[5]);
 
-    rotation.Set( orientationMatrix );
+      //equivalent to the matrix we use for Coronal
+      orientationMatrix[0][0] = 0.0;
+      orientationMatrix[1][0] = 0.0;
+      orientationMatrix[2][0] = -1.0;
+
+      orientationMatrix[0][1] = 1.0;
+      orientationMatrix[1][1] = 0.0;
+      orientationMatrix[2][1] = 0.0;
+
+      orientationMatrix[0][2] = 0.0;
+      orientationMatrix[1][2] = 1.0;
+      orientationMatrix[2][2] = 0.0;
+
+      rotation.Set( orientationMatrix );
     }
     break;
   case PlaneOrientationWithXAxesNormal:
     {
+
+      planeNormal[0] = 1.0;
+      planeNormal[1] = 0.0;
+      planeNormal[2] = 0.0;
+
+      planeCenter[1] = 0.5*(bounds[2]+bounds[3]);
+      planeCenter[2] = 0.5*(bounds[4]+bounds[5]);
+
     //equivalent to the matrix we use for Sagittal
-    orientationMatrix[0][0] = 0.0;
-    orientationMatrix[1][0] = 1.0;
-    orientationMatrix[2][0] = 0.0;
 
-    orientationMatrix[0][1] = 0.0;
-    orientationMatrix[1][1] = 0.0;
-    orientationMatrix[2][1] = -1.0;
+      orientationMatrix[0][0] = 0.0;
+      orientationMatrix[1][0] = 1.0;
+      orientationMatrix[2][0] = 0.0;
 
-    orientationMatrix[0][2] = -1.0;
-    orientationMatrix[1][2] = 0.0;
-    orientationMatrix[2][2] = 0.0;
+      orientationMatrix[0][1] = 0.0;
+      orientationMatrix[1][1] = 0.0;
+      orientationMatrix[2][1] = -1.0;
+
+      orientationMatrix[0][2] = -1.0;
+      orientationMatrix[1][2] = 0.0;
+      orientationMatrix[2][2] = 0.0;
 
     rotation.Set( orientationMatrix );
 
@@ -1338,16 +1218,23 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
  ::itk::Versor<double>::MatrixType combinedRotationMatrix 
                           = combinedRotation.GetMatrix(); 
  
-  m_ResliceAxes->Identity();
+//  m_ResliceAxes->Identity();
 
-  for ( unsigned int i = 0; i < 3; i++ )
-     {
-     m_ResliceAxes->SetElement(i,0,combinedRotationMatrix[i][0]);
-     m_ResliceAxes->SetElement(i,1,combinedRotationMatrix[i][1]);
-     m_ResliceAxes->SetElement(i,2,combinedRotationMatrix[i][2]);
-     m_ResliceAxes->SetElement(i,3,combinedTranslation[i]);
-     }
+  //for ( unsigned int i = 0; i < 3; i++ )
+  //   {
+  //   m_ResliceAxes->SetElement(i,0,combinedRotationMatrix[i][0]);
+  //   m_ResliceAxes->SetElement(i,1,combinedRotationMatrix[i][1]);
+  //   m_ResliceAxes->SetElement(i,2,combinedRotationMatrix[i][2]);
+  //   m_ResliceAxes->SetElement(i,3,combinedTranslation[i]);
+  //   }
  
+  m_ImageReslicePlane->SetCenter( planeCenter[0],
+                                  planeCenter[1],
+                                  planeCenter[2] );
+ 
+  m_ImageReslicePlane->SetNormal( planeNormal[0],
+                                  planeNormal[1],
+                                  planeNormal[2] );
 
   /* 
   std::cout.precision(3);
@@ -1380,42 +1267,67 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
                        ::ComputeOffOrthgonalReslicingPlane called...\n");
 
-  /* Declare the three axes */
-  itk::Vector< double, 3 > axes1;
-  itk::Vector< double, 3 > axes2;
-  itk::Vector< double, 3 > axes3;
+  /* Calculate the tool's long axis vector */
+ 
+  igstk::Transform::VectorType   probeVector;
+  probeVector.Fill(0.0);
+  // fixme: the tool´s long axis direction changes deppending on the spatial object definition 
+  // so, what we can do to always set it correctly?
+  probeVector[0] = 1;
 
+  probeVector = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(probeVector);
+  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
-  /* The first axes will be determined from the toolVector */
-  //We need to get the probe vector in the image coordinate system
-  itk::Vector < double, 3 > toolVector;
+  // auxiliary axes
+  igstk::Transform::VectorType axes1, axes2;
 
-  axes1 = toolVector;
+  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
   switch( m_OrientationType )
     {
-    case OffAxial:
-      {
+    case OffCoronal:
+      {      
 
-      break;
+      //m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+      //m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+        axes2.Fill( 0 );
+        axes2[2] = 1;
+        m_PlaneNormal = itk::CrossProduct( probeVector, axes2 );
+        break;
       }
+
     case OffSagittal:
       {
-
-      break;
+        //m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+        m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+        //m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+        axes2.Fill( 0 );
+        axes2[1] = 1;
+        m_PlaneNormal = itk::CrossProduct( probeVector, axes2 );
+        break;
       }
 
     case Perpendicular:
       {
-
-      break;
+        m_PlaneNormal = probeVector;
+        break;
       }
     }
+
+  m_ImageReslicePlane->SetCenter( m_PlaneCenter[0],
+                                  m_PlaneCenter[1],
+                                  m_PlaneCenter[2]);
+
+  m_ImageReslicePlane->SetNormal( m_PlaneNormal[0],
+                                  m_PlaneNormal[1],
+                                  m_PlaneNormal[2]);
+  
 }
 
 /** Get reslcing plane equation */
 template < class TImageSpatialObject >
-vtkPlane *
+vtkPlaneSource *
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::GetReslicingPlane()
 {
@@ -1428,12 +1340,23 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 template < class TImageSpatialObject >
 vtkMatrix4x4 *
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::RequestGetReslicingMatrix()
+::GetResliceAxes()
 {
   igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-                       ::RequestGetReslicingPlane called...\n");
+                       ::GetResliceAxes called...\n");
   return m_ResliceAxes;
 }
+
+/** Request Get reslicing transform*/
+//template < class TImageSpatialObject >
+//vtkTransform *
+//ImageReslicePlaneSpatialObject< TImageSpatialObject >
+//::GetResliceTransform()
+//{
+//  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+//                       ::GetResliceTransform called...\n");
+//  return m_ResliceTransform;
+//}
 
 /** Report invalid reslicing mode */
 template < class TImageSpatialObject >
@@ -1467,9 +1390,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
-/** Get tool transform */
+/** Get tool transform WRT Image Coordinate System*/
 template < class TImageSpatialObject >
-Transform
+igstk::Transform
 ImageReslicePlaneSpatialObject< TImageSpatialObject >
 ::GetToolTransform( ) const
 {
@@ -1495,5 +1418,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 }
 
 } // end namespace igstk
+
 
 #endif

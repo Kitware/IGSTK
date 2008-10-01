@@ -23,23 +23,23 @@
 #include "igstkStateMachine.h"
 #include "igstkImageReslicePlaneSpatialObject.h"
 
-#include "vtkImageActor.h"
-
-class vtkImageActor;
-class vtkImageMapToWindowLevelColors;
 class vtkLookupTable;
 class vtkImageMapToColors;
 class vtkImageReslice;
-class vtkMatrix4x4;
+class vtkTexture;
+class vtkPolyDataMapper;
+class vtkActor;
+class vtkPlaneSource;
+
 
 namespace igstk
 {
-
+ 
 
 /** \class ImageResliceSpatialObjectRepresentation
- *
- * \brief This class generates representation of resliced image plane. 
- *
+ * 
+ * \brief This class represents an oblique image object. 
+ * 
  * \ingroup ObjectRepresentation
  */
 template < class TImageSpatialObject >
@@ -49,68 +49,149 @@ class ImageResliceSpatialObjectRepresentation : public ObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro(
-                                ImageResliceSpatialObjectRepresentation,ObjectRepresentation )
+  igstkStandardTemplatedClassTraitsMacro( 
+                ImageResliceSpatialObjectRepresentation,ObjectRepresentation )
 
 public:
 
-  /** Typedefs */
-  typedef TImageSpatialObject                 ImageSpatialObjectType;
-  typedef typename ImageSpatialObjectType::Pointer
-                                              ImageSpatialObjectPointer;
+  typedef TImageSpatialObject                  ImageSpatialObjectType;
+
+  typedef typename ImageSpatialObjectType::ConstPointer 
+                                               ImageSpatialObjectConstPointer;
+
+  typedef typename ImageSpatialObjectType::PointType  PointType;
 
   typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
                                                    ReslicePlaneSpatialObjectType;
 
   typedef typename ReslicePlaneSpatialObjectType::Pointer
-                                              ReslicePlaneSpatialObjectPointer;
-  
-  typedef Transform                           TransformType;
+                                              ReslicePlaneSpatialObjectPointer;  
+
+  typedef itk::Vector< double, 3 > VectorType;
+
+  /** Return a copy of the current object representation */
+  Pointer Copy() const;
 
   void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
                                                              planeSpatialObject);
 
-  void RequestSetImageSpatialObject( const ImageSpatialObjectType * image );
+  /** Connect this representation class to the spatial object */
+  void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
+                                                 ImageSpatialObject );
+
+  /** Type used for representing the slice number */
+  typedef unsigned int SliceNumberType;
 
   /** Set the Window Level for the representation */
   void SetWindowLevel( double window, double level );
 
-  /** Set the opacity */
-  void SetOpacity(float alpha);
- 
+  /** Sets the visibility for the representation */
+  void SetVisibility(bool visible);
+
+  vtkCamera* GetCamera();
+
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+
 
 protected:
 
   /** Constructor */
   ImageResliceSpatialObjectRepresentation();
-
+  
   /** Destructor */
   ~ImageResliceSpatialObjectRepresentation();
- 
-  /** Create the vtkActors */
-  virtual void CreateActors();
 
-  /** Delete the vtkActors */
-  virtual void DeleteActors();
+  /** Overloaded function to delete actors */
+  void DeleteActors();
 
-  /** Observer macro that will received a event with an image as payload and
-   * will store it internally. This will be the receptor of the event sent by
-   * the ImageSpatialObject when an image is requested. */
-   igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
-                       EventHelperType::VTKImagePointerType );
-   igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
-     CoordinateSystemTransformToResult );
+  /** Create the VTK actors for displaying geometry */
+  void CreateActors();
 
   /** Verify time stamp. Use the reslicing tool transform to verify 
-    * the time stamp */
+  * the time stamp */
   virtual bool VerifyTimeStamp() const;
 
 private:
 
   ImageResliceSpatialObjectRepresentation(const Self&);
   void operator=(const Self&);   //purposely not implemented
+
+  /** Internal itkSpatialObject */
+  ImageSpatialObjectConstPointer         m_ImageSpatialObject;
+  ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
+
+   /** Variables for maanging reslice plane spatial object */
+  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
+
+    
+  /** VTK classes that support display of an image */
+  vtkImageData                         * m_ImageData;
+  vtkActor                             * m_ImageActor;
+  vtkTexture                           * m_Texture;
+  vtkPlaneSource                       * m_PlaneSource;
+  vtkLookupTable                       * m_LUT;
+  vtkImageMapToColors                  * m_MapColors;
+  vtkImageReslice                      * m_ImageReslice;
+  vtkPolyDataMapper                    * m_TextureMapper;
+  vtkTransform                         * m_ResliceTransform;
+  vtkMatrix4x4                         * m_ResliceAxes;
+  vtkCamera                            * m_Camera;
+
+
+  /** Variables that store window and level values for 2D image display */
+  double                                 m_Level;
+  double                                 m_Window;
+
+  /** Variables that store camera parameters */
+  double m_CameraDistance;
+
+  /** Update the visual representation with changes in the geometry */
+  virtual void UpdateRepresentationProcessing();
+
+  /** Null operation for State Machine transition */
+  void NoProcessing(); 
+
+  /** Set the reslice plane spatial object */
+  void SetReslicePlaneSpatialObjectProcessing();
+
+  /** Connect this representation class to the spatial object. Only to be
+   * called by the State Machine. */
+  void SetImageSpatialObjectProcessing();
+
+   /** Report invalid image spatial object type */
+  void ReportInvalidImageSpatialObjectProcessing( void );
+
+  /** Report invalid tool spatial object type */
+  void ReportInvalidReslicePlaneSpatialObjectProcessing( void );
+
+  /** Report invalid request */
+  void ReportInvalidRequestProcessing( void );
+
+  void GetVector1(double v1[3]);
+  void GetVector2(double v1[3]);
+
+ 
+  /** Reslice processing */
+ // void ResliceProcessing ();
+
+  /** Sets the vtkImageData from the spatial object. This method MUST be
+   * private in order to prevent unsafe access from the VTK image layer. */
+  void SetImage( const vtkImageData * image );
+  
+  /** Connect VTK pipeline */
+  void ConnectVTKPipelineProcessing();
+    
+  /** Declare the observer that will receive a VTK image from the
+   * ImageSpatialObject */
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
+                      EventHelperType::VTKImagePointerType);
+
+  igstkObserverMacro( SliceBounds, IntegerBoundsEvent, 
+                      EventHelperType::IntegerBoundsType );
+
+  typename VTKImageObserver::Pointer  m_VTKImageObserver;
 
 private:
 
@@ -125,55 +206,6 @@ private:
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ImageSpatialObjectSet );
   igstkDeclareStateMacro( ReslicePlaneSpatialObjectSet );
-
-  /** Connect VTK pipeline */
-  void ConnectVTKPipelineProcessing();
- 
-  /** Set the image spatial object */
-  void SetImageSpatialObjectProcessing( void );
-
-  /** Set the reslice plane spatial object */
-  void SetReslicePlaneSpatialObjectProcessing( void );
-
-  /** Report invalid image spatial object type */
-  void ReportInvalidImageSpatialObjectProcessing( void );
-
-  /** Report invalid tool spatial object type */
-  void ReportInvalidReslicePlaneSpatialObjectProcessing( void );
-
-  /** Report invalid request */
-  void ReportInvalidRequestProcessing( void );
-
-  /** Update the visual representation with changes in the geometry */
-  virtual void UpdateRepresentationProcessing();
-
-  /** VTK classes that support display of an image */
-  vtkImageData                         * m_ImageData;
-  vtkImageActor                        * m_ImageActor;
-  vtkLookupTable                       * m_LUT;
-  vtkImageMapToColors                  * m_MapColors;
-  vtkImageReslice                      * m_ImageReslice;
-  vtkMatrix4x4                         * m_ResliceAxes;
-
-  /** Variables that store window and level values for 2D image display */
-  double                                 m_Level;
-  double                                 m_Window;
-
-  /** Variables for managing image spatial object type */
-  ImageSpatialObjectPointer     m_ImageSpatialObjectToBeSet;
-  ImageSpatialObjectPointer     m_ImageSpatialObject;
-
-  /** Variables for maanging reslice plane spatial object */
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
-  
-  /** Observer to the VTK image events */
-  typename VTKImageObserver::Pointer         m_VTKImageObserver;
-  typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
-
-  /** Transform containing the information about image origin
-   *  and image orientation taken from the DICOM input image */
-  Transform                                  m_ImageTransform;
 };
 
 } // end namespace igstk

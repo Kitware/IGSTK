@@ -17,51 +17,69 @@
 #ifndef __igstkImageResliceSpatialObjectRepresentation_txx
 #define __igstkImageResliceSpatialObjectRepresentation_txx
 
-
 #include "igstkImageResliceSpatialObjectRepresentation.h"
+
 #include "igstkEvents.h"
 
-#include "vtkImageActor.h"
-#include "vtkImageMapToWindowLevelColors.h"
-#include "vtkLookupTable.h"
-#include "vtkImageMapToColors.h"
-#include "vtkMath.h"
-#include "vtkImageReslice.h"
-#include "vtkMatrix4x4.h"
-#include "vtkImageData.h"
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
+#include <vtkTransform.h>
+#include <vtkCamera.h>
+#include <vtkLookupTable.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageReslice.h>
+#include <vtkTexture.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkPlaneSource.h>
+
 
 namespace igstk
 {
 
 /** Constructor */
+
 template < class TImageSpatialObject >
-ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::ImageResliceSpatialObjectRepresentation():m_StateMachine(this)
 {
+  // We create the image spatial object
   m_ImageSpatialObject = NULL;
-  m_ReslicePlaneSpatialObject= NULL;
 
-  m_ImageActor = vtkImageActor::New();
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
+
+  // Create classes for displaying images
+  m_ImageActor = vtkActor::New();
   this->AddActor( m_ImageActor );
-
-  m_MapColors  = vtkImageMapToColors::New();
-  m_LUT        = vtkLookupTable::New();
+ 
   m_ImageData  = NULL;
 
-  m_ImageReslice  = vtkImageReslice::New();
+  m_ImageReslice = vtkImageReslice::New();
+  m_ImageReslice->SetOutputDimensionality(2);
+  m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
+  m_ImageReslice->AutoCropOutputOn();  
+  m_ImageReslice->SetOptimization( 1 );
 
-  m_ResliceAxes   = vtkMatrix4x4::New(); 
-  m_ResliceAxes->Identity();
+  m_TextureMapper = vtkPolyDataMapper::New();
 
-  m_ImageReslice->SetResliceAxes( m_ResliceAxes );
+  m_Texture = vtkTexture::New();
+  m_Texture->RepeatOff();
+  m_Texture->SetQualityTo32Bit();
 
+  m_PlaneSource = vtkPlaneSource::New();
+  m_MapColors  = vtkImageMapToColors::New();
+  m_LUT        = vtkLookupTable::New();
+  m_ResliceTransform = vtkTransform::New();
+  m_ResliceAxes = vtkMatrix4x4::New();
+  m_Camera      = vtkCamera::New();
   // Set default values for window and level
-  m_Level = 0;
-  m_Window = 2000;
-  
-  // Create the observer to VTK image events 
+  m_Level = 52;
+  m_Window = 542;
+  m_CameraDistance = 1000;
+
   m_VTKImageObserver = VTKImageObserver::New();
-  m_ImageTransformObserver = ImageTransformObserver::New();
 
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( InValidImageSpatialObject );
@@ -76,6 +94,7 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
   //From Initial state
   igstkAddTransitionMacro( Initial, ValidImageSpatialObject, 
                            ImageSpatialObjectSet,  SetImageSpatialObject );
+
   igstkAddTransitionMacro( Initial, InValidImageSpatialObject, 
                            Initial,  ReportInvalidImageSpatialObject );
 
@@ -98,18 +117,30 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
                            ReslicePlaneSpatialObjectSet, ConnectVTKPipeline );
  
   igstkSetInitialStateMacro( Initial );
-
+ 
   m_StateMachine.SetReadyToRun();
-}
+} 
 
 /** Destructor */
-
 template < class TImageSpatialObject >
-ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
-::~ImageResliceSpatialObjectRepresentation()
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::~ImageResliceSpatialObjectRepresentation()  
 {
+
   // This deletes also the m_ImageActor
   this->DeleteActors();
+
+  if( m_ResliceAxes )
+    {
+    m_ResliceAxes->Delete();
+    m_ResliceAxes = NULL;
+    }
+
+  if( m_ResliceTransform )
+    {
+    m_ResliceTransform->Delete();
+    m_ResliceTransform = NULL;
+    }
 
   if( m_MapColors )
     {
@@ -118,66 +149,42 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
     m_MapColors->Delete();
     m_MapColors = NULL;
     }
-
     
   if( m_LUT )
     {
     m_LUT->Delete();
     m_LUT = NULL;
     }
-
+ 
   if( m_ImageReslice )
     {
     m_ImageReslice->Delete();
     m_ImageReslice = NULL;
     }
 
-  if( m_ResliceAxes )
-    {
-    m_ResliceAxes->Delete();
-    m_ResliceAxes = NULL;
-    }
+  if ( m_TextureMapper )
+  {
+    m_TextureMapper->Delete();
+  }
+
+  if ( m_Texture )
+  {
+    m_Texture->Delete();
+  }
+
+  if ( m_PlaneSource )
+  {
+    m_PlaneSource->Delete();
+  }
 }
 
-/** Create the vtk Actors */
+
 template < class TImageSpatialObject >
-void
+vtkCamera* 
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::CreateActors()
+::GetCamera()
 {
-  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
-                        ::CreateActors called...\n");
-
-  // to avoid duplicates we clean the previous actors
-  this->DeleteActors();
-
-  m_ImageActor = vtkImageActor::New();
-  m_ImageActor->SetPosition(0,0,0);
-  m_ImageActor->SetOrientation(0,0,0);
-    
-  this->AddActor( m_ImageActor );
-
-  //convert RGB to HSV
-  double hue = 0.0;
-  double saturation = 0.0;
-  double value = 1.0;
-
-  vtkMath::RGBToHSV( this->GetRed(),
-                     this->GetGreen(),
-                     this->GetBlue(),
-                     &hue,&saturation,&value );
-
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-  m_LUT->SetSaturationRange (saturation, saturation);
-  m_LUT->SetAlphaRange (m_Opacity, m_Opacity);
-  m_LUT->SetHueRange (hue, hue);
-  m_LUT->SetValueRange (0, value);
-  m_LUT->SetRampToLinear();
-
-  m_MapColors->SetLookupTable( m_LUT );
-
-  igstkPushInputMacro( ConnectVTKPipeline );
-  m_StateMachine.ProcessInputs(); 
+  return this->m_Camera;
 }
 
 /** Overloaded DeleteActor function */
@@ -188,143 +195,36 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
                         ::DeleteActors called...\n");
+   
   this->Superclass::DeleteActors();
+  
   m_ImageActor = NULL;
 
 }
-
+ 
+/** Set the Image Spatial Object */
 template < class TImageSpatialObject >
 void 
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::SetWindowLevel( double window, double level )
+::RequestSetImageSpatialObject( const ImageSpatialObjectType * image )
 {
   igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
-                        ::SetWindowLevel called...\n");
+                        ::RequestSetImageSpatialObject called...\n");
+  
+  m_ImageSpatialObjectToAdd = image;
 
-  m_Window = window;
-  m_Level = level;
-
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-}
-
-/** Set the opacity */
-template < class TImageSpatialObject >
-void
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::SetOpacity(float alpha)
-{
-  if(m_Opacity == alpha)
-    {
-    return;
-    }
-  m_Opacity = alpha;
-
-  // Update all the actors
-  ActorsListType::iterator it = m_Actors.begin();
-  while(it != m_Actors.end())
-    {
-    vtkImageActor * va = static_cast<vtkImageActor*>(*it);
-    va->SetOpacity(m_Opacity); 
-    it++;
-    }
-}
-
-
-template < class TImageSpatialObject >
-void
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::ConnectVTKPipelineProcessing() 
-{
-  m_MapColors->SetInput( m_ImageData );
-  m_ImageReslice->SetInput ( m_MapColors->GetOutput() );
-  m_ImageActor->SetInput( m_ImageReslice->GetOutput() );
-  m_ImageActor->InterpolateOn();
-
-}
-
-template < class TImageSpatialObject >
-void 
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::RequestSetImageSpatialObject( const ImageSpatialObjectType * imageSpatialObject )
-{  
-  igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
-                       ::RequestSetImageSpatialObject called...\n");
-
-  m_ImageSpatialObjectToBeSet = const_cast< ImageSpatialObjectType *>(
-imageSpatialObject );
-
-  if( !m_ImageSpatialObjectToBeSet )
+  if( !m_ImageSpatialObjectToAdd )
     {
     m_StateMachine.PushInput( m_InValidImageSpatialObjectInput );
     }
-  else
+  else 
     {
     m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
     }
-
+  
   m_StateMachine.ProcessInputs();
 }
 
-template < class TImageSpatialObject >
-void 
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::SetImageSpatialObjectProcessing( )
-{  
-  igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
-                       ::SetImageSpatialObjectProcessing called...\n");
-
-  m_ImageSpatialObject = m_ImageSpatialObjectToBeSet;
-  this->RequestSetSpatialObject( m_ImageSpatialObject );
-
-  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
-                                     m_VTKImageObserver );
-
-  m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
-                                     m_ImageTransformObserver );
-
-  // This method gets a VTK image data from the private method of the
-  // ImageSpatialObject and stores it in the representation by invoking the
-  // private SetImage method.
-  //
-  // 
-  this->m_VTKImageObserver->Reset();
-
-  this->m_ImageSpatialObject->RequestGetVTKImage();
-
-  if( this->m_VTKImageObserver->GotVTKImage() ) 
-    {
-    this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
-    if( this->m_ImageData )
-      {
-      this->m_ImageData->Update();
-      }
-    this->m_MapColors->SetInput( this->m_ImageData );
-    this->m_ImageReslice->SetInput( m_MapColors->GetOutput() );
-    }
-
-  this->m_ImageTransformObserver->Reset();
-
-  this->m_ImageSpatialObject->RequestGetImageTransform();
-
-  if( this->m_ImageTransformObserver->GotImageTransform() ) 
-    {
-    const CoordinateSystemTransformToResult transformCarrier =
-      this->m_ImageTransformObserver->GetImageTransform();
-    this->m_ImageTransform = transformCarrier.GetTransform();
-
-    // Image Actor takes care of the image origin position internally.
-    this->m_ImageActor->SetPosition(0,0,0); 
-
-    vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
-
-    this->m_ImageTransform.ExportTransform( *imageTransformMatrix );
-
-    this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
-    imageTransformMatrix->Delete();
-    }
-
-  this->m_ImageActor->SetInput( this->m_ImageReslice->GetOutput() );
-}
 
 template < class TImageSpatialObject >
 void 
@@ -332,7 +232,16 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::ReportInvalidImageSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
-                       ::ReportInvalidImageSpatialObjectProcessing called...\n");
+                       ::ReportInvalidImageSpatialObjectProcessing called...\n"); 
+}
+
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::ReportInvalidReslicePlaneSpatialObjectProcessing( )
+{  
+  igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
+                       ::ReportInvalidReslicePlaneSpatialObjectProcessing called...\n");
 }
 
 template < class TImageSpatialObject >
@@ -369,197 +278,69 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
-  /** Get reslicing plane */
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
-  m_ResliceAxes = m_ReslicePlaneSpatialObject->RequestGetReslicingMatrix();
 
+  m_ResliceAxes->Identity();
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
-  m_ImageReslice->SetInput( this->m_MapColors->GetOutput() ); 
-  m_ImageReslice->SetBackgroundColor( 255.0, 0.0, 0.0, 0 );
-  m_ImageReslice->SetOutputDimensionality( 2 );
-  m_ImageReslice->AutoCropOutputOn();
-  m_ImageReslice->SetOptimization( 1 );
 
-  //Set the output image parameters
-  m_ImageReslice->TransformInputSamplingOff();
+  m_ImageData->UpdateInformation();
 
-  double outputOrigin[3];
-  outputOrigin[0] = m_ResliceAxes->GetElement(0,3); 
-  outputOrigin[1] = m_ResliceAxes->GetElement(1,3); 
-  outputOrigin[2] = m_ResliceAxes->GetElement(2,3); 
+  double spacing[3];
+  m_ImageData->GetSpacing(spacing);
+ 
+  double origin[3];
+  m_ImageData->GetOrigin(origin);
 
-  std::cout << "Output data ReslicedImageOrigin: " << outputOrigin[0] << "," 
-                                         << outputOrigin[1] << ","
-                                         << outputOrigin[2] << std::endl;
+  int extent[6];
+  m_ImageData->GetWholeExtent(extent);
 
+  double bounds[] = {origin[0] + spacing[0]*extent[0], //xmin
+                     origin[0] + spacing[0]*extent[1], //xmax
+                     origin[1] + spacing[1]*extent[2], //ymin
+                     origin[1] + spacing[1]*extent[3], //ymax
+                     origin[2] + spacing[2]*extent[4], //zmin
+                     origin[2] + spacing[2]*extent[5]};//zmax
 
-  m_ImageReslice->SetOutputOrigin( outputOrigin[0],
-                                   outputOrigin[1],
-                                   outputOrigin[2] );
-
-
-  //FIXME
-  unsigned int outputExtent[4];
-  outputExtent[0] = 0;
-  outputExtent[1] = 511;
-  outputExtent[2] = 0;
-  outputExtent[3] = 511;
-
-  m_ImageReslice->SetOutputExtent( outputExtent[0],
-                                   outputExtent[1],
-                                   outputExtent[2],
-                                   outputExtent[3],
-                                   0, 
-                                   0);
+  int i;
+  for ( i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+    {
+    if ( bounds[i] > bounds[i+1] )
+      {
+      double t = bounds[i+1];
+      bounds[i+1] = bounds[i];
+      bounds[i] = t;
+      }
+    }
   
-  m_ImageActor->SetInput( m_ImageReslice->GetOutput() );  
+  switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
+  {
+    case ReslicePlaneSpatialObjectType::Axial:
+    case ReslicePlaneSpatialObjectType::Perpendicular:
+      this->m_PlaneSource->SetOrigin(bounds[0],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint1(bounds[1],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint2(bounds[0],bounds[3],bounds[4]);
+      break;
+    case ReslicePlaneSpatialObjectType::Sagittal:
+    case ReslicePlaneSpatialObjectType::OffSagittal:
+      this->m_PlaneSource->SetOrigin(bounds[0],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint1(bounds[0],bounds[3],bounds[4]);
+      this->m_PlaneSource->SetPoint2(bounds[0],bounds[2],bounds[5]);
+      break;
+    case ReslicePlaneSpatialObjectType::Coronal:
+    case ReslicePlaneSpatialObjectType::OffCoronal:
+      this->m_PlaneSource->SetOrigin(bounds[0],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint1(bounds[0],bounds[2],bounds[5]);
+      this->m_PlaneSource->SetPoint2(bounds[1],bounds[2],bounds[4]);
+      break;
+    default: // set axial extension as default, i.e. the max extension
+      this->m_PlaneSource->SetOrigin(bounds[0],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint1(bounds[1],bounds[2],bounds[4]);
+      this->m_PlaneSource->SetPoint2(bounds[0],bounds[3],bounds[4]);
+      break;
+  }
 }
 
-/** Update the visual representation in response to changes in the geometric
- * object */
-template < class TImageSpatialObject >
-void
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::UpdateRepresentationProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
-                       ::UpdateRepresentationProcessing called...\n");
-  if( m_ImageData )
-    {
-    m_MapColors->SetInput( m_ImageData );
-    }
-
-  /* Updated reslicing: */ 
-  if( m_ReslicePlaneSpatialObject )
-    {
-    m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
-    m_ResliceAxes = m_ReslicePlaneSpatialObject->RequestGetReslicingMatrix();
-
-    std::cout.precision(3);
-    std::cout << "Returned ResliceAxes matrix: \n" 
-            << "(" << m_ResliceAxes->GetElement(0,0) << ","
-            << m_ResliceAxes->GetElement(0,1) << ","
-            << m_ResliceAxes->GetElement(0,2) << ","
-            << m_ResliceAxes->GetElement(0,3) << "\n"
-            << m_ResliceAxes->GetElement(1,0) << ","
-            << m_ResliceAxes->GetElement(1,1) << ","
-            << m_ResliceAxes->GetElement(1,2) << ","
-            << m_ResliceAxes->GetElement(1,3) << "\n"
-            << m_ResliceAxes->GetElement(2,0) << ","
-            << m_ResliceAxes->GetElement(2,1) << ","
-            << m_ResliceAxes->GetElement(2,2) << ","
-            << m_ResliceAxes->GetElement(2,3) << "\n"
-            << m_ResliceAxes->GetElement(3,0) << ","
-            << m_ResliceAxes->GetElement(3,1) << ","
-            << m_ResliceAxes->GetElement(3,2) << ","
-            << m_ResliceAxes->GetElement(3,3) << ")" << std::endl;
-
-
-    m_ImageReslice->SetResliceAxes( m_ResliceAxes );
-
-    double outputOrigin[3];
-    outputOrigin[0] = m_ResliceAxes->GetElement(0,3); 
-    outputOrigin[1] = m_ResliceAxes->GetElement(1,3); 
-    outputOrigin[2] = m_ResliceAxes->GetElement(2,3); 
-
-    std::cout << "Output data ReslicedImageOrigin: " << outputOrigin[0] << "," 
-                                           << outputOrigin[1] << ","
-                                           << outputOrigin[2] << std::endl;
-
-
-    m_ImageReslice->SetOutputOrigin( outputOrigin[0],
-                                     outputOrigin[1],
-                                     outputOrigin[2] );
-
-
-    //FIXME
-    unsigned int outputExtent[4];
-    outputExtent[0] = 0;
-    outputExtent[1] = 511;
-    outputExtent[2] = 0;
-    outputExtent[3] = 511;
-
-    m_ImageReslice->SetOutputExtent( outputExtent[0],
-                                     outputExtent[1],
-                                     outputExtent[2],
-                                     outputExtent[3],
-                                     0, 
-                                     0);
-   
-    //REMOVE THIS
-    m_ImageReslice->Update();
-    vtkImageData * imageData = m_ImageReslice->GetOutput(); 
-
-    std::cout << "Resliced image output: " << std::endl;
-    imageData->Print( std::cout );
-
-    int ext[6];
-
-    imageData->Update();
-    imageData->GetExtent( ext );
-
-    //Compute image bounds
-    double imageSpacing[3];
-    imageData->GetSpacing( imageSpacing );
-
-    double imageOrigin[3];
-    imageData->GetOrigin( imageOrigin );
-    std::cout << "ReslicedImageOrigin: " << imageOrigin[0] << "," 
-                                         << imageOrigin[1] << ","
-                                         << imageOrigin[2] << std::endl;
-
-    int imageExtent[6];
-    imageData->GetWholeExtent( imageExtent );
-
-    double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
-                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
-
-    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
-        {
-        if ( bounds[i] > bounds[i+1] )
-          {
-          double t = bounds[i+1];
-          bounds[i+1] = bounds[i];
-          bounds[i] = t;
-          }
-        }
-
-    std::cout << "Resliced`Image bounds: " << "(" << bounds[0] << "," 
-                                  << bounds[1] << ","
-                                  << bounds[2] << ","
-                                  << bounds[3] << ","
-                                  << bounds[4] << ","
-                                  << bounds[5] << ")" << std::endl;
-    }
-}
-
-template < class TImageSpatialObject >
-void 
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::ReportInvalidReslicePlaneSpatialObjectProcessing( )
-{  
-  igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
-                       ::ReportInvalidReslicePlaneSpatialObjectProcessing called...\n");
-}
-
-
-/** Report invalid request */
-template < class TImageSpatialObject >
-void 
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::ReportInvalidRequestProcessing( void )
-{
-  igstkLogMacro( DEBUG, 
-    "igstk::ImageResliceSpatialObjectRepresentation::ReportInvalidRequestProcessing called...\n");
-
-  this->InvokeEvent( InvalidRequestErrorEvent() );
-}
-
-/** Print Self function */
+/** Verify time stamp of the attached tool*/
 template < class TImageSpatialObject >
 bool
 ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
@@ -595,13 +376,416 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
     }
 }
 
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetWindowLevel( double window, double level )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::SetWindowLevel called...\n");
+
+  m_Window = window;
+  m_Level = level;
+
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+}
+
+
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetVisibility( bool visible )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::SetVisibility called...\n");
+
+  m_ImageActor->SetVisibility(visible);
+}
+
+/** Null Operation for a State Machine Transition */
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::NoProcessing()
+{
+}
+
+/** Set nhe Image Spatial Object */
+template < class TImageSpatialObject >
+void 
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetImageSpatialObjectProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                         ::SetImageSpatialObjectProcessing called...\n");
+
+  m_ImageSpatialObject = m_ImageSpatialObjectToAdd;
+
+  this->RequestSetSpatialObject( m_ImageSpatialObject );
+  
+  m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
+                                      m_VTKImageObserver );
+
+  m_VTKImageObserver->Reset();
+
+  m_ImageSpatialObject->RequestGetVTKImage();
+  
+  if( m_VTKImageObserver->GotVTKImage() )
+    {
+
+    this->SetImage( m_VTKImageObserver->GetVTKImage() );
+    
+    if( m_ImageData )
+      {
+        m_ImageData->Update();
+        m_MapColors->SetLookupTable( m_LUT );
+        m_ImageReslice->SetInput ( m_ImageData );
+        m_MapColors->SetInput( m_ImageReslice->GetOutput() );
+        m_Texture->SetInput( m_MapColors->GetOutput() );
+        m_TextureMapper->SetInput(
+          vtkPolyData::SafeDownCast(m_PlaneSource->GetOutput()) );
+      }
+    }
+
+  m_ImageActor->SetTexture(m_Texture);
+  m_ImageActor->SetMapper(m_TextureMapper);
+}
+
+
 /** Print Self function */
 template < class TImageSpatialObject >
 void
-ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Plane origin";
+  os << indent << this->m_PlaneSource->GetOrigin() << std::endl;
+  os << indent << "Point 1 on the plane";
+  os << indent << this->m_PlaneSource->GetPoint1() << std::endl;
+  os << indent << "Point 2 on the plane";
+  os << indent << this->m_PlaneSource->GetPoint2() << std::endl;
+  os << indent << "Center of the plane";
+  os << indent << this->m_PlaneSource->GetCenter() << std::endl;
+}
+
+
+/** Update the visual representation in response to changes in the geometric
+ * object */
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::UpdateRepresentationProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation::\
+                         UpdateRepresentationProcessing called...\n");
+
+  if( m_ImageData )
+    {
+    m_MapColors->SetInput( m_ImageReslice->GetOutput() );
+    }
+
+  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+
+  // Calculate appropriate pixel spacing for the reslicing
+  //
+  m_ImageData->UpdateInformation();
+
+  double spacing[3];
+  m_ImageData->GetSpacing(spacing); 
+ 
+  double origin[3];
+  m_ImageData->GetOrigin(origin);
+
+  int extent[6];
+  m_ImageData->GetWholeExtent(extent);
+
+  double bounds[] = {origin[0] + spacing[0]*extent[0], //xmin
+                     origin[0] + spacing[0]*extent[1], //xmax
+                     origin[1] + spacing[1]*extent[2], //ymin
+                     origin[1] + spacing[1]*extent[3], //ymax
+                     origin[2] + spacing[2]*extent[4], //zmin
+                     origin[2] + spacing[2]*extent[5]};//zmax
+
+  int i;
+  for ( i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+    {
+    if ( bounds[i] > bounds[i+1] )
+      {
+      double t = bounds[i+1];
+      bounds[i+1] = bounds[i];
+      bounds[i] = t;
+      }
+    }
+
+  vtkPlaneSource* auxPlane = m_ReslicePlaneSpatialObject->GetReslicingPlane();
+
+  m_PlaneSource->SetCenter( auxPlane->GetCenter() );
+  m_PlaneSource->SetNormal( auxPlane->GetNormal() );
+
+  double abs_normal[3];
+  m_PlaneSource->GetNormal(abs_normal);
+
+  double planeCenter[3];
+  m_PlaneSource->GetCenter(planeCenter);
+
+  double nmax = 0.0;
+  int k = 0;
+  for ( i = 0; i < 3; i++ )
+    {
+    abs_normal[i] = fabs(abs_normal[i]);
+    if ( abs_normal[i]>nmax )
+      {
+      nmax = abs_normal[i];
+      k = i;
+      }
+    }
+
+  // Force the plane to lie within the true image bounds along its normal
+  //
+  if ( planeCenter[k] > bounds[2*k+1] )
+    {
+    planeCenter[k] = bounds[2*k+1];
+    }
+  else if ( planeCenter[k] < bounds[2*k] )
+    {
+    planeCenter[k] = bounds[2*k];
+    }
+
+  m_PlaneSource->SetCenter(planeCenter);
+
+  double planeAxis1[3];
+  double planeAxis2[3];
+
+  this->GetVector1(planeAxis1);
+  this->GetVector2(planeAxis2);
+
+  // The x,y dimensions of the plane
+  //
+  double planeSizeX = vtkMath::Normalize(planeAxis1);
+  double planeSizeY = vtkMath::Normalize(planeAxis2);
+
+  double normal[3];
+  m_PlaneSource->GetNormal(normal);
+
+  // Generate the slicing matrix
+  //
+  m_ResliceAxes->Identity();
+
+  for ( i = 0; i < 3; i++ )
+     {
+     m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
+     m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
+     m_ResliceAxes->SetElement(2,i,normal[i]);
+     }
+
+  //m_ResliceAxes->DeepCopy( m_ReslicePlaneSpatialObject->GetResliceAxes() );
+
+  double planeOrigin[4];
+  m_PlaneSource->GetOrigin(planeOrigin);
+
+  planeOrigin[3] = 1.0;
+  double originXYZW[4];
+  m_ResliceAxes->MultiplyPoint(planeOrigin, originXYZW);
+
+  m_ResliceAxes->Transpose();
+  double neworiginXYZW[4];
+  m_ResliceAxes->MultiplyPoint(originXYZW, neworiginXYZW);
+
+  m_ResliceAxes->SetElement(0,3,neworiginXYZW[0]);
+  m_ResliceAxes->SetElement(1,3,neworiginXYZW[1]);
+  m_ResliceAxes->SetElement(2,3,neworiginXYZW[2]);
+
+  m_ImageReslice->SetResliceAxes(m_ResliceAxes);
+
+  double spacingX = fabs(planeAxis1[0]*spacing[0])+\
+                   fabs(planeAxis1[1]*spacing[1])+\
+                   fabs(planeAxis1[2]*spacing[2]);
+
+  double spacingY = fabs(planeAxis2[0]*spacing[0])+\
+                   fabs(planeAxis2[1]*spacing[1])+\
+                   fabs(planeAxis2[2]*spacing[2]);
+
+
+  // Pad extent up to a power of two for efficient texture mapping
+
+  // make sure we're working with valid values
+  double realExtentX = ( spacingX == 0 ) ? 0 : planeSizeX / spacingX;
+
+  int extentX;
+  // Sanity check the input data:
+  // * if realExtentX is too large, extentX will wrap
+  // * if spacingX is 0, things will blow up.
+  // * if realExtentX is naturally 0 or < 0, the padding will yield an
+  //   extentX of 1, which is also not desirable if the input data is invalid.
+  if (realExtentX > (VTK_INT_MAX >> 1) || realExtentX < 1)
+    {
+      std::cout << "Invalid X extent.  Perhaps the input data is empty?" << std::endl;
+      extentX = 0;
+    }
+  else
+    {
+      extentX = 1;
+      while (extentX < realExtentX)
+        {
+          extentX = extentX << 1;
+        }
+    }
+
+  // make sure extentY doesn't wrap during padding
+  double realExtentY = ( spacingY == 0 ) ? 0 : planeSizeY / spacingY;
+
+  int extentY;
+  if (realExtentY > (VTK_INT_MAX >> 1) || realExtentY < 1)
+    {
+      std::cout << "Invalid Y extent.  Perhaps the input data is empty?" << std::endl;
+      extentY = 0;
+    }
+  else
+    {
+      extentY = 1;
+      while (extentY < realExtentY)
+        {
+          extentY = extentY << 1;
+        }
+    }
+
+  double outputSpacingX = planeSizeX/extentX;
+  double outputSpacingY = planeSizeY/extentY;
+  m_ImageReslice->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
+  m_ImageReslice->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
+  m_ImageReslice->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
+
+
+  //Setting up the camera position
+  double focalPoint[3];
+  double position[3];
+  for ( int i = 0; i<3; i++ )
+    {
+    focalPoint[i] = neworiginXYZW[i];
+    position[i] = neworiginXYZW[i];
+    }
+
+  for ( int i = 0; i<3; i++ )
+    {
+    position[i] -= m_CameraDistance * normal[i];
+    }
+  
+  m_Camera->SetViewUp( normal[0], normal[1], normal[2] );
+  m_Camera->SetFocalPoint( focalPoint );
+  //camera->SetParallelScale( 0.8 );
+  //camera->Zoom( 2 );
+  m_Camera->SetPosition( position );
+
+}
+
+
+/** Create the vtk Actors */
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::CreateActors()
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::CreateActors called...\n");
+
+  // to avoid duplicates we clean the previous actors
+  this->DeleteActors();
+
+  m_ImageActor = vtkActor::New();
+  m_ImageActor->SetPosition(0,0,0);
+  m_ImageActor->SetOrientation(0,0,0);
+  m_ImageActor->GetProperty()->SetOpacity(1.0);
+
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LUT->SetSaturationRange( 0.0, 0.0 );
+  m_LUT->SetHueRange( 0.0, 0.0 );
+  m_LUT->SetValueRange( 0.0, 1.0 );  
+  m_LUT->SetRampToLinear();
+  m_LUT->Build();
+
+  m_MapColors->SetLookupTable( m_LUT );  
+
+  m_ImageReslice->SetBackgroundLevel( m_Level - m_Window/2.0 );
+
+  m_ImageActor->SetTexture(m_Texture);
+  m_ImageActor->SetMapper(m_TextureMapper);
+
+  this->AddActor( m_ImageActor );  
+
+  igstkPushInputMacro( ConnectVTKPipeline );
+  m_StateMachine.ProcessInputs(); 
+
+}
+
+/** Create a copy of the current object representation */
+template < class TImageSpatialObject >
+typename ImageResliceSpatialObjectRepresentation< TImageSpatialObject >::Pointer
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::Copy() const
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::Copy called...\n");
+
+  Pointer newOR = ImageResliceSpatialObjectRepresentation::New();
+  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
+  newOR->SetOpacity(this->GetOpacity());
+  newOR->RequestSetImageSpatialObject(m_ImageSpatialObject);
+
+  return newOR;
+}
+
+  
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetImage( const vtkImageData * image )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::SetImage called...\n");
+
+  // This const_cast<> is needed here due to 
+  // the lack of const-correctness in VTK 
+  m_ImageData = const_cast< vtkImageData *>( image );
+}
+
+
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::ConnectVTKPipelineProcessing() 
+{
+  m_ImageReslice->SetInput( m_ImageData );
+  m_MapColors->SetInput( m_ImageReslice->GetOutput() );
+  m_Texture->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->SetTexture( m_Texture );
+  m_ImageActor->SetMapper( m_TextureMapper );
+  m_ImageActor->SetVisibility( false );
+  m_ImageActor->SetPickable( false );
+}
+
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::GetVector1(double v1[3])
+{
+  double* p1 = m_PlaneSource->GetPoint1();
+  double* o =  m_PlaneSource->GetOrigin();
+  v1[0] = p1[0] - o[0];
+  v1[1] = p1[1] - o[1];
+  v1[2] = p1[2] - o[2];
+}
+
+template < class TImageSpatialObject >
+void
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::GetVector2(double v2[3])
+{
+  double* p2 = m_PlaneSource->GetPoint2();
+  double* o =  m_PlaneSource->GetOrigin();
+  v2[0] = p2[0] - o[0];
+  v2[1] = p2[1] - o[1];
+  v2[2] = p2[2] - o[2];
 }
 
 } // end namespace igstk

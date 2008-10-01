@@ -19,13 +19,15 @@
 #define __igstkImageReslicePlaneSpatialObject_h
 
 #include "igstkMacros.h"
+#include "igstkTransform.h"
 #include "igstkSpatialObject.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
 
-class vtkPlane;
+class vtkPlaneSource;
 class vtkMatrix4x4;
 class vtkImageData;
+class vtkTransform;
 
 namespace igstk
 {
@@ -49,7 +51,7 @@ namespace igstk
  * For this mode, the tool tip spatial object provides the reslicing plane postion and orientation
  * information is extraced from the input image spatial object.
  *
- * For OffOrthogonal mode, the three types of orientation are Perpendicular, OffAxial and OffSagittal.
+ * For OffOrthogonal mode, the three types of orientation are Perpendicular, OffSagittal and OffSagittal.
  * The orientation of the reslicing plane is computed using the tracker tool spatial object and
  * the input image spatial object.  The postion is determined from the tracker tool tip postion.
  *
@@ -97,8 +99,8 @@ public:
     Sagittal, 
     Coronal, 
     Perpendicular,
-    OffAxial,
     OffSagittal,
+    OffCoronal,
     PlaneOrientationWithZAxesNormal,
     PlaneOrientationWithXAxesNormal,
     PlaneOrientationWithYAxesNormal
@@ -129,16 +131,22 @@ public:
   void RequestComputeReslicingPlane( ); 
 
   /** Request Get reslicing plane equation */
-  vtkPlane * GetReslicingPlane();
+  vtkPlaneSource * GetReslicingPlane();
 
-  /** Request Get reslicing matrix */
-  vtkMatrix4x4 * RequestGetReslicingMatrix();
+  /** Request Get reslicing axes */
+  vtkMatrix4x4 * GetResliceAxes();
+
+  OrientationType GetOrientationType()
+  { return m_OrientationType;}; 
+
+  /** Request Get reslicing transform */
+  //vtkTransform * GetResliceTransform();
 
   /** Request update tool transform WRT image coordinate system */
-  void RequestUpdateToolTransform();
+  void RequestUpdateToolTransformWRTImageCoordinateSystem();
 
   /** Get tool transform */
-  Transform GetToolTransform() const;
+  igstk::Transform GetToolTransform() const;
 
   /** Inquiry if a tool spatial object is set for reslicing */
   bool  IsToolSpatialObjectSet();
@@ -160,6 +168,9 @@ protected:
    * the ImageSpatialObject when an image is requested. */
    igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
                        EventHelperType::VTKImagePointerType );
+
+   igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
+     CoordinateSystemTransformToResult );
 
 private:
   ImageReslicePlaneSpatialObject(const Self&);   //purposely not implemented
@@ -197,7 +208,8 @@ private:
   igstkDeclareStateMacro( AttemptingToSetMousePosition );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
-  /** Internal itkSpatialObject */
+  /** Null operation for State Machine transition */
+  void NoProcessing();
 
   /** Set the orientation type */
   void SetOrientationTypeProcessing( void );
@@ -253,7 +265,7 @@ private:
   void ReportSliceNumberBoundsProcessing( void );
 
   /** Methods to compute reslcing plane for the different modes*/
-  void ComputeOrthgonalReslicingPlane();
+  void ComputeOrthogonalReslicingPlane();
   void ComputeObliqueReslicingPlane();
   void ComputeOffOrthgonalReslicingPlane();
 
@@ -274,23 +286,34 @@ private:
   ToolSpatialObjectPointer     m_ToolSpatialObject;
   
   /** Image reslice plane */
-  vtkPlane *                        m_ImageReslicePlane;
+  vtkPlaneSource *                  m_ImageReslicePlane;
 
   /** Image reslicing matrix */
   vtkMatrix4x4 *                    m_ResliceAxes; 
 
+//  vtkTransform *                    m_ResliceTransform;
+
   /** vtk image data */
-  vtkImageData *                      m_ImageData;
+  vtkImageData *                    m_ImageData;
+
+  /** Transform containing the information about image origin
+   *  and image orientation taken from the DICOM input image */
+  igstk::Transform                  m_ImageTransform;
+  
+  igstk::Transform::VectorType      m_PlaneNormal;
+  igstk::Transform::VectorType      m_PlaneCenter;
 
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
   igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
 
   // Tool transform with respect to the image coordinate system
-  Transform m_ToolTransformWRTImageCoordinateSystem;
+  igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
 
   /** Observer to the VTK image events */
   typename VTKImageObserver::Pointer         m_VTKImageObserver;
+
+  typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
 
   /** Slice number member variables */
   SliceNumberType      m_SliceNumberToBeSet;
@@ -298,12 +321,19 @@ private:
   bool                 m_SliceNumberSetFlag;
 
   /** mouse position member variables */
-  double                 m_MousePositionToBeSet[3];
-  double                 m_MousePosition[3];
-  bool                   m_MousePostionSetFlag;
+  double               m_MousePositionToBeSet[3];
+  double               m_MousePosition[3];
+  bool                 m_MousePostionSetFlag;
+
+  int                  m_ImageDimension[3];
+  double               m_ImageOrigin[3];
+  double               m_ImageSpacing[3];
+  int                  m_ImageExtent[6];
+  double               m_ImageBounds[6];
 
   /** flag indicating tool spatial object used for reslicing */
-  bool                   m_ToolSpatialObjectSet;
+  bool                 m_ToolSpatialObjectSet;
+
 };
 
 } // end namespace igstk
