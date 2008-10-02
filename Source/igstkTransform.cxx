@@ -164,6 +164,11 @@ void
 Transform
 ::ExportTransform( ::vtkMatrix4x4 & outmatrix ) const
 {
+  outmatrix.SetElement(3,0,0);
+  outmatrix.SetElement(3,1,0);
+  outmatrix.SetElement(3,2,0);
+  outmatrix.SetElement(3,3,1);
+
   VersorType::MatrixType inmatrix = m_Rotation.GetMatrix();
  
   for(unsigned int i=0; i<3; i++ )
