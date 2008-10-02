@@ -30,6 +30,7 @@ class vtkTexture;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkPlaneSource;
+class vtkCamera;
 
 
 namespace igstk

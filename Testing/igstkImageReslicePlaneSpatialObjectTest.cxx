@@ -30,6 +30,7 @@
 #include "igstkEvents.h"
 #include "igstkCylinderObject.h"
 #include "igstkTransform.h"
+#include "vtkPlaneSource.h"
 
 namespace ImageReslicePlaneSpatialObjectTest
 {
@@ -150,7 +151,7 @@ int igstkImageReslicePlaneSpatialObjectTest( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, axesObject );
   planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  vtkPlane * plane = planeSpatialObject->GetReslicingPlane();
+  vtkPlaneSource * plane = planeSpatialObject->GetReslicingPlane();
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
