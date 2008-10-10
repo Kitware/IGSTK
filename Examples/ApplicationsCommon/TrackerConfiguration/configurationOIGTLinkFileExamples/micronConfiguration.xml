@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<tracking_system type = "micron">
+
+    <refresh_rate> 20 </refresh_rate>
+
+    <send_to_ip> 255.255.255.0</send_to_ip>  
+    
+    <camera_calibration_directory>
+         C:/MicronTracker/CalibrationFiles
+    </camera_calibration_directory>
+    
+    <initialization_file>
+      C:/MicronTracker/MTDemoCPP.ini
+    </initialization_file>
+    
+    <templates_directory> 
+      C:/MicronTracker/Markers
+    </templates_directory>
+    
+    <tool usage="reference">
+      <name> referenceMarker </name> 
+      <ip_port>1000</ip_port> 
+    </tool>
+
+    <tool>
+      <name> bayonetProbe </name> 
+      <calibration_file>E:/users/zivy/bayonetCalibration.xml</calibration_file>
+      <ip_port>1001</ip_port> 
+    </tool>
+
+    <tool>
+      <name> usProbe </name> 
+      <calibration_file>E:/users/zivy/USCalibration.xml</calibration_file>
+      <ip_port>1002</ip_port> 
+    </tool>
+
+</tracking_system>
