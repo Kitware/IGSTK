@@ -11,13 +11,13 @@ decl {\#include "itksys/Directory.hxx"} {}
 decl {\#include "igstkMicronTrackerConfiguration.h"} {public
 } 
 
-class MicronMultipleToolTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {MicronMultipleToolTrackerConfigurationGUI():m_Configuration(NULL)} {open
+  Function {MicronTrackerConfigurationGUI():m_Configuration(NULL)} {open
   } {
     Fl_Window m_TrackerConfigurationWindow {
-      label {Micron Tracker Configuration}
-      xywh {445 492 427 373} type Double
+      label {Micron Tracker Configuration} open
+      xywh {445 492 420 420} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Output m_CalibrationFileDir {
@@ -40,7 +40,7 @@ if (fileDir)
       }
       Fl_Button {} {
         label {...}
-        callback {char * fileName = fl_file_chooser("Initialization file","*.*","c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");
+        callback {char * fileName = fl_file_chooser("Initialization file","*.ini","c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");
 if (fileName)
 {
   this->m_InitializationFile->value(fileName);
@@ -93,7 +93,7 @@ if (bToolsAvailable)
         xywh {132 22 105 15} type Horizontal align 4 minimum 1 maximum 48 step 1 value 15
       }
       Fl_Group m_MultipleToolSelectionGroup {
-        xywh {9 211 411 103} box BORDER_BOX
+        xywh {9 252 401 103} box BORDER_BOX
       } {
         Fl_Button m_AddToolBtn {
           label {Add Tool}
@@ -109,10 +109,10 @@ igstk::MicronToolConfiguration tool;
   
 tool.SetMarkerName( this->m_TrackerToolMarker->text() );
 
-const std::string toolCalibrationFileName = 
-  m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
+//const std::string toolCalibrationFileName = 
+//  m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
 
-tool.SetCalibrationFileName( toolCalibrationFileName );
+tool.SetCalibrationFileName( this->m_CalibrationFileName->value() );
 
 m_Configuration->RequestAddTool( &tool );
 if( this->m_ConfigurationErrorOccured )
@@ -125,7 +125,7 @@ if( this->m_ConfigurationErrorOccured )
 
 m_AddedToolsList->add(tool.GetMarkerName().c_str());
 m_AddedToolsList->value(0);}
-          xywh {25 230 105 25}
+          xywh {25 271 105 25}
         }
         Fl_Button m_SetReferenceToolBtn {
           label {Add Reference}
@@ -154,13 +154,13 @@ if( this->m_ConfigurationErrorOccured )
 }
 
 m_ReferenceToolLabel->value(tool.GetMarkerName().c_str());}
-          xywh {25 265 105 25}
+          xywh {25 306 105 25}
         }
         Fl_Choice m_AddedToolsList {
-          xywh {156 230 105 25} down_box BORDER_BOX align 0
+          xywh {156 271 105 25} down_box BORDER_BOX align 0
         } {}
         Fl_Output m_ReferenceToolLabel {
-          xywh {154 264 108 27}
+          xywh {154 305 108 27}
         }
         Fl_Button m_ResetBtn {
           label Reset
@@ -176,7 +176,7 @@ if (m_Configuration != NULL)
 }
 
 InitializeConfiguration();}
-          xywh {285 265 115 25} deactivate
+          xywh {285 306 115 25} deactivate
         }
       }
       Fl_Button {} {
@@ -191,14 +191,26 @@ if( this->m_ConfigurationErrorOccured )
 }
 
 UpdateParentConfiguration();}
-        xywh {305 340 98 25}
+        xywh {305 378 98 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser( "Select calibration file","*.igstk","C:/data/TESTISIS" );
+if( fileName )
+{
+  this->m_CalibrationFileName->value( fileName );
+}} selected
+        xywh {365 206 25 25} labelsize 8
+      }
+      Fl_Output m_CalibrationFileName {
+        label {Template File Dir:}
+        xywh {143 204 217 30}
       }
     }
     code {InitializeConfiguration();
-m_MultipleToolSelectionGroup->deactivate();} {selected
-    }
+m_MultipleToolSelectionGroup->deactivate();} {}
   }
-  Function {~MicronMultipleToolTrackerConfigurationGUI()} {return_type virtual
+  Function {~MicronTrackerConfigurationGUI()} {return_type virtual
   } {
     code {if (m_Configuration != NULL)
 {
@@ -221,7 +233,7 @@ m_Configuration = NULL;} {}
 
 return m_Configuration;} {}
   }
-  Function {Show()} {open return_type {virtual void}
+  Function {Show()} {return_type {virtual void}
   } {
     code {this->m_TrackerConfigurationWindow->show();} {}
   }
