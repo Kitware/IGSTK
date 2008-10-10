@@ -7,18 +7,18 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 decl {\#include "igstkAscensionTrackerConfiguration.h"} {public
 } 
 
-class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+class FlockOfBirdsTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
-  Function {FlockOfBirdsSingleToolConfigurationGUI():m_Configuration(NULL)} {open
+  Function {FlockOfBirdsTrackerConfigurationGUI():m_Configuration(NULL)} {open
   } {
     Fl_Window m_TrackerConfigurationWindow {
       label {FlockOfBirds Tracker Configuration} open
-      xywh {501 385 319 60} type Double
+      xywh {288 593 476 183} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice m_SerialPort {
-        label {Serial Port Number: } open
-        xywh {145 13 75 25} down_box BORDER_BOX
+        label {Serial Port Number: }
+        xywh {325 13 140 25} down_box BORDER_BOX
       } {
         MenuItem {} {
           label COM1
@@ -56,11 +56,29 @@ class FlockOfBirdsSingleToolConfigurationGUI {open : {public igstk::TrackerConfi
       Fl_Button {} {
         label Confirm
         callback {UpdateParentConfiguration();}
-        xywh {235 13 70 25}
+        xywh {395 134 70 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser( "Select calibration file","*.igstk","" );
+if( fileName )
+{
+  this->m_CalibrationFileName->value( fileName );
+}}
+        xywh {440 85 25 25} labelsize 8
+      }
+      Fl_Output m_CalibrationFileName {
+        label {Template File Dir:}
+        xywh {145 83 290 30}
+      }
+      Fl_Value_Slider m_RefreshRateSlider {
+        label {Refresh rate [Hz]:}
+        xywh {325 44 140 23} type Horizontal align 4 minimum 1 maximum 100 step 1 value 30
       }
     }
+    code {this->m_SerialPort->value(2);} {}
   }
-  Function {~FlockOfBirdsSingleToolConfigurationGUI()} {return_type virtual
+  Function {~FlockOfBirdsTrackerConfigurationGUI()} {return_type virtual
   } {}
   Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
   } {
@@ -106,8 +124,9 @@ switch( this->m_SerialPort->value() )
      return NULL;
   }
     
-          //get the desired tracker referesh rate
-  conf->RequestSetFrequency( 40 );
+        //get the desired tracker referesh rate
+  conf->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+  
 
   if( this->m_ConfigurationErrorOccured )
   {
@@ -120,6 +139,7 @@ switch( this->m_SerialPort->value() )
   igstk::AscensionToolConfiguration toolConfig;
 
   toolConfig.SetBirdName("bird0");
+  //toolConfig.SetCalibrationFileName(m_CalibrationFileName->value());
 
   conf->RequestAddTool( &toolConfig );   
 
@@ -127,8 +147,8 @@ switch( this->m_SerialPort->value() )
   if( this->m_ConfigurationErrorOccured )
   {
     conf->Delete();
+    conf = NULL;
     this->m_ConfigurationErrorOccured = false;
-    return NULL;
   }
   return conf;} {selected
     }
