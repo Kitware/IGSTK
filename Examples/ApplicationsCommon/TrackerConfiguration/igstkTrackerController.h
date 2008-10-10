@@ -84,9 +84,9 @@ public:
    */
   void RequestInitialize(const TrackerConfiguration *configuration);
 
-  void RequestStop(const TrackerConfiguration *configuration);
+  void RequestStop();
 
-  void RequestStart(const TrackerConfiguration *configuration);
+  void RequestStart();
 
   /**
    * Stop the tracker and close its communication.

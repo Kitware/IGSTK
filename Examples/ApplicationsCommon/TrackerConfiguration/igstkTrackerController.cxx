@@ -31,9 +31,6 @@
 
 #include "igstkFlockOfBirdsTrackerNew.h"
 
-// #include "igstkCalibrationIO.h"
-
-
 namespace igstk
 { 
 
@@ -863,27 +860,21 @@ TrackerController::RequestInitialize(
 }
 
 void
-TrackerController::RequestStart(
-  const TrackerConfiguration *configuration)
+TrackerController::RequestStart()
 {
   igstkLogMacro( DEBUG, 
                  "igstkTrackerController::RequestStart called...\n" );
-  this->m_TmpTrackerConfiguration = 
-    const_cast<TrackerConfiguration *>(configuration);
   igstkPushInputMacro( TrackerStart );
   this->m_StateMachine.ProcessInputs();
 }
 
 void
-TrackerController::RequestStop(
-  const TrackerConfiguration *configuration)
+TrackerController::RequestStop()
 {
   igstkLogMacro( DEBUG, 
                  "igstkTrackerController::RequestStop called...\n" );
-    this->m_TmpTrackerConfiguration = 
-    const_cast<TrackerConfiguration *>(configuration);
-    igstkPushInputMacro( TrackerStop );
-    this->m_StateMachine.ProcessInputs();
+  igstkPushInputMacro( TrackerStop );
+  this->m_StateMachine.ProcessInputs();
 }
 
 void
@@ -904,7 +895,6 @@ TrackerController::RequestGetTracker()
   this->m_StateMachine.ProcessInputs();
 }
 
-
 void 
 TrackerController::RequestGetNonReferenceToolList()
 {
@@ -913,6 +903,7 @@ TrackerController::RequestGetNonReferenceToolList()
   igstkPushInputMacro( GetTools );
   this->m_StateMachine.ProcessInputs();
 }
+
 void 
 TrackerController::RequestGetReferenceTool()
 {
@@ -921,7 +912,6 @@ TrackerController::RequestGetReferenceTool()
   igstkPushInputMacro( GetReferenceTool );
   this->m_StateMachine.ProcessInputs();
 }
-
 
 void 
 TrackerController::TrackerInitializeProcessing()
@@ -958,14 +948,14 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
     }
-    #ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
     }
-    #endif
+#endif
     else if( dynamic_cast<AscensionTrackerConfiguration *>
     ( this->m_TmpTrackerConfiguration ) )
     {
@@ -1484,24 +1474,6 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
  
   trackerTool->RequestSetMarkerName( toolConfiguration->GetMarkerName() );
 
-  /*
-  igstk::CalibrationIO * reader = new igstk::CalibrationIO;
-
-  std::string fileName = toolConfiguration->GetCalibrationFileName();
-
-  if (itksys::SystemTools::FileExists( fileName.c_str() ) )
-  {
-    reader->SetFileName( fileName );
-    if ( reader->RequestRead( ) )
-    {
-      trackerTool->SetCalibrationTransform( reader->GetCalibrationTransform() );
-      trackerTool->RequestConfigure();
-      return trackerTool;
-    }
-  }
- */
-  // if we could not find the attached calibration file
-  // we set a default identity transformation
   trackerTool->SetCalibrationTransform( 
              toolConfiguration->GetCalibrationTransform() );
 
@@ -1513,7 +1485,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
 
 void TrackerController::MicronInitializeProcessing()
 {
-  #ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
                   //create tracker
   igstk::MicronTracker::Pointer tracker = igstk::MicronTracker::New();
   this->m_Tracker = tracker; 
@@ -1611,26 +1583,10 @@ TrackerController::InitializeAscensionTool(
   FlockOfBirdsTrackerTool::Pointer trackerTool = FlockOfBirdsTrackerTool::New();
 
   trackerTool->RequestSetBirdName("bird0");
-/*
-  igstk::CalibrationIO * reader = new igstk::CalibrationIO;
 
-  std::string fileName = toolConfiguration->GetCalibrationFileName();
-
-  if (itksys::SystemTools::FileExists( fileName.c_str() ) )
-  {
-    reader->SetFileName( fileName );
-    if ( reader->RequestRead( ) )
-    {
-      trackerTool->SetCalibrationTransform( reader->GetCalibrationTransform() );
-      trackerTool->RequestConfigure();
-      return trackerTool;
-    }
-  }
-*/
    //SET SOME IDENTIFIER
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
-
 
   trackerTool->RequestConfigure();
   return trackerTool;
