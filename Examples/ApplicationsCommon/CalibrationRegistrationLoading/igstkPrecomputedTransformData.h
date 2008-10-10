@@ -89,7 +89,7 @@ public:
     virtual ::itk::EventObject* MakeObject() const 
       { return new TransformTypeEvent(); } 
     TransformTypeEvent(const TransformTypeEvent&s) : IGSTKEvent(s){}; 
-    const PrecomputedTransformData::TransformType* Get() const 
+    PrecomputedTransformData::TransformType* Get() const 
       { return m_Payload; }  
     void Set( PrecomputedTransformData::TransformType* p ) 
       { m_Payload = p; }  
