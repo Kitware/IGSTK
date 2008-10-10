@@ -36,7 +36,12 @@ public:
   MicronToolConfiguration(const MicronToolConfiguration &other);
   virtual ~MicronToolConfiguration();
 
+  igstkSetMacro( MarkerName, std::string );
+  igstkGetMacro( MarkerName, std::string );
   virtual std::string GetToolTypeAsString();
+
+protected:
+  std::string m_MarkerName;
 };
 
 

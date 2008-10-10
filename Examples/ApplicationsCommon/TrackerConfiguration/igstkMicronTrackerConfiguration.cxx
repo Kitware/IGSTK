@@ -72,7 +72,7 @@ MicronTrackerConfiguration::InternalAddTool(
 }
 
 
-MicronToolConfiguration::MicronToolConfiguration()
+MicronToolConfiguration::MicronToolConfiguration() : m_MarkerName( "" )
 {
 }
 
@@ -80,6 +80,7 @@ MicronToolConfiguration::MicronToolConfiguration()
 MicronToolConfiguration::MicronToolConfiguration( const 
   MicronToolConfiguration &other ) : TrackerToolConfiguration( other )
 {
+  this->m_MarkerName = other.m_MarkerName;
 }
 
 
