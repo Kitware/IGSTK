@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<tracking_system type = "polaris vicra">
+
+    <refresh_rate> 20 </refresh_rate>
+
+    <communication> 
+      <com_port>3</com_port>
+      <baud_rate>115200</baud_rate> 
+      <data_bits>8</data_bits>
+      <parity>N</parity> 
+      <stop_bits>1</stop_bits> 
+      <hand_shake>0</hand_shake> 
+    </communication>
+
+    <tool usage="reference">
+      <name> reference frame </name> 
+      <srom_file>E:/users/zivy/drf.rom</srom_file>
+    </tool>
+
+    <tool>
+      <name> bayonet probe </name> 
+      <srom_file>E:/users/zivy/probe.rom</srom_file>
+      <calibration_file>E:/users/zivy/bayonetCalibration.xml</calibration_file>
+    </tool>
+
+    <tool>
+      <name> US probe </name> 
+      <srom_file>E:/users/zivy/us.rom</srom_file>
+      <calibration_file>E:/users/zivy/USCalibration.xml</calibration_file>
+    </tool>
+
+</tracking_system>
