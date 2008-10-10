@@ -4,24 +4,22 @@
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
 #include "igstkObject.h"
-#include <itkTransform.h>
+#include "igstkTransformBase.h"
+
 
 namespace igstk
 {
 /** \class PrecomputedTransformData
  * 
- *  \brief This template is a container for precomputed transformations. 
+ *  \brief This class is a container for precomputed transformations. 
  *         The container holds the transformation, its associated estimation 
  *         error, computation date, and human readable description.
  *
- *  This template allows the programmer to load a precomputed transformation 
+ *  This class allows the programmer to load a precomputed transformation 
  *  for use in an IGSTK based application. The transformation is arbitrary 
- *  (i.e. rigid or non-rigid). This container is usefull for loading calibration
- *  data for tools, and preoperative registration of image data such as CT to 
- *  MR. 
- *  
- *  Note that the transformation is limited to decendants of 
- *  itk::Transform<double,3,3>.
+ *  (e.g rigid, affine, perspective...). This container is usefull for loading 
+ *  calibration data for tools, and preoperative registration of image data such 
+ *  as CT to MR. 
  */
 class PrecomputedTransformData : public Object
 {
@@ -31,16 +29,17 @@ public:
     * etc.). */
   igstkStandardClassTraitsMacro( PrecomputedTransformData, Object )
 
-  typedef ::itk::Transform<double, 3, 3>  TransformType;
-  typedef std::string                     DateType;
-  typedef double                          ErrorType;
+  typedef igstk::TransformBase  TransformType;
+  typedef std::string           DateType;
+  typedef double                ErrorType;
 
 
   /** This method Initializes the transformation information according to the 
    *  given data. All of the data is required at this time in a manner similar 
    *  to standard object construction.
-   *  NOTE: The temporal validity of the transformation is not checked.*/
-  void RequestInitialize( TransformType::Pointer transform,
+   *  NOTE: The temporal validity of the transformation is assumed to be 
+   *        infinite.*/
+  void RequestInitialize( TransformType *transform,
                           const DateType &date,
                           const std::string &description,
                           const ErrorType err );
@@ -48,9 +47,9 @@ public:
 
   /** This method is used to request the calibration/registration 
    *  transformation. 
-   *  It generates two events: TransformationTypeEvent, and 
-   *  InvalidRequestErrorEvent (denoting that the transformation data
-   *  is not available). */
+   *  It generates three events: TransformationType3DEvent, 
+   *  PerspectiveTransformTypeEvent and InvalidRequestErrorEvent 
+   * (denoting that the transformation data is not available). */
   void RequestTransform();
 
 
@@ -79,13 +78,32 @@ public:
 
   /** This event is generated when the transformation is requested and the
    *  data was initialized. */
-  igstkLoadedEventMacro( TransformTypeEvent, IGSTKEvent,
-                         TransformType::Pointer );
+  class  TransformTypeEvent : public IGSTKEvent
+  {
+  public:  
+    TransformTypeEvent() {} 
+    virtual ~TransformTypeEvent() {} 
+    virtual const char * GetEventName() const { return "TransformTypeEvent"; } 
+    virtual bool CheckEvent(const ::itk::EventObject* e) const 
+      { return dynamic_cast<const TransformTypeEvent*>(e); } 
+    virtual ::itk::EventObject* MakeObject() const 
+      { return new TransformTypeEvent(); } 
+    TransformTypeEvent(const TransformTypeEvent&s) : IGSTKEvent(s){}; 
+    const PrecomputedTransformData::TransformType* Get() const 
+      { return m_Payload; }  
+    void Set( PrecomputedTransformData::TransformType* p ) 
+      { m_Payload = p; }  
+  private: 
+    void operator=(const TransformTypeEvent &);  
+    TransformType*  m_Payload; 
+  };
+
 
   /** This event is generated when the transformation estimation error is 
    *  requested and the data was initialized. */
   igstkLoadedEventMacro( TransformErrorTypeEvent, IGSTKEvent,
                          ErrorType );
+
 
   /** This event is generated when the transformation computation date is 
    *  requested and the data was initialized. */
@@ -121,8 +139,8 @@ private:
   void GetDescriptionProcessing();
   void GetDateProcessing();
 
-  TransformType::Pointer m_TmpTransform;
-  TransformType::Pointer m_Transform;
+  TransformType *m_TmpTransform;
+  TransformType *m_Transform;
 
   ErrorType m_TmpTransformationError;
   ErrorType m_TransformationError;

@@ -22,7 +22,7 @@ TransformXMLFileReaderBase::CanReadFile(const char* name)
 
 void 
 TransformXMLFileReaderBase::StartElement( const char * name, 
-                                      const char **atts )
+                                          const char **atts )
 {
   if( itksys::SystemTools::Strucmp( name, "precomputed_transform" ) == 0 ) 
   {
@@ -36,13 +36,18 @@ TransformXMLFileReaderBase::StartElement( const char * name,
   }
   else if( itksys::SystemTools::Strucmp( name, "description" ) == 0      ||  
            itksys::SystemTools::Strucmp( name, "computation_date" ) == 0 ||
-           itksys::SystemTools::Strucmp( name, "transformation" ) == 0   ||
-           itksys::SystemTools::Strucmp( name, "estimation_error" ) == 0 )
+           itksys::SystemTools::Strucmp( name, "transformation" ) == 0 )
   {
     if( this->m_ReadingTagData )
       throw FileFormatException( "Nested tags are not allowed." );
     else
       this->m_ReadingTagData = true;
+            //if this is the "transformation" tag then it can have an
+            //"estimation_error" attribute, check for it here
+    if( itksys::SystemTools::Strucmp( name, "transformation" ) == 0 )
+    {
+      ProcessTransformationAttributes( atts );
+    }
   }
 }
 
@@ -96,11 +101,6 @@ TransformXMLFileReaderBase::EndElement( const char *name )
     {
       ProcessTransformation();
       this->m_HaveTransform = true;
-    }
-    else if( itksys::SystemTools::Strucmp( name, "estimation_error" ) == 0 )
-    {
-      ProcessError();
-      this->m_HaveError = true;
     }
             //done processing, clear the current tag's data
     this->m_CurrentTagData.clear();
@@ -164,19 +164,27 @@ TransformXMLFileReaderBase::ProcessDate()
 
 
 void 
-TransformXMLFileReaderBase::ProcessError() 
+TransformXMLFileReaderBase::ProcessTransformationAttributes( const char ** atts )
     throw ( FileFormatException )
 {
-  PrecomputedTransformData::ErrorType tmp;
-  std::istringstream instr;  
-  instr.str( this->m_CurrentTagData );
-  instr>>tmp; 
+            //go over all the attribute-value pairs
+  for( int i=0; atts[i] != NULL; i+=2 ) 
+  {          
+    if( itksys::SystemTools::Strucmp( atts[i], "estimation_error" ) == 0 ) 
+    {
+      PrecomputedTransformData::ErrorType tmp;
+      std::istringstream instr;  
+      instr.str( atts[i+1] );
+      instr>>tmp; 
       //check that we got to the end of the stream, we expect a single value
       //here (assumes that the string err has no trailing white spaces)
-  if(!instr.eof())
-    throw FileFormatException("Estimation error format is invalid.");
-  else
-    this->m_EstimationError = tmp;
+      if(!instr.eof())
+        throw FileFormatException("Estimation error format is invalid.");
+      else
+        this->m_EstimationError = tmp;
+        this->m_HaveError = true;
+    }
+  }
 }
 
 } //namespace

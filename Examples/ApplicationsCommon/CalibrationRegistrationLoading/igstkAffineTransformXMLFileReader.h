@@ -25,16 +25,11 @@ namespace igstk
        Thursday July 4 12:00:00 1776
     </computation_date>
    
-    <transformation>
+    <transformation estimation_error="0.5">
        a b c d
        e f g h
-       i j k l
-       0 0 0 1
+       i j k l       
     </transformation>
-   
-    <estimation_error>
-        0.5 
-    </estimation_error>
   
    </precomputed_transform>
    @endverbatim
@@ -64,7 +59,7 @@ protected:
    * This method extracts the transformation parameters from the string data
    * which is maintained internally (m_CurrentTagData).
    */
-  virtual void ProcessTransformation() throw (FileFormatException );
+  virtual void ProcessTransformation() throw ( FileFormatException );
 
 private:
   AffineTransformXMLFileReader( 

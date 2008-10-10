@@ -14,8 +14,7 @@ namespace igstk
  *         defined by the subclass.
  *
  *  This class is the base class for all the readers that load a precomputed
- *  transformation. The supported transformations are expected to be descendants 
- *  of itk::Transform<double, 3, 3>. 
+ *  transformation. 
  *
  *  The xml file format is as follows:
     @verbatim
@@ -126,9 +125,11 @@ protected:
                                  m_HaveDate( false ),
                                  m_HaveTransform( false ),
                                  m_HaveError( false ),
-                                 m_ReadingTagData( false )
+                                 m_ReadingTagData( false ),
+                                 m_Transform( NULL )
                                  {}
-    
+  ~TransformXMLFileReaderBase() { delete m_Transform; }
+
   void ProcessDescription() 
     throw ( FileFormatException );
 
@@ -138,8 +139,9 @@ protected:
   virtual void ProcessTransformation() 
     throw (FileFormatException ) = 0;
 
-  void ProcessError() 
+  void ProcessTransformationAttributes( const char ** atts )
     throw ( FileFormatException );
+
 
   bool m_ReadingTransformData;
   bool m_ReadingTagData;
@@ -154,7 +156,7 @@ protected:
   std::string m_Description;
   PrecomputedTransformData::DateType m_Date;
   PrecomputedTransformData::ErrorType m_EstimationError;
-  PrecomputedTransformData::TransformType::Pointer m_Transform; 
+  PrecomputedTransformData::TransformType* m_Transform; 
 
 private:
   TransformXMLFileReaderBase( 

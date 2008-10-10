@@ -75,7 +75,7 @@ PrecomputedTransformData::~PrecomputedTransformData()
 
 void 
 PrecomputedTransformData::RequestInitialize( 
-                          TransformType::Pointer transform,
+                          TransformType *transform,
                           const DateType &date,
                           const std::string &description,
                           const ErrorType err )

@@ -1,5 +1,6 @@
 #include "igstkRigidTransformXMLFileReader.h"
-#include <itkVersorRigid3DTransform.h>
+
+#include "igstkTransform.h"
 
 namespace igstk
 {
@@ -9,8 +10,8 @@ RigidTransformXMLFileReader::ProcessTransformation()
   throw ( FileFormatException )
 {
   double qx, qy, qz, qw;
-  itk::VersorRigid3DTransform< double >::TranslationType t;
-  itk::VersorRigid3DTransform< double >::VersorType q;
+  igstk::Transform::VectorType t;
+  igstk::Transform::VersorType q;
   
   const double eps = 0.1;
 
@@ -21,21 +22,27 @@ RigidTransformXMLFileReader::ProcessTransformation()
       //check that we got to the end of the stream, (assumes that the string 
       //m_CurrentTagData has no trailing white spaces)
   if( !instr.eof() )
-    throw FileFormatException( "Error in transformation data, possibly non numeric values" );
+    throw FileFormatException( 
+    "Error in transformation data, possibly non numeric values" );
       //check that we got all seven values
   if( instr.fail() )
     throw FileFormatException( "Missing transformation data" ); 
           //check that the quaternion is a versor (unit norm)
   if( fabs( qx*qx + qy*qy + qz*qz + qw*qw - 1 ) > eps )
   {
-    throw FileFormatException( "Quaternion entries do not define a rotation (norm not equal one)." );
+    throw FileFormatException( 
+      "Quaternion entries do not define a rotation (norm not equal one)." );
   }
 
   q.Set(qx, qy, qz, qw);
-  itk::VersorRigid3DTransform<double>::Pointer rigidTransform = 
-    itk::VersorRigid3DTransform<double>::New();    
-  rigidTransform->SetTranslation( t );
-  rigidTransform->SetRotation( q );
+
+  delete this->m_Transform;
+  Transform *rigidTransform = new Transform();  
+                 //we already have the estimation error
+  rigidTransform->SetTranslationAndRotation( 
+    t, q, 
+    this->m_EstimationError, 
+    itk::NumericTraits< TimeStamp::TimePeriodType >::max() );
   this->m_Transform = rigidTransform;
 }
 

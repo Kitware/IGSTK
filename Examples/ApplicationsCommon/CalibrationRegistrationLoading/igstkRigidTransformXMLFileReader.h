@@ -24,14 +24,10 @@ namespace igstk
        Thursday July 4 12:00:00 1776
     </computation_date>
    
-    <transformation>
+    <transformation estimation_error="0.5">
        qx qy qz qw tx ty tz 
     </transformation>
    
-    <estimation_error>
-        0.5 
-    </estimation_error>
-  
    </precomputed_transform>
    @endverbatim
 */
