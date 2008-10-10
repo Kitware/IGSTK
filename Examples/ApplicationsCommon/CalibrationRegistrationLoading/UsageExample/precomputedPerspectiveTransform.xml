@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!-- Example of settings for perspective transformation:           -->    
+<!-- The tags are:                                                 -->
+<!-- description: Human readable description of the transformation -->
+<!-- computation_date: Human readable date and time when the       -->
+<!--                   transformation was estimated.               -->
+<!-- transformation: The actual transformation data, in our case   -->
+<!--                 this is the 3x4 homogenous perspective        -->
+<!--                 projection matrix, P:                         -->
+<!--                                  P = [K|0][R|t]               -->
+<!--                                           [0|1]               -->  
+<!--                 where K is an upper triangular 3x3 matrix     -->
+<!--                 encoding the intrinsic camera parameters, and -->
+<!--                 R,t are the camera's pose.                    --> 
+<!--                 P is represented by the two matrices K and    -->
+<!--                 [R|t].                                        -->
+<!--                 Data is written in row major order and can    -->
+<!--                 span multiple lines, as shown below.          -->
+<!-- The transformation has an optional "estimation_error"         -->
+<!-- attribute, the error associated with the transformation       -->
+<!-- estimate.                                                     -->
+<!--                                                               -->
+<!--                                                               -->
+<precomputed_transform>
+  
+  <description>
+      C-arm calibration
+  </description>
+  
+  <computation_date>
+      Thursday July 4 12:00:00 1776
+  </computation_date>
+  
+  <transformation estimation_error = "0.5">
+    5.2038    0.0000    0.8646
+    0         5.2038    0.6763
+    0         0         0.0013
+   -0.2579   -0.9662   -0.0001  -722.6399
+    0.0029   -0.0007   -1.0000   188.9381
+    0.9662   -0.2579    0.0030  -6.9727
+  </transformation>
+
+</precomputed_transform>
+
