@@ -315,6 +315,9 @@ SET(IGSTKSandbox_HEADS
   igstkImageReslicePlaneSpatialObject.h
 
   igstkTransformBase.h
+  igstkAffineTransform.h
+  igstkPerspectiveTransform.h
+
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -379,7 +382,7 @@ IF(IGSTKSandbox_USE_vtkKWImage)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkGenericImageReader.h
-      igstkGenericImageSpatialObjectNew.h
+#     igstkGenericImageSpatialObjectNew.h
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
@@ -403,6 +406,9 @@ SET(IGSTKSandbox_SRCS
   igstkImageReslicePlaneSpatialObject.txx
 
   igstkTransformBase.cxx
+  igstkAffineTransform.cxx
+  igstkPerspectiveTransform.cxx
+
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx
@@ -468,7 +474,7 @@ IF(IGSTKSandbox_USE_vtkKWImage)
   SET(IGSTKSandbox_SRCS
       ${IGSTKSandbox_SRCS}
       igstkGenericImageReader.cxx
-      igstkGenericImageSpatialObjectNew.cxx
+#      igstkGenericImageSpatialObjectNew.cxx
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
