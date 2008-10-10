@@ -9,7 +9,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(IGSTK_HEADS
- igstkUSImageObject.h
+  igstkUSImageObject.h
   igstkUSImageObjectRepresentation.h
   igstkUSImageReader.h
   igstkMR3DImageToUS3DImageRegistration.h
@@ -49,7 +49,7 @@ SET(IGSTK_HEADS
   igstkNDIErrorEvent.h
   igstkObjectRepresentation.h
   igstkObject.h
- igstkPolarisTracker.h
+  igstkPolarisTracker.h
   igstkPolarisTrackerTool.h
   igstkPulseGenerator.h
   igstkRealTimeClock.h
@@ -128,11 +128,11 @@ ENDIF(IGSTKSandbox_USE_MicronTracker)
 # The implementation files
 
 SET(IGSTK_SRCS
- igstkUSImageObject.cxx
+  igstkUSImageObject.cxx
   igstkUSImageObjectRepresentation.cxx
   igstkUSImageReader.cxx
   igstkMR3DImageToUS3DImageRegistration.cxx
- igstkAnnotation2D.cxx
+  igstkAnnotation2D.cxx
   igstkAxesObject.cxx
   igstkAxesObjectRepresentation.cxx
   igstkBoxObject.cxx
@@ -164,7 +164,7 @@ SET(IGSTK_SRCS
   igstkMultipleOutput.cxx
   igstkNDICommandInterpreter.cxx
   igstkObject.cxx
- igstkObjectRepresentation.cxx
+  igstkObjectRepresentation.cxx
   igstkPolarisTracker.cxx
   igstkPolarisTrackerTool.cxx
   igstkPulseGenerator.cxx
@@ -314,6 +314,7 @@ SET(IGSTKSandbox_HEADS
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.h
 
+  igstkTransformBase.h
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -378,6 +379,7 @@ IF(IGSTKSandbox_USE_vtkKWImage)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkGenericImageReader.h
+      igstkGenericImageSpatialObjectNew.h
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
@@ -400,6 +402,7 @@ SET(IGSTKSandbox_SRCS
 # Reslicing component support
   igstkImageReslicePlaneSpatialObject.txx
 
+  igstkTransformBase.cxx
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx
@@ -465,6 +468,7 @@ IF(IGSTKSandbox_USE_vtkKWImage)
   SET(IGSTKSandbox_SRCS
       ${IGSTKSandbox_SRCS}
       igstkGenericImageReader.cxx
+      igstkGenericImageSpatialObjectNew.cxx
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
