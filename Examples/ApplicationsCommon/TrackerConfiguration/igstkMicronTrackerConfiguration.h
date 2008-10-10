@@ -25,7 +25,9 @@ namespace igstk
 
 
 /**
- * A micron tracker tool.
+ * A micron tracker tool. 
+ * NOTE: The tool name, TrackerToolConfiguration::SetToolName(), has to be
+ *       the same as the marker template file name.
  */
 class MicronToolConfiguration : public TrackerToolConfiguration
 {
@@ -34,18 +36,7 @@ public:
   MicronToolConfiguration(const MicronToolConfiguration &other);
   virtual ~MicronToolConfiguration();
 
-  igstkSetMacro( MarkerName, std::string );
-  igstkGetMacro( MarkerName, std::string );
-
-  igstkSetMacro( CalibrationFileName, std::string );
-  igstkGetMacro( CalibrationFileName, std::string );
-
   virtual std::string GetToolTypeAsString();
-
-protected:
-
-  std::string m_MarkerName;
-  std::string m_CalibrationFileName;
 };
 
 

@@ -25,7 +25,10 @@ namespace igstk
 
 
 /**
- * An Aurora tool.
+ * An Aurora tool. By default the tool is assumed to be a 6DOF tool connected to
+ * the control box on physical port 1. To indicate that the tool is a 5DOF tool
+ * the user sets the tool's channel which has the side effect of indicating that
+ * the tool is a 5DOF tool.
  */
 class AuroraToolConfiguration : public TrackerToolConfiguration
 {
@@ -44,7 +47,7 @@ public:
    * Set the tool's channel number on the specific port. Valid values are 0,1.
    * By default this value is 0. If a 5DOF tool is connected via a splitter it
    * can be 1.
-   * NOTE: If you invoke this method it implies that this is a 5DOF tool.
+   * NOTE: Invoking this method implies that this is a 5DOF tool.
    */
   void SetChannelNumber( unsigned channelNumber );  
   igstkGetMacro( ChannelNumber, unsigned );

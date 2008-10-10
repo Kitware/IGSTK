@@ -24,22 +24,26 @@
 
 #include "igstkPolarisTracker.h"
 #include "igstkAuroraTracker.h"
+//#include "igstkFlockOfBirdsTracker.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #endif
 
-#include "igstkFlockOfBirdsTrackerNew.h"
 
 namespace igstk
 { 
-
 
 
 TrackerController::TrackerController() : m_StateMachine( this )
 {
             //create error observer
   this->m_ErrorObserver = ErrorObserver::New();
+
+           //create observer for the tracker update status events
+  this->m_TrackerUpdateStatusObserver = 
+    TrackerUpdateObserver::New();
+  this->m_TrackerUpdateStatusObserver->SetParent( this );
 
         //define the state machine's states 
   igstkAddStateMacro( Idle );
@@ -48,791 +52,884 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializePolarisHybrid );
   igstkAddStateMacro( AttemptingToInitializeAurora );
   igstkAddStateMacro( AttemptingToInitializeMicron );
-  igstkAddStateMacro( AttemptingToInitializeAscension );  
-
-  igstkAddStateMacro( AttemptingToShutdown );
+  igstkAddStateMacro( AttemptingToInitializeMedSafe );  
   igstkAddStateMacro( Initialized );
-
-  igstkAddStateMacro( AttemptingToStart );
-  igstkAddStateMacro( AttemptingToStop );
-
-  igstkAddStateMacro( Started );  
+  igstkAddStateMacro( AttemptingToStartTracking );
+  igstkAddStateMacro( Tracking );
+  igstkAddStateMacro( AttemptingToCloseCommunication );
+  igstkAddStateMacro( AttemptingToStopTracking );
 
                    //define the state machine's inputs
   igstkAddInputMacro( TrackerInitialize );
-  igstkAddInputMacro( TrackerStart );
-  igstkAddInputMacro( TrackerStop );
-  igstkAddInputMacro( TrackerShutdown );
   igstkAddInputMacro( PolarisVicraInitialize );
   igstkAddInputMacro( PolarisHybridInitialize );
   igstkAddInputMacro( AuroraInitialize );
   igstkAddInputMacro( MicronInitialize );
-  igstkAddInputMacro( MicronStart );
-  igstkAddInputMacro( MicronStop );
-  igstkAddInputMacro( AscensionInitialize );
+  igstkAddInputMacro( MedSafeInitialize );
+  igstkAddInputMacro( StartTracking );
+  igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( Failed  );
   igstkAddInputMacro( Succeeded  );
-  igstkAddInputMacro( GetTracker  );
+  igstkAddInputMacro( CloseCommunication );
   igstkAddInputMacro( GetTools  );
+  igstkAddInputMacro( GetTool  );
   igstkAddInputMacro( GetReferenceTool  );
 
             //define the state machine's transitions
 
                          //transitions from Idle state
-  igstkAddTransitionMacro(Idle,
-                          TrackerInitialize,
-                          AttemptingToInitialize,
-                          TrackerInitialize);
+  igstkAddTransitionMacro( Idle,
+                           TrackerInitialize,
+                           AttemptingToInitialize,
+                           TrackerInitialize );
 
-  igstkAddTransitionMacro(Idle,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Idle,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(Idle,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Idle,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(Idle,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          Failed,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Idle,
+                           StopTracking,
+                           Idle,
+                           ReportStopTrackingSuccess );
 
-  igstkAddTransitionMacro(Idle,
-                          Succeeded,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(Idle,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Idle,
+                           Failed,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(Idle,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Idle,
+                           Succeeded,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           CloseCommunication,
+                           Idle,
+                           ReportCloseCommunicationSuccess );
+  
+  igstkAddTransitionMacro( Idle,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
 
                   //transitions from AttemptingToInitialize state
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);                          
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );                          
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          PolarisVicraInitialize,
-                          AttemptingToInitializePolarisVicra,
-                          PolarisVicraInitialize);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           PolarisVicraInitialize,
+                           AttemptingToInitializePolarisVicra,
+                           PolarisVicraInitialize );
   
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          PolarisHybridInitialize,
-                          AttemptingToInitializePolarisHybrid,
-                          PolarisHybridInitialize);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           PolarisHybridInitialize,
+                           AttemptingToInitializePolarisHybrid,
+                           PolarisHybridInitialize );
  
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          AuroraInitialize,
-                          AttemptingToInitializeAurora,
-                          AuroraInitialize);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           AuroraInitialize,
+                           AttemptingToInitializeAurora,
+                           AuroraInitialize );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          MicronInitialize,
-                          AttemptingToInitializeMicron,
-                          MicronInitialize);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           MicronInitialize,
+                           AttemptingToInitializeMicron,
+                           MicronInitialize );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          AscensionInitialize,
-                          AttemptingToInitializeAscension,
-                          AscensionInitialize);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           MedSafeInitialize,
+                           AttemptingToInitializeMedSafe,
+                           MedSafeInitialize );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          Succeeded,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Succeeded,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitialize,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
 
            //transitions from AttemptingToInitializePolarisVicra state
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
   
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          Succeeded,
-                          Initialized,
-                          ReportInitializationSuccess);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisVicra,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
 
            //transitions from AttemptingToInitializePolarisHybrid state
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
   
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          Succeeded,
-                          Initialized,
-                          ReportInitializationSuccess);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializePolarisHybrid,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
 
           //transitions from AttemptingToInitializeAurora state
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          Succeeded,
-                          Initialized,
-                          ReportInitializationSuccess);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeAurora,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
 
           //transitions from AttemptingToInitializeMicron state
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
   
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          Succeeded,
-                          Initialized,
-                          ReportInitializationSuccess);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
 
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
-  
-  igstkAddTransitionMacro(AttemptingToInitializeMicron,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
 
-          //transitions from AttemptingToInitializeAscension state
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          Failed,
-                          Idle,
-                          ReportInitializationFailure);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          Succeeded,
-                          Initialized,
-                          ReportInitializationSuccess);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          TrackerInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest);
 
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          TrackerShutdown,
-                          Idle,
-                          ReportInvalidRequest);
+          //transitions from AttemptingToInitializeMedSafe state
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          PolarisVicraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          PolarisHybridInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          AuroraInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          MicronInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          AscensionInitialize,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          GetTracker,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          GetTools,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToInitializeAscension,
-                          GetReferenceTool,
-                          Idle,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
           
           //transitions from Initialized state
-  igstkAddTransitionMacro(Initialized,
-                          GetTracker,
-                          Initialized,
-                          GetTracker);
+  igstkAddTransitionMacro( Initialized,
+                           GetTools,
+                           Initialized,
+                           GetTools );
 
-  igstkAddTransitionMacro(Initialized,
-                          GetTools,
-                          Initialized,
-                          GetTools);
+  igstkAddTransitionMacro( Initialized,
+                           GetTool,
+                           Initialized,
+                           GetTool );
 
-  igstkAddTransitionMacro(Initialized,
-                          GetReferenceTool,
-                          Initialized,
-                          GetReferenceTool);
+  igstkAddTransitionMacro( Initialized,
+                           GetReferenceTool,
+                           Initialized,
+                           GetReferenceTool );
 
-  igstkAddTransitionMacro(Initialized,
-                          TrackerInitialize,
-                          AttemptingToInitialize,
-                          TrackerInitialize);
+  igstkAddTransitionMacro( Initialized,
+                           StartTracking,
+                           AttemptingToStartTracking,
+                           StartTracking);
 
-  igstkAddTransitionMacro(Initialized,
-                          TrackerShutdown,
-                          AttemptingToShutdown,
-                          TrackerShutdown);
+  igstkAddTransitionMacro( Initialized,
+                           StopTracking,
+                           Initialized,
+                           ReportStopTrackingSuccess);
 
-  igstkAddTransitionMacro(Initialized,
-                          TrackerStart,
-                          AttemptingToStart,
-                          TrackerStart);
+  igstkAddTransitionMacro( Initialized,
+                           TrackerInitialize,
+                           AttemptingToInitialize,
+                           TrackerInitialize );
 
-  igstkAddTransitionMacro(Initialized,
-                          PolarisVicraInitialize,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           CloseCommunication );
 
-  igstkAddTransitionMacro(Initialized,
-                          PolarisHybridInitialize,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           PolarisVicraInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Initialized,
+                           PolarisHybridInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Initialized,
-                          AuroraInitialize,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           AuroraInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Initialized,
-                          MicronInitialize,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           MicronInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Initialized,
-                          AscensionInitialize,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           MedSafeInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(Initialized,
-                          TrackerStop,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           Failed,
+                           Initialized,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(Initialized,
-                          Failed,
-                          Initialized,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Initialized,
+                           Succeeded,
+                           Initialized,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(Initialized,
-                          Succeeded,
-                          Initialized,
-                          ReportInvalidRequest);
+         //transitions from AttemptingToStartTracking state
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           Succeeded,
+                           Tracking,
+                           ReportStartTrackingSuccess );
 
-  //transitions from AttemtingToStart state
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           Failed,
+                           Initialized,
+                           ReportStartTrackingFailure );
 
-  igstkAddTransitionMacro(AttemptingToStart,
-                          Succeeded,
-                          Started,
-                          ReportStartSuccess);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          Failed,
-                          Initialized,
-                          ReportStartFailure);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetTracker,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetTools,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          GetReferenceTool,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerShutdown,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerStart,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          PolarisVicraInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          PolarisHybridInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           TrackerInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStart,
-                          AuroraInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           PolarisVicraInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           PolarisHybridInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStart,
-                          MicronInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           AuroraInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStart,
-                          AscensionInitialize,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStart,
-                          TrackerStop,
-                          AttemptingToStart,
-                          ReportInvalidRequest);
-
-        //transitions from Started state
-
-  igstkAddTransitionMacro(Started,
-                          TrackerStop,
-                          AttemptingToStop,
-                          TrackerStop);
-
-  igstkAddTransitionMacro(Started,
-                          PolarisVicraInitialize,
-                          Started,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(Started,
-                          PolarisHybridInitialize,
-                          Started,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           MicronInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Started,
-                          AuroraInitialize,
-                          Started,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           MedSafeInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Started,
-                          MicronInitialize,
-                          Started,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           StartTracking,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           StopTracking,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           CloseCommunication,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           GetTools,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           GetTool,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           GetReferenceTool,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+        //transitions from Tracking state
+  igstkAddTransitionMacro( Tracking,
+                           StopTracking,
+                           AttemptingToStopTracking,
+                           StopTracking );
+
+  igstkAddTransitionMacro( Tracking,
+                           TrackerInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           PolarisVicraInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           PolarisHybridInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(Started,
-                          AscensionInitialize,
-                          Started,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(Started,
-                          TrackerInitialize,
-                          Started,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(Started,
-                          TrackerStart,
-                          Started,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(Started,
-                          Succeeded,
-                          Started,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(Started,
-                          Failed,
-                          Started,
-                          ReportInvalidRequest);
-
-   //transitions from AttemtingtoStop state
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          Succeeded,
-                          Initialized,
-                          ReportStopSuccess);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          Failed,
-                          Started,
-                          ReportStopFailure);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          GetTracker,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          GetTools,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          GetReferenceTool,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          TrackerInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          TrackerShutdown,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          TrackerStart,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          PolarisVicraInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          PolarisHybridInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Tracking,
+                           AuroraInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStop,
-                          AuroraInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Tracking,
+                           MicronInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStop,
-                          MicronInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( Tracking,
+                           MedSafeInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           StartTracking,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           Failed,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           Succeeded,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           CloseCommunication,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           GetTools,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           GetTool,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           GetReferenceTool,
+                           Tracking,
+                           ReportInvalidRequest );
+
+     //transitions from AttemtingtoStop state
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           Succeeded,
+                           Initialized,
+                           ReportStopTrackingSuccess );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           Failed,
+                           Tracking,
+                           ReportStopTrackingFailure );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           TrackerInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           PolarisVicraInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           PolarisHybridInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToStop,
-                          AscensionInitialize,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToStop,
-                          TrackerStop,
-                          AttemptingToStop,
-                          ReportInvalidRequest);
-
-  //transitions from AttemptingToShutdown state
-
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          Succeeded,
-                          Idle,
-                          ReportShutdownSuccess);
-
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          Failed,
-                          Initialized,
-                          ReportShutdownFailure);                          
-
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          TrackerInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          PolarisVicraInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           AuroraInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          PolarisHybridInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           MicronInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           MedSafeInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           StartTracking,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           StopTracking,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           CloseCommunication,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           GetTools,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           GetTool,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           GetReferenceTool,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+
+       //transitions from AttemptingToCloseCommunication state
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           Succeeded,
+                           Idle,
+                           ReportCloseCommunicationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           Failed,
+                           Initialized,
+                           ReportCloseCommunicationFailure );                          
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           TrackerInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           PolarisVicraInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           PolarisHybridInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
  
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          AuroraInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           AuroraInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          MicronInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           MicronInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          AscensionInitialize,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           MedSafeInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          TrackerShutdown,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
-
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          GetTracker,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           StartTracking,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
   
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          GetTools,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           StopTracking,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           CloseCommunication,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           GetTools,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest);
   
-  igstkAddTransitionMacro(AttemptingToShutdown,
-                          GetReferenceTool,
-                          AttemptingToShutdown,
-                          ReportInvalidRequest);
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           GetTool,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           GetReferenceTool,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
 
               //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
@@ -860,20 +957,20 @@ TrackerController::RequestInitialize(
 }
 
 void
-TrackerController::RequestStart()
+TrackerController::RequestStartTracking( )
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestStart called...\n" );
-  igstkPushInputMacro( TrackerStart );
+                 "igstkTrackerController::RequestStartTracking called...\n" );
+  igstkPushInputMacro( StartTracking );
   this->m_StateMachine.ProcessInputs();
 }
 
 void
-TrackerController::RequestStop()
+TrackerController::RequestStopTracking()
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestStop called...\n" );
-  igstkPushInputMacro( TrackerStop );
+                 "igstkTrackerController::RequestStopTracking called...\n" );
+  igstkPushInputMacro( StopTracking );
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -882,18 +979,11 @@ TrackerController::RequestShutdown()
 {
   igstkLogMacro( DEBUG, 
                  "igstkTrackerController::RequestShutdown called...\n" );
-  igstkPushInputMacro( TrackerShutdown );
+  igstkPushInputMacro( StopTracking );
+  igstkPushInputMacro( CloseCommunication );
   this->m_StateMachine.ProcessInputs();
 }
 
-void 
-TrackerController::RequestGetTracker()
-{
-  igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestGetTracker called...\n" );
-  igstkPushInputMacro( GetTracker );
-  this->m_StateMachine.ProcessInputs();
-}
 
 void 
 TrackerController::RequestGetNonReferenceToolList()
@@ -904,6 +994,18 @@ TrackerController::RequestGetNonReferenceToolList()
   this->m_StateMachine.ProcessInputs();
 }
 
+
+void 
+TrackerController::RequestGetTool( const std::string &toolName )
+{
+  igstkLogMacro( DEBUG, 
+                 "igstkTrackerController::RequestGetTool called...\n" );
+  this->m_RequestedToolName = toolName;
+  igstkPushInputMacro( GetTool );
+  this->m_StateMachine.ProcessInputs();
+}
+
+
 void 
 TrackerController::RequestGetReferenceTool()
 {
@@ -912,6 +1014,7 @@ TrackerController::RequestGetReferenceTool()
   igstkPushInputMacro( GetReferenceTool );
   this->m_StateMachine.ProcessInputs();
 }
+
 
 void 
 TrackerController::TrackerInitializeProcessing()
@@ -923,13 +1026,6 @@ TrackerController::TrackerInitializeProcessing()
   }
   else 
   {
-              //clear the previous data, call ShutdownProcessing if there is
-              //something active
-    /*if( this->m_Tracker.IsNotNull() )
-    {
-      TrackerShutdownProcessing();
-    }*/
-
     if( dynamic_cast<PolarisVicraTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
     {
@@ -948,19 +1044,19 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
     }
-#ifdef IGSTKSandbox_USE_MicronTracker
+    #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
     }
-#endif
-    else if( dynamic_cast<AscensionTrackerConfiguration *>
+    #endif
+    else if( dynamic_cast<MedSafeTrackerConfiguration *>
     ( this->m_TmpTrackerConfiguration ) )
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
-      igstkPushInputMacro( AscensionInitialize );
+      igstkPushInputMacro( MedSafeInitialize );
     }
     else
     {
@@ -971,119 +1067,98 @@ TrackerController::TrackerInitializeProcessing()
  this->m_StateMachine.ProcessInputs();
 }
 
-void 
-TrackerController::TrackerStartProcessing()
-{  
-    StartFailureEvent evt;
-    unsigned long observerID;
-    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
-                                             this->m_ErrorObserver );
 
+void 
+TrackerController::StartTrackingProcessing()
+{  
+    unsigned long observerID;
+              
+    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
+                                               this->m_ErrorObserver );
     m_Tracker->RequestStartTracking();
+    this->m_Tracker->RemoveObserver(observerID);
 
     if( this->m_ErrorObserver->ErrorOccured() )
     {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      m_Tracker->RemoveObserver( observerID );
-      //m_Tracker->RequestClose();
-      evt.Set( this->m_ErrorMessage );
-      this->InvokeEvent( evt );
+      this->m_ErrorObserver->ClearError();    
       igstkPushInputMacro( Failed );
     }
     else
     {
-      m_Tracker->RemoveObserver(observerID);
       igstkPushInputMacro( Succeeded );
     }
-
     this->m_StateMachine.ProcessInputs();
 }
 
+
 void 
-TrackerController::TrackerStopProcessing()
+TrackerController::StopTrackingProcessing()
 {
-  StopFailureEvent evt;
   unsigned long observerID;
 
   observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
                                              this->m_ErrorObserver );
-                //stop tracking
   this->m_Tracker->RequestStopTracking();
+  this->m_Tracker->RemoveObserver(observerID);
+
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
-    this->m_Tracker->RemoveObserver(observerID);
-    evt.Set( this->m_ErrorMessage );
-    this->InvokeEvent( evt );
     igstkPushInputMacro( Failed );
-  }
+   }
   else
   {
-    this->m_Tracker->RemoveObserver(observerID);
     igstkPushInputMacro( Succeeded );
-  }
-
+   }
   this->m_StateMachine.ProcessInputs();
 }
 
+
 void 
-TrackerController::TrackerShutdownProcessing()
+TrackerController::CloseCommunicationProcessing()
 {
-  ShutdownFailureEvent evt;
+  CloseCommunicationErrorEvent evt;
   unsigned long observerID;
 
   observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
-                                             this->m_ErrorObserver );
-                //stop tracking
-  /*this->m_Tracker->RequestStopTracking();
-  if( this->m_ErrorObserver->ErrorOccured() )
-  {
-    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-    this->m_ErrorObserver->ClearError();
-    this->m_Tracker->RemoveObserver(observerID);
-    evt.Set( this->m_ErrorMessage );
-    this->InvokeEvent( evt );
-  }*/
+                                             this->m_ErrorObserver );  
                    //close communication with tracker
   this->m_Tracker->RequestClose();
+  this->m_Tracker->RemoveObserver( observerID );
+
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
-    this->m_Tracker->RemoveObserver(observerID);
-    evt.Set( this->m_ErrorMessage );
-    this->InvokeEvent( evt );
     igstkPushInputMacro( Failed );
   }
   else
   {
-   this->m_Tracker->RemoveObserver( observerID );
-
                    //if serial communication, close COM port
    if( this->m_SerialCommunication.IsNotNull() )
    {
      observerID = this->m_SerialCommunication->AddObserver( ClosePortErrorEvent(),
-                                                           this->m_ErrorObserver );
+                                                            this->m_ErrorObserver );
      this->m_SerialCommunication->CloseCommunication();
      this->m_SerialCommunication->RemoveObserver(observerID);
      if( this->m_ErrorObserver->ErrorOccured() )
      {
        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
        this->m_ErrorObserver->ClearError();
-       evt.Set( this->m_ErrorMessage );
-       this->InvokeEvent( evt );
        igstkPushInputMacro( Failed );
      }
+     else
+     {
+       igstkPushInputMacro( Succeeded );
+     }
    }
-   this->m_Tracker = NULL;
-   this->m_ReferenceTool = NULL;
-   this->m_Tools.clear();
-   this->m_SerialCommunication = NULL;
-   igstkPushInputMacro( Succeeded );
+   else //not serial communication
+   {
+     igstkPushInputMacro( Succeeded );
+   }
   }
-
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1120,9 +1195,6 @@ TrackerController::InitializeSerialCommunication()
     this->m_ErrorObserver->ClearError();
     return false;
   }
-
-  this->m_SerialCommunication->Print(std::cout);
-
   return true;
 }
 
@@ -1180,43 +1252,43 @@ TrackerController::PolarisVicraInitializeProcessing()
 
 
                 //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent,
-               //TrackerStartTrackingErrorEvent)
+               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
-
     tracker->SetCommunication( this->m_SerialCommunication );
-
     tracker->RequestOpen();
+    tracker->RemoveObserver(observerID);
+
     if( this->m_ErrorObserver->ErrorOccured() )
     {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      tracker->RemoveObserver(observerID);
+      this->m_ErrorObserver->ClearError();      
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
     }
-    else   //attach the tools and start communication 
+    else   //attach the tools 
     {
-      std::vector< TrackerToolConfiguration * > toolConfigurations = 
-        this->m_TrackerConfiguration->GetTrackerToolList();
+      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
-      std::vector< TrackerToolConfiguration * >::const_iterator it;
-      std::vector< TrackerToolConfiguration * >::const_iterator toolConfigEnd =
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
         toolConfigurations.end();      
       TrackerTool::Pointer currentTool;
       PolarisWirelessToolConfiguration * currentToolConfig;
 
-      for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
       {
-        currentToolConfig = static_cast<PolarisWirelessToolConfiguration *>(*it);
+        currentToolConfig = 
+          static_cast<PolarisWirelessToolConfiguration *>( it->second );
         currentTool = InitializePolarisWirelessTool( currentToolConfig );
-        this->m_Tools.push_back( currentTool );
+        this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
         currentTool->RequestAttachToTracker( tracker );
       }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
-        this->m_TrackerConfiguration->GetReferenceTool();
+        this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
       {
         currentToolConfig = 
@@ -1227,23 +1299,9 @@ TrackerController::PolarisVicraInitializeProcessing()
         currentTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( currentTool );
       }
-      tracker->RequestStartTracking();
-      if( this->m_ErrorObserver->ErrorOccured() )
-      {
-        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-        this->m_ErrorObserver->ClearError();
-        tracker->RemoveObserver( observerID );
-        tracker->RequestClose();
-        this->m_SerialCommunication->CloseCommunication();
-        igstkPushInputMacro( Failed );
-      }
-      else
-      {
-        tracker->RemoveObserver(observerID);
-        igstkPushInputMacro( Succeeded );
-      }
+      igstkPushInputMacro( Succeeded );
     }
-  }
+  }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1266,52 +1324,52 @@ TrackerController::PolarisHybridInitializeProcessing()
 
 
                 //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent,
-               //TrackerStartTrackingErrorEvent)
+               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
-
     tracker->SetCommunication( this->m_SerialCommunication );
-
     tracker->RequestOpen();
+    tracker->RemoveObserver(observerID);
+
     if( this->m_ErrorObserver->ErrorOccured() )
     {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      tracker->RemoveObserver(observerID);
+      this->m_ErrorObserver->ClearError();      
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
     }
-    else   //attach the tools and start communication 
+    else   //attach the tools 
     {
-      std::vector< TrackerToolConfiguration * > toolConfigurations = 
-        this->m_TrackerConfiguration->GetTrackerToolList();
+      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
-      std::vector< TrackerToolConfiguration * >::const_iterator it;
-      std::vector< TrackerToolConfiguration * >::const_iterator toolConfigEnd =
-        toolConfigurations.end();
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
+        toolConfigurations.end();      
       TrackerTool::Pointer trackerTool;
       PolarisWirelessToolConfiguration * wirelessToolConfig;
       PolarisWiredToolConfiguration * wiredToolConfig;
 
-      for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
       {
-        if( (wirelessToolConfig = 
-             dynamic_cast<PolarisWirelessToolConfiguration *>(*it)))
+        if( ( wirelessToolConfig = 
+             dynamic_cast<PolarisWirelessToolConfiguration *>( it->second ) ) )
         {
           trackerTool = InitializePolarisWirelessTool( wirelessToolConfig );
         }
         else 
         {
-          wiredToolConfig = dynamic_cast<PolarisWiredToolConfiguration *>(*it);
+          wiredToolConfig = 
+            dynamic_cast<PolarisWiredToolConfiguration *>( it->second );
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
         }
-        this->m_Tools.push_back( trackerTool );
+        this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
         trackerTool->RequestAttachToTracker( tracker );
       }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
-        this->m_TrackerConfiguration->GetReferenceTool();
+        this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
       {
         if ( ( wirelessToolConfig = 
@@ -1329,23 +1387,9 @@ TrackerController::PolarisHybridInitializeProcessing()
         trackerTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( trackerTool );
       }
-      tracker->RequestStartTracking();
-      if( this->m_ErrorObserver->ErrorOccured() )
-      {
-        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-        this->m_ErrorObserver->ClearError();
-        tracker->RemoveObserver( observerID );
-        tracker->RequestClose();
-        this->m_SerialCommunication->CloseCommunication();
-        igstkPushInputMacro( Failed );
-      }
-      else
-      {
-        tracker->RemoveObserver(observerID);
-        igstkPushInputMacro( Succeeded );
-      }
+      igstkPushInputMacro( Succeeded );
     }
-  }
+  }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1379,6 +1423,7 @@ TrackerController::InitializeAuroraTool(
   return trackerTool;
 }
 
+
 void 
 TrackerController::AuroraInitializeProcessing()
 {
@@ -1397,89 +1442,75 @@ TrackerController::AuroraInitializeProcessing()
 
 
                 //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent,
-               //TrackerStartTrackingErrorEvent)
+               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
-
     tracker->SetCommunication( this->m_SerialCommunication );
-
     tracker->RequestOpen();
+    tracker->RemoveObserver(observerID);
+
     if( this->m_ErrorObserver->ErrorOccured() )
     {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      tracker->RemoveObserver(observerID);
+      this->m_ErrorObserver->ClearError();      
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
     }
-    else   //attach the tools and start communication 
+    else   //attach the tools 
     {
-      std::vector< TrackerToolConfiguration * > toolConfigurations = 
-        this->m_TrackerConfiguration->GetTrackerToolList();
+      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
-      std::vector< TrackerToolConfiguration * >::const_iterator it;
-      std::vector< TrackerToolConfiguration * >::const_iterator toolConfigEnd =
-        toolConfigurations.end();
-      TrackerTool::Pointer trackerTool;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
+        toolConfigurations.end();      
+      TrackerTool::Pointer currentTool;
       AuroraToolConfiguration * currentToolConfig;
 
-      for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
       {
-        currentToolConfig = static_cast<AuroraToolConfiguration *>(*it);
-
-        trackerTool = InitializeAuroraTool( currentToolConfig );
-        this->m_Tools.push_back( trackerTool );
-        trackerTool->RequestAttachToTracker( tracker );
+        currentToolConfig = 
+          static_cast<AuroraToolConfiguration *>( it->second );
+        currentTool = InitializeAuroraTool( currentToolConfig );
+        this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
+        currentTool->RequestAttachToTracker( tracker );
       }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
-        this->m_TrackerConfiguration->GetReferenceTool();
+        this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
       {
         currentToolConfig = 
           static_cast<AuroraToolConfiguration *>( referenceToolConfiguration );
 
-        trackerTool = InitializeAuroraTool( currentToolConfig );   
-        this->m_ReferenceTool = trackerTool;
-        trackerTool->RequestAttachToTracker( tracker );
-        tracker->RequestSetReferenceTool( trackerTool );
+        currentTool = InitializeAuroraTool( currentToolConfig );
+        this->m_ReferenceTool = currentTool;
+        currentTool->RequestAttachToTracker( tracker );
+        tracker->RequestSetReferenceTool( currentTool );
       }
-      tracker->RequestStartTracking();
-      if( this->m_ErrorObserver->ErrorOccured() )
-      {
-        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-        this->m_ErrorObserver->ClearError();
-        tracker->RemoveObserver( observerID );
-        tracker->RequestClose();
-        this->m_SerialCommunication->CloseCommunication();
-        igstkPushInputMacro( Failed );
-      }
-      else
-      {
-        tracker->RemoveObserver(observerID);
-        igstkPushInputMacro( Succeeded );
-      }
+      igstkPushInputMacro( Succeeded );
     }
-  }
+  }  
   this->m_StateMachine.ProcessInputs();
 }
 
 
 #ifdef IGSTKSandbox_USE_MicronTracker
+
 MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration )
 {
   MicronTrackerTool::Pointer trackerTool = MicronTrackerTool::New();
  
-  trackerTool->RequestSetMarkerName( toolConfiguration->GetMarkerName() );
-
+  trackerTool->RequestSetMarkerName( toolConfiguration->GetToolName() );
+ 
   trackerTool->SetCalibrationTransform( 
-             toolConfiguration->GetCalibrationTransform() );
-
+    toolConfiguration->GetCalibrationTransform() );
   trackerTool->RequestConfigure();
   return trackerTool;
 }
+
 #endif
 
 
@@ -1508,36 +1539,37 @@ void TrackerController::MicronInitializeProcessing()
   unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                    this->m_ErrorObserver );
   tracker->RequestOpen();
+  tracker->RemoveObserver(observerID);    
   
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
-    tracker->RemoveObserver(observerID);    
     igstkPushInputMacro( Failed );
   }
   else   //attach the tools and start communication 
   {
-    std::vector< TrackerToolConfiguration * > toolConfigurations = 
-        this->m_TrackerConfiguration->GetTrackerToolList();
+    std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
                           //attach tools
-    std::vector< TrackerToolConfiguration * >::const_iterator it;
-    std::vector< TrackerToolConfiguration * >::const_iterator toolConfigEnd =
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
       toolConfigurations.end();
     TrackerTool::Pointer trackerTool;
     MicronToolConfiguration * currentToolConfig;
 
     for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
     {
-      currentToolConfig = static_cast<MicronToolConfiguration *>(*it);
+      currentToolConfig = static_cast<MicronToolConfiguration *>(it->second);
 
-      trackerTool = InitializeMicronTool( currentToolConfig );
-      this->m_Tools.push_back( trackerTool );
+      trackerTool = InitializeMicronTool( currentToolConfig );      
+      this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
       trackerTool->RequestAttachToTracker( tracker );
     }
-    //add the reference if we have one
+                      //add the reference if we have one
     TrackerToolConfiguration* referenceToolConfiguration = 
-      this->m_TrackerConfiguration->GetReferenceTool();
+      this->m_TrackerConfiguration->m_ReferenceTool;
     if( referenceToolConfiguration )
     {
       currentToolConfig = 
@@ -1548,24 +1580,6 @@ void TrackerController::MicronInitializeProcessing()
       trackerTool->RequestAttachToTracker( tracker );
       tracker->RequestSetReferenceTool( trackerTool );
     }
- 
-    //tracker->RequestStartTracking();
-    //if( this->m_ErrorObserver->ErrorOccured() )
-    //{
-    //  this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-    //  this->m_ErrorObserver->ClearError();
-    //  m_Tracker->RemoveObserver( observerID );
-    //  m_Tracker->RequestClose();
-    //  igstkPushInputMacro( Failed );
-    //}
-  
-    //else
-    //{
-    //  tracker->RemoveObserver(observerID);
-    //  igstkPushInputMacro( Succeeded );
-    //}
-
-    m_Tracker->RemoveObserver(observerID);
     igstkPushInputMacro( Succeeded );
   }
   this->m_StateMachine.ProcessInputs();
@@ -1575,25 +1589,30 @@ void TrackerController::MicronInitializeProcessing()
 #endif
 }
 
-
+/*
 FlockOfBirdsTrackerTool::Pointer 
-TrackerController::InitializeAscensionTool(
-    const AscensionToolConfiguration *toolConfiguration )
+TrackerController::InitializeMedSafeTool(
+    const MedSafeToolConfiguration *toolConfiguration )
 {
   FlockOfBirdsTrackerTool::Pointer trackerTool = FlockOfBirdsTrackerTool::New();
 
-  trackerTool->RequestSetBirdName("bird0");
-
-   //SET SOME IDENTIFIER
+  trackerTool->RequestSetBirdName( toolConfiguration->GetToolName() );
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
-
   trackerTool->RequestConfigure();
   return trackerTool;
 }
+*/
 
 void 
-TrackerController::AscensionInitializeProcessing()
+TrackerController::MedSafeInitializeProcessing()
+{
+   //see implementation below
+}
+
+/*
+void 
+TrackerController::MedSafeInitializeProcessing()
 {
   if( !InitializeSerialCommunication() )
   {
@@ -1632,37 +1651,37 @@ TrackerController::AscensionInitializeProcessing()
     }
     else   //attach the tools and start communication 
     {
-      std::vector< TrackerToolConfiguration * > toolConfigurations = 
-        this->m_TrackerConfiguration->GetTrackerToolList();
+      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
-      std::vector< TrackerToolConfiguration * >::const_iterator it;
-      std::vector< TrackerToolConfiguration * >::const_iterator toolConfigEnd =
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
         toolConfigurations.end();
       TrackerTool::Pointer trackerTool;
-      AscensionToolConfiguration * currentToolConfig;
+      MedSafeToolConfiguration * currentToolConfig;
 
       for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
       {
-        currentToolConfig = static_cast<AscensionToolConfiguration *>(*it);
+        currentToolConfig = static_cast<MedSafeToolConfiguration *>(it->second);
 
-        trackerTool = InitializeAscensionTool( currentToolConfig );
-        this->m_Tools.push_back( trackerTool );
+        trackerTool = InitializeMedSafeTool( currentToolConfig );
+        this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
         trackerTool->RequestAttachToTracker( tracker );
       }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
-        this->m_TrackerConfiguration->GetReferenceTool();
+        this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
       {
         currentToolConfig = 
-          static_cast<AscensionToolConfiguration *>( referenceToolConfiguration );
+          static_cast<MedSafeToolConfiguration *>( referenceToolConfiguration );
 
-        trackerTool = InitializeAscensionTool( currentToolConfig );   
+        trackerTool = InitializeMedSafeTool( currentToolConfig );   
         this->m_ReferenceTool = trackerTool;
         trackerTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( trackerTool );
       }
-      /*
       tracker->RequestStartTracking();
       if( this->m_ErrorObserver->ErrorOccured() )
       {
@@ -1678,25 +1697,13 @@ TrackerController::AscensionInitializeProcessing()
         tracker->RemoveObserver(observerID);
         igstkPushInputMacro( Succeeded );
       }
-      */
-      m_Tracker->RemoveObserver(observerID);
-      igstkPushInputMacro( Succeeded );
+      //m_Tracker->RemoveObserver(observerID);
+      //igstkPushInputMacro( Succeeded );
     }
   }
   this->m_StateMachine.ProcessInputs();
-
 }
-
-void 
-TrackerController::GetTrackerProcessing()
-{
-  igstkLogMacro( DEBUG,
-                  "igstk::TrackerController::"
-                  "GetTrackerProcessing called...\n");
-  RequestTrackerEvent evt;
-  evt.Set( this->m_Tracker );
-  this->InvokeEvent( evt );
-}
+*/
 
 
 void 
@@ -1712,12 +1719,39 @@ TrackerController::GetToolsProcessing()
 
 
 void 
+TrackerController::GetToolProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::TrackerController::"
+                  "GetToolProcessing called...\n");  
+
+  RequestToolEvent sevt;
+  RequestToolErrorEvent fevt;
+   
+  std::map<std::string, TrackerTool::Pointer>::iterator it =
+    this->m_Tools.find( this->m_RequestedToolName );
+ 
+  this->m_RequestedToolName.clear();
+
+  if( it == this->m_Tools.end() ) 
+  {  
+    this->InvokeEvent( fevt );
+  }
+  else
+  {
+    sevt.Set( it->second );
+    this->InvokeEvent( sevt );
+  }
+}
+
+
+void 
 TrackerController::GetReferenceToolProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
                   "GetReferenceToolProcessing called...\n");
-  RequestReferenceToolEvent evt;
+  RequestToolEvent evt;
   evt.Set( this->m_ReferenceTool );
   this->InvokeEvent( evt );
 }
@@ -1729,73 +1763,92 @@ TrackerController::ReportInitializationSuccessProcessing()
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
                   "ReportInitializationSuccess called...\n");
-  this->InvokeEvent( InitializeSuccessEvent() );
+  this->m_Tracker->AddObserver( igstk::TrackerUpdateStatusEvent(),
+                                this->m_TrackerUpdateStatusObserver );
+  this->m_Tracker->AddObserver( igstk::TrackerUpdateStatusErrorEvent(),
+                                this->m_TrackerUpdateStatusObserver );  
+  this->InvokeEvent( InitializeEvent() );
 }
+
+
 void
 TrackerController::ReportInitializationFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
                   "ReportInitializationFailureProcessing called...\n");
-  InitializeFailureEvent evt; 
+  InitializeErrorEvent evt; 
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
+}
 
-}
+
 void 
-TrackerController::ReportShutdownSuccessProcessing()
+TrackerController::ReportStartTrackingSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
-                  "ReportShutdownSuccess called...\n");
-  this->InvokeEvent( ShutdownSuccessEvent() );
+                  "ReportStartTrackingSuccessProcessing called...\n");
+  this->InvokeEvent( TrackerStartTrackingEvent() );
 }
+
+
 void 
-TrackerController::ReportShutdownFailureProcessing()
+TrackerController::ReportStartTrackingFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
-                  "ReportShutdownFailure called...\n");
-  ShutdownFailureEvent evt; 
+                  "ReportStartTrackingFailureProcessing called...\n");
+  TrackerStartTrackingErrorEvent evt; 
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
+
+
 void 
-TrackerController::ReportStartSuccessProcessing()
+TrackerController::ReportStopTrackingSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
-                  "ReportStartSuccess called...\n");
-  this->InvokeEvent( StartSuccessEvent() );
+                  "ReportStopTrackingSuccessProcessing called...\n");
+  this->InvokeEvent( TrackerStopTrackingEvent() );
 }
+
+
 void 
-TrackerController::ReportStartFailureProcessing()
+TrackerController::ReportStopTrackingFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
-                  "ReportStartFailure called...\n");
-  StartFailureEvent evt; 
+                  "ReportStopTrackingFailureProcessing called...\n");
+  TrackerStopTrackingErrorEvent evt; 
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
+
+
 void 
-TrackerController::ReportStopSuccessProcessing()
+TrackerController::ReportCloseCommunicationFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::TrackerController::"
-                  "ReportStopSuccess called...\n");
-  this->InvokeEvent( StopSuccessEvent() );
-}
-void 
-TrackerController::ReportStopFailureProcessing()
-{
-  igstkLogMacro( DEBUG,
-                  "igstk::TrackerController::"
-                  "ReportStopFailure called...\n");
-  StopFailureEvent evt; 
+                  "ReportCloseCommunicationFailureProcessing called...\n");
+  CloseCommunicationErrorEvent evt; 
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
+
+
+void 
+TrackerController::ReportCloseCommunicationSuccessProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::TrackerController::"
+                  "ReportCloseCommunicationSuccessProcessing called...\n");
+  this->InvokeEvent( CloseCommunicationEvent() );
+}
+
+
 void 
 TrackerController::ReportInvalidRequestProcessing()
 {
@@ -1805,7 +1858,7 @@ TrackerController::ReportInvalidRequestProcessing()
 }
 
 
-TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
+TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured( false )
 {                              //serial communication errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( OpenPortErrorEvent().GetEventName(),
@@ -1832,8 +1885,9 @@ TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
 }
 
 void 
-TrackerController::ErrorObserver::Execute(itk::Object *caller, 
-                                            const itk::EventObject & event) throw (std::exception)
+TrackerController::ErrorObserver::Execute( 
+  const itk::Object *caller, 
+  const itk::EventObject & event ) throw (std::exception)
 {
   std::map<std::string,std::string>::iterator it;
   std::string className = event.GetEventName();
@@ -1844,14 +1898,42 @@ TrackerController::ErrorObserver::Execute(itk::Object *caller,
     this->m_ErrorOccured = true;
     this->m_ErrorMessage = (*it).second;
   }
-
   //if the event we got wasn't in the error events map then we
   //silently ignore it
 }
 
 void 
-TrackerController::ErrorObserver::Execute(const itk::Object *caller, 
-                                            const itk::EventObject & event) throw (std::exception)
+TrackerController::ErrorObserver::Execute( 
+  itk::Object *caller, 
+  const itk::EventObject & event ) throw (std::exception)
+{
+  const itk::Object * constCaller = caller;
+  this->Execute(constCaller, event);
+}
+
+
+void
+TrackerController::TrackerUpdateObserver::SetParent( TrackerController *parent )
+{
+  this->m_parent = parent;
+}
+
+
+void
+TrackerController::TrackerUpdateObserver::Execute( 
+  const itk::Object *caller, 
+  const itk::EventObject & event ) throw ( std::exception )
+{
+  if( igstk::TrackerUpdateStatusEvent().CheckEvent( &event ) ||
+      igstk::TrackerUpdateStatusErrorEvent().CheckEvent( &event ) )
+    this->m_parent->InvokeEvent( event );
+}
+
+
+void
+TrackerController::TrackerUpdateObserver::Execute( 
+  itk::Object *caller, 
+  const itk::EventObject & event ) throw ( std::exception )
 {
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);

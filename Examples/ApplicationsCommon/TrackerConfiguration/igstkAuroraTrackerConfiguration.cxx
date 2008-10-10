@@ -42,8 +42,8 @@ AuroraTrackerConfiguration::GetMaximalRefreshRate()
 
 
 void 
-AuroraTrackerConfiguration::InternalAddTool( const
-  TrackerToolConfiguration *tool, bool isReference )
+AuroraTrackerConfiguration::InternalAddTool( 
+  const TrackerToolConfiguration *tool, bool isReference )
 {
   AddToolFailureEvent fe;
   const AuroraToolConfiguration *wiredTool = 
@@ -56,7 +56,8 @@ AuroraTrackerConfiguration::InternalAddTool( const
     this->InvokeEvent( fe );
     return;
   }
-  if( wiredTool->GetPortNumber()>= this->MAXIMAL_PORT_NUMBER )
+  if( wiredTool->GetPortNumber()==0 ||
+      wiredTool->GetPortNumber()> this->MAXIMAL_PORT_NUMBER )
   {
     fe.Set( "Specified physical port number is invalid." );
     this->InvokeEvent( fe );
@@ -74,7 +75,8 @@ AuroraTrackerConfiguration::InternalAddTool( const
   
   if( !isReference )
   {
-    this->m_TrackerToolList.push_back( newTool );
+    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+      (newTool->GetToolName(), newTool) );
   }
   else
   {
@@ -85,7 +87,7 @@ AuroraTrackerConfiguration::InternalAddTool( const
 }
 
 
-AuroraToolConfiguration::AuroraToolConfiguration() : m_PortNumber( 0 ),
+AuroraToolConfiguration::AuroraToolConfiguration() : m_PortNumber( 1 ),
                                                      m_ChannelNumber( 0 ),
                                                      m_SROMFile( "" ),
                                                      m_Is5DOF( false )

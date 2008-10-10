@@ -18,12 +18,10 @@
 #ifndef __igstkTrackerController_h
 #define __igstkTrackerController_h
 
-#include "igstkSandboxConfigure.h"
-
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
-#include "igstkAscensionTrackerConfiguration.h"
+#include "igstkMedSafeTrackerConfiguration.h"
 
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
@@ -35,7 +33,7 @@
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
-#include "igstkFlockOfBirdsTrackerToolNew.h"
+//#include "igstkFlockOfBirdsTrackerToolNew.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
@@ -62,93 +60,102 @@ namespace igstk
  */
 class TrackerController : public Object
 {
-
 public:
+  /**This is the container type in which the tools are found.*/   
+  typedef std::map< std::string, igstk::TrackerTool::Pointer > ToolContainerType;
+
   /** Macro with standard traits declarations (Self, SuperClass, State 
    *  Machine etc.). */
   igstkStandardClassTraitsMacro( TrackerController, Object )
  
   /**
-   * Initialize a tracker using the given configuration. The tracker and 
-   * communication are established and the tracker is in tracking mode.
+   * Initialize a tracker using the given configuration. Communication with the
+   * haredware is established and the tracker is initialized.
    * NOTE: If a tracker was already initialized using this object it will be 
    *       shut down (stop tracking, close communication, and if using serial
    *       communication that will be closed too).
    *
    * @param configuration A specific tracker configuration (Aurora/Micron...)
    *                      which is identified at runtime.
-   * This method generates two events, InitializationSuccessEvent if everything
-   * went well and, InitializationFailureEvent if the tracker could not be 
+   * This method generates two events, InitializeEvent if everything
+   * went well and, InitializeErrorEvent if the tracker could not be 
    * initialized (the specific error is described in the string contained in the
    * error object).
    */
   void RequestInitialize(const TrackerConfiguration *configuration);
 
-  void RequestStop();
-
-  void RequestStart();
+  /**
+   * Start the tracking. The method generates igstk::TrackerStartTrackingEvent 
+   * and igstk::TrackerStartTrackingErrorEvent (see igstkTracker.h).
+   */
+  void RequestStartTracking();
 
   /**
-   * Stop the tracker and close its communication.
-   * This method generates ShutdownSuccessEvent if everything
-   * went well and, a ShutdownErrorEvent if there were problems during
-   * shutdown.
+   * Stop the tracking. The method generates igstk::TrackerStopTrackingEvent and
+   * igstk::TrackerStopTrackingErrorEvent (see igstkTracker.h).
+   */
+  void RequestStopTracking();
+
+  /**
+   * This method stops the tracking and closes communication.
+   * The method generates igstk::TrackerStopTrackingEvent or 
+   * igstk::TrackerStopTrackingErrorEvent followed by 
+   * CloseCommunicationEvent or CloseCommunicationErrorEvent.
    */
   void RequestShutdown();
-  void RequestGetTracker();
+
+  /**
+   * Get the container (ToolContainerType) with all the tools.   
+   * The method generates a RequestToolsEvent if the tracker was previously 
+   * initialized successfuly, otherwise it generates an 
+   * InvalidRequestErrorEvent.*/
   void RequestGetNonReferenceToolList();
+
+  /**
+   * Get a specific tracker tool according to its unique name.   
+   * The method generates a RequestToolEvent if the tracker was 
+   * previously initialized successfuly and the tool exists, otherwise it 
+   * generates a RequestToolErrorEvent if the tool doesn't exist, or
+   * InvalidRequestErrorEvent if the tracker wasn't initialized.*/
+  void RequestGetTool( const std::string &toolName );
+
+  /**
+   * Get the reference tool it it exists.   
+   * The method generates a RequestToolEvent if the tracker was 
+   * previously initialized successfuly, otherwise it generates an 
+   * InvalidRequestErrorEvent.
+   * Note that when no reference tool is used the payload of the event
+   * will be a NULL pointer.*/
   void RequestGetReferenceTool();
 
    /** This event is generated if the initialization succeeds. */
-  igstkEventMacro( InitializeSuccessEvent, IGSTKEvent );
+  igstkEventMacro( InitializeEvent, IGSTKEvent );
 
-   /** This event is generated if the start tracking procedure succeeds. */
-  igstkEventMacro( StartSuccessEvent, IGSTKEvent );
+   /** This event is generated if the initialization fails.*/
+  igstkEventMacro( InitializeErrorEvent, IGSTKErrorWithStringEvent ); 
 
-   /** This event is generated if the stop tracking procedure succeeds. */
-  igstkEventMacro( StopSuccessEvent, IGSTKEvent );
+   /** This event is generated if the communication was closed successfully. */
+  igstkEventMacro( CloseCommunicationEvent, IGSTKEvent );
 
-   /** This event is generated if the shutdown succeeds. */
-  igstkEventMacro( ShutdownSuccessEvent, IGSTKEvent );
-
-   /** This event is generated if the initialization fails*/
-  igstkLoadedEventMacro( InitializeFailureEvent, 
-                         IGSTKErrorEvent, 
-                         EventHelperType::StringType );
-
-  /** This event is generated if the start tracking procedure fails*/
-  igstkLoadedEventMacro( StartFailureEvent, 
-                         IGSTKErrorEvent, 
-                         EventHelperType::StringType );
-
-   /** This event is generated if the user requests the tracker and it is
-    *  initialized. */
-  igstkLoadedEventMacro( RequestTrackerEvent, 
-                         IGSTKEvent, 
-                         Tracker::Pointer );
+   /** This event is generated if closing communication failed.*/
+  igstkEventMacro( CloseCommunicationErrorEvent, IGSTKErrorWithStringEvent ); 
 
    /** This event is generated if the user requests the tracker tools and the 
     *  tracker is initialized. */
   igstkLoadedEventMacro( RequestToolsEvent, 
                          IGSTKEvent, 
-                         std::vector<TrackerTool::Pointer> );
+                         ToolContainerType );
 
-   /** This event is generated if the user requests the reference and the 
-    *  tracker is initialized. */
-  igstkLoadedEventMacro( RequestReferenceToolEvent, 
+   /** This event is generated if the user requests a specific tracker tool and 
+    *  the tracker is initialized. */
+  igstkLoadedEventMacro( RequestToolEvent, 
                          IGSTKEvent, 
                          TrackerTool::Pointer );
 
-   /** This event is generated if the stop tracking procedure encountered difficulties */
-  igstkLoadedEventMacro( StopFailureEvent, 
-                         IGSTKErrorEvent, 
-                         EventHelperType::StringType );
-
-   /** This event is generated if the shutdown encountered difficulties 
-    *   (e.g. tracker communication was already closed from outside). */
-  igstkLoadedEventMacro( ShutdownFailureEvent, 
-                         IGSTKErrorEvent, 
-                         EventHelperType::StringType );
+   /** This event is generated if the user requested a specific tracker tool and
+    *  the tool does not exist.*/
+  igstkEventMacro( RequestToolErrorEvent, 
+                   IGSTKErrorEvent );
 
 protected:
 
@@ -161,66 +168,60 @@ private:
   /** List of state machine states */
   igstkDeclareStateMacro( Idle );
   igstkDeclareStateMacro( AttemptingToInitialize );
-  igstkDeclareStateMacro( AttemptingToStart );
-  igstkDeclareStateMacro( AttemptingToStop );
-  igstkDeclareStateMacro( AttemptingToShutdown );
-  
   igstkDeclareStateMacro( AttemptingToInitializePolarisVicra );
   igstkDeclareStateMacro( AttemptingToInitializePolarisHybrid );
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
-  igstkDeclareStateMacro( AttemptingToInitializeAscension );  
+  igstkDeclareStateMacro( AttemptingToInitializeMedSafe );  
   igstkDeclareStateMacro( Initialized );
-  igstkDeclareStateMacro( Started );
+  igstkDeclareStateMacro( AttemptingToStartTracking );
+  igstkDeclareStateMacro( Tracking );
+  igstkDeclareStateMacro( AttemptingToCloseCommunication );
+  igstkDeclareStateMacro( AttemptingToStopTracking );
 
   /** List of state machine inputs */
   igstkDeclareInputMacro( TrackerInitialize );
-  igstkDeclareInputMacro( TrackerStart );
-  igstkDeclareInputMacro( TrackerStop );
-  igstkDeclareInputMacro( TrackerShutdown );
   igstkDeclareInputMacro( PolarisVicraInitialize );
   igstkDeclareInputMacro( PolarisHybridInitialize );
   igstkDeclareInputMacro( AuroraInitialize );
-
   igstkDeclareInputMacro( MicronInitialize );
-  igstkDeclareInputMacro( MicronStart );
-  igstkDeclareInputMacro( MicronStop );
-
-  igstkDeclareInputMacro( AscensionInitialize );
+  igstkDeclareInputMacro( MedSafeInitialize );
+  igstkDeclareInputMacro( StartTracking );
+  igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Failed  );
   igstkDeclareInputMacro( Succeeded  );
-  igstkDeclareInputMacro( GetTracker  );
+  igstkDeclareInputMacro( CloseCommunication );
   igstkDeclareInputMacro( GetTools  );
+  igstkDeclareInputMacro( GetTool  );
   igstkDeclareInputMacro( GetReferenceTool  );
 
   /**List of state machine actions*/
-  void TrackerInitializeProcessing();
-  void TrackerStartProcessing();
-  void TrackerStopProcessing();
-  void TrackerShutdownProcessing();
-  
+  void TrackerInitializeProcessing();  
   void PolarisVicraInitializeProcessing();
   void PolarisHybridInitializeProcessing();
   void AuroraInitializeProcessing();
   void MicronInitializeProcessing();
-  void AscensionInitializeProcessing();
-
-  void GetTrackerProcessing();
+  void MedSafeInitializeProcessing();
+  void StartTrackingProcessing();
+  void StopTrackingProcessing();
+  void CloseCommunicationProcessing();
   void GetToolsProcessing();
+  void GetToolProcessing();
   void GetReferenceToolProcessing();
+
   void ReportInvalidRequestProcessing();
 
   void ReportInitializationFailureProcessing();
   void ReportInitializationSuccessProcessing();
 
-  void ReportStartFailureProcessing();
-  void ReportStartSuccessProcessing();
+  void ReportStartTrackingFailureProcessing();
+  void ReportStartTrackingSuccessProcessing();
 
-  void ReportStopFailureProcessing();
-  void ReportStopSuccessProcessing();
+  void ReportStopTrackingFailureProcessing();
+  void ReportStopTrackingSuccessProcessing();
 
-  void ReportShutdownFailureProcessing();
-  void ReportShutdownSuccessProcessing();
+  void ReportCloseCommunicationFailureProcessing();
+  void ReportCloseCommunicationSuccessProcessing();
 
   bool InitializeSerialCommunication();
   PolarisTrackerTool::Pointer InitializePolarisWirelessTool(
@@ -229,12 +230,15 @@ private:
     const PolarisWiredToolConfiguration *toolConfiguration );
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
+
 #ifdef IGSTKSandbox_USE_MicronTracker
+
   MicronTrackerTool::Pointer InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration );
+
 #endif
-  FlockOfBirdsTrackerTool::Pointer InitializeAscensionTool(
-    const AscensionToolConfiguration *toolConfiguration );
+//  FlockOfBirdsTrackerTool::Pointer InitializeMedSafeTool(
+//    const MedSafeToolConfiguration *toolConfiguration );
 
 
   class ErrorObserver : public itk::Command
@@ -286,15 +290,47 @@ private:
     void operator=(const Self&); 
   };
 
+  class TrackerUpdateObserver : public itk::Command
+  {
+  public:
+    typedef TrackerUpdateObserver                    Self;
+    typedef ::itk::Command                   Superclass;
+    typedef ::itk::SmartPointer<Self>        Pointer;
+    typedef ::itk::SmartPointer<const Self>  ConstPointer;
+
+    void SetParent( TrackerController *parent );
+
+    igstkNewMacro(Self)
+    igstkTypeMacro(TrackerUpdateObserver, itk::Command)
+
+    /** When an error occurs in an IGSTK component it will invoke this method 
+     *  with the appropriate error event object as a parameter.*/
+    virtual void Execute(itk::Object *caller, 
+                         const itk::EventObject & event) throw (std::exception);
+
+    /** When an error occurs in an IGSTK component it will invoke this method 
+     *  with the appropriate error event object as a parameter.*/
+    virtual void Execute(const itk::Object *caller, 
+                         const itk::EventObject & event) throw (std::exception);
+  private:
+    TrackerController *m_parent;
+  };
+       //this object observes the tracker's igstk::TrackerUpdateStatusEvent and
+      //igstk::TrackerUpdateStatusErrorEvent it then causes its parent to invoke
+      //these events too. In this manner the user is inderictly observing the 
+      //tracker
+  TrackerUpdateObserver::Pointer m_TrackerUpdateStatusObserver;
 
   ErrorObserver::Pointer m_ErrorObserver;
   std::string m_ErrorMessage;
 
   TrackerConfiguration  *m_TmpTrackerConfiguration;
   TrackerConfiguration  *m_TrackerConfiguration;
+  std::string m_RequestedToolName;
+
   Tracker::Pointer m_Tracker;
+  std::map<std::string, TrackerTool::Pointer> m_Tools; 
   TrackerTool::Pointer m_ReferenceTool;
-  std::vector<TrackerTool::Pointer> m_Tools;
   SerialCommunication::Pointer m_SerialCommunication;  
 };
 

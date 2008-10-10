@@ -42,8 +42,9 @@ MicronTrackerConfiguration::GetMaximalRefreshRate()
 }
 
 void 
-MicronTrackerConfiguration::InternalAddTool( const
-  TrackerToolConfiguration *tool, bool isReference )
+MicronTrackerConfiguration::InternalAddTool( 
+  const TrackerToolConfiguration *tool, 
+  bool isReference )
 {
   AddToolFailureEvent fe;
 
@@ -56,16 +57,10 @@ MicronTrackerConfiguration::InternalAddTool( const
     this->InvokeEvent( fe );
     return;
   }
-  if( wirelessTool->GetMarkerName().empty() )
-  {
-    fe.Set( "Marker name not specified for micron tool." );
-    this->InvokeEvent( fe );
-    return;
-  }
   if( !isReference )
   {
-    this->m_TrackerToolList.push_back( new MicronToolConfiguration( 
-                                                              *wirelessTool ) );
+    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+      (wirelessTool->GetToolName(), new MicronToolConfiguration( *wirelessTool )) );
   }
   else
   {
@@ -77,7 +72,7 @@ MicronTrackerConfiguration::InternalAddTool( const
 }
 
 
-MicronToolConfiguration::MicronToolConfiguration() : m_MarkerName( "" ), m_CalibrationFileName( "" )
+MicronToolConfiguration::MicronToolConfiguration()
 {
 }
 
@@ -85,8 +80,6 @@ MicronToolConfiguration::MicronToolConfiguration() : m_MarkerName( "" ), m_Calib
 MicronToolConfiguration::MicronToolConfiguration( const 
   MicronToolConfiguration &other ) : TrackerToolConfiguration( other )
 {
-  this->m_MarkerName = other.m_MarkerName;
-  this->m_CalibrationFileName = other.m_CalibrationFileName;
 }
 
 

@@ -51,9 +51,24 @@ public:
   TrackerToolConfiguration();
   TrackerToolConfiguration(const TrackerToolConfiguration &other);
   virtual ~TrackerToolConfiguration();
-      
+  
+  /**
+   * Set and Get the tool's calibration transform.
+   */
   igstkSetMacro( CalibrationTransform, igstk::Transform );
   igstkGetMacro( CalibrationTransform, igstk::Transform );
+
+
+  /**     
+   * Set and Get the tool's human readable name. Note that this is not the 
+   * unique tool identifier we get when invoking 
+   * igstk::TrackerTool::GetTrackerToolIdentifier(), that identifier is set 
+   * internally by the tracker. This identifier is later used by the user to 
+   * retrieve the specific tool from the tracker controller.
+   */
+  igstkSetMacro( ToolName, std::string );
+  igstkGetMacro( ToolName, std::string );
+
 
   /**
    *Get the tracker tool type as a string. The only reason that this method 
@@ -64,6 +79,8 @@ public:
 protected:
        //the tool's calibration transformation
   igstk::Transform   m_CalibrationTransform;
+       //the tool's name
+  std::string m_ToolName;
 };
 
 
@@ -75,18 +92,20 @@ class TrackerConfiguration : public Object
 {
 public:
 
+  friend class TrackerController;
+
   TrackerConfiguration();
   virtual ~TrackerConfiguration();
 
   /** This event is generated when the frequency was set successfuly. */
-  igstkEventMacro( FrequencySetSuccessEvent, IGSTKEvent );
+  igstkEventMacro( FrequencySetEvent, IGSTKEvent );
 
   /** 
    * This event is generated when the frequency setting fails 
    * (user specified a value that was zero, negative, or greater than the 
    * tracker's maximal refresh rate). 
    */
-  igstkLoadedEventMacro( FrequencySetFailureEvent, IGSTKErrorEvent, std::string );
+  igstkEventMacro( FrequencySetErrorEvent, IGSTKErrorWithStringEvent );
 
   /** This event is generated when a tool was added successfuly. */
   igstkEventMacro( AddToolSuccessEvent, IGSTKEvent );
@@ -110,6 +129,8 @@ public:
 
   /**
    * This method adds a tool to the tracker configuration. 
+   *
+   * @param tool The tool configuration we want to set.
    *
    * NOTE: This tool will not be used as a dynamic reference. If you want to
    *       add the tool as a dynamic reference use the RequestAddReferenceTool()
@@ -136,10 +157,7 @@ public:
   virtual double GetMaximalRefreshRate()=0;
 
   igstkGetMacro( Frequency, double );
-  TrackerToolConfiguration* GetReferenceTool() { 
-    return this->m_ReferenceTool; }
-  igstkGetMacro( TrackerToolList, std::vector< TrackerToolConfiguration * > )
-
+  
 protected:
 
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
@@ -150,8 +168,7 @@ protected:
 
              //the list of tools we want to connect to the tracker (excluding
              //the reference tool)
-  std::vector< TrackerToolConfiguration * > m_TrackerToolList;
-
+  std::map<std::string, TrackerToolConfiguration *> m_TrackerToolList;   
   TrackerToolConfiguration * m_ReferenceTool; 
 };
 
@@ -163,23 +180,72 @@ protected:
 class SerialCommunicatingTrackerConfiguration : public TrackerConfiguration
 {
 public:
-    igstkSetMacro( COMPort, igstk::SerialCommunication::PortNumberType );
-    igstkGetMacro( COMPort, igstk::SerialCommunication::PortNumberType );
+  /** This event is generated when the COM port was set successfuly. */
+  igstkEventMacro( ComPortSetEvent, IGSTKEvent );
 
-    igstkSetMacro( BaudRate, igstk::SerialCommunication::BaudRateType );
-    igstkGetMacro( BaudRate, igstk::SerialCommunication::BaudRateType );
 
-    igstkSetMacro( DataBits, igstk::SerialCommunication::DataBitsType );
-    igstkGetMacro( DataBits, igstk::SerialCommunication::DataBitsType );
+  /** 
+   * This event is generated when the given COM port is invalid. 
+   */
+  igstkEventMacro( ComPortSetErrorEvent, IGSTKErrorWithStringEvent );
 
-    igstkSetMacro( Parity, igstk::SerialCommunication::ParityType );
-    igstkGetMacro( Parity, igstk::SerialCommunication::ParityType );
 
-    igstkSetMacro( StopBits, igstk::SerialCommunication::StopBitsType );
-    igstkGetMacro( StopBits, igstk::SerialCommunication::StopBitsType );
+  /**
+   * Set the com port to the given value. Generates ComPortSetEvent if 
+   * successful otherwise ComPortSetErrorEvent.*/
+  void RequestSetCOMPort( igstk::SerialCommunication::PortNumberType portNumber);
+  igstkGetMacro( COMPort, igstk::SerialCommunication::PortNumberType );
 
-    igstkSetMacro( Handshake, igstk::SerialCommunication::HandshakeType );
-    igstkGetMacro( Handshake, igstk::SerialCommunication::HandshakeType );
+
+  /** This event is generated when the baud rate was set successfuly. */
+  igstkEventMacro( BaudRateSetEvent, IGSTKEvent );
+
+
+  /** 
+   * This event is generated when the given baud rate is invalid. 
+   */
+  igstkEventMacro( BaudRateSetErrorEvent, IGSTKErrorWithStringEvent );
+
+
+  /**
+   * Set the baud rate to the given value. Generates BaudRateSetEvent if 
+   * successful otherwise BaudRateSetErrorEvent.*/
+  void RequestSetBaudRate( igstk::SerialCommunication::BaudRateType baudRate );
+  igstkGetMacro( BaudRate, igstk::SerialCommunication::BaudRateType );
+
+  
+  igstkEventMacro( DataBitsSetEvent, IGSTKEvent );
+
+
+  igstkEventMacro( DataBitsSetErrorEvent, IGSTKErrorWithStringEvent );
+
+  void RequestSetDataBits( igstk::SerialCommunication::DataBitsType dataBits );
+  igstkGetMacro( DataBits, igstk::SerialCommunication::DataBitsType );
+
+  igstkEventMacro( ParitySetEvent, IGSTKEvent );
+
+
+  igstkEventMacro( ParitySetErrorEvent, IGSTKErrorWithStringEvent );
+
+  void RequestSetParity( igstk::SerialCommunication::ParityType parity);
+  igstkGetMacro( Parity, igstk::SerialCommunication::ParityType );
+
+  igstkEventMacro( StopBitsSetEvent, IGSTKEvent );
+
+
+  igstkEventMacro( StopBitsSetErrorEvent, IGSTKErrorWithStringEvent );
+
+
+  void RequestSetStopBits( igstk::SerialCommunication::StopBitsType stopBits );
+  igstkGetMacro( StopBits, igstk::SerialCommunication::StopBitsType );
+
+  igstkEventMacro( HandshakeSetEvent, IGSTKEvent );
+
+
+  igstkEventMacro( HandshakeSetErrorEvent, IGSTKErrorWithStringEvent );
+
+  void RequestSetHandshake( igstk::SerialCommunication::HandshakeType handShake );
+  igstkGetMacro( Handshake, igstk::SerialCommunication::HandshakeType );
 
 protected:
     SerialCommunicatingTrackerConfiguration();

@@ -44,8 +44,8 @@ PolarisVicraTrackerConfiguration::GetMaximalRefreshRate()
 
 
 void 
-PolarisVicraTrackerConfiguration::InternalAddTool( const
-  TrackerToolConfiguration *tool, bool isReference )
+PolarisVicraTrackerConfiguration::InternalAddTool( 
+  const TrackerToolConfiguration *tool, bool isReference )
 {
   AddToolFailureEvent fe;
   const PolarisWirelessToolConfiguration *wirelessTool = 
@@ -65,8 +65,8 @@ PolarisVicraTrackerConfiguration::InternalAddTool( const
   }
   if( !isReference )
   {
-    this->m_TrackerToolList.push_back( new PolarisWirelessToolConfiguration( 
-                                                              *wirelessTool ) );
+    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+      (wirelessTool->GetToolName(), new PolarisWirelessToolConfiguration( *wirelessTool )) );
   }
   else
   {
@@ -125,7 +125,8 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   }
   else   //we have a wired tool
   {
-    if( wiredTool->GetPortNumber()>= this->MAXIMAL_PORT_NUMBER )
+    if( wiredTool->GetPortNumber()==0 ||
+        wiredTool->GetPortNumber()> this->MAXIMAL_PORT_NUMBER )
     {
       fe.Set( "Specified physical port number is invalid." );
       this->InvokeEvent( fe );
@@ -145,7 +146,8 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   
   if( !isReference )
   {
-    this->m_TrackerToolList.push_back( newTool );
+   this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+     (newTool->GetToolName(), newTool) );
   }
   else
   {
@@ -157,7 +159,7 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
 
 
 PolarisWiredToolConfiguration::PolarisWiredToolConfiguration() :
-                                                              m_PortNumber( 0 ),
+                                                              m_PortNumber( 1 ),
                                                               m_SROMFile( "" )
 {
 }

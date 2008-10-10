@@ -17,6 +17,7 @@
 
 #include "igstkTrackerConfiguration.h"
 
+
 namespace igstk
 {
   
@@ -28,13 +29,13 @@ TrackerConfiguration::TrackerConfiguration() : m_ReferenceTool( NULL )
 
 TrackerConfiguration::~TrackerConfiguration()
 {
-  std::vector< TrackerToolConfiguration * >::iterator it;
-  std::vector< TrackerToolConfiguration * >::iterator endIt = 
+  std::map<std::string, TrackerToolConfiguration *>::iterator it;
+  std::map<std::string, TrackerToolConfiguration *>::iterator endIt = 
     this->m_TrackerToolList.end();
 
   for(it=this->m_TrackerToolList.begin(); it!=endIt; it++)
   {    
-    delete (*it);
+    delete (it->second);
   }
   this->m_TrackerToolList.clear();
   if ( m_ReferenceTool )
@@ -51,17 +52,17 @@ TrackerConfiguration::RequestSetFrequency( double frequency )
   {
     std::ostringstream msg;
     msg.str("");
-    msg<<"Invalid tracker frequency specified.";
-    msg<< "Valid values are in [0,"<<GetMaximalRefreshRate()<<"].";
+    msg<<"Invalid tracker frequency specified ("<<frequency<<").";
+    msg<< " Valid values are in [0,"<<GetMaximalRefreshRate()<<"].";
 
-    FrequencySetFailureEvent evt;
+    FrequencySetErrorEvent evt;
     evt.Set( msg.str() );
     this->InvokeEvent( evt );
   }
   else
   {
     this->m_Frequency = frequency;
-     this->InvokeEvent( FrequencySetSuccessEvent() );
+     this->InvokeEvent( FrequencySetEvent() );
   }
 }
 
@@ -69,6 +70,16 @@ TrackerConfiguration::RequestSetFrequency( double frequency )
 void 
 TrackerConfiguration::RequestAddTool( const TrackerToolConfiguration *tool )
 {
+ AddToolFailureEvent fe;
+ std::map<std::string, TrackerToolConfiguration *>::iterator it  = 
+   this->m_TrackerToolList.find( tool->GetToolName() );
+
+ if( it!= this->m_TrackerToolList.end() )
+  {
+    fe.Set( "Tool name is not unique." );
+    this->InvokeEvent( fe );
+    return;
+  }
   InternalAddTool( tool, false );
 }
 
@@ -108,6 +119,138 @@ SerialCommunicatingTrackerConfiguration::~SerialCommunicatingTrackerConfiguratio
 {
 }
 
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetCOMPort(
+  igstk::SerialCommunication::PortNumberType portNumber)
+{
+  switch( portNumber ) 
+  {
+  case igstk::SerialCommunication::PortNumber0:
+  case igstk::SerialCommunication::PortNumber1:
+  case igstk::SerialCommunication::PortNumber2:
+  case igstk::SerialCommunication::PortNumber3:
+  case igstk::SerialCommunication::PortNumber4:
+  case igstk::SerialCommunication::PortNumber5:
+  case igstk::SerialCommunication::PortNumber6:
+  case igstk::SerialCommunication::PortNumber7:
+    this->m_COMPort = portNumber;
+    this->InvokeEvent( ComPortSetEvent() );
+    break;
+  default:
+    ComPortSetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid COM port ("<<portNumber<<"). Supported ports are ";
+    msg<<"in the range ["<<igstk::SerialCommunication::PortNumber0<<",";
+    msg<<igstk::SerialCommunication::PortNumber7<<"].";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
+
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetBaudRate( 
+  igstk::SerialCommunication::BaudRateType baudRate)
+{
+  switch( baudRate ) 
+  {
+  case igstk::SerialCommunication::BaudRate9600:
+  case igstk::SerialCommunication::BaudRate19200:
+  case igstk::SerialCommunication::BaudRate38400:
+  case igstk::SerialCommunication::BaudRate57600:
+  case igstk::SerialCommunication::BaudRate115200:
+    this->m_BaudRate = baudRate;
+    this->InvokeEvent( BaudRateSetEvent() );
+    break;
+  default:
+    BaudRateSetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid baud rate ("<<baudRate<<")";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
+
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetDataBits( 
+  igstk::SerialCommunication::DataBitsType dataBits)
+{
+  switch( dataBits ) 
+  {
+  case igstk::SerialCommunication::DataBits7:
+  case igstk::SerialCommunication::DataBits8:
+    this->m_DataBits = dataBits;
+    this->InvokeEvent( DataBitsSetEvent() );
+    break;
+  default:
+    DataBitsSetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid data bits value ("<<dataBits<<")";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetParity( 
+  igstk::SerialCommunication::ParityType parity)
+{
+  switch( parity ) 
+  {
+  case igstk::SerialCommunication::NoParity:
+  case igstk::SerialCommunication::OddParity:
+  case igstk::SerialCommunication::EvenParity:
+    this->m_Parity = parity;
+    this->InvokeEvent( ParitySetEvent() );
+  default:
+    ParitySetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid parity value ("<<parity<<")";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetStopBits( 
+  igstk::SerialCommunication::StopBitsType stopBits)
+{
+  switch( stopBits ) 
+  {
+  case igstk::SerialCommunication::StopBits1:
+  case igstk::SerialCommunication::StopBits2:
+    this->m_StopBits = stopBits;
+    this->InvokeEvent( StopBitsSetEvent() );
+  default:
+    StopBitsSetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid stop bits value ("<<stopBits<<")";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
+
+void 
+SerialCommunicatingTrackerConfiguration::RequestSetHandshake( 
+  igstk::SerialCommunication::HandshakeType handShake)
+{
+  switch( handShake ) 
+  {
+  case igstk::SerialCommunication::HandshakeOff:
+  case igstk::SerialCommunication::HandshakeOn:
+    this->m_Handshake = handShake;
+    this->InvokeEvent( HandshakeSetEvent() );
+  default:
+    HandshakeSetErrorEvent errorEvt;
+    std::ostringstream msg;
+    msg<<"Invalid handshake value ("<<handShake<<")";
+    errorEvt.Set( msg.str() );
+    this->InvokeEvent( errorEvt );
+  }
+}
+
 
 TrackerToolConfiguration::TrackerToolConfiguration() 
 {
@@ -120,6 +263,7 @@ TrackerToolConfiguration::TrackerToolConfiguration(const
   TrackerToolConfiguration &other)
 {
   this->m_CalibrationTransform = other.m_CalibrationTransform;
+  this->m_ToolName = other.m_ToolName;
 }
 
 
