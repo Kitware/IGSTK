@@ -12,16 +12,26 @@ ELSE (USE_ITK_FILE)
   MESSAGE( FATAL_ERROR "This application requires ITK. One of these components is missing. Please verify configuration")
 ENDIF (USE_ITK_FILE)
 
+#
+#  FIND VTK
+#
+FIND_PACKAGE(VTK)
+IF (USE_VTK_FILE)
+  INCLUDE (${USE_VTK_FILE})
+ELSE (USE_VTK_FILE)
+  MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
+ENDIF (USE_VTK_FILE)
+
 
 #
 #  FIND IGSTK
 #
-FIND_PACKAGE(IGSTK)
-IF (IGSTK_USE_FILE)
-  INCLUDE (${IGSTK_USE_FILE})
-ELSE (IGSTK_USE_FILE)
+FIND_PACKAGE(IGSTKSandbox)
+IF (IGSTKSandbox_USE_FILE)
+  INCLUDE (${IGSTKSandbox_USE_FILE})
+ELSE (IGSTKSandbox_USE_FILE)
   MESSAGE( FATAL_ERROR "This application requires IGSTK. One of these components is missing. Please verify configuration")
-ENDIF (IGSTK_USE_FILE)
+ENDIF (IGSTKSandbox_USE_FILE)
 
 
 
@@ -33,15 +43,17 @@ SET(SRCS
     ../igstkTransformXMLFileReaderBase.cxx
     ../igstkRigidTransformXMLFileReader.cxx
     ../igstkAffineTransformXMLFileReader.cxx
+    ../igstkPerspectiveTransformXMLFileReader.cxx
     ../igstkTransformFileReader.cxx
     main.cxx
 )
 SET(HDRS
-  ../igstkPrecomputedTransformData.h
-  ../igstkTransformXMLFileReaderBase.h
-  ../igstkRigidTransformXMLFileReader.h
-  ../igstkAffineTransformXMLFileReader.h
-  ../igstkTransformFileReader.h
+    ../igstkPrecomputedTransformData.h
+    ../igstkTransformXMLFileReaderBase.h
+    ../igstkRigidTransformXMLFileReader.h
+    ../igstkAffineTransformXMLFileReader.h
+    ../igstkPerspectiveTransformXMLFileReader.h
+    ../igstkTransformFileReader.h
 )
 
 #
@@ -55,8 +67,7 @@ INCLUDE_DIRECTORIES(
 # Link to the following libraries
 #
 LINK_LIBRARIES (
-  ${ITK_LIBRARIES}
-  IGSTK.lib
+   IGSTKSandbox
 )
 
 

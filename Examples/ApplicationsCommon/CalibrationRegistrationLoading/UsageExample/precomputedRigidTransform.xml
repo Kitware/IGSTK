@@ -9,8 +9,9 @@
 <!--                 these are the elements of the unit quaternion -->
 <!--                 representing the rotation, followed by the    -->
 <!--                 translation: qx qy qz qw tx ty tz             -->
-<!-- estimation_error: An error associated with the transformation -->
-<!--                   estimate.                                   -->
+<!-- The transformation has an optional "estimation_error"         -->
+<!-- attribute, the error associated with the transformation       -->
+<!-- estimate.                                                     -->
 <!--                                                               -->
 <!--                                                               -->
 <precomputed_transform>
@@ -23,13 +24,9 @@
       Thursday July 4 12:00:00 1776
   </computation_date>
   
-  <transformation>
+  <transformation estimation_error = "0.5">
       0 0 0 1 0 0 0
   </transformation>
-
-  <estimation_error>
-      0.5 
-  </estimation_error>
 
 </precomputed_transform>
 
