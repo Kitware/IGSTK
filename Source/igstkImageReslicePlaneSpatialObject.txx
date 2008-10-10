@@ -871,20 +871,20 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
       switch ( this->GetOrientationType() )
       {
-        case OrientationType::Axial:
-        case OrientationType::OffAxial:
+        case Axial:
+        case OffAxial:
         this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
         this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
         this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
         break;
-        case OrientationType::Sagittal:
-        case OrientationType::OffSagittal:
+        case Sagittal:
+        case OffSagittal:
         this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
         this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
         this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
         break;
-        case OrientationType::Coronal:
-        case OrientationType::OffCoronal:
+        case Coronal:
+        case OffCoronal:
         this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
         this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
         this->m_PlaneSource->SetPoint2(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);

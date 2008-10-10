@@ -579,7 +579,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
             //
             m_ResliceAxes->Identity();
 
-            for ( i = 0; i < 3; i++ )
+            for (int i = 0; i < 3; i++ )
             {
                 m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
                 m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
