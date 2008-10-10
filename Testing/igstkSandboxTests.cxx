@@ -42,6 +42,9 @@ void RegisterTests()
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
 
+  REGISTER_TEST(igstkAffineTransformTest);
+  REGISTER_TEST(igstkPerspectiveTransformTest);
+
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest2);

@@ -10,7 +10,7 @@
 #include "igstkPulseGenerator.h"
 
 
-int igstkPerspectiveTransformTest( int, char * [] )
+int igstkPerspectiveTransformTest( int argc, char * argv [] )
 {
   
   igstk::RealTimeClock::Initialize();

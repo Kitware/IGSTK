@@ -117,6 +117,8 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.cxx
 
   igstkImageReslicePlaneSpatialObjectTest.cxx
+  igstkAffineTransformTest.cxx
+  igstkPerspectiveTransformTest.cxx
  )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -153,6 +155,9 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
       )
   ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+
+ADD_TEST( igstkAffineTransformTest  ${IGSTKSandbox_TESTS} igstkAffineTransformTest )
+ADD_TEST( igstkPerspectiveTransformTest  ${IGSTKSandbox_TESTS} igstkPerspectiveTransformTest )
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
