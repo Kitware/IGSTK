@@ -74,15 +74,18 @@ public:
 public:
 
   /** Typedefs */
-  typedef TImageSpatialObject                    ImageSpatialObjectType;
+  typedef TImageSpatialObject                           ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer
-                                                 ImageSpatialObjectConstPointer;
+                                                        ImageSpatialObjectConstPointer;
 
-  typedef SpatialObject                          ToolSpatialObjectType;
-  typedef ToolSpatialObjectType::Pointer         ToolSpatialObjectPointer;
+  typedef SpatialObject                                 ToolSpatialObjectType;
+  typedef ToolSpatialObjectType::Pointer                ToolSpatialObjectPointer;
 
-  typedef unsigned int                           SliceNumberType;
+  typedef unsigned int                                  SliceNumberType;
+
+  typedef typename ImageSpatialObjectType::PointType    PointType;
+ 
 
   /** Reslicing modes */
   enum ReslicingMode
@@ -98,13 +101,20 @@ public:
     Axial, 
     Sagittal, 
     Coronal, 
-    Perpendicular,
+    OffAxial,
     OffSagittal,
     OffCoronal,
     PlaneOrientationWithZAxesNormal,
     PlaneOrientationWithXAxesNormal,
     PlaneOrientationWithYAxesNormal
     };
+
+  typedef struct ImageReslicePlaneStruct
+  {
+      Transform::VectorType center;
+      Transform::VectorType normal;
+      OrientationType orientation;
+  };
 
   /** Request the state machine to attempt to set the reslicing mode*/
   void RequestSetReslicingMode( ReslicingMode reslicingMode ); 
@@ -122,25 +132,25 @@ public:
   void RequestSetSliceNumber( SliceNumberType sliceNumber );
 
   /** Request set reslicing mouse position */
-  void RequestSetMousePosition( double  mousePostion[3] );
+  void RequestSetMousePosition( PointType point);
 
   /** Request get image slice number bounds */
   void RequestGetSliceNumberBounds();
 
+  /** Request get tool position */
+  void RequestGetToolPosition();
+
+  /** Request get image bounds */
+  void RequestGetImageBounds();
+
+  /** Request get reslicing plane */
+  void RequestGetVTKPlane();
+
   /** Request compute reslicing plane */
-  void RequestComputeReslicingPlane( ); 
-
-  /** Request Get reslicing plane equation */
-  vtkPlaneSource * GetReslicingPlane();
-
-  /** Request Get reslicing axes */
-  vtkMatrix4x4 * GetResliceAxes();
+  void RequestComputeReslicingPlane(); 
 
   OrientationType GetOrientationType()
   { return m_OrientationType;}; 
-
-  /** Request Get reslicing transform */
-  //vtkTransform * GetResliceTransform();
 
   /** Request update tool transform WRT image coordinate system */
   void RequestUpdateToolTransformWRTImageCoordinateSystem();
@@ -192,6 +202,9 @@ private:
   igstkDeclareInputMacro( ValidMousePosition );
   igstkDeclareInputMacro( InValidMousePosition );
   igstkDeclareInputMacro( GetSliceNumberBounds );
+  igstkDeclareInputMacro( GetToolPosition );
+  igstkDeclareInputMacro( GetImageBounds );
+  igstkDeclareInputMacro( GetVTKPlane );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ComputeReslicePlane );
@@ -264,10 +277,19 @@ private:
   /** Report image slice number bounds */
   void ReportSliceNumberBoundsProcessing( void );
 
+  /** Report image bounds */
+  void ReportImageBoundsProcessing( void );
+
+  /** Report tool position */
+  void ReportToolPositionProcessing( void );
+
+  /** Report plane */
+  void ReportVTKPlaneProcessing( void );
+
   /** Methods to compute reslcing plane for the different modes*/
   void ComputeOrthogonalReslicingPlane();
   void ComputeObliqueReslicingPlane();
-  void ComputeOffOrthgonalReslicingPlane();
+  void ComputeOffOrthogonalReslicingPlane();
 
   /** Variables for managing reslicing mode */
   ReslicingMode     m_ReslicingModeToBeSet;
@@ -286,7 +308,7 @@ private:
   ToolSpatialObjectPointer     m_ToolSpatialObject;
   
   /** Image reslice plane */
-  vtkPlaneSource *                  m_ImageReslicePlane;
+  vtkPlaneSource *                  m_PlaneSource;
 
   /** Image reslicing matrix */
   vtkMatrix4x4 *                    m_ResliceAxes; 
@@ -306,6 +328,7 @@ private:
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
   igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
+  
 
   // Tool transform with respect to the image coordinate system
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
@@ -323,8 +346,9 @@ private:
   /** mouse position member variables */
   double               m_MousePositionToBeSet[3];
   double               m_MousePosition[3];
-  bool                 m_MousePostionSetFlag;
+  bool                 m_MousePositionSetFlag;
 
+  double               m_ToolPosition[3];
   int                  m_ImageDimension[3];
   double               m_ImageOrigin[3];
   double               m_ImageSpacing[3];

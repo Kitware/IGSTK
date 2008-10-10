@@ -30,7 +30,6 @@ class vtkTexture;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkPlaneSource;
-class vtkCamera;
 
 
 namespace igstk
@@ -89,8 +88,6 @@ public:
   /** Sets the visibility for the representation */
   void SetVisibility(bool visible);
 
-  vtkCamera* GetCamera();
-
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -138,15 +135,21 @@ private:
   vtkPolyDataMapper                    * m_TextureMapper;
   vtkTransform                         * m_ResliceTransform;
   vtkMatrix4x4                         * m_ResliceAxes;
-  vtkCamera                            * m_Camera;
+  
 
+  int                  m_ImageDimension[3];
+  double               m_ImageOrigin[3];
+  double               m_ImageSpacing[3];
+  int                  m_ImageExtent[6];
+  double               m_ImageBounds[6];
+
+  /** Camera member and parameters */
+  vtkCamera                              * m_Camera;
+  double                                 m_CameraDistance;
 
   /** Variables that store window and level values for 2D image display */
   double                                 m_Level;
   double                                 m_Window;
-
-  /** Variables that store camera parameters */
-  double m_CameraDistance;
 
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -170,16 +173,20 @@ private:
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
 
+  /** ... */
   void GetVector1(double v1[3]);
+
+  /** ... */
   void GetVector2(double v1[3]);
 
- 
-  /** Reslice processing */
- // void ResliceProcessing ();
-
-  /** Sets the vtkImageData from the spatial object. This method MUST be
+  /** Sets the vtkImageData from the ImageSpatialObject. This method MUST be
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
+
+  /** Sets the vtkPlaneSource from the ImageReslicePlaneSpatialObject object. 
+  * This method MUST be private in order to prevent unsafe access from the 
+  * VTK plane source layer. */
+  void SetPlane( const vtkPlaneSource * plane );
   
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
@@ -189,10 +196,27 @@ private:
   igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
                       EventHelperType::VTKImagePointerType);
 
+  /** Declare the observer that will receive a VTK plane source from the
+   * ImageResliceSpatialObject */
+  igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
+                      EventHelperType::VTKPlaneSourcePointerType);
+
+  /** Declare the observer that will receive a slice bounds event from the
+   * ImageSpatialObject */
   igstkObserverMacro( SliceBounds, IntegerBoundsEvent, 
                       EventHelperType::IntegerBoundsType );
 
+  /** */
+  igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
+                                  igstk::EventHelperType::ImageBoundsType );
+
+  /** */
+  igstkObserverMacro( ImageTransform, CoordinateSystemTransformToEvent, 
+     CoordinateSystemTransformToResult );
+
   typename VTKImageObserver::Pointer  m_VTKImageObserver;
+  typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
+  typename VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
 
 private:
 
