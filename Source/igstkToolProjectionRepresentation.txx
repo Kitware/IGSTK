@@ -217,49 +217,49 @@ void ToolProjectionRepresentation< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
 
-  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+  //m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
-
-  igstk::Transform::VectorType point1 = toolTransform.GetTranslation();
-  igstk::Transform::VectorType point2;
-
-  igstk::Transform::VersorType rotation = toolTransform.GetRotation();
-  
-  igstk::Transform::VectorType toolAxis;
-  toolAxis[0] = 1;
-  toolAxis[1] = 0;
-  toolAxis[2] = 0;
-  toolAxis = rotation.Transform(toolAxis);
-
-  switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
+  if ( m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
   {
-    case ReslicePlaneSpatialObjectType::Axial:
-      toolAxis[2] = 0;
-      point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-      break;
-    case ReslicePlaneSpatialObjectType::Sagittal:
-      toolAxis[0] = 0;
-      point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-      break;
-    case ReslicePlaneSpatialObjectType::Coronal:
-      toolAxis[1] = 0;
-      point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-      break;
-    case ReslicePlaneSpatialObjectType::OffCoronal:
-    case ReslicePlaneSpatialObjectType::OffSagittal:
-    case ReslicePlaneSpatialObjectType::OffAxial:
-      point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-      break;
-      default:
-        igstkLogMacro( CRITICAL, "ToolProjectionRepresentation: "
-            << "Unsupported orientation type \n" );
-  }
+    igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
+    igstk::Transform::VectorType point1 = toolTransform.GetTranslation();
+    igstk::Transform::VectorType point2;
+    igstk::Transform::VersorType rotation = toolTransform.GetRotation();
+    igstk::Transform::VectorType toolAxis;
+    toolAxis[0] = 1;
+    toolAxis[1] = 0;
+    toolAxis[2] = 0;
+    toolAxis = rotation.Transform(toolAxis);
 
-  if ( (point2-point1).GetNorm() > 0.1 )
-  {
-    m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
-    m_LineSource->SetPoint2( point2[0], point2[1], point2[2] );
+    switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
+    {
+      case ReslicePlaneSpatialObjectType::Axial:
+        toolAxis[2] = 0;
+        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
+        break;
+      case ReslicePlaneSpatialObjectType::Sagittal:
+        toolAxis[0] = 0;
+        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
+        break;
+      case ReslicePlaneSpatialObjectType::Coronal:
+        toolAxis[1] = 0;
+        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
+        break;
+      case ReslicePlaneSpatialObjectType::OffCoronal:
+      case ReslicePlaneSpatialObjectType::OffSagittal:
+      case ReslicePlaneSpatialObjectType::OffAxial:
+        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
+        break;
+        default:
+          igstkLogMacro( CRITICAL, "ToolProjectionRepresentation: "
+              << "Unsupported orientation type \n" );
+    }
+
+    if ( (point2-point1).GetNorm() > 0.1 )
+    {
+      m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
+      m_LineSource->SetPoint2( point2[0], point2[1], point2[2] );
+    }
   }
 }
 
@@ -281,6 +281,52 @@ void ToolProjectionRepresentation< TImageSpatialObject >
     }
 }
 
+/** Verify time stamp of the attached tool*/
+template < class TImageSpatialObject >
+bool
+ToolProjectionRepresentation < TImageSpatialObject >
+::VerifyTimeStamp( ) const
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
+
+  if( this->m_ReslicePlaneSpatialObject.IsNull() )
+    {
+    return false;
+    }
+
+  /* if a tool spatial object is driving the reslicing, compare the 
+     tool spatial object transform with the view render time*/
+  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
+    {
+    if( this->GetRenderTimeStamp().GetExpirationTime() <
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+      this->GetRenderTimeStamp().GetStartTime() >
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+      {
+        // fixme
+        double diff = 
+          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+
+        if (diff > 250 )
+        {
+          //std::cout << diff << std::endl;
+          return false;
+        }
+        else
+          return true;
+      }
+    else
+      {
+      return true;
+      }
+    }
+  else
+    {
+    return true;
+    }
+}
+
 /** Create the vtk Actors */
 template < class TImageSpatialObject >
 void ToolProjectionRepresentation< TImageSpatialObject >
@@ -297,7 +343,7 @@ void ToolProjectionRepresentation< TImageSpatialObject >
   m_Tuber = vtkTubeFilter::New();
   m_Tuber->SetInput ( m_LineSource->GetOutput() );
   m_Tuber->SetRadius (1);
-  m_Tuber->SetNumberOfSides(5);
+  m_Tuber->SetNumberOfSides(3);
 
   m_LineMapper = vtkPolyDataMapper::New();
   m_LineMapper->SetInput ( m_Tuber->GetOutput() );

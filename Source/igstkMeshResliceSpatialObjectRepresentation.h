@@ -52,21 +52,21 @@ public:
 public:
     
  /** Typedefs */
-  typedef TImageSpatialObject                  ImageSpatialObjectType;
+  typedef TImageSpatialObject                      ImageSpatialObjectType;
 
   typedef typename ImageSpatialObjectType::ConstPointer 
-                                               ImageSpatialObjectConstPointer;
+                                                   ImageSpatialObjectConstPointer;
 
-  typedef typename ImageSpatialObjectType::PointType  PointType;
+  typedef typename ImageSpatialObjectType::PointType PointType;
 
-  typedef MeshObject                        MeshObjectType;
-  typedef igstk::Transform::VectorType      VectorType;
+  typedef MeshObject                               MeshObjectType;
+  typedef igstk::Transform::VectorType             VectorType;
 
   /** Type for representing the line width of the contour */
-  typedef   double            LineWidthType;
+  typedef   double                                 LineWidthType;
 
   typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                   ReslicePlaneSpatialObjectType;
+                                                    ReslicePlaneSpatialObjectType;
 
   typedef typename ReslicePlaneSpatialObjectType::Pointer
                                               ReslicePlaneSpatialObjectPointer;  
@@ -83,19 +83,18 @@ public:
   void SetVisibility(bool visibility);
 
   /** Sets cutting plane parameters */
-  void RequestSetPlaneNormal(Transform::VectorType &normal);
+  //void RequestSetPlaneNormal(Transform::VectorType &normal);
 
-  void RequestSetPlaneCenter(Transform::VectorType &center);
+  //void RequestSetPlaneCenter(Transform::VectorType &center);
 
   /** Sets the driving plane */
   void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
                                                              planeSpatialObject);
-
   /** Set/Get the opacity */
   void SetLineWidth(LineWidthType LineWidth);
   igstkGetMacro( LineWidth, LineWidthType );
 
-  void RequestSetResliceAxes( vtkMatrix4x4 *matrix );
+ // void RequestSetResliceAxes( vtkMatrix4x4 *matrix );
 
 protected:
 
@@ -111,19 +110,20 @@ protected:
   /** Create the VTK actors */
   void CreateActors();
 
+  /** Verify time stamp. Use the reslicing tool transform to verify 
+  * the time stamp */
+  virtual bool VerifyTimeStamp() const;
+
 private:
   
-
-  /** Oblique plane parameters */
-  PointType                              m_OriginPointOnThePlane;
-  PointType                              m_OriginPointOnThePlaneToBeSet;
-
-  VectorType                             m_Vector1OnThePlane;
-  VectorType                             m_Vector1OnThePlaneToBeSet;
-
-  VectorType                             m_Vector2OnThePlane;
-  VectorType                             m_Vector2OnThePlaneToBeSet;
   LineWidthType                          m_LineWidth;
+
+  /** Declare the observer that will receive a VTK plane source from the
+   * ImageResliceSpatialObject */
+  igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
+                      EventHelperType::VTKPlaneSourcePointerType);
+
+  typename VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -140,6 +140,11 @@ private:
 
   /** Set reslice plane spatial object processing */
   void SetReslicePlaneSpatialObjectProcessing();
+
+  /** Sets the vtkPlaneSource from the ImageReslicePlaneSpatialObject object. 
+  * This method MUST be private in order to prevent unsafe access from the 
+  * VTK plane source layer. */
+  void SetPlane( const vtkPlaneSource * plane );
 
 private:
 

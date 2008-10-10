@@ -92,6 +92,10 @@ protected:
   /** Create the VTK actors */
   void CreateActors();
 
+  /** Verify time stamp. Use the reslicing tool transform to verify 
+  * the time stamp */
+  virtual bool VerifyTimeStamp() const;
+
 private:
 
   ToolProjectionRepresentation(const Self&); //purposely not implemented

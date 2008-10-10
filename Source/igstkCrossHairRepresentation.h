@@ -92,6 +92,10 @@ protected:
   /** Create the VTK actors */
   void CreateActors();
 
+  /** Verify time stamp. Use the reslicing tool transform to verify 
+  * the time stamp */
+  virtual bool VerifyTimeStamp() const;
+
 private:
 
   CrossHairRepresentation(const Self&); //purposely not implemented
@@ -119,6 +123,9 @@ private:
 
   igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
+
+  igstkObserverMacro( ToolPosition, igstk::PointEvent, 
+                                  igstk::EventHelperType::PointType );
 
 private:
 

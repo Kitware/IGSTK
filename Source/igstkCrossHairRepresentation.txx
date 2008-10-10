@@ -155,6 +155,51 @@ CrossHairRepresentation< TImageSpatialObject >
   }
 }
 
+/** Verify time stamp of the attached tool*/
+template < class TImageSpatialObject >
+bool
+CrossHairRepresentation < TImageSpatialObject >
+::VerifyTimeStamp( ) const
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
+
+  if( this->m_ReslicePlaneSpatialObject.IsNull() )
+    {
+    return false;
+    }
+
+  /* if a tool spatial object is driving the reslicing, compare the 
+     tool spatial object transform with the view render time*/
+  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
+    {
+    if( this->GetRenderTimeStamp().GetExpirationTime() <
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+      this->GetRenderTimeStamp().GetStartTime() >
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+      {
+        // fixme
+        double diff = 
+          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+
+        if (diff > 250 )
+        {
+          //std::cout << diff << std::endl;
+          return false;
+        }
+        else
+          return true;
+      }
+    else
+      {
+      return true;
+      }
+    }
+  else
+    {
+    return true;
+    }
+}
 
 /** Request to Set the CrossHairSpatial Object */
 template < class TImageSpatialObject >
@@ -235,9 +280,9 @@ CrossHairRepresentation< TImageSpatialObject >
    */
  
   ImageBoundsObserver::Pointer boundsObs = ImageBoundsObserver::New();
-  unsigned int boundsObsID;
 
-  boundsObsID = m_ReslicePlaneSpatialObject->AddObserver( igstk::ImageBoundsEvent(), boundsObs );
+  unsigned int obsID;
+  obsID = m_ReslicePlaneSpatialObject->AddObserver( igstk::ImageBoundsEvent(), boundsObs );
 
   m_ReslicePlaneSpatialObject->RequestGetImageBounds();
 
@@ -251,7 +296,7 @@ CrossHairRepresentation< TImageSpatialObject >
     m_ImageBounds[5] = boundsObs->GetImageBounds().zmax;
     }
 
-  m_ReslicePlaneSpatialObject->RemoveObserver(boundsObsID);
+  m_ReslicePlaneSpatialObject->RemoveObserver(obsID);
 
   // build vertical cross hair
   m_VerticalLineSource = vtkLineSource::New();
@@ -261,7 +306,7 @@ CrossHairRepresentation< TImageSpatialObject >
   m_VerticalTuber = vtkTubeFilter::New();
   m_VerticalTuber->SetInput ( m_VerticalLineSource->GetOutput() );
   m_VerticalTuber->SetRadius (1);
-  m_VerticalTuber->SetNumberOfSides(5);
+  m_VerticalTuber->SetNumberOfSides(3);
 
   m_VerticalLineMapper = vtkPolyDataMapper::New();
   m_VerticalLineMapper->SetInput( m_VerticalTuber->GetOutput() );
@@ -297,11 +342,31 @@ void CrossHairRepresentation< TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "CrossHairRepresentation::UpdateRepresentationProcessing called ....\n");
 
-  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();  
 
-  igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
+  double point1[3];
 
-  igstk::Transform::VectorType point1 = toolTransform.GetTranslation();
+  /** 
+   * Request information about the tool position. The answer will be
+   * received in the form of event. This will be used to set the 
+   * position of the cross hairs
+   */
+ 
+  ToolPositionObserver::Pointer positionObs = ToolPositionObserver::New();
+
+  unsigned int obsID;
+  obsID = m_ReslicePlaneSpatialObject->AddObserver( igstk::PointEvent(), positionObs );
+
+  m_ReslicePlaneSpatialObject->RequestGetToolPosition();
+
+  if( positionObs->GotToolPosition() )
+    {
+        point1[0] =  positionObs->GetToolPosition()[0];
+        point1[1] =  positionObs->GetToolPosition()[1];
+        point1[2] =  positionObs->GetToolPosition()[2];
+    }
+
+  m_ReslicePlaneSpatialObject->RemoveObserver(obsID);
 
   switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
   {

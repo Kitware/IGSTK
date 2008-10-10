@@ -105,6 +105,7 @@ MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Plane->SetNormal(1,0,0);
 
   m_Cutter = vtkCutter::New();
+  m_VTKPlaneObserver = VTKPlaneObserver::New();
 } 
 
 /** Destructor */
@@ -218,20 +219,38 @@ template < class TImageSpatialObject >
 void MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdateRepresentationProcessing()
 {
-igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
+  igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
 
-  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+  //m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
+  unsigned int planeObsID = 
+      m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
+                                      m_VTKPlaneObserver );
+  
+  m_VTKPlaneObserver->Reset();
 
-  vtkPlaneSource* plane = m_ReslicePlaneSpatialObject->GetReslicingPlane();
+  m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
+  
+  if( m_VTKPlaneObserver->GotVTKPlane() )
+    {
+    this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
+    }
+}
 
-  double *normal = plane->GetNormal();
+template < class TImageSpatialObject >
+void MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
+::SetPlane( const vtkPlaneSource * plane )
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::SetPlane called...\n");
 
-  double *center = plane->GetCenter();
+  // This const_cast<> is needed here due to 
+  // the lack of const-correctness in VTK 
+  //m_PlaneSource = 
+  vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
 
-  m_Plane->SetNormal( normal[0], normal[1], normal[2] );
-  m_Plane->SetOrigin( center[0], center[1], center[2] );
-
+  m_Plane->SetOrigin( auxPlane->GetCenter() );
+  m_Plane->SetNormal( auxPlane->GetNormal() );
 }
 
 /** Create the vtk Actors */
@@ -381,21 +400,50 @@ void MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
     }
 }
 
+/** Verify time stamp of the attached tool*/
 template < class TImageSpatialObject >
-void 
-MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
-::RequestSetPlaneNormal(Transform::VectorType &normal)
+bool
+MeshResliceSpatialObjectRepresentation < TImageSpatialObject >
+::VerifyTimeStamp( ) const
 {
-  m_Plane->SetNormal( normal[0], normal[1], normal[2] );
-}
+  igstkLogMacro( DEBUG, 
+    "igstk::MeshResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
 
-template < class TImageSpatialObject >
-void 
-MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
-::RequestSetPlaneCenter(Transform::VectorType &center)
-{
-  m_Plane->SetOrigin( center[0], center[1], center[2] );
-}
+  if( this->m_ReslicePlaneSpatialObject.IsNull() )
+    {
+    return false;
+    }
 
+  /* if a tool spatial object is driving the reslicing, compare the 
+     tool spatial object transform with the view render time*/
+  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
+    {
+    if( this->GetRenderTimeStamp().GetExpirationTime() <
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+      this->GetRenderTimeStamp().GetStartTime() >
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+      {
+        // fixme
+        double diff = 
+          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+
+        if (diff > 250 )
+        {
+          //std::cout << diff << std::endl;
+          return false;
+        }
+        else
+          return true;
+      }
+    else
+      {
+      return true;
+      }
+    }
+  else
+    {
+    return true;
+    }
+}
 
 } // end namespace igstk
