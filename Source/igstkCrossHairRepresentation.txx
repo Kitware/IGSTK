@@ -345,6 +345,9 @@ void CrossHairRepresentation< TImageSpatialObject >
    m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();  
 
   double point1[3];
+  point1[0] = 0.0;
+  point1[1] = 0.0;
+  point1[2] = 0.0;
 
   /** 
    * Request information about the tool position. The answer will be
