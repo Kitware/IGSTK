@@ -3,13 +3,12 @@ PROJECT(TrackerConfiguration)
   
 SET(TrackerConfiguration_SRCS
   main.cxx
-  Tracking.cxx
   igstkTrackerConfigurationParser.cxx
   igstkTrackerConfigurationComposer.cxx
-  igstkAuroraTrackerConfigurationComposer.cxx
+ # igstkAuroraTrackerConfigurationComposer.cxx
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
-  igstkAscensionTrackerConfiguration.cxx
+  igstkMedSafeTrackerConfiguration.cxx
   igstkAuroraTrackerConfiguration.cxx
   igstkMicronTrackerConfiguration.cxx
   igstkPolarisTrackerConfiguration.cxx
