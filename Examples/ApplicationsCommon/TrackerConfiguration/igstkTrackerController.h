@@ -33,12 +33,12 @@
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
-//#include "igstkFlockOfBirdsTrackerToolNew.h"
+#include "igstkFlockOfBirdsTrackerToolNew.h"
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+//#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkMicronTrackerTool.h"
-#endif
+//#endif
 
 
 namespace igstk
@@ -231,14 +231,14 @@ private:
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+//#ifdef IGSTKSandbox_USE_MicronTracker
 
   MicronTrackerTool::Pointer InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration );
 
-#endif
-//  FlockOfBirdsTrackerTool::Pointer InitializeMedSafeTool(
-//    const MedSafeToolConfiguration *toolConfiguration );
+//#endif
+  FlockOfBirdsTrackerTool::Pointer InitializeMedSafeTool(
+    const MedSafeToolConfiguration *toolConfiguration );
 
 
   class ErrorObserver : public itk::Command

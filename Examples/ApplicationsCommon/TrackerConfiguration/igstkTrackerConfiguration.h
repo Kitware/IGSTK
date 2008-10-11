@@ -123,7 +123,7 @@ public:
    * This method sets the data acquisition frequency.
    * 
    * The method generates two  events: FrequencySetSuccessEvent and 
-   * FrequencySetFailureEvent.
+   * FrequencySetErrorEvent.
    */
   void RequestSetFrequency( double frequency );
 

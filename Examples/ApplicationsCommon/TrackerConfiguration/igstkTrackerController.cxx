@@ -26,9 +26,9 @@
 #include "igstkAuroraTracker.h"
 //#include "igstkFlockOfBirdsTracker.h"
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+//#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
-#endif
+//#endif
 
 
 namespace igstk
@@ -1044,14 +1044,14 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
     }
-    #ifdef IGSTKSandbox_USE_MicronTracker
+   // #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
     {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
     }
-    #endif
+    //#endif
     else if( dynamic_cast<MedSafeTrackerConfiguration *>
     ( this->m_TmpTrackerConfiguration ) )
     {
@@ -1496,7 +1496,7 @@ TrackerController::AuroraInitializeProcessing()
 }
 
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+//#ifdef IGSTKSandbox_USE_MicronTracker
 
 MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration )
@@ -1511,12 +1511,12 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
   return trackerTool;
 }
 
-#endif
+//#endif
 
 
 void TrackerController::MicronInitializeProcessing()
 {
-#ifdef IGSTKSandbox_USE_MicronTracker
+//#ifdef IGSTKSandbox_USE_MicronTracker
                   //create tracker
   igstk::MicronTracker::Pointer tracker = igstk::MicronTracker::New();
   this->m_Tracker = tracker; 
@@ -1583,10 +1583,10 @@ void TrackerController::MicronInitializeProcessing()
     igstkPushInputMacro( Succeeded );
   }
   this->m_StateMachine.ProcessInputs();
-#else
-  igstkPushInputMacro( Failed );
-  this->m_StateMachine.ProcessInputs();
-#endif
+//#else
+//  igstkPushInputMacro( Failed );
+//  this->m_StateMachine.ProcessInputs();
+//#endif
 }
 
 /*
