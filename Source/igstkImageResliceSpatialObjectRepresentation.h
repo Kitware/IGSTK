@@ -28,7 +28,7 @@ class vtkImageMapToColors;
 class vtkImageReslice;
 class vtkTexture;
 class vtkPolyDataMapper;
-class vtkImageActor;
+class vtkActor;
 class vtkPlaneSource;
 
 
@@ -126,13 +126,13 @@ private:
     
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;
-  vtkImageActor                        * m_ImageActor;
-  //vtkTexture                           * m_Texture;
+  vtkActor                             * m_ImageActor;
+  vtkTexture                           * m_Texture;
   vtkPlaneSource                       * m_PlaneSource;
   vtkLookupTable                       * m_LUT;
   vtkImageMapToColors                  * m_MapColors;
   vtkImageReslice                      * m_ImageReslice;
-  //vtkPolyDataMapper                    * m_TextureMapper;
+  vtkPolyDataMapper                    * m_TextureMapper;
   vtkTransform                         * m_ResliceTransform;
   vtkMatrix4x4                         * m_ResliceAxes;
   

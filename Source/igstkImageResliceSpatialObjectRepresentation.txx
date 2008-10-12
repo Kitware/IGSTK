@@ -29,7 +29,7 @@
 #include <vtkLookupTable.h>
 #include <vtkImageMapToColors.h>
 #include <vtkImageReslice.h>
-//#include <vtkTexture.h>
+#include <vtkTexture.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkPlaneSource.h>
@@ -51,7 +51,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->RequestSetSpatialObject( m_ImageSpatialObject );
 
   // Create classes for displaying images
-  m_ImageActor = vtkImageActor::New();
+  m_ImageActor = vtkActor::New();
   this->AddActor( m_ImageActor );
  
   m_ImageData  = NULL;
@@ -62,11 +62,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->AutoCropOutputOn();  
   m_ImageReslice->SetOptimization( 1 );
 
- // m_TextureMapper = vtkPolyDataMapper::New();
+  m_TextureMapper = vtkPolyDataMapper::New();
 
-  //m_Texture = vtkTexture::New();
-  //m_Texture->RepeatOff();
-  //m_Texture->SetQualityTo32Bit();
+  m_Texture = vtkTexture::New();
+  m_Texture->RepeatOff();
+  m_Texture->SetQualityTo32Bit();
 
   m_PlaneSource = vtkPlaneSource::New();
   m_MapColors  = vtkImageMapToColors::New();
@@ -170,17 +170,17 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     m_ImageReslice = NULL;
     }
 
-  /*if( m_TextureMapper )
+  if( m_TextureMapper )
     {
     m_TextureMapper->Delete();
     m_TextureMapper = NULL;
-    }*/
+    }
 
-  //if ( m_Texture )
-  //{
-  //m_Texture->Delete();
-  //m_Texture = NULL;
-  //}
+  if ( m_Texture )
+  {
+  m_Texture->Delete();
+  m_Texture = NULL;
+  }
 
   if ( m_PlaneSource )
   {
@@ -445,9 +445,9 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
             m_MapColors->SetLookupTable( m_LUT );
             m_ImageReslice->SetInput ( m_ImageData );
             m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-            //m_Texture->SetInput( m_MapColors->GetOutput() );
-           // m_TextureMapper->SetInput(
-              //  vtkPolyData::SafeDownCast(m_PlaneSource->GetOutput()) );
+            m_Texture->SetInput( m_MapColors->GetOutput() );
+            m_TextureMapper->SetInput(
+                vtkPolyData::SafeDownCast(m_PlaneSource->GetOutput()) );
         }
     }
 
@@ -475,9 +475,9 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     imageTransformMatrix->Delete();
     }
 
- // m_ImageActor->SetTexture(m_Texture);
- // m_ImageActor->SetMapper(m_TextureMapper);
-    m_ImageActor->SetInput( m_MapColors->GetOutput() );
+    m_ImageActor->SetTexture(m_Texture);
+    m_ImageActor->SetMapper(m_TextureMapper);
+   // m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
 
 
@@ -606,7 +606,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
             m_ImageReslice->SetResliceAxes(m_ResliceAxes);
 
-            m_ImageActor->SetUserMatrix(m_ResliceAxes);
+           // m_ImageActor->SetUserMatrix(m_ResliceAxes);
 
             double spacingX = fabs(planeAxis1[0]*m_ImageSpacing[0])+\
                               fabs(planeAxis1[1]*m_ImageSpacing[1])+\
@@ -713,11 +713,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
-  m_ImageActor = vtkImageActor::New();
+  m_ImageActor = vtkActor::New();
   m_ImageActor->SetPosition(0,0,0);
   m_ImageActor->SetOrientation(0,0,0);
-//  m_ImageActor->GetProperty()->SetOpacity(1.0);
-  m_ImageActor->SetOpacity(1.0);
+  m_ImageActor->GetProperty()->SetOpacity(1.0);
+//  m_ImageActor->SetOpacity(1.0);
 
   m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
   m_LUT->SetSaturationRange( 0.0, 0.0 );
@@ -730,9 +730,9 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ImageReslice->SetBackgroundLevel( m_Level - m_Window/2.0 );
 
- // m_ImageActor->SetTexture(m_Texture);
- // m_ImageActor->SetMapper(m_TextureMapper);
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->SetTexture(m_Texture);
+  m_ImageActor->SetMapper(m_TextureMapper);
+ // m_ImageActor->SetInput( m_MapColors->GetOutput() );
 
   this->AddActor( m_ImageActor );  
 
@@ -796,10 +796,10 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 {
   m_ImageReslice->SetInput( m_ImageData );
   m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-//  m_Texture->SetInput( m_MapColors->GetOutput() );
-//  m_ImageActor->SetTexture( m_Texture );
-//  m_ImageActor->SetMapper( m_TextureMapper );
-  m_ImageActor->SetInput ( m_MapColors->GetOutput() );
+  m_Texture->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->SetTexture( m_Texture );
+  m_ImageActor->SetMapper( m_TextureMapper );
+//  m_ImageActor->SetInput ( m_MapColors->GetOutput() );
   m_ImageActor->SetVisibility( false );
   m_ImageActor->SetPickable( false );
 }
