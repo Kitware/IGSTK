@@ -70,7 +70,7 @@ if( fileName )
           xywh {350 133 25 25}
         }
         Fl_Choice m_TrackerToolPort {
-          label {Port:}
+          label {Port:} open
           xywh {225 99 45 25} down_box BORDER_BOX
         } {
           MenuItem {} {
@@ -136,35 +136,35 @@ if( fileName )
     code {igstk::AuroraTrackerConfiguration * conf = new igstk::AuroraTrackerConfiguration;
 
 conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
-conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
 
 
 //Serial Port
 switch( this->m_SerialPort->value() ) 
   {
   case 0 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
     break;
   case 1 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
     break;
   case 2 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
     break;
   case 3 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
     break;
   case 4 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
     break;
   case 5 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
     break;
   case 6 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
     break;
   case 7 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
     break;
   }
   

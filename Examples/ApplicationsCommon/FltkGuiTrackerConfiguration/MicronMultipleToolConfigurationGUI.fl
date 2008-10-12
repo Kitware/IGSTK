@@ -17,8 +17,8 @@ class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
   } {
     Fl_Window m_TrackerConfigurationWindow {
       label {Micron Tracker Configuration} open
-      xywh {445 492 420 420} type Double
-      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+      xywh {445 492 420 420} type Double hide
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"}
     } {
       Fl_Output m_CalibrationFileDir {
         label {Calibration File Dir:}
@@ -92,7 +92,7 @@ if (bToolsAvailable)
         label {Refresh rate [Hz]:}
         xywh {132 22 105 15} type Horizontal align 4 minimum 1 maximum 48 step 1 value 15
       }
-      Fl_Group m_MultipleToolSelectionGroup {
+      Fl_Group m_MultipleToolSelectionGroup {open
         xywh {9 252 401 103} box BORDER_BOX
       } {
         Fl_Button m_AddToolBtn {
@@ -112,7 +112,7 @@ tool.SetMarkerName( this->m_TrackerToolMarker->text() );
 //const std::string toolCalibrationFileName = 
 //  m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
 
-tool.SetCalibrationFileName( this->m_CalibrationFileName->value() );
+//tool.SetCalibrationFileName( this->m_CalibrationFileName->value() );
 
 m_Configuration->RequestAddTool( &tool );
 if( this->m_ConfigurationErrorOccured )
@@ -143,7 +143,7 @@ tool.SetMarkerName( this->m_TrackerToolMarker->text() );
 const std::string toolCalibrationFileName = 
   m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
 
-tool.SetCalibrationFileName( toolCalibrationFileName );
+//tool.SetCalibrationFileName( toolCalibrationFileName );
 
 m_Configuration->RequestAddReference( &tool );
 if( this->m_ConfigurationErrorOccured )
@@ -153,7 +153,7 @@ if( this->m_ConfigurationErrorOccured )
   return;
 }
 
-m_ReferenceToolLabel->value(tool.GetMarkerName().c_str());}
+m_ReferenceToolLabel->value(tool.GetMarkerName().c_str());} selected
           xywh {25 306 105 25}
         }
         Fl_Choice m_AddedToolsList {
@@ -199,7 +199,7 @@ UpdateParentConfiguration();}
 if( fileName )
 {
   this->m_CalibrationFileName->value( fileName );
-}} selected
+}}
         xywh {365 206 25 25} labelsize 8
       }
       Fl_Output m_CalibrationFileName {
@@ -210,7 +210,7 @@ if( fileName )
     code {InitializeConfiguration();
 m_MultipleToolSelectionGroup->deactivate();} {}
   }
-  Function {~MicronTrackerConfigurationGUI()} {return_type virtual
+  Function {~MicronTrackerConfigurationGUI()} {open return_type virtual
   } {
     code {if (m_Configuration != NULL)
 {
@@ -248,7 +248,7 @@ return m_Configuration;} {}
 {
  m_Configuration = new igstk::MicronTrackerConfiguration();
  m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
- m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this );
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this );
 }} {}
   }
 } 

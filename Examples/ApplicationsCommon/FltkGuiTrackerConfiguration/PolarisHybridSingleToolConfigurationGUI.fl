@@ -4,8 +4,7 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-decl {\#include "igstkPolarisTrackerConfiguration.h"} {selected
-} 
+decl {\#include "igstkPolarisTrackerConfiguration.h"} {} 
 
 class PolarisHybridTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
 } {
@@ -155,34 +154,34 @@ if( fileName )
     code {igstk::PolarisHybridTrackerConfiguration * conf = new igstk::PolarisHybridTrackerConfiguration();
 
 conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
-conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
 
           //get the COM port
 switch( this->m_SerialPort->value() ) 
   {
   case 0 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
     break;
   case 1 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
     break;
   case 2 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
     break;
   case 3 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
     break;
   case 4 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
     break;
   case 5 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
     break;
   case 6 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
     break;
   case 7 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
     break;
   }
   
@@ -227,7 +226,8 @@ switch( this->m_SerialPort->value() )
     this->m_ConfigurationErrorOccured = false;
     return NULL;
   }
-  return conf;} {}
+  return conf;} {selected
+    }
   }
   Function {Show()} {return_type {virtual void}
   } {

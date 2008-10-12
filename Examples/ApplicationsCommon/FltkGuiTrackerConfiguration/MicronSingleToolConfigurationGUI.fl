@@ -15,7 +15,7 @@ class MicronSingleToolTrackerConfigurationGUI {open : {public igstk::TrackerConf
   Function {MicronSingleToolTrackerConfigurationGUI()} {open
   } {
     Fl_Window m_TrackerConfigurationWindow {
-      label {Micron Tracker Configuration} selected
+      label {Micron Tracker Configuration} open
       xywh {380 540 468 306} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
@@ -110,7 +110,7 @@ if( fileName )
     code {igstk::MicronTrackerConfiguration *conf = new igstk::MicronTrackerConfiguration();
 
 conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
-conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
 
          //get the desired tracker referesh rate
 conf->RequestSetFrequency( this->m_RefreshRateSlider->value() );
@@ -133,7 +133,7 @@ tool.SetMarkerName( this->m_TrackerToolMarker->text() );
 const std::string toolCalibrationFileName = 
   conf->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
 
-tool.SetCalibrationFileName( toolCalibrationFileName );
+//tool.SetCalibrationFileName( toolCalibrationFileName );
 
 conf->RequestAddTool( &tool );
 if( this->m_ConfigurationErrorOccured )
@@ -142,7 +142,8 @@ if( this->m_ConfigurationErrorOccured )
   this->m_ConfigurationErrorOccured = false;
   return NULL;
 }
-return conf;} {}
+return conf;} {selected
+    }
   }
   Function {Show()} {return_type {virtual void}
   } {
