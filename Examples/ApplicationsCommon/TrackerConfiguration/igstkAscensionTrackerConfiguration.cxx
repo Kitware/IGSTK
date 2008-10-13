@@ -67,13 +67,14 @@ AscensionTrackerConfiguration::InternalAddTool( const
   }
   */
   
-        //copy the tool and add it as a standard or dynamic reference tool
+         //copy the tool and add it as a standard or dynamic reference tool
   AscensionToolConfiguration *newTool = 
     new AscensionToolConfiguration( *wiredTool );
   
   if( !isReference )
   {
-    this->m_TrackerToolList.push_back( newTool );
+    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+      (newTool->GetToolName(), newTool) );
   }
   else
   {
