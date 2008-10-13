@@ -13,7 +13,7 @@ class FlockOfBirdsTrackerConfigurationGUI {open : {public igstk::TrackerConfigur
   } {
     Fl_Window m_TrackerConfigurationWindow {
       label {FlockOfBirds Tracker Configuration} open
-      xywh {288 593 476 183} type Double
+      xywh {371 726 476 183} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice m_SerialPort {
@@ -85,35 +85,35 @@ if( fileName )
     code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
 
 conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
-conf->AddObserver( igstk::TrackerConfiguration::FrequencySetFailureEvent(), this ); 
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
 
 
 //Serial Port
 switch( this->m_SerialPort->value() ) 
   {
   case 0 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
     break;
   case 1 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
     break;
   case 2 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
     break;
   case 3 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
     break;
   case 4 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
     break;
   case 5 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
     break;
   case 6 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
     break;
   case 7 : 
-    conf->SetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
     break;
   }
   
