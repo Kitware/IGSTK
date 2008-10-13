@@ -1372,16 +1372,16 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                                   m_PlaneNormal[2]);  
 }
 
-/** Get reslcing plane equation */
-//template < class TImageSpatialObject >
-//vtkPlaneSource *
-//ImageReslicePlaneSpatialObject< TImageSpatialObject >
-//::GetReslicingPlane()
-//{
-//  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-//                       ::GetReslicingPlane called...\n");
-//  return m_PlaneSource;
-//}
+/** Get reslicing plane equation */
+template < class TImageSpatialObject >
+vtkPlaneSource *
+ImageReslicePlaneSpatialObject< TImageSpatialObject >
+::GetReslicingPlane()
+{
+  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
+                       ::GetReslicingPlane called...\n");
+  return m_PlaneSource;
+}
 
 ///** Request Get reslicing axes matrix */
 //template < class TImageSpatialObject >

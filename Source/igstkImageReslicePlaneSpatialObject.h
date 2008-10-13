@@ -146,6 +146,8 @@ public:
   /** Request get reslicing plane */
   void RequestGetVTKPlane();
 
+  vtkPlaneSource * GetReslicingPlane();
+
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane(); 
 
