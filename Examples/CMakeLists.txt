@@ -28,8 +28,8 @@ IF (IGSTKSandbox_USE_FLTK)
 # and it is not yet fully tested
 #    UltrasoundGuidedRFA
     NeedleBiopsy
-    NeedleBiopsyWithReslicing
-    NeedleBiopsyUnimodality
+#    NeedleBiopsyWithReslicing
+#    NeedleBiopsyUnimodality
     DeckOfCardRobot
     View
     Logging
