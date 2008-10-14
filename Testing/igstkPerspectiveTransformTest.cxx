@@ -50,7 +50,7 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
 
       P.ExportTransform( *vtkP );       
       vtkP->GetMatrix( vtkPMatrix );
-      
+  
       igstk::PerspectiveTransform::ExtrinsicMatrixType PMatrix;
 
       PMatrix = K.GetVnlMatrix()*Rt.GetVnlMatrix();
@@ -70,6 +70,9 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
            != 0.0 )
       {
         std::cerr<<"Error in export transformation.\n";
+        vtkP->Delete();
+        vtkPMatrix->Delete();
+        vtkRtMatrix->Delete();
         return EXIT_FAILURE;
       }
           //export the intrinsic calibration matrix K
@@ -88,6 +91,9 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
            != 0.0 )
       {
         std::cerr<<"Error in export intrinsic transformation.\n";
+        vtkP->Delete();
+        vtkPMatrix->Delete();
+        vtkRtMatrix->Delete();
         return EXIT_FAILURE;
       }
        
@@ -108,10 +114,15 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
            != 0.0 )
       {
         std::cerr<<"Error in export intrinsic transformation.\n";
+        vtkP->Delete();
+        vtkPMatrix->Delete();
+        vtkRtMatrix->Delete();
         return EXIT_FAILURE;
-      }
+      }      
+      vtkP->Delete();
+      vtkPMatrix->Delete();
+      vtkRtMatrix->Delete();  
 
-  
   }
   catch(...)
     {
