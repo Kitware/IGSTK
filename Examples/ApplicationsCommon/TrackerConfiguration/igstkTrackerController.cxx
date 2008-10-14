@@ -1739,7 +1739,7 @@ TrackerController::GetToolProcessing()
   }
   else
   {
-    sevt.Set( it->second );
+    sevt.Set( *it );
     this->InvokeEvent( sevt );
   }
 }
@@ -1752,7 +1752,9 @@ TrackerController::GetReferenceToolProcessing()
                   "igstk::TrackerController::"
                   "GetReferenceToolProcessing called...\n");
   RequestToolEvent evt;
-  evt.Set( this->m_ReferenceTool );
+  evt.Set( std::pair<std::string, igstk::TrackerTool::Pointer>( 
+           "reference",
+           this->m_ReferenceTool ) );
   this->InvokeEvent( evt );
 }
 

@@ -150,7 +150,7 @@ public:
     *  the tracker is initialized. */
   igstkLoadedEventMacro( RequestToolEvent, 
                          IGSTKEvent, 
-                         TrackerTool::Pointer );
+                         std::pair<std::string, igstk::TrackerTool::Pointer> );
 
    /** This event is generated if the user requested a specific tracker tool and
     *  the tool does not exist.*/
