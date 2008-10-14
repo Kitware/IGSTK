@@ -62,7 +62,9 @@ class TrackerController : public Object
 {
 public:
   /**This is the container type in which the tools are found.*/   
-  typedef std::map< std::string, igstk::TrackerTool::Pointer > ToolContainerType;
+  typedef std::map < std::string, igstk::TrackerTool::Pointer > ToolContainerType;
+
+  typedef std::pair < std::string, igstk::TrackerTool::Pointer > ToolEntryType;
 
   /** Macro with standard traits declarations (Self, SuperClass, State 
    *  Machine etc.). */
@@ -150,7 +152,7 @@ public:
     *  the tracker is initialized. */
   igstkLoadedEventMacro( RequestToolEvent, 
                          IGSTKEvent, 
-                         std::pair<std::string, igstk::TrackerTool::Pointer> );
+                         ToolEntryType );
 
    /** This event is generated if the user requested a specific tracker tool and
     *  the tool does not exist.*/
