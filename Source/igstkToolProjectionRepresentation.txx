@@ -24,6 +24,7 @@
 #include <vtkLineSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkTubeFilter.h>
+#include <vtkPlaneSource.h>
 
 
 
@@ -41,6 +42,11 @@ ToolProjectionRepresentation():m_StateMachine(this)
   m_LineMapper = NULL;
 
   m_ToolProjectionSpatialObject = NULL;
+
+  m_VTKPlaneObserver = VTKPlaneObserver::New();
+
+  m_PlaneNormal.Fill(0.0);
+
   this->RequestSetSpatialObject( m_ToolProjectionSpatialObject );
   
   igstkAddInputMacro( ValidToolProjectionObject );
@@ -222,15 +228,36 @@ void ToolProjectionRepresentation< TImageSpatialObject >
   if ( m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
   {
     igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
-    igstk::Transform::VectorType point1 = toolTransform.GetTranslation();
-    igstk::Transform::VectorType point2;
+    VectorType point1 = toolTransform.GetTranslation();
+    VectorType point2;
+    point2.Fill(0);
     igstk::Transform::VersorType rotation = toolTransform.GetRotation();
-    igstk::Transform::VectorType toolAxis;
+    VectorType toolAxis;
     toolAxis[0] = 1;
     toolAxis[1] = 0;
     toolAxis[2] = 0;
     toolAxis = rotation.Transform(toolAxis);
 
+    unsigned int planeObsID = 
+        m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
+                                        m_VTKPlaneObserver );
+    
+    m_VTKPlaneObserver->Reset();
+
+    m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
+    
+    if( m_VTKPlaneObserver->GotVTKPlane() )
+    {
+        this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );        
+
+        VectorType toolProy = itk::CrossProduct( m_PlaneNormal, itk::CrossProduct(toolAxis, m_PlaneNormal) );
+
+        point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
+    }
+
+    m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
+
+/*
     switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
     {
       case ReslicePlaneSpatialObjectType::Axial:
@@ -254,7 +281,7 @@ void ToolProjectionRepresentation< TImageSpatialObject >
           igstkLogMacro( CRITICAL, "ToolProjectionRepresentation: "
               << "Unsupported orientation type \n" );
     }
-
+*/
     if ( (point2-point1).GetNorm() > 0.1 )
     {
       m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
@@ -325,6 +352,26 @@ ToolProjectionRepresentation < TImageSpatialObject >
     {
     return true;
     }
+}
+
+template < class TImageSpatialObject >
+void
+ToolProjectionRepresentation< TImageSpatialObject >
+::SetPlane( const vtkPlaneSource * plane )
+{
+  igstkLogMacro( DEBUG, "igstk::ToolProjectionRepresentation\
+                        ::SetPlane called...\n");
+
+  // This const_cast<> is needed here due to 
+  // the lack of const-correctness in VTK 
+  //m_PlaneSource = 
+  vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
+
+  double* normal = auxPlane->GetNormal();
+
+  m_PlaneNormal[0] = normal[0];
+  m_PlaneNormal[1] = normal[1];
+  m_PlaneNormal[2] = normal[2];
 }
 
 /** Create the vtk Actors */

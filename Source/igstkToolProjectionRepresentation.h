@@ -61,12 +61,15 @@ public:
                                                ImageSpatialObjectConstPointer;
 
   typedef typename ImageSpatialObjectType::PointType  PointType;
+ 
 
   typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
                                                    ReslicePlaneSpatialObjectType;
 
   typedef typename ReslicePlaneSpatialObjectType::Pointer
                                               ReslicePlaneSpatialObjectPointer;  
+
+  typedef typename ReslicePlaneSpatialObjectType::VectorType VectorType;
 
   typedef ToolProjectionObject                 ToolProjectionSpatialObjectType;
 
@@ -91,6 +94,8 @@ protected:
 
   /** Create the VTK actors */
   void CreateActors();
+
+  void SetPlane( const vtkPlaneSource * plane );
 
   /** Verify time stamp. Use the reslicing tool transform to verify 
   * the time stamp */
@@ -124,6 +129,13 @@ private:
   igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
 
+    /** Declare the observer that will receive a VTK plane source from the
+   * ImageResliceSpatialObject */
+  igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
+                      EventHelperType::VTKPlaneSourcePointerType);
+
+  typename VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
+
 private:
 
   /** Variables for maanging reslice plane spatial object */
@@ -134,6 +146,8 @@ private:
   vtkTubeFilter *m_Tuber;
 
   vtkPolyDataMapper* m_LineMapper;
+
+  VectorType m_PlaneNormal;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidToolProjectionObject );

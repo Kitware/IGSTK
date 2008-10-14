@@ -85,6 +85,8 @@ public:
   typedef unsigned int                                  SliceNumberType;
 
   typedef typename ImageSpatialObjectType::PointType    PointType;
+
+  typedef igstk::Transform::VectorType                  VectorType;
  
 
   /** Reslicing modes */

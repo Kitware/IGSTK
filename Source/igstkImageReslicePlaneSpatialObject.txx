@@ -302,6 +302,12 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject>
                            ReportInvalidToolSpatialObject );
 
   //From ToolSpatialObjectSet
+
+  igstkAddTransitionMacro( ToolSpatialObjectSet, 
+                           ValidReslicingMode, 
+                           ToolSpatialObjectSet, 
+                           SetReslicingMode );
+
   igstkAddTransitionMacro( ToolSpatialObjectSet,
                            ValidOrientationType,
                            ToolSpatialObjectSet,

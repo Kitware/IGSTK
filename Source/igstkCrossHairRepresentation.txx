@@ -374,18 +374,21 @@ void CrossHairRepresentation< TImageSpatialObject >
   switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
   {
     case ReslicePlaneSpatialObjectType::Axial:
+    case ReslicePlaneSpatialObjectType::OffAxial:
       m_VerticalLineSource->SetPoint1( point1[0], m_ImageBounds[2], point1[2] );
       m_VerticalLineSource->SetPoint2( point1[0], m_ImageBounds[3], point1[2] );
       m_HorizontalLineSource->SetPoint1( m_ImageBounds[0], point1[1], point1[2] );
       m_HorizontalLineSource->SetPoint2( m_ImageBounds[1], point1[1], point1[2] );
       break;
     case ReslicePlaneSpatialObjectType::Sagittal:
+    case ReslicePlaneSpatialObjectType::OffSagittal:
       m_VerticalLineSource->SetPoint1( point1[0], point1[1], m_ImageBounds[4] );
       m_VerticalLineSource->SetPoint2( point1[0], point1[1], m_ImageBounds[5] );
       m_HorizontalLineSource->SetPoint1( point1[0], m_ImageBounds[2], point1[2] );
       m_HorizontalLineSource->SetPoint2( point1[0], m_ImageBounds[3], point1[2] );
       break;
     case ReslicePlaneSpatialObjectType::Coronal:
+    case ReslicePlaneSpatialObjectType::OffCoronal:
       m_VerticalLineSource->SetPoint1( point1[0], point1[1], m_ImageBounds[4] );
       m_VerticalLineSource->SetPoint2( point1[0], point1[1], m_ImageBounds[5] );
       m_HorizontalLineSource->SetPoint1( m_ImageBounds[0], point1[1], point1[2] );
