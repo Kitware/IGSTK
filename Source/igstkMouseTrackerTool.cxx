@@ -27,7 +27,7 @@
 namespace igstk
 {
 
-/** Constructor (configures Polaris-specific tool values) */
+/** Constructor (configures Mouse-specific tool values) */
 MouseTrackerTool::MouseTrackerTool():m_StateMachine(this)
 {
   m_TrackerToolConfigured = false;
@@ -54,7 +54,7 @@ bool
 MouseTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, 
-     "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+     "igstk::MouseTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 

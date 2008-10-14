@@ -106,7 +106,7 @@ AuroraTracker::ResultType AuroraTracker
     if (this->CheckError(commandInterpreter) == FAILURE)
     {
     igstkLogMacro( WARNING, 
-       "igstk::PolarisTracker::Error searching for uninitialized ports \n");
+       "igstk::AuroraTracker::Error searching for uninitialized ports \n");
     return FAILURE;
     }
 

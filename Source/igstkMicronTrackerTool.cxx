@@ -27,7 +27,7 @@
 namespace igstk
 {
 
-/** Constructor (configures Polaris-specific tool values) */
+/** Constructor (configures Micron-specific tool values) */
 MicronTrackerTool::MicronTrackerTool():m_StateMachine(this)
 {
   m_TrackerToolConfigured = false;
@@ -130,7 +130,7 @@ bool
 MicronTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+    "igstk::MicronTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
