@@ -55,8 +55,11 @@ int igstkAffineTransformTest( int argc, char * argv [] )
             != 0.0 )
       {
         std::cerr<<"Error in setting and getting transformation values.\n";
+        vtkM1->Delete();
         return EXIT_FAILURE;
       }
+      vtkM1->Delete();
+
                    //test transformation composition
       igstk::AffineTransform composedTransform;
       composedTransform = 
@@ -86,8 +89,10 @@ int igstkAffineTransformTest( int argc, char * argv [] )
            != 0.0 )
       {
         std::cerr<<"Error in composition.\n";
+        vtkM2->Delete();
         return EXIT_FAILURE;
       }
+      vtkM2->Delete();
   }
   catch(...)
     {
