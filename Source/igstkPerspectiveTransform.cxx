@@ -70,6 +70,7 @@ PerspectiveTransform
     }
   }
   outMatrix.SetMatrix( vtkT  );
+  vtkT->Delete();
 }
 
 
@@ -107,6 +108,7 @@ PerspectiveTransform
     }
   }  
   outMatrix.SetMatrix( vtkT  );
+  vtkT->Delete();
 }
 
 
