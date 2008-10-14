@@ -51,8 +51,9 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
       P.ExportTransform( *vtkP );       
       vtkP->GetMatrix( vtkPMatrix );
       
-      igstk::PerspectiveTransform::ExtrinsicMatrixType PMatrix = 
-        K.GetVnlMatrix()*Rt.GetVnlMatrix();
+      igstk::PerspectiveTransform::ExtrinsicMatrixType PMatrix;
+
+      PMatrix = K.GetVnlMatrix()*Rt.GetVnlMatrix();
 
       if( ( PMatrix(0,0)-vtkPMatrix->GetElement(0,0) + 
             PMatrix(0,1)-vtkPMatrix->GetElement(0,1) + 
