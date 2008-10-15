@@ -4,14 +4,14 @@
 
     <refresh_rate> 20 </refresh_rate>
 
-    <communication> 
+    <serial_communication> 
       <com_port>3</com_port>
       <baud_rate>115200</baud_rate> 
       <data_bits>8</data_bits>
       <parity>N</parity> 
       <stop_bits>1</stop_bits> 
       <hand_shake>0</hand_shake> 
-    </communication>
+    </serial_communication>
 
     <tool usage="reference">
       <name> reference frame </name> 
