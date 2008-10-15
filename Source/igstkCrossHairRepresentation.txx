@@ -36,13 +36,17 @@ CrossHairRepresentation< TImageSpatialObject >::
 CrossHairRepresentation():m_StateMachine(this)
 {
 
-  m_HorizontalLineSource = NULL;
-  m_HorizontalTuber = NULL;
-  m_HorizontalLineMapper = NULL;
+  m_AxialLineSource = NULL;
+  m_SagittalLineSource = NULL;
+  m_CoronalLineSource = NULL;
 
-  m_VerticalLineSource = NULL;
-  m_VerticalTuber = NULL;
-  m_VerticalLineMapper = NULL;
+  m_AxialTuber = NULL;
+  m_SagittalTuber = NULL;
+  m_CoronalTuber = NULL;
+
+  m_AxialLineMapper = NULL;
+  m_SagittalLineMapper = NULL;
+  m_CoronalLineMapper = NULL;
 
   m_ImageBounds[0] = 0;
   m_ImageBounds[1] = 0;
@@ -118,41 +122,60 @@ CrossHairRepresentation< TImageSpatialObject >
 {
   this->DeleteActors();
 
-  if (m_VerticalLineSource != NULL)
+  if (m_AxialLineSource != NULL)
   {
-    m_VerticalLineSource->Delete();
-    m_VerticalLineSource=NULL;
+    m_AxialLineSource->Delete();
+    m_AxialLineSource=NULL;
   }
 
-  if (m_VerticalTuber != NULL)
+  if (m_SagittalLineSource != NULL)
   {
-    m_VerticalTuber->Delete();
-    m_VerticalTuber=NULL;
+    m_SagittalLineSource->Delete();
+    m_SagittalLineSource=NULL;
   }
 
-  if (m_VerticalLineMapper != NULL)
+  if (m_CoronalLineSource != NULL)
   {
-    m_VerticalLineMapper->Delete();
-    m_VerticalLineMapper=NULL;
+    m_CoronalLineSource->Delete();
+    m_CoronalLineSource=NULL;
   }
 
-  if (m_HorizontalLineSource != NULL)
+  if (m_AxialTuber != NULL)
   {
-    m_HorizontalLineSource->Delete();
-    m_HorizontalLineSource=NULL;
+    m_AxialTuber->Delete();
+    m_AxialTuber=NULL;
   }
 
-  if (m_HorizontalTuber != NULL)
+  if (m_SagittalTuber != NULL)
   {
-    m_HorizontalTuber->Delete();
-    m_HorizontalTuber=NULL;
+    m_SagittalTuber->Delete();
+    m_SagittalTuber=NULL;
   }
 
-  if (m_HorizontalLineMapper != NULL)
+  if (m_CoronalTuber != NULL)
   {
-    m_HorizontalLineMapper->Delete();
-    m_HorizontalLineMapper=NULL;
+    m_CoronalTuber->Delete();
+    m_CoronalTuber=NULL;
   }
+
+  if (m_AxialLineMapper != NULL)
+  {
+    m_AxialLineMapper->Delete();
+    m_AxialLineMapper=NULL;
+  }
+
+  if (m_SagittalLineMapper != NULL)
+  {
+    m_SagittalLineMapper->Delete();
+    m_SagittalLineMapper=NULL;
+  }
+
+  if (m_CoronalLineMapper != NULL)
+  {
+    m_CoronalLineMapper->Delete();
+    m_CoronalLineMapper=NULL;
+  }
+
 }
 
 /** Verify time stamp of the attached tool*/
@@ -298,31 +321,44 @@ CrossHairRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RemoveObserver(obsID);
 
-  // build vertical cross hair
-  m_VerticalLineSource = vtkLineSource::New();
-  m_VerticalLineSource->SetPoint1( 0, 0, 0 );
-  m_VerticalLineSource->SetPoint2( 1, 1, 1 );
+  // build axial cross hair
+  m_AxialLineSource = vtkLineSource::New();
+  m_AxialLineSource->SetPoint1( 0, 0, 0 );
+  m_AxialLineSource->SetPoint2( 1, 1, 1 );
 
-  m_VerticalTuber = vtkTubeFilter::New();
-  m_VerticalTuber->SetInput ( m_VerticalLineSource->GetOutput() );
-  m_VerticalTuber->SetRadius (1);
-  m_VerticalTuber->SetNumberOfSides(3);
+  m_AxialTuber = vtkTubeFilter::New();
+  m_AxialTuber->SetInput ( m_AxialLineSource->GetOutput() );
+  m_AxialTuber->SetRadius (1);
+  m_AxialTuber->SetNumberOfSides(3);
 
-  m_VerticalLineMapper = vtkPolyDataMapper::New();
-  m_VerticalLineMapper->SetInput( m_VerticalTuber->GetOutput() );
+  m_AxialLineMapper = vtkPolyDataMapper::New();
+  m_AxialLineMapper->SetInput( m_AxialTuber->GetOutput() );
 
-    // build horizontal cross hair
-  m_HorizontalLineSource = vtkLineSource::New();
-  m_HorizontalLineSource->SetPoint1( 0, 0, 0 );
-  m_HorizontalLineSource->SetPoint2( 1, 1, 1 );
+ // build sagittal cross hair
+  m_SagittalLineSource = vtkLineSource::New();
+  m_SagittalLineSource->SetPoint1( 0, 0, 0 );
+  m_SagittalLineSource->SetPoint2( 1, 1, 1 );
 
-  m_HorizontalTuber = vtkTubeFilter::New();
-  m_HorizontalTuber->SetInput ( m_HorizontalLineSource->GetOutput() );
-  m_HorizontalTuber->SetRadius (1);
-  m_HorizontalTuber->SetNumberOfSides(5);
+  m_SagittalTuber = vtkTubeFilter::New();
+  m_SagittalTuber->SetInput ( m_SagittalLineSource->GetOutput() );
+  m_SagittalTuber->SetRadius (1);
+  m_SagittalTuber->SetNumberOfSides(3);
 
-  m_HorizontalLineMapper = vtkPolyDataMapper::New();
-  m_HorizontalLineMapper->SetInput( m_HorizontalTuber->GetOutput() );
+  m_SagittalLineMapper = vtkPolyDataMapper::New();
+  m_SagittalLineMapper->SetInput( m_SagittalTuber->GetOutput() );
+
+ // build coronal cross hair
+  m_CoronalLineSource = vtkLineSource::New();
+  m_CoronalLineSource->SetPoint1( 0, 0, 0 );
+  m_CoronalLineSource->SetPoint2( 1, 1, 1 );
+
+  m_CoronalTuber = vtkTubeFilter::New();
+  m_CoronalTuber->SetInput ( m_CoronalLineSource->GetOutput() );
+  m_CoronalTuber->SetRadius (1);
+  m_CoronalTuber->SetNumberOfSides(3);
+
+  m_CoronalLineMapper = vtkPolyDataMapper::New();
+  m_CoronalLineMapper->SetInput( m_CoronalTuber->GetOutput() );
 
 }
 
@@ -371,30 +407,13 @@ void CrossHairRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RemoveObserver(obsID);
 
-  switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
-  {
-    case ReslicePlaneSpatialObjectType::Axial:
-    case ReslicePlaneSpatialObjectType::OffAxial:
-      m_VerticalLineSource->SetPoint1( point1[0], m_ImageBounds[2], point1[2] );
-      m_VerticalLineSource->SetPoint2( point1[0], m_ImageBounds[3], point1[2] );
-      m_HorizontalLineSource->SetPoint1( m_ImageBounds[0], point1[1], point1[2] );
-      m_HorizontalLineSource->SetPoint2( m_ImageBounds[1], point1[1], point1[2] );
-      break;
-    case ReslicePlaneSpatialObjectType::Sagittal:
-    case ReslicePlaneSpatialObjectType::OffSagittal:
-      m_VerticalLineSource->SetPoint1( point1[0], point1[1], m_ImageBounds[4] );
-      m_VerticalLineSource->SetPoint2( point1[0], point1[1], m_ImageBounds[5] );
-      m_HorizontalLineSource->SetPoint1( point1[0], m_ImageBounds[2], point1[2] );
-      m_HorizontalLineSource->SetPoint2( point1[0], m_ImageBounds[3], point1[2] );
-      break;
-    case ReslicePlaneSpatialObjectType::Coronal:
-    case ReslicePlaneSpatialObjectType::OffCoronal:
-      m_VerticalLineSource->SetPoint1( point1[0], point1[1], m_ImageBounds[4] );
-      m_VerticalLineSource->SetPoint2( point1[0], point1[1], m_ImageBounds[5] );
-      m_HorizontalLineSource->SetPoint1( m_ImageBounds[0], point1[1], point1[2] );
-      m_HorizontalLineSource->SetPoint2( m_ImageBounds[1], point1[1], point1[2] );
-      break;
-  }
+  m_SagittalLineSource->SetPoint1( point1[0], m_ImageBounds[2], point1[2] );
+  m_SagittalLineSource->SetPoint2( point1[0], m_ImageBounds[3], point1[2] );
+  m_CoronalLineSource->SetPoint1( m_ImageBounds[0], point1[1], point1[2] );
+  m_CoronalLineSource->SetPoint2( m_ImageBounds[1], point1[1], point1[2] );
+  m_AxialLineSource->SetPoint1( point1[0], point1[1], m_ImageBounds[4] );
+  m_AxialLineSource->SetPoint2( point1[0], point1[1], m_ImageBounds[5] );
+
 }
 
 /** Sets actors visibility */
@@ -423,43 +442,23 @@ void CrossHairRepresentation< TImageSpatialObject >
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
-  vtkActor* verticalLineActor = vtkActor::New();
-  verticalLineActor->SetMapper (m_VerticalLineMapper);
+  vtkActor* axialLineActor = vtkActor::New();
+  axialLineActor->SetMapper (m_AxialLineMapper);
 
-  vtkActor* horizontalLineActor = vtkActor::New();
-  horizontalLineActor->SetMapper (m_HorizontalLineMapper);
+  vtkActor* sagittalLineActor = vtkActor::New();
+  sagittalLineActor->SetMapper (m_SagittalLineMapper);
 
-   // set their color according to the orientation
-  switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
-  {
-    case ReslicePlaneSpatialObjectType::Axial:
-    {
-    verticalLineActor->GetProperty()->SetColor( 0,1,0 );
-    horizontalLineActor->GetProperty()->SetColor( 0,0,1 );
-    break;
-    }
-    case ReslicePlaneSpatialObjectType::Sagittal:
-    {
-    verticalLineActor->GetProperty()->SetColor( 0,0,1 );
-    horizontalLineActor->GetProperty()->SetColor( 1,0,0 );
-    break;
-    }
-    case ReslicePlaneSpatialObjectType::Coronal:
-    {
-    verticalLineActor->GetProperty()->SetColor( 0,1,0 );
-    horizontalLineActor->GetProperty()->SetColor( 1,0,0 );
-    break;
-    }
-    default:
-    {
-    std::cerr << "Invalid orientaiton" << std::endl;
-    break;
-    }
-  }
+  vtkActor* coronalLineActor = vtkActor::New();
+  coronalLineActor->SetMapper (m_CoronalLineMapper);
 
-  this->AddActor( verticalLineActor );
+  // set their color according to the orientation
+  axialLineActor->GetProperty()->SetColor( 1,0,0 );
+  sagittalLineActor->GetProperty()->SetColor( 0,1,0 );
+  coronalLineActor->GetProperty()->SetColor( 0,0,1 );
 
-  this->AddActor( horizontalLineActor );
+  this->AddActor( axialLineActor );
+  this->AddActor( sagittalLineActor );
+  this->AddActor( coronalLineActor );
 
 }
 

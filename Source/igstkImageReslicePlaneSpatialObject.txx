@@ -875,32 +875,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
       m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-      switch ( this->GetOrientationType() )
-      {
-        case Axial:
-        case OffAxial:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        break;
-        case Sagittal:
-        case OffSagittal:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
-        break;
-        case Coronal:
-        case OffCoronal:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        break;
-        default: // set axial extension as default, i.e. the max extension
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        break;
-      }
+      this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
+      this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
+      this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
     }
 }
 
@@ -1269,6 +1246,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   // auxiliary axes
   igstk::Transform::VectorType axes1, axes2;
 
+  igstk::Transform::VectorType vx, vy, vn, v;
+
   m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
   switch( m_OrientationType )
@@ -1336,35 +1315,83 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   // auxiliary axes
   igstk::Transform::VectorType axes1, axes2;
 
+  igstk::Transform::VectorType vx, vy, vn, v;
+
   m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
   switch( m_OrientationType )
     {
     case OffCoronal:
-      {      
+      {
+        vx.Fill( 0.0 );
+        vx[1] = 1;
 
-        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
-        axes2.Fill( 0 );
-        axes2[2] = 1;
-        m_PlaneNormal = itk::CrossProduct( probeVector, axes2 );
+        vy[0] = probeVector[0];
+        vy[1] = probeVector[1];
+        vy[2] = probeVector[2];
+
+        if ( fabs(vx*vy) < 1e-9 )
+        {
+        // FIXME: need to handle this situation too
+        igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
+        }
+
+        vn = itk::CrossProduct( vx, vy );
+        vn.Normalize();
+
+        m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
+
+        m_PlaneNormal = vn;//itk::CrossProduct( axes2, probeVector );
         break;
       }
 
     case OffSagittal:
       {
-        m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);        
-        axes2.Fill( 0 );
-        axes2[1] = 1;
-        m_PlaneNormal = itk::CrossProduct( probeVector, axes2 );
+                
+        vx.Fill( 0.0 );
+        vx[2] = 1;
+
+        vy[0] = probeVector[0];
+        vy[1] = probeVector[1];
+        vy[2] = probeVector[2];
+
+        if ( fabs(vx*vy) < 1e-9 )
+        {
+        // FIXME: need to handle this situation too
+        igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
+        }
+
+        vn = itk::CrossProduct( vx, vy );
+        vn.Normalize();
+
+        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+
+        m_PlaneNormal = vn;//itk::CrossProduct( axes2, probeVector );
         break;
       }
 
     case OffAxial:
       {
-        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-        axes2.Fill( 0 );
-        axes2[0] = 1;
-        m_PlaneNormal = itk::CrossProduct( probeVector, axes2 );
+        vx.Fill( 0.0 );
+        vx[0] = 1;
+        //vx = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(vx);
+      
+        vy[0] = probeVector[0];
+        vy[1] = probeVector[1];
+        vy[2] = probeVector[2];
+
+        if ( fabs(vx*vy) < 1e-9 )
+        {
+        // FIXME: need to handle this situation too
+        igstkLogMacro( DEBUG, "The two vectors are parrelell \n");
+        }
+
+        vn = itk::CrossProduct( vx, vy );
+        vn.Normalize();
+
+        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);        
+       
+        m_PlaneNormal = vn;//itk::CrossProduct( axes2, probeVector );
         break;
       }
     }

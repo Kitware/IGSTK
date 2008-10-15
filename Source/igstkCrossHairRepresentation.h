@@ -135,14 +135,17 @@ private:
 
   double                            m_ImageBounds[6];
 
-  vtkLineSource* m_HorizontalLineSource;
-  vtkLineSource* m_VerticalLineSource;
+  vtkLineSource* m_AxialLineSource;
+  vtkLineSource* m_SagittalLineSource;
+  vtkLineSource* m_CoronalLineSource;
 
-  vtkTubeFilter *m_VerticalTuber;
-  vtkTubeFilter *m_HorizontalTuber;
+  vtkTubeFilter *m_AxialTuber;
+  vtkTubeFilter *m_SagittalTuber;
+  vtkTubeFilter *m_CoronalTuber;
 
-  vtkPolyDataMapper* m_VerticalLineMapper;
-  vtkPolyDataMapper* m_HorizontalLineMapper;
+  vtkPolyDataMapper* m_AxialLineMapper;
+  vtkPolyDataMapper* m_SagittalLineMapper;
+  vtkPolyDataMapper* m_CoronalLineMapper;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidCrossHairObject );

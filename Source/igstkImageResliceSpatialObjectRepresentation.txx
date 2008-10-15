@@ -285,6 +285,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
+  this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
+  this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
+  this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
+
+/*
   switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
   {
     case ReslicePlaneSpatialObjectType::Axial:
@@ -311,6 +316,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
         this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
         break;
   }
+*/
 }
 
 /** Verify time stamp of the attached tool*/
@@ -560,7 +566,8 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                planeCenter[k] = m_ImageBounds[2*k];
             }
 
-            m_PlaneSource->SetCenter(planeCenter);
+           // just commented
+           // m_PlaneSource->SetCenter(planeCenter);
 
             double planeAxis1[3];
             double planeAxis2[3];
@@ -585,9 +592,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                 m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
                 m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
                 m_ResliceAxes->SetElement(2,i,normal[i]);
-            }
-
-            //m_ResliceAxes->DeepCopy( m_ReslicePlaneSpatialObject->GetResliceAxes() );
+            }           
 
             double planeOrigin[4];
             m_PlaneSource->GetOrigin(planeOrigin);
