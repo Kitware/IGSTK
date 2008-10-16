@@ -290,6 +290,10 @@ private:
   /** Report plane */
   void ReportVTKPlaneProcessing( void );
 
+  /** Auxiliary function to get the distance to the bounding plane in the 
+  direction of the tool*/
+  double GetDistanceToPlane(VectorType p, VectorType pv, unsigned int pi);
+
   /** Methods to compute reslcing plane for the different modes*/
   void ComputeOrthogonalReslicingPlane();
   void ComputeObliqueReslicingPlane();
@@ -363,6 +367,10 @@ private:
   double               m_ImageSpacing[3];
   int                  m_ImageExtent[6];
   double               m_ImageBounds[6];
+  std::vector< VectorType > m_ImageBoundsCenters;
+  std::vector< VectorType > m_ImageBoundsNormals;
+
+  
 
   /** flag indicating tool spatial object used for reslicing */
   bool                 m_ToolSpatialObjectSet;

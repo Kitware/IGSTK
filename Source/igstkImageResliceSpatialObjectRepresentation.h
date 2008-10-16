@@ -136,15 +136,10 @@ private:
   vtkTransform                         * m_ResliceTransform;
   vtkMatrix4x4                         * m_ResliceAxes;
   
-
-  int                  m_ImageDimension[3];
-  double               m_ImageOrigin[3];
-  double               m_ImageSpacing[3];
-  int                  m_ImageExtent[6];
-  double               m_ImageBounds[6];
+  double                                m_ImageSpacing[3];
 
   /** Camera member and parameters */
-  vtkCamera                              * m_Camera;
+  vtkCamera                            * m_Camera;
   double                                 m_CameraDistance;
 
   /** Variables that store window and level values for 2D image display */

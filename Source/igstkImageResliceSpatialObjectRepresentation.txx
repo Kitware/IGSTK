@@ -61,6 +61,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
   m_ImageReslice->AutoCropOutputOn();  
   m_ImageReslice->SetOptimization( 1 );
+  m_ImageReslice->SetInterpolationModeToCubic();
 
   m_TextureMapper = vtkPolyDataMapper::New();
 
@@ -405,28 +406,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
         if( m_ImageData )
         {
             m_ImageData->Update();
-
-            m_ImageData->GetDimensions( m_ImageDimension );
-            m_ImageData->GetOrigin( m_ImageOrigin );
             m_ImageData->GetSpacing( m_ImageSpacing );
-            m_ImageData->GetWholeExtent( m_ImageExtent );
-
-            m_ImageBounds[0] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[0]; //xmin
-            m_ImageBounds[1] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[1]; //xmax
-            m_ImageBounds[2] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[2]; //ymin
-            m_ImageBounds[3] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[3]; //ymax
-            m_ImageBounds[4] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[4]; //zmin
-            m_ImageBounds[5] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[5]; //zmax
-
-            for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
-            {
-                if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
-                {
-                double t = m_ImageBounds[i+1];
-                m_ImageBounds[i+1] = m_ImageBounds[i];
-                m_ImageBounds[i] = t;
-                }
-            }
 
             m_MapColors->SetLookupTable( m_LUT );
             m_ImageReslice->SetInput ( m_ImageData );
@@ -438,7 +418,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     }
 
   m_ImageSpatialObject->RemoveObserver( obsId );
-
+/*
   this->m_ImageTransformObserver->Reset();
 
   this->m_ImageSpatialObject->RequestGetImageTransform();
@@ -460,7 +440,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
       this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
       imageTransformMatrix->Delete();
     }
-
+*/
     m_ImageActor->SetTexture(m_Texture);
     m_ImageActor->SetMapper(m_TextureMapper);
    // m_ImageActor->SetInput( m_MapColors->GetOutput() );
@@ -515,40 +495,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
         this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
 
         if( m_PlaneSource )
-        {
-            double abs_normal[3];
-            m_PlaneSource->GetNormal(abs_normal);
-
-            double planeCenter[3];
-            m_PlaneSource->GetCenter(planeCenter);
-
-            double nmax = 0.0;
-            int k = 0;
-
-            for (int i = 0; i < 3; i++ )
-            {
-                abs_normal[i] = fabs(abs_normal[i]);
-                if ( abs_normal[i]>nmax )
-                {
-                    nmax = abs_normal[i];
-                    k = i;
-                }
-            }
-
-            // Force the plane to lie within the true image bounds along its normal
-            //
-            if ( planeCenter[k] > m_ImageBounds[2*k+1] )
-            {
-               planeCenter[k] = m_ImageBounds[2*k+1];
-            }
-            else if ( planeCenter[k] < m_ImageBounds[2*k] )
-            {
-               planeCenter[k] = m_ImageBounds[2*k];
-            }
-
-           // just commented
-           // m_PlaneSource->SetCenter(planeCenter);
-
+        {           
             double planeAxis1[3];
             double planeAxis2[3];
 
@@ -652,6 +599,10 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
             m_ImageReslice->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
 
             //Setting up the camera position
+
+            double planeCenter[3];
+            m_PlaneSource->GetCenter(planeCenter);
+
             double focalPoint[3];
             double position[3];
             for ( int i = 0; i<3; i++ )

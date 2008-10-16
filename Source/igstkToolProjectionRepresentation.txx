@@ -257,31 +257,6 @@ void ToolProjectionRepresentation< TImageSpatialObject >
 
     m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
 
-/*
-    switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
-    {
-      case ReslicePlaneSpatialObjectType::Axial:
-        toolAxis[2] = 0;
-        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-        break;
-      case ReslicePlaneSpatialObjectType::Sagittal:
-        toolAxis[0] = 0;
-        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-        break;
-      case ReslicePlaneSpatialObjectType::Coronal:
-        toolAxis[1] = 0;
-        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-        break;
-      case ReslicePlaneSpatialObjectType::OffCoronal:
-      case ReslicePlaneSpatialObjectType::OffSagittal:
-      case ReslicePlaneSpatialObjectType::OffAxial:
-        point2 = point1 + toolAxis*this->m_ToolProjectionSpatialObject->GetSize();
-        break;
-        default:
-          igstkLogMacro( CRITICAL, "ToolProjectionRepresentation: "
-              << "Unsupported orientation type \n" );
-    }
-*/
     if ( (point2-point1).GetNorm() > 0.1 )
     {
       m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
