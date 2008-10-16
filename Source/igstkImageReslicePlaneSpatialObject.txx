@@ -27,8 +27,6 @@
 #include "vtkMath.h"
 #include "vtkTransform.h"
 
-//#include "itkVersor.h"
-
 namespace igstk
 { 
 
@@ -560,6 +558,12 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
                         ::ReportVTKPlaneProcessing called...\n");
 
+  m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
+  m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
+  m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
+  m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
+  m_PlaneSource->SetCenter(m_PlaneCenter[0],m_PlaneCenter[1],m_PlaneCenter[2]);
+
   VTKPlaneModifiedEvent event;
   event.Set( m_PlaneSource );
   this->InvokeEvent( event );
@@ -839,9 +843,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
                                      m_VTKImageObserver );
 
- // m_ImageSpatialObject->AddObserver( CoordinateSystemTransformToEvent(), 
- //                                    m_ImageTransformObserver );
-
   this->m_VTKImageObserver->Reset();
 
   this->m_ImageSpatialObject->RequestGetVTKImage();
@@ -875,9 +876,99 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
       m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-      this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-      this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-      this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
+      switch ( this->GetOrientationType() )
+      {
+        case Axial:
+        case OffAxial:
+            m_PlaneOrigin[0] = m_ImageBounds[0];
+            m_PlaneOrigin[1] = m_ImageBounds[2];
+            m_PlaneOrigin[2] = m_ImageBounds[4];
+
+            m_PlanePoint1[0] = m_ImageBounds[1];
+            m_PlanePoint1[1] = m_ImageBounds[2];
+            m_PlanePoint1[2] = m_ImageBounds[4];
+
+            m_PlanePoint2[0] = m_ImageBounds[0];
+            m_PlanePoint2[1] = m_ImageBounds[3];
+            m_PlanePoint2[2] = m_ImageBounds[4];
+
+            m_PlaneNormal[0] = 0;
+            m_PlaneNormal[1] = 0;
+            m_PlaneNormal[2] = 1;
+
+            break;
+        case Sagittal:
+        case OffSagittal:
+            m_PlaneOrigin[0] = m_ImageBounds[0];
+            m_PlaneOrigin[1] = m_ImageBounds[2];
+            m_PlaneOrigin[2] = m_ImageBounds[4];
+
+            m_PlanePoint1[0] = m_ImageBounds[0];
+            m_PlanePoint1[1] = m_ImageBounds[3];
+            m_PlanePoint1[2] = m_ImageBounds[4];
+
+            m_PlanePoint2[0] = m_ImageBounds[0];
+            m_PlanePoint2[1] = m_ImageBounds[2];
+            m_PlanePoint2[2] = m_ImageBounds[5];
+
+            m_PlaneNormal[0] = 0;
+            m_PlaneNormal[1] = 1;
+            m_PlaneNormal[2] = 0;
+           /* m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
+            m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
+            m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);*/
+            break;
+        case Coronal:
+        case OffCoronal:
+
+            m_PlaneOrigin[0] = m_ImageBounds[0];
+            m_PlaneOrigin[1] = m_ImageBounds[2];
+            m_PlaneOrigin[2] = m_ImageBounds[4];
+
+            m_PlanePoint1[0] = m_ImageBounds[0];
+            m_PlanePoint1[1] = m_ImageBounds[2];
+            m_PlanePoint1[2] = m_ImageBounds[5];
+
+            m_PlanePoint2[0] = m_ImageBounds[1];
+            m_PlanePoint2[1] = m_ImageBounds[2];
+            m_PlanePoint2[2] = m_ImageBounds[4];
+
+            m_PlaneNormal[0] = 1;
+            m_PlaneNormal[1] = 0;
+            m_PlaneNormal[2] = 0;
+
+            //m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
+            //m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
+            //m_PlaneSource->SetPoint2(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
+            break;
+        default: // set axial extension as default, i.e. the max extension
+            m_PlaneOrigin[0] = m_ImageBounds[0];
+            m_PlaneOrigin[1] = m_ImageBounds[2];
+            m_PlaneOrigin[2] = m_ImageBounds[4];
+
+            m_PlanePoint1[0] = m_ImageBounds[1];
+            m_PlanePoint1[1] = m_ImageBounds[2];
+            m_PlanePoint1[2] = m_ImageBounds[4];
+
+            m_PlanePoint2[0] = m_ImageBounds[0];
+            m_PlanePoint2[1] = m_ImageBounds[3];
+            m_PlanePoint2[2] = m_ImageBounds[4];
+
+            m_PlaneNormal[0] = 0;
+            m_PlaneNormal[1] = 0;
+            m_PlaneNormal[2] = 1;
+
+            /*m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
+            m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
+            m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);*/
+            break;
+      }
+
+       m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
+       m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
+       m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
+       m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
+
     }
 }
 
@@ -1210,13 +1301,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   }  
 
 
-  m_PlaneSource->SetCenter( m_PlaneCenter[0],
+ /* m_PlaneSource->SetCenter( m_PlaneCenter[0],
                             m_PlaneCenter[1],
                             m_PlaneCenter[2] );
  
   m_PlaneSource->SetNormal( m_PlaneNormal[0],
                             m_PlaneNormal[1],
-                            m_PlaneNormal[2] );
+                            m_PlaneNormal[2] );*/
 }
 
 /**Compute oblique reslicing plane */
@@ -1279,13 +1370,13 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
       }
     }
 
-  m_PlaneSource->SetCenter( m_PlaneCenter[0],
-                                  m_PlaneCenter[1],
-                                  m_PlaneCenter[2]);
+  //m_PlaneSource->SetCenter( m_PlaneCenter[0],
+  //                                m_PlaneCenter[1],
+  //                                m_PlaneCenter[2]);
 
-  m_PlaneSource->SetNormal( m_PlaneNormal[0],
-                                  m_PlaneNormal[1],
-                                  m_PlaneNormal[2]);
+  //m_PlaneSource->SetNormal( m_PlaneNormal[0],
+  //                                m_PlaneNormal[1],
+  //                                m_PlaneNormal[2]);
 }
 
 /**Compute off-orthgonal reslicing plane */
@@ -1298,10 +1389,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
                        ::ComputeOffOrthogonalReslicingPlane called...\n");
 
   /* Calculate the tool's long axis vector */
- 
   igstk::Transform::VectorType   probeVector;
   probeVector.Fill(0.0);
-  // fixme: the tool´s long axis direction changes deppending on the spatial object definition 
+  // fixme: the tool´s long axis direction changes depending on the spatial object definition 
   // so, what we can do to always set it correctly?
   probeVector[0] = 1;
 
@@ -1313,11 +1403,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   m_ToolPosition[2] = m_PlaneCenter[2];
 
   // auxiliary axes
-  igstk::Transform::VectorType axes1, axes2;
+  VectorType axes1, axes2;
 
-  igstk::Transform::VectorType vx, vy, vn, v;
-
-  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  VectorType vx, vy, vn, v;
 
   switch( m_OrientationType )
     {
@@ -1389,20 +1477,30 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
         vn = itk::CrossProduct( vx, vy );
         vn.Normalize();
 
-        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);        
+       // m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);  
+
+        vx[0] *= 100;
+
+        vy.Fill( 0.0 );
+        vy[1] = 100;
+
+        // good, continue in this line....
+        m_PlaneOrigin = m_ToolPosition-vx-vy;
+        m_PlanePoint1 = m_ToolPosition-vx+vy;
+        m_PlanePoint2 = m_ToolPosition+vx-vy;
        
-        m_PlaneNormal = vn;//itk::CrossProduct( axes2, probeVector );
+        m_PlaneNormal = vn;
         break;
       }
     }
 
-  m_PlaneSource->SetCenter( m_PlaneCenter[0],
-                                  m_PlaneCenter[1],
-                                  m_PlaneCenter[2]);
+  //m_PlaneSource->SetCenter( m_PlaneCenter[0],
+  //                                m_PlaneCenter[1],
+  //                                m_PlaneCenter[2]);
 
-  m_PlaneSource->SetNormal( m_PlaneNormal[0],
-                                  m_PlaneNormal[1],
-                                  m_PlaneNormal[2]);  
+  //m_PlaneSource->SetNormal( m_PlaneNormal[0],
+  //                                m_PlaneNormal[1],
+  //                                m_PlaneNormal[2]);  
 }
 
 /** Get reslicing plane equation */

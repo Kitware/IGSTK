@@ -285,38 +285,18 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-  this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-  this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
+  unsigned int planeObsID = 
+      m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
+                                      m_VTKPlaneObserver );
+  
+  m_VTKPlaneObserver->Reset();
 
-/*
-  switch ( m_ReslicePlaneSpatialObject->GetOrientationType() )
+  m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
+  
+  if( m_VTKPlaneObserver->GotVTKPlane() )
   {
-    case ReslicePlaneSpatialObjectType::Axial:
-    case ReslicePlaneSpatialObjectType::OffAxial:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        break;
-    case ReslicePlaneSpatialObjectType::Sagittal:
-    case ReslicePlaneSpatialObjectType::OffSagittal:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
-        break;
-    case ReslicePlaneSpatialObjectType::Coronal:
-    case ReslicePlaneSpatialObjectType::OffCoronal:
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        break;
-    default: // set axial extension as default, i.e. the max extension
-        this->m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-        this->m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-        break;
+      this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
   }
-*/
 }
 
 /** Verify time stamp of the attached tool*/
@@ -465,20 +445,20 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   if( this->m_ImageTransformObserver->GotImageTransform() ) 
     {
-    const CoordinateSystemTransformToResult transformCarrier =
-      this->m_ImageTransformObserver->GetImageTransform();
+      const CoordinateSystemTransformToResult transformCarrier =
+        this->m_ImageTransformObserver->GetImageTransform();
 
-    igstk::Transform imageTransform = transformCarrier.GetTransform();
+      igstk::Transform imageTransform = transformCarrier.GetTransform();
 
-    // Image Actor takes care of the image origin position internally.
-    this->m_ImageActor->SetPosition(0,0,0);
+      // Image Actor takes care of the image origin position internally.
+      this->m_ImageActor->SetPosition(0,0,0);
 
-    vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
+      vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
 
-    imageTransform.ExportTransform( *imageTransformMatrix );
+      imageTransform.ExportTransform( *imageTransformMatrix );
 
-    this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
-    imageTransformMatrix->Delete();
+      this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
+      imageTransformMatrix->Delete();
     }
 
     m_ImageActor->SetTexture(m_Texture);
@@ -790,8 +770,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   //m_PlaneSource = 
   vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
 
-  m_PlaneSource->SetCenter( auxPlane->GetCenter() );
+  m_PlaneSource->SetOrigin( auxPlane->GetOrigin() );
+  m_PlaneSource->SetPoint1( auxPlane->GetPoint1() );
+  m_PlaneSource->SetPoint2( auxPlane->GetPoint2() );
   m_PlaneSource->SetNormal( auxPlane->GetNormal() );
+
 }
 
 template < class TImageSpatialObject >

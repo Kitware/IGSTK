@@ -326,8 +326,12 @@ private:
    *  and image orientation taken from the DICOM input image */
   igstk::Transform                  m_ImageTransform;
   
-  igstk::Transform::VectorType      m_PlaneNormal;
-  igstk::Transform::VectorType      m_PlaneCenter;
+  /** Plane parameters */
+  VectorType                        m_PlaneNormal;
+  VectorType                        m_PlaneCenter;
+  VectorType                        m_PlanePoint1;
+  VectorType                        m_PlanePoint2;
+  VectorType                        m_PlaneOrigin;
 
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
@@ -352,7 +356,8 @@ private:
   double               m_MousePosition[3];
   bool                 m_MousePositionSetFlag;
 
-  double               m_ToolPosition[3];
+  VectorType           m_ToolPosition;
+
   int                  m_ImageDimension[3];
   double               m_ImageOrigin[3];
   double               m_ImageSpacing[3];
