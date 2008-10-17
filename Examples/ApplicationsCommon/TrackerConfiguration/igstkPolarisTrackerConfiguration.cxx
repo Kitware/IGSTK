@@ -20,31 +20,13 @@
 namespace igstk
 {
 const double PolarisVicraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 20;
+const double PolarisWirelessSpectraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
 const double PolarisHybridTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
 const unsigned PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER = 12;
 
 
-PolarisVicraTrackerConfiguration::PolarisVicraTrackerConfiguration()
-{  
-  this->m_Frequency = MAXIMAL_REFERESH_RATE;
-}
-
-
-PolarisVicraTrackerConfiguration::~PolarisVicraTrackerConfiguration()
-{
-
-}
-
-
-double
-PolarisVicraTrackerConfiguration::GetMaximalRefreshRate()
-{
-  return this->MAXIMAL_REFERESH_RATE;
-}
-
-
 void 
-PolarisVicraTrackerConfiguration::InternalAddTool( 
+PolarisWirelessTrackerConfiguration::InternalAddTool( 
   const TrackerToolConfiguration *tool, bool isReference )
 {
   AddToolFailureEvent fe;
@@ -75,6 +57,43 @@ PolarisVicraTrackerConfiguration::InternalAddTool(
                                                               *wirelessTool );
   }
   this->InvokeEvent( AddToolSuccessEvent() );
+}
+
+PolarisVicraTrackerConfiguration::PolarisVicraTrackerConfiguration()
+{  
+  this->m_Frequency = MAXIMAL_REFERESH_RATE;
+}
+
+
+PolarisVicraTrackerConfiguration::~PolarisVicraTrackerConfiguration()
+{
+
+}
+
+
+double
+PolarisVicraTrackerConfiguration::GetMaximalRefreshRate()
+{
+  return this->MAXIMAL_REFERESH_RATE;
+}
+
+
+PolarisWirelessSpectraTrackerConfiguration::PolarisWirelessSpectraTrackerConfiguration()
+{  
+  this->m_Frequency = MAXIMAL_REFERESH_RATE;
+}
+
+
+PolarisWirelessSpectraTrackerConfiguration::~PolarisWirelessSpectraTrackerConfiguration()
+{
+
+}
+
+
+double
+PolarisWirelessSpectraTrackerConfiguration::GetMaximalRefreshRate()
+{
+  return this->MAXIMAL_REFERESH_RATE;
 }
 
 

@@ -94,8 +94,25 @@ protected:
 /**
  * Configuration for the Polaris Vicra tracker.
  */
-class PolarisVicraTrackerConfiguration : 
+class PolarisWirelessTrackerConfiguration : 
   public SerialCommunicatingTrackerConfiguration
+{
+public:
+  PolarisWirelessTrackerConfiguration() {}
+  virtual ~PolarisWirelessTrackerConfiguration() {}
+
+protected:
+  virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
+                                bool isReference );
+
+};
+
+
+/**
+ * Configuration for the Polaris Vicra tracker.
+ */
+class PolarisVicraTrackerConfiguration : 
+  public PolarisWirelessTrackerConfiguration
 {
 public:
   PolarisVicraTrackerConfiguration();
@@ -106,14 +123,32 @@ public:
    */
   virtual double GetMaximalRefreshRate();
 
-protected:
-  virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
-                                bool isReference );
+private:                  
+                //manufacturer specified maximal refresh rate [Hz]
+  static const double MAXIMAL_REFERESH_RATE;
+};
+
+
+/**
+ * Configuration for the Polaris Vicra tracker.
+ */
+class PolarisWirelessSpectraTrackerConfiguration : 
+  public PolarisWirelessTrackerConfiguration
+{
+public:
+  PolarisWirelessSpectraTrackerConfiguration();
+  virtual ~PolarisWirelessSpectraTrackerConfiguration();
+
+  /**
+   * Get the manufacturer specified maximal refresh rate.
+   */
+  virtual double GetMaximalRefreshRate();
 
 private:                  
                 //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 };
+
 
 /**
  * Configuration for the Hybrid Polaris trackers.
