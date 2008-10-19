@@ -433,24 +433,19 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
     SliceNumberType minSlice = 0;
     SliceNumberType maxSlice = 0;
     
-    int ext[6];
-
-    m_ImageData->Update();
-    m_ImageData->GetExtent( ext );
-
     switch( m_OrientationType )
       {
       case Axial:
-        minSlice = ext[4];
-        maxSlice = ext[5];
+        minSlice = m_ImageExtent[4];
+        maxSlice = m_ImageExtent[5];
         break;
       case Sagittal:
-        minSlice = ext[0];
-        maxSlice = ext[1];
+        minSlice = m_ImageExtent[0];
+        maxSlice = m_ImageExtent[1];
         break;
       case Coronal:
-        minSlice = ext[2];
-        maxSlice = ext[3];
+        minSlice = m_ImageExtent[2];
+        maxSlice = m_ImageExtent[3];
         break;
       }
 
@@ -614,7 +609,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
                         ::ReportSliceNumberBoundsProcessing called...\n");
 
-  EventHelperType::IntegerBoundsType bounds;
+  EventHelperType::SliceBoundsType bounds;
 
   switch( m_OrientationType )
     {
@@ -874,6 +869,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   if( this->m_VTKImageObserver->GotVTKImage() ) 
     {
       m_ImageData = this->m_VTKImageObserver->GetVTKImage();
+
+      // get image parameters
       m_ImageData->GetDimensions( m_ImageDimension );
       m_ImageData->GetOrigin( m_ImageOrigin );
       m_ImageData->GetSpacing( m_ImageSpacing );
@@ -1001,13 +998,10 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
             m_PlaneNormal[0] = 0;
             m_PlaneNormal[1] = 1;
             m_PlaneNormal[2] = 0;
-           /* m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-            m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);
-            m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);*/
+
             break;
         case Coronal:
         case OffCoronal:
-
             m_PlaneOrigin[0] = m_ImageBounds[0];
             m_PlaneOrigin[1] = m_ImageBounds[2];
             m_PlaneOrigin[2] = m_ImageBounds[4];
@@ -1024,11 +1018,8 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
             m_PlaneNormal[1] = 0;
             m_PlaneNormal[2] = 0;
 
-            //m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-            //m_PlaneSource->SetPoint1(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[5]);
-            //m_PlaneSource->SetPoint2(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
             break;
-        default: // set axial extension as default, i.e. the max extension
+        default: // set axial extension as default
             m_PlaneOrigin[0] = m_ImageBounds[0];
             m_PlaneOrigin[1] = m_ImageBounds[2];
             m_PlaneOrigin[2] = m_ImageBounds[4];
@@ -1045,9 +1036,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
             m_PlaneNormal[1] = 0;
             m_PlaneNormal[2] = 1;
 
-            /*m_PlaneSource->SetOrigin(m_ImageBounds[0],m_ImageBounds[2],m_ImageBounds[4]);
-            m_PlaneSource->SetPoint1(m_ImageBounds[1],m_ImageBounds[2],m_ImageBounds[4]);
-            m_PlaneSource->SetPoint2(m_ImageBounds[0],m_ImageBounds[3],m_ImageBounds[4]);*/
             break;
       }
 
@@ -1055,7 +1043,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
        m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
        m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
        m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
-
     }
 }
 
@@ -1267,73 +1254,73 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
         {
             case Axial:
             {
-            m_PlaneNormal[0] = 0.0;
-            m_PlaneNormal[1] = 0.0;
-            m_PlaneNormal[2] = 1.0;
+              m_PlaneNormal[0] = 0.0;
+              m_PlaneNormal[1] = 0.0;
+              m_PlaneNormal[2] = 1.0;
 
-            m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
-            m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
+              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
+              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
 
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+              m_PlaneOrigin[0] = m_ImageBounds[0];
+              m_PlaneOrigin[1] = m_ImageBounds[2];
+              m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[1];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[4];
+              m_PlanePoint1[0] = m_ImageBounds[1];
+              m_PlanePoint1[1] = m_ImageBounds[2];
+              m_PlanePoint1[2] = m_ImageBounds[4];
 
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[3];
-            m_PlanePoint2[2] = m_ImageBounds[4];
+              m_PlanePoint2[0] = m_ImageBounds[0];
+              m_PlanePoint2[1] = m_ImageBounds[3];
+              m_PlanePoint2[2] = m_ImageBounds[4];
 
-            break;
+              break;
             }
 
             case Sagittal:
             {
-            m_PlaneNormal[0] = 1.0;
-            m_PlaneNormal[1] = 0.0;
-            m_PlaneNormal[2] = 0.0;
+              m_PlaneNormal[0] = 1.0;
+              m_PlaneNormal[1] = 0.0;
+              m_PlaneNormal[2] = 0.0;
 
-            m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
-            m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
+              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
 
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+              m_PlaneOrigin[0] = m_ImageBounds[0];
+              m_PlaneOrigin[1] = m_ImageBounds[2];
+              m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[3];
-            m_PlanePoint1[2] = m_ImageBounds[4];
+              m_PlanePoint1[0] = m_ImageBounds[0];
+              m_PlanePoint1[1] = m_ImageBounds[3];
+              m_PlanePoint1[2] = m_ImageBounds[4];
 
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[5];
-            break;
+              m_PlanePoint2[0] = m_ImageBounds[0];
+              m_PlanePoint2[1] = m_ImageBounds[2];
+              m_PlanePoint2[2] = m_ImageBounds[5];
+              break;
             }
 
             case Coronal:
             {
-            m_PlaneNormal[0] = 0.0;
-            m_PlaneNormal[1] = 1.0;
-            m_PlaneNormal[2] = 0.0;
+              m_PlaneNormal[0] = 0.0;
+              m_PlaneNormal[1] = 1.0;
+              m_PlaneNormal[2] = 0.0;
 
-            m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
-            m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
+              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
 
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+              m_PlaneOrigin[0] = m_ImageBounds[0];
+              m_PlaneOrigin[1] = m_ImageBounds[2];
+              m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[5];
+              m_PlanePoint1[0] = m_ImageBounds[0];
+              m_PlanePoint1[1] = m_ImageBounds[2];
+              m_PlanePoint1[2] = m_ImageBounds[5];
 
-            m_PlanePoint2[0] = m_ImageBounds[1];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[4];
+              m_PlanePoint2[0] = m_ImageBounds[1];
+              m_PlanePoint2[1] = m_ImageBounds[2];
+              m_PlanePoint2[2] = m_ImageBounds[4];
 
-            break;
+              break;
             }
 
             default:
@@ -1350,75 +1337,75 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
         {
             case Axial:
             {
-                m_PlaneNormal[0] = 0.0;
-                m_PlaneNormal[1] = 0.0;
-                m_PlaneNormal[2] = 1.0;
+              m_PlaneNormal[0] = 0.0;
+              m_PlaneNormal[1] = 0.0;
+              m_PlaneNormal[2] = 1.0;
 
-                m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-                m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
 
-                if ( m_SliceNumberSetFlag )
-                {
-                m_PlaneCenter[2] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_SliceNumber;
-                m_ToolPosition[2] = m_PlaneCenter[2];
-                m_SliceNumberSetFlag = false;
-                }
+              if ( m_SliceNumberSetFlag )
+              {
+              m_PlaneCenter[2] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_SliceNumber;
+              m_ToolPosition[2] = m_PlaneCenter[2];
+              m_SliceNumberSetFlag = false;
+              }
 
-                if ( m_MousePositionSetFlag )
-                {
-                m_PlaneCenter[2] = m_MousePosition[2];
-                m_ToolPosition[2] = m_MousePosition[2];
-                m_MousePositionSetFlag = false;
-                }
-                break; 
+              if ( m_MousePositionSetFlag )
+              {
+              m_PlaneCenter[2] = m_MousePosition[2];
+              m_ToolPosition[2] = m_MousePosition[2];
+              m_MousePositionSetFlag = false;
+              }
+              break; 
             }
             case Sagittal:
             {
-                m_PlaneNormal[0] = 1.0;
-                m_PlaneNormal[1] = 0.0;
-                m_PlaneNormal[2] = 0.0;
+              m_PlaneNormal[0] = 1.0;
+              m_PlaneNormal[1] = 0.0;
+              m_PlaneNormal[2] = 0.0;
 
-                m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-                m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-                if( m_SliceNumberSetFlag )
-                {
+              if( m_SliceNumberSetFlag )
+              {
                 m_PlaneCenter[0] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_SliceNumber;
                 m_ToolPosition[0] = m_PlaneCenter[0];
                 m_SliceNumberSetFlag = false;
-                }
+              }
 
-                if ( m_MousePositionSetFlag )
-                {
+              if ( m_MousePositionSetFlag )
+              {
                 m_PlaneCenter[0] = m_MousePosition[0];
                 m_ToolPosition[0] = m_MousePosition[0];
                 m_MousePositionSetFlag = false;
-                }
-                break;
+              }
+              break;
             }
             case Coronal:
             {
-                m_PlaneNormal[0] = 0.0;
-                m_PlaneNormal[1] = 1.0;
-                m_PlaneNormal[2] = 0.0;
+              m_PlaneNormal[0] = 0.0;
+              m_PlaneNormal[1] = 1.0;
+              m_PlaneNormal[2] = 0.0;
 
-                m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-                m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-                if( m_SliceNumberSetFlag )
-                {
-                    m_PlaneCenter[1] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_SliceNumber;
-                    m_ToolPosition[1] = m_PlaneCenter[1];
-                    m_SliceNumberSetFlag = false;
-                }
+              if( m_SliceNumberSetFlag )
+              {
+                  m_PlaneCenter[1] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_SliceNumber;
+                  m_ToolPosition[1] = m_PlaneCenter[1];
+                  m_SliceNumberSetFlag = false;
+              }
 
-                if ( m_MousePositionSetFlag )
-                {
-                    m_PlaneCenter[1] = m_MousePosition[1];
-                    m_ToolPosition[1] = m_MousePosition[1];
-                    m_MousePositionSetFlag = false;
-                }
-                break;
+              if ( m_MousePositionSetFlag )
+              {
+                  m_PlaneCenter[1] = m_MousePosition[1];
+                  m_ToolPosition[1] = m_MousePosition[1];
+                  m_MousePositionSetFlag = false;
+              }
+              break;
             }
             default:
             {
@@ -1621,8 +1608,9 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 }
 
 /** Get distance to closest plane in the image bounding box 
+* work in progress ...
 * p: is the tool position
-* pv: is the tool long axis vector
+* pv: is the tool´s long axis vector
 * pi: is the plane index in the bounding box
 */
 template < class TImageSpatialObject >

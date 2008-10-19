@@ -297,8 +297,8 @@ CrossHairRepresentation< TImageSpatialObject >
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();  
 
   /** 
-   * Request information about the slice bounds. The answer will be
-   * received in the form of event. This will be used to set the 
+   * Request information about the image bounds. The answer will be
+   * received in the form of an event. This will be used to set the 
    * size of the cross hairs
    */
  

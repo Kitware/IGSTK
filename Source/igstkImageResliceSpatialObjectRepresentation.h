@@ -202,7 +202,7 @@ private:
                       EventHelperType::IntegerBoundsType );
 
   /** */
-  igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
+  igstkObserverMacro( Bounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
 
   /** */

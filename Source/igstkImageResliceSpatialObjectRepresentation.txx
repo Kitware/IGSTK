@@ -61,7 +61,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
   m_ImageReslice->AutoCropOutputOn();  
   m_ImageReslice->SetOptimization( 1 );
-  m_ImageReslice->SetInterpolationModeToCubic();
+  m_ImageReslice->SetInterpolationModeToNearestNeighbor();
 
   m_TextureMapper = vtkPolyDataMapper::New();
 
