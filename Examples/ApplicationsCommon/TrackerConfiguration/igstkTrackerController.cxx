@@ -74,6 +74,9 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( GetTools  );
   igstkAddInputMacro( GetTool  );
   igstkAddInputMacro( GetReferenceTool  );
+  igstkAddInputMacro( SetParentSpatialObject  );
+  igstkAddInputMacro( SetChildSpatialObject  );
+
 
             //define the state machine's transitions
 
@@ -148,6 +151,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( Idle,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+    igstkAddTransitionMacro( Idle,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
                   //transitions from AttemptingToInitialize state
   igstkAddTransitionMacro( AttemptingToInitialize,
                            Failed,
@@ -216,6 +229,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
@@ -290,6 +313,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
            //transitions from AttemptingToInitializePolarisHybrid state
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            Failed,
@@ -358,6 +391,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+    igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
@@ -432,6 +475,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+    igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
           //transitions from AttemptingToInitializeMicron state
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            Failed,
@@ -500,6 +553,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest);
 
@@ -573,7 +636,17 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            GetReferenceTool,
                            Idle,
                            ReportInvalidRequest );
-          
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+  
+    igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
           //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
                            GetTools,
@@ -589,6 +662,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            GetReferenceTool,
                            Initialized,
                            GetReferenceTool );
+
+  igstkAddTransitionMacro( Initialized,
+                           SetParentSpatialObject,
+                           Initialized,
+                           SetParentSpatialObject );
+
+    igstkAddTransitionMacro( Initialized,
+                           SetChildSpatialObject,
+                           Initialized,
+                           SetChildSpatialObject );
 
   igstkAddTransitionMacro( Initialized,
                            StartTracking,
@@ -716,6 +799,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
+    igstkAddTransitionMacro( AttemptingToStartTracking,
+                           SetParentSpatialObject,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+    igstkAddTransitionMacro( AttemptingToStartTracking,
+                           SetChildSpatialObject,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
         //transitions from Tracking state
   igstkAddTransitionMacro( Tracking,
                            StopTracking,
@@ -786,6 +879,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            GetReferenceTool,
                            Tracking,
                            ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           SetParentSpatialObject,
+                           Tracking,
+                           SetParentSpatialObject );
+
+  igstkAddTransitionMacro( Tracking,
+                           SetChildSpatialObject,
+                           Tracking,
+                           SetChildSpatialObject );
 
      //transitions from AttemtingtoStop state
   igstkAddTransitionMacro( AttemptingToStopTracking,
@@ -858,6 +961,15 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           SetParentSpatialObject,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           SetChildSpatialObject,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
 
        //transitions from AttemptingToCloseCommunication state
 
@@ -928,6 +1040,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            GetReferenceTool,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           SetParentSpatialObject,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           SetChildSpatialObject,
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
@@ -1015,6 +1137,33 @@ TrackerController::RequestGetReferenceTool()
   this->m_StateMachine.ProcessInputs();
 }
 
+void 
+TrackerController::RequestSetParentSpatialObject( igstk::Transform transform, 
+                                igstk::SpatialObject * spatialObject)
+{
+  igstkLogMacro( DEBUG, 
+                 "igstkTrackerController::RequestSetParentSpatialObject called...\n" );
+
+  m_TmpTransform = transform;
+  m_TmpSpatialObject = spatialObject;
+
+  igstkPushInputMacro( SetParentSpatialObject );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void 
+TrackerController::RequestAddChildSpatialObject( igstk::Transform transform, 
+                                igstk::SpatialObject * spatialObject)
+{
+  igstkLogMacro( DEBUG, 
+                 "igstkTrackerController::RequestAddChildSpatialObject called...\n" );
+
+  m_TmpTransform = transform;
+  m_TmpSpatialObject = spatialObject;
+
+  igstkPushInputMacro( SetChildSpatialObject );
+  this->m_StateMachine.ProcessInputs();
+}
 
 void 
 TrackerController::TrackerInitializeProcessing()
@@ -1758,6 +1907,26 @@ TrackerController::GetReferenceToolProcessing()
   this->InvokeEvent( evt );
 }
 
+void 
+TrackerController::SetParentSpatialObjectProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::TrackerController::"
+                  "SetParentSpatialObjectProcessing called...\n");
+ 
+  this->m_Tracker->RequestDetachFromParent();
+  this->m_Tracker->RequestSetTransformAndParent(m_TmpTransform, m_TmpSpatialObject);
+}
+
+void 
+TrackerController::SetChildSpatialObjectProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::TrackerController::"
+                  "SetParentSpatialObjectProcessing called...\n");
+ 
+  m_TmpSpatialObject->RequestSetTransformAndParent(m_TmpTransform, this->m_Tracker);
+}
 
 void 
 TrackerController::ReportInitializationSuccessProcessing()

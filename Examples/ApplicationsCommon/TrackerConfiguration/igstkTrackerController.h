@@ -28,7 +28,9 @@
 #include "igstkEvents.h"
 #include "igstkObject.h"
 #include "igstkSerialCommunication.h"
+#include "igstkTransform.h"
 
+#include "igstkSpatialObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
@@ -65,6 +67,10 @@ public:
   typedef std::map < std::string, igstk::TrackerTool::Pointer > ToolContainerType;
 
   typedef std::pair < std::string, igstk::TrackerTool::Pointer > ToolEntryType;
+
+  typedef igstk::Transform                                        TransformType;
+
+  typedef igstk::SpatialObject                                    SpatialObjectType;
 
   /** Macro with standard traits declarations (Self, SuperClass, State 
    *  Machine etc.). */
@@ -129,6 +135,20 @@ public:
    * Note that when no reference tool is used the payload of the event
    * will be a NULL pointer.*/
   void RequestGetReferenceTool();
+
+  /** 
+  * 
+  * Sets the tracker's parent spatial object
+  */
+  void RequestSetParentSpatialObject( TransformType transform, 
+                                      SpatialObjectType * spatialObject);
+
+  /** 
+  * Adds a Spatial Object as a child of the tracker. For example, if you want 
+  * to display the tracker's working volume (e.g. frustum or cube)
+  */
+  void RequestAddChildSpatialObject( TransformType transform, 
+                                     SpatialObjectType * spatialObject);
 
    /** This event is generated if the initialization succeeds. */
   igstkEventMacro( InitializeEvent, IGSTKEvent );
@@ -196,6 +216,9 @@ private:
   igstkDeclareInputMacro( GetTools  );
   igstkDeclareInputMacro( GetTool  );
   igstkDeclareInputMacro( GetReferenceTool  );
+  igstkDeclareInputMacro( SetParentSpatialObject  );
+  igstkDeclareInputMacro( SetChildSpatialObject  );
+
 
   /**List of state machine actions*/
   void TrackerInitializeProcessing();  
@@ -210,6 +233,8 @@ private:
   void GetToolsProcessing();
   void GetToolProcessing();
   void GetReferenceToolProcessing();
+  void SetParentSpatialObjectProcessing();
+  void SetChildSpatialObjectProcessing();
 
   void ReportInvalidRequestProcessing();
 
@@ -325,6 +350,9 @@ private:
 
   ErrorObserver::Pointer m_ErrorObserver;
   std::string m_ErrorMessage;
+
+  SpatialObjectType     *m_TmpSpatialObject;
+  TransformType          m_TmpTransform;
 
   TrackerConfiguration  *m_TmpTrackerConfiguration;
   TrackerConfiguration  *m_TrackerConfiguration;
