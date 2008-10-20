@@ -50,26 +50,44 @@ AuroraTrackerConfiguration::InternalAddTool(
     dynamic_cast<const AuroraToolConfiguration *>( tool );
   
 
+  unsigned int newPortNumber = wiredTool->GetPortNumber();
+  unsigned int newChannelNumber = wiredTool->GetChannelNumber();
+
   if( wiredTool == NULL )
   {
     fe.Set( "Given tool configuration type not compatible with tracker type." );
     this->InvokeEvent( fe );
     return;
   }
-  if( wiredTool->GetPortNumber()==0 ||
-      wiredTool->GetPortNumber()> this->MAXIMAL_PORT_NUMBER )
+  if( newPortNumber == 0 ||
+      newPortNumber > this->MAXIMAL_PORT_NUMBER )
   {
     fe.Set( "Specified physical port number is invalid." );
     this->InvokeEvent( fe );
     return;
   }
-  if( wiredTool->GetChannelNumber()> this->MAXIMAL_CHANNEL_NUMBER )
+  if( newChannelNumber > this->MAXIMAL_CHANNEL_NUMBER )
   {
     fe.Set( "Specified channel number is invalid." );
     this->InvokeEvent( fe );
     return;
   }
-  
+
+  std::map<std::string, TrackerToolConfiguration *>::const_iterator it, end;
+  it = this->m_TrackerToolList.begin();
+  end = this->m_TrackerToolList.end();
+  for( ; it!=end; it++ )
+  {
+    const AuroraToolConfiguration *currentTool = 
+      static_cast<const AuroraToolConfiguration *>( it->second );
+    if( currentTool->GetPortNumber() == newPortNumber &&
+      currentTool->GetChannelNumber() == newChannelNumber )
+    {
+      fe.Set( "Multiple tools with same port and channel are not allowed.");
+      this->InvokeEvent( fe );
+      return;
+    }
+  }
         //copy the tool and add it as a standard or dynamic reference tool
   AuroraToolConfiguration *newTool = new AuroraToolConfiguration( *wiredTool );
   

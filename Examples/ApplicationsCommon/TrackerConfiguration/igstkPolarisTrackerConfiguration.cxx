@@ -144,12 +144,27 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   }
   else   //we have a wired tool
   {
-    if( wiredTool->GetPortNumber()==0 ||
-        wiredTool->GetPortNumber()> this->MAXIMAL_PORT_NUMBER )
+    unsigned int newPortNumber = wiredTool->GetPortNumber();
+    if( newPortNumber==0 ||
+        newPortNumber > this->MAXIMAL_PORT_NUMBER )
     {
       fe.Set( "Specified physical port number is invalid." );
       this->InvokeEvent( fe );
       return;
+    }
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it, end;
+    it = this->m_TrackerToolList.begin();
+    end = this->m_TrackerToolList.end();
+    for( ; it!=end; it++ )
+    {
+      const PolarisWiredToolConfiguration *currentTool = 
+        static_cast<const PolarisWiredToolConfiguration *>( it->second );
+      if( currentTool->GetPortNumber() == newPortNumber )
+      {
+        fe.Set( "Multiple tools with same port are not allowed.");
+        this->InvokeEvent( fe );
+        return;
+      }
     }
   }
         //copy the tool and add it as a standard or dynamic reference tool
