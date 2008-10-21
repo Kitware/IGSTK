@@ -159,6 +159,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   representation->SetLogger( logger );
   representation->SetWindowLevel( 1559, -244 );
   representation->RequestSetImageSpatialObject( imageSpatialObject );
+  
   //View
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
