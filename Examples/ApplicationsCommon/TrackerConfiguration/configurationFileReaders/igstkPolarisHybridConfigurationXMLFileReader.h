@@ -50,7 +50,7 @@ public:
   /**
    * Return a pointer to the object containing the configuration data.
    */
-  virtual igstk::TrackerConfiguration * GetTrackerConfigurationData();
+  virtual const igstk::TrackerConfiguration * GetTrackerConfigurationData();
 
 
 protected:

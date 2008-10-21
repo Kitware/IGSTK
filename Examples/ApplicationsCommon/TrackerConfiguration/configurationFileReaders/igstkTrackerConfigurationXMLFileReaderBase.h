@@ -51,6 +51,7 @@ public:
   typedef TrackerConfigurationXMLFileReaderBase    Self;
   typedef itk::XMLReaderBase                       Superclass;
   typedef itk::SmartPointer<Self>                  Pointer;
+  typedef itk::SmartPointer < const Self >         ConstPointer;
 
            //run-time type information (and related methods)
   itkTypeMacro( TrackerConfigurationXMLFileReaderBase, itk::XMLReaderBase );
@@ -86,7 +87,7 @@ public:
   /**
    * Return a pointer to the object containing the configuration data.
    */
-  virtual igstk::TrackerConfiguration * GetTrackerConfigurationData()
+  virtual const igstk::TrackerConfiguration * GetTrackerConfigurationData()
     throw ( FileFormatException ) = 0;
 
 protected:

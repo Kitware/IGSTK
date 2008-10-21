@@ -155,7 +155,7 @@ PolarisHybridConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 
-igstk::TrackerConfiguration * 
+const igstk::TrackerConfiguration * 
 PolarisHybridConfigurationXMLFileReader::GetTrackerConfigurationData()
 {
   igstk::PolarisHybridTrackerConfiguration *trackerConfig = 

@@ -292,7 +292,7 @@ TrackerConfigurationFileReader::~TrackerConfigurationFileReader()
 
 void 
 TrackerConfigurationFileReader::RequestSetReader( 
-               TrackerConfigurationXMLFileReaderBase::Pointer transformReader )
+  TrackerConfigurationXMLFileReaderBase::Pointer transformReader )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerConfigurationFileReader::"
                         "RequestSetReader called...\n" );
@@ -351,14 +351,14 @@ TrackerConfigurationFileReader::ReportInvalidRequestProcessing()
 void 
 TrackerConfigurationFileReader::SetReaderProcessing()
 {
-  if( this->m_TmpXMLFileReader.IsNull() )
+  if( !this->m_TmpXMLFileReader )
   {
     igstkPushInputMacro( Failure );
   }
   else
   {
     this->m_XMLFileReader = this->m_TmpXMLFileReader;
-    this->m_TmpXMLFileReader = NULL;
+    //this->m_TmpXMLFileReader = NULL;
     igstkPushInputMacro( Success );
   }
   this->m_StateMachine.ProcessInputs();

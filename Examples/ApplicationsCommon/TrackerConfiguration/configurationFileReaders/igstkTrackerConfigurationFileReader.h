@@ -28,14 +28,16 @@ public:
 
   /** This is the container type which holds all the data associated with the 
    *  tracker configuration (e.g. COM port...).*/
-   typedef TrackerConfiguration*  TrackerConfigurationDataType;
+   typedef const TrackerConfiguration*  TrackerConfigurationDataType;
+
+   typedef TrackerConfigurationXMLFileReaderBase::Pointer   FileReaderBasePointerType;
 
   /**
    * Set a specific reader, which also defines the type of the tracker.
    * This method generates two events: If the reader is NULL 
    * SetReaderFailureEvent, otherwise SetReaderSuccessEvent.
    */
-  void RequestSetReader( TrackerConfigurationXMLFileReaderBase::Pointer 
+   void RequestSetReader( TrackerConfigurationXMLFileReaderBase::Pointer
                          trackerConfigurationReader );
 
   /**
@@ -128,8 +130,10 @@ private:
   void GetDataProcessing();
 
   TrackerConfigurationDataType m_TrackerConfiguration;
-  TrackerConfigurationXMLFileReaderBase::Pointer m_TmpXMLFileReader;
-  TrackerConfigurationXMLFileReaderBase::Pointer m_XMLFileReader;
+  
+  FileReaderBasePointerType m_TmpXMLFileReader;
+  FileReaderBasePointerType m_XMLFileReader;
+
   std::string m_TmpFileName;
   std::string m_FileName;
 
