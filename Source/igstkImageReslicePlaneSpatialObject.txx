@@ -609,7 +609,7 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageReslicePlaneSpatialObject\
                         ::ReportSliceNumberBoundsProcessing called...\n");
 
-  EventHelperType::SliceBoundsType bounds;
+  EventHelperType::IntegerBoundsType bounds;
 
   switch( m_OrientationType )
     {
