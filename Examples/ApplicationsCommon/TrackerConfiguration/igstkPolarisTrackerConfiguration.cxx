@@ -20,7 +20,7 @@
 namespace igstk
 {
 const double PolarisVicraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 20;
-const double PolarisWirelessSpectraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
+const double PolarisSpectraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
 const double PolarisHybridTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
 const unsigned PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER = 12;
 
@@ -78,20 +78,20 @@ PolarisVicraTrackerConfiguration::GetMaximalRefreshRate()
 }
 
 
-PolarisWirelessSpectraTrackerConfiguration::PolarisWirelessSpectraTrackerConfiguration()
+PolarisSpectraTrackerConfiguration::PolarisSpectraTrackerConfiguration()
 {  
   this->m_Frequency = MAXIMAL_REFERESH_RATE;
 }
 
 
-PolarisWirelessSpectraTrackerConfiguration::~PolarisWirelessSpectraTrackerConfiguration()
+PolarisSpectraTrackerConfiguration::~PolarisSpectraTrackerConfiguration()
 {
 
 }
 
 
 double
-PolarisWirelessSpectraTrackerConfiguration::GetMaximalRefreshRate()
+PolarisSpectraTrackerConfiguration::GetMaximalRefreshRate()
 {
   return this->MAXIMAL_REFERESH_RATE;
 }

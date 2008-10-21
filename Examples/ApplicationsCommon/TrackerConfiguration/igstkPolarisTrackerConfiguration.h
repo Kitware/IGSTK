@@ -130,14 +130,14 @@ private:
 
 
 /**
- * Configuration for the Polaris Vicra tracker.
+ * Configuration for the Polaris Spectra tracker.
  */
-class PolarisWirelessSpectraTrackerConfiguration : 
+class PolarisSpectraTrackerConfiguration : 
   public PolarisWirelessTrackerConfiguration
 {
 public:
-  PolarisWirelessSpectraTrackerConfiguration();
-  virtual ~PolarisWirelessSpectraTrackerConfiguration();
+  PolarisSpectraTrackerConfiguration();
+  virtual ~PolarisSpectraTrackerConfiguration();
 
   /**
    * Get the manufacturer specified maximal refresh rate.
