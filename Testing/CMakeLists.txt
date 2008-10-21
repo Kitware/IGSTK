@@ -292,6 +292,22 @@ IF(IGSTKSandbox_USE_FLTK)
 #  ${CXX_TEST_PATH}/igstkCTImageSpatialObjectReadingAndRepresentationTest4
 #  ${IGSTK_DATA_ROOT}/Input/E000192 )
 # END OF FIXME
+
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationFltkTest.cxx)
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationFltkTest2.cxx)
+
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationFltkTest3.cxx)
+
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkImageResliceSpatialObjectRepresentationFltkTest4.cxx)
+
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
