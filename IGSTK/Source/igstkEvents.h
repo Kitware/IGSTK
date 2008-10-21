@@ -77,6 +77,14 @@ typedef struct {
   double zmin;
   double zmax;
 }                                  ImageBoundsType;
+typedef struct {
+  unsigned int xmin;
+  unsigned int xmax;
+  unsigned int ymin;
+  unsigned int ymax;
+  unsigned int zmin;
+  unsigned int zmax;
+}                                  ImageExtentType;
 }
 
 #define igstkLoadedObjectEventMacro( name, superclass, payloadtype ) \
@@ -203,6 +211,9 @@ igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent,
 
 igstkLoadedEventMacro( ImageBoundsEvent, IGSTKEvent, 
                        EventHelperType::ImageBoundsType );
+
+igstkLoadedEventMacro( ImageExtentEvent, IGSTKEvent, 
+                       EventHelperType::ImageExtentType );
 
 igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
                        EventHelperType::VTKImagePointerType );
