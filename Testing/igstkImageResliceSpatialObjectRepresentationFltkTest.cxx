@@ -19,12 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-// QT header files
-//#include <QApplication>
-//#include <QMainWindow>
-//#include <QtTest/QTest>
 
-#include "igstkView2D.h"
 #include "igstkFLTKWidget.h"
 
 #include "igstkConfigure.h"
@@ -39,7 +34,7 @@
 #include "igstkCylinderObject.h"
 #include "igstkTransform.h"
 #include "igstkView2D.h"
-//#include "igstkQTWidget.h"
+
 
 namespace ImageResliceSpatialObjectRepresentationFltkTest
 {
@@ -218,11 +213,11 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   view2D->RequestAddObject( representation );
    
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532,"Image Reslice SpatialObject Representation FLTK Test");
+  Fl_Window * form = new Fl_Window(512,512,"Image Reslice SpatialObject Representation FLTK Test");
     
   // instantiate FLTK widget 
   FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
+                      new FLTKWidgetType(0,0,512,512,"2D View");
 
   fltkWidget2D->RequestSetView( view2D );
   fltkWidget2D->SetLogger( logger );
@@ -234,7 +229,6 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   form->show();
   
   view2D->RequestStart();
-
   view2D->RequestResetCamera();
 
   for(int i=0; i<100; i++) 
