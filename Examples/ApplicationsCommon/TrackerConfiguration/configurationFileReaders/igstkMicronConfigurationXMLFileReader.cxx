@@ -124,7 +124,7 @@ MicronConfigurationXMLFileReader::ProcessToolData()
     this->m_TrackerToolList.push_back( toolConfig );
 
                  //reset all tool data to initial state
-  this->m_CurrentToolName.empty();
+  this->m_CurrentToolName.clear();
   this->m_CurrentToolCalibration.SetToIdentity( 
     igstk::TimeStamp::GetLongestPossibleTime() );
 }

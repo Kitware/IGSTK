@@ -130,7 +130,7 @@ AuroraConfigurationXMLFileReader::ProcessToolData()
                  //reset all tool data to initial state
   this->m_CurrentToolIsReference = false;
   this->m_CurrentSromFileName.clear();
-  this->m_CurrentToolName.empty();
+  this->m_CurrentToolName.clear();
   this->m_CurrentToolCalibration.SetToIdentity( 
     igstk::TimeStamp::GetLongestPossibleTime() );
   this->m_HaveCurrentControlBoxPort = false;

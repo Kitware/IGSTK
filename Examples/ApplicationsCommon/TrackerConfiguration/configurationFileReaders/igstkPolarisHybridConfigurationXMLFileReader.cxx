@@ -136,7 +136,7 @@ PolarisHybridConfigurationXMLFileReader::ProcessToolData()
   this->m_HaveCurrentControlBoxPort = false;
   this->m_CurrentToolIsReference = false;
   this->m_CurrentSromFileName.clear();
-  this->m_CurrentToolName.empty();
+  this->m_CurrentToolName.clear();
   this->m_CurrentToolCalibration.SetToIdentity( 
     igstk::TimeStamp::GetLongestPossibleTime() );
 }
