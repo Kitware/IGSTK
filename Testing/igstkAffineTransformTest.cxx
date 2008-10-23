@@ -58,11 +58,7 @@ int igstkAffineTransformTest( int argc, char * argv [] )
         vtkM1->Delete();
         return EXIT_FAILURE;
       }
-      vtkM1->Delete();
       
-      std::cout << "I " << I << " \n";
-      std::cout << "transform " << transform << " \n";
-
       //test transformation composition
       igstk::AffineTransform composedTransform;
       composedTransform = 
@@ -75,19 +71,10 @@ int igstkAffineTransformTest( int argc, char * argv [] )
         return EXIT_FAILURE;
       }
 
-      std::cout << "composedTransform " << composedTransform << " \n";
       //check the composed transform data, should be equal to the
       //original as 
       vtkMatrix4x4* vtkM2 = vtkMatrix4x4::New();
       composedTransform.ExportTransform( *vtkM2 );
-      
-      for (unsigned int i=0; i<=3; i++)
-        {
-        for (unsigned int j=0; j<=3; j++)
-          {
-          std::cout << vtkM1->GetElement(i,j) << "\t" << vtkM2->GetElement(i,j) << "\n";
-          }
-        }
 
       double error = 
       fabs( vtkM1->GetElement(0,0)-vtkM2->GetElement(0,0) + 
@@ -103,13 +90,13 @@ int igstkAffineTransformTest( int argc, char * argv [] )
         vtkM1->GetElement(2,2)-vtkM2->GetElement(2,2) + 
         vtkM1->GetElement(2,3)-vtkM2->GetElement(2,3) );
 
-      std::cout<<"Error: " << error << " \n";
-       if(  error  > 0.00000001 )
-      {
+      if(  error  > 0.00000001 )
+        {
         std::cout<<"Error in setting and getting transformation values 2.\n";
         vtkM2->Delete();
         return EXIT_FAILURE;
-      }
+        }
+      vtkM1->Delete();
       vtkM2->Delete();
   }
   catch(...)
