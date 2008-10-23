@@ -81,8 +81,9 @@ int igstkAffineTransformTest( int argc, char * argv [] )
       vtkMatrix4x4* vtkM2 = vtkMatrix4x4::New();
       composedTransform.ExportTransform( *vtkM2 );
       
-      vtkM1->Print( std::cout );
-      vtkM2->Print( std::cout );
+      vtkIndent indent;
+      vtkM1->PrintSelf( std::cout, indent );
+      vtkM2->PrintSelf( std::cout, indent );
 
       double error = 
       fabs( vtkM1->GetElement(0,0)-vtkM2->GetElement(0,0) + 
