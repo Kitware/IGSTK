@@ -17,17 +17,17 @@ int igstkAffineTransformTest( int argc, char * argv [] )
 
   try
     {
-                 //test the default constructor
+      //test the default constructor
       igstk::AffineTransform I;
-              //transformation should never be valid, default timestamp has
-              //the same start and end times (zero)
+      //transformation should never be valid, default timestamp has
+      //the same start and end times (zero)
       if( I.IsValidNow() )
       {
-        std::cerr<<"Error in default constructor.\n";
+        std::cout<<"Error in default constructor.\n";
         return EXIT_FAILURE;
       }
     
-                     //test the transform setting and exporting
+      //test the transform setting and exporting
       igstk::AffineTransform transform;
       igstk::AffineTransform::MatrixType m;
       igstk::AffineTransform::OffsetType t;
@@ -54,24 +54,25 @@ int igstkAffineTransformTest( int argc, char * argv [] )
             m(2,2)-vtkM1->GetElement(2,2) + t[2]-vtkM1->GetElement(2,3)) 
             != 0.0 )
       {
-        std::cerr<<"Error in setting and getting transformation values.\n";
+        std::cout<<"Error in setting and getting transformation values.\n";
         vtkM1->Delete();
         return EXIT_FAILURE;
       }
       vtkM1->Delete();
 
-                   //test transformation composition
+      //test transformation composition
       igstk::AffineTransform composedTransform;
       composedTransform = 
         igstk::AffineTransform::TransformCompose( I, transform );
-             //the composition should not be valid as the transform, I, has the
-             //same start and end time (zero).
+      //the composition should not be valid as the transform, I, has the
+      //same start and end time (zero).
       if( composedTransform.IsValidNow() )
       {
-        std::cerr<<"Error in composition.\n";
+        std::cout<<"Error in composition.\n";
         return EXIT_FAILURE;
-      }            //check the composed transform data, should be equal to the
-                   //original as 
+      }
+      //check the composed transform data, should be equal to the
+      //original as 
       vtkMatrix4x4* vtkM2 = vtkMatrix4x4::New();
       composedTransform.ExportTransform( *vtkM2 );
       if( ( vtkM1->GetElement(0,0)-vtkM2->GetElement(0,0) + 
@@ -88,7 +89,7 @@ int igstkAffineTransformTest( int argc, char * argv [] )
             vtkM1->GetElement(2,3)-vtkM2->GetElement(2,3) )
            != 0.0 )
       {
-        std::cerr<<"Error in composition.\n";
+        std::cout<<"Error in setting and getting transformation values 2.\n";
         vtkM2->Delete();
         return EXIT_FAILURE;
       }
@@ -96,7 +97,7 @@ int igstkAffineTransformTest( int argc, char * argv [] )
   }
   catch(...)
     {
-    std::cerr << "Exception caught !!!" << std::endl;
+    std::cout << "Exception caught !!!" << std::endl;
     return EXIT_FAILURE;
     }
 
