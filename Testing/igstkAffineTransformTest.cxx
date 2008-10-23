@@ -75,19 +75,22 @@ int igstkAffineTransformTest( int argc, char * argv [] )
       //original as 
       vtkMatrix4x4* vtkM2 = vtkMatrix4x4::New();
       composedTransform.ExportTransform( *vtkM2 );
-      if( ( vtkM1->GetElement(0,0)-vtkM2->GetElement(0,0) + 
-            vtkM1->GetElement(0,1)-vtkM2->GetElement(0,1) + 
-            vtkM1->GetElement(0,2)-vtkM2->GetElement(0,2) + 
-            vtkM1->GetElement(0,3)-vtkM2->GetElement(0,3) +
-            vtkM1->GetElement(1,0)-vtkM2->GetElement(1,0) + 
-            vtkM1->GetElement(1,1)-vtkM2->GetElement(1,1) + 
-            vtkM1->GetElement(1,2)-vtkM2->GetElement(1,2) + 
-            vtkM1->GetElement(1,3)-vtkM2->GetElement(1,3) +
-            vtkM1->GetElement(2,0)-vtkM2->GetElement(2,0) + 
-            vtkM1->GetElement(2,1)-vtkM2->GetElement(2,1) + 
-            vtkM1->GetElement(2,2)-vtkM2->GetElement(2,2) + 
-            vtkM1->GetElement(2,3)-vtkM2->GetElement(2,3) )
-           != 0.0 )
+      double error = 
+      fabs( vtkM1->GetElement(0,0)-vtkM2->GetElement(0,0) + 
+        vtkM1->GetElement(0,1)-vtkM2->GetElement(0,1) + 
+        vtkM1->GetElement(0,2)-vtkM2->GetElement(0,2) + 
+        vtkM1->GetElement(0,3)-vtkM2->GetElement(0,3) +
+        vtkM1->GetElement(1,0)-vtkM2->GetElement(1,0) + 
+        vtkM1->GetElement(1,1)-vtkM2->GetElement(1,1) + 
+        vtkM1->GetElement(1,2)-vtkM2->GetElement(1,2) + 
+        vtkM1->GetElement(1,3)-vtkM2->GetElement(1,3) +
+        vtkM1->GetElement(2,0)-vtkM2->GetElement(2,0) + 
+        vtkM1->GetElement(2,1)-vtkM2->GetElement(2,1) + 
+        vtkM1->GetElement(2,2)-vtkM2->GetElement(2,2) + 
+        vtkM1->GetElement(2,3)-vtkM2->GetElement(2,3) );
+
+      std::cout<<"Error: " << error << " \n";
+       if(  error  > 0.00000001 )
       {
         std::cout<<"Error in setting and getting transformation values 2.\n";
         vtkM2->Delete();
