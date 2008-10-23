@@ -258,6 +258,38 @@ IF(IGSTKSandbox_USE_Qt)
 
 ENDIF(IGSTKSandbox_USE_Qt)
 
+IF(IGSTKSandbox_USE_FLTK)
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest
+              ${IGSTKSandbox_TESTS}
+              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceSpatialObjectRepresentationFltkTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest2
+              ${IGSTKSandbox_TESTS}
+              igstkImageResliceSpatialObjectRepresentationFltkTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
+
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest3
+              ${IGSTKSandbox_TESTS}
+              igstkImageResliceSpatialObjectRepresentationFltkTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
+
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest4
+              ${IGSTKSandbox_TESTS}
+              igstkImageResliceSpatialObjectRepresentationFltkTest4
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
+
+ENDIF(IGSTKSandbox_USE_FLTK)
+
+
 
 ADD_TEST( igstkImageReslicePlaneSpatialObjectTest ${IGSTKSandbox_TESTS} 
           igstkImageReslicePlaneSpatialObjectTest
