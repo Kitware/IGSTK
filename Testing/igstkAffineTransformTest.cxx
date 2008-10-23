@@ -59,6 +59,9 @@ int igstkAffineTransformTest( int argc, char * argv [] )
         return EXIT_FAILURE;
       }
       vtkM1->Delete();
+      
+      std::cout << "I " << I << " \n";
+      std::cout << "transform " << transform << " \n";
 
       //test transformation composition
       igstk::AffineTransform composedTransform;
@@ -71,6 +74,8 @@ int igstkAffineTransformTest( int argc, char * argv [] )
         std::cout<<"Error in composition.\n";
         return EXIT_FAILURE;
       }
+
+      std::cout << "composedTransform " << composedTransform << " \n";
       //check the composed transform data, should be equal to the
       //original as 
       vtkMatrix4x4* vtkM2 = vtkMatrix4x4::New();
