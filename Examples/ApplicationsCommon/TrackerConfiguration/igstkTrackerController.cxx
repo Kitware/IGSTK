@@ -1901,6 +1901,14 @@ TrackerController::GetReferenceToolProcessing()
                   "igstk::TrackerController::"
                   "GetReferenceToolProcessing called...\n");
   RequestToolEvent evt;
+  RequestToolErrorEvent fevt;
+               //we don't have a reference
+  if( this->m_ReferenceTool.IsNull() )
+  {
+    this->InvokeEvent( fevt );
+    return;
+  }
+
   evt.Set( std::pair<std::string, igstk::TrackerTool::Pointer>( 
            "reference",
            this->m_ReferenceTool ) );
