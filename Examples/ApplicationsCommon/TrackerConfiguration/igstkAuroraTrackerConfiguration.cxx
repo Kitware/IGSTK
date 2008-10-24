@@ -59,8 +59,7 @@ AuroraTrackerConfiguration::InternalAddTool(
     this->InvokeEvent( fe );
     return;
   }
-  if( newPortNumber == 0 ||
-      newPortNumber > this->MAXIMAL_PORT_NUMBER )
+  if( newPortNumber > this->MAXIMAL_PORT_NUMBER )
   {
     fe.Set( "Specified physical port number is invalid." );
     this->InvokeEvent( fe );

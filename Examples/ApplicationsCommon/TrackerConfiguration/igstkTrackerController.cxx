@@ -1555,7 +1555,9 @@ TrackerController::InitializeAuroraTool(
   else
     trackerTool->RequestSelect6DOFTrackerTool();
 
-  trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() );
+  // aurora internally handles [0-3] , so here we substract
+
+  trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() - 1 );
 
   if( is5DOF )
     trackerTool->RequestSetChannelNumber( toolConfiguration->GetChannelNumber() );
