@@ -617,8 +617,8 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
             }
 
             m_Camera->SetViewUp( -m_ResliceAxes->GetElement(0,1), 
-                        -m_ResliceAxes->GetElement(1,1), 
-                        -m_ResliceAxes->GetElement(2,1) );
+                                 -m_ResliceAxes->GetElement(1,1), 
+                                 -m_ResliceAxes->GetElement(2,1) );
 
             m_Camera->SetFocalPoint( focalPoint );
             //camera->SetParallelScale( 0.8 );
