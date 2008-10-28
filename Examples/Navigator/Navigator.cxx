@@ -2356,8 +2356,8 @@ void Navigator::InitializeTrackerProcessing()
   // notify the GUI that the system is tracking
   m_TrackingSemaphore->color(FL_YELLOW);
 
-  m_TrackerTool->AddObserver(
-      igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
+//  m_TrackerTool->AddObserver(
+//      igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
 
   m_TrackerTool->AddObserver(
       igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_TrackerToolNotAvailableObserver);
@@ -3442,61 +3442,6 @@ void Navigator::CoronalReslicePlaneCameraModifiedCallback(const itk::EventObject
     }
   }
 }
-
-/** -----------------------------------------------------------------
-*  Callback function for TrackerToolTransformUpdateEvent
-*---------------------------------------------------------------------
-*/
-/*
-void Navigator::ToolTrackingCallback(const itk::EventObject & event )
-{
-
-  if ( !m_CollectingCandidates )
-     return;
-
-  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
-  {
-    typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer pointerTransformObserver = ObserverType::New();
-    pointerTransformObserver->ObserveTransformEventsFrom( m_TrackerTool );
-    pointerTransformObserver->Clear();
-
-    m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
-    
-    if ( pointerTransformObserver->GotTransform() )
-    {       
-      igstk::Transform pointerTransform = pointerTransformObserver->GetTransform();       
-
-      PointType point = TransformToPoint( pointerTransform );
-
-      m_CandidateLandmarks.push_back( point );
-
-      // Get the value of the progress
-      double progress =  (double) m_CandidateLandmarks.size() / MAX_CANDIDATES ;
-
-      // Update the progress bar and value
-      m_OutProgressMeter->value(100 * progress);
-      m_OutProgressCounter->value(100 * progress);
-
-      // Show or hide progress bar if necessary
-      if(progress < 1.0f && !m_WinProgress->visible())
-      {
-          m_WinProgress->show();
-      }
-        else if (progress == 1.0f && m_WinProgress->visible())
-      {
-          m_WinProgress->hide();
-      }  
-
-      if ( m_CandidateLandmarks.size() >= MAX_CANDIDATES )
-      {
-        m_CollectingCandidates = false;
-        RequestPinpointTrackerFiducial();
-      }
-    }
-  }
-}
-*/
 
 void Navigator::ToolAvailableCallback(const itk::EventObject & event )
 {
