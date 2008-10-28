@@ -890,12 +890,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
      m_MeshRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
 
      m_MeshRepresentation->SetOpacity(0.3);      
-
-     double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-     double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-     double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-
-     m_MeshRepresentation->SetColor(r, g, b);
+     m_MeshRepresentation->SetColor(0, 0, 1);
      
      m_ViewerGroup->m_AxialView->RequestAddObject( m_MeshRepresentation->Copy() );
      m_ViewerGroup->m_SagittalView->RequestAddObject( m_MeshRepresentation->Copy() );
@@ -970,13 +965,7 @@ void WorkingVolumeTester::LoadTrackerMeshProcessing()
      m_MeshRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
 
      m_MeshRepresentation->SetOpacity(0.3);      
-
-     double color[4];
-     color[0] = 1.0;
-     color[1] = 1.0;
-     color[2] = 0.0;
-
-     m_MeshRepresentation->SetColor(color[0],color[1],color[2]);
+     m_MeshRepresentation->SetColor(1,1,0);
      
      m_ViewerGroup->m_AxialView->RequestAddObject( m_MeshRepresentation->Copy() );
      m_ViewerGroup->m_SagittalView->RequestAddObject( m_MeshRepresentation->Copy() );
