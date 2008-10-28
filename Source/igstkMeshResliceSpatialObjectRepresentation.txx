@@ -235,6 +235,9 @@ void MeshResliceSpatialObjectRepresentation< TImageSpatialObject >
     {
     this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
     }
+
+  m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
+
 }
 
 template < class TImageSpatialObject >
