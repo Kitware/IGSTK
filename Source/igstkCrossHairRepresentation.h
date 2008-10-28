@@ -42,36 +42,22 @@ namespace igstk
  *
  * \ingroup ObjectRepresentation
  */
-template < class TImageSpatialObject >
+
 class CrossHairRepresentation : public ObjectRepresentation
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( CrossHairRepresentation, 
+  igstkStandardClassTraitsMacro( CrossHairRepresentation, 
                                  ObjectRepresentation )
 
 public:
 
   /** Typedefs */
-  typedef TImageSpatialObject                  ImageSpatialObjectType;
-
-  typedef typename ImageSpatialObjectType::ConstPointer 
-                                               ImageSpatialObjectConstPointer;
-
-  typedef typename ImageSpatialObjectType::PointType  PointType;
-
-  typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                   ReslicePlaneSpatialObjectType;
-
-  typedef typename ReslicePlaneSpatialObjectType::Pointer
-                                              ReslicePlaneSpatialObjectPointer;  
-
-  typedef CrossHairObject                 CrossHairSpatialObjectType;
-
-  void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
-                                                             planeSpatialObject);
+  typedef CrossHairObject                             CrossHairSpatialObjectType;
+  typedef CrossHairSpatialObjectType::Pointer         CrossHairPointerType;
+  typedef CrossHairSpatialObjectType::PointType       PointType;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -94,16 +80,12 @@ protected:
 
   /** Verify time stamp. Use the reslicing tool transform to verify 
   * the time stamp */
-  virtual bool VerifyTimeStamp() const;
+//  virtual bool VerifyTimeStamp() const;
 
 private:
 
   CrossHairRepresentation(const Self&); //purposely not implemented
-  void operator=(const Self&);     //purposely not implemented
-
-  
-  /** Internal itkSpatialObject */
-  CrossHairSpatialObjectType::ConstPointer   m_CrossHairSpatialObject;
+  void operator=(const Self&);     //purposely not implemented  
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -116,57 +98,42 @@ private:
    *  transition */
   void NoProcessing();
 
-  /** Set the reslice plane spatial object */
-  void SetReslicePlaneSpatialObjectProcessing();
+  /** Define observers for event communication */
+  igstkObserverMacro( CrossHairPosition, PointEvent,
+                                    igstk::EventHelperType::PointType );
 
-   /** Define observers for event communication */
-
-  igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
-                                  igstk::EventHelperType::ImageBoundsType );
-
-  igstkObserverMacro( ToolPosition, igstk::PointEvent, 
-                                  igstk::EventHelperType::PointType );
+  CrossHairPositionObserver::Pointer  m_CrossHairPositionObserver;
 
 private:
 
-  /** Variables for maanging reslice plane spatial object */
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
-
   double                            m_ImageBounds[6];
 
-  vtkLineSource* m_AxialLineSource;
-  vtkLineSource* m_SagittalLineSource;
-  vtkLineSource* m_CoronalLineSource;
+  vtkLineSource* m_LineSourceX;
+  vtkLineSource* m_LineSourceY;
+  vtkLineSource* m_LineSourceZ;
 
-  vtkTubeFilter *m_AxialTuber;
-  vtkTubeFilter *m_SagittalTuber;
-  vtkTubeFilter *m_CoronalTuber;
+  vtkTubeFilter *m_TuberX;
+  vtkTubeFilter *m_TuberY;
+  vtkTubeFilter *m_TuberZ;
 
-  vtkPolyDataMapper* m_AxialLineMapper;
-  vtkPolyDataMapper* m_SagittalLineMapper;
-  vtkPolyDataMapper* m_CoronalLineMapper;
+  vtkPolyDataMapper* m_LineMapperX;
+  vtkPolyDataMapper* m_LineMapperY;
+  vtkPolyDataMapper* m_LineMapperZ;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidCrossHairObject );
   igstkDeclareInputMacro( NullCrossHairObject );
-  igstkDeclareInputMacro( ValidReslicePlaneSpatialObject );
-  igstkDeclareInputMacro( InValidReslicePlaneSpatialObject );
   
   /** States for the State Machine */
   igstkDeclareStateMacro( NullCrossHairObject );
   igstkDeclareStateMacro( ValidCrossHairObject );
   igstkDeclareStateMacro( ValidReslicePlaneSpatialObject );
 
-
-  CrossHairSpatialObjectType::ConstPointer m_CrossHairObjectToAdd;
+  CrossHairPointerType    m_CrossHairSpatialObjectToAdd;
+  CrossHairPointerType    m_CrossHairSpatialObject;
 
 };
 
 } // end namespace igstk
-
-#ifndef IGSTK_MANUAL_INSTANTIATION
-#include "igstkCrossHairRepresentation.txx"
-#endif
 
 #endif // __igstkCrossHairRepresentation_h
