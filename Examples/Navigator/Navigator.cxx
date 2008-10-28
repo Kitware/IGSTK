@@ -40,6 +40,7 @@ Navigator::Navigator() :
   m_TrackerConfiguration( NULL ),
   m_StateMachine(this)
 {
+  std::srand( 5 );
 
   m_ImageDir = "C:/data";
 
@@ -2229,46 +2230,20 @@ void Navigator::LoadTargetMeshProcessing()
      m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetLineWidth(3.0);
      m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetLineWidth(3.0);
 
-     double color[4];
-     // in case we want to assign different properties to the loaded meshes
-     switch (m_NumberOfLoadedMeshes)
-     {
-       case 0:   
-         color[0] = 1.0;
-         color[1] = 1.0;
-         color[2] = 0.0;
-         break;
-       case 1:         
-         color[0] = 0.0;
-         color[1] = 0.0;
-         color[2] = 1.0;
-         break;
-       case 2:
-         color[0] = 0.0;
-         color[1] = 1.0;
-         color[2] = 0.0;
-         break;
-       default:        
-         color[0] = 1.0;
-         color[1] = 0.0;
-         color[2] = 0.0;
-         break;
-     }
+     double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
+     double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
+     double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
-     m_MeshRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(color[0],color[1],color[2]);
-
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(color[0],color[1],color[2]);
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(color[0],color[1],color[2]);
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(color[0],color[1],color[2]);
-  //     m_ObliqueMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(color[0],color[1],color[2]);     
+     m_MeshRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
+     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
+     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
+     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
 
      m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
      m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
      m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
-  //     m_ViewerGroup->m_ObliqueView->RequestAddObject( m_ObliqueMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );          
-     
 
-     //m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
+     m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
      m_ViewerGroup->m_3DView->RequestResetCamera();
 
      m_NumberOfLoadedMeshes ++;
