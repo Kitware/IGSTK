@@ -194,9 +194,9 @@ Navigator::Navigator() :
    *  Refer to:
    *  Navigator::ToolTrackingCallback()
    */
-  m_TrackerToolUpdateObserver = LoadedObserverType::New();
-  m_TrackerToolUpdateObserver->SetCallbackFunction( this,
-                                                 &Navigator::ToolTrackingCallback );
+  //m_TrackerToolUpdateObserver = LoadedObserverType::New();
+  //m_TrackerToolUpdateObserver->SetCallbackFunction( this,
+  //                                               &Navigator::ToolTrackingCallback );
 
   m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
   m_TrackerToolNotAvailableObserver->SetCallbackFunction( this,
@@ -230,7 +230,7 @@ Navigator::Navigator() :
   igstkAddStateMacro( InitializingTracker );
   igstkAddStateMacro( TrackerInitializationReady );
   igstkAddStateMacro( SettingTrackerFiducials );
-  igstkAddStateMacro( PinpointingTrackerFiducial );
+//  igstkAddStateMacro( PinpointingTrackerFiducial );
   igstkAddStateMacro( EndingSetTrackerFiducials );
   igstkAddStateMacro( TrackerFiducialsReady );
   igstkAddStateMacro( RegisteringTracker );  
@@ -255,9 +255,8 @@ Navigator::Navigator() :
   igstkAddInputMacro( ConfigureTracker );
   igstkAddInputMacro( InitializeTracker );
   igstkAddInputMacro( StartSetTrackerFiducials );
-  igstkAddInputMacro( PinpointTrackerFiducial );
-  igstkAddInputMacro( EndSetTrackerFiducials );
-  igstkAddInputMacro( AcceptFiducial );
+  igstkAddInputMacro( AcceptTrackerFiducial );
+  igstkAddInputMacro( EndSetTrackerFiducials );  
   igstkAddInputMacro( RegisterTracker );
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
@@ -294,12 +293,10 @@ Navigator::Navigator() :
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StartSetTrackerFiducials, 
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( Initial, AcceptTrackerFiducial, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, EndSetTrackerFiducials, 
-                           Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, AcceptFiducial, 
-                           Initial, ReportInvalidRequest );
+                           Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, StartTracking, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StopTracking, 
@@ -338,11 +335,9 @@ Navigator::Navigator() :
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, StartSetTrackerFiducials, 
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingImage, AcceptTrackerFiducial, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, EndSetTrackerFiducials, 
-                           LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, AcceptFiducial, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, StartTracking, 
                            LoadingImage, ReportInvalidRequest );
@@ -383,11 +378,9 @@ Navigator::Navigator() :
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetTrackerFiducials, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, PinpointTrackerFiducial,
+  igstkAddTransitionMacro( ConfirmingImagePatientName, AcceptTrackerFiducial,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, EndSetTrackerFiducials, 
-                           ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, AcceptFiducial,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartTracking,
                            ConfirmingImagePatientName, ReportInvalidRequest );
@@ -426,11 +419,9 @@ Navigator::Navigator() :
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, StartSetTrackerFiducials, 
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, PinpointTrackerFiducial,
+  igstkAddTransitionMacro( ImageReady, AcceptTrackerFiducial,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, EndSetTrackerFiducials, 
-                           ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, AcceptFiducial, 
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, StartTracking,
                            ImageReady, ReportInvalidRequest );
@@ -468,11 +459,9 @@ Navigator::Navigator() :
                            LoadingSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingSpatialObject, StartSetTrackerFiducials, 
                            LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingSpatialObject, AcceptTrackerFiducial, 
                            LoadingSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingSpatialObject, EndSetTrackerFiducials, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, AcceptFiducial, 
                            LoadingSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingSpatialObject, ConfigureTracker, 
                            LoadingSpatialObject, ReportInvalidRequest );
@@ -513,11 +502,9 @@ Navigator::Navigator() :
                            LoadingTargetMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTargetMesh, StartSetTrackerFiducials, 
                            LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingTargetMesh, AcceptTrackerFiducial, 
                            LoadingTargetMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTargetMesh, EndSetTrackerFiducials, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, AcceptFiducial,
                            LoadingTargetMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTargetMesh, ConfigureTracker, 
                            LoadingTargetMesh, ReportInvalidRequest );
@@ -565,11 +552,9 @@ Navigator::Navigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetTrackerFiducials, 
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( SettingImageFiducials, AcceptTrackerFiducial, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, EndSetTrackerFiducials, 
-                           SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, AcceptFiducial, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartTracking, 
                            SettingImageFiducials, ReportInvalidRequest );
@@ -611,11 +596,9 @@ Navigator::Navigator() :
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartSetTrackerFiducials, 
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( ConfiguringTracker, AcceptTrackerFiducial, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, EndSetTrackerFiducials, 
-                           ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, AcceptFiducial,
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartTracking, 
                            ConfiguringTracker, ReportInvalidRequest );
@@ -656,11 +639,9 @@ Navigator::Navigator() :
 
   igstkAddTransitionMacro( TrackerConfigurationReady, RegisterTracker, 
                            TrackerConfigurationReady, ReportInvalidRequest );  
-  igstkAddTransitionMacro( TrackerConfigurationReady, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, AcceptTrackerFiducial, 
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, EndSetTrackerFiducials, 
-                           TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, AcceptFiducial,
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartTracking, 
                            TrackerConfigurationReady, ReportInvalidRequest );
@@ -703,13 +684,10 @@ Navigator::Navigator() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartSetTrackerFiducials, 
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( InitializingTracker, AcceptTrackerFiducial, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, EndSetTrackerFiducials, 
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, AcceptFiducial, 
-                           InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, StartTracking, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StopTracking, 
@@ -749,33 +727,25 @@ Navigator::Navigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, RegisterTracker, 
                            TrackerInitializationReady, ReportInvalidRequest );  
-  igstkAddTransitionMacro( TrackerInitializationReady, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerInitializationReady, AcceptTrackerFiducial, 
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, EndSetTrackerFiducials, 
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, AcceptFiducial, 
-                           TrackerInitializationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerInitializationReady, StartTracking, 
                            TrackerInitializationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerInitializationReady, DisconnectTracker, 
                            TrackerInitializationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerInitializationReady, StopTracking, 
                            TrackerInitializationReady, ReportInvalidRequest );
   
 
   /** SettingTrackerFiducials State*/
 
-  igstkAddTransitionMacro( SettingTrackerFiducials, PinpointTrackerFiducial, 
-                           PinpointingTrackerFiducial, PinpointTrackerFiducial );
+  igstkAddTransitionMacro( SettingTrackerFiducials, AcceptTrackerFiducial,
+                           SettingTrackerFiducials, AcceptTrackerFiducial );
 
   igstkAddTransitionMacro( SettingTrackerFiducials, EndSetTrackerFiducials,
                            EndingSetTrackerFiducials, EndSetTrackerFiducials );
-
-  igstkAddTransitionMacro( SettingTrackerFiducials, AcceptFiducial,
-                           SettingTrackerFiducials, AcceptFiducial );
 
   //complete table for state: SettingTrackerFiducials
   igstkAddTransitionMacro( SettingTrackerFiducials, Success, 
@@ -812,53 +782,7 @@ Navigator::Navigator() :
   igstkAddTransitionMacro( SettingTrackerFiducials, DisconnectTracker, 
                            SettingTrackerFiducials, ReportInvalidRequest );
 
-      /** PinpointingTrackerFiducial State*/
-
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, Success, 
-                           SettingTrackerFiducials, ReportSuccessPinpointingTrackerFiducial );
-
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, Failure, 
-                           SettingTrackerFiducials, ReportFailurePinpointingTrackerFiducial );
-
-  //complete table for state: PinpointingTrackerFiducial
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, LoadImage, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, LoadToolSpatialObject, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, ConfirmImagePatientName, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, LoadTargetMesh, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, StartSetImageFiducials, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, SetPickingPosition, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, EndSetImageFiducials, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, ConfigureTracker, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, InitializeTracker, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, PinpointTrackerFiducial,
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, EndSetTrackerFiducials,
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, AcceptFiducial,
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, RegisterTracker, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, StartSetTrackerFiducials, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-
-
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, StartTracking, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, StopTracking, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-  igstkAddTransitionMacro( PinpointingTrackerFiducial, DisconnectTracker, 
-                           PinpointingTrackerFiducial, ReportInvalidRequest );
-
-    /** EndingSetTrackerFiducials State*/
+  /** EndingSetTrackerFiducials State*/
 
   igstkAddTransitionMacro( EndingSetTrackerFiducials, Success, 
                            TrackerFiducialsReady, ReportSuccessEndSetTrackerFiducials );
@@ -885,11 +809,9 @@ Navigator::Navigator() :
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, InitializeTracker, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, PinpointTrackerFiducial,
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, AcceptTrackerFiducial,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, EndSetTrackerFiducials,
-                           EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, AcceptFiducial,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, RegisterTracker, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
@@ -935,11 +857,9 @@ Navigator::Navigator() :
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, StartSetTrackerFiducials, 
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, AcceptTrackerFiducial, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, EndSetTrackerFiducials, 
-                           TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, AcceptFiducial, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, StartTracking, 
                            TrackerFiducialsReady, ReportInvalidRequest );
@@ -977,11 +897,9 @@ Navigator::Navigator() :
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, StartSetTrackerFiducials, 
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( RegisteringTracker, AcceptTrackerFiducial, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, EndSetTrackerFiducials, 
-                           RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, AcceptFiducial,
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, RegisterTracker,
                            RegisteringTracker, ReportInvalidRequest );
@@ -1022,11 +940,9 @@ Navigator::Navigator() :
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, StartSetTrackerFiducials, 
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( AcceptingRegistration, AcceptTrackerFiducial, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, EndSetTrackerFiducials, 
-                           AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, AcceptFiducial, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, RegisterTracker, 
                            AcceptingRegistration, ReportInvalidRequest );
@@ -1074,11 +990,9 @@ Navigator::Navigator() :
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, RegisterTracker, 
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( RegistrationReady, AcceptTrackerFiducial, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, EndSetTrackerFiducials, 
-                           RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, AcceptFiducial, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, StopTracking, 
                            RegistrationReady, ReportInvalidRequest );
@@ -1115,11 +1029,9 @@ Navigator::Navigator() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, RegisterTracker, 
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( StartingTracker, AcceptTrackerFiducial, 
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, EndSetTrackerFiducials, 
-                           StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, AcceptFiducial,
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StartTracking, 
                            StartingTracker, ReportInvalidRequest );
@@ -1160,11 +1072,9 @@ Navigator::Navigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, RegisterTracker, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( Tracking, AcceptTrackerFiducial, 
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, EndSetTrackerFiducials, 
-                           Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, AcceptFiducial,
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, SetPickingPosition, 
                            Tracking, ReportInvalidRequest );
@@ -1205,11 +1115,9 @@ Navigator::Navigator() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StartSetTrackerFiducials, 
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( StoppingTracker, AcceptTrackerFiducial, 
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, EndSetTrackerFiducials, 
-                           StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, AcceptFiducial, 
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StartTracking, 
                            StoppingTracker, ReportInvalidRequest );
@@ -1250,11 +1158,9 @@ Navigator::Navigator() :
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StartSetTrackerFiducials, 
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, PinpointTrackerFiducial, 
+  igstkAddTransitionMacro( DisconnectingTracker, AcceptTrackerFiducial, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, EndSetTrackerFiducials, 
-                           DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, AcceptFiducial, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StartTracking, 
                            DisconnectingTracker, ReportInvalidRequest );
@@ -1461,21 +1367,12 @@ void Navigator::RequestStartSetTrackerFiducials()
   m_StateMachine.ProcessInputs();
 }
 
-void Navigator::RequestAcceptFiducial()
+void Navigator::RequestAcceptTrackerFiducial()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestAcceptFiducial called...\n" )
+             "Navigator::RequestAcceptTrackerFiducial called...\n" ) 
 
-  m_StateMachine.PushInput( m_AcceptFiducialInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void Navigator::RequestPinpointTrackerFiducial()
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestPinpointTrackerFiducial called...\n" ) 
-
-  m_StateMachine.PushInput( m_PinpointTrackerFiducialInput );
+  m_StateMachine.PushInput( m_AcceptTrackerFiducialInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1698,12 +1595,40 @@ Navigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 }
 
 void 
-Navigator::AcceptFiducialProcessing()
+Navigator::AcceptTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "AcceptFiducialProcessing called...\n");
+                 "AcceptTrackerFiducialProcessing called...\n");
 
-  m_CollectingCandidates = true;
+  //m_CollectingCandidates = true;
+
+  typedef igstk::TransformObserver ObserverType;
+  ObserverType::Pointer transformObserver = ObserverType::New();
+  transformObserver->ObserveTransformEventsFrom( m_TrackerTool );
+  transformObserver->Clear();
+  m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
+
+  if ( transformObserver->GotTransform() )
+  {
+    int n = m_FiducialsPointList->value();
+    int m = m_FiducialsPointList->size();
+    m_LandmarksContainer[n] = 
+          TransformToPoint( transformObserver->GetTransform() );
+    m_AcceptedLandmarksContainer[n] = true;
+
+    //todo: change color to fiducials to indicate that they were accepted
+
+    if ( n < m )
+    {
+      m_FiducialsPointList->value(n+1);
+      this->RequestChangeSelectedFiducial();
+    }
+    if ( n == m-2)
+    {
+      m_ModifyTrackerFiducialsBtn->label("Ready");     
+      m_ModifyTrackerFiducialsBtn->color(FL_GREEN);
+    }
+  }
 }
 
 /** Method to be invoked on failure end set tracker fiducials */
@@ -2503,7 +2428,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   Fl::check();
 }
 
-
+/*
 void Navigator::PinpointTrackerFiducialProcessing()
 {
   
@@ -2558,6 +2483,19 @@ void Navigator::PinpointTrackerFiducialProcessing()
 
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
+}
+*/
+
+/** -----------------------------------------------------------------
+* Sets a new point to the registration procedure
+*---------------------------------------------------------------------
+*/
+void Navigator::SetTrackerFiducialProcessing()
+{ 
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::SetTrackerFiducialProcessing called...\n" )
+
+  
 }
 
 void Navigator::EndSetTrackerFiducialsProcessing()
@@ -3387,8 +3325,8 @@ void Navigator::HandleKeyPressed (
         m_ViewerGroup->m_3DView->RequestResetCamera();
         break;
 
-    case 'h': // accepts a fiducial while doing the registration
-        this->RequestAcceptFiducial();
+    case 'h': // accepts a fiducial pointed out by the tracker while doing the registration        
+          this->RequestAcceptTrackerFiducial();
         break;
 
     case 'g': // attempts to finish the registration
@@ -3509,6 +3447,7 @@ void Navigator::CoronalReslicePlaneCameraModifiedCallback(const itk::EventObject
 *  Callback function for TrackerToolTransformUpdateEvent
 *---------------------------------------------------------------------
 */
+/*
 void Navigator::ToolTrackingCallback(const itk::EventObject & event )
 {
 
@@ -3557,6 +3496,7 @@ void Navigator::ToolTrackingCallback(const itk::EventObject & event )
     }
   }
 }
+*/
 
 void Navigator::ToolAvailableCallback(const itk::EventObject & event )
 {

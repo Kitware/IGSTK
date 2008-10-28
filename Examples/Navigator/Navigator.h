@@ -156,10 +156,9 @@ public:
   virtual void RequestLoadToolSpatialObject();
   virtual void RequestLoadTargetMesh();
   virtual void RequestToggleSetImageFiducials();
-  virtual void RequestPinpointTrackerFiducial();
   virtual void RequestStartSetTrackerFiducials();
   virtual void RequestEndSetTrackerFiducials();
-  virtual void RequestAcceptFiducial();
+  virtual void RequestAcceptTrackerFiducial();
   virtual void RequestPrepareToQuit();
 
   /** Public request methods from the GUI to help operation workflow */
@@ -298,7 +297,7 @@ private:
   igstkDeclareStateMacro( LoadingTargetMesh );
   igstkDeclareStateMacro( SettingImageFiducials );
   igstkDeclareStateMacro( SettingTrackerFiducials );
-  igstkDeclareStateMacro( PinpointingTrackerFiducial );
+//  igstkDeclareStateMacro( PinpointingTrackerFiducial );
   igstkDeclareStateMacro( EndingSetTrackerFiducials );
   igstkDeclareStateMacro( TrackerFiducialsReady );
   igstkDeclareStateMacro( ConfiguringTracker );
@@ -327,9 +326,8 @@ private:
   igstkDeclareInputMacro( ConfigureTracker );
   igstkDeclareInputMacro( InitializeTracker );
   igstkDeclareInputMacro( StartSetTrackerFiducials );
-  igstkDeclareInputMacro( PinpointTrackerFiducial );
+  igstkDeclareInputMacro( AcceptTrackerFiducial );
   igstkDeclareInputMacro( EndSetTrackerFiducials );
-  igstkDeclareInputMacro( AcceptFiducial );
   igstkDeclareInputMacro( RegisterTracker );
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
@@ -563,9 +561,10 @@ private:
   void SetImageFiducialProcessing();
   void SetImagePickingProcessing();
   void PinpointTrackerFiducialProcessing();
+  void SetTrackerFiducialProcessing();
   void StartSetTrackerFiducialsProcessing();
   void EndSetTrackerFiducialsProcessing();
-  void AcceptFiducialProcessing();
+  void AcceptTrackerFiducialProcessing();
   void ConfigureTrackerProcessing();
   void InitializeTrackerProcessing();
   void TrackerRegistrationProcessing();
@@ -678,11 +677,12 @@ private:
 
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event );
-  void HandleTabChangedCallback( const itk::EventObject & event );
-  void ToolTrackingCallback( const itk::EventObject & event ); 
+  
+  //void ToolTrackingCallback( const itk::EventObject & event ); 
   void AxialReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 
   void SagittalReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 
   void CoronalReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 
+
   void ToolNotAvailableCallback( const itk::EventObject & event ); 
   void ToolAvailableCallback( const itk::EventObject & event ); 
   void ReferenceNotAvailableCallback( const itk::EventObject & event ); 
