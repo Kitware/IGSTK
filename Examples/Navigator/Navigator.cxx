@@ -2086,7 +2086,7 @@ void Navigator::LoadToolSpatialObjectProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                 "Navigator::LoadToolSpatialObjectProcessing called...\n" )
 
-  const char* fileName = "sPtr.msh";
+  const char* fileName = "tool.msh";
 
   if ( fileName != NULL )
   {
@@ -2128,7 +2128,7 @@ void Navigator::LoadToolSpatialObjectProcessing()
     m_TrackerToolRepresentation = MeshRepresentationType::New();
     m_TrackerToolRepresentation->RequestSetMeshObject( m_PointerSpatialObject );
     m_TrackerToolRepresentation->SetOpacity(1.0);
-    m_TrackerToolRepresentation->SetColor(0.0,0.0,1.0);
+    m_TrackerToolRepresentation->SetColor(1.0,0.0,1.0);
 
     
     m_StateMachine.PushInput( m_SuccessInput );
