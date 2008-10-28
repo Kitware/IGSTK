@@ -1164,18 +1164,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
 
   this->m_ToolTransformWRTImageCoordinateSystem =
     this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
-
- // Transform::VectorType translation =
- //   this->m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
-
-  //Set the validity time stamp of the image spatial object transform to 
-  //validity time of the tool spatial object.
-
-//  Transform::TimePeriodType startTime = 
-//         this->m_ToolTransformWRTImageCoordinateSystem.GetStartTime();
-
-//  Transform::TimePeriodType expirationTime =
-//         this->m_ToolTransformWRTImageCoordinateSystem.GetExpirationTime();
 }
 
 /** Request compute reslicing plane */
