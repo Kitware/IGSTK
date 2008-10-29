@@ -2880,29 +2880,14 @@ void Navigator::ConnectImageRepresentation()
 
   // Set up cross hairs
   m_CrossHair = CrossHairType::New();
+  m_CrossHair->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
 
-  BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
-  boundingBoxObserver->Reset();
-
-  // this should be moved inside the cross hair class and be received as an event
-  unsigned long boundingBoxObserverID = 
-  m_ImageSpatialObject->AddObserver( ImageSpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
-
-  m_ImageSpatialObject->RequestGetBounds();
-
-  if( boundingBoxObserver->GotBoundingBox() ) 
-  {
-    ImageSpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
-    if( bbox )
-    {
-      m_CrossHair->RequestSetBoundingBox( bbox );
-    }
-  }
-  
+  // buid the cross hair representation and add the cross hair object
   m_CrossHairRepresentation = CrossHairRepresentationType::New();
-  m_CrossHairRepresentation->SetColor(1,1,0);
+  m_CrossHairRepresentation->SetColor(1,0,0);
   m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
+  // add the cross hair representation to the different views
   m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
   m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
@@ -2916,9 +2901,9 @@ void Navigator::ConnectImageRepresentation()
  
   /**
   *  Connect the scene graph
-  *  Here we created a virtual world reference system (as the root) and
+  *  Here we create a virtual world reference system (as the root) and
   *  attached all the objects as its children.
-  *  This is for the convenience in the following implementation. You 
+  *  This is for the convenience in the following implementation. You can
   *  use any spatial object, view, tracker, or tracker tool as a 
   *  reference system in IGSTK. And you can create your own class to
   *  use the coordinate system API by using this macro:
@@ -2985,6 +2970,7 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_3DView->SetRefreshRate( VIEW_3D_REFRESH_RATE );
   m_ViewerGroup->m_3DView->RequestStart();
 
+  // reset the cameras in the views
   m_ViewerGroup->m_AxialView->RequestResetCamera();
   m_ViewerGroup->m_SagittalView->RequestResetCamera();
   m_ViewerGroup->m_CoronalView->RequestResetCamera();
@@ -3000,15 +2986,15 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CoronalView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
 
-  /** Adding observer for slider bar reslicing event*/
+  /** Adding observer for slider bar reslicing event */
   m_ManualReslicingObserverID = m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
     m_ManualReslicingObserver );
 
-  /** Adding observer for key pressed event*/
+  /** Adding observer for key pressed event */
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::KeyPressedEvent(),
     m_KeyPressedObserver );
 
-  /** Adding observer for mouse pressed event*/
+  /** Adding observer for mouse pressed event */
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::MousePressedEvent(),
     m_MousePressedObserver );  
 

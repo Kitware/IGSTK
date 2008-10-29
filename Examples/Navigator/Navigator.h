@@ -274,8 +274,8 @@ public:
   igstkObserverMacro( VTKImage, igstk::VTKImageModifiedEvent,
                       igstk::EventHelperType::VTKImagePointerType);
 
-  igstkObserverConstObjectMacro( BoundingBox, ImageSpatialObjectType::BoundingBoxEvent,
-                                  ImageSpatialObjectType::BoundingBoxType);
+  //igstkObserverConstObjectMacro( BoundingBox, ImageSpatialObjectType::BoundingBoxEvent,
+  //                                ImageSpatialObjectType::BoundingBoxType);
 
   igstkEventMacro( InvalidRequestErrorEvent, igstk::IGSTKErrorEvent );
 
