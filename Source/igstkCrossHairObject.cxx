@@ -317,7 +317,7 @@ CrossHairObject
 
   if(index >= 6)
     {
-    return NULL;
+    return 0;
     }
 
   const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
