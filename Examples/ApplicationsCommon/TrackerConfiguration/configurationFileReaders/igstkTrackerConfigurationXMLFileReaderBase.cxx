@@ -141,7 +141,7 @@ TrackerConfigurationXMLFileReaderBase::CharacterDataHandler(
 
 void 
 TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes( 
-  const char **atts )
+  const char **atts ) throw ( FileFormatException )
 {
   bool systemTypeFound = false;
 
@@ -190,7 +190,7 @@ TrackerConfigurationXMLFileReaderBase::ProcessRefreshRate()
 
 void 
 TrackerConfigurationXMLFileReaderBase::ProcessToolAttributes( 
-  const char **atts )
+  const char **atts ) throw ( FileFormatException )
 {
              //by default the tool isn't a reference
   this->m_CurrentToolIsReference = false;
