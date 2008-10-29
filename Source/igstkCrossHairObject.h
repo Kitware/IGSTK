@@ -46,14 +46,13 @@ public:
   igstkStandardClassTraitsMacro( CrossHairObject, SpatialObject )
 
   /** Typedefs */
+  typedef igstk::Transform::PointType          PointType;
+  typedef igstk::Transform::VectorType         VectorType;
 
-  typedef igstk::Transform::PointType        PointType;
-  typedef igstk::Transform::VectorType       VectorType;
+  typedef SpatialObject                        SpatialObjectType;
 
-  typedef SpatialObject::BoundingBoxType     BoundingBoxType;
-
-  typedef SpatialObject                      ToolSpatialObjectType;
-  typedef ToolSpatialObjectType::Pointer     ToolSpatialObjectPointer;
+  typedef SpatialObjectType::BoundingBoxType   BoundingBoxType;
+  typedef SpatialObjectType::Pointer           SpatialObjectPointerType;
 
 public:  
 
@@ -65,15 +64,17 @@ public:
   void RequestGetCrossHairPosition();
 
   /** Request set tool spatial object */
-  void RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject );
+  void RequestSetToolSpatialObject( const SpatialObjectType * spatialObject );
 
   /** Request set bounding box */
-  void RequestSetBoundingBox(const BoundingBoxType* bounds);
+  //void RequestSetBoundingBox(const BoundingBoxType* bounds);
+  void RequestSetReferenceSpatialObject( const SpatialObjectType * spatialObject );
 
   /** Request set mouse position */
   void RequestSetMousePosition( PointType point);
 
-//  igstkGetMacro(Position, PointType);
+  /** Get tool transform */
+  igstk::Transform GetToolTransform() const;
 
   double GetBoundingBoxDimensionByIndex(unsigned int index);
  
@@ -95,13 +96,7 @@ private:
 
   CrossHairObject(const Self&);         //purposely not implemented
   void operator=(const Self&);     //purposely not implemented  
-
-  /** Attempt set bounding box attempt */
-  void AttemptSetBoundingBoxProcessing( void );
-  
-  /** Set bounding box processing */
-  void SetBoundingBoxProcessing( void );
- 
+   
   /** Set mouse position processing */
   void SetMousePositionProcessing( void );
 
@@ -111,17 +106,20 @@ private:
   /** Set tool spatial object processing */
   void SetToolSpatialObjectProcessing( void );
 
+  /** Set reference spatial object processing */
+  void SetReferenceSpatialObjectProcessing( void );
+
   /** Get cross hair position processing */
   void GetCrossHairPositionProcessing( void );
 
   /** Report invalid tool spatial object type */
   void ReportInvalidToolSpatialObjectProcessing( void );
 
+  /** Report invalid reference spatial object */
+  void ReportInvalidReferenceSpatialObjectProcessing( void );
+
   /** Report invalid mouse position */
   void ReportInvalidMousePositionProcessing( void );
-
-  /** Report invalid bounding box */
-  void ReportInvalidBoundingBoxProcessing( void );
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -146,12 +144,17 @@ private:
 
   /** tool spatial object member variables */
   bool                         m_ToolSpatialObjectSet;
-  ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
-  ToolSpatialObjectPointer     m_ToolSpatialObject;
+  SpatialObjectPointerType     m_ToolSpatialObjectToBeSet;
+  SpatialObjectPointerType     m_ToolSpatialObject;
+
+  /** reference spatial object member variables */
+  bool                         m_ReferenceSpatialObjectSet;
+  SpatialObjectPointerType     m_ReferenceSpatialObjectToBeSet;
+  SpatialObjectPointerType     m_ReferenceSpatialObject;
 
   /** bounding box member variables */
   BoundingBoxType::ConstPointer           m_BoundingBox;
-  BoundingBoxType::ConstPointer           m_BoundingBoxToBeSet;
+//  BoundingBoxType::ConstPointer           m_BoundingBoxToBeSet;
 
   /** tool transform with respect to the image coordinate system */
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
@@ -159,15 +162,15 @@ private:
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ToolSpatialObjectSet );
-  igstkDeclareStateMacro( ValidBoundingBoxSet );
-  igstkDeclareStateMacro( AttemptingToSetBoundingBox );
+  igstkDeclareStateMacro( ValidReferenceSpatialObjectSet );
+  igstkDeclareStateMacro( AttemptingToSetReferenceSpatialObject );
   igstkDeclareStateMacro( AttemptingToSetMousePosition );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( SetBoundingBox );
-  igstkDeclareInputMacro( ValidBoundingBox );
-  igstkDeclareInputMacro( InValidBoundingBox );
+  igstkDeclareInputMacro( SetReferenceSpatialObject );
+  igstkDeclareInputMacro( ValidReferenceSpatialObject );
+  igstkDeclareInputMacro( InValidReferenceSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
   igstkDeclareInputMacro( SetMousePosition );
@@ -180,6 +183,9 @@ private:
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
   igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
+
+  igstkObserverConstObjectMacro( BoundingBox, SpatialObjectType::BoundingBoxEvent,
+                                              SpatialObjectType::BoundingBoxType);
 
 };
 

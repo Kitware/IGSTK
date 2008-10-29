@@ -149,52 +149,68 @@ CrossHairRepresentation
 
 }
 
+/** Set the actor´s visibility */
+void 
+CrossHairRepresentation
+::SetVisibility(bool visibility)
+{
+  // Update all the actors
+  ActorsListType::iterator it = this->m_Actors.begin();
+  while(it != this->m_Actors.end())
+    {
+    vtkActor * va = dynamic_cast< vtkActor * >( *it );
+    if( va )
+      {
+      va->SetVisibility(visibility);
+      }
+    it++;
+    }
+}
+
 /** Verify time stamp of the attached tool*/
-/*
-template < class TImageSpatialObject >
 bool
-CrossHairRepresentation < TImageSpatialObject >
+CrossHairRepresentation
 ::VerifyTimeStamp( ) const
 {
   igstkLogMacro( DEBUG, 
-    "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
+    "igstk::CrossHairRepresentation::VerifyTimeStamp called...\n");
 
-  if( this->m_CrossHairSpatialObject.IsNull() )
+  if( m_CrossHairSpatialObject.IsNull() )
     {
     return false;
     }
 
   // if a tool spatial object is driving the reslicing, compare the 
   //   tool spatial object transform with the view render time
-  if( this->m_CrossHairSpatialObject->->IsToolSpatialObjectSet())
+  if( m_CrossHairSpatialObject->IsToolSpatialObjectSet() )
     {
-    if( this->GetRenderTimeStamp().GetExpirationTime() <
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
-      this->GetRenderTimeStamp().GetStartTime() >
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
-      {
-        // fixme
-        double diff = 
-          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
-
-        if (diff > 250 )
+      if( this->GetRenderTimeStamp().GetExpirationTime() <
+        this->m_CrossHairSpatialObject->GetToolTransform().GetStartTime() ||
+        this->GetRenderTimeStamp().GetStartTime() >
+        this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime() )
         {
-          //std::cout << diff << std::endl;
-          return false;
+          // fixme
+          double diff = 
+            this->GetRenderTimeStamp().GetStartTime() - this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
+
+          if (diff > 250 )
+          {
+            //std::cout << diff << std::endl;
+            return false;
+          }
+          else
+            return true;
         }
-        else
-          return true;
-      }
-    else
-      {
-      return true;
-      }
+      else
+        {
+        return true;
+        }
     }
   else
     {
     return true;
     }
-}*/
+}
 
 /** Request to Set the CrossHairSpatial Object */
 void CrossHairRepresentation
@@ -411,23 +427,6 @@ void CrossHairRepresentation
 
       m_LineSourceZ->SetPoint1( position[0], position[1], m_ImageBounds[4] );
       m_LineSourceZ->SetPoint2( position[0], position[1], m_ImageBounds[5] );
-    }
-}
-
-/** Sets actors visibility */
-void CrossHairRepresentation
-::SetVisibility(bool visibility)
-{
-  // Update all the actors
-  ActorsListType::iterator it = this->m_Actors.begin();
-  while(it != this->m_Actors.end())
-    {
-    vtkActor * va = dynamic_cast< vtkActor * >( *it );
-    if( va )
-      {
-      va->SetVisibility(visibility);
-      }
-    it++;
     }
 }
 

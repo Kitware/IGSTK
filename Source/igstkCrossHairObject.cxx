@@ -33,16 +33,16 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   // List of states
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ToolSpatialObjectSet );
-  igstkAddStateMacro( ValidBoundingBoxSet );
-  igstkAddStateMacro( AttemptingToSetBoundingBox );  
+  igstkAddStateMacro( ValidReferenceSpatialObjectSet );
+  igstkAddStateMacro( AttemptingToSetReferenceSpatialObject );  
   igstkAddStateMacro( AttemptingToSetMousePosition );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   
   // List of state machine inputs
 
-  igstkAddInputMacro( SetBoundingBox );
-  igstkAddInputMacro( ValidBoundingBox );
-  igstkAddInputMacro( InValidBoundingBox );
+  igstkAddInputMacro( SetReferenceSpatialObject );
+  igstkAddInputMacro( ValidReferenceSpatialObject );
+  igstkAddInputMacro( InValidReferenceSpatialObject );
   igstkAddInputMacro( ValidToolSpatialObject );
   igstkAddInputMacro( InValidToolSpatialObject );
   igstkAddInputMacro( SetMousePosition );
@@ -54,44 +54,44 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
 
   // From Initial
 
-  igstkAddTransitionMacro( Initial, SetBoundingBox, 
-                           AttemptingToSetBoundingBox, SetBoundingBox);
+  igstkAddTransitionMacro( Initial, SetReferenceSpatialObject, 
+                           AttemptingToSetReferenceSpatialObject, SetReferenceSpatialObject);
 
-  // From AttemptingToSetBoundingbox
+  // From AttemptingToSetReferenceSpatialObject
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBox, ValidBoundingBox,
-                           ValidBoundingBoxSet,  SetBoundingBox ); 
+  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, ValidReferenceSpatialObject,
+                           ValidReferenceSpatialObjectSet,  SetReferenceSpatialObject ); 
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBox, InValidBoundingBox,
-                           Initial,  ReportInvalidBoundingBox );
+  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, InValidReferenceSpatialObject,
+                           Initial,  ReportInvalidReferenceSpatialObject );
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBox, SetMousePosition, 
+  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, SetMousePosition, 
                            AttemptingToSetMousePosition, AttemptSetMousePosition);
 
   // From AttemptingToSetMousePosition
 
   igstkAddTransitionMacro( AttemptingToSetMousePosition, ValidMousePosition,
-                           ValidBoundingBoxSet,  SetMousePosition ); 
+                           ValidReferenceSpatialObjectSet,  SetMousePosition ); 
 
   igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
-                           ValidBoundingBoxSet,  ReportInvalidMousePosition );
+                           ValidReferenceSpatialObjectSet,  ReportInvalidMousePosition );
 
-  // From ValidBoundingBoxSet
+  // From ValidReferenceSpatialObjectSet
 
-  igstkAddTransitionMacro( ValidBoundingBoxSet, SetMousePosition,
+  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, SetMousePosition,
                            AttemptingToSetMousePosition, AttemptSetMousePosition );
 
-  igstkAddTransitionMacro( ValidBoundingBoxSet, ValidToolSpatialObject,
+  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, ValidToolSpatialObject,
                            ToolSpatialObjectSet, SetToolSpatialObject );
 
-  igstkAddTransitionMacro( ValidBoundingBoxSet, InValidToolSpatialObject,
-                           ValidBoundingBoxSet, ReportInvalidToolSpatialObject );
+  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, InValidToolSpatialObject,
+                           ValidReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
 
-  igstkAddTransitionMacro( ValidBoundingBoxSet, InValidToolSpatialObject,
-                           ValidBoundingBoxSet, ReportInvalidToolSpatialObject );
+  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, InValidToolSpatialObject,
+                           ValidReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
 
-  igstkAddTransitionMacro( ValidBoundingBoxSet, GetCrossHairPosition,
-                           ValidBoundingBoxSet, GetCrossHairPosition );
+  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, GetCrossHairPosition,
+                           ValidReferenceSpatialObjectSet, GetCrossHairPosition );
 
   // From ToolSpatialObjectSet
 
@@ -187,10 +187,10 @@ CrossHairObject
 
 void 
 CrossHairObject
-::ReportInvalidBoundingBoxProcessing( )
+::ReportInvalidReferenceSpatialObjectProcessing( )
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-                       ::ReportInvalidBoundingBoxProcessing called...\n");
+                       ::ReportInvalidReferenceSpatialObjectProcessing called...\n");
 }
 
 void 
@@ -255,40 +255,52 @@ CrossHairObject
   m_MousePositionSetFlag = true;
 }
 
+//void
+//CrossHairObject
+//::RequestSetBoundingBox( const BoundingBoxType* boundingBox )
+//{
+//  igstkLogMacro( DEBUG,"igstk::CrossHairObject\
+//                       ::RequestSetBoundingBox called...\n");
+//
+//  m_BoundingBoxToBeSet = const_cast< BoundingBoxType *>(boundingBox);
+//
+//  m_StateMachine.PushInput( m_SetBoundingBoxInput );
+//
+//  m_StateMachine.ProcessInputs();
+//}
+
 void
 CrossHairObject
-::RequestSetBoundingBox( const BoundingBoxType* boundingBox )
+::RequestSetReferenceSpatialObject( const SpatialObjectType* spatialObject )
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-                       ::RequestSetBoundingBox called...\n");
+                       ::RequestSetReferenceSpatialObject called...\n");
 
-  m_BoundingBoxToBeSet = const_cast< BoundingBoxType *>(boundingBox);
+  m_ReferenceSpatialObject = const_cast< SpatialObjectType* >(spatialObject);
 
-  m_StateMachine.PushInput( m_SetBoundingBoxInput );
+  if ( m_ReferenceSpatialObject.IsNotNull() )
+  {
+   // m_BoundingBox = const_cast< BoundingBoxType *>(boundingBox);
+
+    // get the bounding box from the reference spatial object
+    BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
+    boundingBoxObserver->Reset();
+    unsigned long boundingBoxObserverID = 
+    m_ReferenceSpatialObject->AddObserver( SpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
+    m_ReferenceSpatialObject->RequestGetBounds();
+
+    if( boundingBoxObserver->GotBoundingBox() ) 
+    {
+      //ImageSpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
+      m_BoundingBox = boundingBoxObserver->GetBoundingBox();
+    }
+
+  }
+
+  m_StateMachine.PushInput( m_SetReferenceSpatialObjectInput );
 
   m_StateMachine.ProcessInputs();
 }
-
-void
-CrossHairObject
-::AttemptSetBoundingBoxProcessing()
-{
-
- igstkLogMacro( DEBUG, "igstk::CrossHairObject\
-                        ::AttemptSetBoundingBoxProcessing called...\n");
-
- if( !m_BoundingBoxToBeSet )
-  {
-  m_StateMachine.PushInput( m_InValidBoundingBoxInput );
-  }
- else
-  {
-  m_StateMachine.PushInput( m_ValidBoundingBoxInput );
-  }
-
- m_StateMachine.ProcessInputs();
-}
-
 
  /** Return a given dimension */
 double
@@ -308,12 +320,12 @@ CrossHairObject
 
 void 
 CrossHairObject
-::RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject )
+::RequestSetToolSpatialObject( const SpatialObjectType * spatialObject )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
                        ::RequestSetToolSpatialObject called...\n");
 
-  m_ToolSpatialObjectToBeSet = const_cast< ToolSpatialObjectType *>(toolSpatialObject);
+  m_ToolSpatialObjectToBeSet = const_cast< SpatialObjectType *>(spatialObject);
 
   if( !m_ToolSpatialObjectToBeSet )
     {
@@ -342,13 +354,22 @@ CrossHairObject
 
 void 
 CrossHairObject
-::SetBoundingBoxProcessing( )
+::SetReferenceSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-                       ::SetBoundingBoxProcessing called...\n");
+                       ::SetReferenceSpatialObjectProcessing called...\n");
 
-  m_BoundingBox = m_BoundingBoxToBeSet;
+  m_ReferenceSpatialObject = m_ReferenceSpatialObjectToBeSet;
 }
+
+/** Get tool transform WRT Image Coordinate System*/
+igstk::Transform
+CrossHairObject
+::GetToolTransform( ) const
+{
+  return this->m_ToolTransformWRTImageCoordinateSystem;
+}
+
 
 void
 CrossHairObject
@@ -404,9 +425,9 @@ CrossHairObject
     m_Position[2] = vec[2];
     }
 
-  PointEvent positionEvent;
-  positionEvent.Set( m_Position );
-  this->InvokeEvent( positionEvent );
+    PointEvent positionEvent;
+    positionEvent.Set( m_Position );
+    this->InvokeEvent( positionEvent );
 }
 
 
