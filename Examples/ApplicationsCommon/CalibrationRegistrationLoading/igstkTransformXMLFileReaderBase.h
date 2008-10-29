@@ -120,14 +120,15 @@ public:
 protected:
           //this is the constructor that is called by the factory to 
          //create a new object
-  TransformXMLFileReaderBase() : m_ReadingTransformData( false ),                             
-                                 m_HaveDescription( false ),
-                                 m_HaveDate( false ),
-                                 m_HaveTransform( false ),
-                                 m_HaveError( false ),
-                                 m_ReadingTagData( false ),
-                                 m_Transform( NULL )
-                                 {}
+  TransformXMLFileReaderBase() {
+    m_ReadingTransformData = false;
+    m_HaveDescription = false;
+    m_HaveDate = false;
+    m_HaveTransform = false;
+    m_HaveError = false;
+    m_ReadingTagData = false;
+    m_Transform = NULL;
+    }
   ~TransformXMLFileReaderBase() { delete m_Transform; }
 
   void ProcessDescription() 

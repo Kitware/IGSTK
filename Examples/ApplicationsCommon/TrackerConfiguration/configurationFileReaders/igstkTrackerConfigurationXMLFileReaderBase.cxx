@@ -3,7 +3,7 @@
 #include <itksys/SystemTools.hxx>
 
 #include "igstkTrackerConfigurationXMLFileReaderBase.h"
-#include "igstkRigidTransformXMLFileReader.h."
+#include "igstkRigidTransformXMLFileReader.h"
 
 namespace igstk
 {

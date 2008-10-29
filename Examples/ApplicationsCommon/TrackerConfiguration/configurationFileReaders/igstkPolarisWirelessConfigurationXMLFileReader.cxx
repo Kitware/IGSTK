@@ -96,6 +96,7 @@ PolarisWirelessConfigurationXMLFileReader::HaveConfigurationData()
 
 igstk::TrackerConfiguration * 
 PolarisWirelessConfigurationXMLFileReader::GetTrackerConfigurationData()
+throw ( FileFormatException )
 {
   igstk::PolarisWirelessTrackerConfiguration *trackerConfig = 
     GetPolarisConfiguration();

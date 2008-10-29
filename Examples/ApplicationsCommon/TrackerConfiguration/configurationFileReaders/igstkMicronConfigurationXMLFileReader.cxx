@@ -145,6 +145,7 @@ MicronConfigurationXMLFileReader::HaveConfigurationData()
 
 igstk::TrackerConfiguration * 
 MicronConfigurationXMLFileReader::GetTrackerConfigurationData()
+throw ( FileFormatException )
 {
   igstk::MicronTrackerConfiguration *trackerConfig = 
     new igstk::MicronTrackerConfiguration();

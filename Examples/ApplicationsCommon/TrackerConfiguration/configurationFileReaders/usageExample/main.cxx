@@ -22,7 +22,10 @@ public:
   typedef  ::itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 protected:
-  ReadFailSuccessObserver() : m_GotFailure( false ), m_GotSuccess( false ) {}
+  ReadFailSuccessObserver() {
+    m_GotSuccess = false;
+    m_GotFailure = false;
+    }
   ~ReadFailSuccessObserver() {}
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -32,8 +35,7 @@ public:
   }
   void Execute(const itk::Object *caller, const itk::EventObject & event)
   {
-  if( const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *rse = 
-      dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
+  if( dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
       m_GotSuccess = true;
   else if( const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
            dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
@@ -80,7 +82,7 @@ igstkObserverMacro( InitializeError,
 int main( int argc, char *argv[] )
 {
   const unsigned int NUM_TRACKER_TYPES = 5;
-  char * trackerTypes[NUM_TRACKER_TYPES]; 
+  std::string trackerTypes[NUM_TRACKER_TYPES]; 
   enum { PolarisVicra, PolarisSpectra, PolarisHybrid, Aurora, Micron };
   trackerTypes[PolarisVicra] = "Polaris Vicra";
   trackerTypes[PolarisSpectra] = "Polaris Spectra";
@@ -93,7 +95,7 @@ int main( int argc, char *argv[] )
     std::cerr<<"Usage: "<<argv[0]<<" tracker_type ";
     std::cerr<<"tracker_xml_configuration_file.\n";
     std::cerr<<"Tracker types:\n";
-    for( int i=0; i<NUM_TRACKER_TYPES; i++ )
+    for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
       std::cerr<<"\t"<<i<<" == "<<trackerTypes[i]<<"\n";
     return EXIT_FAILURE;
   }
@@ -129,7 +131,7 @@ int main( int argc, char *argv[] )
       break;
     default:
       std::cerr<<"Invalid tracker type. Valid types are:\n";
-      for( int i=0; i<NUM_TRACKER_TYPES; i++ )
+      for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
         std::cerr<<"\t"<<i<<" == "<<trackerTypes[i]<<"\n";
       return EXIT_FAILURE;
   }
@@ -173,7 +175,7 @@ int main( int argc, char *argv[] )
     return EXIT_FAILURE;
   }
 
-  igstk::TrackerConfiguration *trackerConfiguration = 
+  const igstk::TrackerConfiguration *trackerConfiguration = 
     tco->GetTrackerConfiguration();
 
          //initialize the tracker controller and start tracking

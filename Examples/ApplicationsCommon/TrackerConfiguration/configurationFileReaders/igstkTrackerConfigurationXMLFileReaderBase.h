@@ -93,13 +93,14 @@ public:
 protected:
           //this is the constructor that is called by the factory to 
          //create a new object
-  TrackerConfigurationXMLFileReaderBase() : 
-                                 m_ReadingTrackerConfiguration( false ),                             
-                                 m_ReadingToolConfiguration( false ),
-                                 m_HaveRefreshRate( false ),
-                                 m_ReferenceTool( NULL ),
-                                 m_CurrentToolIsReference( false )
-                                 {}
+  TrackerConfigurationXMLFileReaderBase()
+  {
+  m_ReadingTrackerConfiguration = false;
+  m_ReadingToolConfiguration = false;
+  m_HaveRefreshRate = false;
+  m_ReferenceTool = NULL;
+  m_CurrentToolIsReference = false;
+  }
   virtual ~TrackerConfigurationXMLFileReaderBase() {
     std::vector<TrackerToolConfiguration *>::iterator it = 
       this->m_TrackerToolList.begin();

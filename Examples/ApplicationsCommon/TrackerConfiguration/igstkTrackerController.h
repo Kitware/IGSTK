@@ -18,6 +18,8 @@
 #ifndef __igstkTrackerController_h
 #define __igstkTrackerController_h
 
+#include "igstkSandboxConfigure.h"
+
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
@@ -37,10 +39,10 @@
 #include "igstkAuroraTrackerTool.h"
 #include "igstkFlockOfBirdsTrackerToolNew.h"
 
-//#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkMicronTrackerTool.h"
-//#endif
+#endif
 
 
 namespace igstk
@@ -258,12 +260,12 @@ private:
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
 
-//#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
 
   MicronTrackerTool::Pointer InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration );
 
-//#endif
+#endif
   FlockOfBirdsTrackerTool::Pointer InitializeMedSafeTool(
     const MedSafeToolConfiguration *toolConfiguration );
 

@@ -153,6 +153,7 @@ AuroraConfigurationXMLFileReader::HaveConfigurationData()
 
 igstk::TrackerConfiguration * 
 AuroraConfigurationXMLFileReader::GetTrackerConfigurationData()
+throw ( FileFormatException )
 {
   igstk::AuroraTrackerConfiguration *trackerConfig = 
     new igstk::AuroraTrackerConfiguration();

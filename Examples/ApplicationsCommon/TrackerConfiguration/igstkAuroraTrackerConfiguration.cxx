@@ -104,12 +104,12 @@ AuroraTrackerConfiguration::InternalAddTool(
 }
 
 
-AuroraToolConfiguration::AuroraToolConfiguration() : m_PortNumber( 1 ),
-                                                     m_ChannelNumber( 0 ),
-                                                     m_SROMFile( "" ),
-                                                     m_Is5DOF( false )
-
+AuroraToolConfiguration::AuroraToolConfiguration()
 {
+  m_PortNumber = 1;
+  m_ChannelNumber = 0;
+  m_SROMFile = "";
+  m_Is5DOF = false;
 }
 
 

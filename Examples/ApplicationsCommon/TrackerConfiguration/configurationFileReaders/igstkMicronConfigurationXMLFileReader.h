@@ -47,7 +47,8 @@ public:
   /**
    * Return a pointer to the object containing the configuration data.
    */
-  virtual igstk::TrackerConfiguration * GetTrackerConfigurationData();
+  virtual igstk::TrackerConfiguration * GetTrackerConfigurationData()
+          throw ( FileFormatException );
 
 
 protected:

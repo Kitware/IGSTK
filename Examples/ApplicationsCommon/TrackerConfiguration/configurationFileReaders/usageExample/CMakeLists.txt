@@ -43,7 +43,7 @@ ELSE (IGSTKSandbox_USE_FILE)
 ENDIF (IGSTKSandbox_USE_FILE)
 
 SET(PRECOMPUTED_TRANSFORM_READER_DIR
-    C:/toolkits/IGSTK/IGSTKSandbox_SRC/Examples/ApplicationsCommon/CalibrationRegistrationLoading
+   ${PROJECT_SOURCE_DIR}/../../../CalibrationRegistrationLoading
 )
 
 #
@@ -97,6 +97,7 @@ INCLUDE_DIRECTORIES(
 ../..
 ${PRECOMPUTED_TRANSFORM_READER_DIR}
 ${IGSTKSandbox_INCLUDE_DIR}
+${IGSTKSandbox_DIR}
 )
 
 #
