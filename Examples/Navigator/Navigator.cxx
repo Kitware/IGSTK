@@ -2053,7 +2053,7 @@ void Navigator::LoadToolSpatialObjectProcessing()
     m_TrackerToolRepresentation = MeshRepresentationType::New();
     m_TrackerToolRepresentation->RequestSetMeshObject( m_PointerSpatialObject );
     m_TrackerToolRepresentation->SetOpacity(1.0);
-    m_TrackerToolRepresentation->SetColor(1.0,0.0,1.0);
+    m_TrackerToolRepresentation->SetColor(1,1,0);
 
     
     m_StateMachine.PushInput( m_SuccessInput );
@@ -2831,8 +2831,8 @@ void Navigator::ConnectImageRepresentation()
     igstk::VTKCameraModifiedEvent(), m_CoronalReslicePlaneCameraModifiedObserver );
   
    /** 
-   *  Request information about the slice bounds. The answers will be
-   *  received in the form of events. This will be used to initialize
+   *  Request information about the slice bounds. The answer will be
+   *  received in the form of an event. This will be used to initialize
    *  the reslicing sliders and set initial slice position
    */
 
@@ -2851,6 +2851,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
     const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
+    // todo: see if SetSliceNumber is working correctly and if we actually need it
     m_AxialPlaneSpatialObject->RequestSetSliceNumber( zslice );
     m_ViewerGroup->m_Sliders[0]->minimum( zmin );
     m_ViewerGroup->m_Sliders[0]->maximum( zmax );
@@ -2860,6 +2861,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
     const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
+    // todo: see if SetSliceNumber is working correctly and if we actually need it
     m_SagittalPlaneSpatialObject->RequestSetSliceNumber( yslice );
     m_ViewerGroup->m_Sliders[1]->minimum( ymin );
     m_ViewerGroup->m_Sliders[1]->maximum( ymax );
@@ -2869,6 +2871,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
     const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
+    // todo: see if SetSliceNumber is working correctly and if we actually need it
     m_CoronalPlaneSpatialObject->RequestSetSliceNumber( xslice );
     m_ViewerGroup->m_Sliders[2]->minimum( xmin );
     m_ViewerGroup->m_Sliders[2]->maximum( xmax );
@@ -2884,7 +2887,7 @@ void Navigator::ConnectImageRepresentation()
 
   // buid the cross hair representation and add the cross hair object
   m_CrossHairRepresentation = CrossHairRepresentationType::New();
-  m_CrossHairRepresentation->SetColor(1,0,0);
+  m_CrossHairRepresentation->SetColor(0,1,0);
   m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
   // add the cross hair representation to the different views
@@ -2930,14 +2933,18 @@ void Navigator::ConnectImageRepresentation()
       identity, m_ViewerGroup->m_AxialView );
 
 
+  // set transform and parent to the image spatial object
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
+  // set transform and parent to the image plane reslice spatial objects
   m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
   m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
   m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
+  // set transform and parent to the cross hair object
   m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
 
+  // set transform and parent to the fiducial points
   m_FiducialPointVector[0]->RequestSetTransformAndParent( identity, m_WorldReference );
   m_FiducialPointVector[1]->RequestSetTransformAndParent( identity, m_WorldReference );
   m_FiducialPointVector[2]->RequestSetTransformAndParent( identity, m_WorldReference );
@@ -2970,7 +2977,7 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_3DView->SetRefreshRate( VIEW_3D_REFRESH_RATE );
   m_ViewerGroup->m_3DView->RequestStart();
 
-  // reset the cameras in the views
+  // reset the cameras in the different views
   m_ViewerGroup->m_AxialView->RequestResetCamera();
   m_ViewerGroup->m_SagittalView->RequestResetCamera();
   m_ViewerGroup->m_CoronalView->RequestResetCamera();
