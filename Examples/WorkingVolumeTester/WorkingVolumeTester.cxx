@@ -897,16 +897,16 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
      m_ViewerGroup->m_CoronalView->RequestAddObject( m_MeshRepresentation->Copy() );
      m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation->Copy() );
 
-     // Set up cross hairs
-      m_CrossHair = CrossHairType::New();      
-      m_CrossHair->RequestSetReferenceSpatialObject( m_MeshSpatialObject );      
-      m_CrossHair->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
-      m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
+     //// Set up cross hairs
+     // m_CrossHair = CrossHairType::New();
+     // m_CrossHair->RequestSetReferenceSpatialObject( m_MeshSpatialObject );      
+     // m_CrossHair->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+     // m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
 
-      // set up the cross hair representation and add the cross hair object
-      m_CrossHairRepresentation = CrossHairRepresentationType::New();
-      m_CrossHairRepresentation->SetColor(1,0,0);
-      m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
+     // // set up the cross hair representation and add the cross hair object
+     // m_CrossHairRepresentation = CrossHairRepresentationType::New();
+     // m_CrossHairRepresentation->SetColor(1,0,0);
+     // m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
       // add the cross hair representation to the different views
       m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
