@@ -898,12 +898,12 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
      m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation->Copy() );
 
      // Set up cross hairs
-      m_CrossHair = CrossHairType::New();
-      m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
+      m_CrossHair = CrossHairType::New();      
       m_CrossHair->RequestSetReferenceSpatialObject( m_MeshSpatialObject );      
-      m_CrossHair->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
+      m_CrossHair->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+      m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
 
-      // buid the cross hair representation and add the cross hair object
+      // set up the cross hair representation and add the cross hair object
       m_CrossHairRepresentation = CrossHairRepresentationType::New();
       m_CrossHairRepresentation->SetColor(1,0,0);
       m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
