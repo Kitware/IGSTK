@@ -32,14 +32,12 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
 
   // List of states
   igstkAddStateMacro( Initial );
-  igstkAddStateMacro( ToolSpatialObjectSet );
-  igstkAddStateMacro( ValidReferenceSpatialObjectSet );
+  igstkAddStateMacro( ReferenceSpatialObjectSet );
   igstkAddStateMacro( AttemptingToSetReferenceSpatialObject );  
   igstkAddStateMacro( AttemptingToSetMousePosition );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   
   // List of state machine inputs
-
   igstkAddInputMacro( SetReferenceSpatialObject );
   igstkAddInputMacro( ValidReferenceSpatialObject );
   igstkAddInputMacro( InValidReferenceSpatialObject );
@@ -55,12 +53,12 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   // From Initial
 
   igstkAddTransitionMacro( Initial, SetReferenceSpatialObject, 
-                           AttemptingToSetReferenceSpatialObject, SetReferenceSpatialObject);
+                           AttemptingToSetReferenceSpatialObject, AttemptSetReferenceSpatialObject);
 
   // From AttemptingToSetReferenceSpatialObject
 
   igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, ValidReferenceSpatialObject,
-                           ValidReferenceSpatialObjectSet,  SetReferenceSpatialObject ); 
+                           ReferenceSpatialObjectSet,  SetReferenceSpatialObject ); 
 
   igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, InValidReferenceSpatialObject,
                            Initial,  ReportInvalidReferenceSpatialObject );
@@ -68,33 +66,40 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, SetMousePosition, 
                            AttemptingToSetMousePosition, AttemptSetMousePosition);
 
+  // From ValidReferenceSpatialObjectSet
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, SetMousePosition,
+                           AttemptingToSetMousePosition, AttemptSetMousePosition );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ValidToolSpatialObject,
+                           ReferenceSpatialObjectSet, SetToolSpatialObject );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, InValidToolSpatialObject,
+                           ReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, InValidToolSpatialObject,
+                           ReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetCrossHairPosition,
+                           ReferenceSpatialObjectSet, GetCrossHairPosition );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem,
+                                         RequestGetToolTransformWRTImageCoordinateSystem );
+
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ToolTransformWRTImageCoordinateSystem,
+                           ReferenceSpatialObjectSet, ReportInvalidRequest );  
+
   // From AttemptingToSetMousePosition
 
   igstkAddTransitionMacro( AttemptingToSetMousePosition, ValidMousePosition,
-                           ValidReferenceSpatialObjectSet,  SetMousePosition ); 
+                           ReferenceSpatialObjectSet,  SetMousePosition ); 
 
   igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
-                           ValidReferenceSpatialObjectSet,  ReportInvalidMousePosition );
-
-  // From ValidReferenceSpatialObjectSet
-
-  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, SetMousePosition,
-                           AttemptingToSetMousePosition, AttemptSetMousePosition );
-
-  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, ValidToolSpatialObject,
-                           ToolSpatialObjectSet, SetToolSpatialObject );
-
-  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, InValidToolSpatialObject,
-                           ValidReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
-
-  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, InValidToolSpatialObject,
-                           ValidReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );
-
-  igstkAddTransitionMacro( ValidReferenceSpatialObjectSet, GetCrossHairPosition,
-                           ValidReferenceSpatialObjectSet, GetCrossHairPosition );
+                           ReferenceSpatialObjectSet,  ReportInvalidMousePosition );
 
   // From ToolSpatialObjectSet
-
+/*
   igstkAddTransitionMacro( ToolSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
                                          RequestGetToolTransformWRTImageCoordinateSystem );
@@ -104,12 +109,12 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
 
   igstkAddTransitionMacro( ToolSpatialObjectSet, GetCrossHairPosition,
                            ToolSpatialObjectSet, GetCrossHairPosition );
-
+*/    
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
 
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
                                             ToolTransformWRTImageCoordinateSystem,
-                           ToolSpatialObjectSet,
+                           ReferenceSpatialObjectSet,
                                             ReceiveToolTransformWRTImageCoordinateSystem );
 
   igstkSetInitialStateMacro( Initial );
@@ -276,31 +281,33 @@ CrossHairObject
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
                        ::RequestSetReferenceSpatialObject called...\n");
 
-  m_ReferenceSpatialObject = const_cast< SpatialObjectType* >(spatialObject);
-
-  if ( m_ReferenceSpatialObject.IsNotNull() )
-  {
-   // m_BoundingBox = const_cast< BoundingBoxType *>(boundingBox);
-
-    // get the bounding box from the reference spatial object
-    BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
-    boundingBoxObserver->Reset();
-    unsigned long boundingBoxObserverID = 
-    m_ReferenceSpatialObject->AddObserver( SpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
-    m_ReferenceSpatialObject->RequestGetBounds();
-
-    if( boundingBoxObserver->GotBoundingBox() ) 
-    {
-      //ImageSpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
-      m_BoundingBox = boundingBoxObserver->GetBoundingBox();
-    }
-
-  }
+  m_ReferenceSpatialObjectToBeSet = const_cast< SpatialObjectType* >(spatialObject);
 
   m_StateMachine.PushInput( m_SetReferenceSpatialObjectInput );
 
   m_StateMachine.ProcessInputs();
 }
+
+
+void
+CrossHairObject
+::AttemptSetReferenceSpatialObjectProcessing( )
+{
+  igstkLogMacro( DEBUG,"igstk::CrossHairObject\
+                       ::AttemptSetReferenceSpatialObject called...\n");
+
+  if( !m_ReferenceSpatialObjectToBeSet )
+    {
+    m_StateMachine.PushInput( m_InValidReferenceSpatialObjectInput );
+    }
+  else
+    {
+    m_StateMachine.PushInput( m_ValidReferenceSpatialObjectInput );
+    }
+
+  m_StateMachine.ProcessInputs();
+}
+
 
  /** Return a given dimension */
 double
@@ -360,6 +367,19 @@ CrossHairObject
                        ::SetReferenceSpatialObjectProcessing called...\n");
 
   m_ReferenceSpatialObject = m_ReferenceSpatialObjectToBeSet;
+
+  // get the bounding box from the reference spatial object
+  BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
+  boundingBoxObserver->Reset();
+  unsigned long boundingBoxObserverID = 
+  m_ReferenceSpatialObject->AddObserver( SpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
+  m_ReferenceSpatialObject->RequestGetBounds();
+
+  if( boundingBoxObserver->GotBoundingBox() ) 
+  {
+    //SpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
+    m_BoundingBox = boundingBoxObserver->GetBoundingBox();
+  }
 }
 
 /** Get tool transform WRT Image Coordinate System*/
@@ -394,12 +414,13 @@ CrossHairObject
                           CoordinateSystemHelperType;
 
   const CoordinateSystem* ImageSpatialObjectCoordinateSystem = 
-    CoordinateSystemHelperType::GetCoordinateSystem( this );
+    CoordinateSystemHelperType::GetCoordinateSystem( m_ReferenceSpatialObject );
 
   CoordinateSystem * ImageSpatialObjectCoordinateSystemNC =
           const_cast< CoordinateSystem *>(ImageSpatialObjectCoordinateSystem);
 
-  m_ToolSpatialObject->RequestComputeTransformTo( ImageSpatialObjectCoordinateSystemNC ); 
+  if ( m_ToolSpatialObjectSet )
+    m_ToolSpatialObject->RequestComputeTransformTo( ImageSpatialObjectCoordinateSystemNC ); 
 }
 
 /** Check if tool spatial object is set to drive the reslicing*/

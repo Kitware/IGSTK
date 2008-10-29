@@ -56,7 +56,6 @@ public:
 
 public:  
 
-
   /** Inquiry if a tool spatial object is set */
   bool  IsToolSpatialObjectSet();
 
@@ -103,6 +102,9 @@ private:
   /** Attempt set mouse position processing */
   void AttemptSetMousePositionProcessing( void );
 
+  /** Attempt set reference spatial object */
+  void AttemptSetReferenceSpatialObjectProcessing( void );
+
   /** Set tool spatial object processing */
   void SetToolSpatialObjectProcessing( void );
 
@@ -148,26 +150,23 @@ private:
   SpatialObjectPointerType     m_ToolSpatialObject;
 
   /** reference spatial object member variables */
-  bool                         m_ReferenceSpatialObjectSet;
   SpatialObjectPointerType     m_ReferenceSpatialObjectToBeSet;
   SpatialObjectPointerType     m_ReferenceSpatialObject;
 
   /** bounding box member variables */
   BoundingBoxType::ConstPointer           m_BoundingBox;
-//  BoundingBoxType::ConstPointer           m_BoundingBoxToBeSet;
 
   /** tool transform with respect to the image coordinate system */
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( ToolSpatialObjectSet );
-  igstkDeclareStateMacro( ValidReferenceSpatialObjectSet );
+  igstkDeclareStateMacro( ReferenceSpatialObjectSet );
   igstkDeclareStateMacro( AttemptingToSetReferenceSpatialObject );
   igstkDeclareStateMacro( AttemptingToSetMousePosition );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
-  /** Inputs to the State Machine */
+  /** Inputs to the State Machine */  
   igstkDeclareInputMacro( SetReferenceSpatialObject );
   igstkDeclareInputMacro( ValidReferenceSpatialObject );
   igstkDeclareInputMacro( InValidReferenceSpatialObject );
