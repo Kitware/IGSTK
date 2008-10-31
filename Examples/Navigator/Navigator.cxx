@@ -2201,10 +2201,13 @@ void Navigator::SetImagePickingProcessing()
   {
     ImageSpatialObjectType::IndexType index;
     m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( point );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CrossHair->RequestSetMousePosition( point );
+
+    const double *data = point.GetVnlVector().data_block();
+
+    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CrossHair->RequestSetMousePosition( data );
     this->ResliceImage( index );
   }
   else
@@ -2251,11 +2254,12 @@ void Navigator::SetImageFiducialProcessing()
       ImageSpatialObjectType::IndexType index;
       m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
 
-      m_AxialPlaneSpatialObject->RequestSetMousePosition( point );
-      m_SagittalPlaneSpatialObject->RequestSetMousePosition( point );
-      m_CoronalPlaneSpatialObject->RequestSetMousePosition( point );
+      const double *data = point.GetVnlVector().data_block();
 
-      m_CrossHair->RequestSetMousePosition( point );
+      m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
+      m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
+      m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
+      m_CrossHair->RequestSetMousePosition( data );
 
       this->ResliceImage( index );
     }
@@ -2761,52 +2765,37 @@ void Navigator::ConnectImageRepresentation()
   m_ImagePickerObserver->SetCallbackFunction( this, &Navigator::ImagePickingCallback );
 
   // create reslice plane spatial object for axial view
-  m_AxialPlaneSpatialObject = ImageReslicePlaneSpatialObjectType::New();
-  m_AxialPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-  m_AxialPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Axial );
-  m_AxialPlaneSpatialObject->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
+  m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  m_AxialPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane spatial object for sagittal view
-  m_SagittalPlaneSpatialObject = ImageReslicePlaneSpatialObjectType::New();
-  m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-  m_SagittalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Sagittal );
-  m_SagittalPlaneSpatialObject->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
+  m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+  m_SagittalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane spatial object for coronal view
-  m_CoronalPlaneSpatialObject = ImageReslicePlaneSpatialObjectType::New();
-  m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-  m_CoronalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Coronal );
-  m_CoronalPlaneSpatialObject->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
+  m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+  m_CoronalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane representation for axial view
-  m_AxialPlaneRepresentation1 = ImageRepresentationType::New();
-  m_AxialPlaneRepresentation1->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_AxialPlaneRepresentation1->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+  m_AxialPlaneRepresentation = ImageRepresentationType::New();
+  m_AxialPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
 
   // create reslice plane representation for sagittal view
-  m_SagittalPlaneRepresentation1 = ImageRepresentationType::New();
-  m_SagittalPlaneRepresentation1->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_SagittalPlaneRepresentation1->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+  m_SagittalPlaneRepresentation = ImageRepresentationType::New();
+  m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
 
   // create reslice plane representation for coronal view
-  m_CoronalPlaneRepresentation1 = ImageRepresentationType::New();
-  m_CoronalPlaneRepresentation1->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation1->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-
-  // create reslice plane representation for axial view in the 3D view
-  m_AxialPlaneRepresentation2 = ImageRepresentationType::New();
-  m_AxialPlaneRepresentation2->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_AxialPlaneRepresentation2->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-
-  // create reslice plane representation for sagittal view in the 3D view
-  m_SagittalPlaneRepresentation2 = ImageRepresentationType::New();
-  m_SagittalPlaneRepresentation2->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_SagittalPlaneRepresentation2->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-
-  // create reslice plane representation for coronal view in the 3D view
-  m_CoronalPlaneRepresentation2 = ImageRepresentationType::New();
-  m_CoronalPlaneRepresentation2->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation2->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+  m_CoronalPlaneRepresentation = ImageRepresentationType::New();
+  m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
 
   // set up camera observers
   m_AxialReslicePlaneCameraModifiedObserver = LoadedObserverType::New();
@@ -2821,13 +2810,13 @@ void Navigator::ConnectImageRepresentation()
   m_CoronalReslicePlaneCameraModifiedObserver->SetCallbackFunction(
     this, &Navigator::CoronalReslicePlaneCameraModifiedCallback );
 
-  m_AxialPlaneRepresentation1->AddObserver( 
+  m_AxialPlaneRepresentation->AddObserver( 
     igstk::VTKCameraModifiedEvent(), m_AxialReslicePlaneCameraModifiedObserver );
 
-  m_SagittalPlaneRepresentation1->AddObserver(
+  m_SagittalPlaneRepresentation->AddObserver(
     igstk::VTKCameraModifiedEvent(), m_SagittalReslicePlaneCameraModifiedObserver );
 
-  m_CoronalPlaneRepresentation1->AddObserver(
+  m_CoronalPlaneRepresentation->AddObserver(
     igstk::VTKCameraModifiedEvent(), m_CoronalReslicePlaneCameraModifiedObserver );
   
    /** 
@@ -2852,7 +2841,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int zmax = extent.zmax;
     const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
     // todo: see if SetSliceNumber is working correctly and if we actually need it
-    m_AxialPlaneSpatialObject->RequestSetSliceNumber( zslice );
+ //   m_AxialPlaneSpatialObject->RequestSetSliceNumber( zslice );
     m_ViewerGroup->m_Sliders[0]->minimum( zmin );
     m_ViewerGroup->m_Sliders[0]->maximum( zmax );
     m_ViewerGroup->m_Sliders[0]->value( zslice );
@@ -2862,7 +2851,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int ymax = extent.ymax;
     const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
     // todo: see if SetSliceNumber is working correctly and if we actually need it
-    m_SagittalPlaneSpatialObject->RequestSetSliceNumber( yslice );
+ //   m_SagittalPlaneSpatialObject->RequestSetSliceNumber( yslice );
     m_ViewerGroup->m_Sliders[1]->minimum( ymin );
     m_ViewerGroup->m_Sliders[1]->maximum( ymax );
     m_ViewerGroup->m_Sliders[1]->value( yslice );
@@ -2872,7 +2861,7 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int xmax = extent.xmax;
     const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
     // todo: see if SetSliceNumber is working correctly and if we actually need it
-    m_CoronalPlaneSpatialObject->RequestSetSliceNumber( xslice );
+//    m_CoronalPlaneSpatialObject->RequestSetSliceNumber( xslice );
     m_ViewerGroup->m_Sliders[2]->minimum( xmin );
     m_ViewerGroup->m_Sliders[2]->maximum( xmax );
     m_ViewerGroup->m_Sliders[2]->value( xslice );
@@ -2951,14 +2940,14 @@ void Navigator::ConnectImageRepresentation()
   m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );  
 
   // add reslice plane representations to the orthogonal views
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation1 );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation1 );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation1 );
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
 
   // add reslice plane representations to the 3D views
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );    
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   // set up view parameters
@@ -3090,30 +3079,30 @@ void Navigator::RequestChangeSelectedViewMode()
   switch (choice)
   {
     case 0:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Axial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Sagittal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Coronal );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
       break;
 
     case 1:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Orthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::Axial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::OffOrthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::OffAxial );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::OffOrthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::OffSagittal );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
       break;
 
     case 2:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Oblique );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::PlaneOrientationWithXAxesNormal );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Oblique );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::PlaneOrientationWithYAxesNormal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ImageReslicePlaneSpatialObjectType::Oblique );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ImageReslicePlaneSpatialObjectType::PlaneOrientationWithZAxesNormal );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
       break;
 
   default:
@@ -3190,10 +3179,13 @@ void Navigator::RequestChangeSelectedFiducial()
   {
     ImageSpatialObjectType::IndexType index;
     m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( point );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CrossHair->RequestSetMousePosition( point );
+
+    const double *data = point.GetVnlVector().data_block();
+
+    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CrossHair->RequestSetMousePosition( data );
     this->ResliceImage( index );
   }
   else
@@ -3223,11 +3215,14 @@ void Navigator::ResliceImageCallback( const itk::EventObject & event )
     ImageSpatialObjectType::IndexType index = resliceEvent->Get();
 
     PointType point;
-    m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point);
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( point );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( point );
-    m_CrossHair->RequestSetMousePosition( point );
+    m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+
+    const double *data = point.GetVnlVector().data_block();
+
+    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
+    m_CrossHair->RequestSetMousePosition( data );
   }
 }
 
@@ -3294,13 +3289,9 @@ void Navigator::HandleMousePressed (
 
     m_WindowLevel += mouseCommand.dy * 2;
 
-    m_AxialPlaneRepresentation1->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation1->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation1->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-
-    m_AxialPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_AxialPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_SagittalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CoronalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 
     Fl::check();
 }
@@ -3346,16 +3337,16 @@ void Navigator::ResliceImage ( IndexType index )
 
 void Navigator::EnableOrthogonalPlanes()
 {
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
 }
 
 void Navigator::DisableOrthogonalPlanes()
 {
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation2 );
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation2 );
+  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation2 );
 }
 
 /** -----------------------------------------------------------------

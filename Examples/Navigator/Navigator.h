@@ -29,7 +29,8 @@
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 
-#include "igstkImageReslicePlaneSpatialObject.h"
+//#include "igstkImageReslicePlaneSpatialObject.h"
+#include "igstkReslicerPlaneSpatialObject.h"
 #include "igstkImageResliceSpatialObjectRepresentation.h"
 #include "igstkMeshResliceSpatialObjectRepresentation.h"
 
@@ -110,28 +111,25 @@ public:
   /** typedef for mesh spatial objects */
   typedef MeshReaderType::MeshObjectType              MeshObjectType;
 
-  typedef ImageSpatialObjectType::IndexType         IndexType;
-  typedef ImageSpatialObjectType::PointType         PointType;
+  typedef ImageSpatialObjectType::IndexType           IndexType;
+  typedef ImageSpatialObjectType::PointType           PointType;
 
-  /** Tool projection object */
-  typedef igstk::ToolProjectionObject               ToolProjectionType;
-
-  /** Cross hair object and representation */
+  /** Cross hair spatial object and representation */
   typedef igstk::CrossHairObject                   CrossHairType;
   typedef igstk::CrossHairRepresentation           CrossHairRepresentationType;
 
-  /** tool projection object and representation */
-  typedef igstk::ToolProjectionRepresentation< ImageSpatialObjectType >
-                                                ToolProjectionRepresentationType;
+  /** tool projection spatial object and representation */
+  typedef igstk::ToolProjectionObject              ToolProjectionType;
+  typedef igstk::ToolProjectionRepresentation      ToolProjectionRepresentationType;
 
-  typedef igstk::ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                ImageReslicePlaneSpatialObjectType;
+  /** reslicer plane spatial object */
+  typedef igstk::ReslicerPlaneSpatialObject        ReslicerPlaneType;
 
-  /** tool object and representation */
-  typedef igstk::MeshObjectRepresentation               MeshRepresentationType;
- 
-  typedef igstk::MeshResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                                        MeshResliceRepresentationType;
+  /** tool spatial object and representation */
+  typedef igstk::MeshObjectRepresentation                MeshRepresentationType;
+
+  /** mesh reslice representation */
+  typedef igstk::MeshResliceSpatialObjectRepresentation  MeshResliceRepresentationType;
 
   /** image reslice representation */
   typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
@@ -388,17 +386,13 @@ private:
   std::vector< MeshObjectType::Pointer >                m_TargetMeshObjectVector;
   MeshObjectType::Pointer                               m_PointerSpatialObject;
 
-  ImageReslicePlaneSpatialObjectType::Pointer         m_AxialPlaneSpatialObject;
-  ImageReslicePlaneSpatialObjectType::Pointer         m_SagittalPlaneSpatialObject;
-  ImageReslicePlaneSpatialObjectType::Pointer         m_CoronalPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                            m_CoronalPlaneSpatialObject;
 
-  ImageRepresentationType::Pointer                  m_AxialPlaneRepresentation1;
-  ImageRepresentationType::Pointer                  m_SagittalPlaneRepresentation1;
-  ImageRepresentationType::Pointer                  m_CoronalPlaneRepresentation1;
-
-  ImageRepresentationType::Pointer                  m_AxialPlaneRepresentation2;
-  ImageRepresentationType::Pointer                  m_SagittalPlaneRepresentation2;
-  ImageRepresentationType::Pointer                  m_CoronalPlaneRepresentation2;
+  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation;
+  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation;
+  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation;
 
   std::vector< MeshRepresentationType::Pointer >        m_MeshRepresentationVector;
 

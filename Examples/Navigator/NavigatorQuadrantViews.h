@@ -69,7 +69,6 @@ public:
   ViewType2D::Pointer          m_AxialView;
   ViewType2D::Pointer          m_SagittalView;
   ViewType2D::Pointer          m_CoronalView;
-//  ViewType2D::Pointer          m_ObliqueView;
   ViewType3D::Pointer          m_3DView;
 
   /** Annotation is used for displaying 2D texts on View */
