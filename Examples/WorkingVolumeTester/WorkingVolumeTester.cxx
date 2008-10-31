@@ -848,95 +848,148 @@ void WorkingVolumeTester::BuildSceneGraph()
 void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "WorkingVolumeTester::LoadWorkingVolumeMeshProcessing called...\n" )
+           "WorkingVolumeTester::LoadWorkingVolumeMeshProcessing called...\n" )
 
-  const char*  fileName = 
-    fl_file_chooser("Select the mesh file","*.msh", "");
+    const char*  fileName = fl_file_chooser("Select the mesh file","*.msh", "");
 
-  if ( fileName != NULL )
-  {
-     MeshReaderType::Pointer reader = MeshReaderType::New();
-     reader->RequestSetFileName( fileName );
-     reader->RequestReadObject();
-     MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
-     reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
-     reader->RequestGetOutput();
+    if ( !fileName )
+    {
+       igstkLogMacro2( m_Logger, DEBUG, "No file was selected\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+    }
 
-     if(!observer->GotMeshObject())
-     {
-         igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-         m_StateMachine.PushInput( m_FailureInput);
-         m_StateMachine.ProcessInputs();
-         return;
-     }
+    MeshReaderType::Pointer reader = MeshReaderType::New();
+    reader->RequestSetFileName( fileName );
+    reader->RequestReadObject();
+    MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+    reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
+    reader->RequestGetOutput();
 
-     m_MeshSpatialObject = observer->GetMeshObject();   
-     if ( m_MeshSpatialObject.IsNull() )
-     {
+    if(!observer->GotMeshObject())
+    {
        igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
        m_StateMachine.PushInput( m_FailureInput);
        m_StateMachine.ProcessInputs();
        return;
-     }
+    }
 
-     igstk::Transform identity;
-     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-     
-     // we want the mesh to be a child of the tracker
-     m_MeshSpatialObject->RequestDetachFromParent();
-     m_TrackerController->RequestAddChildSpatialObject( identity, m_MeshSpatialObject );
-     
-     MeshRepresentationType::Pointer m_MeshRepresentation = MeshRepresentationType::New();
-     m_MeshRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
-
-     m_MeshRepresentation->SetOpacity(0.3);      
-     m_MeshRepresentation->SetColor(0, 0, 1);
-     
-     m_ViewerGroup->m_AxialView->RequestAddObject( m_MeshRepresentation->Copy() );
-     m_ViewerGroup->m_SagittalView->RequestAddObject( m_MeshRepresentation->Copy() );
-     m_ViewerGroup->m_CoronalView->RequestAddObject( m_MeshRepresentation->Copy() );
-     m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation->Copy() );
-
-     //// Set up cross hairs
-     // m_CrossHair = CrossHairType::New();
-     // m_CrossHair->RequestSetReferenceSpatialObject( m_MeshSpatialObject );      
-     // m_CrossHair->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
-     // m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
-
-     // // set up the cross hair representation and add the cross hair object
-     // m_CrossHairRepresentation = CrossHairRepresentationType::New();
-     // m_CrossHairRepresentation->SetColor(1,0,0);
-     // m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
-
-      // add the cross hair representation to the different views
-      m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-      m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-      m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-      m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-
-      // set background color to the views
-      m_ViewerGroup->m_AxialView->SetRendererBackgroundColor(0,0,0);
-      m_ViewerGroup->m_SagittalView->SetRendererBackgroundColor(0,0,0);
-      m_ViewerGroup->m_CoronalView->SetRendererBackgroundColor(0,0,0);
-      m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
-
-     
-     m_ViewerGroup->m_AxialView->RequestResetCamera();
-     m_ViewerGroup->m_SagittalView->RequestResetCamera();
-     m_ViewerGroup->m_CoronalView->RequestResetCamera();
-     m_ViewerGroup->m_3DView->RequestResetCamera();
-
-     m_StateMachine.PushInput( m_SuccessInput );
+    m_MeshSpatialObject = observer->GetMeshObject();   
+    if ( m_MeshSpatialObject.IsNull() )
+    {
+     igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
+     m_StateMachine.PushInput( m_FailureInput);
      m_StateMachine.ProcessInputs();
      return;
-  }
-  else
-  {
-     igstkLogMacro2( m_Logger, DEBUG, "No directory is selected\n" )
-     m_StateMachine.PushInput( m_FailureInput );
-     m_StateMachine.ProcessInputs();
-     return;
-  }
+    }
+
+    igstk::Transform identity;
+    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+    // we want the mesh spatial object to be a child of the tracker
+    m_MeshSpatialObject->RequestDetachFromParent();
+    m_TrackerController->RequestAddChildSpatialObject( identity, m_MeshSpatialObject );
+
+    // build the mesh representation
+    MeshRepresentationType::Pointer m_MeshRepresentation = MeshRepresentationType::New();
+    m_MeshRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
+    m_MeshRepresentation->SetOpacity(0.3);      
+    m_MeshRepresentation->SetColor(0, 0, 1);
+
+    // add the mesh representation only to the 3D view
+    m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation );
+
+    // create reslice plane spatial object for axial view
+    m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
+    m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+    m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+    m_AxialPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+    // create reslice plane spatial object for sagittal view
+    m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
+    m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+    m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+    m_SagittalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+    // create reslice plane spatial object for coronal view
+    m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
+    m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+    m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+    m_CoronalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+    // create a mesh reslice representation for axial view
+    MeshResliceRepresentationType::Pointer m_AxialMeshResliceRepresentation = MeshResliceRepresentationType::New();
+    m_AxialMeshResliceRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
+    m_AxialMeshResliceRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+    m_AxialMeshResliceRepresentation->SetOpacity(1.0);
+    m_AxialMeshResliceRepresentation->SetLineWidth(1.0);
+    m_AxialMeshResliceRepresentation->SetColor(1, 1, 0);
+
+    // create a mesh reslice representation for sagittal view
+    MeshResliceRepresentationType::Pointer m_SagittalMeshResliceRepresentation = MeshResliceRepresentationType::New();
+    m_SagittalMeshResliceRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
+    m_SagittalMeshResliceRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+    m_SagittalMeshResliceRepresentation->SetOpacity(1.0);
+    m_SagittalMeshResliceRepresentation->SetLineWidth(1.0);
+    m_SagittalMeshResliceRepresentation->SetColor(1, 1, 0);
+
+    // create a mesh reslice representation for coronal view
+    MeshResliceRepresentationType::Pointer m_CoronalMeshResliceRepresentation = MeshResliceRepresentationType::New();
+    m_CoronalMeshResliceRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
+    m_CoronalMeshResliceRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+    m_CoronalMeshResliceRepresentation->SetOpacity(1.0);
+    m_CoronalMeshResliceRepresentation->SetLineWidth(1.0);
+    m_CoronalMeshResliceRepresentation->SetColor(1, 1, 0);
+
+    // todo: see the camera issue within childs and parents for the case of
+    // a View and a ReslicerPlaneSpatialObjet, respectively.
+    /*
+    m_ViewerGroup->m_AxialView->RequestDetachFromParent();
+    m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
+      identity, m_AxialPlaneSpatialObject );
+
+    m_ViewerGroup->m_SagittalView->RequestDetachFromParent();
+    m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent(
+      identity, m_SagittalPlaneSpatialObject );
+
+    m_ViewerGroup->m_CoronalView->RequestDetachFromParent();
+    m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
+      identity, m_CoronalPlaneSpatialObject );
+    */
+
+    // add axial mesh reslice representation to the 2D and 3D views
+    m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialMeshResliceRepresentation );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentation->Copy() );
+
+    // add sagittal mesh reslice representation to the 2D and 3D views
+    m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalMeshResliceRepresentation );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentation->Copy() );
+
+    // add coronal mesh reslice representation to the 2D and 3D views
+    m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalMeshResliceRepresentation );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentation->Copy() );
+
+    // set background color to the views
+    m_ViewerGroup->m_AxialView->SetRendererBackgroundColor(0,0,0);
+    m_ViewerGroup->m_SagittalView->SetRendererBackgroundColor(0,0,0);
+    m_ViewerGroup->m_CoronalView->SetRendererBackgroundColor(0,0,0);
+    m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
+
+    // reset cameras in the different views
+    m_ViewerGroup->m_AxialView->RequestResetCamera();
+    m_ViewerGroup->m_SagittalView->RequestResetCamera();
+    m_ViewerGroup->m_CoronalView->RequestResetCamera();
+    m_ViewerGroup->m_3DView->RequestResetCamera();
+
+    m_StateMachine.PushInput( m_SuccessInput );
+    m_StateMachine.ProcessInputs();
 }
 
 /** -----------------------------------------------------------------
@@ -991,9 +1044,9 @@ void WorkingVolumeTester::LoadTrackerMeshProcessing()
      m_MeshRepresentation->SetOpacity(0.3);      
      m_MeshRepresentation->SetColor(1,1,0);
      
-     m_ViewerGroup->m_AxialView->RequestAddObject( m_MeshRepresentation->Copy() );
-     m_ViewerGroup->m_SagittalView->RequestAddObject( m_MeshRepresentation->Copy() );
-     m_ViewerGroup->m_CoronalView->RequestAddObject( m_MeshRepresentation->Copy() );
+     //m_ViewerGroup->m_AxialView->RequestAddObject( m_MeshRepresentation->Copy() );
+     //m_ViewerGroup->m_SagittalView->RequestAddObject( m_MeshRepresentation->Copy() );
+     //m_ViewerGroup->m_CoronalView->RequestAddObject( m_MeshRepresentation->Copy() );
      m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation->Copy() );
      
      m_ViewerGroup->m_AxialView->RequestResetCamera();
