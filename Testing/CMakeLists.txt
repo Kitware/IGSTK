@@ -116,7 +116,7 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
 
-  igstkImageReslicePlaneSpatialObjectTest.cxx
+  igstkReslicerPlaneSpatialObjectTest.cxx
   igstkAffineTransformTest.cxx
   igstkPerspectiveTransformTest.cxx
  )
@@ -259,9 +259,11 @@ IF(IGSTKSandbox_USE_Qt)
 ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_FLTK)
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest
-              ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+
+ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest
+           ${IGSTKSandbox_TESTS}
+           --compare
+           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
                         ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
               --toleranceIntensity 10
               --toleranceRadius    5
@@ -269,6 +271,7 @@ IF(IGSTKSandbox_USE_FLTK)
               igstkImageResliceSpatialObjectRepresentationFltkTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+
  ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest2
               ${IGSTKSandbox_TESTS}
               igstkImageResliceSpatialObjectRepresentationFltkTest2
@@ -281,18 +284,13 @@ IF(IGSTKSandbox_USE_FLTK)
               ${IGSTK_DATA_ROOT}/Input/E000192 
          )
 
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationFltkTest4
-              ${IGSTKSandbox_TESTS}
-              igstkImageResliceSpatialObjectRepresentationFltkTest4
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
 
-ADD_TEST( igstkImageReslicePlaneSpatialObjectTest ${IGSTKSandbox_TESTS} 
-          igstkImageReslicePlaneSpatialObjectTest
+ADD_TEST( igstkReslicerPlaneSpatialObjectTest ${IGSTKSandbox_TESTS} 
+          igstkReslicerPlaneSpatialObjectTest
           ${IGSTK_DATA_ROOT}/Input/E000192
         )
 
@@ -335,10 +333,6 @@ IF(IGSTKSandbox_USE_FLTK)
  SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
   igstkImageResliceSpatialObjectRepresentationFltkTest3.cxx)
-
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceSpatialObjectRepresentationFltkTest4.cxx)
 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
