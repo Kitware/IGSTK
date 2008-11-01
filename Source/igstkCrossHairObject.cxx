@@ -34,7 +34,7 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ReferenceSpatialObjectSet );
   igstkAddStateMacro( AttemptingToSetReferenceSpatialObject );  
-  igstkAddStateMacro( AttemptingToSetMousePosition );
+  igstkAddStateMacro( AttemptingToSetCursorPosition );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   
   // List of state machine inputs
@@ -43,9 +43,9 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddInputMacro( InValidReferenceSpatialObject );
   igstkAddInputMacro( ValidToolSpatialObject );
   igstkAddInputMacro( InValidToolSpatialObject );
-  igstkAddInputMacro( SetMousePosition );
-  igstkAddInputMacro( ValidMousePosition );
-  igstkAddInputMacro( InValidMousePosition );
+  igstkAddInputMacro( SetCursorPosition );
+  igstkAddInputMacro( ValidCursorPosition );
+  igstkAddInputMacro( InValidCursorPosition );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( GetCrossHairPosition );
@@ -63,13 +63,13 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, InValidReferenceSpatialObject,
                            Initial,  ReportInvalidReferenceSpatialObject );
 
-  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, SetMousePosition, 
-                           AttemptingToSetMousePosition, AttemptSetMousePosition);
+  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, SetCursorPosition, 
+                           AttemptingToSetCursorPosition, AttemptSetCursorPosition);
 
   // From ValidReferenceSpatialObjectSet
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, SetMousePosition,
-                           AttemptingToSetMousePosition, AttemptSetMousePosition );
+  igstkAddTransitionMacro( ReferenceSpatialObjectSet, SetCursorPosition,
+                           AttemptingToSetCursorPosition, AttemptSetCursorPosition );
 
   igstkAddTransitionMacro( ReferenceSpatialObjectSet, ValidToolSpatialObject,
                            ReferenceSpatialObjectSet, SetToolSpatialObject );
@@ -90,13 +90,13 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddTransitionMacro( ReferenceSpatialObjectSet, ToolTransformWRTImageCoordinateSystem,
                            ReferenceSpatialObjectSet, ReportInvalidRequest );  
 
-  // From AttemptingToSetMousePosition
+  // From AttemptingToSetCursorPosition
 
-  igstkAddTransitionMacro( AttemptingToSetMousePosition, ValidMousePosition,
-                           ReferenceSpatialObjectSet,  SetMousePosition ); 
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidCursorPosition,
+                           ReferenceSpatialObjectSet,  SetCursorPosition ); 
 
-  igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
-                           ReferenceSpatialObjectSet,  ReportInvalidMousePosition );
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidCursorPosition,
+                           ReferenceSpatialObjectSet,  ReportInvalidCursorPosition );
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
 
@@ -140,16 +140,16 @@ CrossHairObject
 
 void 
 CrossHairObject
-::RequestSetMousePosition( PointType point )
+::RequestSetCursorPosition( PointType point )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-                       ::RequestSetMousePosition called...\n");
+                       ::RequestSetCursorPosition called...\n");
 
-  m_MousePositionToBeSet[0] = point[0];
-  m_MousePositionToBeSet[1] = point[1];
-  m_MousePositionToBeSet[2] = point[2];
+  m_CursorPositionToBeSet[0] = point[0];
+  m_CursorPositionToBeSet[1] = point[1];
+  m_CursorPositionToBeSet[2] = point[2];
 
-  m_StateMachine.PushInput( m_SetMousePositionInput );
+  m_StateMachine.PushInput( m_SetCursorPositionInput );
 
   m_StateMachine.ProcessInputs();
 }
@@ -188,42 +188,42 @@ CrossHairObject
 
 void 
 CrossHairObject
-::ReportInvalidMousePositionProcessing( )
+::ReportInvalidCursorPositionProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-                       ::ReportInvalidMousePositionProcessing called...\n");
+                       ::ReportInvalidCursorPositionProcessing called...\n");
 }
 
 void 
 CrossHairObject
-::AttemptSetMousePositionProcessing()
+::AttemptSetCursorPositionProcessing()
 {
 
   igstkLogMacro( DEBUG, "igstk::CrossHairObject\
-                        ::AttemptSetMousePositionProcessing called...\n");
+                        ::AttemptSetCursorPositionProcessing called...\n");
 
     bool validPosition = false; 
 
     const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
 
 
-    if( m_MousePositionToBeSet[0] < bounds[0] || 
-        m_MousePositionToBeSet[1] > bounds[1] ||
-        m_MousePositionToBeSet[2] < bounds[2] || 
-        m_MousePositionToBeSet[3] > bounds[3] ||
-        m_MousePositionToBeSet[4] < bounds[4] || 
-        m_MousePositionToBeSet[5] > bounds[5] )
+    if( m_CursorPositionToBeSet[0] < bounds[0] || 
+        m_CursorPositionToBeSet[1] > bounds[1] ||
+        m_CursorPositionToBeSet[2] < bounds[2] || 
+        m_CursorPositionToBeSet[3] > bounds[3] ||
+        m_CursorPositionToBeSet[4] < bounds[4] || 
+        m_CursorPositionToBeSet[5] > bounds[5] )
     {
         validPosition = true;
     }
 
     if( validPosition )
       {
-      igstkPushInputMacro( ValidMousePosition );
+      igstkPushInputMacro( ValidCursorPosition );
       }
     else
       {
-      igstkPushInputMacro( InValidMousePosition );
+      igstkPushInputMacro( InValidCursorPosition );
       }
 
     m_StateMachine.ProcessInputs();
@@ -231,21 +231,21 @@ CrossHairObject
 
 void 
 CrossHairObject
-::SetMousePositionProcessing()
+::SetCursorPositionProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::CrossHairObject\
-                        ::SetMousePositionProcessing called...\n");
+                        ::SetCursorPositionProcessing called...\n");
 
-  m_MousePosition[0] = m_MousePositionToBeSet[0];
-  m_MousePosition[1] = m_MousePositionToBeSet[1];
-  m_MousePosition[2] = m_MousePositionToBeSet[2];
+  m_CursorPosition[0] = m_CursorPositionToBeSet[0];
+  m_CursorPosition[1] = m_CursorPositionToBeSet[1];
+  m_CursorPosition[2] = m_CursorPositionToBeSet[2];
 
-  m_Position[0] = m_MousePosition[0];
-  m_Position[1] = m_MousePosition[1];
-  m_Position[2] = m_MousePosition[2];
+  m_Position[0] = m_CursorPosition[0];
+  m_Position[1] = m_CursorPosition[1];
+  m_Position[2] = m_CursorPosition[2];
 
   //turn on the flag
-  m_MousePositionSetFlag = true;
+  m_CursorPositionSetFlag = true;
 }
 
 //void

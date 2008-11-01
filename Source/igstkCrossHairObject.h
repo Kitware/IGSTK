@@ -69,8 +69,8 @@ public:
   //void RequestSetBoundingBox(const BoundingBoxType* bounds);
   void RequestSetReferenceSpatialObject( const SpatialObjectType * spatialObject );
 
-  /** Request set mouse position */
-  void RequestSetMousePosition( PointType point);
+  /** Request set cursor position */
+  void RequestSetCursorPosition( PointType point);
 
   /** Get tool transform */
   igstk::Transform GetToolTransform() const;
@@ -96,11 +96,11 @@ private:
   CrossHairObject(const Self&);         //purposely not implemented
   void operator=(const Self&);     //purposely not implemented  
    
-  /** Set mouse position processing */
-  void SetMousePositionProcessing( void );
+  /** Set Cursor position processing */
+  void SetCursorPositionProcessing( void );
 
-  /** Attempt set mouse position processing */
-  void AttemptSetMousePositionProcessing( void );
+  /** Attempt set Cursor position processing */
+  void AttemptSetCursorPositionProcessing( void );
 
   /** Attempt set reference spatial object */
   void AttemptSetReferenceSpatialObjectProcessing( void );
@@ -120,8 +120,8 @@ private:
   /** Report invalid reference spatial object */
   void ReportInvalidReferenceSpatialObjectProcessing( void );
 
-  /** Report invalid mouse position */
-  void ReportInvalidMousePositionProcessing( void );
+  /** Report invalid Cursor position */
+  void ReportInvalidCursorPositionProcessing( void );
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -139,10 +139,10 @@ private:
 
   PointType                               m_Position;
 
-  /** mouse position member variables */
-  double               m_MousePositionToBeSet[3];
-  double               m_MousePosition[3];
-  bool                 m_MousePositionSetFlag;
+  /** Cursor position member variables */
+  double               m_CursorPositionToBeSet[3];
+  double               m_CursorPosition[3];
+  bool                 m_CursorPositionSetFlag;
 
   /** tool spatial object member variables */
   bool                         m_ToolSpatialObjectSet;
@@ -163,7 +163,7 @@ private:
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ReferenceSpatialObjectSet );
   igstkDeclareStateMacro( AttemptingToSetReferenceSpatialObject );
-  igstkDeclareStateMacro( AttemptingToSetMousePosition );
+  igstkDeclareStateMacro( AttemptingToSetCursorPosition );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Inputs to the State Machine */  
@@ -172,9 +172,9 @@ private:
   igstkDeclareInputMacro( InValidReferenceSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
-  igstkDeclareInputMacro( SetMousePosition );
-  igstkDeclareInputMacro( ValidMousePosition );
-  igstkDeclareInputMacro( InValidMousePosition );
+  igstkDeclareInputMacro( SetCursorPosition );
+  igstkDeclareInputMacro( ValidCursorPosition );
+  igstkDeclareInputMacro( InValidCursorPosition );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( GetCrossHairPosition );
