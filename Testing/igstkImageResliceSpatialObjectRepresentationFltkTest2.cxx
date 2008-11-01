@@ -198,7 +198,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
 
-  // Select Sagittal orientation type
+  // Select Axial orientation type
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
 
   // Set reference spatial object to the reslicer plane object
@@ -219,7 +219,8 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   // auxiliar
   const double *data = NULL;
 
-  // Select axial orientation in the reslicer plane
+  // Select axial orientation in the reslicer plane and view
+  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   
   index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
@@ -248,12 +249,10 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   view2D->RequestStop();
 
   /* Change slice orientation to sagittal */
-
   std::cout << "Sagittal view: " << std::endl;
   view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
-//  reslicerPlaneSpatialObject->RequestSetSliceNumber( imageExtent[0] );
   index[0] = imageExtent[0];
   index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
   index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
@@ -281,7 +280,6 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   view2D->RequestStop();
 
   /* Change slice orientation to coronal */
-  
   std::cout << "Coronal view: " << std::endl;
   view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
