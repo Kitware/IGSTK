@@ -52,7 +52,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest4);
 #endif
 
-  REGISTER_TEST(igstkImageReslicePlaneSpatialObjectTest);
+  REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
 
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
@@ -71,7 +71,6 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest3);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest4);
 #endif /* IGSTKSandbox_USE_FLTK */
 
   REGISTER_TEST(igstkFlockOfBirdsTrackerTest2);
