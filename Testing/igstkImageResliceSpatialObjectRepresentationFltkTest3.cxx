@@ -19,7 +19,6 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-
 #include "igstkFLTKWidget.h"
 
 #include "igstkConfigure.h"
@@ -31,7 +30,10 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 #include "igstkEvents.h"
+#include "igstkCylinderObject.h"
+#include "igstkTransform.h"
 #include "igstkView2D.h"
+
 
 namespace ImageResliceSpatialObjectRepresentationFltkTest3
 {
@@ -42,7 +44,9 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
                        ::igstk::EventHelperType::VTKImagePointerType );
 }
 
-/** This test demonstrates how to perform orthogonal reslicing using mouse position(manual reslicing) */
+
+/** This test demonstrates how to perform oblique reslicing using a tool
+ * spatial object ( automatic reslicing ) */
 int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * argv [] )
 {
   igstk::RealTimeClock::Initialize();
@@ -51,7 +55,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   if( argc < 2 )
     {
     std::cerr << " Missing arguments: " << argv[0] << "CTImage " \
-              << std::endl; 
+              << std::endl;
     return EXIT_FAILURE;
     }
   typedef short    PixelType;
@@ -60,8 +64,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   typedef igstk::ImageSpatialObject<PixelType,Dimension> 
                                                        ImageSpatialObjectType;
   
-  typedef igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>
-                                                       ResliceSpatialObjectType;
+  typedef igstk::ReslicerPlaneSpatialObject            ResliceSpatialObjectType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -141,6 +144,18 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 
   vtkImageData * imageData = vtkImageObserver->GetVTKImage();
 
+  /* Compute image bounds */
+  double imageSpacing[3];
+  imageData->GetSpacing( imageSpacing );
+  std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
+                                 << imageSpacing[1] << ","
+                                 << imageSpacing[2] << ")" << std::endl;
+  double imageOrigin[3];
+  imageData->GetOrigin( imageOrigin );
+  std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
+                                 << imageOrigin[1] << ","
+                                 << imageOrigin[2] << ")" << std::endl;
+
   int imageExtent[6];
   imageData->GetWholeExtent( imageExtent );
   std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
@@ -150,46 +165,41 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
                                 << imageExtent[4] << ","
                                 << imageExtent[5] << ")" << std::endl;
 
-  double imageSpacing[3];
-  imageData->GetSpacing( imageSpacing );
-
-  double imageOrigin[3];
-  imageData->GetOrigin( imageOrigin );
- 
   double bounds[] = { imageOrigin[0] + imageSpacing[0]*imageExtent[0], //xmin
-                         imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
-                         imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
-                         imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
+                       imageOrigin[0] + imageSpacing[0]*imageExtent[1], //xmax
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[2], //ymin
+                       imageOrigin[1] + imageSpacing[1]*imageExtent[3], //ymax
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[4], //zmin
+                       imageOrigin[2] + imageSpacing[2]*imageExtent[5]};//zmax
 
-    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+      {
+      if ( bounds[i] > bounds[i+1] )
         {
-        if ( bounds[i] > bounds[i+1] )
-          {
-          double t = bounds[i+1];
-          bounds[i+1] = bounds[i];
-          bounds[i] = t;
-          }
+        double t = bounds[i+1];
+        bounds[i+1] = bounds[i];
+        bounds[i] = t;
         }
+      }
 
-  double imageCenter[3];
-
-  imageCenter[0] = 0.5*( bounds[0] + bounds[1] );
-  imageCenter[1] = 0.5*( bounds[2] + bounds[3] );
-  imageCenter[2] = 0.5*( bounds[4] + bounds[5] );
+  std::cout << "Image bounds: " << "(" << bounds[0] << "," 
+                                << bounds[1] << ","
+                                << bounds[2] << ","
+                                << bounds[3] << ","
+                                << bounds[4] << ","
+                                << bounds[5] << ")" << std::endl;
 
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
 
-  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
+    typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
                                         RepresentationType;
 
   RepresentationType::Pointer  representation =  RepresentationType::New(); 
   representation->SetLogger( logger );
   representation->SetWindowLevel( 1559, -244 );
   representation->RequestSetImageSpatialObject( imageSpatialObject );
-  //View
+ //View
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );
@@ -214,23 +224,62 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   form->end();
   form->show();
 
+  view2D->RequestStart();
+
+  view2D->RequestResetCamera();
+
+  for( unsigned int i=0; i < 100; i++)
+    {
+    //QTest::qWait(10);
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    }
+
+  //Request refreshing stop to take a screenshot
+  view2D->RequestStop();
+      
   //Instantiate and use reslice plane spatial object
   std::cout << "Attach a reslice plane spatial object ....." << std::endl;
   ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
   planeSpatialObject->SetLogger( logger );
 
-   // Select Orthogonal reslicing mode
+   // Select oblique reslicing mode
   planeSpatialObject->RequestSetReslicingMode( 
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Orthogonal );
+           igstk::ReslicerPlaneSpatialObject::Oblique );
 
-  // Select axial orientation
+  // Select Oblique axial orientation
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Axial );
-  planeSpatialObject->RequestSetImageSpatialObject( imageSpatialObject );
+           igstk::ReslicerPlaneSpatialObject::PlaneOrientationWithZAxesNormal );
 
+  planeSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
 
-  double position[] = { imageCenter[0], imageCenter[1], imageCenter[2] };
-  planeSpatialObject->RequestSetMousePosition( position );
+  // Set input tool spatial object
+  typedef igstk::CylinderObject                           ToolSpatialObjectType;
+  ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  
+  toolSpatialObject->SetRadius( 0.1 );
+  toolSpatialObject->SetHeight( 2.0 );
+
+  // set tool transform
+  igstk::Transform toolTransform;
+  igstk::Transform::VectorType    translation;
+  igstk::Transform::VersorType    rotation;
+  translation[0] =    0.5 * (bounds[0] + bounds[1] );
+  translation[1] =    0.5 * (bounds[2] + bounds[3] );
+  translation[2] =  bounds[4];
+  const double transformUncertainty = 1.0;
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+  planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
  //Set to the reslice plane to the representation
   representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
@@ -241,28 +290,39 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<imageExtent[5]; i++)
       {
-      position[0] = imageCenter[0];
-      position[1] = imageCenter[1];
-      position[2] = imageOrigin[2] + imageSpacing[2]*i; 
-      planeSpatialObject->RequestSetMousePosition( position );
+      translation[0] =    0.5 * (bounds[0] + bounds[1] );
+      translation[1] =    0.5 * (bounds[2] + bounds[3] );
+      translation[2] =    bounds[4] + i*imageSpacing[2];
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Axial mouse position : (" << position[0]  
-                                             << "," << position[1] 
-                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
-  std::cout << "Sagittal view: " << std::endl;
+  /* Change slice orientation to plane orienation with x axes normal*/
+  std::cout << "Plane orienation with x axes normal : " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Sagittal );
+           igstk::ReslicerPlaneSpatialObject::PlaneOrientationWithXAxesNormal );
 
-  position[0] = imageOrigin[0];
-  position[1] = imageCenter[1];
-  position[2] = imageCenter[2];
- 
-  planeSpatialObject->RequestSetMousePosition( position );
+  translation[0] =    bounds[0];
+  translation[1] =    0.5 * (bounds[2] + bounds[3] );
+  translation[2] =    0.5 * (bounds[4] + bounds[5] );
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0,1.0);
+  toolTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
@@ -270,46 +330,56 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[1]; i++)
       {
-      position[0] = imageOrigin[0] + imageSpacing[2]*i;
-      position[1] = imageCenter[1];
-      position[2] = imageCenter[2];
-      planeSpatialObject->RequestSetMousePosition( position );
-
+      translation[0] =    bounds[0] + i*imageSpacing[0];
+      translation[1] =    0.5 * (bounds[2] + bounds[3] );
+      translation[2] =    0.5 * (bounds[4] + bounds[5] );
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );      
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Sagittal mouse position : (" << position[0]  
-                                             << "," << position[1] 
-                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
-  std::cout << "Coronal view: " << std::endl;
+  /* Change slice orientation to plane orientaion with y axes normal */
+  std::cout << "Plane orientation with Y axes normal: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
+           igstk::ReslicerPlaneSpatialObject::PlaneOrientationWithYAxesNormal );
 
-  position[0] = imageCenter[0];
-  position[1] = imageOrigin[1];
-  position[2] = imageCenter[2];
-  planeSpatialObject->RequestSetMousePosition( position );
+  translation[0] =    0.5 * (bounds[0] + bounds[1] );
+  translation[1] =    bounds[2];
+  translation[2] =    0.5 * (bounds[4] + bounds[5] );
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  toolTransform.SetRotation(
+                          rotation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
   form->show();
-
   //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[3]; i++)
       {
-      position[0] = imageCenter[0];
-      position[1] = imageOrigin[1] + imageSpacing[1]*i;
-      position[2] = imageCenter[2];
-      planeSpatialObject->RequestSetMousePosition( position );
-
+      translation[0] =    0.5 * (bounds[0] + bounds[1] );
+      translation[1] =    bounds[2] + i*imageSpacing[1];
+      translation[2] =    0.5 * (bounds[4] + bounds[5] );
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+      //QTest::qWait(10);
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
-      std::cout << "Coronal mouse position : (" << position[0]  
-                                             << "," << position[1] 
-                                             << "," << position[2] << ")" << std::endl;
       }
   view2D->RequestStop();
 

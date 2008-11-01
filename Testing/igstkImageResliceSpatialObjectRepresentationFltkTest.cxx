@@ -62,11 +62,9 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
-  typedef igstk::ImageSpatialObject<PixelType,Dimension> 
-                                                       ImageSpatialObjectType;
+  typedef igstk::ImageSpatialObject<PixelType,Dimension> ImageSpatialObjectType;
   
-  typedef igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>
-                                                       ResliceSpatialObjectType;
+  typedef igstk::ReslicerPlaneSpatialObject            ResliceSpatialObjectType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -254,13 +252,11 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   planeSpatialObject->SetLogger( logger );
 
    // Select Orthogonal reslicing mode
-  planeSpatialObject->RequestSetReslicingMode( 
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Orthogonal );
+  planeSpatialObject->RequestSetReslicingMode( igstk::ReslicerPlaneSpatialObject::Orthogonal );
 
   // Select axial orientation
-  planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Axial );
-  planeSpatialObject->RequestSetImageSpatialObject( imageSpatialObject );
+  planeSpatialObject->RequestSetOrientationType( igstk::ReslicerPlaneSpatialObject::Axial );
+  planeSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
 
   // Set input tool spatial object
   typedef igstk::CylinderObject                           ToolSpatialObjectType;
@@ -311,7 +307,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   /* Change slice orientation to sagittal */
   std::cout << "Sagittal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Sagittal );
+           igstk::ReslicerPlaneSpatialObject::Sagittal );
 
   translation[0] =    bounds[0];
   translation[1] =    0.5 * (bounds[2] + bounds[3] );
@@ -346,7 +342,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   /* Change slice orientation to sagittal */
   std::cout << "Coronal view: " << std::endl;
   planeSpatialObject->RequestSetOrientationType(
-           igstk::ImageReslicePlaneSpatialObject<ImageSpatialObjectType>::Coronal );
+           igstk::ReslicerPlaneSpatialObject::Coronal );
 
   translation[0] =    0.5 * (bounds[0] + bounds[1] );
   translation[1] =    bounds[2];
