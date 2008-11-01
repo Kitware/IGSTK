@@ -65,10 +65,6 @@
 
 #include "igstkTrackerController.h"
 #include "igstkTrackerConfiguration.h"
-
-#include "igstkImagerController.h"
-#include "igstkImagerConfiguration.h"
-
 #include "igstkCoordinateSystemTransformToResult.h"
 
 #include "igstkMicronTrackerConfiguration.h"

@@ -2119,51 +2119,45 @@ void Navigator::LoadTargetMeshProcessing()
      
      m_TargetMeshObjectVector[m_NumberOfLoadedMeshes]->RequestSetTransformAndParent( identity, m_WorldReference );
      
-     MeshRepresentationType::Pointer rep = MeshRepresentationType::New();
-     m_MeshRepresentationVector.push_back(rep);
-     m_MeshRepresentationVector[m_NumberOfLoadedMeshes]->RequestSetMeshObject( 
-       m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-
-     MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-     m_AxialMeshResliceRepresentationVector.push_back(axialContour);
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->RequestSetMeshObject(
-          m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->
-        RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-
-     MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New();
-     m_SagittalMeshResliceRepresentationVector.push_back(sagittalContour);
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->RequestSetMeshObject( 
-          m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->
-        RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-
-     MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
-     m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->RequestSetMeshObject( 
-     m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->
-        RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-
-     m_MeshRepresentationVector[m_NumberOfLoadedMeshes]->SetOpacity(0.7);      
-
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetOpacity(1.0);  
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetOpacity(1.0);  
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetOpacity(1.0);
-
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetLineWidth(3.0);
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetLineWidth(3.0);
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetLineWidth(3.0);
-
+     //build mesh representation and spatial objects
      double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
      double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
      double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
-     m_MeshRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
-     m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
-     m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
-     m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes]->SetColor(r, g, b);
+     MeshRepresentationType::Pointer rep = MeshRepresentationType::New();     
+     rep->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+     rep->SetOpacity(0.7);
+     rep->SetColor(r, g, b);
+     m_MeshRepresentationVector.push_back(rep);
 
+     // build axial mesh reslice representation
+     MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
+     axialContour->SetOpacity(1.0); 
+     axialContour->SetLineWidth(3.0);
+     axialContour->SetColor(r, g, b);     
+     axialContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+     axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+     m_AxialMeshResliceRepresentationVector.push_back( axialContour );
+
+     // build sagittal mesh reslice representation
+     MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
+     sagittalContour->SetOpacity(1.0);
+     sagittalContour->SetLineWidth(3.0);
+     sagittalContour->SetColor(r, g, b);
+     sagittalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+     sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+     m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
+
+     // build coronal mesh reslice representation
+     MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
+     coronalContour->SetOpacity(1.0);
+     coronalContour->SetLineWidth(3.0);
+     coronalContour->SetColor(r, g, b);
+     coronalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+     coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+     m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);     
+
+     // add repressentations to the views
      m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
      m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
      m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
@@ -2204,10 +2198,10 @@ void Navigator::SetImagePickingProcessing()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CrossHair->RequestSetMousePosition( data );
+    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
   }
   else
@@ -2256,10 +2250,10 @@ void Navigator::SetImageFiducialProcessing()
 
       const double *data = point.GetVnlVector().data_block();
 
-      m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
-      m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
-      m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
-      m_CrossHair->RequestSetMousePosition( data );
+      m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
+      m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
+      m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+      m_CrossHair->RequestSetCursorPosition( data );
 
       this->ResliceImage( index );
     }
@@ -3182,10 +3176,10 @@ void Navigator::RequestChangeSelectedFiducial()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CrossHair->RequestSetMousePosition( data );
+    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
   }
   else
@@ -3219,10 +3213,10 @@ void Navigator::ResliceImageCallback( const itk::EventObject & event )
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetMousePosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetMousePosition( data );
-    m_CrossHair->RequestSetMousePosition( data );
+    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CrossHair->RequestSetCursorPosition( data );
   }
 }
 
