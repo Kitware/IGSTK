@@ -312,7 +312,8 @@ SET(IGSTKSandbox_HEADS
    igstkFlockOfBirdsTrackerToolNew.h
 
 # Reslicing component support
-  igstkImageReslicePlaneSpatialObject.h
+# igstkImageReslicePlaneSpatialObject.h
+  igstkReslicerPlaneSpatialObject.h
 
   igstkTransformBase.h
   igstkAffineTransform.h
@@ -403,7 +404,8 @@ SET(IGSTKSandbox_SRCS
    igstkFlockOfBirdsTrackerToolNew.cxx
  
 # Reslicing component support
-  igstkImageReslicePlaneSpatialObject.txx
+#  igstkImageReslicePlaneSpatialObject.txx
+  igstkReslicerPlaneSpatialObject.cxx
 
   igstkTransformBase.cxx
   igstkAffineTransform.cxx
