@@ -21,7 +21,8 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
-#include "igstkImageReslicePlaneSpatialObject.h"
+//#include "igstkImageReslicePlaneSpatialObject.h"
+#include "igstkReslicerPlaneSpatialObject.h"
 
 class vtkLookupTable;
 class vtkImageMapToColors;
@@ -61,19 +62,17 @@ public:
 
   typedef typename ImageSpatialObjectType::PointType  PointType;
 
-  typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                   ReslicePlaneSpatialObjectType;
+  typedef ReslicerPlaneSpatialObject           ReslicerPlaneType;
 
-  typedef typename ReslicePlaneSpatialObjectType::Pointer
-                                              ReslicePlaneSpatialObjectPointer;  
+  typedef ReslicerPlaneType::Pointer           ReslicerPlanePointerType;  
 
   typedef itk::Vector< double, 3 > VectorType;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
-  void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
-                                                             planeSpatialObject);
+  void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
+                                                    planeSpatialObject);
 
   /** Connect this representation class to the spatial object */
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
@@ -120,9 +119,8 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
    /** Variables for maanging reslice plane spatial object */
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
-
+  ReslicerPlanePointerType                   m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicerPlanePointerType                   m_ReslicePlaneSpatialObject;
     
   /** VTK classes that support display of an image */
   vtkImageData                         * m_ImageData;

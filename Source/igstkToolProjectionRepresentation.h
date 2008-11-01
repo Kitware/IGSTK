@@ -21,7 +21,7 @@
 #include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkToolProjectionObject.h"
-#include "igstkImageReslicePlaneSpatialObject.h"
+#include "igstkReslicerPlaneSpatialObject.h"
 #include "igstkStateMachine.h"
 
 class vtkLineSource;
@@ -42,38 +42,29 @@ namespace igstk
  *
  * \ingroup ObjectRepresentation
  */
-template < class TImageSpatialObject >
+
 class ToolProjectionRepresentation : public ObjectRepresentation
 {
 
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( ToolProjectionRepresentation, 
+  igstkStandardClassTraitsMacro( ToolProjectionRepresentation, 
                                  ObjectRepresentation )
 
 public:
 
-  /** Typedefs */
-  typedef TImageSpatialObject                  ImageSpatialObjectType;
+  /** Typedefs */ 
 
-  typedef typename ImageSpatialObjectType::ConstPointer 
-                                               ImageSpatialObjectConstPointer;
+  typedef ReslicerPlaneSpatialObject                  ReslicerPlaneType;
 
-  typedef typename ImageSpatialObjectType::PointType  PointType;
- 
+  typedef ReslicerPlaneType::Pointer            ReslicerPlanePointerType;  
 
-  typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                   ReslicePlaneSpatialObjectType;
+  typedef ReslicerPlaneType::VectorType                       VectorType;
 
-  typedef typename ReslicePlaneSpatialObjectType::Pointer
-                                              ReslicePlaneSpatialObjectPointer;  
+  typedef ToolProjectionObject           ToolProjectionSpatialObjectType;
 
-  typedef typename ReslicePlaneSpatialObjectType::VectorType VectorType;
-
-  typedef ToolProjectionObject                 ToolProjectionSpatialObjectType;
-
-  void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
+  void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
                                                              planeSpatialObject);
 
   /** Return a copy of the current object representation */
@@ -134,13 +125,13 @@ private:
   igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
                       EventHelperType::VTKPlaneSourcePointerType);
 
-  typename VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
+  VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
 
 private:
 
   /** Variables for maanging reslice plane spatial object */
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
+  ReslicerPlanePointerType  m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicerPlanePointerType  m_ReslicePlaneSpatialObject;
 
   vtkLineSource* m_LineSource;
   vtkTubeFilter *m_Tuber;
@@ -166,9 +157,5 @@ private:
 };
 
 } // end namespace igstk
-
-#ifndef IGSTK_MANUAL_INSTANTIATION
-#include "igstkToolProjectionRepresentation.txx"
-#endif
 
 #endif // __igstkToolProjectionRepresentation_h

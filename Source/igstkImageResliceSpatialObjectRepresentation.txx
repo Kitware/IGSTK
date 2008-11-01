@@ -34,7 +34,7 @@
 #include <vtkActor.h>
 #include <vtkPlaneSource.h>
 #include <vtkCamera.h>
-
+#include <vtkMath.h>
 
 namespace igstk
 {
@@ -253,14 +253,13 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 template < class TImageSpatialObject >
 void 
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
+::RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
 reslicePlaneSpatialObject )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageResliceSpatialObjectRepresentation\
                        ::RequestSetReslicePlaneSpatialObject called...\n");
 
-  m_ReslicePlaneSpatialObjectToBeSet = const_cast< ReslicePlaneSpatialObjectType
-*>(reslicePlaneSpatialObject);
+  m_ReslicePlaneSpatialObjectToBeSet = const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
     {
@@ -676,25 +675,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_StateMachine.ProcessInputs(); 
 
 }
-
-/** Create a copy of the current object representation */
-template < class TImageSpatialObject >
-typename ImageResliceSpatialObjectRepresentation< TImageSpatialObject >::Pointer
-ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
-::Copy() const
-{
-  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
-                        ::Copy called...\n");
-
-  Pointer newOR = ImageResliceSpatialObjectRepresentation::New();
-  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
-  newOR->SetOpacity(this->GetOpacity());
-  newOR->RequestSetImageSpatialObject(m_ImageSpatialObject);
-
-  return newOR;
-}
-
-  
+ 
 template < class TImageSpatialObject >
 void
 ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
@@ -765,6 +746,24 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   v2[0] = p2[0] - o[0];
   v2[1] = p2[1] - o[1];
   v2[2] = p2[2] - o[2];
+}
+
+/** Create a copy of the current object representation */
+template < class TImageSpatialObject >
+typename ImageResliceSpatialObjectRepresentation< TImageSpatialObject >::Pointer
+ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
+::Copy() const
+{
+  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                        ::Copy called...\n");
+
+  Pointer newOR = ImageResliceSpatialObjectRepresentation::New();
+  newOR->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+  newOR->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  newOR->RequestSetReslicePlaneSpatialObject( m_ReslicePlaneSpatialObject );
+
+  return newOR;
 }
 
 } // end namespace igstk

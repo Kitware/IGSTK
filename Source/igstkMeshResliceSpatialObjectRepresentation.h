@@ -23,6 +23,7 @@
 #include "igstkMeshObject.h"
 #include "igstkStateMachine.h"
 #include "igstkObjectRepresentation.h"
+#include "igstkReslicerPlaneSpatialObject.h"
 
 class vtkPlane;
 class vtkCutter;
@@ -38,7 +39,7 @@ namespace igstk
  *
  * \ingroup ObjectRepresentation
  */
-template < class TImageSpatialObject >
+
 class MeshResliceSpatialObjectRepresentation 
 : public ObjectRepresentation
 {
@@ -46,32 +47,21 @@ class MeshResliceSpatialObjectRepresentation
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( MeshResliceSpatialObjectRepresentation, 
+  igstkStandardClassTraitsMacro( MeshResliceSpatialObjectRepresentation, 
                                  ObjectRepresentation )
 
 public:
     
  /** Typedefs */
-  typedef TImageSpatialObject                      ImageSpatialObjectType;
-
-  typedef typename ImageSpatialObjectType::ConstPointer 
-                                                   ImageSpatialObjectConstPointer;
-
-  typedef typename ImageSpatialObjectType::PointType PointType;
 
   typedef MeshObject                               MeshObjectType;
-  typedef igstk::Transform::VectorType             VectorType;
 
-  /** Type for representing the line width of the contour */
-  typedef   double                                 LineWidthType;
+  typedef MeshObjectType::PointType                PointType;
 
-  typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                                    ReslicePlaneSpatialObjectType;
+  typedef ReslicerPlaneSpatialObject               ReslicerPlaneType;
+  typedef ReslicerPlaneType::Pointer               ReslicerPlanePointerType;  
 
-  typedef typename ReslicePlaneSpatialObjectType::Pointer
-                                              ReslicePlaneSpatialObjectPointer;  
-
-//  typedef ToolProjectionObject                 ToolProjectionSpatialObjectType;
+  typedef ReslicerPlaneType::VectorType            VectorType;
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
@@ -82,17 +72,12 @@ public:
   /** Sets visibility */
   void SetVisibility(bool visibility);
 
-  /** Sets cutting plane parameters */
-  //void RequestSetPlaneNormal(Transform::VectorType &normal);
-
-  //void RequestSetPlaneCenter(Transform::VectorType &center);
-
-  /** Sets the driving plane */
-  void RequestSetReslicePlaneSpatialObject( const ReslicePlaneSpatialObjectType *
+  /** Sets the reslicer plane */
+  void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
                                                              planeSpatialObject);
-  /** Set/Get the opacity */
-  void SetLineWidth(LineWidthType LineWidth);
-  igstkGetMacro( LineWidth, LineWidthType );
+  /** Set/Get line width */
+  void SetLineWidth(double LineWidth);
+  igstkGetMacro( LineWidth, double );
 
  // void RequestSetResliceAxes( vtkMatrix4x4 *matrix );
 
@@ -116,14 +101,12 @@ protected:
 
 private:
   
-  LineWidthType                          m_LineWidth;
-
   /** Declare the observer that will receive a VTK plane source from the
    * ImageResliceSpatialObject */
   igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
                       EventHelperType::VTKPlaneSourcePointerType);
 
-  typename VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
+  VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -167,20 +150,16 @@ private:
   MeshObjectType::ConstPointer   m_MeshObjectToBeSet;
 
   /** Variables for managing reslice plane spatial object */
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicePlaneSpatialObjectPointer  m_ReslicePlaneSpatialObject;
+  ReslicerPlanePointerType  m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicerPlanePointerType  m_ReslicePlaneSpatialObject;
 
   /** Plane defining the contour */
   vtkPlane*  m_Plane;
   vtkCutter* m_Cutter;
   vtkTubeFilter* m_Tuber;
-  //vtkMatrix4x4* m_ResliceAxes;
+  double                          m_LineWidth;
 };
 
 } // end namespace igstk
 
-#ifndef IGSTK_MANUAL_INSTANTIATION
-#include "igstkMeshResliceSpatialObjectRepresentation.txx"
-#endif
-
-#endif // __igstkContourMeshObjectRepresentation_h
+#endif // __igstkMeshResliceSpatialObjectRepresentation_h

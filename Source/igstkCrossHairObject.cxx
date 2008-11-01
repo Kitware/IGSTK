@@ -98,18 +98,6 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   igstkAddTransitionMacro( AttemptingToSetMousePosition, InValidMousePosition,
                            ReferenceSpatialObjectSet,  ReportInvalidMousePosition );
 
-  // From ToolSpatialObjectSet
-/*
-  igstkAddTransitionMacro( ToolSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
-                           AttemptingToGetToolTransformWRTImageCoordinateSystem,
-                                         RequestGetToolTransformWRTImageCoordinateSystem );
-
-  igstkAddTransitionMacro( ToolSpatialObjectSet, ToolTransformWRTImageCoordinateSystem,
-                           ToolSpatialObjectSet, ReportInvalidRequest );  
-
-  igstkAddTransitionMacro( ToolSpatialObjectSet, GetCrossHairPosition,
-                           ToolSpatialObjectSet, GetCrossHairPosition );
-*/    
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
 
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
