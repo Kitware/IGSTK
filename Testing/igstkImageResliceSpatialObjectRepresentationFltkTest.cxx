@@ -63,8 +63,6 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   const unsigned int Dimension = 3;
 
   typedef igstk::ImageSpatialObject<PixelType,Dimension> ImageSpatialObjectType;
-  
-  typedef igstk::ReslicerPlaneSpatialObject            ResliceSpatialObjectType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -190,35 +188,23 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
                                 << bounds[5] << ")" << std::endl;
 
   //Connect the image spatial object to the reference coordinate system
-  imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
-
-  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                        RepresentationType;
-
-  RepresentationType::Pointer  representation =  RepresentationType::New(); 
-  representation->SetLogger( logger );
-  representation->SetWindowLevel( 1559, -244 );
-  representation->RequestSetImageSpatialObject( imageSpatialObject );
-
+  imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );  
   
   typedef igstk::View2D          View2DType;
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
   view2D->SetLogger( logger );
-    
-  view2D->RequestResetCamera();
-  view2D->RequestAddObject( representation );
-   
+       
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(512,512,"Image Reslice SpatialObject Representation FLTK Test");
+  Fl_Window * form = new Fl_Window(512,512,"ImageResliceSpatialObjectRepresentationFltkTest");
     
   // instantiate FLTK widget 
   FLTKWidgetType * fltkWidget2D = 
                       new FLTKWidgetType(0,0,512,512,"2D View");
 
   fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+//  fltkWidget2D->SetLogger( logger );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetRefreshRate( 40 );
@@ -226,12 +212,41 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   form->end();
   form->show();
   
+  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
+                                        ImageRepresentationType; 
+
+  ImageRepresentationType::Pointer  imageRepresentation =  ImageRepresentationType::New(); 
+  imageRepresentation->SetLogger( logger );
+  imageRepresentation->SetWindowLevel( 1559, -244 );
+  imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
+
+  // Instantiate and use a reslicer plane spatial object
+  typedef igstk::ReslicerPlaneSpatialObject            ReslicerPlaneType;
+
+  ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
+//  reslicerPlaneSpatialObject->SetLogger( logger );
+
+  // Select Orthogonal reslicing mode
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+
+  // Select Sagittal orientation type
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  // Set reference spatial object to the reslicer plane object
+  reslicerPlaneSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
+
+  // Set the reslicer plane spatial object to the image representation
+  imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+
+  // add the image representation to the view
+  view2D->RequestAddObject( imageRepresentation );
+
   view2D->RequestStart();
   view2D->RequestResetCamera();
 
   for(int i=0; i<100; i++) 
     {
-    std::cout << "Refresh=" << i << std::endl;
+    std::cout << "Refresh: " << i << std::endl;
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check(); 
@@ -246,19 +261,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
-  //Instantiate and use reslice plane spatial object
-  std::cout << "Attach a reslice plane spatial object ....." << std::endl;
-  ResliceSpatialObjectType::Pointer planeSpatialObject = ResliceSpatialObjectType::New();
-  planeSpatialObject->SetLogger( logger );
-
-   // Select Orthogonal reslicing mode
-  planeSpatialObject->RequestSetReslicingMode( igstk::ReslicerPlaneSpatialObject::Orthogonal );
-
-  // Select axial orientation
-  planeSpatialObject->RequestSetOrientationType( igstk::ReslicerPlaneSpatialObject::Axial );
-  planeSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
-
-  // Set input tool spatial object
+  // build a tool spatial object using a cylinder object
   typedef igstk::CylinderObject                           ToolSpatialObjectType;
   ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  
   toolSpatialObject->SetRadius( 0.1 );
@@ -277,11 +280,12 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-  planeSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
- //Set to the reslice plane to the representation
-  representation->RequestSetReslicePlaneSpatialObject( planeSpatialObject );
+  // set parent and transform
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+  // set the tool spatial object to the reslicer plane
+  reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
@@ -306,8 +310,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
 
   /* Change slice orientation to sagittal */
   std::cout << "Sagittal view: " << std::endl;
-  planeSpatialObject->RequestSetOrientationType(
-           igstk::ReslicerPlaneSpatialObject::Sagittal );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
   translation[0] =    bounds[0];
   translation[1] =    0.5 * (bounds[2] + bounds[3] );
@@ -322,7 +325,8 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   view2D->RequestStart();
   view2D->RequestResetCamera();
   form->show();
-  //Iteratively change the tool transf1rm to reslice
+
+  //Iteratively change the tool transform to reslice
   for(unsigned int i=0; i<imageExtent[1]; i++)
       {
       translation[0] =    bounds[0] + i*imageSpacing[0];
@@ -332,8 +336,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
-      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-      //QTest::qWait(10);
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );      
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
       }
@@ -341,8 +344,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
 
   /* Change slice orientation to sagittal */
   std::cout << "Coronal view: " << std::endl;
-  planeSpatialObject->RequestSetOrientationType(
-           igstk::ReslicerPlaneSpatialObject::Coronal );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
   translation[0] =    0.5 * (bounds[0] + bounds[1] );
   translation[1] =    bounds[2];
@@ -352,11 +354,12 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetZeroValue() );
+
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
-  //qtMainWindow->show();
+
   form->show();
   //Iteratively change the tool transf1rm to reslice
   for(unsigned int i=0; i<imageExtent[3]; i++)
@@ -368,15 +371,11 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetZeroValue() );
-      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-      //QTest::qWait(10);
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );      
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
       }
   view2D->RequestStop();
-
- /* delete qtWidget2D;
-  delete qtMainWindow;*/
 
   delete fltkWidget2D;
   delete form;

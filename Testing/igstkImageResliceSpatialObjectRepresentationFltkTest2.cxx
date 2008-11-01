@@ -155,25 +155,16 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
                                 << imageExtent[3] << ","
                                 << imageExtent[4] << ","
                                 << imageExtent[5] << ")" << std::endl;
-
+  
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );
 
-  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                        RepresentationType;
-
-  RepresentationType::Pointer  representation =  RepresentationType::New(); 
-  //representation->SetLogger( logger );
-  representation->SetWindowLevel( 1559, -244 );
-  representation->RequestSetImageSpatialObject( imageSpatialObject );
-  
-  //View
+  // Set a 2D View
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
 //  view2D->SetLogger( logger );
     
   view2D->RequestResetCamera();
-  view2D->RequestAddObject( representation );
 
   Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceSpatialObjectRepresentationFltkTest2");
 
@@ -192,7 +183,15 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   form->end();
   form->show();
 
-  //Instantiate and use a plane reslicer spatial object
+  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
+                                        ImageRepresentationType;
+
+  ImageRepresentationType::Pointer  representation =  ImageRepresentationType::New(); 
+  //representation->SetLogger( logger );
+  representation->SetWindowLevel( 1559, -244 );
+  representation->RequestSetImageSpatialObject( imageSpatialObject );
+
+  //Instantiate and use a reslicer plane spatial object
   ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
 //  reslicerPlaneSpatialObject->SetLogger( logger );
 
@@ -207,6 +206,9 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
 
   // Set the reslicer plane spatial object to the representation
   representation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+
+  // add the image representation to the view
+  view2D->RequestAddObject( representation );
 
   // a variable to hold image index
   ImageSpatialObjectType::IndexType index;
