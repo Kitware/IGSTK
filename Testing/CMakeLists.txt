@@ -124,18 +124,14 @@ SET(SandboxTests_SRCS
 IF(IGSTKSandbox_USE_Qt)
   SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
-  igstkImageResliceSpatialObjectRepresentationTest.cxx)
+  igstkImageResliceSpatialObjectRepresentationQtTest.cxx)
  SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
-  igstkImageResliceSpatialObjectRepresentationTest2.cxx)
+  igstkImageResliceSpatialObjectRepresentationQtTest2.cxx)
 
  SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
-  igstkImageResliceSpatialObjectRepresentationTest3.cxx)
-
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceSpatialObjectRepresentationTest4.cxx)
+  igstkImageResliceSpatialObjectRepresentationQtTest3.cxx)
 
 ENDIF(IGSTKSandbox_USE_Qt)
  
@@ -228,31 +224,26 @@ ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
 IF(IGSTKSandbox_USE_Qt)
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationQtTest
               ${IGSTKSandbox_TESTS}
-              --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              --compare
+${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
+${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
-              igstkImageResliceSpatialObjectRepresentationTest
+              igstkImageResliceSpatialObjectRepresentationQtTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest2
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationQtTest2
               ${IGSTKSandbox_TESTS}
-              igstkImageResliceSpatialObjectRepresentationTest2
+              igstkImageResliceSpatialObjectRepresentationQtTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
          )
 
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest3
+ ADD_TEST( igstkImageResliceSpatialObjectRepresentationQtTest3
               ${IGSTKSandbox_TESTS}
-              igstkImageResliceSpatialObjectRepresentationTest3
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
-
- ADD_TEST( igstkImageResliceSpatialObjectRepresentationTest4
-              ${IGSTKSandbox_TESTS}
-              igstkImageResliceSpatialObjectRepresentationTest4
+              igstkImageResliceSpatialObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
          )
 

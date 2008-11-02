@@ -46,10 +46,9 @@ void RegisterTests()
   REGISTER_TEST(igstkPerspectiveTransformTest);
 
 #ifdef IGSTKSandbox_USE_Qt
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest2);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest3);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationTest4);
+  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest);
+  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest2);
+  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest3);
 #endif
 
   REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);

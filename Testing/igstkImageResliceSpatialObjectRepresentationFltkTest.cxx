@@ -432,14 +432,18 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
+
   delete fltkWidget2D;
   delete form;
 
-
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
+    std::cout << "Got VTK Logger errors!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
     }
+ 
+  std::cout << "[SUCCESS]" << std::endl;
  
   return EXIT_SUCCESS;
 }
