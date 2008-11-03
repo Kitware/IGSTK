@@ -107,6 +107,8 @@ MeshResliceSpatialObjectRepresentation
   m_Plane->SetOrigin(0,0,0);
   m_Plane->SetNormal(1,0,0);
 
+  m_Tuber = vtkTubeFilter::New();
+
   m_Cutter = vtkCutter::New();
   m_VTKPlaneObserver = VTKPlaneObserver::New();
   m_LineWidth = 1.0;
@@ -129,6 +131,12 @@ MeshResliceSpatialObjectRepresentation
     {
     m_Cutter->Delete();
     m_Cutter = NULL;
+    }
+
+   if ( m_Tuber )
+    {
+    m_Tuber->Delete();
+    m_Tuber = NULL;
     }
 }
 
@@ -332,7 +340,6 @@ void MeshResliceSpatialObjectRepresentation
                                      this->GetBlue());
   polyData->SetPoints(polyPoints);
 
-  m_Tuber = vtkTubeFilter::New();
   m_Tuber->SetInput ( m_Cutter->GetOutput() );
   m_Tuber->SetRadius (m_LineWidth);
   m_Tuber->SetNumberOfSides(4);
