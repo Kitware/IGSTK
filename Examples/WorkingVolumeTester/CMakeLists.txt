@@ -1,6 +1,7 @@
 PROJECT(WorkingVolumeTester)
 
 INCLUDE_DIRECTORIES (
+  ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
