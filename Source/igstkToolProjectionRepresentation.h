@@ -120,8 +120,8 @@ private:
   igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
 
-    /** Declare the observer that will receive a VTK plane source from the
-   * ImageResliceSpatialObject */
+  /** Declare the observer that will receive a VTK plane source from the
+  * ImageResliceSpatialObject */
   igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
                       EventHelperType::VTKPlaneSourcePointerType);
 
