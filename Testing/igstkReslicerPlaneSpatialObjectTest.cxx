@@ -36,6 +36,11 @@ namespace ReslicerPlaneSpatialObjectTest
 {
 igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
+
+// an observer that will receive a VTK plane source from the
+//ImageResliceSpatialObject 
+igstkObserverMacro( VTKPlane, ::igstk::VTKPlaneModifiedEvent,
+                      ::igstk::EventHelperType::VTKPlaneSourcePointerType)
 }
 
 /** This test demonstrates how to set the necessary inputs to the ReslicerPlaneSpatialObject */
@@ -150,21 +155,50 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, axesObject );
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  vtkPlaneSource * plane = reslicerPlaneSpatialObject->GetReslicingPlane();
+  ReslicerPlaneSpatialObjectTest::VTKPlaneObserver::Pointer  planeObserver;
+
+  unsigned int obsID = 
+    reslicerPlaneSpatialObject->AddObserver( ::igstk::VTKPlaneModifiedEvent(),
+                                      planeObserver );
+  
+  planeObserver->Reset();
+
+  reslicerPlaneSpatialObject->RequestGetVTKPlane();
+  
+  if( !planeObserver->GotVTKPlane() )
+    {
+    std::cout << "VTKPlaneObserver failed!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // This const_cast<> is needed here due to 
+  // the lack of const-correctness in VTK 
+  //m_PlaneSource = 
+  vtkPlaneSource* plane = const_cast< vtkPlaneSource *>( planeObserver->GetVTKPlane() );
+
+  if( !plane )
+    {
+    std::cout << "Retrieved planes is NULL!" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   double* center = plane->GetCenter();
   std::cout << "Plane center: " << "(" << center[0] << "," 
-                                       << center[1] << ","
-                                       << center[2] << ")" << std::endl;
+                                     << center[1] << ","
+                                     << center[2] << ")" << std::endl;
+   
+  reslicerPlaneSpatialObject->RemoveObserver( obsID );
 
   // todo: compare the position given to the tool spatial object and the 
   // center of the retrieved resliced plane 
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
+    std::cout << "Found errors in vtkLoggerOutput!" << std::endl;
     return EXIT_FAILURE;
     }
  
+  std::cout << "[SUCCESS]" << std::endl;
   return EXIT_SUCCESS;
 }
 
