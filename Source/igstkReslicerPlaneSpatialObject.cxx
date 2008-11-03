@@ -81,11 +81,9 @@ ReslicerPlaneSpatialObject
   igstkAddStateMacro( ReslicingModeSet );
   igstkAddStateMacro( OrientationTypeSet );
   igstkAddStateMacro( ReferenceSpatialObjectSet );
-  //igstkAddStateMacro( ToolSpatialObjectSet );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   igstkAddStateMacro( AttemptingToSetCursorPosition );
   igstkAddStateMacro( AttemptingToSetReferenceSpatialObject );
-  //igstkAddStateMacro( ValidCursorPositionSet );
 
   // List of state machine inputs
   igstkAddInputMacro( SetReferenceSpatialObject );
@@ -100,9 +98,7 @@ ReslicerPlaneSpatialObject
   igstkAddInputMacro( SetCursorPosition );
   igstkAddInputMacro( ValidCursorPosition );
   igstkAddInputMacro( InValidCursorPosition );
-  //igstkAddInputMacro( GetSliceNumberBounds );
   igstkAddInputMacro( GetToolPosition );
-  igstkAddInputMacro( GetBounds );
   igstkAddInputMacro( GetVTKPlane );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
@@ -180,9 +176,6 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( ReferenceSpatialObjectSet, ComputeReslicePlane,
                            ReferenceSpatialObjectSet, ComputeReslicePlane );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetBounds,
-                           ReferenceSpatialObjectSet, ReportBounds );
-
   igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetToolPosition,
                            ReferenceSpatialObjectSet, ReportToolPosition );
 
@@ -254,17 +247,6 @@ ReslicerPlaneSpatialObject
 
 void
 ReslicerPlaneSpatialObject
-::RequestGetBounds() 
-{
-  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-                        ::RequestGetBounds called...\n");
- 
-  igstkPushInputMacro( GetBounds );
-  m_StateMachine.ProcessInputs();
-}
-
-void
-ReslicerPlaneSpatialObject
 ::RequestGetToolPosition() 
 {
   igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
@@ -301,30 +283,6 @@ ReslicerPlaneSpatialObject
   PointEvent event;
   event.Set( position );
   this->InvokeEvent( event );
-}
-
-void
-ReslicerPlaneSpatialObject
-::ReportBoundsProcessing() 
-{
-  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-                        ::ReportBoundsProcessing called...\n");
-/* 
-  m_ImageData->Update();
-
-  EventHelperType::ImageBoundsType bounds;
-
-  bounds.xmin = m_ImageBounds[0];
-  bounds.xmax = m_ImageBounds[1];
-  bounds.ymin = m_ImageBounds[2];
-  bounds.ymax = m_ImageBounds[3];
-  bounds.zmin = m_ImageBounds[4];
-  bounds.zmax = m_ImageBounds[5];
-
-  ImageBoundsEvent event;
-  event.Set( bounds );
-  this->InvokeEvent( event );
-  */
 }
 
 void
@@ -371,58 +329,6 @@ ReslicerPlaneSpatialObject
   event.Set( m_PlaneSource );
   this->InvokeEvent( event );
 }
-
-//void
-//ReslicerPlaneSpatialObject
-//::RequestGetSliceNumberBounds() 
-//{
-//  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-//                        ::RequestGetSliceNumberBounds called...\n");
-// 
-//  igstkPushInputMacro( GetSliceNumberBounds );
-//  m_StateMachine.ProcessInputs();
-//}
-
-//void
-//ReslicerPlaneSpatialObject
-//::ReportSliceNumberBoundsProcessing() 
-//{
-//  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-//                        ::ReportSliceNumberBoundsProcessing called...\n");
-//
-//  EventHelperType::IntegerBoundsType bounds;
-//
-//  switch( m_OrientationType )
-//    {
-//    case Axial:
-//      {
-//      bounds.minimum = m_ImageExtent[4];
-//      bounds.maximum = m_ImageExtent[5];
-//      AxialSliceBoundsEvent event;
-//      event.Set( bounds );
-//      this->InvokeEvent( event );
-//      break;
-//      }
-//    case Sagittal:
-//      {
-//      bounds.minimum = m_ImageExtent[0];
-//      bounds.maximum = m_ImageExtent[1];
-//      SagittalSliceBoundsEvent event;
-//      event.Set( bounds );
-//      this->InvokeEvent( event );
-//      break;
-//      }
-//    case Coronal:
-//      {
-//      bounds.minimum = m_ImageExtent[2];
-//      bounds.maximum = m_ImageExtent[3];
-//      CoronalSliceBoundsEvent event;
-//      event.Set( bounds );
-//      this->InvokeEvent( event );
-//      break;
-//      }
-//    }
-//}
 
 void 
 ReslicerPlaneSpatialObject
@@ -639,203 +545,6 @@ ReslicerPlaneSpatialObject
 
   m_StateMachine.ProcessInputs();
 }
-/*
-void 
-ReslicerPlaneSpatialObject
-::SetReferenceSpatialObjectProcessing( )
-{  
-  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::SetReferenceSpatialObjectProcessing called...\n");
-
-  m_ReferenceSpatialObject = m_ReferenceSpatialObjectToBeSet;
-
-  m_ReferenceSpatialObject->AddObserver( VTKImageModifiedEvent(), 
-                                     m_VTKImageObserver );
-
-  this->m_VTKImageObserver->Reset();
-
-  this->m_ReferenceSpatialObject->RequestGetVTKImage();
-
-  if( this->m_VTKImageObserver->GotVTKImage() ) 
-    {
-      m_ImageData = this->m_VTKImageObserver->GetVTKImage();
-
-      // get image parameters
-      m_ImageData->GetDimensions( m_ImageDimension );
-      m_ImageData->GetOrigin( m_ImageOrigin );
-      m_ImageData->GetSpacing( m_ImageSpacing );
-      m_ImageData->GetWholeExtent( m_ImageExtent );
-
-      m_ImageBounds[0] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[0]; //xmin
-      m_ImageBounds[1] = m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[1]; //xmax
-      m_ImageBounds[2] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[2]; //ymin
-      m_ImageBounds[3] = m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[3]; //ymax
-      m_ImageBounds[4] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[4]; //zmin
-      m_ImageBounds[5] = m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[5]; //zmax
-
-      for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
-      {
-        if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
-        {
-          double t = m_ImageBounds[i+1];
-          m_ImageBounds[i+1] = m_ImageBounds[i];
-          m_ImageBounds[i] = t;
-        }
-      }
-
-      VectorType auxvec;
-      VectorType auxnorm;
-
-      auxvec.Fill(0);
-      auxvec[0] = m_ImageBounds[0];
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = 1;
-      auxnorm[1] = 0;
-      auxnorm[2] = 0;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      auxvec.Fill(0);
-      auxvec[0] = m_ImageBounds[1];
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = -1;
-      auxnorm[1] = 0;
-      auxnorm[2] = 0;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = m_ImageBounds[2];
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 1;
-      auxnorm[2] = 0;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = m_ImageBounds[3];
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = -1;
-      auxnorm[2] = 0;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = m_ImageBounds[4];
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 0;
-      auxnorm[2] = 1;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = m_ImageBounds[5];
-      m_ImageBoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 0;
-      auxnorm[2] = -1;
-      m_ImageBoundsNormals.push_back(auxnorm);
-
-      m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-      m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-      m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
-
-      switch ( this->GetOrientationType() )
-      {
-        case Axial:
-        case OffAxial:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
-
-            m_PlanePoint1[0] = m_ImageBounds[1];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[4];
-
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[3];
-            m_PlanePoint2[2] = m_ImageBounds[4];
-
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 1;
-
-            break;
-        case Sagittal:
-        case OffSagittal:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
-
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[3];
-            m_PlanePoint1[2] = m_ImageBounds[4];
-
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[5];
-
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 1;
-            m_PlaneNormal[2] = 0;
-
-            break;
-        case Coronal:
-        case OffCoronal:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
-
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[5];
-
-            m_PlanePoint2[0] = m_ImageBounds[1];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[4];
-
-            m_PlaneNormal[0] = 1;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 0;
-
-            break;
-        default: // set axial extension as default
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
-
-            m_PlanePoint1[0] = m_ImageBounds[1];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[4];
-
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[3];
-            m_PlanePoint2[2] = m_ImageBounds[4];
-
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 1;
-
-            break;
-      }
-
-    //   m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
-       m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
-       m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
-       m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
-    }
-}
-*/
 
 void 
 ReslicerPlaneSpatialObject
@@ -856,7 +565,6 @@ ReslicerPlaneSpatialObject
 
   if( boundingBoxObserver->GotBoundingBox() ) 
   {
-    //SpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
     m_BoundingBox = boundingBoxObserver->GetBoundingBox();
 
     const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
@@ -869,167 +577,165 @@ ReslicerPlaneSpatialObject
     m_ImageBounds[5] = bounds[5];
 
     for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+    {
+      if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
       {
-        if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
-        {
-          double t = m_ImageBounds[i+1];
-          m_ImageBounds[i+1] = m_ImageBounds[i];
-          m_ImageBounds[i] = t;
-        }
+        double t = m_ImageBounds[i+1];
+        m_ImageBounds[i+1] = m_ImageBounds[i];
+        m_ImageBounds[i] = t;
       }
+    }
 
-      VectorType auxvec;
-      VectorType auxnorm;
+    VectorType auxvec;
+    VectorType auxnorm;
 
-      auxvec.Fill(0);
-      auxvec[0] = m_ImageBounds[0];
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = 1;
-      auxnorm[1] = 0;
-      auxnorm[2] = 0;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = m_ImageBounds[0];
+    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = 1;
+    auxnorm[1] = 0;
+    auxnorm[2] = 0;
+    m_BoundsNormals.push_back(auxnorm);
 
-      auxvec.Fill(0);
-      auxvec[0] = m_ImageBounds[1];
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = -1;
-      auxnorm[1] = 0;
-      auxnorm[2] = 0;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = m_ImageBounds[1];
+    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = -1;
+    auxnorm[1] = 0;
+    auxnorm[2] = 0;
+    m_BoundsNormals.push_back(auxnorm);
 
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = m_ImageBounds[2];
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 1;
-      auxnorm[2] = 0;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+    auxvec[1] = m_ImageBounds[2];
+    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = 0;
+    auxnorm[1] = 1;
+    auxnorm[2] = 0;
+    m_BoundsNormals.push_back(auxnorm);
 
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = m_ImageBounds[3];
-      auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = -1;
-      auxnorm[2] = 0;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+    auxvec[1] = m_ImageBounds[3];
+    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = 0;
+    auxnorm[1] = -1;
+    auxnorm[2] = 0;
+    m_BoundsNormals.push_back(auxnorm);
 
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = m_ImageBounds[4];
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 0;
-      auxnorm[2] = 1;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+    auxvec[2] = m_ImageBounds[4];
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = 0;
+    auxnorm[1] = 0;
+    auxnorm[2] = 1;
+    m_BoundsNormals.push_back(auxnorm);
 
-      auxvec.Fill(0);
-      auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-      auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-      auxvec[2] = m_ImageBounds[5];
-      m_BoundsCenters.push_back(auxvec);
-      auxnorm[0] = 0;
-      auxnorm[1] = 0;
-      auxnorm[2] = -1;
-      m_BoundsNormals.push_back(auxnorm);
+    auxvec.Fill(0);
+    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+    auxvec[2] = m_ImageBounds[5];
+    m_BoundsCenters.push_back(auxvec);
+    auxnorm[0] = 0;
+    auxnorm[1] = 0;
+    auxnorm[2] = -1;
+    m_BoundsNormals.push_back(auxnorm);
 
-      m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-      m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-      m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+    m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+    m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+    m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-      switch ( this->GetOrientationType() )
-      {
-        case Axial:
-        case OffAxial:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+    switch ( this->GetOrientationType() )
+    {
+      case Axial:
+      case OffAxial:
+          m_PlaneOrigin[0] = m_ImageBounds[0];
+          m_PlaneOrigin[1] = m_ImageBounds[2];
+          m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[1];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[4];
+          m_PlanePoint1[0] = m_ImageBounds[1];
+          m_PlanePoint1[1] = m_ImageBounds[2];
+          m_PlanePoint1[2] = m_ImageBounds[4];
 
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[3];
-            m_PlanePoint2[2] = m_ImageBounds[4];
+          m_PlanePoint2[0] = m_ImageBounds[0];
+          m_PlanePoint2[1] = m_ImageBounds[3];
+          m_PlanePoint2[2] = m_ImageBounds[4];
 
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 1;
+          m_PlaneNormal[0] = 0;
+          m_PlaneNormal[1] = 0;
+          m_PlaneNormal[2] = 1;
 
-            break;
-        case Sagittal:
-        case OffSagittal:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+          break;
+      case Sagittal:
+      case OffSagittal:
+          m_PlaneOrigin[0] = m_ImageBounds[0];
+          m_PlaneOrigin[1] = m_ImageBounds[2];
+          m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[3];
-            m_PlanePoint1[2] = m_ImageBounds[4];
+          m_PlanePoint1[0] = m_ImageBounds[0];
+          m_PlanePoint1[1] = m_ImageBounds[3];
+          m_PlanePoint1[2] = m_ImageBounds[4];
 
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[5];
+          m_PlanePoint2[0] = m_ImageBounds[0];
+          m_PlanePoint2[1] = m_ImageBounds[2];
+          m_PlanePoint2[2] = m_ImageBounds[5];
 
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 1;
-            m_PlaneNormal[2] = 0;
+          m_PlaneNormal[0] = 0;
+          m_PlaneNormal[1] = 1;
+          m_PlaneNormal[2] = 0;
 
-            break;
-        case Coronal:
-        case OffCoronal:
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+          break;
+      case Coronal:
+      case OffCoronal:
+          m_PlaneOrigin[0] = m_ImageBounds[0];
+          m_PlaneOrigin[1] = m_ImageBounds[2];
+          m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[0];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[5];
+          m_PlanePoint1[0] = m_ImageBounds[0];
+          m_PlanePoint1[1] = m_ImageBounds[2];
+          m_PlanePoint1[2] = m_ImageBounds[5];
 
-            m_PlanePoint2[0] = m_ImageBounds[1];
-            m_PlanePoint2[1] = m_ImageBounds[2];
-            m_PlanePoint2[2] = m_ImageBounds[4];
+          m_PlanePoint2[0] = m_ImageBounds[1];
+          m_PlanePoint2[1] = m_ImageBounds[2];
+          m_PlanePoint2[2] = m_ImageBounds[4];
 
-            m_PlaneNormal[0] = 1;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 0;
+          m_PlaneNormal[0] = 1;
+          m_PlaneNormal[1] = 0;
+          m_PlaneNormal[2] = 0;
 
-            break;
-        default: // set axial extension as default
-            m_PlaneOrigin[0] = m_ImageBounds[0];
-            m_PlaneOrigin[1] = m_ImageBounds[2];
-            m_PlaneOrigin[2] = m_ImageBounds[4];
+          break;
+      default: // set axial extension as default
+          m_PlaneOrigin[0] = m_ImageBounds[0];
+          m_PlaneOrigin[1] = m_ImageBounds[2];
+          m_PlaneOrigin[2] = m_ImageBounds[4];
 
-            m_PlanePoint1[0] = m_ImageBounds[1];
-            m_PlanePoint1[1] = m_ImageBounds[2];
-            m_PlanePoint1[2] = m_ImageBounds[4];
+          m_PlanePoint1[0] = m_ImageBounds[1];
+          m_PlanePoint1[1] = m_ImageBounds[2];
+          m_PlanePoint1[2] = m_ImageBounds[4];
 
-            m_PlanePoint2[0] = m_ImageBounds[0];
-            m_PlanePoint2[1] = m_ImageBounds[3];
-            m_PlanePoint2[2] = m_ImageBounds[4];
+          m_PlanePoint2[0] = m_ImageBounds[0];
+          m_PlanePoint2[1] = m_ImageBounds[3];
+          m_PlanePoint2[2] = m_ImageBounds[4];
 
-            m_PlaneNormal[0] = 0;
-            m_PlaneNormal[1] = 0;
-            m_PlaneNormal[2] = 1;
+          m_PlaneNormal[0] = 0;
+          m_PlaneNormal[1] = 0;
+          m_PlaneNormal[2] = 1;
 
-            break;
-      }
+          break;
+    }
 
-    //   m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
-       m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
-       m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
-       m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
-
-
+  //   m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
+     m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
+     m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
+     m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
   }
 }
 
@@ -1562,14 +1268,14 @@ ReslicerPlaneSpatialObject
 }
 
 /** Get reslicing plane equation */
-vtkPlaneSource *
-ReslicerPlaneSpatialObject
-::GetReslicingPlane()
-{
-  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::GetReslicingPlane called...\n");
-  return m_PlaneSource;
-}
+//vtkPlaneSource *
+//ReslicerPlaneSpatialObject
+//::GetReslicingPlane()
+//{
+//  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
+//                       ::GetReslicingPlane called...\n");
+//  return m_PlaneSource;
+//}
 
 ///** Request Get reslicing axes matrix */
 //vtkMatrix4x4 *

@@ -21,12 +21,10 @@
 #include "igstkMacros.h"
 #include "igstkTransform.h"
 #include "igstkSpatialObject.h"
-//#include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
 
 class vtkPlaneSource;
 class vtkMatrix4x4;
-//class vtkImageData;
 class vtkTransform;
 
 namespace igstk
@@ -121,19 +119,19 @@ public:
   /** Request get tool position */
   void RequestGetToolPosition();
 
-  /** Request get reference spatial object bounds */
-  void RequestGetBounds();
-
   /** Request get reslicing plane */
   void RequestGetVTKPlane();
-
-  vtkPlaneSource * GetReslicingPlane();
 
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane(); 
 
+  /** Retrieve current orientation mode*/
   OrientationType GetOrientationType()
-  { return m_OrientationType; }; 
+  { return m_OrientationType; };
+
+  /** Retrieve current reslicing mode */
+  ReslicingMode GetReslicingMode()
+  { return m_ReslicingMode; };
 
   /** Request update tool transform WRT reference spatial object coordinate system */
   void RequestUpdateToolTransformWRTImageCoordinateSystem();
@@ -174,7 +172,6 @@ private:
   igstkDeclareInputMacro( ValidCursorPosition );
   igstkDeclareInputMacro( InValidCursorPosition );
   igstkDeclareInputMacro( GetToolPosition );
-  igstkDeclareInputMacro( GetBounds );
   igstkDeclareInputMacro( GetVTKPlane );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
@@ -235,12 +232,6 @@ private:
   /** Receive tool transform with respect to reference spatial object coordinate system */ 
   void ReceiveToolTransformWRTImageCoordinateSystemProcessing( void );
 
-  /** Report image slice number bounds */
-//  void ReportSliceNumberBoundsProcessing( void );
-
-  /** Report image bounds */
-  void ReportBoundsProcessing( void );
-
   /** Report tool position */
   void ReportToolPositionProcessing( void );
 
@@ -279,13 +270,6 @@ private:
   vtkMatrix4x4 *                    m_ResliceAxes; 
 
 //  vtkTransform *                    m_ResliceTransform;
-
-  /** vtk image data */
-  //vtkImageData *                    m_ImageData;
-
-  /** Transform containing the information about image origin
-   *  and image orientation taken from the DICOM input image */
-//  igstk::Transform                  m_ImageTransform;
   
   /** Plane parameters */
   VectorType                        m_PlaneNormal;
@@ -302,10 +286,9 @@ private:
   // Tool transform with respect to the reference spatial object coordinate system
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
 
-  /** Observer to the VTK image events */
-//  typename VTKImageObserver::Pointer         m_VTKImageObserver;
-
-//  typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
+  /** Observer for the bounding box event */
+  igstkObserverConstObjectMacro( BoundingBox, SpatialObject::BoundingBoxEvent,
+                                              SpatialObject::BoundingBoxType);
 
   /** Cursor position member variables */
   double               m_CursorPositionToBeSet[3];
@@ -314,10 +297,6 @@ private:
 
   VectorType           m_ToolPosition;
 
-  //int                  m_ImageDimension[3];
-  //double               m_ImageOrigin[3];
-  //double               m_ImageSpacing[3];
-  //int                  m_ImageExtent[6];
   double               m_ImageBounds[6];
 
   BoundingBoxType::ConstPointer       m_BoundingBox;
@@ -326,11 +305,8 @@ private:
   std::vector< VectorType > m_BoundsCenters;
   std::vector< VectorType > m_BoundsNormals;
  
-  /** flag indicating tool spatial object used for reslicing */
+  /** flag indicating that a tool spatial object for reslicing is set */
   bool                 m_ToolSpatialObjectSet;
-
-  igstkObserverConstObjectMacro( BoundingBox, SpatialObject::BoundingBoxEvent,
-                                              SpatialObject::BoundingBoxType);
 
 };
 

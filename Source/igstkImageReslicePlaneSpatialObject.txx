@@ -1618,17 +1618,6 @@ ImageReslicePlaneSpatialObject< TImageSpatialObject >
   return u;
 }
 
-/** Get reslicing plane equation */
-template < class TImageSpatialObject >
-vtkPlaneSource *
-ImageReslicePlaneSpatialObject< TImageSpatialObject >
-::GetReslicingPlane()
-{
-  igstkLogMacro( DEBUG,"igstk::ImageReslicePlaneSpatialObject\
-                       ::GetReslicingPlane called...\n");
-  return m_PlaneSource;
-}
-
 ///** Request Get reslicing axes matrix */
 //template < class TImageSpatialObject >
 //vtkMatrix4x4 *

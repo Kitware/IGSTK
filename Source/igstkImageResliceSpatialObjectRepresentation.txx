@@ -285,7 +285,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  unsigned int planeObsID = 
+  unsigned int obsID = 
       m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
                                       m_VTKPlaneObserver );
   
@@ -295,8 +295,10 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   
   if( m_VTKPlaneObserver->GotVTKPlane() )
   {
-      this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
+    this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
   }
+
+  m_ReslicePlaneSpatialObject->RemoveObserver( obsID );
 }
 
 /** Verify time stamp of the attached tool*/
@@ -481,7 +483,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  unsigned int planeObsID = 
+  unsigned int obsID = 
       m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
                                       m_VTKPlaneObserver );
   
@@ -632,7 +634,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
        } // if m_PlaneSource
   }
   
-  m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
+  m_ReslicePlaneSpatialObject->RemoveObserver( obsID );
 }
 
 
