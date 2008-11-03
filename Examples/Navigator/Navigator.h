@@ -131,8 +131,6 @@ public:
   typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
                                                         ImageRepresentationType;
 
-  typedef igstk::AxesObject                           AxesObjectType;
-
   /** typedef for landmark registration types */
   typedef igstk::Landmark3DRegistration               RegistrationType;
 
@@ -185,10 +183,6 @@ public:
   igstkObserverMacro( TransformationDate, 
                       igstk::PrecomputedTransformData::TransformDateTypeEvent, 
                       std::string )
-
-  //igstkObserverMacro( Transform, 
-  //                    igstk::PrecomputedTransformData::TransformTypeEvent, 
-  //                    igstk::PrecomputedTransformData::TransformType::Pointer )
 
   // fixme: use or define an IGSTK observer
   class TransformRequestObserver : public ::itk::Command
@@ -291,7 +285,6 @@ private:
   igstkDeclareStateMacro( LoadingTargetMesh );
   igstkDeclareStateMacro( SettingImageFiducials );
   igstkDeclareStateMacro( SettingTrackerFiducials );
-//  igstkDeclareStateMacro( PinpointingTrackerFiducial );
   igstkDeclareStateMacro( EndingSetTrackerFiducials );
   igstkDeclareStateMacro( TrackerFiducialsReady );
   igstkDeclareStateMacro( ConfiguringTracker );
@@ -336,7 +329,6 @@ private:
   LandmarkPointContainerType                            m_CandidateLandmarks;
 
   std::string                                           m_ImageDir;
-  std::string                                           m_TargetDir;
 
   std::string                                           m_PlanFilename;
   std::string                                           m_PlanFilenamePath;
@@ -356,7 +348,6 @@ private:
 
   bool                                                  m_ImagePlanesIn3DViewEnabled;
   bool                                                  m_ModifyImageFiducialsEnabled;
-  bool                                                  m_CollectingCandidates;
 
   /* Command used for progress tracking */
   itk::SmartPointer<ProgressCommandType>                m_ProgressCommand;  
@@ -364,8 +355,7 @@ private:
   /** Pointer to the ImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
 
-  /** Define a initial world coordinate system */
-  AxesObjectType::Pointer                               m_WorldReference;
+
 
  
   ToolProjectionType::Pointer                           m_ToolProjection;
@@ -519,7 +509,6 @@ private:
   void ReportFailuredSpatialObjectLoadedProcessing();
   void ReportSuccessTargetMeshLoadedProcessing();
   void ReportFailuredTargetMeshLoadedProcessing();
-//  void ReportSuccessNeedlePathLoadedProcessing();
   void ReportSuccessStartSetImageFiducialsProcessing();
   void ReportSuccessEndSetImageFiducialsProcessing();
   void ReportSuccessStartSetTrackerFiducialsProcessing();
@@ -606,8 +595,9 @@ private:
   typedef igstk::CylinderObject                   CylinderType;
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
 
-  /** Axes object */
+    /** Define a initial world coordinate system */
   typedef igstk::AxesObject                       AxesObjectType;
+  AxesObjectType::Pointer                         m_WorldReference;
 
   igstk::Transform                                m_RegistrationTransform;
   igstk::Transform                                m_TransformToBeChanged;
@@ -668,7 +658,6 @@ private:
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event );
   
-  //void ToolTrackingCallback( const itk::EventObject & event ); 
   void AxialReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 
   void SagittalReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 
   void CoronalReslicePlaneCameraModifiedCallback( const itk::EventObject & event ); 

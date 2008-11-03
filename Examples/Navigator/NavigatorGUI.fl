@@ -8,7 +8,8 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 class NavigatorGUI {open : {public igstk::Object}
 } {
-  Function {NavigatorGUI()} {} {
+  Function {NavigatorGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK - Navigator Application}
       callback {Quit();} open
@@ -16,7 +17,7 @@ class NavigatorGUI {open : {public igstk::Object}
       code0 {\#include "igstkFLTKWidget.h"}
       code1 {\#include <time.H>} noborder visible
     } {
-      Fl_Group m_ControlGroup {
+      Fl_Group m_ControlGroup {open
         xywh {3 5 151 1017} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
       } {
         Fl_Button m_QuitButton {
@@ -45,7 +46,7 @@ class NavigatorGUI {open : {public igstk::Object}
         }
         Fl_Choice m_ViewModeList {
           label {Viewing Mode}
-          callback {RequestChangeSelectedViewMode();} open
+          callback {RequestChangeSelectedViewMode();} open selected
           xywh {10 676 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
         } {
           MenuItem {} {
@@ -92,7 +93,7 @@ RequestToggleSetImageFiducials();}
         Fl_Button {} {
           label {Configure Tracker}
           callback {RequestLoadToolSpatialObject();
-//RequestConfigureTracker();} selected
+//RequestConfigureTracker();}
           tooltip {Configue tracker system} xywh {10 336 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_ModifyTrackerFiducialsBtn {

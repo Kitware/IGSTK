@@ -27,10 +27,8 @@
 #include "igstkMicronTrackerConfiguration.h"
 
 #define TRACKER_DEFAULT_REFRESH_RATE 15
-#define VIEW_2D_REFRESH_RATE 15
-#define VIEW_3D_REFRESH_RATE 15
-
-#define MAX_CANDIDATES 3
+#define VIEW_2D_REFRESH_RATE 30
+#define VIEW_3D_REFRESH_RATE 30
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -52,8 +50,6 @@ Navigator::Navigator() :
   m_CoronalViewInitialized = false;
   
   m_ModifyImageFiducialsEnabled = false;
-
-  m_CollectingCandidates = false;
 
   /** Create the controller for the tracker and assign observers to him*/
   m_TrackerController = igstk::TrackerController::New();
@@ -122,18 +118,18 @@ Navigator::Navigator() :
   // set logger to the controller
   m_TrackerController->SetLogger(this->GetLogger());
 
-  /** Initialize all member variables  */
-  
+  /** Initialize all member variables  */  
   m_ImageReader         = ImageReaderType::New();
   m_ImageReader->SetGlobalWarningDisplay(false);
 
-  m_WorldReference        = igstk::AxesObject::New();
+  m_WorldReference      = igstk::AxesObject::New();
 
   m_Plan                = new igstk::FiducialsPlan;
 
   m_TrackerRMS = 0.0;
-
   m_NumberOfLoadedMeshes = 0;
+  m_WindowWidth = 542;
+  m_WindowLevel = 52;
 
   m_FiducialPointVector.resize(4);
   m_AxialFiducialRepresentationVector.resize(4);
@@ -186,18 +182,6 @@ Navigator::Navigator() :
   m_MousePressedObserver->SetCallbackFunction( this,
     &Navigator::HandleMousePressedCallback );
 
-  /** 
-   *  This observer listens to the TrackerToolTransformUpdateEvent from
-   *  TrackerTool class, notice this event doesn't carry any payload, it
-   *  only functions as a ticker here to trigger image representation class
-   *  to do image reslicing according to the current tooltip location.
-   *  Refer to:
-   *  Navigator::ToolTrackingCallback()
-   */
-  //m_TrackerToolUpdateObserver = LoadedObserverType::New();
-  //m_TrackerToolUpdateObserver->SetCallbackFunction( this,
-  //                                               &Navigator::ToolTrackingCallback );
-
   m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
   m_TrackerToolNotAvailableObserver->SetCallbackFunction( this,
                                                  &Navigator::ToolNotAvailableCallback );
@@ -213,8 +197,6 @@ Navigator::Navigator() :
   m_ReferenceAvailableObserver = LoadedObserverType::New();
   m_ReferenceAvailableObserver->SetCallbackFunction( this,
                                                  &Navigator::ReferenceAvailableCallback );  
-  m_WindowWidth = 542;
-  m_WindowLevel = 52;
 
   /** Machine States*/
 
@@ -230,7 +212,6 @@ Navigator::Navigator() :
   igstkAddStateMacro( InitializingTracker );
   igstkAddStateMacro( TrackerInitializationReady );
   igstkAddStateMacro( SettingTrackerFiducials );
-//  igstkAddStateMacro( PinpointingTrackerFiducial );
   igstkAddStateMacro( EndingSetTrackerFiducials );
   igstkAddStateMacro( TrackerFiducialsReady );
   igstkAddStateMacro( RegisteringTracker );  
@@ -267,7 +248,7 @@ Navigator::Navigator() :
   igstkAddTransitionMacro( Initial, LoadImage,
                            LoadingImage, LoadImage );
 
-    //complete table for state: Initial State
+  //complete table for state: Initial State
 
   igstkAddTransitionMacro( Initial, Success, 
                            Initial, ReportInvalidRequest );
@@ -1585,10 +1566,10 @@ Navigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 
   for (int i=0; i<4; i++)
   {
-  m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-  m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-  m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
   this->RequestTrackerRegistration();
@@ -1599,8 +1580,6 @@ Navigator::AcceptTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "AcceptTrackerFiducialProcessing called...\n");
-
-  //m_CollectingCandidates = true;
 
   typedef igstk::TransformObserver ObserverType;
   ObserverType::Pointer transformObserver = ObserverType::New();
@@ -1616,13 +1595,12 @@ Navigator::AcceptTrackerFiducialProcessing()
           TransformToPoint( transformObserver->GetTransform() );
     m_AcceptedLandmarksContainer[n] = true;
 
-    //todo: change color to fiducials to indicate that they were accepted
-
     if ( n < m )
     {
       m_FiducialsPointList->value(n+1);
       this->RequestChangeSelectedFiducial();
     }
+
     if ( n == m-2)
     {
       m_ModifyTrackerFiducialsBtn->label("Ready");     
@@ -1822,8 +1800,6 @@ Navigator::ReportFailureStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportFailureStartTrackingProcessing called...\n")
-
-  Fl::check();
 }
 
 /** Method to be invoked on failured tracker stop */
@@ -1861,68 +1837,63 @@ Navigator::ReportSuccessStopTrackingProcessing()
 void Navigator::LoadImageProcessing()
 {
     igstkLogMacro2( m_Logger, DEBUG, 
-                  "Navigator::LoadImageProcessing called...\n" )
+                    "Navigator::LoadImageProcessing called...\n" )
 
     const char*  directoryName = 
-      fl_dir_chooser("Indicate the DICOM directory ", m_ImageDir.c_str());
+        fl_dir_chooser("Set DICOM directory ", m_ImageDir.c_str());
 
-    if ( directoryName != NULL )
-    {
-        m_ImageDir = directoryName;
-
-       //check if FLTK has added a slash
-       if (itksys::SystemTools::StringEndsWith(m_ImageDir.c_str(),"/") )
-       {
-         m_ImageDir = m_ImageDir.substr (0,m_ImageDir.length()-1);
-       }
-
-       igstkLogMacro2( m_Logger, DEBUG, 
-                          "Set ImageReader directory: " << directoryName << "\n" )
-
-       m_ImageReader->RequestSetDirectory( directoryName );
-
-
-       // Provide a progress observer to the image reader      
-       m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
-
-       m_ImageReader->RequestReadImage();
-
-       m_ImageObserver = ImageObserver::New();
-       m_ImageReader->AddObserver(ImageReaderType::ImageModifiedEvent(),
-                                                        m_ImageObserver);
-
-       m_ImageReader->RequestGetImage();
-
-       if(!m_ImageObserver->GotImage())
-       { 
-         std::string errorMessage;
-         errorMessage = "Could not open image";
-         fl_alert( errorMessage.c_str() );
-         fl_beep( FL_BEEP_ERROR );
-
-         m_ImageObserver->RemoveAllObservers();
-         m_ImageObserver = NULL;
-
-         igstkLogMacro2( m_Logger, DEBUG, "Could not read image\n" )
-         m_StateMachine.PushInput( m_FailureInput);
-         m_StateMachine.ProcessInputs();
-
-         return;
-       }
-
-       m_StateMachine.PushInput( m_SuccessInput);
-
-       m_StateMachine.ProcessInputs();
-
-       return;      
-    }
-    else
-    {    
+   if ( !directoryName )
+   {    
       igstkLogMacro2( m_Logger, DEBUG, "No directory was selected\n" )
       m_StateMachine.PushInput( m_FailureInput );
       m_StateMachine.ProcessInputs();
       return;
-    }    
+   }   
+
+   m_ImageDir = directoryName;
+
+   //check if FLTK has added a slash
+   if (itksys::SystemTools::StringEndsWith(m_ImageDir.c_str(),"/") )
+   {
+     m_ImageDir = m_ImageDir.substr (0,m_ImageDir.length()-1);
+   }
+
+   igstkLogMacro2( m_Logger, DEBUG, 
+                      "Set ImageReader directory: " << directoryName << "\n" )
+
+   m_ImageReader->RequestSetDirectory( directoryName );
+
+
+   // Provide a progress observer to the image reader      
+   m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
+
+   m_ImageReader->RequestReadImage();
+
+   m_ImageObserver = ImageObserver::New();
+   m_ImageReader->AddObserver(ImageReaderType::ImageModifiedEvent(),
+                                                    m_ImageObserver);
+
+   m_ImageReader->RequestGetImage();
+
+   if(!m_ImageObserver->GotImage())
+   { 
+     std::string errorMessage;
+     errorMessage = "Could not open image";
+     fl_alert( errorMessage.c_str() );
+     fl_beep( FL_BEEP_ERROR );
+
+     m_ImageObserver->RemoveAllObservers();
+     m_ImageObserver = NULL;
+
+     igstkLogMacro2( m_Logger, DEBUG, "Could not read image\n" )
+     m_StateMachine.PushInput( m_FailureInput);
+     m_StateMachine.ProcessInputs();
+
+     return;
+   }
+
+   m_StateMachine.PushInput( m_SuccessInput);
+   m_StateMachine.ProcessInputs(); 
 }
 
 /** -----------------------------------------------------------------
@@ -2013,53 +1984,7 @@ void Navigator::LoadToolSpatialObjectProcessing()
 
   const char* fileName = "tool.msh";
 
-  if ( fileName != NULL )
-  {
-    igstkLogMacro2( m_Logger, DEBUG,
-                        "Spatial Image filename: " << fileName << "\n" )
-
-    MeshReaderType::Pointer reader = MeshReaderType::New();
-
-    reader->RequestSetFileName( fileName );
-    reader->RequestReadObject();
-
-    MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
-    reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
-    reader->RequestGetOutput();
-
-    if(!observer->GotMeshObject())
-    {
-      igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" )
-      m_StateMachine.PushInput( m_FailureInput );
-      m_StateMachine.ProcessInputs();
-      return;
-    }
-
-    m_PointerSpatialObject = observer->GetMeshObject();
-      
-    if (m_PointerSpatialObject.IsNull())
-    {
-      igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" ) 
-      m_StateMachine.PushInput( m_FailureInput );
-      m_StateMachine.ProcessInputs();
-      return ;
-    }
-
-    igstk::Transform identity;
-    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-
-    m_PointerSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-
-    m_TrackerToolRepresentation = MeshRepresentationType::New();
-    m_TrackerToolRepresentation->RequestSetMeshObject( m_PointerSpatialObject );
-    m_TrackerToolRepresentation->SetOpacity(1.0);
-    m_TrackerToolRepresentation->SetColor(1,1,0);
-
-    
-    m_StateMachine.PushInput( m_SuccessInput );
-    m_StateMachine.ProcessInputs();
-  }
-  else
+  if ( !fileName )
   {
     igstkLogMacro2( m_Logger, DEBUG, 
       "No spatial object was selected.\n" )
@@ -2067,6 +1992,50 @@ void Navigator::LoadToolSpatialObjectProcessing()
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
   }
+
+  igstkLogMacro2( m_Logger, DEBUG,
+                      "Spatial Image filename: " << fileName << "\n" )
+
+  MeshReaderType::Pointer reader = MeshReaderType::New();
+
+  reader->RequestSetFileName( fileName );
+  reader->RequestReadObject();
+
+  MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+  reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
+  reader->RequestGetOutput();
+
+  if(!observer->GotMeshObject())
+  {
+    igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_PointerSpatialObject = observer->GetMeshObject();
+    
+  if (m_PointerSpatialObject.IsNull())
+  {
+    igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" ) 
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return ;
+  }
+
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_PointerSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+  m_TrackerToolRepresentation = MeshRepresentationType::New();
+  m_TrackerToolRepresentation->RequestSetMeshObject( m_PointerSpatialObject );
+  m_TrackerToolRepresentation->SetOpacity(1.0);
+  m_TrackerToolRepresentation->SetColor(1,1,0);
+
+  
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();  
 }
 
 /** -----------------------------------------------------------------
@@ -2080,104 +2049,101 @@ void Navigator::LoadTargetMeshProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::LoadTargetMeshProcessing called...\n" )
 
-  const char*  fileName = 
-    fl_file_chooser("Select the target mesh file","*.msh", m_TargetDir.c_str());
+   const char*  fileName = 
+    fl_file_chooser("Select the target mesh file","*.msh", m_ImageDir.c_str());
 
-  if ( fileName != NULL )
-  {
-     MeshReaderType::Pointer reader = MeshReaderType::New();
-     reader->RequestSetFileName( fileName );
-
-     reader->RequestReadObject();
-   
-     MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
-
-     reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
-
-     reader->RequestGetOutput();
-
-     if(!observer->GotMeshObject())
-     {
-         igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-         m_StateMachine.PushInput( m_FailureInput);
-         m_StateMachine.ProcessInputs();
-         return;
-     }
-
-     m_TargetMeshObjectVector.push_back( observer->GetMeshObject() );
-      
-     if (m_TargetMeshObjectVector[m_NumberOfLoadedMeshes].IsNull())
-     {
-       igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-       m_StateMachine.PushInput( m_FailureInput);
-       m_StateMachine.ProcessInputs();
-       return;
-     }
-
-     igstk::Transform identity;
-     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-     
-     m_TargetMeshObjectVector[m_NumberOfLoadedMeshes]->RequestSetTransformAndParent( identity, m_WorldReference );
-     
-     //build mesh representation and spatial objects
-     double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-     double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-     double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-
-     MeshRepresentationType::Pointer rep = MeshRepresentationType::New();     
-     rep->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     rep->SetOpacity(0.7);
-     rep->SetColor(r, g, b);
-     m_MeshRepresentationVector.push_back(rep);
-
-     // build axial mesh reslice representation
-     MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-     axialContour->SetOpacity(1.0); 
-     axialContour->SetLineWidth(3.0);
-     axialContour->SetColor(r, g, b);     
-     axialContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-     m_AxialMeshResliceRepresentationVector.push_back( axialContour );
-
-     // build sagittal mesh reslice representation
-     MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
-     sagittalContour->SetOpacity(1.0);
-     sagittalContour->SetLineWidth(3.0);
-     sagittalContour->SetColor(r, g, b);
-     sagittalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-     m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
-
-     // build coronal mesh reslice representation
-     MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
-     coronalContour->SetOpacity(1.0);
-     coronalContour->SetLineWidth(3.0);
-     coronalContour->SetColor(r, g, b);
-     coronalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-     coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-     m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);     
-
-     // add repressentations to the views
-     m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-     m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-     m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
-
-     m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
-     m_ViewerGroup->m_3DView->RequestResetCamera();
-
-     m_NumberOfLoadedMeshes ++;
-
-     m_StateMachine.PushInput( m_SuccessInput );
-     m_StateMachine.ProcessInputs();
-     return;
-  }
-  else
-  {
-     igstkLogMacro2( m_Logger, DEBUG, "No directory is selected\n" )
+   if ( !fileName != NULL )
+    {
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing No directory was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
      return;
-  }
+    }
+
+   MeshReaderType::Pointer reader = MeshReaderType::New();
+   reader->RequestSetFileName( fileName );
+
+   reader->RequestReadObject();
+ 
+   MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+
+   reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
+
+   reader->RequestGetOutput();
+
+   if(!observer->GotMeshObject())
+   {
+       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing Cannot read mesh\n" )
+       m_StateMachine.PushInput( m_FailureInput);
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+
+   m_TargetMeshObjectVector.push_back( observer->GetMeshObject() );
+    
+   if (m_TargetMeshObjectVector[m_NumberOfLoadedMeshes].IsNull())
+   {
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing Cannot read mesh\n" )
+     m_StateMachine.PushInput( m_FailureInput);
+     m_StateMachine.ProcessInputs();
+     return;
+   }
+
+   igstk::Transform identity;
+   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+   
+   m_TargetMeshObjectVector[m_NumberOfLoadedMeshes]->RequestSetTransformAndParent( identity, m_WorldReference );
+   
+   //build mesh representation and spatial objects
+   double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
+   double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
+   double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
+
+   MeshRepresentationType::Pointer rep = MeshRepresentationType::New();     
+   rep->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   rep->SetOpacity(0.7);
+   rep->SetColor(r, g, b);
+   m_MeshRepresentationVector.push_back(rep);
+
+   // build axial mesh reslice representation
+   MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
+   axialContour->SetOpacity(1.0); 
+   axialContour->SetLineWidth(1.0);
+   axialContour->SetColor(r, g, b);     
+   axialContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+   m_AxialMeshResliceRepresentationVector.push_back( axialContour );
+
+   // build sagittal mesh reslice representation
+   MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
+   sagittalContour->SetOpacity(1.0);
+   sagittalContour->SetLineWidth(1.0);
+   sagittalContour->SetColor(r, g, b);
+   sagittalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+   m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
+
+   // build coronal mesh reslice representation
+   MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
+   coronalContour->SetOpacity(1.0);
+   coronalContour->SetLineWidth(1.0);
+   coronalContour->SetColor(r, g, b);
+   coronalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+   m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);     
+
+   // add repressentations to the views
+   m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
+
+   m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_3DView->RequestResetCamera();
+
+   m_NumberOfLoadedMeshes ++;
+
+   m_StateMachine.PushInput( m_SuccessInput );
+   m_StateMachine.ProcessInputs();     
 }
 
 /** -----------------------------------------------------------------
@@ -2425,64 +2391,6 @@ void Navigator::StartSetTrackerFiducialsProcessing()
 
   Fl::check();
 }
-
-/*
-void Navigator::PinpointTrackerFiducialProcessing()
-{
-  
-  igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::PinpointingTrackerFiducialProcessing called...\n" )
-
-  if (m_CollectingCandidates)
-    return;
-
-  unsigned int validTrials = m_CandidateLandmarks.size();
-
-  igstkLogMacro2( m_Logger, DEBUG,
-      "Navigator::PinpointingTrackerFiducialProcessing valid trials: " << validTrials << "\n" )
-
-  if (!validTrials)
-  {
-    m_StateMachine.PushInput( m_FailureInput ); 
-    m_StateMachine.ProcessInputs();
-    return;
-  }
-
-  PointType pt;
-  pt.Fill(0.0);
-
-  for (int i=0; i<validTrials; i++)
-  {
-    pt[0] += m_CandidateLandmarks[i][0]/validTrials;
-    pt[1] += m_CandidateLandmarks[i][1]/validTrials;
-    pt[2] += m_CandidateLandmarks[i][2]/validTrials;
-  }
-
-  int n = m_FiducialsPointList->value();
-  int m = m_FiducialsPointList->size();
-
-  m_LandmarksContainer[n] = pt;
-  m_AcceptedLandmarksContainer[n] = true;
-
-  //todo: change color to fiducials to indicate that they were accepted
-  if ( n < m )
-  {
-    m_FiducialsPointList->value(n+1);
-    RequestChangeSelectedFiducial();       
-  }
-
-  if ( n == m-2)
-  {
-    m_ModifyTrackerFiducialsBtn->label("Ready");
-    m_ModifyTrackerFiducialsBtn->color(FL_GREEN);
-  }
-
-  m_CandidateLandmarks.clear();
-
-  m_StateMachine.PushInput( m_SuccessInput );
-  m_StateMachine.ProcessInputs();
-}
-*/
 
 /** -----------------------------------------------------------------
 * Sets a new point to the registration procedure
@@ -3331,16 +3239,24 @@ void Navigator::ResliceImage ( IndexType index )
 
 void Navigator::EnableOrthogonalPlanes()
 {
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+    igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::EnableOrthogonalPlanes called...\n" )
+
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+
 }
 
 void Navigator::DisableOrthogonalPlanes()
 {
-  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation2 );
-  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation2 );
-  //m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation2 );
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::DisableOrthogonalPlanes called...\n" )
+
+  m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialPlaneRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalPlaneRepresentation );
+
 }
 
 /** -----------------------------------------------------------------
