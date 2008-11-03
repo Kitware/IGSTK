@@ -50,8 +50,6 @@ public:
   ~OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI();
   void AttachObjectToTrackerTool( int trackerToolNumber,
                                   igstk::SpatialObject * objectToTrack );
-  void GetTrackerToolTransform( int trackerToolNumber, 
-    TransformType & transform );
   void InitializeTracker( std::string InitializationFile,
                           std::string CameraCalibrationFileDirectory,
                           std::string markerTemplateDirectory );

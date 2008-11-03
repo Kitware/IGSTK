@@ -130,26 +130,6 @@ int main(int argc, char** argv)
     {
     QTest::qWait(10);
     igstk::PulseGenerator::CheckTimeouts();
-
-    if( mainWindow.IsTrackingTurnedOn())
-      {
-      mainWindow.GetTrackerToolTransform( 1, toolTransform );
-
-      position = toolTransform.GetTranslation();
-      std::cout << "Trackertool1:" 
-                << "  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-
-      mainWindow.GetTrackerToolTransform( 2, toolTransform );
-
-      position = toolTransform.GetTranslation();
-      std::cout << "Trackertool2:" 
-                << "  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-      }
-
     }
 
   return EXIT_SUCCESS;

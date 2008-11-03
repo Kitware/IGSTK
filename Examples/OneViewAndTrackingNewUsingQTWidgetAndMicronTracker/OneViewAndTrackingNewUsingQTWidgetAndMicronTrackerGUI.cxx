@@ -100,24 +100,6 @@ void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
     }
 }
 
- void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI
-::GetTrackerToolTransform( int trackerToolNumber, TransformType & transform )
-{
-  if ( trackerToolNumber == 1 )
-    {
-    transform = m_TrackerTool->GetRawTransform();
-    }
-  else if ( trackerToolNumber == 2)
-    {
-    transform = m_TrackerTool2->GetRawTransform();
-    }
-  else
-    {
-    std::cerr << "Unavailable tracker tool number is specified" << std::endl;
-    }
-}
-
-
 void OneViewAndTrackingNewUsingQTWidgetAndMicronTrackerGUI::CreateActions()
 {
   connect(m_GUI.QuitPushButton, SIGNAL(clicked()), this, SLOT(OnQuitAction()));
