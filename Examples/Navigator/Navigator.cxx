@@ -28,7 +28,7 @@
 
 #define TRACKER_DEFAULT_REFRESH_RATE 15
 #define VIEW_2D_REFRESH_RATE 30
-#define VIEW_3D_REFRESH_RATE 30
+#define VIEW_3D_REFRESH_RATE 10
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -1230,9 +1230,10 @@ void Navigator::ConfigureTrackerProcessing()
   igstk::MicronToolConfiguration toolConfig;
 
   toolConfig.SetToolName( "sPtr" );
-  toolConfig.SetMarkerName( "sPtr" ); //"sPtr" );
+  toolConfig.SetMarkerName( "sPtr" );
   igstk::Transform* calibrationTransform =  
-    this->ReadTransformFile( "claron_sptr_Calibration.xml" );
+    //this->ReadTransformFile( "claron_sptr_Calibration.xml" );
+    this->ReadTransformFile( "claron_sptrcyl_Calibration.xml" );    
 
 
   if ( calibrationTransform != NULL )
@@ -1987,15 +1988,10 @@ void Navigator::LoadToolSpatialObjectProcessing()
   m_ToolSpatialObject->SetRadius( 1.0 );
   m_ToolSpatialObject->SetHeight( 150 );
 
-  igstk::Transform identity;
-  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-
-  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-
   m_ToolRepresentation = CylinderRepresentationType::New();
   m_ToolRepresentation->RequestSetCylinderObject( m_ToolSpatialObject );
   m_ToolRepresentation->SetOpacity(1.0);
-  m_ToolRepresentation->SetColor(1,1,0);
+  m_ToolRepresentation->SetColor(1,0,0);
   
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();  
@@ -2232,18 +2228,17 @@ void Navigator::InitializeTrackerProcessing()
 
 //  m_TrackerController->RequestGetTracker();
   m_TrackerController->RequestGetNonReferenceToolList();
-  m_TrackerController->RequestGetReferenceTool();
-      
+  m_TrackerController->RequestGetReferenceTool();       
+
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
- 
-  // seba: recien comentado
+
   m_ToolSpatialObject->RequestDetachFromParent();
   m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool);  
 
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
-  {
+  { 
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
   /*else
