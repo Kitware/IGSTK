@@ -33,7 +33,6 @@
 #include "igstkLandmarkUltrasoundCalibration.h"
 #include "igstkObliqueImageSpatialObjectRepresentation.h"
 #include "igstkImageResliceSpatialObjectRepresentation.h"
-#include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkSpatialObject.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkSandboxConfigure.h"
@@ -64,8 +63,6 @@ namespace igstk
 {
 
 typedef ImageSpatialObject<float,3>                 ImageSpatialObjectType;
-typedef ImageReslicePlaneSpatialObject< ImageSpatialObjectType >
-                                        ImageReslicePlaneSpatialObjectType;
 
 typedef ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
                                         ImageResliceSpatialObjectRepresentationType;
@@ -215,8 +212,6 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::CoordinateSystem, outputDirectory, skipLoops );
 
   igstkTestExportStateMachine1( igstk::ImageResliceSpatialObjectRepresentationType, outputDirectory, skipLoops );
-
-  igstkTestExportStateMachine1( igstk::ImageReslicePlaneSpatialObjectType, outputDirectory, skipLoops );
 
 #ifdef IGSTKSandbox_USE_FLTK
   igstk::FLTKWidget fltkWidget(0,0, 100, 100, "Dummy FLTKWidget for testing");
