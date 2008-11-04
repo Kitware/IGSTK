@@ -1396,7 +1396,7 @@ WorkingVolumeTester
   this->RequestDisconnectTracker();
 }
 
-
+/*
 igstk::Transform *
 WorkingVolumeTester::
 ReadTransformFile( const std::string &calibrationFileName )
@@ -1471,6 +1471,7 @@ ReadTransformFile( const std::string &calibrationFileName )
             //set the tool's calibration transform
       //if(response == 'y' || response=='Y') 
      // {
+/*
         transformData->RequestTransform();
         //if( transformObserver->GotTransform() )
        // {
@@ -1488,15 +1489,10 @@ ReadTransformFile( const std::string &calibrationFileName )
                                              igstk::TimeStamp::GetLongestPossibleTime() );
 
         return result;
-       /* }
-        else
-        {
-          return NULL;
-        }*/
-     // }
     }
     else return NULL;
   }
   else return NULL;
 }
+*/
 

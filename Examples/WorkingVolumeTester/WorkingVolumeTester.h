@@ -79,14 +79,19 @@ public:
   /** typedef for mesh readers */
   typedef igstk::MeshReader                           MeshReaderType;
 
-  /** typedef for mesh spatial objects */
+  /** typedef for mesh spatial object */
   typedef MeshReaderType::MeshObjectType              MeshObjectType;
+
+  /** typedef for mesh spatial object representation */
   typedef igstk::MeshObjectRepresentation             MeshRepresentationType;
 
-  /** typedef for ellipsoid spatial objects */
+  /** typedef for ellipsoid spatial object */
   typedef igstk::EllipsoidObject                      EllipsoidType;
+
+  /** typedef for ellipsoid spatial object representation*/
   typedef igstk::EllipsoidObjectRepresentation        EllipsoidRepresentationType;
 
+  /** typedef for a vector of ellipsoid spatial objects and representations*/
   typedef std::vector < EllipsoidType::Pointer >      
                                                       EllipsoidSpatialObjectVectorType;
 
@@ -450,15 +455,12 @@ private:
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   typedef itk::SimpleMemberCommand < Self > CancelObserverType;
   
-//  LoadedObserverType::Pointer               m_KeyPressedObserver;
-//  LoadedObserverType::Pointer               m_MousePressedObserver;  
-
   CancelObserverType::Pointer               m_TrackerConfigurationCancelObserver;
       
   /** Log file */
   std::ofstream                                   m_LogFile;  
 
-  igstk::Transform* ReadTransformFile( const std::string &);
+//  igstk::Transform* ReadTransformFile( const std::string &);
 
   bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
