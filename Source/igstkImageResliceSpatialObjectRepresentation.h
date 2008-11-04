@@ -21,7 +21,6 @@
 #include "igstkObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
-//#include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkReslicerPlaneSpatialObject.h"
 
 class vtkLookupTable;

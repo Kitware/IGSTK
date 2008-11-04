@@ -21,7 +21,6 @@
 #include "igstkMacros.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkCrossHairObject.h"
-#include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkStateMachine.h"
 
 class vtkLineSource;
