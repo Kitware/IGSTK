@@ -15,7 +15,7 @@ class NavigatorGUI {open : {public igstk::Object}
       callback {Quit();} open
       xywh {0 0 1280 1024} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"}
-      code1 {\#include <time.H>} noborder visible
+      code1 {\#include <time.h>} noborder visible
     } {
       Fl_Group m_ControlGroup {open
         xywh {3 5 151 1017} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0

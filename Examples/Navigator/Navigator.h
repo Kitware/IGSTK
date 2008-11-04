@@ -29,7 +29,6 @@
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 
-//#include "igstkImageReslicePlaneSpatialObject.h"
 #include "igstkReslicerPlaneSpatialObject.h"
 #include "igstkImageResliceSpatialObjectRepresentation.h"
 #include "igstkMeshResliceSpatialObjectRepresentation.h"
