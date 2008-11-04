@@ -139,7 +139,7 @@ AuroraTracker::ResultType AuroraTracker
         unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
 
         const unsigned int NumberOfPorts = 4;
-        if (ndiport >= 0 && ndiport < NumberOfPorts)
+        if (ndiport > 0 && ndiport <= NumberOfPorts)
           {
           port = ndiport - 1;
           // check if the port number specified 
