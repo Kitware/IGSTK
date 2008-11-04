@@ -25,6 +25,8 @@ IF (IGSTKSandbox_USE_FLTK)
     DeckOfCardRobot
     View
     Logging
+    Navigator
+    WorkingVolumeTester
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
