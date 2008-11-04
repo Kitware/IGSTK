@@ -35,10 +35,8 @@ namespace igstk
  * 
  * \brief This class provides a visual representation of a ToolProjectionObject. 
  *
- * RequestSetReslicePlaneSpatialObject sets the driving plane onto which the tool´s long axis
- * is projected.
  *
- * \sa ToolProjectionObject
+ * \sa ToolProjectionRepresentation
  *
  * \ingroup ObjectRepresentation
  */
@@ -64,6 +62,7 @@ public:
 
   typedef ToolProjectionObject           ToolProjectionSpatialObjectType;
 
+  /** Provides the reslicing plane onto which the tool is projected */
   void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
                                                              planeSpatialObject);
 
@@ -71,7 +70,8 @@ public:
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
-  void RequestSetToolProjectionObject( const ToolProjectionSpatialObjectType * ToolProjectionObject );
+  void RequestSetToolProjectionObject( const ToolProjectionSpatialObjectType * 
+                                                             toolProjectionObject );
 
   virtual void SetVisibility ( bool visible);
 
@@ -135,7 +135,6 @@ private:
 
   vtkLineSource* m_LineSource;
   vtkTubeFilter *m_Tuber;
-
   vtkPolyDataMapper* m_LineMapper;
 
   VectorType m_PlaneNormal;
@@ -150,7 +149,6 @@ private:
   igstkDeclareStateMacro( NullToolProjectionObject );
   igstkDeclareStateMacro( ValidToolProjectionObject );
   igstkDeclareStateMacro( ValidReslicePlaneSpatialObject );
-
 
   ToolProjectionSpatialObjectType::ConstPointer m_ToolProjectionObjectToAdd;
 

@@ -213,45 +213,51 @@ void ToolProjectionRepresentation
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
 
+  // we don't need to force a plane update in the reslicer plane spatial object. Let's use
+  // the plane the he already has
   //m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  if ( m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
+  if ( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
+    return;
+
+  // should we use an event here?
+  igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
+  VectorType point1 = toolTransform.GetTranslation();
+  VectorType point2;
+  point2.Fill(0);
+
+  // we need to fix this issue: how to know the tool's long axis orientation?
+  // It depends on the calibration transform, but how to know it from here?
+  igstk::Transform::VersorType rotation = toolTransform.GetRotation();
+  VectorType toolAxis;
+  toolAxis[0] = 0; //1;
+  toolAxis[1] = 0;
+  toolAxis[2] = 1;
+  toolAxis = rotation.Transform(toolAxis);
+
+  unsigned int planeObsID = 
+      m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
+                                      m_VTKPlaneObserver );
+  
+  m_VTKPlaneObserver->Reset();
+
+  m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
+  
+  if( m_VTKPlaneObserver->GotVTKPlane() )
   {
-    igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
-    VectorType point1 = toolTransform.GetTranslation();
-    VectorType point2;
-    point2.Fill(0);
-    igstk::Transform::VersorType rotation = toolTransform.GetRotation();
-    VectorType toolAxis;
-    toolAxis[0] = 1;
-    toolAxis[1] = 0;
-    toolAxis[2] = 0;
-    toolAxis = rotation.Transform(toolAxis);
+      this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );        
 
-    unsigned int planeObsID = 
-        m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
-                                        m_VTKPlaneObserver );
-    
-    m_VTKPlaneObserver->Reset();
+      VectorType toolProy = itk::CrossProduct( m_PlaneNormal, itk::CrossProduct(toolAxis, m_PlaneNormal) );
 
-    m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
-    
-    if( m_VTKPlaneObserver->GotVTKPlane() )
-    {
-        this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );        
+      point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
+  }
 
-        VectorType toolProy = itk::CrossProduct( m_PlaneNormal, itk::CrossProduct(toolAxis, m_PlaneNormal) );
+  m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
 
-        point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
-    }
-
-    m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
-
-    if ( (point2-point1).GetNorm() > 0.1 )
-    {
-      m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
-      m_LineSource->SetPoint2( point2[0], point2[1], point2[2] );
-    }
+  if ( (point2-point1).GetNorm() > 0.1 )
+  {
+    m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
+    m_LineSource->SetPoint2( point2[0], point2[1], point2[2] );
   }
 }
 
@@ -280,36 +286,36 @@ ToolProjectionRepresentation
   igstkLogMacro( DEBUG, 
     "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
 
-  if( this->m_ReslicePlaneSpatialObject.IsNull() )
+  if( m_ReslicePlaneSpatialObject.IsNull() )
     {
     return false;
     }
 
-  /* if a tool spatial object is driving the reslicing, compare the 
-     tool spatial object transform with the view render time*/
-  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
+  // if there is no tool spatial object attached to the reslicer plane,
+  // we don't want to show the tool projection either
+  if( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
     {
-    if( this->GetRenderTimeStamp().GetExpirationTime() <
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
-      this->GetRenderTimeStamp().GetStartTime() >
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
-      {
-        // fixme
-        double diff = 
-          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+    return false;
+    }
 
-        if (diff > 250 )
-        {
-          //std::cout << diff << std::endl;
-          return false;
-        }
-        else
-          return true;
-      }
-    else
+  // fixme: we are having severe blinking problems here
+  if( this->GetRenderTimeStamp().GetExpirationTime() <
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+    this->GetRenderTimeStamp().GetStartTime() >
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+    {
+      // fixme
+      double diff = 
+        this->GetRenderTimeStamp().GetStartTime() - 
+        this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+
+      if (diff > 250 )
       {
-      return true;
+        //std::cout << diff << std::endl;
+        return false;
       }
+      else
+        return true;
     }
   else
     {
@@ -370,9 +376,10 @@ ToolProjectionRepresentation
 ::Copy() const
 {
   Pointer newOR = ToolProjectionRepresentation::New();
-  newOR->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
-  newOR->SetOpacity(this->GetOpacity());
-  newOR->RequestSetToolProjectionObject(m_ToolProjectionSpatialObject);
+  newOR->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+  newOR->RequestSetToolProjectionObject( this->m_ToolProjectionSpatialObject );
+  newOR->RequestSetReslicePlaneSpatialObject( this->m_ReslicePlaneSpatialObject );
 
   return newOR;
 }

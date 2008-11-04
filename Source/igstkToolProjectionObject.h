@@ -29,8 +29,7 @@ namespace igstk
  * 
  * \brief This class represents a Axes object. 
  *
- * This class displays the projection of the tool on the View. It is intended for providing
- * a visual reference of the orientation of the tool in space in the context of a 2D View.
+ * This class displays the projection of a tool spatial object ontop of a reslicing plane.
  * 
  * \ingroup Object
  */
