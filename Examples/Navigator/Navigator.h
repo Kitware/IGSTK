@@ -73,8 +73,6 @@
 
 #include <time.h>
 
-#define MAX_RMS 2000.5
-
 /** \class Navigator
 * 
 * \brief Implementation class for NavigatorGUI.
@@ -106,6 +104,11 @@ public:
   /** typedef for mesh spatial objects */
   typedef MeshReaderType::MeshObjectType              MeshObjectType;
 
+  /** typedef for a cylinder spatial object and representation
+  * used to represent the tracked tool */
+  typedef igstk::CylinderObject                   CylinderType;
+  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
+
   typedef ImageSpatialObjectType::IndexType           IndexType;
   typedef ImageSpatialObjectType::PointType           PointType;
 
@@ -118,7 +121,7 @@ public:
   typedef igstk::ToolProjectionRepresentation      ToolProjectionRepresentationType;
 
   /** reslicer plane spatial object */
-  typedef igstk::ReslicerPlaneSpatialObject        ReslicerPlaneType;
+  typedef igstk::ReslicerPlaneSpatialObject              ReslicerPlaneType;
 
   /** tool spatial object and representation */
   typedef igstk::MeshObjectRepresentation                MeshRepresentationType;
@@ -128,7 +131,7 @@ public:
 
   /** image reslice representation */
   typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                                        ImageRepresentationType;
+                                                          ImageRepresentationType;
 
   /** typedef for landmark registration types */
   typedef igstk::Landmark3DRegistration               RegistrationType;
@@ -261,9 +264,6 @@ public:
   igstkObserverMacro( VTKImage, igstk::VTKImageModifiedEvent,
                       igstk::EventHelperType::VTKImagePointerType);
 
-  //igstkObserverConstObjectMacro( BoundingBox, ImageSpatialObjectType::BoundingBoxEvent,
-  //                                ImageSpatialObjectType::BoundingBoxType);
-
   igstkEventMacro( InvalidRequestErrorEvent, igstk::IGSTKErrorEvent );
 
   Navigator();
@@ -354,10 +354,10 @@ private:
   /** Pointer to the ImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
 
-
-
- 
+  /** Pointer to the ToolProjectionSpatialObject */
   ToolProjectionType::Pointer                           m_ToolProjection;
+
+  /** Pointer to the CrossHairSpatialObject */
   CrossHairType::Pointer                                m_CrossHair;
 
   ToolProjectionRepresentationType::Pointer             m_AxialToolProjectionRepresentation;
@@ -365,11 +365,15 @@ private:
   ToolProjectionRepresentationType::Pointer             m_CoronalToolProjectionRepresentation;
   ToolProjectionRepresentationType::Pointer             m_PerpendicularToolProjectionRepresentation;
 
+  /** our cross hair representation */
   CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
 
-  /** Pointer to the TargetMeshSpatialObject */
+  /** a vector of TargetMeshSpatialObjects */
   std::vector< MeshObjectType::Pointer >                m_TargetMeshObjectVector;
-  MeshObjectType::Pointer                               m_PointerSpatialObject;
+
+  /** our tool spatial object */
+  CylinderType::Pointer                                 m_ToolSpatialObject;
+  CylinderRepresentationType::Pointer                   m_ToolRepresentation;
 
   ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
   ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
@@ -579,22 +583,16 @@ private:
 
   /** Ellipsoid spatial object, used to represent the fiducial points*/
   typedef igstk::EllipsoidObject                  EllipsoidType;
-  typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
-  
-  MeshRepresentationType::Pointer                 m_TrackerToolRepresentation;
+  typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;  
 
   /** Objects for path planning and fiducial selection */
   std::vector< EllipsoidType::Pointer >                m_FiducialPointVector;
   std::vector< EllipsoidRepresentationType::Pointer >  m_AxialFiducialRepresentationVector;
   std::vector< EllipsoidRepresentationType::Pointer >  m_SagittalFiducialRepresentationVector;
   std::vector< EllipsoidRepresentationType::Pointer >  m_CoronalFiducialRepresentationVector;
-  std::vector< EllipsoidRepresentationType::Pointer >  m_3DViewFiducialRepresentationVector;
-    
-  /** Cylinder spatial object, used to represent the pointer */
-  typedef igstk::CylinderObject                   CylinderType;
-  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
+  std::vector< EllipsoidRepresentationType::Pointer >  m_3DViewFiducialRepresentationVector;      
 
-    /** Define a initial world coordinate system */
+  /** Define a initial world coordinate system */
   typedef igstk::AxesObject                       AxesObjectType;
   AxesObjectType::Pointer                         m_WorldReference;
 

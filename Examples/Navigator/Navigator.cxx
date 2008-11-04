@@ -1660,11 +1660,11 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
                  "ReportSuccessAcceptingRegistration called...\n");  
 
   // add the tool object to the image planes
-  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_PointerSpatialObject );   
-  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_PointerSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_PointerSpatialObject ); 
+  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );   
+  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
 
-  m_CrossHair->RequestSetToolSpatialObject( m_PointerSpatialObject ); 
+  m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
     
   // Set up tool projection for each view
   igstk::Transform identity;
@@ -1693,7 +1693,7 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
   m_PerpendicularToolProjectionRepresentation->SetColor( 1,1,0 );
 
-  m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
 
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );    
   m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalToolProjectionRepresentation );
@@ -1982,57 +1982,20 @@ void Navigator::LoadToolSpatialObjectProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                 "Navigator::LoadToolSpatialObjectProcessing called...\n" )
 
-  const char* fileName = "tool.msh";
-
-  if ( !fileName )
-  {
-    igstkLogMacro2( m_Logger, DEBUG, 
-      "No spatial object was selected.\n" )
-
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-  }
-
-  igstkLogMacro2( m_Logger, DEBUG,
-                      "Spatial Image filename: " << fileName << "\n" )
-
-  MeshReaderType::Pointer reader = MeshReaderType::New();
-
-  reader->RequestSetFileName( fileName );
-  reader->RequestReadObject();
-
-  MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
-  reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
-  reader->RequestGetOutput();
-
-  if(!observer->GotMeshObject())
-  {
-    igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" )
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return;
-  }
-
-  m_PointerSpatialObject = observer->GetMeshObject();
-    
-  if (m_PointerSpatialObject.IsNull())
-  {
-    igstkLogMacro2( m_Logger, DEBUG, "Could not read mesh spatial object\n" ) 
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return ;
-  }
+  // build a tool spatial object using a cylinder spatial object
+  m_ToolSpatialObject = CylinderType::New();  
+  m_ToolSpatialObject->SetRadius( 1.0 );
+  m_ToolSpatialObject->SetHeight( 150 );
 
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_PointerSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
-  m_TrackerToolRepresentation = MeshRepresentationType::New();
-  m_TrackerToolRepresentation->RequestSetMeshObject( m_PointerSpatialObject );
-  m_TrackerToolRepresentation->SetOpacity(1.0);
-  m_TrackerToolRepresentation->SetColor(1,1,0);
-
+  m_ToolRepresentation = CylinderRepresentationType::New();
+  m_ToolRepresentation->RequestSetCylinderObject( m_ToolSpatialObject );
+  m_ToolRepresentation->SetOpacity(1.0);
+  m_ToolRepresentation->SetColor(1,1,0);
   
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();  
@@ -2275,8 +2238,8 @@ void Navigator::InitializeTrackerProcessing()
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
  
   // seba: recien comentado
-  m_PointerSpatialObject->RequestDetachFromParent();
-  m_PointerSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool);  
+  m_ToolSpatialObject->RequestDetachFromParent();
+  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool);  
 
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
@@ -2495,17 +2458,7 @@ void Navigator::TrackerRegistrationProcessing()
        m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
        m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
 
-       m_ViewerGroup->RequestUpdateOverlays();
-
-       // todo: check what happends if we don't accept the registration
-       if (m_TrackerRMS > MAX_RMS)
-       {
-         igstkLogMacro2( m_Logger, DEBUG, 
-           "RMS error too big to operate\n" )
-         m_StateMachine.PushInput( m_FailureInput );
-         m_StateMachine.ProcessInputs();
-         return;
-       }
+       m_ViewerGroup->RequestUpdateOverlays();    
     }
     else
     {
