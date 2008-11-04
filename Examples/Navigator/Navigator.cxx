@@ -2052,7 +2052,7 @@ void Navigator::LoadTargetMeshProcessing()
    const char*  fileName = 
     fl_file_chooser("Select the target mesh file","*.msh", m_ImageDir.c_str());
 
-   if ( !fileName != NULL )
+   if ( !fileName )
     {
      igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing No directory was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
@@ -2377,7 +2377,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   m_AcceptedLandmarksContainer.clear();
 
   char buf[50];
-  for ( int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
+  for ( unsigned int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
   {
     sprintf( buf, "Fiducial #%d", i+1 );
     m_FiducialsPointList->add(buf);
@@ -2449,7 +2449,7 @@ void Navigator::TrackerRegistrationProcessing()
   RegistrationType::Pointer registration  = RegistrationType::New();
   registration->RequestResetRegistration();
 
-  for( int i=0; i< m_LandmarksContainer.size(); i++)
+  for( unsigned int i=0; i< m_LandmarksContainer.size(); i++)
   {
     // use only those fiducial points that were accepted by the user
     if ( m_AcceptedLandmarksContainer[i] ) 
@@ -2932,7 +2932,7 @@ void Navigator::ReadFiducials()
   m_AcceptedLandmarksContainer.clear();
   
   char buf[50];
-  for( int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
+  for( unsigned int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
   {
     sprintf( buf, "Fiducial #%d", i+1 );
     m_FiducialsPointList->add( buf );
