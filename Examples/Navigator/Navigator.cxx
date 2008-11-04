@@ -1696,9 +1696,14 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
 
   m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );    
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
+
   m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalToolProjectionRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalToolProjectionRepresentation->Copy() );
+
   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalToolProjectionRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_3DView->RequestResetCamera();
 }
