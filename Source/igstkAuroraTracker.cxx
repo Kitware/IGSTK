@@ -33,6 +33,10 @@ namespace igstk
 /** Constructor: Initializes all internal variables. */
 AuroraTracker::AuroraTracker(void):m_StateMachine(this)
 {
+  for ( unsigned int i=0; i< MAX_WIRED_PORT_NUMBER; i++)
+  {
+    m_HasSpliter[i] = 0;
+  }
 }
 
 /** Destructor */
@@ -56,9 +60,6 @@ AuroraTracker::ResultType AuroraTracker
   igstkLogMacro( DEBUG,
     "AuroraTracker::VerifyTrackerToolInformation called ...\n");
 
-  /** typedefs for the tool */
-  typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
-
   TrackerToolType * trackerToolNonConst = 
                     const_cast<TrackerToolType*>(trackerTool);
 
@@ -76,8 +77,7 @@ AuroraTracker::ResultType AuroraTracker
   CommandInterpreterType::Pointer commandInterpreter = 
     this->GetCommandInterpreter();
 
-  //Make several attempts to find uninitialized port
-  const unsigned int NUMBER_OF_ATTEMPTS = 256;
+
   
   // free ports that are waiting to be freed
   commandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
@@ -138,8 +138,7 @@ AuroraTracker::ResultType AuroraTracker
         {
         unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
 
-        const unsigned int NumberOfPorts = 4;
-        if (ndiport > 0 && ndiport <= NumberOfPorts)
+        if (ndiport > 0 && ndiport <= MAX_WIRED_PORT_NUMBER)
           {
           port = ndiport - 1;
           // check if the port number specified 
@@ -167,7 +166,11 @@ AuroraTracker::ResultType AuroraTracker
       }
   }
 
-  if( !foundTool )
+  // No new port handle found, we will exit with failure here
+  // But if we have found a spliter in previous operation, meaning there will
+  // be two tools attached to the same port, we should go ahead and use
+  // those port handle
+  if( !foundTool && !m_HasSpliter[auroraTrackerTool->GetPortNumber()])
   {
   igstkLogMacro(CRITICAL, 
     "Uninitialized port that corresponds to what is specified: "
@@ -210,17 +213,93 @@ AuroraTracker::ResultType AuroraTracker
       }
     }
 
-  // initialize the port 
-  commandInterpreter->PINIT(ph);
+  if ( !m_HasSpliter[auroraTrackerTool->GetPortNumber()] )
+  {  
+    // initialize the port 
+    commandInterpreter->PINIT(ph);
 
-  if (this->CheckError(commandInterpreter) == SUCCESS)
+    if (this->CheckError(commandInterpreter) == SUCCESS)
+      {
+      igstkLogMacro(INFO, "Port handle initialized successfully \n");
+      }
+    else
+      {
+      igstkLogMacro(CRITICAL, "Failure initializing the port \n ");
+      }
+  }
+  
+  // Search for port handle for the second channel, see if there is a spliter
+  int ph2;
+
+  // If it is a 5DOF tool and the port has not been initialized ()
+  if ( auroraTrackerTool->IsTrackerTool5DOF()  && !m_HasSpliter[auroraTrackerTool->GetPortNumber()] )
     {
-    igstkLogMacro(INFO, "Port handle initialized successfully \n");
-    }
-  else
+    // search for splits
+    commandInterpreter->PHSR( CommandInterpreterType::NDI_UNENABLED_HANDLES);
+    if (this->CheckError(commandInterpreter) == FAILURE)
+      {
+      igstkLogMacro( WARNING, 
+        "igstk::AuroraTracker::Error searching for channel splits \n");
+      return FAILURE;
+      }
+
+    unsigned int ntools = commandInterpreter->GetPHSRNumberOfHandles();
+    for( unsigned int toolNumber = 0; toolNumber < ntools; toolNumber++ )
     {
-    igstkLogMacro(CRITICAL, "Failure initializing the port \n ");
+      ph2 = commandInterpreter->GetPHSRHandle( toolNumber );
+      
+      if ( ph2 == ph )// skip ph (channel 0);
+      {
+        continue;
+      }
+      // Get port handle information
+      commandInterpreter->PHINF(ph2, CommandInterpreterType::NDI_PORT_LOCATION);
+
+      // get the physical port identifier
+      char location[512];
+      commandInterpreter->GetPHINFPortLocation(location);
+
+      // physical port number
+      unsigned int port = 0;
+
+      if (location[9] == '0') // wired tool
+      {
+        unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
+
+        if (ndiport > 0 && ndiport <= MAX_WIRED_PORT_NUMBER)
+        {
+          port = ndiport - 1;
+          // check if the port number is the same with ph
+          if ( port == auroraTrackerTool->GetPortNumber() )
+          {
+            // found two port handles on the same port
+            // There is a channel spliter 
+            igstkLogMacro( DEBUG, "Found channel split on port:" << port << "\n" );
+            m_HasSpliter[port]       = 1;
+            m_SpliterHandle[port][0] = ph;
+            m_SpliterHandle[port][1] = ph2;
+            // Use the channel as requested
+            if (auroraTrackerTool->GetChannelNumber() == 1)
+            {
+              ph = ph2;
+            }
+            break;
+          }
+        }
+      }      
     }
+
+    }
+    else
+    {
+      unsigned int port = auroraTrackerTool->GetPortNumber();
+      unsigned int channel = auroraTrackerTool->GetChannelNumber();
+      ph = m_SpliterHandle[port][channel];
+    }
+  
+  //////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////
 
   commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
@@ -270,8 +349,7 @@ AuroraTracker::ResultType AuroraTracker
     {
     unsigned int ndiport = (location[10]-'0')*10 + (location[11]-'0');
 
-    const unsigned int NumberOfPorts = 12;
-    if (ndiport > 0 && ndiport <= NumberOfPorts)
+    if (ndiport > 0 && ndiport <= MAX_PORT_NUMBER)
       {
       port = ndiport - 1;
       // Verify port number specified 
@@ -344,7 +422,31 @@ AuroraTracker::ValidateSpecifiedFrequency( double frequencyInHz )
   return SUCCESS;
 }
 
+AuroraTracker::ResultType 
+AuroraTracker::
+RemoveTrackerToolFromInternalDataContainers
+( const TrackerToolType * trackerTool ) 
+{
+  igstkLogMacro( DEBUG, 
+    "igstk::AuroraTracker::RemoveTrackerToolFromInternalDataContainers "
+    "called ...\n");
 
+  if ( trackerTool == NULL )
+  {
+    return FAILURE;
+  }
+
+  TrackerToolType * trackerToolNonConst = 
+                                  const_cast<TrackerToolType*>(trackerTool);
+
+  AuroraTrackerToolType * auroraTrackerTool = 
+            dynamic_cast< AuroraTrackerToolType * > ( trackerToolNonConst );   
+
+  
+ m_HasSpliter[auroraTrackerTool->GetPortNumber()] = 0;
+
+  return Superclass::RemoveTrackerToolFromInternalDataContainers( trackerTool);
+}
 /** Print Self function */
 void AuroraTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {

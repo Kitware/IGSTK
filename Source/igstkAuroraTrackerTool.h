@@ -86,6 +86,9 @@ public:
   /** Get tracker tool port number */
   igstkGetMacro( PortNumber, unsigned int );
 
+  /** Get tracker tool channel number */
+  igstkGetMacro( ChannelNumber, unsigned int );
+
   /** Get tracker tool part number */
   igstkGetStringMacro( PartNumber );
 

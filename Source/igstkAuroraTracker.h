@@ -40,12 +40,19 @@ namespace igstk
   *
   */
 
+const unsigned int MAX_PORT_NUMBER = 12;
+const unsigned int MAX_WIRED_PORT_NUMBER = 4;
+const unsigned int NUMBER_OF_ATTEMPTS = 256;
+
 class AuroraTracker : public NDITracker
 {
 public:
 
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( AuroraTracker, NDITracker )
+
+  /** typedefs for the tool */
+  typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
 
 protected:
 
@@ -63,10 +70,18 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
+  /** Remove tracker tool entry from internal containers */ 
+  virtual ResultType RemoveTrackerToolFromInternalDataContainers(
+                                  const TrackerToolType * trackerTool ); 
+
 private:
 
   AuroraTracker(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
+
+  // Keep track of initialized port with spliter
+  int                                     m_HasSpliter[MAX_WIRED_PORT_NUMBER];
+  int                               m_SpliterHandle[MAX_WIRED_PORT_NUMBER][2];
 };
 
 }
