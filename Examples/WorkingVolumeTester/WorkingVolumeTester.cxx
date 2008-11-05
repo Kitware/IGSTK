@@ -698,25 +698,6 @@ WorkingVolumeTester::ReportInvalidRequestProcessing()
   this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
-/** Method to be invoked on successful Starting Application */
-//void 
-//WorkingVolumeTester::ReportSuccessStartingApplicationProcessing()
-//{
-//  igstkLogMacro2( m_Logger, DEBUG, "igstk::WorkingVolumeTester::"
-//                 "ReportSuccessStartingApplicationProcessing called...\n");    
-//
-////  this->RequestConfigureTracker();
-//}
-
-/** Method to be invoked on failured Starting Application */
-//void 
-//WorkingVolumeTester::ReportFailuredStartingApplicationProcessing()
-//{
-//  igstkLogMacro2( m_Logger, DEBUG, "igstk::WorkingVolumeTester::"
-//                 "ReportFailuredStartingApplicationProcessing called...\n");
-//
-//}
-
 /** Method to be invoked on successful mesh loading */
 void 
 WorkingVolumeTester::ReportSuccessMeshLoadedProcessing()
@@ -793,13 +774,7 @@ WorkingVolumeTester::ReportSuccessStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::WorkingVolumeTester::"
                  "ReportSuccessStartTrackingProcessing called...\n")
-  
-//  m_RunStopButton->label("Stop");
-  //m_RunStopButton->deactivate();
-
-//  Fl::check();
 }
-
 
 /** Method to be invoked on failured tracker start */
 void 
@@ -807,8 +782,6 @@ WorkingVolumeTester::ReportFailureStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::WorkingVolumeTester::"
                  "ReportFailureStartTrackingProcessing called...\n")
-
-  Fl::check();
 }
 
 /** Method to be invoked on failured tracker stop */
@@ -825,10 +798,6 @@ WorkingVolumeTester::ReportSuccessStopTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::WorkingVolumeTester::"
                  "ReportSuccessStopTrackingProcessing called...\n")
-   
-//  m_RunStopButton->label("Run");
-
-  Fl::check();
 }
 
 /** -----------------------------------------------------------------
@@ -838,7 +807,6 @@ WorkingVolumeTester::ReportSuccessStopTrackingProcessing()
 void WorkingVolumeTester::BuildSceneGraph()
 {
   
- 
 }
 
 /** -----------------------------------------------------------------
@@ -1372,13 +1340,6 @@ WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object *caller,
     {
       m_Parent->m_ToolVector.push_back( (*iter).second );
     }
-      //toolContainer.find("needle");
-
-    /*if ( iter!=toolContainer.end() )
-    {      
-        m_Parent->m_PointerTool = (*iter).second;
-    }*/
-
   }
   else if ( evt4 )
   {
