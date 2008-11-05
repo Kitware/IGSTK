@@ -25,10 +25,18 @@
 #include "igstkTransformObserver.h"
 
 #include "igstkMicronTrackerConfiguration.h"
+#include "igstkAuroraTrackerConfiguration.h"
+#include "igstkPolarisTrackerConfiguration.h"
 
-#define TRACKER_DEFAULT_REFRESH_RATE 15
+#include "igstkAuroraConfigurationXMLFileReader.h"
+#include "igstkPolarisVicraConfigurationXMLFileReader.h"
+#include "igstkPolarisSpectraConfigurationXMLFileReader.h"
+#include "igstkPolarisHybridConfigurationXMLFileReader.h"
+#include "igstkMicronConfigurationXMLFileReader.h"
+
 #define VIEW_2D_REFRESH_RATE 30
 #define VIEW_3D_REFRESH_RATE 10
+//#define DRIVING_TOOL_NAME "sPtr"
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -228,7 +236,6 @@ Navigator::Navigator() :
   igstkAddInputMacro( Failure );
   igstkAddInputMacro( LoadImage );
   igstkAddInputMacro( ConfirmImagePatientName );
-  igstkAddInputMacro( LoadToolSpatialObject );
   igstkAddInputMacro( LoadTargetMesh );
   igstkAddInputMacro( StartSetImageFiducials );
   igstkAddInputMacro( SetPickingPosition );
@@ -257,9 +264,7 @@ Navigator::Navigator() :
   igstkAddTransitionMacro( Initial, ConfirmImagePatientName, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, LoadTargetMesh, 
-                           Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadToolSpatialObject, 
-                           Initial, ReportInvalidRequest );
+                           Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, StartSetImageFiducials, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, SetPickingPosition, 
@@ -295,8 +300,6 @@ Navigator::Navigator() :
  //complete table for state: LoadingImage State
 
   igstkAddTransitionMacro( LoadingImage, LoadImage, 
-                           LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, LoadToolSpatialObject, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, ConfirmImagePatientName, 
                            LoadingImage, ReportInvalidRequest );
@@ -339,8 +342,6 @@ Navigator::Navigator() :
 
   igstkAddTransitionMacro( ConfirmingImagePatientName, LoadImage, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadToolSpatialObject, 
-                           ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, ConfirmImagePatientName, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, LoadTargetMesh, 
@@ -372,8 +373,6 @@ Navigator::Navigator() :
 
   /** ImageReady State */
   
-  igstkAddTransitionMacro( ImageReady, LoadToolSpatialObject,
-                           LoadingSpatialObject, LoadToolSpatialObject );
   igstkAddTransitionMacro( ImageReady, LoadTargetMesh,
                            LoadingTargetMesh, LoadTargetMesh );
   igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
@@ -424,8 +423,6 @@ Navigator::Navigator() :
 
   igstkAddTransitionMacro( LoadingSpatialObject, LoadImage, 
                            LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, LoadToolSpatialObject,
-                           LoadingSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingSpatialObject, ConfirmImagePatientName, 
                            LoadingSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingSpatialObject, LoadTargetMesh,
@@ -466,8 +463,6 @@ Navigator::Navigator() :
   //complete table for state: LoadingTargetMesh
 
   igstkAddTransitionMacro( LoadingTargetMesh, LoadImage, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, LoadToolSpatialObject,
                            LoadingTargetMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTargetMesh, ConfirmImagePatientName, 
                            LoadingTargetMesh, ReportInvalidRequest );
@@ -518,8 +513,6 @@ Navigator::Navigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, ConfirmImagePatientName, 
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadToolSpatialObject, 
-                           SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, LoadTargetMesh, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials, 
@@ -555,8 +548,6 @@ Navigator::Navigator() :
   //complete table for state: ConfiguringTracker
 
   igstkAddTransitionMacro( ConfiguringTracker, LoadImage, 
-                           ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadToolSpatialObject, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, ConfirmImagePatientName, 
                            ConfiguringTracker, ReportInvalidRequest );
@@ -601,8 +592,6 @@ Navigator::Navigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadImage, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadToolSpatialObject, 
-                           TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, ConfirmImagePatientName, 
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadTargetMesh, 
@@ -643,8 +632,6 @@ Navigator::Navigator() :
   //complete table for state: InitializingTracker
 
   igstkAddTransitionMacro( InitializingTracker, LoadImage, 
-                           InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadToolSpatialObject, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, ConfirmImagePatientName, 
                            InitializingTracker, ReportInvalidRequest );
@@ -692,8 +679,6 @@ Navigator::Navigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, LoadImage, 
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadToolSpatialObject, 
-                           TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, ConfirmImagePatientName, 
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, LoadTargetMesh, 
@@ -735,8 +720,6 @@ Navigator::Navigator() :
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, LoadImage, 
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadToolSpatialObject, 
-                           SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, ConfirmImagePatientName, 
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, LoadTargetMesh, 
@@ -773,8 +756,6 @@ Navigator::Navigator() :
 
   //complete table for state: EndingSetTrackerFiducials
   igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadImage, 
-                           EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadToolSpatialObject, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfirmImagePatientName, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
@@ -820,8 +801,6 @@ Navigator::Navigator() :
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, LoadImage, 
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadToolSpatialObject, 
-                           TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, ConfirmImagePatientName, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, LoadTargetMesh, 
@@ -859,8 +838,6 @@ Navigator::Navigator() :
   //complete table for state: RegisteringTracker
 
   igstkAddTransitionMacro( RegisteringTracker, LoadImage, 
-                           RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, LoadToolSpatialObject, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, ConfirmImagePatientName, 
                            RegisteringTracker, ReportInvalidRequest );
@@ -902,8 +879,6 @@ Navigator::Navigator() :
   //complete table for state: RegisteringTracker
 
   igstkAddTransitionMacro( AcceptingRegistration, LoadImage, 
-                           AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, LoadToolSpatialObject, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, ConfirmImagePatientName, 
                            AcceptingRegistration, ReportInvalidRequest );
@@ -951,8 +926,6 @@ Navigator::Navigator() :
 
   igstkAddTransitionMacro( RegistrationReady, LoadImage, 
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, LoadToolSpatialObject, 
-                           RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, ConfirmImagePatientName, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, LoadTargetMesh, 
@@ -989,8 +962,6 @@ Navigator::Navigator() :
   //complete table for state: StartingTracker
 
   igstkAddTransitionMacro( StartingTracker, LoadImage, 
-                           StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadToolSpatialObject, 
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, ConfirmImagePatientName, 
                            StartingTracker, ReportInvalidRequest );
@@ -1037,8 +1008,6 @@ Navigator::Navigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, LoadImage, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadToolSpatialObject, 
-                           Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, ConfirmImagePatientName, 
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, LoadTargetMesh, 
@@ -1075,8 +1044,6 @@ Navigator::Navigator() :
   //complete table for state: StoppingTracker
 
   igstkAddTransitionMacro( StoppingTracker, LoadImage, 
-                           StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadToolSpatialObject, 
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, ConfirmImagePatientName, 
                            StoppingTracker, ReportInvalidRequest );
@@ -1118,8 +1085,6 @@ Navigator::Navigator() :
   //complete table for state: DisconnectingTracker
 
   igstkAddTransitionMacro( DisconnectingTracker, LoadImage, 
-                           DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadToolSpatialObject, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, ConfirmImagePatientName, 
                            DisconnectingTracker, ReportInvalidRequest );
@@ -1177,94 +1142,158 @@ void Navigator::ConfigureTrackerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "Navigator::ConfigureTrackerProcessing called...\n" )
-  
-  m_TrackerConfiguration = 
-    new igstk::MicronTrackerConfiguration();
+ 
+  const char*  fileName = 
+    fl_file_chooser("Select a tracker configuration file","*.xml", "auroraConfiguration.xml");
 
-  if ( itksys::SystemTools::FileExists("C:/Program Files/Claron Technology/MicronTracker/CalibrationFiles", false) )
-    m_TrackerConfiguration->SetCameraCalibrationFileDirectory( 
-      "C:/Program Files/Claron Technology/MicronTracker/CalibrationFiles" );
-  else if ( itksys::SystemTools::FileExists("D:/Archivos de programa/Claron Technology/MicronTracker/CalibrationFiles", false) )
-    m_TrackerConfiguration->SetCameraCalibrationFileDirectory( 
-      "D:/Archivos de programa/Claron Technology/MicronTracker/CalibrationFiles" );
-  else
+  if ( !fileName )
   {
-    igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker Could not find MicronTracker/CalibrationFiles \n" )
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return;
+      igstkLogMacro2( m_Logger, DEBUG, 
+             "Navigator::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
+      m_StateMachine.PushInput( m_FailureInput );
+      m_StateMachine.ProcessInputs();
+      return;
   }
 
-  if ( itksys::SystemTools::FileExists("C:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini", true) )
-    m_TrackerConfiguration->SetInitializationFile( 
-      "C:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini" );
-  else if ( itksys::SystemTools::FileExists("D:/Archivos de programa/Claron Technology/MicronTracker/MTDemoCPP.ini", true) )
-    m_TrackerConfiguration->SetInitializationFile( 
-      "D:/Archivos de programa/Claron Technology/MicronTracker/MTDemoCPP.ini" );
-  else
+  igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader = 
+    igstk::TrackerConfigurationFileReader::New();
+    //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+  trackerConfigReader->RequestSetFileName( fileName );
+
+  if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
   {
-    igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker Could not find MicronTracker/MTDemoCPP.ini \n" )
-    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.PushInput( m_SuccessInput );
     m_StateMachine.ProcessInputs();
-    return;
   }
-
- if ( itksys::SystemTools::FileExists("C:/Program Files/Claron Technology/MicronTracker/Markers", false) )
-    m_TrackerConfiguration->SetTemplatesDirectory( 
-      "C:/Program Files/Claron Technology/MicronTracker/Markers" ); 
- else if ( itksys::SystemTools::FileExists("D:/Archivos de programa/Claron Technology/MicronTracker/Markers", false) )
-    m_TrackerConfiguration->SetTemplatesDirectory( 
-      "D:/Archivos de programa/Claron Technology/MicronTracker/Markers" );
- else
- {
-    igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker Could not find MicronTracker/Markers \n" )
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return;
- }
-  
-  //set the tool parameters
-  igstk::MicronToolConfiguration toolConfig;
-
-  toolConfig.SetToolName( "sPtr" );
-  toolConfig.SetMarkerName( "sPtr" );
-  igstk::Transform* calibrationTransform =  
-    //this->ReadTransformFile( "claron_sptr_Calibration.xml" );
-    this->ReadTransformFile( "claron_sptrcyl_Calibration.xml" );    
-
-
-  if ( calibrationTransform != NULL )
+  else if ( this->ReadMicronConfiguration( trackerConfigReader ) )
   {
-    toolConfig.SetCalibrationTransform( *calibrationTransform ); 
+    m_StateMachine.PushInput( m_SuccessInput );
+    m_StateMachine.ProcessInputs();
   }
   else
   {
-    igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker calibration .xml file was not loaded...\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  } 
+}
+
+bool Navigator::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer trackerCofigurationXMLReader;
+  
+  trackerCofigurationXMLReader = igstk::MicronConfigurationXMLFileReader::New();
+
+  reader->RequestSetReader( trackerCofigurationXMLReader );  
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserver::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadMicronConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
   }
 
-  m_TrackerConfiguration->RequestAddTool( &toolConfig );
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadMicronConfiguration error: could not read MICRON tracker configuration file\n")
+     return false;
+  }
 
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker tool added...\n" )
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
   
-  //set the tool parameters
-  igstk::MicronToolConfiguration reftool;  
-  reftool.SetToolName( "abdomen" );
-  reftool.SetMarkerName( "abdomen" ); //reference
-  m_TrackerConfiguration->RequestAddReference( &reftool );
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadMicronConfiguration error: could not get MICRON tracker configuration\n")
+     return false;
+  }
 
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestConfigureTracker reference tool added...\n" )
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
 
-  m_TrackerConfiguration->RequestSetFrequency( TRACKER_DEFAULT_REFRESH_RATE );
+  return true;
+}
 
-  m_StateMachine.PushInput( m_SuccessInput );
-  m_StateMachine.ProcessInputs();
+bool Navigator::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
 
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::AuroraConfigurationXMLFileReader::New();
+
+  //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+ // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserver::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: could not read AURORA tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: could not get AURORA tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
 }
 
 void Navigator::RequestLoadImage()
@@ -1272,14 +1301,6 @@ void Navigator::RequestLoadImage()
   igstkLogMacro2( m_Logger, DEBUG, 
              "Navigator::RequestLoadImage called...\n" )
   m_StateMachine.PushInput( m_LoadImageInput );
-  m_StateMachine.ProcessInputs();
-}
-
-void Navigator::RequestLoadToolSpatialObject()
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestLoadToolSpatialObject called...\n" )
-  m_StateMachine.PushInput( m_LoadToolSpatialObjectInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1978,15 +1999,10 @@ void Navigator::RequestAcceptImageLoad()
   m_StateMachine.ProcessInputs();
 }
 
-/** -----------------------------------------------------------------
-* Load a spatial object for the principal tool. This method asks for a .msh file 
-* with the ITK spatial object representation of the principal tool.
-*  -----------------------------------------------------------------
-*/
-void Navigator::LoadToolSpatialObjectProcessing()
+void Navigator::BuildToolSpatialObject()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                "Navigator::LoadToolSpatialObjectProcessing called...\n" )
+                "Navigator::BuildToolSpatialObject called...\n" )
 
   // build a tool spatial object using a cylinder spatial object
   m_ToolSpatialObject = CylinderType::New();  
@@ -1998,8 +2014,6 @@ void Navigator::LoadToolSpatialObjectProcessing()
   m_ToolRepresentation->SetOpacity(1.0);
   m_ToolRepresentation->SetColor(1,0,0);
   
-  m_StateMachine.PushInput( m_SuccessInput );
-  m_StateMachine.ProcessInputs();  
 }
 
 /** -----------------------------------------------------------------
@@ -2238,18 +2252,16 @@ void Navigator::InitializeTrackerProcessing()
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
+  this->BuildToolSpatialObject();
+
   m_ToolSpatialObject->RequestDetachFromParent();
-  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool);  
+  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
 
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
   { 
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
-  /*else
-  {
-    m_Tracker->RequestSetTransformAndParent(identity, m_WorldReference);
-  }  */
 
   if (!m_TrackerConfiguration)
   {
@@ -2282,21 +2294,6 @@ void Navigator::InitializeTrackerProcessing()
 
   // notify the GUI that the system is tracking
   m_TrackingSemaphore->color(FL_YELLOW);
-
-//  m_TrackerTool->AddObserver(
-//      igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
-
-  m_TrackerTool->AddObserver(
-      igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_TrackerToolNotAvailableObserver);
- 
-  m_TrackerTool->AddObserver(
-      igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_TrackerToolAvailableObserver);
-
-  m_ReferenceTool->AddObserver(
-      igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_ReferenceNotAvailableObserver);
- 
-  m_ReferenceTool->AddObserver(
-      igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_ReferenceAvailableObserver);
   
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
@@ -2330,6 +2327,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
  
   if ( m_ReferenceTool.IsNotNull() )
   {
+    m_ReferenceTool->RequestDetachFromParent();
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
 
@@ -2470,10 +2468,9 @@ void Navigator::TrackerRegistrationProcessing()
     }
 
     // set new transformation
-
     m_RegistrationTransform = lrtcb->GetTransform();
     
-    if (m_ReferenceTool.IsNotNull())
+    if ( m_ReferenceTool.IsNotNull() )
     {
       m_ReferenceTool->RequestDetachFromParent();
       m_ReferenceTool->RequestSetTransformAndParent(m_RegistrationTransform, m_WorldReference);
@@ -3353,7 +3350,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
    const igstk::TrackerController::RequestToolsEvent *evt3 = 
     dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
 
-  const igstk::TrackerController::RequestToolEvent *evt4 = 
+   const igstk::TrackerController::RequestToolEvent *evt4 = 
     dynamic_cast< const igstk::TrackerController::RequestToolEvent * > (&event);
 
   if( evt1a ) 
@@ -3383,6 +3380,37 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     if ( iter!=toolContainer.end() )
     {      
         m_Parent->m_TrackerTool = (*iter).second;
+
+        m_Parent->m_TrackerTool->AddObserver(
+         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
+   
+        m_Parent->m_TrackerTool->AddObserver(
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
+    }
+  }
+  else if ( evt4 )
+  {
+    igstk::TrackerController::ToolEntryType entry = evt4->Get();
+    if ( entry.first == "reference" )
+    {
+        m_Parent->m_ReferenceTool = entry.second;
+
+        m_Parent->m_ReferenceTool->AddObserver(
+            igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ReferenceNotAvailableObserver);
+
+        m_Parent->m_ReferenceTool->AddObserver(
+            igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ReferenceAvailableObserver);
+    }
+  }
+  /*
+  else if ( evt3 )
+  {
+    igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
+    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find("sPtr");
+
+    if ( iter!=toolContainer.end() )
+    {      
+        m_Parent->m_TrackerTool = (*iter).second;
     }
   }
   else if ( evt4 )
@@ -3391,6 +3419,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
       if ( entry.first == "reference" )
         m_Parent->m_ReferenceTool = entry.second;
   }
+  */
 }
 
 void 

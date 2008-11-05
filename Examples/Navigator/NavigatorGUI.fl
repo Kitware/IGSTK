@@ -6,7 +6,7 @@ decl {\#include <FL/fl_ask.H>} {}
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class NavigatorGUI {open : {public igstk::Object}
+class NavigatorGUI {open selected : {public igstk::Object}
 } {
   Function {NavigatorGUI()} {open
   } {
@@ -46,7 +46,7 @@ class NavigatorGUI {open : {public igstk::Object}
         }
         Fl_Choice m_ViewModeList {
           label {Viewing Mode}
-          callback {RequestChangeSelectedViewMode();} open selected
+          callback {RequestChangeSelectedViewMode();} open
           xywh {10 676 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
         } {
           MenuItem {} {
@@ -92,8 +92,7 @@ RequestToggleSetImageFiducials();}
         }
         Fl_Button {} {
           label {Configure Tracker}
-          callback {RequestLoadToolSpatialObject();
-//RequestConfigureTracker();}
+          callback {RequestConfigureTracker();}
           tooltip {Configue tracker system} xywh {10 336 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_ModifyTrackerFiducialsBtn {
@@ -235,8 +234,6 @@ this->RequestRejectRegistration();}
   } {}
   Function {RequestToggleSetImageFiducials()} {return_type {virtual void}
   } {}
-  Function {RequestConfigureTracker()} {return_type {virtual void}
-  } {}
   Function {RequestResetCameraToImageBounds()} {return_type {virtual void}
   } {}
   Function {RequestCancelImageLoad()} {return_type {virtual void}
@@ -245,7 +242,7 @@ this->RequestRejectRegistration();}
   } {}
   Function {RequestPrepareToQuit()} {return_type {virtual void}
   } {}
-  Function {RequestLoadToolSpatialObject()} {return_type {virtual void}
+  Function {RequestConfigureTracker()} {return_type {virtual void}
   } {}
   Function {RequestConfirmToProceed()} {return_type {virtual void}
   } {}
