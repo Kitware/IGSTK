@@ -1672,7 +1672,7 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   m_ToolProjection = igstk::ToolProjectionObject::New();
-  m_ToolProjection->SetSize(100);
+  m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
 
   m_AxialToolProjectionRepresentation = ToolProjectionRepresentationType::New();
