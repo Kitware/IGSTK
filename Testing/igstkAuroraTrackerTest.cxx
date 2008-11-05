@@ -216,6 +216,7 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
 
   // instantiate aurora tracker tool
   AuroraTrackerToolType::Pointer auroraTrackerTool = AuroraTrackerToolType::New();
+  auroraTrackerTool->AddObserver( itk::AnyEvent(), my_command);
 
   //we use a 5 DOF sensor
   auroraTrackerTool->RequestSelect5DOFTrackerTool();
@@ -233,30 +234,228 @@ int igstkAuroraTrackerTest( int argc, char * argv[] )
   //Attach to the tracker
   auroraTrackerTool->RequestAttachToTracker( tracker );
 
+  //////////////////////////////////////////////////////////////////////////
+  // instantiate another aurora tracker tool
+  AuroraTrackerToolType::Pointer auroraTrackerTool2 = AuroraTrackerToolType::New();
+  auroraTrackerTool2->AddObserver( itk::AnyEvent(), my_command);
+  auroraTrackerTool2->RequestSelect5DOFTrackerTool();
+  auroraTrackerTool2->RequestSetPortNumber( portNumber );
+  auroraTrackerTool2->RequestSetChannelNumber( 1 );
+  auroraTrackerTool2->RequestConfigure();
+  
+  auroraTrackerTool2->RequestAttachToTracker( tracker );
+  //////////////////////////////////////////////////////////////////////////
+
   //start tracking 
   tracker->RequestStartTracking();
+
 
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  trackerTool = auroraTrackerTool;
+  //////////////////////////////////////////////////////////////////////////
+  typedef igstk::TransformObserver      ObserverType;
+  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+  coordSystemAObserver->ObserveTransformEventsFrom( auroraTrackerTool );
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  coordSystemAObserver2->ObserveTransformEventsFrom( auroraTrackerTool2 );
 
-  bool stop = false;
-  // create an observer for the TrackerToolTransformUpdateEvent
-  ToolUpdatedObserver::Pointer toolUpdateObserver = ToolUpdatedObserver::New();
-  toolUpdateObserver->Initialize(trackerTool, &stop);
-
-  // add the observer to the tracker tool
-  trackerTool->AddObserver( igstk::TrackerToolTransformUpdateEvent(), toolUpdateObserver );
-
-  while (!stop)
+  for(unsigned int i=0; i<100; i++)
   {
-    // this indeed is not an infinite loop. The stop variable will be set to true by the 
-    // observer upon completed the number of iterations (m_NumberOfIterations)
-    igstk::PulseGenerator::Sleep(10);
     igstk::PulseGenerator::CheckTimeouts();
+
+    TransformType             transform;
+    VectorType                position;
+
+    coordSystemAObserver->Clear();
+    auroraTrackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+    {
+      transform = coordSystemAObserver->GetTransform();
+      if ( transform.IsValidNow() ) 
+      {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool :" 
+          << auroraTrackerTool->GetTrackerToolIdentifier() 
+          << "\t\t  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+      }
+      else
+      {
+        std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+      }
+    }
+
+    coordSystemAObserver2->Clear();
+    auroraTrackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+    {
+      transform = coordSystemAObserver2->GetTransform();
+      if ( transform.IsValidNow() ) 
+      {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool2:" 
+          << auroraTrackerTool2->GetTrackerToolIdentifier() 
+          << "\t\t  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+      }
+      else
+      {
+        std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+      }
+    }
+
   }
+
+  //////////////////////////////////////////////////////////////////////////
+
+  std::cout << "RequestStopTracking()" << std::endl;
+   tracker->RequestStopTracking();
+ 
+   //Remove one of the tracker tools and restart tracking
+   std::cout << "Detach the tracker tool1 from the tracker" << std::endl;
+   auroraTrackerTool->RequestDetachFromTracker( );
+   
+   // restart tracking 
+   tracker->RequestStartTracking();
+ 
+   for(unsigned int i=0; i<100; i++)
+   {
+     igstk::PulseGenerator::CheckTimeouts();
+ 
+     TransformType             transform;
+     VectorType                position;
+ 
+     coordSystemAObserver2->Clear();
+     auroraTrackerTool2->RequestGetTransformToParent();
+     if (coordSystemAObserver2->GotTransform())
+     {
+       transform = coordSystemAObserver2->GetTransform();
+       if ( transform.IsValidNow() ) 
+       {
+         position = transform.GetTranslation();
+         std::cout << "Trackertool2:" 
+           << auroraTrackerTool2->GetTrackerToolIdentifier() 
+           << "\t\t  Position = (" << position[0]
+         << "," << position[1] << "," << position[2]
+         << ")" << std::endl;
+       }
+       else
+       {
+         std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+       }
+     }
+     
+   }
+ 
+
+  //////////////////////////////////////////////////////////////////////////
+
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  //Remove tracker tool2, reattach tool1 back, and restart tracking
+  std::cout << "Detach the tracker tool2 from the tracker" << std::endl;
+  auroraTrackerTool2->RequestDetachFromTracker( );
+  std::cout << "Attach tracker tool1 to the tracker" << std::endl;
+  auroraTrackerTool->RequestAttachToTracker( tracker );
+  
+  // restart tracking
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<100; i++)
+  {
+    igstk::PulseGenerator::CheckTimeouts();
+
+    TransformType             transform;
+    VectorType                position;
+
+    coordSystemAObserver->Clear();
+    auroraTrackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+    {
+      transform = coordSystemAObserver->GetTransform();
+      if ( transform.IsValidNow() ) 
+      {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool1:" 
+          << auroraTrackerTool->GetTrackerToolIdentifier() 
+          << "\t\t  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+      }
+      else
+      {
+        std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+      }
+    }
+    
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+
+  std::cout << "RequestStopTracking()" << std::endl;
+  tracker->RequestStopTracking();
+
+  //Reattach tool2 and restart tracking
+  std::cout << "Attach tracker tool2 to the tracker" << std::endl;
+  auroraTrackerTool2->RequestAttachToTracker( tracker );
+
+  // restart tracking
+  tracker->RequestStartTracking();
+
+  for(unsigned int i=0; i<100; i++)
+  {
+    igstk::PulseGenerator::CheckTimeouts();
+
+    TransformType             transform;
+    VectorType                position;
+
+    coordSystemAObserver->Clear();
+    auroraTrackerTool->RequestGetTransformToParent();
+    if (coordSystemAObserver->GotTransform())
+    {
+      transform = coordSystemAObserver->GetTransform();
+      if ( transform.IsValidNow() ) 
+      {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool :" 
+          << auroraTrackerTool->GetTrackerToolIdentifier() 
+          << "\t\t  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+      }
+      else
+      {
+        std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+      }
+    }
+
+    coordSystemAObserver2->Clear();
+    auroraTrackerTool2->RequestGetTransformToParent();
+    if (coordSystemAObserver2->GotTransform())
+    {
+      transform = coordSystemAObserver2->GetTransform();
+      if ( transform.IsValidNow() ) 
+      {
+        position = transform.GetTranslation();
+        std::cout << "Trackertool2:" 
+          << auroraTrackerTool2->GetTrackerToolIdentifier() 
+          << "\t\t  Position = (" << position[0]
+        << "," << position[1] << "," << position[2]
+        << ")" << std::endl;
+      }
+      else
+      {
+        std::cout << "Invalid transform! make sure tool is within tracking volume\n";
+      }
+    }
+
+  }
+  //////////////////////////////////////////////////////////////////////////
 
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
