@@ -3454,7 +3454,7 @@ Navigator
   this->RequestDisconnectTracker();
 }
 
-
+/*
 igstk::Transform *
 Navigator::
 ReadTransformFile( const std::string &calibrationFileName )
@@ -3524,8 +3524,8 @@ ReadTransformFile( const std::string &calibrationFileName )
       std::cout << descriptionObserver->GetTransformationDescription();
       std::cout << " ("<<dateObserver->GetTransformationDate() << ").\n";
       std::cout << "Estimation error: "<<transformErrorObserver->GetTransformError() << "\n";
-      /*std::cout<<"Use this data [n,y]: ";
-      std::cin>>response;*/
+      //std::cout<<"Use this data [n,y]: ";
+      //std::cin>>response;
             //set the tool's calibration transform
       //if(response == 'y' || response=='Y') 
      // {
@@ -3552,4 +3552,5 @@ ReadTransformFile( const std::string &calibrationFileName )
   }
   else return NULL;
 }
+*/
 

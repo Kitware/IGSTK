@@ -71,7 +71,6 @@
 #include "igstkTrackerConfigurationFileReader.h"
 #include "igstkTrackerConfigurationXMLFileReaderBase.h"
 
-#include <time.h>
 
 /** \class Navigator
 * 
