@@ -546,12 +546,6 @@ private:
     void operator=(const Self&); 
   };
 
-  enum {NUM_TRACKER_TYPES = 5};
-
-  //these enumerations must match the list entries in the GUI from 
-  //which this class inherits
-  enum {POLARIS_VICRA = 0, POLARIS_HYBRID = 1, AURORA = 2, MICRON = 3, FLOCK_OF_BIRDS = 4};
-
   igstk::TrackerController::Pointer                     m_TrackerController;
   TrackerControllerObserver::Pointer                    m_TrackerControllerObserver;
 
@@ -701,7 +695,9 @@ private:
 
   bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-
+  bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
 
   void HandleKeyPressed ( igstk::NavigatorQuadrantViews::KeyboardCommandType keyCommand );
   void HandleMousePressed ( igstk::NavigatorQuadrantViews::MouseCommandType mouseCommand );
