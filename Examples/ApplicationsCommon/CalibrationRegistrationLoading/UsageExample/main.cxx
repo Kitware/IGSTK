@@ -33,7 +33,7 @@ public:
     if( ( rfe = 
       dynamic_cast<const igstk::TransformFileReader::ReadFailureEvent *>
       ( &event ) ) ) 
-      std::cerr<<rfe->Get()<<"\n";
+      std::cerr<<"Failed reading: "<<rfe->Get()<<"\n";
     else if( dynamic_cast<const igstk::TransformFileReader::ReadSuccessEvent *>
       ( &event ) )
       ( static_cast<igstk::TransformFileReader *>( caller ) )->RequestGetData();
@@ -71,78 +71,41 @@ igstkObserverMacro( TransformationDate,
                     igstk::PrecomputedTransformData::TransformDateTypeEvent, 
                     std::string )
 
-class TransformRequestObserver : public ::itk::Command 
-{ 
-public: 
-  typedef  TransformRequestObserver             Self; 
-  typedef  ::itk::Command             Superclass;
-  typedef  ::itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-protected:
-  TransformRequestObserver() : m_GotObject( false ) {}
-  ~TransformRequestObserver() {}
-public:
-  void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
-    const itk::Object * constCaller = caller;
-    this->Execute( constCaller, event );
-  }
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
-    m_GotObject = false;
-    if( igstk::PrecomputedTransformData::TransformTypeEvent().CheckEvent( &event ) )
-    {
-      const igstk::PrecomputedTransformData::TransformTypeEvent * objectEvent = 
-        dynamic_cast< const igstk::PrecomputedTransformData::TransformTypeEvent *>( &event );
-      if( objectEvent )
-      {
-        m_Object = objectEvent->Get();
-        m_GotObject = true;
-      }
-    }
-  }
-  bool GotTransformRequest() const
-  {
-    return m_GotObject;
-  }
-  void Reset() 
-  {
-    m_GotObject = false; 
-  }
-  const igstk::PrecomputedTransformData::TransformType * GetTransformRequest() 
-    const
-  {
-    return m_Object;
-  }
-private:
-  const igstk::PrecomputedTransformData::TransformType *   m_Object;
-  bool m_GotObject;
-};
+typedef igstk::PrecomputedTransformData::TransformType *  TransformTypePointer;
 
-
+igstkObserverMacro( TransformRequest, 
+                    igstk::PrecomputedTransformData::TransformTypeEvent, 
+                    TransformTypePointer )
 
 igstkObserverMacro( TransformError, 
                     igstk::PrecomputedTransformData::TransformErrorTypeEvent, 
                     igstk::PrecomputedTransformData::ErrorType )
 
 /**
- * This program recieves an xml file containing a precomputed rigid 
+ * This program recieves an xml file containing a precomputed
  * transformation, reads it, presents the user with the general information 
  * about the transformation (when computed and estimation error). The user is
  * then asked if to use the transformation or not. If the answer is yes, the
  * program prints the transformation and exits, otherwise it just exits.
  *
- * To load other types of transformations change 
- * the instantiation of igstk::RigidTransformXMLFileReader to 
- * igstk::PerspectiveTransformXMLFileReader or 
- * igstk::AffineTransformXMLFileReader.
  */
 int main(int argc, char *argv[])
 {
-  if( argc!= 2 )
+  const unsigned int NUM_TRANSFORM_TYPES = 3;
+  std::string transformTypes[NUM_TRANSFORM_TYPES]; 
+  enum { RIGID_TRANSFORM, AFFINE_TRANSFORM, PERSPECTIVE_TRANSFORM };
+  transformTypes[RIGID_TRANSFORM] = "rigid";
+  transformTypes[AFFINE_TRANSFORM] = "affine";
+  transformTypes[PERSPECTIVE_TRANSFORM] = "perspective";
+
+  if( argc!= 3 )
   {
     std::cerr<<"Wrong number of arguments.\n";
-    std::cerr<<"Usage: "<<argv[0]<<" transformation_data_file_name\n";
+    std::cerr<<"Usage: "<<argv[0]<<" transformation_type ";
+    std::cerr<<"transformation_data_file_name\n";
+    std::cerr<<"Transformation types:\n";
+    for( unsigned int i=0; i<NUM_TRANSFORM_TYPES; i++ )
+      std::cerr<<"\t"<<i<<" == "<<transformTypes[i]<<"\n";
     return EXIT_FAILURE;
   }
 
@@ -152,10 +115,29 @@ int main(int argc, char *argv[])
     igstk::TransformFileReader::New();
                   //set our reader to read a rigid transformation from the 
                   //given file
-  igstk::TransformXMLFileReaderBase::Pointer xmlFileReader = 
-    igstk::RigidTransformXMLFileReader::New();
+  igstk::TransformXMLFileReaderBase::Pointer xmlFileReader;
+       //assumes the second argument is an integer, not checking for junk input
+  switch( atoi( argv[1] ) )
+  {
+  case RIGID_TRANSFORM:
+    xmlFileReader = igstk::RigidTransformXMLFileReader::New();
+    break;
+  case AFFINE_TRANSFORM:
+    xmlFileReader = igstk::AffineTransformXMLFileReader::New();
+    break;
+  case PERSPECTIVE_TRANSFORM:
+    xmlFileReader = igstk::PerspectiveTransformXMLFileReader::New();
+    break;
+  default:
+    std::cerr<<"Given transfromation type ("<<argv[1]<<") is invalid.\n";
+    std::cerr<<"Transformation types:\n";
+    for( unsigned int i=0; i<NUM_TRANSFORM_TYPES; i++ )
+      std::cerr<<"\t"<<i<<" == "<<transformTypes[i]<<"\n";
+    return EXIT_FAILURE;
+  }
+
   transformFileReader->RequestSetReader( xmlFileReader );
-  transformFileReader->RequestSetFileName( argv[1] );
+  transformFileReader->RequestSetFileName( argv[2] );
 
             //observer for the read success and failure events
   ReadObserver::Pointer readObserver = ReadObserver::New();
