@@ -464,10 +464,9 @@ private:
 
   bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  //todo
-  //bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  //bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  //bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
 
   void BuildSceneGraph();
 

@@ -464,6 +464,70 @@ WorkingVolumeTester::~WorkingVolumeTester()
 
 }
 
+bool WorkingVolumeTester::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "WorkingVolumeTester::ReadPolarisVicraConfiguration called...\n" )
+
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::PolarisVicraConfigurationXMLFileReader::New();
+
+  //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+ // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserver::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: could not read Polaris Vicra tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: could not get Polaris Vicra tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
+}
+
 bool WorkingVolumeTester::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
 {
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer trackerCofigurationXMLReader;
@@ -606,20 +670,22 @@ void WorkingVolumeTester::ConfigureTrackerProcessing()
 
   if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
   {
-    m_StateMachine.PushInput( m_SuccessInput );
-    m_StateMachine.ProcessInputs();
+    m_StateMachine.PushInput( m_SuccessInput );    
   }
   else if ( this->ReadMicronConfiguration( trackerConfigReader ) )
   {
     m_StateMachine.PushInput( m_SuccessInput );
-    m_StateMachine.ProcessInputs();
+  }
+  else if ( this->ReadPolarisVicraConfiguration( trackerConfigReader ) )
+  {
+    m_StateMachine.PushInput( m_SuccessInput );
   }
   else
   {
     m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return;
   } 
+
+  m_StateMachine.ProcessInputs();
 }
 
 void WorkingVolumeTester::RequestLoadTrackerMesh()
@@ -873,7 +939,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
     m_AxialPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
     m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create reslice plane spatial object for sagittal view
@@ -1339,6 +1405,7 @@ WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object *caller,
     for ( ; iter != toolContainer.end(); iter++ )
     {
       m_Parent->m_ToolVector.push_back( (*iter).second );
+      std::cout << "WorkingVolumeTester::TrackerControllerObserver::Execute() found tool: " << (*iter).first << std::endl;
     }
   }
   else if ( evt4 )
@@ -1357,103 +1424,4 @@ WorkingVolumeTester
   this->RequestDisconnectTracker();
 }
 
-/*
-igstk::Transform *
-WorkingVolumeTester::
-ReadTransformFile( const std::string &calibrationFileName )
-{
-  igstk::PrecomputedTransformData::Pointer transformData;
-                                  //our reader
-  igstk::TransformFileReader::Pointer transformFileReader = 
-    igstk::TransformFileReader::New();
-                  //set our reader to read a rigid transformation from the 
-                  //given file
-  igstk::TransformXMLFileReaderBase::Pointer xmlFileReader = 
-    igstk::RigidTransformXMLFileReader::New();
-  transformFileReader->RequestSetReader( xmlFileReader );
-  transformFileReader->RequestSetFileName( calibrationFileName );
-
-            //observer for the read success and failure events
-  ReadObserver::Pointer readObserver = ReadObserver::New();
-            //observer for the get data event (initiated by the readObserver)
-  TransformDataObserver::Pointer getDataObserver = TransformDataObserver::New();
-                       
-            //add our observers     
-  transformFileReader->AddObserver( igstk::TransformFileReader::ReadFailureEvent(),
-                                    readObserver );
-  transformFileReader->AddObserver( igstk::TransformFileReader::ReadSuccessEvent(),
-                                    readObserver );
-  transformFileReader->AddObserver( igstk::TransformFileReader::TransformDataEvent(),
-                                    getDataObserver );
-
-                //request read. if it fails the readObserver will print the 
-                //error, otherwise it will request to get the transform data                 
-  transformFileReader->RequestRead();
-               //if the read succeeded it invoked a request data, so check if
-               //we got the data
-  if( getDataObserver->GotTransformData() ) 
-  {
-    transformData = getDataObserver->GetTransformData();
-                           //attach all observers to the transformation data
-                           //object
-    TransformationDescriptionObserver::Pointer descriptionObserver = 
-      TransformationDescriptionObserver::New();
-    transformData->AddObserver( igstk::StringEvent(), 
-                                descriptionObserver );
-
-    TransformationDateObserver::Pointer dateObserver = 
-      TransformationDateObserver::New();
-    transformData->AddObserver( igstk::PrecomputedTransformData::TransformDateTypeEvent(), 
-                                dateObserver );
-      
-    TransformRequestObserver ::Pointer transformObserver = 
-      TransformRequestObserver ::New();
-    transformData->AddObserver( igstk::PrecomputedTransformData::TransformTypeEvent(), 
-                                transformObserver );
-
-    TransformErrorObserver::Pointer transformErrorObserver = 
-      TransformErrorObserver::New();
-    transformData->AddObserver( igstk::PrecomputedTransformData::TransformErrorTypeEvent(), 
-                                transformErrorObserver );
-                           //request all the info
-    transformData->RequestTransformDescription();
-    transformData->RequestComputationDateAndTime();
-    transformData->RequestEstimationError();     
-    if( descriptionObserver->GotTransformationDescription() &&
-        dateObserver->GotTransformationDate() &&
-        transformErrorObserver->GotTransformError() )
-    {
-//      char response;
-      std::cout << descriptionObserver->GetTransformationDescription();
-      std::cout << " ("<<dateObserver->GetTransformationDate() << ").\n";
-      std::cout << "Estimation error: "<<transformErrorObserver->GetTransformError() << "\n";
-      /*std::cout<<"Use this data [n,y]: ";
-      std::cin>>response;*/
-            //set the tool's calibration transform
-      //if(response == 'y' || response=='Y') 
-     // {
-/*
-        transformData->RequestTransform();
-        //if( transformObserver->GotTransform() )
-       // {
-        igstk::Transform* rigidTransform = dynamic_cast< igstk::Transform* >
-          (transformObserver->GetTransformRequest());
-        
-        if (!rigidTransform)
-          return NULL;
-         
-        igstk::Transform *result = new igstk::Transform();         
-
-        result->SetTranslationAndRotation( rigidTransform->GetTranslation(),
-                                             rigidTransform->GetRotation(),
-                                             transformErrorObserver->GetTransformError(),
-                                             igstk::TimeStamp::GetLongestPossibleTime() );
-
-        return result;
-    }
-    else return NULL;
-  }
-  else return NULL;
-}
-*/
 
