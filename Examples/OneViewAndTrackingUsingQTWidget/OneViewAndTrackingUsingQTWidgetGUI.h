@@ -72,6 +72,7 @@ private:
   std::ofstream           m_LogFile;
 
   bool                    m_GUIQuit;
+  igstk::SpatialObject::Pointer  m_ObjectToTrack;
 
   typedef itk::ReceptorMemberCommand < 
                 OneViewAndTrackingUsingQTWidgetGUI > ObserverType;

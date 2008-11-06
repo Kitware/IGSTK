@@ -119,6 +119,10 @@ void OneViewAndTrackingUsingQTWidgetGUI::OnTrackingAction( int state )
     {
     m_Tracking = true;
     m_Tracker->RequestStartTracking();
+
+    igstk::Transform transform;
+    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    m_ObjectToTrack->RequestSetTransformAndParent( transform, m_Tool );
     }
   else
     {
@@ -147,7 +151,8 @@ AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
 {
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  objectToTrack->RequestSetTransformAndParent( transform, m_Tool );
+  m_ObjectToTrack = objectToTrack;
+  m_ObjectToTrack->RequestSetTransformAndParent( transform, m_Tracker );
 }
 
 bool OneViewAndTrackingUsingQTWidgetGUI::HasQuitted( )
