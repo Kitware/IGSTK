@@ -37,7 +37,7 @@
 #define VIEW_2D_REFRESH_RATE 15
 #define VIEW_3D_REFRESH_RATE 10
 // set here the name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "bayonet" //sPtr // bayonet
+#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet
 
 /** ---------------------------------------------------------------
 *     Constructor
@@ -1796,13 +1796,13 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
 
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
+ // m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalToolProjectionRepresentation );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalToolProjectionRepresentation->Copy() );
+ // m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalToolProjectionRepresentation );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
+ // m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_3DView->RequestResetCamera();
 }
@@ -2188,9 +2188,9 @@ void Navigator::LoadTargetMeshProcessing()
    m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);     
 
    // add repressentations to the views
-   m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-   m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-   m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
+   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
 
    m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
    m_ViewerGroup->m_3DView->RequestResetCamera();
