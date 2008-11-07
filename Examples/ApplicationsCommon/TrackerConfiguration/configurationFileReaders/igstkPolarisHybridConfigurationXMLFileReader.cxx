@@ -119,7 +119,7 @@ PolarisHybridConfigurationXMLFileReader::ProcessToolData()
   {
     igstk::PolarisWiredToolConfiguration *wiredToolConfig = 
       new igstk::PolarisWiredToolConfiguration();
-    wiredToolConfig->SetPortNumber( this->m_HaveCurrentControlBoxPort );
+    wiredToolConfig->SetPortNumber( this->m_CurrentControlBoxPort );
                        //srom is optional
     if( !this->m_CurrentSromFileName.empty() )
       wiredToolConfig->SetSROMFile( this->m_CurrentSromFileName );      
