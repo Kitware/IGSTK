@@ -37,7 +37,8 @@
 #define VIEW_2D_REFRESH_RATE 15
 #define VIEW_3D_REFRESH_RATE 10
 // set here the name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet
+#define DRIVING_TOOL_NAME "hybrid_pointer" //sPtr // bayonet
+#define REFERENCE_NAME "reference"
 
 /** ---------------------------------------------------------------
 *     Constructor
@@ -1174,6 +1175,14 @@ void Navigator::ConfigureTrackerProcessing()
   {
     m_StateMachine.PushInput( m_SuccessInput );
   }
+  else if ( this->ReadPolarisSpectraConfiguration( trackerConfigReader ) )
+  {
+    m_StateMachine.PushInput( m_SuccessInput );
+  }
+  else if ( this->ReadPolarisHybridConfiguration( trackerConfigReader ) )
+  {
+    m_StateMachine.PushInput( m_SuccessInput );
+  }
   else
   {
     std::string errorMessage;
@@ -1312,8 +1321,7 @@ bool Navigator::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileRea
 
 bool Navigator::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
 {
-
-    igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG, 
              "Navigator::ReadAuroraConfiguration called...\n" )
 
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
@@ -1366,6 +1374,132 @@ bool Navigator::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::P
   {
      igstkLogMacro2( m_Logger, DEBUG, 
         "Navigator::ReadAuroraConfiguration error: could not get AURORA tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
+}
+
+bool Navigator::ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "Navigator::ReadPolarisHybridConfiguration called...\n" )
+
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::PolarisHybridConfigurationXMLFileReader::New();
+
+  //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+ // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserver::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadPolarisHybridConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadPolarisHybridConfiguration error: could not read Polaris Hybrid tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: could not get Polaris Hybrid tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
+}
+
+bool Navigator::ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "Navigator::ReadPolarisSpectraConfiguration called...\n" )
+
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::PolarisSpectraConfigurationXMLFileReader::New();
+
+  // setting the file name and reader always succeeds so I don't
+  // observe the trackerConfigReader for their success events
+  // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+  // need to observe if the request read succeeds or fails
+  // there is a third option that the read is invalid, if the
+  // file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserver::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: could not read Polaris Spectra tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "Navigator::ReadAuroraConfiguration error: could not get Polaris Spectra tracker configuration\n")
      return false;
   }
 
@@ -3270,9 +3404,9 @@ void Navigator::EnableOrthogonalPlanes()
     igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::EnableOrthogonalPlanes called...\n" )
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation );
 
 }
 
@@ -3281,9 +3415,9 @@ void Navigator::DisableOrthogonalPlanes()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::DisableOrthogonalPlanes called...\n" )
 
-  m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation );
 
 }
 
@@ -3469,7 +3603,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
   else if ( evt4 )
   {
     igstk::TrackerController::ToolEntryType entry = evt4->Get();
-    if ( entry.first == "reference" )
+    if ( entry.first == REFERENCE_NAME )
     {
         m_Parent->m_ReferenceTool = entry.second;
 
