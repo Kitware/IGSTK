@@ -6,10 +6,9 @@ decl {\#include <FL/fl_ask.H>} {}
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class NavigatorGUI {open selected : {public igstk::Object}
+class NavigatorGUI {open : {public igstk::Object}
 } {
-  Function {NavigatorGUI()} {open
-  } {
+  Function {NavigatorGUI()} {} {
     Fl_Window mainWindow {
       label {IGSTK - Navigator Application}
       callback {Quit();} open
@@ -62,14 +61,14 @@ class NavigatorGUI {open selected : {public igstk::Object}
             xywh {0 0 30 20}
           }
         }
-        Fl_Button {} {
+        Fl_Button m_LoadImageButton {
           label {Load Image}
           callback {RequestLoadImage();}
           tooltip {Load CT data set} xywh {10 83 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
-        Fl_Button {} {
+        Fl_Button m_LoadMeshButton {
           label {Load Mesh}
-          callback {RequestLoadTargetMesh();}
+          callback {RequestLoadMesh();}
           tooltip {Load segmentation (.msh)} xywh {10 140 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Choice m_FiducialsPointList {
@@ -77,25 +76,17 @@ class NavigatorGUI {open selected : {public igstk::Object}
           callback {RequestChangeSelectedFiducial();}
           xywh {20 211 110 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
         } {}
-        Fl_Button m_ModifyButton {
+        Fl_Button m_ModifyFiducialsButton {
           label {Modify Fiducials}
-          callback {//if(o->value())
-//{
-//  RequestStartSetImageFiducials();
-//}
-//else
-//{
-//  RequestEndSetImageFiducials();
-//}
-RequestToggleSetImageFiducials();}
+          callback {RequestToggleSetImageFiducials();}
           tooltip {Modify fiducial coordinates (by mouse click on image)} xywh {10 265 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
-        Fl_Button {} {
+        Fl_Button m_ConfigureTrackerButton {
           label {Configure Tracker}
           callback {RequestConfigureTracker();}
           tooltip {Configue tracker system} xywh {10 336 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
-        Fl_Button m_ModifyTrackerFiducialsBtn {
+        Fl_Button m_RegisterButton {
           label Register
           callback {//RequestStartTracking();
 RequestStartSetTrackerFiducials();}
@@ -212,7 +203,7 @@ this->RequestRejectRegistration();}
   } {}
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
-  Function {Quit()} {open return_type void
+  Function {Quit()} {return_type void
   } {
     code {m_ConfirmToQuitWindow->show();} {}
   }
@@ -222,7 +213,7 @@ this->RequestRejectRegistration();}
   }
   Function {RequestLoadImage()} {return_type {virtual void}
   } {}
-  Function {RequestLoadTargetMesh()} {return_type {virtual void}
+  Function {RequestLoadMesh()} {return_type {virtual void}
   } {}
   Function {RequestChangeSelectedFiducial()} {return_type {virtual void}
   } {}
@@ -256,4 +247,15 @@ this->RequestRejectRegistration();}
   } {}
   Function {RequestStartSetTrackerFiducials()} {return_type {virtual void}
   } {}
+  Function {DisableAll()} {open return_type void
+  } {
+    code {//m_LoadImageButton->disable();
+//m_LoadMeshButton->disable();
+//m_FiducialsPointList->disable();
+//m_ModifyFiducialsButton->disable();
+//m_ConfigureTrackerButton->disable();
+//m_RegisterButton->disable();
+//m_ViewModeList->disable();} {selected
+    }
+  }
 } 

@@ -37,7 +37,7 @@
 #define VIEW_2D_REFRESH_RATE 15
 #define VIEW_3D_REFRESH_RATE 10
 // set here the name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "hybrid_pointer" //sPtr // bayonet
+#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 #define REFERENCE_NAME "reference"
 
 /** ---------------------------------------------------------------
@@ -1516,10 +1516,10 @@ void Navigator::RequestLoadImage()
   m_StateMachine.ProcessInputs();
 }
 
-void Navigator::RequestLoadTargetMesh()
+void Navigator::RequestLoadMesh()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-             "Navigator::RequestLoadTargetMesh called...\n" )
+             "Navigator::RequestLoadMesh called...\n" )
   m_StateMachine.PushInput( m_LoadTargetMeshInput );
   m_StateMachine.ProcessInputs();
 }
@@ -1742,7 +1742,7 @@ Navigator::ReportSuccessStartSetImageFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportSuccessStartSetImageFiducialsProcessing called...\n");
-  m_ModifyButton->color(FL_YELLOW);
+  m_ModifyFiducialsButton->color(FL_YELLOW);
 
   m_ModifyImageFiducialsEnabled = true;
 }
@@ -1760,7 +1760,7 @@ Navigator::ReportSuccessEndSetImageFiducialsProcessing()
 
   m_ViewerGroup->RequestUpdateOverlays();
 
-  m_ModifyButton->color((Fl_Color)55);
+  m_ModifyFiducialsButton->color((Fl_Color)55);
 
   m_ModifyImageFiducialsEnabled = false;
 }
@@ -1837,8 +1837,8 @@ Navigator::AcceptTrackerFiducialProcessing()
 
     if ( n == m-2)
     {
-      m_ModifyTrackerFiducialsBtn->label("Ready");     
-      m_ModifyTrackerFiducialsBtn->color(FL_GREEN);
+      m_RegisterButton->label("Ready");     
+      m_RegisterButton->color(FL_GREEN);
     }
   }
 }
@@ -2516,8 +2516,8 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::StartSetTrackerFiducialsProcessing called...\n" )
 
-  m_ModifyTrackerFiducialsBtn->label("Registering...");
-  m_ModifyTrackerFiducialsBtn->deactivate();
+  m_RegisterButton->label("Registering...");
+  m_RegisterButton->deactivate();
 
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
@@ -2530,7 +2530,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
 
   m_ViewerGroup->RequestUpdateOverlays();
 
-  m_ModifyTrackerFiducialsBtn->color(FL_RED); 
+  m_RegisterButton->color(FL_RED); 
 
   // first reset the reference tool
   igstk::Transform identity;
@@ -2596,9 +2596,9 @@ void Navigator::EndSetTrackerFiducialsProcessing()
 
   if (numberOfAcceptedLandmarks > 3)
   {
-    m_ModifyTrackerFiducialsBtn->label("Register");
-    m_ModifyTrackerFiducialsBtn->activate();
-    m_ModifyTrackerFiducialsBtn->color((Fl_Color)55);
+    m_RegisterButton->label("Register");
+    m_RegisterButton->activate();
+    m_RegisterButton->color((Fl_Color)55);
     m_StateMachine.PushInput( m_SuccessInput );
   }
   else
@@ -2831,19 +2831,19 @@ void Navigator::ConnectImageRepresentation()
   m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
   m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
   m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  m_AxialPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
+  m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane spatial object for sagittal view
   m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
   m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
   m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-  m_SagittalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
+  m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane spatial object for coronal view
   m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
   m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
   m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-  m_CoronalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane representation for axial view
   m_AxialPlaneRepresentation = ImageRepresentationType::New();
@@ -2936,7 +2936,7 @@ void Navigator::ConnectImageRepresentation()
 
   // Set up cross hairs
   m_CrossHair = CrossHairType::New();
-  m_CrossHair->RequestSetReferenceSpatialObject( m_ImageSpatialObject );
+  m_CrossHair->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // buid the cross hair representation and add the cross hair object
   m_CrossHairRepresentation = CrossHairRepresentationType::New();
