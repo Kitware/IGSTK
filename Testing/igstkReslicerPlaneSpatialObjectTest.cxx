@@ -130,7 +130,9 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
 
   // Select axial orientation
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  reslicerPlaneSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
+
+  // Set bounding box provider spatial object
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
   // Set input tool spatial object
   typedef igstk::CylinderObject                           ToolSpatialObjectType;

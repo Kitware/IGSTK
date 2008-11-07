@@ -237,8 +237,8 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   // Select Axial orientation type
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
 
-  // Set reference spatial object to the reslicer plane object
-  reslicerPlaneSpatialObject->RequestSetReferenceSpatialObject( imageSpatialObject );
+  // Set bounding box provider spatial object to the reslicer plane object
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
   // Set the reslicer plane spatial object to the image representation
   imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
