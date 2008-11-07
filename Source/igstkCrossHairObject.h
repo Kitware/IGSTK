@@ -65,9 +65,8 @@ public:
   /** Request set tool spatial object */
   void RequestSetToolSpatialObject( const SpatialObjectType * spatialObject );
 
-  /** Request set bounding box */
-  //void RequestSetBoundingBox(const BoundingBoxType* bounds);
-  void RequestSetReferenceSpatialObject( const SpatialObjectType * spatialObject );
+  /** Request set bounding box provider spatial object */
+  void RequestSetBoundingBoxProviderSpatialObject( const SpatialObjectType * spatialObject );
 
   /** Request set cursor position */
   void RequestSetCursorPosition( PointType point);
@@ -102,14 +101,14 @@ private:
   /** Attempt set Cursor position processing */
   void AttemptSetCursorPositionProcessing( void );
 
-  /** Attempt set reference spatial object */
-  void AttemptSetReferenceSpatialObjectProcessing( void );
+  /** Attempt set bounding box provider spatial object */
+  void AttemptSetBoundingBoxProviderSpatialObjectProcessing( void );
 
   /** Set tool spatial object processing */
   void SetToolSpatialObjectProcessing( void );
 
   /** Set reference spatial object processing */
-  void SetReferenceSpatialObjectProcessing( void );
+  void SetBoundingBoxProviderSpatialObjectProcessing( void );
 
   /** Get cross hair position processing */
   void GetCrossHairPositionProcessing( void );
@@ -118,7 +117,7 @@ private:
   void ReportInvalidToolSpatialObjectProcessing( void );
 
   /** Report invalid reference spatial object */
-  void ReportInvalidReferenceSpatialObjectProcessing( void );
+  void ReportInvalidBoundingBoxProviderSpatialObjectProcessing( void );
 
   /** Report invalid Cursor position */
   void ReportInvalidCursorPositionProcessing( void );
@@ -150,8 +149,8 @@ private:
   SpatialObjectPointerType     m_ToolSpatialObject;
 
   /** reference spatial object member variables */
-  SpatialObjectPointerType     m_ReferenceSpatialObjectToBeSet;
-  SpatialObjectPointerType     m_ReferenceSpatialObject;
+  SpatialObjectPointerType     m_BoundingBoxProviderSpatialObjectToBeSet;
+  SpatialObjectPointerType     m_BoundingBoxProviderSpatialObject;
 
   /** bounding box member variables */
   BoundingBoxType::ConstPointer           m_BoundingBox;
@@ -161,15 +160,15 @@ private:
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );
-  igstkDeclareStateMacro( ReferenceSpatialObjectSet );
-  igstkDeclareStateMacro( AttemptingToSetReferenceSpatialObject );
+  igstkDeclareStateMacro( BoundingBoxProviderSpatialObjectSet );
+  igstkDeclareStateMacro( AttemptingToSetBoundingBoxProviderSpatialObject );
   igstkDeclareStateMacro( AttemptingToSetCursorPosition );
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Inputs to the State Machine */  
-  igstkDeclareInputMacro( SetReferenceSpatialObject );
-  igstkDeclareInputMacro( ValidReferenceSpatialObject );
-  igstkDeclareInputMacro( InValidReferenceSpatialObject );
+  igstkDeclareInputMacro( SetBoundingBoxProviderSpatialObject );
+  igstkDeclareInputMacro( ValidBoundingBoxProviderSpatialObject );
+  igstkDeclareInputMacro( InValidBoundingBoxProviderSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
   igstkDeclareInputMacro( SetCursorPosition );

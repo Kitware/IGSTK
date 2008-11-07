@@ -42,7 +42,7 @@ ReslicerPlaneSpatialObject
   //Default orientation type
   m_OrientationType = Axial;
 
-  m_ReferenceSpatialObject = NULL;
+  m_BoundingBoxProviderSpatialObject = NULL;
   m_ToolSpatialObject = NULL; 
 
   //Create vtk plane 
@@ -80,19 +80,19 @@ ReslicerPlaneSpatialObject
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( ReslicingModeSet );
   igstkAddStateMacro( OrientationTypeSet );
-  igstkAddStateMacro( ReferenceSpatialObjectSet );
+  igstkAddStateMacro( BoundingBoxProviderSpatialObjectSet );
   igstkAddStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
   igstkAddStateMacro( AttemptingToSetCursorPosition );
-  igstkAddStateMacro( AttemptingToSetReferenceSpatialObject );
+  igstkAddStateMacro( AttemptingToSetBoundingBoxProviderSpatialObject );
 
   // List of state machine inputs
-  igstkAddInputMacro( SetReferenceSpatialObject );
+  igstkAddInputMacro( SetBoundingBoxProviderSpatialObject );
   igstkAddInputMacro( ValidReslicingMode );
   igstkAddInputMacro( InValidReslicingMode );
   igstkAddInputMacro( ValidOrientationType );
   igstkAddInputMacro( InValidOrientationType );
-  igstkAddInputMacro( ValidReferenceSpatialObject );
-  igstkAddInputMacro( InValidReferenceSpatialObject );
+  igstkAddInputMacro( ValidBoundingBoxProviderSpatialObject );
+  igstkAddInputMacro( InValidBoundingBoxProviderSpatialObject );
   igstkAddInputMacro( ValidToolSpatialObject );
   igstkAddInputMacro( InValidToolSpatialObject );  
   igstkAddInputMacro( SetCursorPosition );
@@ -122,7 +122,7 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( Initial, SetCursorPosition, 
                            Initial, ReportInvalidRequest);
 
-  igstkAddTransitionMacro( Initial, SetReferenceSpatialObject, 
+  igstkAddTransitionMacro( Initial, SetBoundingBoxProviderSpatialObject, 
                            Initial, ReportInvalidRequest);
 
   //From ReslicingModeSet
@@ -136,66 +136,66 @@ ReslicerPlaneSpatialObject
                            ReslicingModeSet, ReportInvalidRequest );  
 
   //From OrientationTypeSet
-  igstkAddTransitionMacro( OrientationTypeSet, SetReferenceSpatialObject,
-                           AttemptingToSetReferenceSpatialObject, AttemptSetReferenceSpatialObject );
+  igstkAddTransitionMacro( OrientationTypeSet, SetBoundingBoxProviderSpatialObject,
+                           AttemptingToSetBoundingBoxProviderSpatialObject, AttemptSetBoundingBoxProviderSpatialObject );
 
   igstkAddTransitionMacro( OrientationTypeSet, SetCursorPosition, 
                            OrientationTypeSet, ReportInvalidRequest );
 
 
-  // From AttemptingToSetReferenceSpatialObject
-  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, ValidReferenceSpatialObject,
-                           ReferenceSpatialObjectSet,  SetReferenceSpatialObject ); 
+  // From AttemptingToSetBoundingBoxProviderSpatialObject
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidBoundingBoxProviderSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet,  SetBoundingBoxProviderSpatialObject ); 
 
-  igstkAddTransitionMacro( AttemptingToSetReferenceSpatialObject, InValidReferenceSpatialObject,
-                           OrientationTypeSet,  ReportInvalidReferenceSpatialObject );
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidBoundingBoxProviderSpatialObject,
+                           OrientationTypeSet,  ReportInvalidBoundingBoxProviderSpatialObject );
 
 
-  //From ReferenceSpatialObjectSet
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ValidOrientationType,
-                           ReferenceSpatialObjectSet, SetOrientationType );
+  //From BoundingBoxProviderSpatialObjectSet
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidOrientationType,
+                           BoundingBoxProviderSpatialObjectSet, SetOrientationType );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, InValidOrientationType,
-                           ReferenceSpatialObjectSet, ReportInvalidOrientationType );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidOrientationType,
+                           BoundingBoxProviderSpatialObjectSet, ReportInvalidOrientationType );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ValidReslicingMode, 
-                           ReferenceSpatialObjectSet, SetReslicingMode );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidReslicingMode, 
+                           BoundingBoxProviderSpatialObjectSet, SetReslicingMode );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, InValidReslicingMode, 
-                           ReferenceSpatialObjectSet, ReportInvalidReslicingMode );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidReslicingMode, 
+                           BoundingBoxProviderSpatialObjectSet, ReportInvalidReslicingMode );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ValidToolSpatialObject,
-                           ReferenceSpatialObjectSet, SetToolSpatialObject );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidToolSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet, SetToolSpatialObject );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, InValidToolSpatialObject,
-                           ReferenceSpatialObjectSet, ReportInvalidToolSpatialObject );  
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidToolSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet, ReportInvalidToolSpatialObject );  
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, SetCursorPosition,
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, SetCursorPosition,
                            AttemptingToSetCursorPosition, AttemptSetCursorPosition );  
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, ComputeReslicePlane,
-                           ReferenceSpatialObjectSet, ComputeReslicePlane );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ComputeReslicePlane,
+                           BoundingBoxProviderSpatialObjectSet, ComputeReslicePlane );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetToolPosition,
-                           ReferenceSpatialObjectSet, ReportToolPosition );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetToolPosition,
+                           BoundingBoxProviderSpatialObjectSet, ReportToolPosition );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetVTKPlane,
-                           ReferenceSpatialObjectSet, ReportVTKPlane );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetVTKPlane,
+                           BoundingBoxProviderSpatialObjectSet, ReportVTKPlane );
 
-  igstkAddTransitionMacro( ReferenceSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
                                              RequestGetToolTransformWRTImageCoordinateSystem );
 
   // From AttemptingToSetCursorPosition
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidCursorPosition,
-                           ReferenceSpatialObjectSet,  SetCursorPosition ); 
+                           BoundingBoxProviderSpatialObjectSet,  SetCursorPosition ); 
 
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidCursorPosition,
-                           ReferenceSpatialObjectSet,  ReportInvalidCursorPosition );
+                           BoundingBoxProviderSpatialObjectSet,  ReportInvalidCursorPosition );
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ToolTransformWRTImageCoordinateSystem,
-                           ReferenceSpatialObjectSet, ReceiveToolTransformWRTImageCoordinateSystem );
+                           BoundingBoxProviderSpatialObjectSet, ReceiveToolTransformWRTImageCoordinateSystem );
 
   igstkSetInitialStateMacro( Initial );
   this->m_StateMachine.SetReadyToRun();
@@ -494,20 +494,20 @@ ReslicerPlaneSpatialObject
 
 //void 
 //ReslicerPlaneSpatialObject
-//::RequestSetReferenceSpatialObject( const ReferenceSpatialObjectType * referenceSpatialObject )
+//::RequestSetBoundingBoxProviderSpatialObject( const BoundingBoxProviderSpatialObjectType * BoundingBoxProviderSpatialObject )
 //{  
 //  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-//                       ::RequestSetReferenceSpatialObject called...\n");
+//                       ::RequestSetBoundingBoxProviderSpatialObject called...\n");
 //
-//  m_ReferenceSpatialObjectToBeSet = referenceSpatialObject;
+//  m_BoundingBoxProviderSpatialObjectToBeSet = BoundingBoxProviderSpatialObject;
 //
-//  if( !m_ReferenceSpatialObjectToBeSet )
+//  if( !m_BoundingBoxProviderSpatialObjectToBeSet )
 //    {
-//    m_StateMachine.PushInput( m_InValidReferenceSpatialObjectInput );
+//    m_StateMachine.PushInput( m_InValidBoundingBoxProviderSpatialObjectInput );
 //    }
 //  else
 //    {
-//    m_StateMachine.PushInput( m_ValidReferenceSpatialObjectInput );
+//    m_StateMachine.PushInput( m_ValidBoundingBoxProviderSpatialObjectInput );
 //    }
 //
 //  m_StateMachine.ProcessInputs();
@@ -515,32 +515,32 @@ ReslicerPlaneSpatialObject
 
 void
 ReslicerPlaneSpatialObject
-::RequestSetReferenceSpatialObject( const ReferenceSpatialObjectType* spatialObject )
+::RequestSetBoundingBoxProviderSpatialObject( const BoundingBoxProviderSpatialObjectType* spatialObject )
 {
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::RequestSetReferenceSpatialObject called...\n");
+                       ::RequestSetBoundingBoxProviderSpatialObject called...\n");
 
-  m_ReferenceSpatialObjectToBeSet = const_cast< ReferenceSpatialObjectType* >(spatialObject);
+  m_BoundingBoxProviderSpatialObjectToBeSet = const_cast< BoundingBoxProviderSpatialObjectType* >(spatialObject);
 
-  m_StateMachine.PushInput( m_SetReferenceSpatialObjectInput );
+  m_StateMachine.PushInput( m_SetBoundingBoxProviderSpatialObjectInput );
 
   m_StateMachine.ProcessInputs();
 }
 
 void
 ReslicerPlaneSpatialObject
-::AttemptSetReferenceSpatialObjectProcessing( )
+::AttemptSetBoundingBoxProviderSpatialObjectProcessing( )
 {
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::AttemptSetReferenceSpatialObject called...\n");
+                       ::AttemptSetBoundingBoxProviderSpatialObject called...\n");
 
-  if( !m_ReferenceSpatialObjectToBeSet )
+  if( !m_BoundingBoxProviderSpatialObjectToBeSet )
     {
-    m_StateMachine.PushInput( m_InValidReferenceSpatialObjectInput );
+    m_StateMachine.PushInput( m_InValidBoundingBoxProviderSpatialObjectInput );
     }
   else
     {
-    m_StateMachine.PushInput( m_ValidReferenceSpatialObjectInput );
+    m_StateMachine.PushInput( m_ValidBoundingBoxProviderSpatialObjectInput );
     }
 
   m_StateMachine.ProcessInputs();
@@ -548,20 +548,20 @@ ReslicerPlaneSpatialObject
 
 void 
 ReslicerPlaneSpatialObject
-::SetReferenceSpatialObjectProcessing( )
+::SetBoundingBoxProviderSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::SetReferenceSpatialObjectProcessing called...\n");
+                       ::SetBoundingBoxProviderSpatialObjectProcessing called...\n");
 
-  m_ReferenceSpatialObject = m_ReferenceSpatialObjectToBeSet;
+  m_BoundingBoxProviderSpatialObject = m_BoundingBoxProviderSpatialObjectToBeSet;
 
   // get the bounding box from the reference spatial object
   BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
   boundingBoxObserver->Reset();
 
   unsigned long boundingBoxObserverID = 
-  m_ReferenceSpatialObject->AddObserver( ReferenceSpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
-  m_ReferenceSpatialObject->RequestGetBounds();
+  m_BoundingBoxProviderSpatialObject->AddObserver( BoundingBoxProviderSpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
+  m_BoundingBoxProviderSpatialObject->RequestGetBounds();
 
   if( boundingBoxObserver->GotBoundingBox() ) 
   {
@@ -741,10 +741,10 @@ ReslicerPlaneSpatialObject
 
 void 
 ReslicerPlaneSpatialObject
-::ReportInvalidReferenceSpatialObjectProcessing( )
+::ReportInvalidBoundingBoxProviderSpatialObjectProcessing( )
 {
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::ReportInvalidReferenceSpatialObjectProcessing called...\n");
+                       ::ReportInvalidBoundingBoxProviderSpatialObjectProcessing called...\n");
 }
 
 void 
@@ -821,7 +821,7 @@ ReslicerPlaneSpatialObject
                           CoordinateSystemHelperType;
 
   const CoordinateSystem* ImageSpatialObjectCoordinateSystem = 
-    CoordinateSystemHelperType::GetCoordinateSystem( m_ReferenceSpatialObject );
+    CoordinateSystemHelperType::GetCoordinateSystem( m_BoundingBoxProviderSpatialObject );
 
   CoordinateSystem * ImageSpatialObjectCoordinateSystemNC =
           const_cast< CoordinateSystem *>(ImageSpatialObjectCoordinateSystem);

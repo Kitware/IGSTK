@@ -65,8 +65,8 @@ public:
 public:
 
   /** Typedefs */
-  typedef SpatialObject                                 ReferenceSpatialObjectType;
-  typedef ReferenceSpatialObjectType::ConstPointer      ReferenceSpatialObjectConstPointer;
+  typedef SpatialObject                                 BoundingBoxProviderSpatialObjectType;
+  typedef BoundingBoxProviderSpatialObjectType::ConstPointer      BoundingBoxProviderSpatialObjectConstPointer;
 
   typedef SpatialObject                                 ToolSpatialObjectType;
   typedef ToolSpatialObjectType::Pointer                ToolSpatialObjectPointer;
@@ -101,11 +101,12 @@ public:
   /** Request the state machine to attempt to set orientation type */
   void RequestSetOrientationType( OrientationType orientationType ); 
 
-  /** Attempts to set reference spatial object*/ 
-  void AttemptSetReferenceSpatialObjectProcessing();
+  /** Attempts to set bounding box provider spatial object*/ 
+  void AttemptSetBoundingBoxProviderSpatialObjectProcessing();
 
-  /** Actually sets reference spatial object*/ 
-  void RequestSetReferenceSpatialObject( const ReferenceSpatialObjectType * referenceSpatialObject ); 
+  /** Actually sets boundingbox provider spatial object*/ 
+  void RequestSetBoundingBoxProviderSpatialObject( 
+    const BoundingBoxProviderSpatialObjectType * boundingBoxProviderSpatialObject ); 
 
   /** Request the state machine to attempt to set the tool spatial object. A tool 
   * spatial object is actually optional; althought required for the OffOrthogonal and 
@@ -159,13 +160,13 @@ private:
   void operator=(const Self&);   //purposely not implemented
 
   /** Inputs to the State Machine */  
-  igstkDeclareInputMacro( SetReferenceSpatialObject );
+  igstkDeclareInputMacro( SetBoundingBoxProviderSpatialObject );
   igstkDeclareInputMacro( ValidReslicingMode );
   igstkDeclareInputMacro( InValidReslicingMode );
   igstkDeclareInputMacro( ValidOrientationType );
   igstkDeclareInputMacro( InValidOrientationType );
-  igstkDeclareInputMacro( ValidReferenceSpatialObject );
-  igstkDeclareInputMacro( InValidReferenceSpatialObject );
+  igstkDeclareInputMacro( ValidBoundingBoxProviderSpatialObject );
+  igstkDeclareInputMacro( InValidBoundingBoxProviderSpatialObject );
   igstkDeclareInputMacro( ValidToolSpatialObject );
   igstkDeclareInputMacro( InValidToolSpatialObject );
   igstkDeclareInputMacro( SetCursorPosition );
@@ -181,9 +182,9 @@ private:
   igstkDeclareStateMacro( Initial );
   igstkDeclareStateMacro( ReslicingModeSet );
   igstkDeclareStateMacro( OrientationTypeSet );
-  igstkDeclareStateMacro( ReferenceSpatialObjectSet );
+  igstkDeclareStateMacro( BoundingBoxProviderSpatialObjectSet );
   igstkDeclareStateMacro( AttemptingToSetCursorPosition );
-  igstkDeclareStateMacro( AttemptingToSetReferenceSpatialObject );  
+  igstkDeclareStateMacro( AttemptingToSetBoundingBoxProviderSpatialObject );  
   igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
 
   /** Null operation for State Machine transition */
@@ -203,7 +204,7 @@ private:
   void ComputeReslicePlaneProcessing();
  
   /** Set the reference spatial object */
-  void SetReferenceSpatialObjectProcessing( void );
+  void SetBoundingBoxProviderSpatialObjectProcessing( void );
 
   /** Set the tool spatial object */
   void SetToolSpatialObjectProcessing( void );
@@ -215,7 +216,7 @@ private:
   void ReportInvalidOrientationTypeProcessing( void );
 
   /** Report invalid reference spatial object type */
-  void ReportInvalidReferenceSpatialObjectProcessing( void );
+  void ReportInvalidBoundingBoxProviderSpatialObjectProcessing( void );
 
   /** Report invalid tool spatial object type */
   void ReportInvalidToolSpatialObjectProcessing( void );
@@ -256,8 +257,8 @@ private:
   OrientationType     m_OrientationType;
 
   /** Variables for managing reference spatial object type */
-  ReferenceSpatialObjectConstPointer     m_ReferenceSpatialObjectToBeSet;
-  ReferenceSpatialObjectConstPointer     m_ReferenceSpatialObject;
+  BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObjectToBeSet;
+  BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObject;
 
   /** Variables for managing tool spatial object type */
   ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
