@@ -938,7 +938,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
     m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-    m_AxialPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
     m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
     m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -946,7 +946,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
     m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-    m_SagittalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
     m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
     m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -954,7 +954,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
     m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-    m_CoronalPlaneSpatialObject->RequestSetReferenceSpatialObject( m_MeshSpatialObject );
+    m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
     m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
     m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
