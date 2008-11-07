@@ -51,8 +51,12 @@ protected:
 class MicronTrackerConfiguration : public TrackerConfiguration
 {
 public:
-  MicronTrackerConfiguration();
-  virtual ~MicronTrackerConfiguration();
+        //standard typedefs
+  igstkStandardClassBasicTraitsMacro( MicronTrackerConfiguration, 
+                                      TrackerConfiguration )
+
+         //method for creation through the object factory
+  igstkNewMacro( Self );
 
   /**
    * Get the manufacturer specified maximal refresh rate.
@@ -71,6 +75,8 @@ public:
 protected:
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference );
+  MicronTrackerConfiguration();
+  virtual ~MicronTrackerConfiguration();
 
 private:
   std::string     m_CameraCalibrationFileDirectory;

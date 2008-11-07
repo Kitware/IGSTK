@@ -98,13 +98,15 @@ class PolarisWirelessTrackerConfiguration :
   public SerialCommunicatingTrackerConfiguration
 {
 public:
+          //standard typedefs
+  igstkStandardClassBasicTraitsMacro( PolarisWirelessTrackerConfiguration, 
+                                      SerialCommunicatingTrackerConfiguration )
+protected:
   PolarisWirelessTrackerConfiguration() {}
   virtual ~PolarisWirelessTrackerConfiguration() {}
 
-protected:
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference );
-
 };
 
 
@@ -115,13 +117,20 @@ class PolarisVicraTrackerConfiguration :
   public PolarisWirelessTrackerConfiguration
 {
 public:
-  PolarisVicraTrackerConfiguration();
-  virtual ~PolarisVicraTrackerConfiguration();
+          //standard typedefs
+  igstkStandardClassBasicTraitsMacro( PolarisVicraTrackerConfiguration, 
+                                      PolarisWirelessTrackerConfiguration )
+
+  igstkNewMacro( Self );
 
   /**
    * Get the manufacturer specified maximal refresh rate.
    */
   virtual double GetMaximalRefreshRate();
+
+protected:
+    PolarisVicraTrackerConfiguration();
+    virtual ~PolarisVicraTrackerConfiguration();
 
 private:                  
                 //manufacturer specified maximal refresh rate [Hz]
@@ -136,13 +145,20 @@ class PolarisSpectraTrackerConfiguration :
   public PolarisWirelessTrackerConfiguration
 {
 public:
-  PolarisSpectraTrackerConfiguration();
-  virtual ~PolarisSpectraTrackerConfiguration();
+          //standard typedefs
+  igstkStandardClassBasicTraitsMacro( PolarisSpectraTrackerConfiguration, 
+                                      PolarisWirelessTrackerConfiguration )
+
+  igstkNewMacro( Self );
 
   /**
    * Get the manufacturer specified maximal refresh rate.
    */
   virtual double GetMaximalRefreshRate();
+
+protected:
+  PolarisSpectraTrackerConfiguration();
+  virtual ~PolarisSpectraTrackerConfiguration();
 
 private:                  
                 //manufacturer specified maximal refresh rate [Hz]
@@ -157,8 +173,12 @@ class PolarisHybridTrackerConfiguration :
   public SerialCommunicatingTrackerConfiguration
 {
 public:
-  PolarisHybridTrackerConfiguration();
-  virtual ~PolarisHybridTrackerConfiguration();
+
+          //standard typedefs
+  igstkStandardClassBasicTraitsMacro( PolarisHybridTrackerConfiguration, 
+                                      SerialCommunicatingTrackerConfiguration )
+
+  igstkNewMacro( Self );
 
   /**
    * Get the manufacturer specified maximal refresh rate.
@@ -166,6 +186,9 @@ public:
   virtual double GetMaximalRefreshRate();
 
 protected:
+  PolarisHybridTrackerConfiguration();
+  virtual ~PolarisHybridTrackerConfiguration();
+
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference );
 

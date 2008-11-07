@@ -94,8 +94,8 @@ public:
 
   friend class TrackerController;
 
-  TrackerConfiguration();
-  virtual ~TrackerConfiguration();
+        //standard typedefs
+  igstkStandardClassBasicTraitsMacro( TrackerConfiguration, igstk::Object )
 
   /** This event is generated when the frequency was set successfuly. */
   igstkEventMacro( FrequencySetEvent, IGSTKEvent );
@@ -160,6 +160,9 @@ public:
   
 protected:
 
+  TrackerConfiguration();
+  virtual ~TrackerConfiguration();
+
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference )=0;
 
@@ -180,6 +183,11 @@ protected:
 class SerialCommunicatingTrackerConfiguration : public TrackerConfiguration
 {
 public:
+        //standard typedefs
+  igstkStandardClassBasicTraitsMacro( SerialCommunicatingTrackerConfiguration, 
+                                      TrackerConfiguration )
+
+
   /** This event is generated when the COM port was set successfuly. */
   igstkEventMacro( ComPortSetEvent, IGSTKEvent );
 

@@ -84,8 +84,11 @@ class AuroraTrackerConfiguration :
   public SerialCommunicatingTrackerConfiguration
 {
 public:
-  AuroraTrackerConfiguration();
-  virtual ~AuroraTrackerConfiguration();
+          //standard typedefs
+  igstkStandardClassBasicTraitsMacro( AuroraTrackerConfiguration, 
+                                      SerialCommunicatingTrackerConfiguration )
+         //method for creation through the object factory
+  igstkNewMacro( Self );
 
   /**
    * Get the manufacturer specified maximal refresh rate.
@@ -93,6 +96,10 @@ public:
   virtual double GetMaximalRefreshRate();
 
 protected:
+
+  AuroraTrackerConfiguration();
+  virtual ~AuroraTrackerConfiguration();
+
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference );
 
