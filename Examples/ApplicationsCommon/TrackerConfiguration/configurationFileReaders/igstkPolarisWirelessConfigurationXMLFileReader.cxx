@@ -3,7 +3,7 @@
 #include <itksys/SystemTools.hxx>
 
 #include "igstkPolarisWirelessConfigurationXMLFileReader.h"
-#include "igstkPolarisTrackerConfiguration.h"
+
 
 namespace igstk
 {
@@ -94,11 +94,11 @@ PolarisWirelessConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 
-igstk::TrackerConfiguration * 
+const igstk::TrackerConfiguration::Pointer 
 PolarisWirelessConfigurationXMLFileReader::GetTrackerConfigurationData()
 throw ( FileFormatException )
 {
-  igstk::PolarisWirelessTrackerConfiguration *trackerConfig = 
+  igstk::PolarisWirelessTrackerConfiguration::Pointer trackerConfig = 
     GetPolarisConfiguration();
     
                 //this request is guaranteed to succeed as the refresh rate
@@ -129,7 +129,6 @@ throw ( FileFormatException )
     trackerConfig->RequestAddTool( *it );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
@@ -138,12 +137,13 @@ throw ( FileFormatException )
     trackerConfig->RequestAddReference( this->m_ReferenceTool );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
- 
-  return trackerConfig;
+   
+            //explicitly upcast to avoid the compiler warning
+  igstk::TrackerConfiguration::Pointer genericConfig = trackerConfig;
+  return genericConfig;
 }
 
 } //namespace

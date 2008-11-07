@@ -3,12 +3,10 @@
 
 #include <itkXMLFile.h>
 #include "igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h"
-
+#include "igstkPolarisTrackerConfiguration.h"
 
 namespace igstk
 {
-class PolarisHybridTrackerConfiguration;
-
   
 class PolarisHybridConfigurationXMLFileReader : 
    public SerialCommunicatingTrackerConfigurationXMLFileReader 
@@ -50,8 +48,8 @@ public:
   /**
    * Return a pointer to the object containing the configuration data.
    */
-  virtual const igstk::TrackerConfiguration * GetTrackerConfigurationData()
-        throw ( FileFormatException );
+  virtual const igstk::TrackerConfiguration::Pointer 
+    GetTrackerConfigurationData() throw ( FileFormatException );
 
 
 protected:
@@ -76,7 +74,7 @@ protected:
   virtual void ProcessToolData() 
     throw ( FileFormatException );
 
-  virtual igstk::PolarisHybridTrackerConfiguration *
+  virtual igstk::PolarisHybridTrackerConfiguration::Pointer
     GetPolarisConfiguration();
 
   std::string m_CurrentSromFileName;

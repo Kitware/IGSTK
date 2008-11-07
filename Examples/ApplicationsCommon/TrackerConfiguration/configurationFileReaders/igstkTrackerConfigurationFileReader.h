@@ -28,7 +28,7 @@ public:
 
   /** This is the container type which holds all the data associated with the 
    *  tracker configuration (e.g. COM port...).*/
-   typedef const TrackerConfiguration*  TrackerConfigurationDataType;
+   //typedef const TrackerConfiguration::Pointer  TrackerConfigurationDataType;
 
    typedef TrackerConfigurationXMLFileReaderBase::Pointer   FileReaderBasePointerType;
 
@@ -64,8 +64,29 @@ public:
 
   /** This event is generated when the configuration data is requested and the
    *  data is available. */
-  igstkLoadedEventMacro( TrackerConfigurationDataEvent, IGSTKEvent,
-                         TrackerConfigurationDataType );
+  class  TrackerConfigurationDataEvent : public IGSTKEvent 
+  { 
+  public:  
+    typedef TrackerConfigurationDataEvent        Self; 
+    typedef IGSTKEvent                           Superclass; 
+    typedef igstk::TrackerConfiguration::Pointer PayloadType; 
+    TrackerConfigurationDataEvent() {} 
+    virtual ~TrackerConfigurationDataEvent() {} 
+    virtual const char * GetEventName() const { 
+      return "TrackerConfigurationDataEvent"; } 
+    virtual bool CheckEvent(const ::itk::EventObject* e) const { 
+      return dynamic_cast<const Self*>(e); } 
+    virtual ::itk::EventObject* MakeObject() const { 
+      return new Self; } 
+    TrackerConfigurationDataEvent(const Self&s) :Superclass(s){}; 
+    const PayloadType Get() const { 
+      return m_Payload; }  
+    void Set( PayloadType _var ) { 
+      m_Payload = _var; }  
+  private: 
+    void operator=(const Self&);  
+    PayloadType  m_Payload; 
+  };
  
      /** This event is generated if setting the xml reader succeeded. */
   igstkEventMacro( SetReaderSuccessEvent, IGSTKEvent );
@@ -129,7 +150,7 @@ private:
   void ReportReadFailureProcessing();
   void GetDataProcessing();
 
-  TrackerConfigurationDataType m_TrackerConfiguration;
+  igstk::TrackerConfiguration::Pointer m_TrackerConfiguration;
   
   FileReaderBasePointerType m_TmpXMLFileReader;
   FileReaderBasePointerType m_XMLFileReader;

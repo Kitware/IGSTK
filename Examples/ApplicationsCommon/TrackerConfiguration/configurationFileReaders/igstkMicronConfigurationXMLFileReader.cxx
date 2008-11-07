@@ -64,9 +64,10 @@ MicronConfigurationXMLFileReader::GetSystemType()
 double 
 MicronConfigurationXMLFileReader::GetMaximalRefreshRate()
 {
-  igstk::MicronTrackerConfiguration trackerConfig;
+  igstk::MicronTrackerConfiguration::Pointer trackerConfig =
+    igstk::MicronTrackerConfiguration::New();
 
-  return trackerConfig.GetMaximalRefreshRate();
+  return trackerConfig->GetMaximalRefreshRate();
 }
 
 
@@ -143,12 +144,12 @@ MicronConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 
-igstk::TrackerConfiguration * 
+const igstk::TrackerConfiguration::Pointer
 MicronConfigurationXMLFileReader::GetTrackerConfigurationData()
 throw ( FileFormatException )
 {
-  igstk::MicronTrackerConfiguration *trackerConfig = 
-    new igstk::MicronTrackerConfiguration();
+  igstk::MicronTrackerConfiguration::Pointer trackerConfig = 
+    igstk::MicronTrackerConfiguration::New();
     
                 //this request is guaranteed to succeed as the refresh rate
                 //is validated in the TrackerConfigurationXMLReaderBase                
@@ -171,8 +172,7 @@ throw ( FileFormatException )
   {
     trackerConfig->RequestAddTool( *it );
     if( failureObserver->GotAddToolFailure() )
-    {
-      delete trackerConfig;
+    {      
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
@@ -181,12 +181,13 @@ throw ( FileFormatException )
     trackerConfig->RequestAddReference( this->m_ReferenceTool );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
  
-  return trackerConfig;
+               //explicitly upcast to avoid the compiler warning
+  igstk::TrackerConfiguration::Pointer genericConfig = trackerConfig;
+  return genericConfig;
 }
 
 } //namespace

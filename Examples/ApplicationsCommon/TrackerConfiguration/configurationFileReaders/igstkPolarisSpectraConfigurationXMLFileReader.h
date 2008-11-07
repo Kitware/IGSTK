@@ -36,7 +36,8 @@ protected:
 
  virtual double GetMaximalRefreshRate();
  virtual std::string GetSystemType();
- virtual igstk::PolarisWirelessTrackerConfiguration * GetPolarisConfiguration();
+ virtual igstk::PolarisWirelessTrackerConfiguration::Pointer 
+   GetPolarisConfiguration();
 
 private:
   PolarisSpectraConfigurationXMLFileReader( 

@@ -3,7 +3,6 @@
 #include <itksys/SystemTools.hxx>
 
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
-#include "igstkPolarisTrackerConfiguration.h"
 
 namespace igstk
 {
@@ -59,9 +58,10 @@ PolarisHybridConfigurationXMLFileReader::GetSystemType()
 double 
 PolarisHybridConfigurationXMLFileReader::GetMaximalRefreshRate()
 {
-  igstk::PolarisHybridTrackerConfiguration trackerConfig;
+  igstk::PolarisHybridTrackerConfiguration::Pointer trackerConfig =
+    igstk::PolarisHybridTrackerConfiguration::New();
 
-  return trackerConfig.GetMaximalRefreshRate();
+  return trackerConfig->GetMaximalRefreshRate();
 }
 
 
@@ -155,11 +155,11 @@ PolarisHybridConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 
-const igstk::TrackerConfiguration * 
+const igstk::TrackerConfiguration::Pointer
 PolarisHybridConfigurationXMLFileReader::GetTrackerConfigurationData()
 throw ( FileFormatException )
 {
-  igstk::PolarisHybridTrackerConfiguration *trackerConfig = 
+  igstk::PolarisHybridTrackerConfiguration::Pointer trackerConfig = 
     GetPolarisConfiguration();
     
                 //this request is guaranteed to succeed as the refresh rate
@@ -189,8 +189,7 @@ throw ( FileFormatException )
   {
     trackerConfig->RequestAddTool( *it );
     if( failureObserver->GotAddToolFailure() )
-    {
-      delete trackerConfig;
+    {      
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
@@ -199,18 +198,19 @@ throw ( FileFormatException )
     trackerConfig->RequestAddReference( this->m_ReferenceTool );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
  
-  return trackerConfig;
+               //explicitly upcast to avoid the compiler warning
+  igstk::TrackerConfiguration::Pointer genericConfig = trackerConfig;
+  return genericConfig;
 }
 
-igstk::PolarisHybridTrackerConfiguration * 
+igstk::PolarisHybridTrackerConfiguration::Pointer 
 PolarisHybridConfigurationXMLFileReader::GetPolarisConfiguration()
 {
-  return new igstk::PolarisHybridTrackerConfiguration();
+  return PolarisHybridTrackerConfiguration::New();
 }
 
 } //namespace

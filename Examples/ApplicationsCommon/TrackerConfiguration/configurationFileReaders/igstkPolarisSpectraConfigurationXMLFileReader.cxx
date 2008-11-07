@@ -6,9 +6,10 @@ namespace igstk
 double 
 PolarisSpectraConfigurationXMLFileReader::GetMaximalRefreshRate()
 {
-  igstk::PolarisSpectraTrackerConfiguration trackerConfig;
+  igstk::PolarisSpectraTrackerConfiguration::Pointer trackerConfig=
+    igstk::PolarisSpectraTrackerConfiguration::New();
 
-  return trackerConfig.GetMaximalRefreshRate();
+  return trackerConfig->GetMaximalRefreshRate();
 }
 
 
@@ -18,10 +19,13 @@ PolarisSpectraConfigurationXMLFileReader::GetSystemType()
   return "polaris wireless spectra";
 }
 
-igstk::PolarisWirelessTrackerConfiguration * 
+igstk::PolarisWirelessTrackerConfiguration::Pointer 
 PolarisSpectraConfigurationXMLFileReader::GetPolarisConfiguration()
 {
-  return new igstk::PolarisSpectraTrackerConfiguration();
+      //explicitly upcast to avoid the compiler warning
+  igstk::PolarisWirelessTrackerConfiguration::Pointer 
+    polarisWireless = PolarisSpectraTrackerConfiguration::New();
+  return polarisWireless;
 }
 
 } //namespace

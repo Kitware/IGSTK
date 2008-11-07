@@ -21,7 +21,6 @@ public:
   itkTypeMacro( MicronConfigurationXMLFileReader, 
                 TrackerConfigurationXMLFileReaderBase );
 
-  //method for creation through the object factory
   itkNewMacro( Self );
 
   /**
@@ -47,8 +46,8 @@ public:
   /**
    * Return a pointer to the object containing the configuration data.
    */
-  virtual igstk::TrackerConfiguration * GetTrackerConfigurationData()
-          throw ( FileFormatException );
+  virtual const igstk::TrackerConfiguration::Pointer 
+    GetTrackerConfigurationData() throw ( FileFormatException );
 
 
 protected:

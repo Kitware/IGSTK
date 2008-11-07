@@ -151,14 +151,13 @@ AuroraConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 
-igstk::TrackerConfiguration * 
+const igstk::TrackerConfiguration::Pointer 
 AuroraConfigurationXMLFileReader::GetTrackerConfigurationData()
 throw ( FileFormatException )
 {
-  igstk::AuroraTrackerConfiguration *trackerConfig = 
-    new igstk::AuroraTrackerConfiguration();
-    
-    
+  igstk::AuroraTrackerConfiguration::Pointer trackerConfig = 
+    AuroraTrackerConfiguration::New();
+        
                 //this request is guaranteed to succeed as the refresh rate
                 //is validated in the TrackerConfigurationXMLReaderBase                
   trackerConfig->RequestSetFrequency( this->m_RefreshRate );
@@ -187,7 +186,6 @@ throw ( FileFormatException )
     trackerConfig->RequestAddTool( *it );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
@@ -196,12 +194,11 @@ throw ( FileFormatException )
     trackerConfig->RequestAddReference( this->m_ReferenceTool );
     if( failureObserver->GotAddToolFailure() )
     {
-      delete trackerConfig;
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
- 
-  return trackerConfig;
+ igstk::TrackerConfiguration::Pointer genericTrackerConfig = trackerConfig;
+  return genericTrackerConfig;
 }
 
 
@@ -215,9 +212,10 @@ AuroraConfigurationXMLFileReader::GetSystemType()
 double 
 AuroraConfigurationXMLFileReader::GetMaximalRefreshRate()
 {
-  igstk::AuroraTrackerConfiguration trackerConfig;
+  igstk::AuroraTrackerConfiguration::Pointer trackerConfig =
+    igstk::AuroraTrackerConfiguration::New();
 
-  return trackerConfig.GetMaximalRefreshRate();
+  return trackerConfig->GetMaximalRefreshRate();
 }
 
 

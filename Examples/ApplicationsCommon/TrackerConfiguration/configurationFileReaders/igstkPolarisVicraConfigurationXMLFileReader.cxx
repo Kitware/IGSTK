@@ -6,9 +6,10 @@ namespace igstk
 double 
 PolarisVicraConfigurationXMLFileReader::GetMaximalRefreshRate()
 {
-  igstk::PolarisVicraTrackerConfiguration trackerConfig;
+  igstk::PolarisVicraTrackerConfiguration::Pointer 
+    trackerConfig = igstk::PolarisVicraTrackerConfiguration::New();
 
-  return trackerConfig.GetMaximalRefreshRate();
+  return trackerConfig->GetMaximalRefreshRate();
 }
 
 
@@ -19,10 +20,13 @@ PolarisVicraConfigurationXMLFileReader::GetSystemType()
 }
 
 
-igstk::PolarisWirelessTrackerConfiguration * 
+igstk::PolarisWirelessTrackerConfiguration::Pointer
 PolarisVicraConfigurationXMLFileReader::GetPolarisConfiguration()
 {
-  return new igstk::PolarisVicraTrackerConfiguration();
+      //explicitly upcast to avoid the compiler warning
+  igstk::PolarisWirelessTrackerConfiguration::Pointer 
+    polarisWireless = PolarisVicraTrackerConfiguration::New();
+  return polarisWireless;
 }
 
 } //namespace
