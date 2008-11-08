@@ -65,15 +65,16 @@ ELSE (USE_VTK_FILE)
   MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
 ENDIF (USE_VTK_FILE)
 
+IF( ${ITK_VERSION_MAJOR} LESS 3)
+  MESSAGE(FATAL_ERROR "You are using ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
+ENDIF(${ITK_VERSION_MAJOR} LESS 3 )
 
-#  Use the correct VTK version 
-IF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} LESS 3.4)
-   MESSAGE(FATAL_ERROR "You are using ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
-ENDIF(${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} LESS 3.4 )
+IF( ${ITK_VERSION_MINOR} LESS 4)
+  MESSAGE(FATAL_ERROR "You are using ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
+ENDIF(${ITK_VERSION_MINOR} LESS 4 )
 
-# Use the correct ITK version
 IF( ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} LESS 5.0 )
-     MESSAGE(FATAL_ERROR "You are using VTK ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}. Use VTK version 5.0 or later")
+  MESSAGE(FATAL_ERROR "You are using VTK ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}. Use VTK version 5.0 or later")
 ENDIF(${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} LESS 5.0 )
 
 #
