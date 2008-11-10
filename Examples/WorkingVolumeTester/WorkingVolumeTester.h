@@ -135,8 +135,7 @@ public:
    * TrackerConfigurationFileReader->RequestGetData() method.
    */
   igstkObserverObjectMacro( TrackerConfiguration, 
-                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent, 
-                   //igstk::TrackerConfigurationFileReader::TrackerConfigurationDataType )
+                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent,
                    igstk::TrackerConfiguration)
 
   igstkObserverMacro( TransformData, 
