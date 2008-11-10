@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <itksys/SystemTools.hxx>
-
+#include <algorithm>
 #include "igstkTransformXMLFileReaderBase.h"
 
 namespace igstk
@@ -66,7 +66,7 @@ TransformXMLFileReaderBase::EndElement( const char *name )
   {
     this->m_CurrentTagData = this->m_CurrentTagData.substr( startpos, 
                                                             endpos-startpos+1 );
-  }
+  } 
            //replace all newlines ('\n') and carriage returns ('\r') with space
   std::replace( this->m_CurrentTagData.begin(), 
                 this->m_CurrentTagData.end(), 
