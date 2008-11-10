@@ -49,6 +49,7 @@ ReslicerPlaneSpatialObject
   m_PlaneSource = vtkPlaneSource::New();
   m_PlaneSource->SetOrigin(0,0,0);
   m_PlaneSource->SetCenter(0,0,0);
+  m_PlaneSource->SetNormal(1,0,0);
 
   //Create reslice axes matrix
   m_ResliceAxes = vtkMatrix4x4::New();
@@ -732,7 +733,7 @@ ReslicerPlaneSpatialObject
           break;
     }
 
-  //   m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
+     m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
      m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
      m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
      m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
@@ -1068,8 +1069,8 @@ ReslicerPlaneSpatialObject
  
   igstk::Transform::VectorType   probeVector;
   probeVector.Fill(0.0);
-  // fixme: the tool´s long axis direction changes depending on the spatial object definition 
-  // so, what we can do to always set it correctly?
+  // we make the assumption that the tool's long spatial object is on the -x axis
+  // with the tip in (0,0,0)
   probeVector[0] = 1;
 
   probeVector = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(probeVector);

@@ -64,13 +64,13 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageReslice->SetInterpolationModeToNearestNeighbor();
 
   m_TextureMapper = vtkPolyDataMapper::New();
-
   m_Texture = vtkTexture::New();
-  m_Texture->RepeatOff();
-  m_Texture->SetQualityTo32Bit();
 
   m_PlaneSource = vtkPlaneSource::New();
-  m_MapColors  = vtkImageMapToColors::New();
+  m_PlaneSource->SetOrigin(0,0,0);
+  m_PlaneSource->SetCenter(0,0,0);
+  m_PlaneSource->SetNormal(1,0,0);
+  //m_MapColors  = vtkImageMapToColors::New();
   m_LUT        = vtkLookupTable::New();
   m_ResliceTransform = vtkTransform::New();
   m_ResliceAxes = vtkMatrix4x4::New();
@@ -79,6 +79,20 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = 52;
   m_Window = 542;
   m_CameraDistance = 1000;
+
+  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LUT->SetSaturationRange( 0.0, 0.0 );
+  m_LUT->SetHueRange( 0.0, 0.0 );
+  m_LUT->SetValueRange( 0.0, 1.0 );  
+  m_LUT->SetRampToLinear();
+  m_LUT->Build();
+
+  m_ImageReslice->SetBackgroundLevel( m_Level - m_Window/2.0 );
+
+  m_Texture->MapColorScalarsThroughLookupTableOn();
+  m_Texture->InterpolateOn();
+  m_Texture->SetLookupTable( m_LUT );
+  m_Texture->RepeatOff();
 
   m_VTKImageObserver = VTKImageObserver::New();
   m_VTKPlaneObserver = VTKPlaneObserver::New();
@@ -99,7 +113,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
                            ImageSpatialObjectSet,  SetImageSpatialObject );
 
   igstkAddTransitionMacro( Initial, InValidImageSpatialObject, 
-                           Initial,  ReportInvalidImageSpatialObject );
+                           Initial, ReportInvalidImageSpatialObject );
 
   //From ImageSpatialObjectSet
   igstkAddTransitionMacro( ImageSpatialObjectSet, ValidReslicePlaneSpatialObject, 
@@ -107,18 +121,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   igstkAddTransitionMacro( ImageSpatialObjectSet, InValidReslicePlaneSpatialObject, 
                            ImageSpatialObjectSet, ReportInvalidReslicePlaneSpatialObject );
-
-  igstkAddTransitionMacro( ImageSpatialObjectSet, ConnectVTKPipeline,
-                           ImageSpatialObjectSet, ConnectVTKPipeline );
  
   //From ReslicePlaneSpatialObjectSet
   igstkAddTransitionMacro( ReslicePlaneSpatialObjectSet, ConnectVTKPipeline,
                            ReslicePlaneSpatialObjectSet, ConnectVTKPipeline );
- 
-  //From ReslicePlaneSpatialObjectSet
-  igstkAddTransitionMacro( ReslicePlaneSpatialObjectSet, ConnectVTKPipeline,
-                           ReslicePlaneSpatialObjectSet, ConnectVTKPipeline );
- 
+  
   igstkSetInitialStateMacro( Initial );
  
   m_StateMachine.SetReadyToRun();
@@ -150,14 +157,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     m_ResliceTransform->Delete();
     m_ResliceTransform = NULL;
     }
-
-  if( m_MapColors )
-    {
-    m_MapColors->SetLookupTable( NULL );
-    m_MapColors->SetInput( NULL );
-    m_MapColors->Delete();
-    m_MapColors = NULL;
-    }
     
   if( m_LUT )
     {
@@ -178,16 +177,16 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     }
 
   if ( m_Texture )
-  {
-  m_Texture->Delete();
-  m_Texture = NULL;
-  }
+    {
+    m_Texture->Delete();
+    m_Texture = NULL;
+    }
 
   if ( m_PlaneSource )
-  {
-  m_PlaneSource->Delete();
-  m_PlaneSource = NULL;
-  }
+    {
+    m_PlaneSource->Delete();
+    m_PlaneSource = NULL;
+    }
 }
 
 /** Overloaded DeleteActor function */
@@ -407,14 +406,8 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
         if( m_ImageData )
         {
             m_ImageData->Update();
-            m_ImageData->GetSpacing( m_ImageSpacing );
-
-            m_MapColors->SetLookupTable( m_LUT );
+            m_ImageData->GetSpacing( m_ImageSpacing );           
             m_ImageReslice->SetInput ( m_ImageData );
-            m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-            m_Texture->SetInput( m_MapColors->GetOutput() );
-            m_TextureMapper->SetInput(
-                vtkPolyData::SafeDownCast(m_PlaneSource->GetOutput()) );
         }
     }
 
@@ -442,9 +435,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
       imageTransformMatrix->Delete();
     }
 */
-    m_ImageActor->SetTexture(m_Texture);
-    m_ImageActor->SetMapper(m_TextureMapper);
-   // m_ImageActor->SetInput( m_MapColors->GetOutput() );
 }
 
 
@@ -476,11 +466,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation::\
                          UpdateRepresentationProcessing called...\n");
 
-  if( m_ImageData )
-    {
-    m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-    }
-
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
   unsigned int obsID = 
@@ -491,150 +476,149 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
   
-  if( m_VTKPlaneObserver->GotVTKPlane() )
-    {
-        this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
+  if( !m_VTKPlaneObserver->GotVTKPlane() )
+    return;
 
-        if( m_PlaneSource )
-        {           
-            double planeAxis1[3];
-            double planeAxis2[3];
+  this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
 
-            this->GetVector1(planeAxis1);
-            this->GetVector2(planeAxis2);
+   m_ReslicePlaneSpatialObject->RemoveObserver( obsID );
 
-            // The x,y dimensions of the plane
-            //
-            double planeSizeX = vtkMath::Normalize(planeAxis1);
-            double planeSizeY = vtkMath::Normalize(planeAxis2);
+  if( !m_PlaneSource )
+    return;
 
-            double normal[3];
-            m_PlaneSource->GetNormal(normal);
+  double planeAxis1[3];
+  double planeAxis2[3];
 
-            // Generate the slicing matrix
-            //
-            m_ResliceAxes->Identity();
+  this->GetVector1(planeAxis1);
+  this->GetVector2(planeAxis2);
 
-            for (int i = 0; i < 3; i++ )
-            {
-                m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
-                m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
-                m_ResliceAxes->SetElement(2,i,normal[i]);
-            }           
+  // The x,y dimensions of the plane
+  //
+  double planeSizeX = vtkMath::Normalize(planeAxis1);
+  double planeSizeY = vtkMath::Normalize(planeAxis2);
 
-            double planeOrigin[4];
-            m_PlaneSource->GetOrigin(planeOrigin);
+  double normal[3];
+  m_PlaneSource->GetNormal(normal);
 
-            planeOrigin[3] = 1.0;
-            double originXYZW[4];
-            m_ResliceAxes->MultiplyPoint(planeOrigin, originXYZW);
+  // Generate the slicing matrix
+  //
+  m_ResliceAxes->Identity();
 
-            m_ResliceAxes->Transpose();
-            double neworiginXYZW[4];
-            m_ResliceAxes->MultiplyPoint(originXYZW, neworiginXYZW);
+  for (int i = 0; i < 3; i++ )
+  {
+      m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
+      m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
+      m_ResliceAxes->SetElement(2,i,normal[i]);
+  }           
 
-            m_ResliceAxes->SetElement(0,3,neworiginXYZW[0]);
-            m_ResliceAxes->SetElement(1,3,neworiginXYZW[1]);
-            m_ResliceAxes->SetElement(2,3,neworiginXYZW[2]);
+  double planeOrigin[4];
+  m_PlaneSource->GetOrigin(planeOrigin);
 
-            m_ImageReslice->SetResliceAxes(m_ResliceAxes);
+  planeOrigin[3] = 1.0;
+  double originXYZW[4];
+  m_ResliceAxes->MultiplyPoint(planeOrigin, originXYZW);
 
-           // m_ImageActor->SetUserMatrix(m_ResliceAxes);
+  m_ResliceAxes->Transpose();
+  double neworiginXYZW[4];
+  m_ResliceAxes->MultiplyPoint(originXYZW, neworiginXYZW);
 
-            double spacingX = fabs(planeAxis1[0]*m_ImageSpacing[0])+\
-                              fabs(planeAxis1[1]*m_ImageSpacing[1])+\
-                              fabs(planeAxis1[2]*m_ImageSpacing[2]);
+  m_ResliceAxes->SetElement(0,3,neworiginXYZW[0]);
+  m_ResliceAxes->SetElement(1,3,neworiginXYZW[1]);
+  m_ResliceAxes->SetElement(2,3,neworiginXYZW[2]);
 
-            double spacingY = fabs(planeAxis2[0]*m_ImageSpacing[0])+\
-                              fabs(planeAxis2[1]*m_ImageSpacing[1])+\
-                              fabs(planeAxis2[2]*m_ImageSpacing[2]);
+  m_ImageReslice->SetResliceAxes(m_ResliceAxes);
 
-            // Pad extent up to a power of two for efficient texture mapping
+ // m_ImageActor->SetUserMatrix(m_ResliceAxes);
 
-            // make sure we're working with valid values
-            double realExtentX = ( spacingX == 0 ) ? 0 : planeSizeX / spacingX;
+  double spacingX = fabs(planeAxis1[0]*m_ImageSpacing[0])+\
+                    fabs(planeAxis1[1]*m_ImageSpacing[1])+\
+                    fabs(planeAxis1[2]*m_ImageSpacing[2]);
 
-            int extentX;
-            // Sanity check the input data:
-            // * if realExtentX is too large, extentX will wrap
-            // * if spacingX is 0, things will blow up.
-            // * if realExtentX is naturally 0 or < 0, the padding will yield an
-            //   extentX of 1, which is also not desirable if the input data is invalid.
-            if (realExtentX > (VTK_INT_MAX >> 1) || realExtentX < 1)
-            {
-                std::cout << "Invalid X extent.  Perhaps the input data is empty?" << std::endl;
-                extentX = 0;
-            }
-            else
-            {
-                extentX = 1;
-                while (extentX < realExtentX)
-                {
-                    extentX = extentX << 1;
-                }
-            }
+  double spacingY = fabs(planeAxis2[0]*m_ImageSpacing[0])+\
+                    fabs(planeAxis2[1]*m_ImageSpacing[1])+\
+                    fabs(planeAxis2[2]*m_ImageSpacing[2]);
 
-            // make sure extentY doesn't wrap during padding
-            double realExtentY = ( spacingY == 0 ) ? 0 : planeSizeY / spacingY;
+  // Pad extent up to a power of two for efficient texture mapping
 
-            int extentY;
-            if (realExtentY > (VTK_INT_MAX >> 1) || realExtentY < 1)
-            {
-                std::cout << "Invalid Y extent.  Perhaps the input data is empty?" << std::endl;
-                extentY = 0;
-            }
-            else
-            {
-                extentY = 1;
-                while (extentY < realExtentY)
-                {
-                extentY = extentY << 1;
-                }
-            }
+  // make sure we're working with valid values
+  double realExtentX = ( spacingX == 0 ) ? 0 : planeSizeX / spacingX;
 
-            double outputSpacingX = planeSizeX/extentX;
-            double outputSpacingY = planeSizeY/extentY;
-
-            m_ImageReslice->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
-            m_ImageReslice->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
-            m_ImageReslice->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
-
-            //Setting up the camera position
-
-            double planeCenter[3];
-            m_PlaneSource->GetCenter(planeCenter);
-
-            double focalPoint[3];
-            double position[3];
-            for ( int i = 0; i<3; i++ )
-            {
-            focalPoint[i] = planeCenter[i];
-            position[i] = planeCenter[i];
-            }
-
-            for ( int i = 0; i<3; i++ )
-            {
-            position[i] -= m_CameraDistance * normal[i];
-            }
-
-            m_Camera->SetViewUp( -m_ResliceAxes->GetElement(0,1), 
-                                 -m_ResliceAxes->GetElement(1,1), 
-                                 -m_ResliceAxes->GetElement(2,1) );
-
-            m_Camera->SetFocalPoint( focalPoint );
-            //camera->SetParallelScale( 0.8 );
-            //camera->Zoom( 2 );
-            m_Camera->SetPosition( position );
-             
-
-            VTKCameraModifiedEvent event;
-            event.Set( m_Camera );
-            this->InvokeEvent( event );
-
-       } // if m_PlaneSource
+  int extentX;
+  // Sanity check the input data:
+  // * if realExtentX is too large, extentX will wrap
+  // * if spacingX is 0, things will blow up.
+  // * if realExtentX is naturally 0 or < 0, the padding will yield an
+  //   extentX of 1, which is also not desirable if the input data is invalid.
+  if (realExtentX > (VTK_INT_MAX >> 1) || realExtentX < 1)
+  {
+      std::cout << "Invalid X extent.  Perhaps the input data is empty?" << std::endl;
+      extentX = 0;
   }
-  
-  m_ReslicePlaneSpatialObject->RemoveObserver( obsID );
+  else
+  {
+      extentX = 1;
+      while (extentX < realExtentX)
+      {
+          extentX = extentX << 1;
+      }
+  }
+
+  // make sure extentY doesn't wrap during padding
+  double realExtentY = ( spacingY == 0 ) ? 0 : planeSizeY / spacingY;
+
+  int extentY;
+  if (realExtentY > (VTK_INT_MAX >> 1) || realExtentY < 1)
+  {
+      std::cout << "Invalid Y extent.  Perhaps the input data is empty?" << std::endl;
+      extentY = 0;
+  }
+  else
+  {
+      extentY = 1;
+      while (extentY < realExtentY)
+      {
+      extentY = extentY << 1;
+      }
+  }
+
+  double outputSpacingX = planeSizeX/extentX;
+  double outputSpacingY = planeSizeY/extentY;
+
+  m_ImageReslice->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
+  m_ImageReslice->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
+  m_ImageReslice->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
+
+  //Setting up the camera position
+
+  double planeCenter[3];
+  m_PlaneSource->GetCenter(planeCenter);
+
+  double focalPoint[3];
+  double position[3];
+  for ( int i = 0; i<3; i++ )
+  {
+  focalPoint[i] = planeCenter[i];
+  position[i] = planeCenter[i];
+  }
+
+  for ( int i = 0; i<3; i++ )
+  {
+  position[i] -= m_CameraDistance * normal[i];
+  }
+
+  m_Camera->SetViewUp( -m_ResliceAxes->GetElement(0,1), 
+                       -m_ResliceAxes->GetElement(1,1), 
+                       -m_ResliceAxes->GetElement(2,1) );
+
+  m_Camera->SetFocalPoint( focalPoint );
+  //camera->SetParallelScale( 0.8 );
+  //camera->Zoom( 2 );
+  m_Camera->SetPosition( position );
+   
+
+  VTKCameraModifiedEvent event;
+  event.Set( m_Camera );
+  this->InvokeEvent( event );  
 }
 
 
@@ -651,25 +635,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkActor::New();
-  m_ImageActor->SetPosition(0,0,0);
-  m_ImageActor->SetOrientation(0,0,0);
-  m_ImageActor->GetProperty()->SetOpacity(1.0);
-//  m_ImageActor->SetOpacity(1.0);
-
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-  m_LUT->SetSaturationRange( 0.0, 0.0 );
-  m_LUT->SetHueRange( 0.0, 0.0 );
-  m_LUT->SetValueRange( 0.0, 1.0 );  
-  m_LUT->SetRampToLinear();
-  m_LUT->Build();
-
-  m_MapColors->SetLookupTable( m_LUT );  
-
-  m_ImageReslice->SetBackgroundLevel( m_Level - m_Window/2.0 );
-
-  m_ImageActor->SetTexture(m_Texture);
-  m_ImageActor->SetMapper(m_TextureMapper);
- // m_ImageActor->SetInput( m_MapColors->GetOutput() );
 
   this->AddActor( m_ImageActor );  
 
@@ -717,13 +682,13 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
   m_ImageReslice->SetInput( m_ImageData );
-  m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-  m_Texture->SetInput( m_MapColors->GetOutput() );
+  m_Texture->SetInput( m_ImageReslice->GetOutput() );
+  m_TextureMapper->SetInput( m_PlaneSource->GetOutput() );
   m_ImageActor->SetTexture( m_Texture );
   m_ImageActor->SetMapper( m_TextureMapper );
 //  m_ImageActor->SetInput ( m_MapColors->GetOutput() );
-  m_ImageActor->SetVisibility( false );
-  m_ImageActor->SetPickable( false );
+//  m_ImageActor->SetVisibility( false );
+//  m_ImageActor->SetPickable( false );
 }
 
 template < class TImageSpatialObject >
