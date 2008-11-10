@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <itksys/SystemTools.hxx>
+#include <algorithm>
 
 #include "igstkTrackerConfigurationXMLFileReaderBase.h"
 #include "igstkRigidTransformXMLFileReader.h"
