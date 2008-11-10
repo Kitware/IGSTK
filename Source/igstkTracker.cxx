@@ -483,6 +483,21 @@ void Tracker::ResetFromTrackingStateProcessing( void )
   // leaving TrackingState, going to CommunicationEstablishedState
   this->ExitTrackingStateProcessing();
   this->ResetFromToolsActiveStateProcessing();
+
+  // Report to all the tracker tools that the tracking state is reset and
+  // tracking should be stopped
+  typedef TrackerToolsContainerType::iterator  InputConstIterator;
+
+  InputConstIterator inputItr = m_TrackerTools.begin();
+  InputConstIterator inputEnd = m_TrackerTools.end();
+
+  while( inputItr != inputEnd )
+    {
+    (inputItr->second)->RequestReportTrackingStopped();
+    ++inputItr;
+    }
+
+  this->InvokeEvent( TrackerStopTrackingEvent() );  
 }
 
 /** The Reset methods force the tracker to the
