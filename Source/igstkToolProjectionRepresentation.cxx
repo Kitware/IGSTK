@@ -226,13 +226,12 @@ void ToolProjectionRepresentation
   VectorType point2;
   point2.Fill(0);
 
-  // we need to fix this issue: how to know the tool's long axis orientation?
-  // It depends on the calibration transform, but how to know it from here?
+  // we assume the tool's long axis in the -x direction (with the tip in (0,0,0)
   igstk::Transform::VersorType rotation = toolTransform.GetRotation();
   VectorType toolAxis;
-  toolAxis[0] = 0; //1;
+  toolAxis[0] = 1;
   toolAxis[1] = 0;
-  toolAxis[2] = 1;
+  toolAxis[2] = 0;
   toolAxis = rotation.Transform(toolAxis);
 
   unsigned int planeObsID = 
