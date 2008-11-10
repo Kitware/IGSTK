@@ -101,12 +101,12 @@ public:
   typedef ImageReaderType::ImageSpatialObjectType     ImageSpatialObjectType;
 
   /** typedef for mesh spatial objects */
-  typedef MeshReaderType::MeshObjectType              MeshObjectType;
+  typedef MeshReaderType::MeshObjectType              MeshType;
 
   /** typedef for a cylinder spatial object and representation
   * used to represent the tracked tool */
-  typedef igstk::CylinderObject                   CylinderType;
-  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
+  typedef igstk::CylinderObject                       CylinderType;
+  typedef igstk::CylinderObjectRepresentation         CylinderRepresentationType;  
 
   typedef ImageSpatialObjectType::IndexType           IndexType;
   typedef ImageSpatialObjectType::PointType           PointType;
@@ -138,7 +138,7 @@ public:
   typedef RegistrationType::LandmarkPointContainerType  
                                                       LandmarkPointContainerType;
 
-  typedef std::vector< bool >                         AcceptedLandmarkPointContainerType;
+  typedef std::map< unsigned int, bool >              AcceptedLandmarkPointContainerType;
 
   typedef itk::MemberCommand<Navigator>               ProgressCommandType;
 
@@ -147,6 +147,7 @@ public:
   virtual void RequestCancelImageLoad();
   virtual void RequestAcceptImageLoad();
   virtual void RequestLoadMesh();
+  virtual void RequestLoadToolSpatialObject();
   virtual void RequestToggleSetImageFiducials();
   virtual void RequestStartSetTrackerFiducials();
   virtual void RequestEndSetTrackerFiducials();
@@ -177,8 +178,7 @@ public:
    * TrackerConfigurationFileReader->RequestGetData() method.
    */
   igstkObserverObjectMacro( TrackerConfiguration, 
-                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent, 
-                   //igstk::TrackerConfigurationFileReader::TrackerConfigurationDataType )
+                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent,
                    igstk::TrackerConfiguration)
 
   igstkObserverMacro( TransformData, 
@@ -303,10 +303,10 @@ public:
 
   /** Define observers for event communication */
   igstkObserverObjectMacro( Image, igstk::CTImageReader::ImageModifiedEvent,
-                                     igstk::CTImageSpatialObject);
+                                     igstk::CTImageSpatialObject );
 
   igstkObserverObjectMacro( MeshObject, igstk::MeshReader::MeshModifiedEvent,
-                                        igstk::MeshObject);
+                                        igstk::MeshObject );
 
    /** this observer will receive an update event of the plane relice
    * event triggered by the ImageResliceSpatialObject */
@@ -340,8 +340,8 @@ private:
   igstkDeclareStateMacro( LoadingImage );
   igstkDeclareStateMacro( ConfirmingImagePatientName );
   igstkDeclareStateMacro( ImageReady );
-  igstkDeclareStateMacro( LoadingSpatialObject );
-  igstkDeclareStateMacro( LoadingTargetMesh );
+  igstkDeclareStateMacro( LoadingToolSpatialObject );
+  igstkDeclareStateMacro( LoadingMesh );
   igstkDeclareStateMacro( SettingImageFiducials );
   igstkDeclareStateMacro( SettingTrackerFiducials );
   igstkDeclareStateMacro( EndingSetTrackerFiducials );
@@ -364,11 +364,12 @@ private:
   igstkDeclareInputMacro( Failure );
   igstkDeclareInputMacro( LoadImage );
   igstkDeclareInputMacro( ConfirmImagePatientName );
-  igstkDeclareInputMacro( LoadTargetMesh );
+  igstkDeclareInputMacro( LoadMesh );
+  igstkDeclareInputMacro( LoadToolSpatialObject );
+  igstkDeclareInputMacro( ConfigureTracker );
   igstkDeclareInputMacro( StartSetImageFiducials );
   igstkDeclareInputMacro( SetPickingPosition );
   igstkDeclareInputMacro( EndSetImageFiducials );
-  igstkDeclareInputMacro( ConfigureTracker );
   igstkDeclareInputMacro( InitializeTracker );
   igstkDeclareInputMacro( StartSetTrackerFiducials );
   igstkDeclareInputMacro( AcceptTrackerFiducial );
@@ -379,7 +380,7 @@ private:
   igstkDeclareInputMacro( DisconnectTracker );
 
   /** DICOM image reader */
-  ImageReaderType::Pointer                            m_ImageReader;
+  ImageReaderType::Pointer                              m_ImageReader;
   
   /** DICOM image observers */
   ImageObserver::Pointer                                m_ImageObserver;
@@ -387,7 +388,6 @@ private:
   LandmarkPointContainerType                            m_CandidateLandmarks;
 
   std::string                                           m_ImageDir;
-
   std::string                                           m_PlanFilename;
   std::string                                           m_PlanFilenamePath;
   
@@ -396,7 +396,6 @@ private:
   double                                                m_WindowLevel;
   double                                                m_WindowWidth;
 
-  int                                                   m_NumberOfLoadedMeshes;
   double                                                m_TrackerRMS;
   bool                                                  m_ResliceEnabled;
   
@@ -410,29 +409,29 @@ private:
   /* Command used for progress tracking */
   itk::SmartPointer<ProgressCommandType>                m_ProgressCommand;  
   
-  /** Pointer to the ImageSpatialObject */
+  /** image spatial object */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
 
-  /** Pointer to the ToolProjectionSpatialObject */
+  /** tool projection spatial object */
   ToolProjectionType::Pointer                           m_ToolProjection;
 
-  /** Pointer to the CrossHairSpatialObject */
+  /** cross hair spatial object */
   CrossHairType::Pointer                                m_CrossHair;
 
+  /** tool projection representations */
   ToolProjectionRepresentationType::Pointer             m_AxialToolProjectionRepresentation;
   ToolProjectionRepresentationType::Pointer             m_SagittalToolProjectionRepresentation;
   ToolProjectionRepresentationType::Pointer             m_CoronalToolProjectionRepresentation;
-  ToolProjectionRepresentationType::Pointer             m_PerpendicularToolProjectionRepresentation;
 
-  /** our cross hair representation */
+  /** cross hair representation */
   CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
 
-  /** a vector of TargetMeshSpatialObjects */
-  std::vector< MeshObjectType::Pointer >                m_TargetMeshObjectVector;
+  /** a vector of mesh spatial objects */
+  std::vector< MeshType::Pointer >                      m_MeshVector;
 
-  /** our tool spatial object */
-  CylinderType::Pointer                                 m_ToolSpatialObject;
-  CylinderRepresentationType::Pointer                   m_ToolRepresentation;
+  /** tool spatial object and representation */
+  MeshType::Pointer                                     m_ToolSpatialObject;
+  MeshRepresentationType::Pointer                       m_ToolRepresentation;
 
   ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
   ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
@@ -564,10 +563,10 @@ private:
   void ReportInvalidRequestProcessing();
   void ReportSuccessImageLoadedProcessing();
   void ReportFailuredImageLoadedProcessing();
-  void ReportSuccessSpatialObjectLoadedProcessing();
-  void ReportFailuredSpatialObjectLoadedProcessing();
-  void ReportSuccessTargetMeshLoadedProcessing();
-  void ReportFailuredTargetMeshLoadedProcessing();
+  void ReportSuccessToolSpatialObjectLoadedProcessing();
+  void ReportFailuredToolSpatialObjectLoadedProcessing();
+  void ReportSuccessMeshLoadedProcessing();
+  void ReportFailuredMeshLoadedProcessing();
   void ReportSuccessStartSetImageFiducialsProcessing();
   void ReportSuccessEndSetImageFiducialsProcessing();
   void ReportSuccessStartSetTrackerFiducialsProcessing();
@@ -591,14 +590,13 @@ private:
   void ReportFailureStartTrackingProcessing();
   void LoadImageProcessing();
   void ConfirmPatientNameProcessing();  
-  void LoadTargetMeshProcessing();
+  void LoadMeshProcessing();
+  void LoadToolSpatialObjectProcessing();
   void SetImageFiducialProcessing();
   void SetImagePickingProcessing();
-  void PinpointTrackerFiducialProcessing();
-  void SetTrackerFiducialProcessing();
   void StartSetTrackerFiducialsProcessing();
-  void EndSetTrackerFiducialsProcessing();
   void AcceptTrackerFiducialProcessing();
+  void EndSetTrackerFiducialsProcessing();  
   void ConfigureTrackerProcessing();
   void InitializeTrackerProcessing();
   void TrackerRegistrationProcessing();
@@ -649,7 +647,7 @@ private:
   AxesObjectType::Pointer                         m_WorldReference;
 
   igstk::Transform                                m_RegistrationTransform;
-  igstk::Transform                                m_TransformToBeChanged;
+  igstk::Transform                                m_PickingTransform;
 
   /** Log file */
   std::ofstream                                   m_LogFile;  
@@ -692,7 +690,7 @@ private:
   void UpdateFiducialPoint();
   void RequestToggleOrthogonalPlanes();
   void ResliceImage( IndexType index );
-  void BuildToolSpatialObject();
+  bool BuildToolSpatialObject();
 
   bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);

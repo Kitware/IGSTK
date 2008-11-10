@@ -35,9 +35,10 @@
 #include "igstkMicronConfigurationXMLFileReader.h"
 
 #define VIEW_2D_REFRESH_RATE 15
-#define VIEW_3D_REFRESH_RATE 10
-// set here the name of the tool that is going to drive the reslicing
+#define VIEW_3D_REFRESH_RATE 15
+// name of the tool that is going to drive the reslicing
 #define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+// name of the tool that is going to be used as dynamic reference
 #define REFERENCE_NAME "reference"
 
 /** ---------------------------------------------------------------
@@ -50,9 +51,8 @@ Navigator::Navigator() :
 {
   std::srand( 5 );
 
-  m_ImageDir = "C:/data";
+  m_ImageDir = "";
 
-  m_ResliceEnabled = false;
   m_ImagePlanesIn3DViewEnabled = true;
 
   m_AxialViewInitialized = false;
@@ -137,7 +137,6 @@ Navigator::Navigator() :
   m_Plan                = new igstk::FiducialsPlan;
 
   m_TrackerRMS = 0.0;
-  m_NumberOfLoadedMeshes = 0;
   m_WindowWidth = 542;
   m_WindowLevel = 52;
 
@@ -214,8 +213,8 @@ Navigator::Navigator() :
   igstkAddStateMacro( LoadingImage );
   igstkAddStateMacro( ConfirmingImagePatientName );
   igstkAddStateMacro( ImageReady );
-  igstkAddStateMacro( LoadingSpatialObject ); 
-  igstkAddStateMacro( LoadingTargetMesh ); 
+  igstkAddStateMacro( LoadingToolSpatialObject ); 
+  igstkAddStateMacro( LoadingMesh ); 
   igstkAddStateMacro( SettingImageFiducials );
   igstkAddStateMacro( ConfiguringTracker );
   igstkAddStateMacro( TrackerConfigurationReady );
@@ -238,7 +237,8 @@ Navigator::Navigator() :
   igstkAddInputMacro( Failure );
   igstkAddInputMacro( LoadImage );
   igstkAddInputMacro( ConfirmImagePatientName );
-  igstkAddInputMacro( LoadTargetMesh );
+  igstkAddInputMacro( LoadMesh );
+  igstkAddInputMacro( LoadToolSpatialObject );
   igstkAddInputMacro( StartSetImageFiducials );
   igstkAddInputMacro( SetPickingPosition );
   igstkAddInputMacro( EndSetImageFiducials );  
@@ -265,7 +265,9 @@ Navigator::Navigator() :
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, ConfirmImagePatientName, 
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadTargetMesh, 
+  igstkAddTransitionMacro( Initial, LoadMesh, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, LoadToolSpatialObject, 
                            Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, StartSetImageFiducials, 
                            Initial, ReportInvalidRequest );
@@ -305,7 +307,9 @@ Navigator::Navigator() :
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, ConfirmImagePatientName, 
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, LoadTargetMesh, 
+  igstkAddTransitionMacro( LoadingImage, LoadMesh, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, LoadToolSpatialObject, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, StartSetImageFiducials, 
                            LoadingImage, ReportInvalidRequest );
@@ -346,7 +350,9 @@ Navigator::Navigator() :
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, ConfirmImagePatientName, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadTargetMesh, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadMesh, 
+                           ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadToolSpatialObject, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetImageFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
@@ -375,8 +381,10 @@ Navigator::Navigator() :
 
   /** ImageReady State */
   
-  igstkAddTransitionMacro( ImageReady, LoadTargetMesh,
-                           LoadingTargetMesh, LoadTargetMesh );
+  igstkAddTransitionMacro( ImageReady, LoadMesh,
+                           LoadingMesh, LoadMesh );
+  igstkAddTransitionMacro( ImageReady, LoadToolSpatialObject,
+                           LoadingToolSpatialObject, LoadToolSpatialObject );
   igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
                            ImageReady, SetImagePicking );
   igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
@@ -413,88 +421,92 @@ Navigator::Navigator() :
                            ImageReady, ReportInvalidRequest );
   
    
-  /** LoadingSpatialObject State */
+  /** LoadingToolSpatialObject State */
 
-  igstkAddTransitionMacro( LoadingSpatialObject, Success,
-                           ImageReady, ReportSuccessSpatialObjectLoaded );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, Success,
+                           ImageReady, ReportSuccessToolSpatialObjectLoaded );
 
-  igstkAddTransitionMacro( LoadingSpatialObject, Failure,
-                           ImageReady, ReportFailuredSpatialObjectLoaded );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, Failure,
+                           ImageReady, ReportFailuredToolSpatialObjectLoaded );
 
-  //complete table for state: LoadingTargetMesh
+  //complete table for state: LoadingMesh
 
-  igstkAddTransitionMacro( LoadingSpatialObject, LoadImage, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, ConfirmImagePatientName, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, LoadTargetMesh,
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, StartSetImageFiducials, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, SetPickingPosition, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, EndSetImageFiducials, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, RegisterTracker, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, StartSetTrackerFiducials, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, AcceptTrackerFiducial, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, EndSetTrackerFiducials, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, ConfigureTracker, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, InitializeTracker, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, StartTracking, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, StopTracking, 
-                           LoadingSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingSpatialObject, DisconnectTracker, 
-                           LoadingSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadImage, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfirmImagePatientName, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadMesh,
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadToolSpatialObject,
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetImageFiducials, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, SetPickingPosition, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetImageFiducials, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, RegisterTracker, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetTrackerFiducials, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, AcceptTrackerFiducial, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetTrackerFiducials, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfigureTracker, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, InitializeTracker, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartTracking, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StopTracking, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingToolSpatialObject, DisconnectTracker, 
+                           LoadingToolSpatialObject, ReportInvalidRequest );
   
-  /** LoadingTargetMesh State */
+  /** LoadingMesh State */
 
-  igstkAddTransitionMacro( LoadingTargetMesh, Success,
-                           ImageReady, ReportSuccessTargetMeshLoaded );
+  igstkAddTransitionMacro( LoadingMesh, Success,
+                           ImageReady, ReportSuccessMeshLoaded );
 
-  igstkAddTransitionMacro( LoadingTargetMesh, Failure,
-                           ImageReady, ReportFailuredTargetMeshLoaded );
+  igstkAddTransitionMacro( LoadingMesh, Failure,
+                           ImageReady, ReportFailuredMeshLoaded );
 
-  //complete table for state: LoadingTargetMesh
+  //complete table for state: LoadingMesh
 
-  igstkAddTransitionMacro( LoadingTargetMesh, LoadImage, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, ConfirmImagePatientName, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, LoadTargetMesh, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, StartSetImageFiducials, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, SetPickingPosition, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, EndSetImageFiducials, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, RegisterTracker, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, StartSetTrackerFiducials, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, AcceptTrackerFiducial, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, EndSetTrackerFiducials, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, ConfigureTracker, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, InitializeTracker, 
-                           LoadingTargetMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, LoadImage, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, ConfirmImagePatientName, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, LoadMesh, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, LoadToolSpatialObject, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StartSetImageFiducials, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, SetPickingPosition, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, EndSetImageFiducials, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, RegisterTracker, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StartSetTrackerFiducials, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, AcceptTrackerFiducial, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, EndSetTrackerFiducials, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, ConfigureTracker, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, InitializeTracker, 
+                           LoadingMesh, ReportInvalidRequest );
 
-  igstkAddTransitionMacro( LoadingTargetMesh, StartTracking, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, StopTracking, 
-                           LoadingTargetMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTargetMesh, DisconnectTracker, 
-                           LoadingTargetMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StartTracking, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StopTracking, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, DisconnectTracker, 
+                           LoadingMesh, ReportInvalidRequest );
   
 
   /** SettingImageFiducials State */  
@@ -515,7 +527,9 @@ Navigator::Navigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, ConfirmImagePatientName, 
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadTargetMesh, 
+  igstkAddTransitionMacro( SettingImageFiducials, LoadMesh, 
+                           SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, LoadToolSpatialObject, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials, 
                            SettingImageFiducials, ReportInvalidRequest );
@@ -523,7 +537,6 @@ Navigator::Navigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, InitializeTracker, 
                            SettingImageFiducials, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( SettingImageFiducials, RegisterTracker, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetTrackerFiducials, 
@@ -553,7 +566,9 @@ Navigator::Navigator() :
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, ConfirmImagePatientName, 
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( ConfiguringTracker, LoadMesh, 
+                           ConfiguringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfiguringTracker, LoadToolSpatialObject, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartSetImageFiducials, 
                            ConfiguringTracker, ReportInvalidRequest ); 
@@ -564,8 +579,7 @@ Navigator::Navigator() :
   igstkAddTransitionMacro( ConfiguringTracker, ConfigureTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, InitializeTracker, 
-                           ConfiguringTracker, ReportInvalidRequest );
-  
+                           ConfiguringTracker, ReportInvalidRequest );  
   igstkAddTransitionMacro( ConfiguringTracker, RegisterTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartSetTrackerFiducials, 
@@ -596,7 +610,9 @@ Navigator::Navigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, ConfirmImagePatientName, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadTargetMesh, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadMesh, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadToolSpatialObject, 
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartSetImageFiducials, 
                            TrackerConfigurationReady, ReportInvalidRequest ); 
@@ -608,7 +624,6 @@ Navigator::Navigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartSetTrackerFiducials, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, RegisterTracker, 
                            TrackerConfigurationReady, ReportInvalidRequest );  
   igstkAddTransitionMacro( TrackerConfigurationReady, AcceptTrackerFiducial, 
@@ -637,7 +652,9 @@ Navigator::Navigator() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, ConfirmImagePatientName, 
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( InitializingTracker, LoadMesh, 
+                           InitializingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingTracker, LoadToolSpatialObject, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartSetImageFiducials, 
                            InitializingTracker, ReportInvalidRequest ); 
@@ -649,7 +666,6 @@ Navigator::Navigator() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, InitializeTracker, 
                            InitializingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( InitializingTracker, RegisterTracker, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartSetTrackerFiducials, 
@@ -683,7 +699,9 @@ Navigator::Navigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, ConfirmImagePatientName, 
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadTargetMesh, 
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadMesh, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadToolSpatialObject, 
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StartSetImageFiducials, 
                            TrackerInitializationReady, ReportInvalidRequest ); 
@@ -724,7 +742,9 @@ Navigator::Navigator() :
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, ConfirmImagePatientName, 
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadTargetMesh, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadMesh, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadToolSpatialObject, 
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, StartSetImageFiducials, 
                            SettingTrackerFiducials, ReportInvalidRequest ); 
@@ -761,7 +781,9 @@ Navigator::Navigator() :
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfirmImagePatientName, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadTargetMesh, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadMesh, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadToolSpatialObject, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetImageFiducials, 
                            EndingSetTrackerFiducials, ReportInvalidRequest ); 
@@ -781,8 +803,6 @@ Navigator::Navigator() :
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetTrackerFiducials, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-
-
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StartTracking, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StopTracking, 
@@ -805,7 +825,9 @@ Navigator::Navigator() :
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, ConfirmImagePatientName, 
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadTargetMesh, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadMesh, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadToolSpatialObject, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, StartSetImageFiducials, 
                            TrackerFiducialsReady, ReportInvalidRequest ); 
@@ -843,7 +865,9 @@ Navigator::Navigator() :
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, ConfirmImagePatientName, 
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( RegisteringTracker, LoadMesh, 
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, LoadToolSpatialObject, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, StartSetImageFiducials, 
                            RegisteringTracker, ReportInvalidRequest ); 
@@ -884,7 +908,9 @@ Navigator::Navigator() :
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, ConfirmImagePatientName, 
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, LoadTargetMesh, 
+  igstkAddTransitionMacro( AcceptingRegistration, LoadMesh, 
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, LoadToolSpatialObject, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, StartSetImageFiducials, 
                            AcceptingRegistration, ReportInvalidRequest ); 
@@ -930,7 +956,9 @@ Navigator::Navigator() :
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, ConfirmImagePatientName, 
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, LoadTargetMesh, 
+  igstkAddTransitionMacro( RegistrationReady, LoadMesh, 
+                           RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, LoadToolSpatialObject, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, StartSetImageFiducials, 
                            RegistrationReady, ReportInvalidRequest ); 
@@ -967,7 +995,9 @@ Navigator::Navigator() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, ConfirmImagePatientName, 
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( StartingTracker, LoadMesh, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, LoadToolSpatialObject, 
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StartSetImageFiducials, 
                            StartingTracker, ReportInvalidRequest ); 
@@ -1012,7 +1042,9 @@ Navigator::Navigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, ConfirmImagePatientName, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadTargetMesh, 
+  igstkAddTransitionMacro( Tracking, LoadMesh, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, LoadToolSpatialObject, 
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StartSetImageFiducials, 
                            Tracking, ReportInvalidRequest ); 
@@ -1049,7 +1081,9 @@ Navigator::Navigator() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, ConfirmImagePatientName, 
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( StoppingTracker, LoadMesh, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, LoadToolSpatialObject, 
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StartSetImageFiducials, 
                            StoppingTracker, ReportInvalidRequest ); 
@@ -1090,7 +1124,9 @@ Navigator::Navigator() :
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, ConfirmImagePatientName, 
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadTargetMesh, 
+  igstkAddTransitionMacro( DisconnectingTracker, LoadMesh, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, LoadToolSpatialObject, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StartSetImageFiducials, 
                            DisconnectingTracker, ReportInvalidRequest ); 
@@ -1122,6 +1158,11 @@ Navigator::Navigator() :
   igstkSetInitialStateMacro( Initial );
 
   m_StateMachine.SetReadyToRun();
+
+  this->DisableAll();
+
+  this->m_LoadImageButton->activate();
+
 /*
   std::ofstream ofile;
   ofile.open("NavigatorStateMachineDiagram.dot");
@@ -1520,7 +1561,15 @@ void Navigator::RequestLoadMesh()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "Navigator::RequestLoadMesh called...\n" )
-  m_StateMachine.PushInput( m_LoadTargetMeshInput );
+  m_StateMachine.PushInput( m_LoadMeshInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void Navigator::RequestLoadToolSpatialObject()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "Navigator::RequestLoadToolSpatialObject called...\n" )
+  m_StateMachine.PushInput( m_LoadToolSpatialObjectInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1689,6 +1738,13 @@ Navigator::ReportSuccessImageLoadedProcessing()
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
+  this->DisableAll();
+
+  m_LoadMeshButton->activate();
+  m_FiducialsPointList->activate();
+  m_ModifyFiducialsButton->activate();
+  m_ConfigureTrackerButton->activate();
+
   m_ViewerGroup->redraw();
   Fl::check();
 }
@@ -1703,37 +1759,37 @@ Navigator::ReportFailuredImageLoadedProcessing()
 
 /** Method to be invoked on successful spatial object loading */
 void 
-Navigator::ReportSuccessSpatialObjectLoadedProcessing()
+Navigator::ReportSuccessToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportSuccessSpatialObjectLoadedProcessing called...\n");    
+                 "ReportSuccessToolSpatialObjectLoadedProcessing called...\n");    
 
   this->RequestConfigureTracker();
 }
 
 /** Method to be invoked on failured spatial object loading */
 void 
-Navigator::ReportFailuredSpatialObjectLoadedProcessing()
+Navigator::ReportFailuredToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportFailuredSpatialObjectLoadedProcessing called...\n");
+                 "ReportFailuredToolSpatialObjectLoadedProcessing called...\n");
 
 }
 
 /** Method to be invoked on successful target mesh loading */
 void 
-Navigator::ReportSuccessTargetMeshLoadedProcessing()
+Navigator::ReportSuccessMeshLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportSuccessTargetMeshLoadedProcessing called...\n");
+                 "ReportSuccessMeshLoadedProcessing called...\n");
 }
 
 /** Method to be invoked on failured target mesh loading */
 void 
-Navigator::ReportFailuredTargetMeshLoadedProcessing()
+Navigator::ReportFailuredMeshLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportFailuredTargetMeshLoadedProcessing called...\n");
+                 "ReportFailuredMeshLoadedProcessing called...\n");
 }
 
 /** Method to be invoked on successful start set image fiducials */
@@ -1821,25 +1877,46 @@ Navigator::AcceptTrackerFiducialProcessing()
   transformObserver->Clear();
   m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
 
-  if ( transformObserver->GotTransform() )
+  if ( !transformObserver->GotTransform() )
+    return;
+
+  int n = m_FiducialsPointList->value();
+  int m = m_FiducialsPointList->size();
+  m_LandmarksContainer[n] = 
+        TransformToPoint( transformObserver->GetTransform() );
+  m_AcceptedLandmarksContainer[n] = true;
+
+  m_AxialFiducialRepresentationVector[n]->SetColor( 0.0, 1.0, 0.0 );
+  m_SagittalFiducialRepresentationVector[n]->SetColor( 0.0, 1.0, 0.0 );
+  m_CoronalFiducialRepresentationVector[n]->SetColor( 0.0, 1.0, 0.0 );
+
+  if ( n < m )
   {
-    int n = m_FiducialsPointList->value();
-    int m = m_FiducialsPointList->size();
-    m_LandmarksContainer[n] = 
-          TransformToPoint( transformObserver->GetTransform() );
-    m_AcceptedLandmarksContainer[n] = true;
+    m_FiducialsPointList->value(n+1);
+  }
+  else
+  {
+    m_FiducialsPointList->value(0);
+  }
 
-    if ( n < m )
-    {
-      m_FiducialsPointList->value(n+1);
-      this->RequestChangeSelectedFiducial();
-    }
+  this->RequestChangeSelectedFiducial();
 
-    if ( n == m-2)
-    {
-      m_RegisterButton->label("Ready");     
-      m_RegisterButton->color(FL_GREEN);
-    }
+  fl_beep( FL_BEEP_MESSAGE );
+
+  AcceptedLandmarkPointContainerType::const_iterator iter;
+  iter = m_AcceptedLandmarksContainer.begin();
+
+  unsigned int numberOfAcceptedLandmarks = 0;
+  for (;iter != m_AcceptedLandmarksContainer.end(); iter++)
+  {
+    if (iter->second)
+      numberOfAcceptedLandmarks++;
+  }
+
+  if ( numberOfAcceptedLandmarks >= 3 )
+  {
+    m_RegisterButton->label("Ready");     
+    m_RegisterButton->color(FL_GREEN);
   }
 }
 
@@ -1867,6 +1944,11 @@ Navigator::ReportFailureTrackerConfigurationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportFailureTrackerConfigurationProcessing called...\n");
+
+  std::string errorMessage;
+  errorMessage = "Could not configure tracker device";
+  fl_alert( errorMessage.c_str() );
+  fl_beep( FL_BEEP_ERROR );
 }
 
 /** Method to be invoked on failured tracker initialization */
@@ -1875,6 +1957,11 @@ Navigator::ReportFailureTrackerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportFailureTrackerConfigurationProcessing called...\n");
+
+  std::string errorMessage;
+  errorMessage = "Could not initialize tracker device";
+  fl_alert( errorMessage.c_str() );
+  fl_beep( FL_BEEP_ERROR );
 }
 
 
@@ -1884,6 +1971,10 @@ Navigator::ReportSuccessTrackerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportSuccessTrackerInitializationProcessing called...\n");
+
+  this->DisableAll();
+
+  m_RegisterButton->activate();
 }
 
 /** Method to be invoked on successful registration acceptance */
@@ -1908,25 +1999,25 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
 
+  // setup axial tool projection
   m_AxialToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_SagittalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_CoronalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_PerpendicularToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-
   m_AxialToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_SagittalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_CoronalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_PerpendicularToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection ); 
-
   m_AxialToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-  m_SagittalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-  m_CoronalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-
   m_AxialToolProjectionRepresentation->SetColor( 1,1,0 );
-  m_SagittalToolProjectionRepresentation->SetColor( 1,1,0 );
-  m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
-  m_PerpendicularToolProjectionRepresentation->SetColor( 1,1,0 );
 
+  // setup sagittal tool projection
+  m_SagittalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
+  m_SagittalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
+  m_SagittalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+  m_SagittalToolProjectionRepresentation->SetColor( 1,1,0 );
+
+  // setup coronal tool projection
+  m_CoronalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
+  m_CoronalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
+  m_CoronalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+  m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
+
+  // add tool representation to the 3D view
   m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
 
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
@@ -1939,6 +2030,10 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
  // m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_3DView->RequestResetCamera();
+
+  this->DisableAll();
+
+  m_ViewModeList->activate();
 }
 
 /** Method to be invoked on failure registration acceptance */
@@ -1947,6 +2042,16 @@ Navigator::ReportFailureAcceptingRegistrationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportFailureAcceptingRegistration called...\n");
+
+  for (unsigned int i=0; i<4; i++)
+  {
+    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+  }
+
+  //try again
+  this->RequestStartSetTrackerFiducials();
 }
 
 /** Method to be invoked on successful tracker registration */
@@ -1963,6 +2068,7 @@ Navigator::ReportSuccessTrackerRegistrationProcessing()
    m_RegistrationErrorLabel->value( buf );
 
    m_AcceptRegistrationWindow->show();
+   this->CenterChildWindowInParentWindow( m_AcceptRegistrationWindow );
 
    Fl::check();       
 
@@ -2012,22 +2118,25 @@ Navigator::ReportSuccessStartTrackingProcessing()
                  "ReportSuccessStartTrackingProcessing called...\n")
 
   char buf[50];
-  sprintf( buf, "TRACKING (%.2f)", m_TrackerRMS);      
-  //sprintf( buf, "TRACKING");      
+  sprintf( buf, "TRACKING (%.2f)", m_TrackerRMS);
 
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
   m_ViewerGroup->RequestUpdateOverlays();
   
-//  m_RunStopButton->label("Stop");
-  //m_RunStopButton->deactivate();
+  for (unsigned int i=0; i<4; i++)
+  {
+    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
+  }
 
   Fl::check();
 }
@@ -2153,6 +2262,7 @@ void Navigator::ConfirmPatientNameProcessing()
    }
    
    m_PatientNameWindow->show();
+   this->CenterChildWindowInParentWindow( m_PatientNameWindow );
 
    Fl::check();       
 }
@@ -2210,40 +2320,23 @@ void Navigator::RequestAcceptImageLoad()
   m_StateMachine.ProcessInputs();
 }
 
-void Navigator::BuildToolSpatialObject()
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-                "Navigator::BuildToolSpatialObject called...\n" )
-
-  // build a tool spatial object using a cylinder spatial object
-  m_ToolSpatialObject = CylinderType::New();  
-  m_ToolSpatialObject->SetRadius( 1.0 );
-  m_ToolSpatialObject->SetHeight( 150 );
-
-  m_ToolRepresentation = CylinderRepresentationType::New();
-  m_ToolRepresentation->RequestSetCylinderObject( m_ToolSpatialObject );
-  m_ToolRepresentation->SetOpacity(1.0);
-  m_ToolRepresentation->SetColor(1,0,0);
-  
-}
 
 /** -----------------------------------------------------------------
-* Load target mesh. This method asks for a file with the target 
-* segmentation: a mesh in the .msh format (see mesh SpatialObject in ITK)
-* Any number of meshes can be loaded
+* Load tool spatial object mesh. This method asks for a file with the 
+* spatial object mesh in the .msh format (see mesh SpatialObject in ITK)
 *  -----------------------------------------------------------------
 */
-void Navigator::LoadTargetMeshProcessing()
+void Navigator::LoadToolSpatialObjectProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::LoadTargetMeshProcessing called...\n" )
+                    "Navigator::LoadToolSpatialObjectProcessing called...\n" )
 
    const char*  fileName = 
-    fl_file_chooser("Select the target mesh file","*.msh", m_ImageDir.c_str());
+    fl_file_chooser("Chose a tool spatial object mesh", "*.msh", "");
 
    if ( !fileName )
     {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing No directory was selected\n" )
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadToolSpatialObjectProcessing No file was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
      return;
@@ -2260,19 +2353,78 @@ void Navigator::LoadTargetMeshProcessing()
 
    reader->RequestGetOutput();
 
-   if(!observer->GotMeshObject())
+   if( !observer->GotMeshObject() )
    {
-       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing Cannot read mesh\n" )
+       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadToolSpatialObjectProcessing cannot read mesh\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+
+   m_ToolSpatialObject = observer->GetMeshObject();
+
+   /*
+    // build a tool spatial object using a cylinder spatial object
+    m_ToolSpatialObject = CylinderType::New();  
+    m_ToolSpatialObject->SetRadius( 1.0 );
+    m_ToolSpatialObject->SetHeight( 150 );
+  */
+
+    m_ToolRepresentation = MeshRepresentationType::New();
+    m_ToolRepresentation->RequestSetMeshObject( m_ToolSpatialObject );
+    m_ToolRepresentation->SetOpacity(1.0);
+    m_ToolRepresentation->SetColor(0,0,1);
+
+   m_StateMachine.PushInput( m_SuccessInput);
+   m_StateMachine.ProcessInputs();
+}
+
+/** -----------------------------------------------------------------
+* Load target mesh. This method asks for a file with the target 
+* segmentation: a mesh in the .msh format (see mesh SpatialObject in ITK)
+* Any number of meshes can be loaded
+*  -----------------------------------------------------------------
+*/
+void Navigator::LoadMeshProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::LoadMeshProcessing called...\n" )
+
+   const char*  fileName = 
+    fl_file_chooser("Select the target mesh file","*.msh", m_ImageDir.c_str());
+
+   if ( !fileName )
+    {
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing No directory was selected\n" )
+     m_StateMachine.PushInput( m_FailureInput );
+     m_StateMachine.ProcessInputs();
+     return;
+    }
+
+   MeshReaderType::Pointer reader = MeshReaderType::New();
+   reader->RequestSetFileName( fileName );
+
+   reader->RequestReadObject();
+ 
+   MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+
+   reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
+
+   reader->RequestGetOutput();
+
+   if( !observer->GotMeshObject() )
+   {
+       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Cannot read mesh\n" )
        m_StateMachine.PushInput( m_FailureInput);
        m_StateMachine.ProcessInputs();
        return;
    }
 
-   m_TargetMeshObjectVector.push_back( observer->GetMeshObject() );
+   MeshType::Pointer meshSpatialObject = observer->GetMeshObject();
     
-   if (m_TargetMeshObjectVector[m_NumberOfLoadedMeshes].IsNull())
+   if (meshSpatialObject.IsNull())
    {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadTargetMeshProcessing Cannot read mesh\n" )
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Cannot read mesh\n" )
      m_StateMachine.PushInput( m_FailureInput);
      m_StateMachine.ProcessInputs();
      return;
@@ -2281,55 +2433,55 @@ void Navigator::LoadTargetMeshProcessing()
    igstk::Transform identity;
    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
    
-   m_TargetMeshObjectVector[m_NumberOfLoadedMeshes]->RequestSetTransformAndParent( identity, m_WorldReference );
+   meshSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
    
    //build mesh representation and spatial objects
    double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
-   MeshRepresentationType::Pointer rep = MeshRepresentationType::New();     
-   rep->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-   rep->SetOpacity(0.7);
-   rep->SetColor(r, g, b);
-   m_MeshRepresentationVector.push_back(rep);
+   MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
+   meshRepresentation->RequestSetMeshObject( meshSpatialObject );
+   meshRepresentation->SetOpacity(0.7);
+   meshRepresentation->SetColor(r, g, b);
+   m_MeshRepresentationVector.push_back( meshRepresentation );
 
    // build axial mesh reslice representation
    MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
    axialContour->SetOpacity(1.0); 
    axialContour->SetLineWidth(1.0);
    axialContour->SetColor(r, g, b);     
-   axialContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
-   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-   m_AxialMeshResliceRepresentationVector.push_back( axialContour );
+   axialContour->RequestSetMeshObject( meshSpatialObject );
+   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );   
 
    // build sagittal mesh reslice representation
    MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
    sagittalContour->SetOpacity(1.0);
    sagittalContour->SetLineWidth(1.0);
    sagittalContour->SetColor(r, g, b);
-   sagittalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   sagittalContour->RequestSetMeshObject( meshSpatialObject );
    sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-   m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
-
+   
    // build coronal mesh reslice representation
    MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
    coronalContour->SetOpacity(1.0);
    coronalContour->SetLineWidth(1.0);
    coronalContour->SetColor(r, g, b);
-   coronalContour->RequestSetMeshObject( m_TargetMeshObjectVector[m_NumberOfLoadedMeshes] );
+   coronalContour->RequestSetMeshObject( meshSpatialObject );
    coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-   m_CoronalMeshResliceRepresentationVector.push_back(coronalContour);     
-
+      
    // add repressentations to the views
-   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-   m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );
-   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalMeshResliceRepresentationVector[m_NumberOfLoadedMeshes] );     
-
-   m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[m_NumberOfLoadedMeshes] );
+   m_ViewerGroup->m_AxialView->RequestAddObject( axialContour );
+   m_ViewerGroup->m_SagittalView->RequestAddObject( sagittalContour );
+   m_ViewerGroup->m_CoronalView->RequestAddObject( coronalContour );     
+   m_ViewerGroup->m_3DView->RequestAddObject( meshRepresentation );
    m_ViewerGroup->m_3DView->RequestResetCamera();
 
-   m_NumberOfLoadedMeshes ++;
+   // keep the mesh and contours
+   m_MeshVector.push_back( meshSpatialObject );
+   m_AxialMeshResliceRepresentationVector.push_back( axialContour );
+   m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
+   m_CoronalMeshResliceRepresentationVector.push_back( coronalContour );  
 
    m_StateMachine.PushInput( m_SuccessInput );
    m_StateMachine.ProcessInputs();     
@@ -2344,7 +2496,7 @@ void Navigator::SetImagePickingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                   "Navigator::SetImagePickingProcessing called...\n" )
 
-  ImageSpatialObjectType::PointType point = TransformToPoint( m_TransformToBeChanged );
+  ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
 
   if ( m_ImageSpatialObject->IsInside( point ) )
   {
@@ -2374,13 +2526,13 @@ void Navigator::SetImageFiducialProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::SetImageFiducialProcessing called...\n" )
 
-    ImageSpatialObjectType::PointType point = TransformToPoint( m_TransformToBeChanged );
+    ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
   
     if( m_ImageSpatialObject->IsInside( point ) )
     {
       int choice = m_FiducialsPointList->value();
 
-      m_FiducialPointVector[choice]->RequestSetTransformAndParent(m_TransformToBeChanged, m_WorldReference );
+      m_FiducialPointVector[choice]->RequestSetTransformAndParent(m_PickingTransform, m_WorldReference );
 
       m_Plan->m_FiducialPoints[choice] = point;
 
@@ -2456,14 +2608,19 @@ void Navigator::InitializeTrackerProcessing()
     return;
   }
 
-//  m_TrackerController->RequestGetTracker();
   m_TrackerController->RequestGetNonReferenceToolList();
   m_TrackerController->RequestGetReferenceTool();       
 
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
-  this->BuildToolSpatialObject();
+  if ( m_ToolSpatialObject.IsNull() )
+  {
+    igstkLogMacro2( m_Logger, DEBUG, "Tool spatial object not available\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
 
   m_ToolSpatialObject->RequestDetachFromParent();
   m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
@@ -2516,8 +2673,12 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::StartSetTrackerFiducialsProcessing called...\n" )
 
+  this->DisableAll();
+
+  m_FiducialsPointList->activate();
+
+  m_RegisterButton->color(FL_RED); 
   m_RegisterButton->label("Registering...");
-  m_RegisterButton->deactivate();
 
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
@@ -2528,9 +2689,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->RequestUpdateOverlays();
-
-  m_RegisterButton->color(FL_RED); 
+  m_ViewerGroup->RequestUpdateOverlays(); 
 
   // first reset the reference tool
   igstk::Transform identity;
@@ -2541,8 +2700,6 @@ void Navigator::StartSetTrackerFiducialsProcessing()
     m_ReferenceTool->RequestDetachFromParent();
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
-
-  m_ResliceEnabled = false;
 
   m_FiducialsPointList->clear();
   m_LandmarksContainer.clear();
@@ -2555,7 +2712,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
     m_FiducialsPointList->add(buf);
     RegistrationType::LandmarkTrackerPointType p;
     m_LandmarksContainer.push_back(p);
-    m_AcceptedLandmarksContainer.push_back(false);
+    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false) );
   }
 
   m_FiducialsPointList->value(0);
@@ -2564,17 +2721,6 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   Fl::check();
 }
 
-/** -----------------------------------------------------------------
-* Sets a new point to the registration procedure
-*---------------------------------------------------------------------
-*/
-void Navigator::SetTrackerFiducialProcessing()
-{ 
-  igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::SetTrackerFiducialProcessing called...\n" )
-
-  
-}
 
 void Navigator::EndSetTrackerFiducialsProcessing()
 {
@@ -2587,14 +2733,14 @@ void Navigator::EndSetTrackerFiducialsProcessing()
   unsigned int numberOfAcceptedLandmarks = 0;
   for (;iter != m_AcceptedLandmarksContainer.end(); iter++)
   {
-    if (*iter)
+    if (iter->second)
       numberOfAcceptedLandmarks++;
   }
 
   igstkLogMacro2( m_Logger, DEBUG, 
                     "numberOfAcceptedLandmarks " << numberOfAcceptedLandmarks << "\n" )
 
-  if (numberOfAcceptedLandmarks > 3)
+  if (numberOfAcceptedLandmarks >= 3)
   {
     m_RegisterButton->label("Register");
     m_RegisterButton->activate();
@@ -3005,13 +3151,13 @@ void Navigator::ConnectImageRepresentation()
 
   // add reslice plane representations to the orthogonal views
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+ // m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
+ // m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
 
   // add reslice plane representations to the 3D views
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
+  //m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   // set up view parameters
@@ -3100,7 +3246,7 @@ void Navigator::ReadFiducials()
     m_FiducialsPointList->add( buf );
     RegistrationType::LandmarkTrackerPointType p;
     m_LandmarksContainer.push_back(p);
-    m_AcceptedLandmarksContainer.push_back(false);
+    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false) );
   }
 
   m_FiducialsPointList->value(0);
@@ -3334,7 +3480,7 @@ void Navigator::ImagePickingCallback( const itk::EventObject & event)
     dynamic_cast< const TransformEventType *>( & event );
 
     igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
-    m_TransformToBeChanged = transformCarrier.GetTransform();
+    m_PickingTransform = transformCarrier.GetTransform();
 
     m_StateMachine.PushInput( m_SetPickingPositionInput );
     m_StateMachine.ProcessInputs();
@@ -3649,6 +3795,7 @@ Navigator
   if(progress < 1.0f && !m_WinProgress->visible())
     {
     m_WinProgress->show();
+    this->CenterChildWindowInParentWindow( m_WinProgress );
     }
   else if (progress == 1.0f && m_WinProgress->visible())
     {
