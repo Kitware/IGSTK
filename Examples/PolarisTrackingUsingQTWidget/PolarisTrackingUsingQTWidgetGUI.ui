@@ -1,0 +1,77 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>867</width>
+    <height>784</height>
+   </rect>
+  </property>
+  <property name="acceptDrops" >
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle" >
+   <string>IGSTK: Tracking Polaris Using QTWidget </string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <widget class="igstk::QTWidget" native="1" name="Display3D" >
+    <property name="geometry" >
+     <rect>
+      <x>8</x>
+      <y>37</y>
+      <width>940</width>
+      <height>630</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget" >
+    <property name="geometry" >
+     <rect>
+      <x>22</x>
+      <y>707</y>
+      <width>247</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="TrackingCheckBox" >
+       <property name="text" >
+        <string>Tracking</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="InteractionCheckBox" >
+       <property name="text" >
+        <string>Interaction</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="QuitPushButton" >
+       <property name="text" >
+        <string>Quit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>igstk::QTWidget</class>
+   <extends></extends>
+   <header>igstkQTWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
