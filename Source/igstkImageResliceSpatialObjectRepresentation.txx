@@ -27,7 +27,6 @@
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
 #include <vtkLookupTable.h>
-#include <vtkImageMapToColors.h>
 #include <vtkImageReslice.h>
 #include <vtkTexture.h>
 #include <vtkPolyDataMapper.h>
@@ -67,10 +66,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Texture = vtkTexture::New();
 
   m_PlaneSource = vtkPlaneSource::New();
-  m_PlaneSource->SetOrigin(0,0,0);
-  m_PlaneSource->SetCenter(0,0,0);
-  m_PlaneSource->SetNormal(1,0,0);
-  //m_MapColors  = vtkImageMapToColors::New();
+
   m_LUT        = vtkLookupTable::New();
   m_ResliceTransform = vtkTransform::New();
   m_ResliceAxes = vtkMatrix4x4::New();
@@ -666,14 +662,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   // This const_cast<> is needed here due to 
   // the lack of const-correctness in VTK 
-  //m_PlaneSource = 
-  vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
-
-  m_PlaneSource->SetOrigin( auxPlane->GetOrigin() );
-  m_PlaneSource->SetPoint1( auxPlane->GetPoint1() );
-  m_PlaneSource->SetPoint2( auxPlane->GetPoint2() );
-  m_PlaneSource->SetNormal( auxPlane->GetNormal() );
-
+  m_PlaneSource = const_cast< vtkPlaneSource *>( plane );
 }
 
 template < class TImageSpatialObject >
@@ -686,9 +675,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_TextureMapper->SetInput( m_PlaneSource->GetOutput() );
   m_ImageActor->SetTexture( m_Texture );
   m_ImageActor->SetMapper( m_TextureMapper );
-//  m_ImageActor->SetInput ( m_MapColors->GetOutput() );
-//  m_ImageActor->SetVisibility( false );
-//  m_ImageActor->SetPickable( false );
 }
 
 template < class TImageSpatialObject >

@@ -127,7 +127,6 @@ private:
   vtkTexture                           * m_Texture;
   vtkPlaneSource                       * m_PlaneSource;
   vtkLookupTable                       * m_LUT;
-  vtkImageMapToColors                  * m_MapColors;
   vtkImageReslice                      * m_ImageReslice;
   vtkPolyDataMapper                    * m_TextureMapper;
   vtkTransform                         * m_ResliceTransform;
