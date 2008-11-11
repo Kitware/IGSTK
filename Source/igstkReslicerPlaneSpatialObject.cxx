@@ -530,112 +530,118 @@ ReslicerPlaneSpatialObject
   m_BoundingBoxProviderSpatialObject->AddObserver( BoundingBoxProviderSpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
   m_BoundingBoxProviderSpatialObject->RequestGetBounds();
 
-  if( boundingBoxObserver->GotBoundingBox() ) 
+  if( !boundingBoxObserver->GotBoundingBox() ) 
+    return;
+
+  m_BoundingBox = boundingBoxObserver->GetBoundingBox();
+
+  if ( m_BoundingBox.IsNull() )
+    return;
+
+  m_BoundingBoxProviderSpatialObject->RemoveObserver( boundingBoxObserverID );
+
+  const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
+
+  m_ImageBounds[0] = bounds[0];
+  m_ImageBounds[1] = bounds[1];
+  m_ImageBounds[2] = bounds[2];
+  m_ImageBounds[3] = bounds[3];
+  m_ImageBounds[4] = bounds[4];
+  m_ImageBounds[5] = bounds[5];
+
+  for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
   {
-    m_BoundingBox = boundingBoxObserver->GetBoundingBox();
-
-    const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
-
-    m_ImageBounds[0] = bounds[0];
-    m_ImageBounds[1] = bounds[1];
-    m_ImageBounds[2] = bounds[2];
-    m_ImageBounds[3] = bounds[3];
-    m_ImageBounds[4] = bounds[4];
-    m_ImageBounds[5] = bounds[5];
-
-    for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+    if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
     {
-      if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
-      {
-        double t = m_ImageBounds[i+1];
-        m_ImageBounds[i+1] = m_ImageBounds[i];
-        m_ImageBounds[i] = t;
-      }
+      double t = m_ImageBounds[i+1];
+      m_ImageBounds[i+1] = m_ImageBounds[i];
+      m_ImageBounds[i] = t;
     }
+  }
 
-    VectorType auxvec;
-    VectorType auxnorm;
+  VectorType auxvec;
+  VectorType auxnorm;
 
-    auxvec.Fill(0);
-    auxvec[0] = m_ImageBounds[0];
-    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = 1;
-    auxnorm[1] = 0;
-    auxnorm[2] = 0;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = m_ImageBounds[0];
+  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = 1;
+  auxnorm[1] = 0;
+  auxnorm[2] = 0;
+  m_BoundsNormals.push_back(auxnorm);
 
-    auxvec.Fill(0);
-    auxvec[0] = m_ImageBounds[1];
-    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = -1;
-    auxnorm[1] = 0;
-    auxnorm[2] = 0;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = m_ImageBounds[1];
+  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = -1;
+  auxnorm[1] = 0;
+  auxnorm[2] = 0;
+  m_BoundsNormals.push_back(auxnorm);
 
-    auxvec.Fill(0);
-    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-    auxvec[1] = m_ImageBounds[2];
-    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = 0;
-    auxnorm[1] = 1;
-    auxnorm[2] = 0;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+  auxvec[1] = m_ImageBounds[2];
+  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = 0;
+  auxnorm[1] = 1;
+  auxnorm[2] = 0;
+  m_BoundsNormals.push_back(auxnorm);
 
-    auxvec.Fill(0);
-    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-    auxvec[1] = m_ImageBounds[3];
-    auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = 0;
-    auxnorm[1] = -1;
-    auxnorm[2] = 0;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+  auxvec[1] = m_ImageBounds[3];
+  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = 0;
+  auxnorm[1] = -1;
+  auxnorm[2] = 0;
+  m_BoundsNormals.push_back(auxnorm);
 
-    auxvec.Fill(0);
-    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-    auxvec[2] = m_ImageBounds[4];
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = 0;
-    auxnorm[1] = 0;
-    auxnorm[2] = 1;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+  auxvec[2] = m_ImageBounds[4];
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = 0;
+  auxnorm[1] = 0;
+  auxnorm[2] = 1;
+  m_BoundsNormals.push_back(auxnorm);
 
-    auxvec.Fill(0);
-    auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-    auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-    auxvec[2] = m_ImageBounds[5];
-    m_BoundsCenters.push_back(auxvec);
-    auxnorm[0] = 0;
-    auxnorm[1] = 0;
-    auxnorm[2] = -1;
-    m_BoundsNormals.push_back(auxnorm);
+  auxvec.Fill(0);
+  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
+  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
+  auxvec[2] = m_ImageBounds[5];
+  m_BoundsCenters.push_back(auxvec);
+  auxnorm[0] = 0;
+  auxnorm[1] = 0;
+  auxnorm[2] = -1;
+  m_BoundsNormals.push_back(auxnorm);
 
-    m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-    m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-    m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+  m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
+  m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+  m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-    // fixe: setting the same initial extension to all orientations
-    m_PlaneOrigin[0] = m_ImageBounds[0];
-    m_PlaneOrigin[1] = m_ImageBounds[2];
-    m_PlaneOrigin[2] = m_ImageBounds[4];
+  // fixe: setting the same initial extension to all orientations
+  m_PlaneOrigin[0] = m_ImageBounds[0];
+  m_PlaneOrigin[1] = m_ImageBounds[2];
+  m_PlaneOrigin[2] = m_ImageBounds[4];
 
-    m_PlanePoint1[0] = m_ImageBounds[1];
-    m_PlanePoint1[1] = m_ImageBounds[2];
-    m_PlanePoint1[2] = m_ImageBounds[4];
+  m_PlanePoint1[0] = m_ImageBounds[1];
+  m_PlanePoint1[1] = m_ImageBounds[2];
+  m_PlanePoint1[2] = m_ImageBounds[4];
 
-    m_PlanePoint2[0] = m_ImageBounds[0];
-    m_PlanePoint2[1] = m_ImageBounds[3];
-    m_PlanePoint2[2] = m_ImageBounds[4];
+  m_PlanePoint2[0] = m_ImageBounds[0];
+  m_PlanePoint2[1] = m_ImageBounds[3];
+  m_PlanePoint2[2] = m_ImageBounds[4];
 
-    m_PlaneNormal[0] = 0;
-    m_PlaneNormal[1] = 0;
-    m_PlaneNormal[2] = 1;
+  m_PlaneNormal[0] = 0;
+  m_PlaneNormal[1] = 0;
+  m_PlaneNormal[2] = 1;
 /*
     switch ( this->GetOrientationType() )
     {
@@ -720,7 +726,6 @@ ReslicerPlaneSpatialObject
      m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
      m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
      m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
-  }
 }
 
 void 
@@ -1072,11 +1077,9 @@ ReslicerPlaneSpatialObject
   probeVector[0] = 1;
   probeVector = rotation.Transform(probeVector);
 
-  m_PlaneCenter = translation;
-
-  m_ToolPosition[0] = m_PlaneCenter[0];
-  m_ToolPosition[1] = m_PlaneCenter[1];
-  m_ToolPosition[2] = m_PlaneCenter[2];
+  m_ToolPosition[0] = translation[0];
+  m_ToolPosition[1] = translation[1];
+  m_ToolPosition[2] = translation[2];
 
   // auxiliary vecs
   VectorType v1, v2, vn;
