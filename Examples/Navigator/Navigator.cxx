@@ -35,7 +35,7 @@
 #include "igstkMicronConfigurationXMLFileReader.h"
 
 #define VIEW_2D_REFRESH_RATE 15
-#define VIEW_3D_REFRESH_RATE 15
+#define VIEW_3D_REFRESH_RATE 12
 // name of the tool that is going to drive the reslicing
 #define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 // name of the tool that is going to be used as dynamic reference
@@ -1728,7 +1728,7 @@ Navigator::ReportSuccessImageLoadedProcessing()
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 0, "" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 0, "" );
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
 
   for (int i=0; i<4; i++)
   {
@@ -1814,7 +1814,7 @@ Navigator::ReportSuccessEndSetImageFiducialsProcessing()
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, " " );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, " " );
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
 
   m_ModifyFiducialsButton->color((Fl_Color)55);
 
@@ -1975,6 +1975,8 @@ Navigator::ReportSuccessTrackerInitializationProcessing()
   this->DisableAll();
 
   m_RegisterButton->activate();
+
+  this->RequestStartSetTrackerFiducials();
 }
 
 /** Method to be invoked on successful registration acceptance */
@@ -2106,7 +2108,7 @@ Navigator::ReportSuccessTrackerDisconnectionProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
 
 }
 
@@ -2129,7 +2131,7 @@ Navigator::ReportSuccessStartTrackingProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
   
   for (unsigned int i=0; i<4; i++)
   {
@@ -2174,7 +2176,7 @@ Navigator::ReportSuccessStopTrackingProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
   
 //  m_RunStopButton->label("Run");
 
@@ -2306,7 +2308,7 @@ void Navigator::RequestAcceptImageLoad()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontSize(3, 12);
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
 
   if ( m_ImageObserver.IsNotNull() )
   {
@@ -2380,10 +2382,11 @@ void Navigator::LoadToolSpatialObjectProcessing()
 }
 
 /** -----------------------------------------------------------------
-* Load target mesh. This method asks for a file with the target 
-* segmentation: a mesh in the .msh format (see mesh SpatialObject in ITK)
-* Any number of meshes can be loaded
-*  -----------------------------------------------------------------
+* Load mesh. This method asks for a file with the a mesh (e.g representing a 
+* segmentation). The file must be in the .msh format (see mesh SpatialObject in ITK)
+* Any number of meshes can be loaded. Both, spatial object and representation 
+* will be kept in a vector.
+* -----------------------------------------------------------------
 */
 void Navigator::LoadMeshProcessing()
 {
@@ -2401,6 +2404,7 @@ void Navigator::LoadMeshProcessing()
      return;
     }
 
+   // setup a mesh reader
    MeshReaderType::Pointer reader = MeshReaderType::New();
    reader->RequestSetFileName( fileName );
 
@@ -2414,32 +2418,34 @@ void Navigator::LoadMeshProcessing()
 
    if( !observer->GotMeshObject() )
    {
-       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Cannot read mesh\n" )
+       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Could not read the mesh\n" )
        m_StateMachine.PushInput( m_FailureInput);
        m_StateMachine.ProcessInputs();
        return;
    }
 
+   // get the mesh spatial object
    MeshType::Pointer meshSpatialObject = observer->GetMeshObject();
     
    if (meshSpatialObject.IsNull())
    {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Cannot read mesh\n" )
+     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Could not retrieve the mesh\n" )
      m_StateMachine.PushInput( m_FailureInput);
      m_StateMachine.ProcessInputs();
      return;
    }
 
+   // set transform and parent to the mesh spatial object
    igstk::Transform identity;
    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-   
    meshSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
    
-   //build mesh representation and spatial objects
+   // set a random color
    double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
+   // setup a mesh representation
    MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
    meshRepresentation->RequestSetMeshObject( meshSpatialObject );
    meshRepresentation->SetOpacity(0.7);
@@ -2477,7 +2483,7 @@ void Navigator::LoadMeshProcessing()
    m_ViewerGroup->m_3DView->RequestAddObject( meshRepresentation );
    m_ViewerGroup->m_3DView->RequestResetCamera();
 
-   // keep the mesh and contours
+   // keep the mesh and contours in corresponding vectors
    m_MeshVector.push_back( meshSpatialObject );
    m_AxialMeshResliceRepresentationVector.push_back( axialContour );
    m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
@@ -2547,7 +2553,7 @@ void Navigator::SetImageFiducialProcessing()
       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
 
-      m_ViewerGroup->RequestUpdateOverlays();
+//      m_ViewerGroup->RequestUpdateOverlays();
 
       /** Write the updated plan to file */
       this->WriteFiducials();
@@ -2689,7 +2695,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->RequestUpdateOverlays(); 
+//  m_ViewerGroup->RequestUpdateOverlays(); 
 
   // first reset the reference tool
   igstk::Transform identity;
@@ -2813,7 +2819,7 @@ void Navigator::TrackerRegistrationProcessing()
        m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
        m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
 
-       m_ViewerGroup->RequestUpdateOverlays();    
+//       m_ViewerGroup->RequestUpdateOverlays();    
     }
     else
     {
@@ -3151,13 +3157,13 @@ void Navigator::ConnectImageRepresentation()
 
   // add reslice plane representations to the orthogonal views
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
- // m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
- // m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
 
   // add reslice plane representations to the 3D views
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
-  //m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   // set up view parameters
@@ -3193,7 +3199,7 @@ void Navigator::ConnectImageRepresentation()
       igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
 
   /** Adding observer for slider bar reslicing event */
-  m_ManualReslicingObserverID = m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
+  m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
     m_ManualReslicingObserver );
 
   /** Adding observer for key pressed event */
@@ -3382,7 +3388,7 @@ void Navigator::RequestChangeSelectedFiducial()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
 
-  m_ViewerGroup->RequestUpdateOverlays();
+//  m_ViewerGroup->RequestUpdateOverlays();
 
   /** Reslice image to the selected point position */
   if( m_ImageSpatialObject->IsInside( point ) )

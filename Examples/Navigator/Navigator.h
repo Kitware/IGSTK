@@ -165,10 +165,8 @@ public:
   virtual void RequestTrackerRegistration();
   virtual void RequestStartTracking();
   virtual void RequestStopTracking();
-
   virtual void RequestAcceptRegistration();
   virtual void RequestRejectRegistration();
-
   virtual void RequestChangeSelectedFiducial();
   virtual void RequestChangeSelectedViewMode();
   virtual void RequestDisconnectTracker();
@@ -246,7 +244,6 @@ public:
     bool m_GotFailure;
   };
 
-  // fixme: use or define an IGSTK observer
   class TransformRequestObserver : public ::itk::Command
   {
   public:
@@ -293,7 +290,6 @@ public:
     igstk::PrecomputedTransformData::TransformType *   m_Object;
     bool m_GotObject;
   };
-
 
 
   igstkObserverMacro( TransformError, 
@@ -613,7 +609,6 @@ private:
   LoadedObserverType::Pointer               m_ImagePickerObserver;
 
   LoadedObserverType::Pointer               m_ManualReslicingObserver;
-  unsigned int                              m_ManualReslicingObserverID;
 
   LoadedObserverType::Pointer               m_KeyPressedObserver;
   LoadedObserverType::Pointer               m_MousePressedObserver;

@@ -75,7 +75,7 @@ NavigatorQuadrantViews::NavigatorQuadrantViews(int X, int Y, int W, int H, const
   m_SagittalViewAnnotation = igstk::Annotation2D::New();
   m_CoronalViewAnnotation = igstk::Annotation2D::New();
 
-  this->RequestUpdateOverlays();
+//  this->RequestUpdateOverlays();
 
   // Create slider bars
   m_Sliders.clear();

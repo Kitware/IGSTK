@@ -80,7 +80,7 @@ public:
   igstk::FLTKWidget * m_AxialWidget;
   igstk::FLTKWidget * m_SagittalWidget;
   igstk::FLTKWidget * m_CoronalWidget;
-//  igstk::FLTKWidget * m_ObliqueWidget;
+
   igstk::FLTKWidget * m_3DWidget;
 
   // Define slider bars
