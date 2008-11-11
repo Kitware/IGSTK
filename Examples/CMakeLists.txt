@@ -38,6 +38,7 @@ ENDIF (IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_Qt)
   SUBDIRS( OneViewAndTrackingUsingQTWidget )
+  SUBDIRS( PolarisTrackingUsingQTWidget )
   IF (IGSTKSandbox_USE_MicronTracker) 
      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
   ENDIF(IGSTKSandbox_USE_MicronTracker) 
