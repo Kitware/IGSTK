@@ -72,6 +72,7 @@ public:
   typedef ToolSpatialObjectType::Pointer                ToolSpatialObjectPointer;
 
   typedef igstk::Transform::VectorType                  VectorType;
+  typedef igstk::Transform::VersorType                  VersorType;
 
   /** Reslicing modes */
   enum ReslicingMode
@@ -256,11 +257,11 @@ private:
   OrientationType     m_OrientationTypeToBeSet;
   OrientationType     m_OrientationType;
 
-  /** Variables for managing reference spatial object type */
+  /** Variables for managing bounding box provider spatial object */
   BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObjectToBeSet;
   BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObject;
 
-  /** Variables for managing tool spatial object type */
+  /** Variables for managing tool spatial object */
   ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
   ToolSpatialObjectPointer     m_ToolSpatialObject;
   
@@ -268,7 +269,7 @@ private:
   vtkPlaneSource *                  m_PlaneSource;
 
   /** reslicing matrix */
-  vtkMatrix4x4 *                    m_ResliceAxes; 
+  //vtkMatrix4x4 *                    m_ResliceAxes; 
 
 //  vtkTransform *                    m_ResliceTransform;
   

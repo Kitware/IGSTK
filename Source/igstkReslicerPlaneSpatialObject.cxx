@@ -27,8 +27,6 @@
 #include "vtkTransform.h"
 
 
-static const double dist0 = 200;
-
 namespace igstk
 { 
 
@@ -47,12 +45,9 @@ ReslicerPlaneSpatialObject
 
   //Create vtk plane 
   m_PlaneSource = vtkPlaneSource::New();
-  m_PlaneSource->SetOrigin(0,0,0);
-  m_PlaneSource->SetCenter(0,0,0);
-  m_PlaneSource->SetNormal(1,0,0);
 
   //Create reslice axes matrix
-  m_ResliceAxes = vtkMatrix4x4::New();
+  //m_ResliceAxes = vtkMatrix4x4::New();
 
   //Create reslice transform
   //m_ResliceTransform = vtkTransform::New();
@@ -205,19 +200,7 @@ ReslicerPlaneSpatialObject
 /** Destructor */
 ReslicerPlaneSpatialObject
 ::~ReslicerPlaneSpatialObject()  
-{
-  //if( ! m_ResliceAxes )
-  //  {
-  //  m_ResliceAxes->Delete();
-  //  m_ResliceAxes = NULL;
-  //  }
-
-  //if( ! m_ResliceTransform )
-  //  {
-  //  m_ResliceTransform->Delete();
-  //  m_ResliceTransform = NULL;
-  //  }
-  
+{  
   if( ! m_PlaneSource )
     {
     m_PlaneSource->Delete();
@@ -380,6 +363,10 @@ ReslicerPlaneSpatialObject
           validPosition = true;
           }
         break;
+      default:
+          {
+          validPosition = false;
+          }
       }
 
     if( validPosition )
@@ -492,27 +479,6 @@ ReslicerPlaneSpatialObject
                        ::SetOrientationTypeProcessing called...\n");
   m_OrientationType = m_OrientationTypeToBeSet;
 }
-
-//void 
-//ReslicerPlaneSpatialObject
-//::RequestSetBoundingBoxProviderSpatialObject( const BoundingBoxProviderSpatialObjectType * BoundingBoxProviderSpatialObject )
-//{  
-//  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-//                       ::RequestSetBoundingBoxProviderSpatialObject called...\n");
-//
-//  m_BoundingBoxProviderSpatialObjectToBeSet = BoundingBoxProviderSpatialObject;
-//
-//  if( !m_BoundingBoxProviderSpatialObjectToBeSet )
-//    {
-//    m_StateMachine.PushInput( m_InValidBoundingBoxProviderSpatialObjectInput );
-//    }
-//  else
-//    {
-//    m_StateMachine.PushInput( m_ValidBoundingBoxProviderSpatialObjectInput );
-//    }
-//
-//  m_StateMachine.ProcessInputs();
-//}
 
 void
 ReslicerPlaneSpatialObject
@@ -654,6 +620,23 @@ ReslicerPlaneSpatialObject
     m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
     m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
+    // fixe: setting the same initial extension to all orientations
+    m_PlaneOrigin[0] = m_ImageBounds[0];
+    m_PlaneOrigin[1] = m_ImageBounds[2];
+    m_PlaneOrigin[2] = m_ImageBounds[4];
+
+    m_PlanePoint1[0] = m_ImageBounds[1];
+    m_PlanePoint1[1] = m_ImageBounds[2];
+    m_PlanePoint1[2] = m_ImageBounds[4];
+
+    m_PlanePoint2[0] = m_ImageBounds[0];
+    m_PlanePoint2[1] = m_ImageBounds[3];
+    m_PlanePoint2[2] = m_ImageBounds[4];
+
+    m_PlaneNormal[0] = 0;
+    m_PlaneNormal[1] = 0;
+    m_PlaneNormal[2] = 1;
+/*
     switch ( this->GetOrientationType() )
     {
       case Axial:
@@ -732,7 +715,7 @@ ReslicerPlaneSpatialObject
 
           break;
     }
-
+*/
      m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
      m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
      m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
@@ -994,7 +977,7 @@ ReslicerPlaneSpatialObject
     }
   else
     {
-        // Otherwise, use the slice number or Cursor postion and image bounds to set the center
+        // Otherwise, use the cursor postion and image bounds to set the center
         switch( m_OrientationType )
         {
             case Axial:
@@ -1062,82 +1045,87 @@ void
 ReslicerPlaneSpatialObject
 ::ComputeObliqueReslicingPlane( )
 {
- igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
+  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
                        ::ComputeObliqueReslicingPlane called...\n");
 
+  // set the same extension to the thre planes
+  m_PlaneOrigin[0] = m_ImageBounds[0];
+  m_PlaneOrigin[1] = m_ImageBounds[2];
+  m_PlaneOrigin[2] = m_ImageBounds[4];
+
+  m_PlanePoint1[0] = m_ImageBounds[1];
+  m_PlanePoint1[1] = m_ImageBounds[2];
+  m_PlanePoint1[2] = m_ImageBounds[4];
+
+  m_PlanePoint2[0] = m_ImageBounds[0];
+  m_PlanePoint2[1] = m_ImageBounds[3];
+  m_PlanePoint2[2] = m_ImageBounds[4];
+
   /* Calculate the tool's long axis vector */
- 
-  igstk::Transform::VectorType   probeVector;
+  const VectorType& translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  const VersorType& rotation = m_ToolTransformWRTImageCoordinateSystem.GetRotation();
+
+  VectorType   probeVector;
   probeVector.Fill(0.0);
-  // we make the assumption that the tool's long spatial object is on the -x axis
+  // we make the assumption that the tool's long axis is on the -x axis
   // with the tip in (0,0,0)
   probeVector[0] = 1;
+  probeVector = rotation.Transform(probeVector);
 
-  probeVector = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(probeVector);
-  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  m_PlaneCenter = translation;
 
   m_ToolPosition[0] = m_PlaneCenter[0];
   m_ToolPosition[1] = m_PlaneCenter[1];
   m_ToolPosition[2] = m_PlaneCenter[2];
 
-  // auxiliary axes
-  igstk::Transform::VectorType vx, vy, vn, v;
+  // auxiliary vecs
+  VectorType v1, v2, vn;
 
-  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  // get any normal vector to the tool's long axis
+  // fixme: we can make use of the 6DOF by converting the
+  // orthonormal base (1,0,0) (0,1,0) (0,0,1) but it's too noisy ...
+  v1[0] = -probeVector[1];
+  v1[1] = probeVector[0];
+  v1[2] = 0;
+
+  // get a second normal vector
+  v2 = itk::CrossProduct( v1, probeVector );
 
   switch( m_OrientationType )
     {
-    case PlaneOrientationWithXAxesNormal:
-      { 
-        vx.Fill( 0.0 );
-        vx[1] = 1;
-        vx = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(vx);        
+      case PlaneOrientationWithXAxesNormal:
+        { 
+          m_PlaneNormal = v1;
+          break;
+        }
 
-        m_PlaneNormal = probeVector;        
-        
-        vy = itk::CrossProduct( vx, probeVector );
+      case PlaneOrientationWithYAxesNormal:
+        {
+          m_PlaneNormal = v2;    
 
-        m_PlaneOrigin = m_ToolPosition-vx*dist0-vy*dist0;
-        m_PlanePoint1 = m_ToolPosition-vx*dist0+vy*dist0;
-        m_PlanePoint2 = m_ToolPosition+vx*dist0-vy*dist0;
+         /* v2 = itk::CrossProduct( v1, probeVector );
 
-        break;
-      }
+          double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
+          double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
 
-    case PlaneOrientationWithYAxesNormal:
-      {
-        vx.Fill( 0.0 );
-        vx[1] = 1;
-        vx = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(vx);
+          m_PlaneOrigin = m_ToolPosition-probeVector*dist0+v2*dist0;
+          m_PlanePoint1 = m_PlaneOrigin+probeVector*dist0*2;
+          m_PlanePoint2 = m_PlaneOrigin-v2*dist0*2;*/
+          
+          break;
+        }
 
-        m_PlaneNormal = vx;
+      case PlaneOrientationWithZAxesNormal:
+        {
+          m_PlaneNormal = probeVector;
+          break;
+        }
 
-        vy = itk::CrossProduct( vx, probeVector );
-
-        m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
-        m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
-        m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
-        
-        break;
-      }
-
-    case PlaneOrientationWithZAxesNormal:
-      {
-        vx.Fill( 0.0 );
-        vx[2] = 1;
-        vx = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(vx);
-
-        m_PlaneNormal = vx;
-
-        vy = itk::CrossProduct( vx, probeVector );
-
-        
-        m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
-        m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
-        m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
-
-        break;
-      }
+      default:
+        {
+           std::cerr << "Invalid orientaiton" << std::endl;
+           break;
+        }
     }
 }
 
@@ -1209,6 +1197,9 @@ ReslicerPlaneSpatialObject
 
 //        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]); 
 
+        double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
+        double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
+
         m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
         m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
         m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
@@ -1237,12 +1228,21 @@ ReslicerPlaneSpatialObject
 
 //        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]); 
 
+        double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
+        double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
+
         m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
         m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
         m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
 
         break;
       }      
+
+      default:
+        {
+           std::cerr << "Invalid orientaiton" << std::endl;
+           break;
+        }
     }
 }
 
@@ -1269,34 +1269,38 @@ ReslicerPlaneSpatialObject
 }
 
 /** Get reslicing plane equation */
-//vtkPlaneSource *
-//ReslicerPlaneSpatialObject
-//::GetReslicingPlane()
-//{
-//  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-//                       ::GetReslicingPlane called...\n");
-//  return m_PlaneSource;
-//}
+/*
+vtkPlaneSource *
+ReslicerPlaneSpatialObject
+::GetReslicingPlane()
+{
+  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
+                       ::GetReslicingPlane called...\n");
+  return m_PlaneSource;
+}*/
 
-///** Request Get reslicing axes matrix */
-//vtkMatrix4x4 *
-//ReslicerPlaneSpatialObject
-//::GetResliceAxes()
-//{
-//  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-//                       ::GetResliceAxes called...\n");
-//  return m_ResliceAxes;
-//}
-
+/** Request Get reslicing axes matrix */
+/*
+vtkMatrix4x4 *
+ReslicerPlaneSpatialObject
+::GetResliceAxes()
+{
+  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
+                       ::GetResliceAxes called...\n");
+  return m_ResliceAxes;
+}
+*/
 /** Request Get reslicing transform*/
-//vtkTransform *
-//ReslicerPlaneSpatialObject
-//::GetResliceTransform()
-//{
-//  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-//                       ::GetResliceTransform called...\n");
-//  return m_ResliceTransform;
-//}
+/*
+vtkTransform *
+ReslicerPlaneSpatialObject
+::GetResliceTransform()
+{
+  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
+                       ::GetResliceTransform called...\n");
+  return m_ResliceTransform;
+}
+*/
 
 /** Report invalid reslicing mode */
 void
