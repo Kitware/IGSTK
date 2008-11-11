@@ -23,7 +23,7 @@ igstk::PolarisWirelessTrackerConfiguration::Pointer
 PolarisSpectraConfigurationXMLFileReader::GetPolarisConfiguration()
 {
       //explicitly upcast to avoid the compiler warning
-  igstk::PolarisWirelessTrackerConfiguration::Pointer 
+  igstk::PolarisWirelessTrackerConfiguration::Pointer polarisWireless;
     polarisWireless = PolarisSpectraTrackerConfiguration::New();
   return polarisWireless;
 }

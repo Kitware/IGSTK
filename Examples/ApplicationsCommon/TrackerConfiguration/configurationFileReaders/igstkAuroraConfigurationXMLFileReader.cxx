@@ -197,7 +197,8 @@ throw ( FileFormatException )
       throw FileFormatException( failureObserver->GetAddToolFailure() );
     }
   }
- igstk::TrackerConfiguration::Pointer genericTrackerConfig = trackerConfig;
+ igstk::TrackerConfiguration::Pointer genericTrackerConfig;
+ genericTrackerConfig = trackerConfig;
   return genericTrackerConfig;
 }
 

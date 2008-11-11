@@ -203,7 +203,8 @@ throw ( FileFormatException )
   }
  
                //explicitly upcast to avoid the compiler warning
-  igstk::TrackerConfiguration::Pointer genericConfig = trackerConfig;
+  igstk::TrackerConfiguration::Pointer genericConfig;
+  genericConfig  = trackerConfig;
   return genericConfig;
 }
 
