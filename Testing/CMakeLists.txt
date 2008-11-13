@@ -390,7 +390,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
              #ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
              #TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
 
-
 #######-----------------------------------------------------------------------
 # Now running IGSTK tests with the latest main library
 INCLUDE(${IGSTK_SOURCE_DIR}/Testing/IGSTKTestingMacros.cmake)
@@ -408,6 +407,6 @@ IGSTKTesting(igstkLatestTests
              IGSTKSandbox_USE_FLTK
              IGSTKSandbox_USE_Qt
              IGSTKSandbox_USE_MicronTracker
-             IGSTK_USE_KWSTYLE
+             IGSTKSandbox_USE_KWSTYLE
              )
 

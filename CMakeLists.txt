@@ -280,3 +280,51 @@ ELSE (WIN32 )
   SET( IGSTK_SERIAL_PORT_6 "/dev/ttyS6" CACHE STRING "Seventh serial port device name  (Default /dev/ttyS6)")
   SET( IGSTK_SERIAL_PORT_7 "/dev/ttyS7" CACHE STRING "Eighth serial port device name  (Default /dev/ttyS7)")
 ENDIF ( WIN32 )
+
+#-----------------------------------------------------------------------------
+# IGSTK uses KWStyle for checking the coding style
+OPTION(IGSTKSandbox_USE_KWSTYLE "Run KWStyle in order to check for violations of the coding standard." OFF)
+MARK_AS_ADVANCED(IGSTKSandbox_USE_KWSTYLE)
+
+IF(IGSTKSandbox_USE_KWSTYLE)
+  FIND_PROGRAM(KWSTYLE_EXECUTABLE
+  NAMES KWStyle 
+  PATHS
+  /usr/local/bin
+  )
+  MARK_AS_ADVANCED(KWSTYLE_EXECUTABLE)
+
+  OPTION(KWSTYLE_USE_VIM_FORMAT "Set KWStyle to generate errors with a VIM-compatible format." OFF)
+  OPTION(KWSTYLE_USE_MSVC_FORMAT "Set KWStyle to generate errors with a VisualStudio-compatible format." OFF)
+
+  CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTK.kws.xml.in
+               ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml)
+
+  CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
+               ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
+
+  SET(KWSTYLE_ARGUMENTS -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o
+${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D
+${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+  )
+ 
+  IF(KWSTYLE_USE_VIM_FORMAT)
+    SET(KWSTYLE_ARGUMENTS -vim ${KWSTYLE_ARGUMENTS})
+  ENDIF(KWSTYLE_USE_VIM_FORMAT)
+
+  IF(KWSTYLE_USE_MSVC_FORMAT)
+    SET(KWSTYLE_ARGUMENTS -msvc ${KWSTYLE_ARGUMENTS})
+  ENDIF(KWSTYLE_USE_MSVC_FORMAT)
+
+ ADD_CUSTOM_COMMAND(
+    OUTPUT ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt
+    COMMAND ${KWSTYLE_EXECUTABLE}
+    ARGS    -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o
+${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt
+${KWSTYLE_ARGUMENTS} -D ${IGSTKSandbox_BINARY_DIR}/IGSTKFiles.txt 
+    COMMENT "Coding Style Checker"
+    )
+  ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt)
+ENDIF(IGSTKSandbox_USE_KWSTYLE)
+
+
