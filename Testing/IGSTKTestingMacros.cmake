@@ -34,6 +34,7 @@ MACRO(IGSTKTesting
       IGSTK_USE_FLTK
       IGSTK_USE_Qt
       IGSTK_USE_MicronTracker
+      IGSTK_USE_KWSTYLE
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -689,16 +690,8 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/igstkSystemInformation.h"
                @ONLY IMMEDIATE)
 
-#ARE THESE NEEDED!!!?
-#CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/Input/polaris_stream_07_27_2005.bin"
-#               "${CXX_TEST_PATH}/polaris_stream_07_27_2005.bin"
-#               COPYONLY @ONLY IMMEDIATE)
-#CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/Input/polaris_stream_07_27_2005.bin"
-#"${CMAKE_CURRENT_BINARY_DIR}/polaris_stream_07_27_2005.bin"
-#COPYONLY @ONLY IMMEDIATE)
-
-#CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.ctest.in"
-#               "${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.ctest"
-#               COPYONLY @ONLY IMMEDIATE)
+IF(IGSTK_USE_KWSTYLE)
+  ADD_TEST(KWStyle ${KWSTYLE_EXECUTABLE} ${KWSTYLE_ARGUMENTS})
+ENDIF(IGSTK_USE_KWSTYLE)
 
 ENDMACRO(IGSTKTesting)

@@ -339,6 +339,16 @@ IF(IGSTK_USE_KWSTYLE)
   OPTION(KWSTYLE_USE_VIM_FORMAT "Set KWStyle to generate errors with a VIM-compatible format." OFF)
   OPTION(KWSTYLE_USE_MSVC_FORMAT "Set KWStyle to generate errors with a VisualStudio-compatible format." OFF)
 
+  CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTK.kws.xml.in
+               ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml)
+
+  CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
+               ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
+
+  SET(KWSTYLE_ARGUMENTS
+  -xml ${IGSTK_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+  )
+
   IF(KWSTYLE_USE_VIM_FORMAT)
     SET(KWSTYLE_ARGUMENTS -vim ${KWSTYLE_ARGUMENTS})
   ENDIF(KWSTYLE_USE_VIM_FORMAT)
@@ -347,13 +357,7 @@ IF(IGSTK_USE_KWSTYLE)
     SET(KWSTYLE_ARGUMENTS -msvc ${KWSTYLE_ARGUMENTS})
   ENDIF(KWSTYLE_USE_MSVC_FORMAT)
 
-  CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTK.kws.xml.in
-               ${IGSTK_BINARY_DIR}/IGSTK.kws.xml)
-
-  CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
-               ${IGSTK_BINARY_DIR}/IGSTKFiles.txt)
-
-  ADD_CUSTOM_COMMAND(
+    ADD_CUSTOM_COMMAND(
     OUTPUT ${IGSTK_BINARY_DIR}/KWStyleReport.txt
     COMMAND ${KWSTYLE_EXECUTABLE}
     ARGS    -xml ${IGSTK_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt ${KWSTYLE_ARGUMENTS} -D ${IGSTK_BINARY_DIR}/IGSTKFiles.txt 

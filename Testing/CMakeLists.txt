@@ -38,5 +38,6 @@ IGSTKTesting(igstkTests
              IGSTK_USE_FLTK
              IGSTK_USE_Qt
              IGSTK_USE_MicronTracker
+             IGSTK_USE_KWSTYLE
              )
 
