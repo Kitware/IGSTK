@@ -345,8 +345,7 @@ IF(IGSTK_USE_KWSTYLE)
   CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
                ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
 
-  SET(KWSTYLE_ARGUMENTS
-  -xml ${IGSTK_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+  SET(KWSTYLE_ARGUMENTS -xml ${IGSTK_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
   )
 
   IF(KWSTYLE_USE_VIM_FORMAT)
