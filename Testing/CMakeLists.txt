@@ -408,5 +408,6 @@ IGSTKTesting(igstkLatestTests
              IGSTKSandbox_USE_FLTK
              IGSTKSandbox_USE_Qt
              IGSTKSandbox_USE_MicronTracker
+             IGSTK_USE_KWSTYLE
              )
 
