@@ -47,6 +47,12 @@ AuroraTrackerTool::AuroraTrackerTool():m_StateMachine(this)
   // Channel number Specified
   m_ChannelNumberSpecified = false;
 
+  // Initialize internal variables accessable through GetMacros
+  m_PortNumber    = 0;
+  m_ChannelNumber = 0;
+  m_SROMFileName  = "";
+  m_PartNumber    = "";
+
   // States
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( 5DOFTrackerToolSelected );

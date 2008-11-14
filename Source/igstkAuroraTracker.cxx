@@ -290,17 +290,19 @@ AuroraTracker::ResultType AuroraTracker
     }
 
     }
-    else
+    else if ( auroraTrackerTool->IsTrackerTool5DOF() )
     {
       unsigned int port = auroraTrackerTool->GetPortNumber();
       unsigned int channel = auroraTrackerTool->GetChannelNumber();
+      
+      // There are only two channels 0 and 1, use 1 if channel is not set      
+      if (channel > MAX_CHANNEL_NUMBER)
+      {
+        channel = MAX_CHANNEL_NUMBER;
+      }
       ph = m_SpliterHandle[port][channel];
     }
   
-  //////////////////////////////////////////////////////////////////////////
-
-  //////////////////////////////////////////////////////////////////////////
-
   commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
 
   // tool identity and type information

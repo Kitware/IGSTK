@@ -43,6 +43,7 @@ namespace igstk
 const unsigned int MAX_PORT_NUMBER = 12;
 const unsigned int MAX_WIRED_PORT_NUMBER = 4;
 const unsigned int NUMBER_OF_ATTEMPTS = 256;
+const unsigned int MAX_CHANNEL_NUMBER = 1;
 
 class AuroraTracker : public NDITracker
 {
