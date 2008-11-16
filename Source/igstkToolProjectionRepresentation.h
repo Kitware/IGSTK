@@ -86,8 +86,6 @@ protected:
   /** Create the VTK actors */
   void CreateActors();
 
-  void SetPlane( const vtkPlaneSource * plane );
-
   /** Verify time stamp. Use the reslicing tool transform to verify 
   * the time stamp */
   virtual bool VerifyTimeStamp() const;
@@ -120,12 +118,12 @@ private:
   igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
 
-  /** Declare the observer that will receive a VTK plane source from the
-  * ImageResliceSpatialObject */
-  igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
-                      EventHelperType::VTKPlaneSourcePointerType);
+  /** Declare the observer that will receive the reslicer plane normal from the
+  * ReslicerPlaneSpatialObject */
+  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                      ReslicerPlaneType::VectorType);
 
-  VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
+  ReslicerPlaneNormalObserver::Pointer  m_ReslicerPlaneNormalObserver;
 
 private:
 
@@ -136,8 +134,6 @@ private:
   vtkLineSource* m_LineSource;
   vtkTubeFilter *m_Tuber;
   vtkPolyDataMapper* m_LineMapper;
-
-  VectorType m_PlaneNormal;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidToolProjectionObject );

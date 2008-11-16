@@ -42,9 +42,7 @@ ToolProjectionRepresentation
 
   m_ToolProjectionSpatialObject = NULL;
 
-  m_VTKPlaneObserver = VTKPlaneObserver::New();
-
-  m_PlaneNormal.Fill(0.0);
+  m_ReslicerPlaneNormalObserver = ReslicerPlaneNormalObserver::New();
 
   this->RequestSetSpatialObject( m_ToolProjectionSpatialObject );
   
@@ -196,6 +194,9 @@ ToolProjectionRepresentation
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
+  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                            m_ReslicerPlaneNormalObserver );
+
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 }
 
@@ -215,12 +216,12 @@ void ToolProjectionRepresentation
 
   // we don't need to force a plane update in the reslicer plane spatial object. Let's use
   // the plane the he already has
-  //m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
   if ( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
     return;
 
-  // should we use an event here?
+  // todo: get the tool's direction directly. do not calculate it again
   igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
   VectorType point1 = toolTransform.GetTranslation();
   VectorType point2;
@@ -233,25 +234,19 @@ void ToolProjectionRepresentation
   toolAxis[1] = 0;
   toolAxis[2] = 0;
   toolAxis = rotation.Transform(toolAxis);
-
-  unsigned int planeObsID = 
-      m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
-                                      m_VTKPlaneObserver );
   
-  m_VTKPlaneObserver->Reset();
+  m_ReslicerPlaneNormalObserver->Reset();
 
-  m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
+  m_ReslicePlaneSpatialObject->RequestGetReslicingPlaneParameters();
   
-  if( m_VTKPlaneObserver->GotVTKPlane() )
+  if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
   {
-      this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );        
+      ReslicerPlaneType::VectorType &normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
 
-      VectorType toolProy = itk::CrossProduct( m_PlaneNormal, itk::CrossProduct(toolAxis, m_PlaneNormal) );
+      VectorType toolProy = itk::CrossProduct( normal, itk::CrossProduct(toolAxis, normal) );
 
       point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
   }
-
-  m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
 
   if ( (point2-point1).GetNorm() > 0.1 )
   {
@@ -320,25 +315,6 @@ ToolProjectionRepresentation
     {
     return true;
     }
-}
-
-void
-ToolProjectionRepresentation
-::SetPlane( const vtkPlaneSource * plane )
-{
-  igstkLogMacro( DEBUG, "igstk::ToolProjectionRepresentation\
-                        ::SetPlane called...\n");
-
-  // This const_cast<> is needed here due to 
-  // the lack of const-correctness in VTK 
-  //m_PlaneSource = 
-  vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
-
-  double* normal = auxPlane->GetNormal();
-
-  m_PlaneNormal[0] = normal[0];
-  m_PlaneNormal[1] = normal[1];
-  m_PlaneNormal[2] = normal[2];
 }
 
 /** Create the vtk Actors */
