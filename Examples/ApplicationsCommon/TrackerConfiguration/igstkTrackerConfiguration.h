@@ -76,6 +76,8 @@ public:
    */
   virtual std::string GetToolTypeAsString() = 0;
 
+
+
 protected:
        //the tool's calibration transformation
   igstk::Transform   m_CalibrationTransform;
