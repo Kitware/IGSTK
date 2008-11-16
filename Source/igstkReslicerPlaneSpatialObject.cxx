@@ -23,8 +23,11 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkPlaneSource.h"
+#include "vtkPlane.h"
 #include "vtkMath.h"
 #include "vtkTransform.h"
+#include "vtkCutter.h"
+#include "vtkOutlineFilter.h"
 
 
 namespace igstk
@@ -42,16 +45,6 @@ ReslicerPlaneSpatialObject
 
   m_BoundingBoxProviderSpatialObject = NULL;
   m_ToolSpatialObject = NULL; 
-
-  //Create vtk plane 
-  m_PlaneSource = vtkPlaneSource::New();
-
-  //Create reslice axes matrix
-  //m_ResliceAxes = vtkMatrix4x4::New();
-
-  //Create reslice transform
-  //m_ResliceTransform = vtkTransform::New();
-  //m_ResliceTransform->Identity();
 
   // Create the observer to VTK image events 
 //  m_VTKImageObserver = VTKImageObserver::New();
@@ -95,7 +88,7 @@ ReslicerPlaneSpatialObject
   igstkAddInputMacro( ValidCursorPosition );
   igstkAddInputMacro( InValidCursorPosition );
   igstkAddInputMacro( GetToolPosition );
-  igstkAddInputMacro( GetVTKPlane );
+  igstkAddInputMacro( GetReslicingPlaneParameters );
   igstkAddInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ComputeReslicePlane );
@@ -175,8 +168,8 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetToolPosition,
                            BoundingBoxProviderSpatialObjectSet, ReportToolPosition );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetVTKPlane,
-                           BoundingBoxProviderSpatialObjectSet, ReportVTKPlane );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetReslicingPlaneParameters,
+                           BoundingBoxProviderSpatialObjectSet, ReportReslicingPlaneParameters );
 
   igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
@@ -201,11 +194,7 @@ ReslicerPlaneSpatialObject
 ReslicerPlaneSpatialObject
 ::~ReslicerPlaneSpatialObject()  
 {  
-  if( ! m_PlaneSource )
-    {
-    m_PlaneSource->Delete();
-    m_PlaneSource = NULL;
-    }
+
 }
 
 void 
@@ -242,12 +231,12 @@ ReslicerPlaneSpatialObject
 
 void
 ReslicerPlaneSpatialObject
-::RequestGetVTKPlane() 
+::RequestGetReslicingPlaneParameters() 
 {
   igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-                        ::RequestGetVTKPlane called...\n");
+                        ::RequestGetReslicingPlaneParameters called...\n");
  
-  igstkPushInputMacro( GetVTKPlane );
+  igstkPushInputMacro( GetReslicingPlaneParameters );
   m_StateMachine.ProcessInputs();
 }
 
@@ -258,60 +247,26 @@ ReslicerPlaneSpatialObject
   igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
                         ::ReportToolPositionProcessing called...\n");
 
-  EventHelperType::PointType position;
-   
-  position[0] = m_ToolPosition[0];
-  position[1] = m_ToolPosition[1];
-  position[2] = m_ToolPosition[2];
-
-  PointEvent event;
-  event.Set( position );
+  ToolTipPositionEvent event;
+  event.Set( m_ToolPosition );
   this->InvokeEvent( event );
 }
 
 void
 ReslicerPlaneSpatialObject
-::ReportVTKPlaneProcessing() 
+::ReportReslicingPlaneParametersProcessing() 
 {
   igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
-                        ::ReportVTKPlaneProcessing called...\n");
+                        ::ReportReslicingPlaneParametersProcessing called...\n");
 
-  double abs_normal[3];
-  m_PlaneSource->GetNormal(abs_normal);
+  ReslicerPlaneCenterEvent pcEvent;
+  pcEvent.Set( m_PlaneCenter );
+  this->InvokeEvent( pcEvent );
 
-  double nmax = 0.0;
-  int k = 0;
+  ReslicerPlaneNormalEvent pnEvent;
+  pnEvent.Set( m_PlaneNormal );
+  this->InvokeEvent( pnEvent );
 
-  for (int i = 0; i < 3; i++ )
-  {
-      abs_normal[i] = fabs(abs_normal[i]);
-      if ( abs_normal[i]>nmax )
-      {
-          nmax = abs_normal[i];
-          k = i;
-      }
-  }
-
-  // Force the plane to lie within the true bounds along its normal
-  //
-  if ( m_PlaneCenter[k] > m_ImageBounds[2*k+1] )
-  {
-     m_PlaneCenter[k] = m_ImageBounds[2*k+1];
-  }
-  else if ( m_PlaneCenter[k] < m_ImageBounds[2*k] )
-  {
-     m_PlaneCenter[k] = m_ImageBounds[2*k];
-  }
-
-  m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
-  m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
-  m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
-  m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
-  m_PlaneSource->SetCenter(m_PlaneCenter[0],m_PlaneCenter[1],m_PlaneCenter[2]);
-
-  VTKPlaneModifiedEvent event;
-  event.Set( m_PlaneSource );
-  this->InvokeEvent( event );
 }
 
 void 
@@ -559,173 +514,10 @@ ReslicerPlaneSpatialObject
     }
   }
 
-  VectorType auxvec;
-  VectorType auxnorm;
-
-  auxvec.Fill(0);
-  auxvec[0] = m_ImageBounds[0];
-  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = 1;
-  auxnorm[1] = 0;
-  auxnorm[2] = 0;
-  m_BoundsNormals.push_back(auxnorm);
-
-  auxvec.Fill(0);
-  auxvec[0] = m_ImageBounds[1];
-  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = -1;
-  auxnorm[1] = 0;
-  auxnorm[2] = 0;
-  m_BoundsNormals.push_back(auxnorm);
-
-  auxvec.Fill(0);
-  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-  auxvec[1] = m_ImageBounds[2];
-  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = 0;
-  auxnorm[1] = 1;
-  auxnorm[2] = 0;
-  m_BoundsNormals.push_back(auxnorm);
-
-  auxvec.Fill(0);
-  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-  auxvec[1] = m_ImageBounds[3];
-  auxvec[2] = 0.5 * ( m_ImageBounds[4] + m_ImageBounds[5] );
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = 0;
-  auxnorm[1] = -1;
-  auxnorm[2] = 0;
-  m_BoundsNormals.push_back(auxnorm);
-
-  auxvec.Fill(0);
-  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-  auxvec[2] = m_ImageBounds[4];
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = 0;
-  auxnorm[1] = 0;
-  auxnorm[2] = 1;
-  m_BoundsNormals.push_back(auxnorm);
-
-  auxvec.Fill(0);
-  auxvec[0] = 0.5 * ( m_ImageBounds[0] + m_ImageBounds[1] );
-  auxvec[1] = 0.5 * ( m_ImageBounds[2] + m_ImageBounds[3] );
-  auxvec[2] = m_ImageBounds[5];
-  m_BoundsCenters.push_back(auxvec);
-  auxnorm[0] = 0;
-  auxnorm[1] = 0;
-  auxnorm[2] = -1;
-  m_BoundsNormals.push_back(auxnorm);
-
   m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
   m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
   m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
 
-  // fixe: setting the same initial extension to all orientations
-  m_PlaneOrigin[0] = m_ImageBounds[0];
-  m_PlaneOrigin[1] = m_ImageBounds[2];
-  m_PlaneOrigin[2] = m_ImageBounds[4];
-
-  m_PlanePoint1[0] = m_ImageBounds[1];
-  m_PlanePoint1[1] = m_ImageBounds[2];
-  m_PlanePoint1[2] = m_ImageBounds[4];
-
-  m_PlanePoint2[0] = m_ImageBounds[0];
-  m_PlanePoint2[1] = m_ImageBounds[3];
-  m_PlanePoint2[2] = m_ImageBounds[4];
-
-  m_PlaneNormal[0] = 0;
-  m_PlaneNormal[1] = 0;
-  m_PlaneNormal[2] = 1;
-/*
-    switch ( this->GetOrientationType() )
-    {
-      case Axial:
-      case OffAxial:
-          m_PlaneOrigin[0] = m_ImageBounds[0];
-          m_PlaneOrigin[1] = m_ImageBounds[2];
-          m_PlaneOrigin[2] = m_ImageBounds[4];
-
-          m_PlanePoint1[0] = m_ImageBounds[1];
-          m_PlanePoint1[1] = m_ImageBounds[2];
-          m_PlanePoint1[2] = m_ImageBounds[4];
-
-          m_PlanePoint2[0] = m_ImageBounds[0];
-          m_PlanePoint2[1] = m_ImageBounds[3];
-          m_PlanePoint2[2] = m_ImageBounds[4];
-
-          m_PlaneNormal[0] = 0;
-          m_PlaneNormal[1] = 0;
-          m_PlaneNormal[2] = 1;
-
-          break;
-      case Sagittal:
-      case OffSagittal:
-          m_PlaneOrigin[0] = m_ImageBounds[0];
-          m_PlaneOrigin[1] = m_ImageBounds[2];
-          m_PlaneOrigin[2] = m_ImageBounds[4];
-
-          m_PlanePoint1[0] = m_ImageBounds[0];
-          m_PlanePoint1[1] = m_ImageBounds[3];
-          m_PlanePoint1[2] = m_ImageBounds[4];
-
-          m_PlanePoint2[0] = m_ImageBounds[0];
-          m_PlanePoint2[1] = m_ImageBounds[2];
-          m_PlanePoint2[2] = m_ImageBounds[5];
-
-          m_PlaneNormal[0] = 0;
-          m_PlaneNormal[1] = 1;
-          m_PlaneNormal[2] = 0;
-
-          break;
-      case Coronal:
-      case OffCoronal:
-          m_PlaneOrigin[0] = m_ImageBounds[0];
-          m_PlaneOrigin[1] = m_ImageBounds[2];
-          m_PlaneOrigin[2] = m_ImageBounds[4];
-
-          m_PlanePoint1[0] = m_ImageBounds[0];
-          m_PlanePoint1[1] = m_ImageBounds[2];
-          m_PlanePoint1[2] = m_ImageBounds[5];
-
-          m_PlanePoint2[0] = m_ImageBounds[1];
-          m_PlanePoint2[1] = m_ImageBounds[2];
-          m_PlanePoint2[2] = m_ImageBounds[4];
-
-          m_PlaneNormal[0] = 1;
-          m_PlaneNormal[1] = 0;
-          m_PlaneNormal[2] = 0;
-
-          break;
-      default: // set axial extension as default
-          m_PlaneOrigin[0] = m_ImageBounds[0];
-          m_PlaneOrigin[1] = m_ImageBounds[2];
-          m_PlaneOrigin[2] = m_ImageBounds[4];
-
-          m_PlanePoint1[0] = m_ImageBounds[1];
-          m_PlanePoint1[1] = m_ImageBounds[2];
-          m_PlanePoint1[2] = m_ImageBounds[4];
-
-          m_PlanePoint2[0] = m_ImageBounds[0];
-          m_PlanePoint2[1] = m_ImageBounds[3];
-          m_PlanePoint2[2] = m_ImageBounds[4];
-
-          m_PlaneNormal[0] = 0;
-          m_PlaneNormal[1] = 0;
-          m_PlaneNormal[2] = 1;
-
-          break;
-    }
-*/
-     m_PlaneSource->SetNormal(m_PlaneNormal[0],m_PlaneNormal[1],m_PlaneNormal[2]);
-     m_PlaneSource->SetOrigin(m_PlaneOrigin[0],m_PlaneOrigin[1],m_PlaneOrigin[2]);
-     m_PlaneSource->SetPoint1(m_PlanePoint1[0],m_PlanePoint1[1],m_PlanePoint1[2]);
-     m_PlaneSource->SetPoint2(m_PlanePoint2[0],m_PlanePoint2[1],m_PlanePoint2[2]);
 }
 
 void 
@@ -889,7 +681,7 @@ ReslicerPlaneSpatialObject
   //the plane center will be set to the tool postion in 3D space.
   if( m_ToolSpatialObject )
     {
-        Transform::VectorType   translation;
+        VectorType   translation;
         translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
         m_ToolPosition[0] = translation[0];
@@ -911,18 +703,6 @@ ReslicerPlaneSpatialObject
               m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
               m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
 
-              m_PlaneOrigin[0] = m_ImageBounds[0];
-              m_PlaneOrigin[1] = m_ImageBounds[2];
-              m_PlaneOrigin[2] = m_ImageBounds[4];
-
-              m_PlanePoint1[0] = m_ImageBounds[1];
-              m_PlanePoint1[1] = m_ImageBounds[2];
-              m_PlanePoint1[2] = m_ImageBounds[4];
-
-              m_PlanePoint2[0] = m_ImageBounds[0];
-              m_PlanePoint2[1] = m_ImageBounds[3];
-              m_PlanePoint2[2] = m_ImageBounds[4];
-
               break;
             }
 
@@ -935,17 +715,6 @@ ReslicerPlaneSpatialObject
               m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
               m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
 
-              m_PlaneOrigin[0] = m_ImageBounds[0];
-              m_PlaneOrigin[1] = m_ImageBounds[2];
-              m_PlaneOrigin[2] = m_ImageBounds[4];
-
-              m_PlanePoint1[0] = m_ImageBounds[0];
-              m_PlanePoint1[1] = m_ImageBounds[3];
-              m_PlanePoint1[2] = m_ImageBounds[4];
-
-              m_PlanePoint2[0] = m_ImageBounds[0];
-              m_PlanePoint2[1] = m_ImageBounds[2];
-              m_PlanePoint2[2] = m_ImageBounds[5];
               break;
             }
 
@@ -957,18 +726,6 @@ ReslicerPlaneSpatialObject
 
               m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
               m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
-
-              m_PlaneOrigin[0] = m_ImageBounds[0];
-              m_PlaneOrigin[1] = m_ImageBounds[2];
-              m_PlaneOrigin[2] = m_ImageBounds[4];
-
-              m_PlanePoint1[0] = m_ImageBounds[0];
-              m_PlanePoint1[1] = m_ImageBounds[2];
-              m_PlanePoint1[2] = m_ImageBounds[5];
-
-              m_PlanePoint2[0] = m_ImageBounds[1];
-              m_PlanePoint2[1] = m_ImageBounds[2];
-              m_PlanePoint2[2] = m_ImageBounds[4];
 
               break;
             }
@@ -1053,74 +810,54 @@ ReslicerPlaneSpatialObject
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
                        ::ComputeObliqueReslicingPlane called...\n");
 
-  // set the same extension to the thre planes
-  m_PlaneOrigin[0] = m_ImageBounds[0];
-  m_PlaneOrigin[1] = m_ImageBounds[2];
-  m_PlaneOrigin[2] = m_ImageBounds[4];
-
-  m_PlanePoint1[0] = m_ImageBounds[1];
-  m_PlanePoint1[1] = m_ImageBounds[2];
-  m_PlanePoint1[2] = m_ImageBounds[4];
-
-  m_PlanePoint2[0] = m_ImageBounds[0];
-  m_PlanePoint2[1] = m_ImageBounds[3];
-  m_PlanePoint2[2] = m_ImageBounds[4];
-
-  /* Calculate the tool's long axis vector */
-  const VectorType& translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  /* Calculate the tool's long axis vector.
+  * we make the assumption that the tool's long axis is on the -x axis
+  * with the tip in (0,0,0)
+  */
   const VersorType& rotation = m_ToolTransformWRTImageCoordinateSystem.GetRotation();
+    // auxiliary vecs
+  VectorType v1, v2, vn;
+  vn.Fill(0.0);
+  vn[0] = 1;
+  vn = rotation.Transform(vn);
 
-  VectorType   probeVector;
-  probeVector.Fill(0.0);
-  // we make the assumption that the tool's long axis is on the -x axis
-  // with the tip in (0,0,0)
-  probeVector[0] = 1;
-  probeVector = rotation.Transform(probeVector);
+  const VectorType& translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
   m_ToolPosition[0] = translation[0];
   m_ToolPosition[1] = translation[1];
   m_ToolPosition[2] = translation[2];
 
-  // auxiliary vecs
-  VectorType v1, v2, vn;
+  m_PlaneCenter[0] = translation[0];
+  m_PlaneCenter[1] = translation[1];
+  m_PlaneCenter[2] = translation[2];
 
   // get any normal vector to the tool's long axis
-  // fixme: we can make use of the 6DOF by converting the
+  // fixme: we could make use of the 6DOF by converting the
   // orthonormal base (1,0,0) (0,1,0) (0,0,1) but it's too noisy ...
-  v1[0] = -probeVector[1];
-  v1[1] = probeVector[0];
+  v1[0] = -vn[1];
+  v1[1] = vn[0];
   v1[2] = 0;
 
   // get a second normal vector
-  v2 = itk::CrossProduct( v1, probeVector );
+  v2 = itk::CrossProduct( v1, vn );
 
   switch( m_OrientationType )
     {
       case PlaneOrientationWithXAxesNormal:
         { 
-          m_PlaneNormal = v1;
+          m_PlaneNormal = v1;          
           break;
         }
 
       case PlaneOrientationWithYAxesNormal:
         {
-          m_PlaneNormal = v2;    
-
-         /* v2 = itk::CrossProduct( v1, probeVector );
-
-          double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
-          double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
-
-          m_PlaneOrigin = m_ToolPosition-probeVector*dist0+v2*dist0;
-          m_PlanePoint1 = m_PlaneOrigin+probeVector*dist0*2;
-          m_PlanePoint2 = m_PlaneOrigin-v2*dist0*2;*/
-          
+          m_PlaneNormal = v2;              
           break;
         }
 
       case PlaneOrientationWithZAxesNormal:
         {
-          m_PlaneNormal = probeVector;
+          m_PlaneNormal = vn;
           break;
         }
 
@@ -1140,39 +877,45 @@ ReslicerPlaneSpatialObject
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
                        ::ComputeOffOrthogonalReslicingPlane called...\n");
 
-  /* Calculate the tool's long axis vector */
-  igstk::Transform::VectorType   probeVector;
-  probeVector.Fill(0.0);
-  // fixme: the tool´s long axis direction changes depending on the spatial object definition 
-  // so, what we can do to always set it correctly?
-  probeVector[0] = 1;
+ /* Calculate the tool's long axis vector.
+  * we make the assumption that the tool's long axis is on the -x axis
+  * with the tip in (0,0,0)
+  */
+  const VersorType& rotation = m_ToolTransformWRTImageCoordinateSystem.GetRotation();
+  
+  // auxiliary vecs
+  VectorType v1, vn;
+  vn.Fill(0.0);
+  vn[0] = 1;
+  vn = rotation.Transform(vn);
 
-  probeVector = m_ToolTransformWRTImageCoordinateSystem.GetRotation().Transform(probeVector);
-  m_PlaneCenter = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+  const VectorType& translation = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
 
-  m_ToolPosition[0] = m_PlaneCenter[0];
-  m_ToolPosition[1] = m_PlaneCenter[1];
-  m_ToolPosition[2] = m_PlaneCenter[2];
+  m_ToolPosition[0] = translation[0];
+  m_ToolPosition[1] = translation[1];
+  m_ToolPosition[2] = translation[2];
 
-  VectorType vx, vy, vn, v;
+  m_PlaneCenter[0] = translation[0];
+  m_PlaneCenter[1] = translation[1];
+  m_PlaneCenter[2] = translation[2];
 
   switch( m_OrientationType )
     {
       case OffAxial:
       {
-        vx.Fill( 0.0 );
-        vx[0] = 1;
+        v1.Fill( 0.0 );
+        v1[0] = 1;
       
-        if ( fabs(vx*probeVector) < 1e-9 )
+        if ( fabs(v1*vn) < 1e-9 )
         {
         // FIXME: need to handle this situation too
         igstkLogMacro( DEBUG, "The two vectors are parallel \n");
         }
 
-        vn = itk::CrossProduct( vx, probeVector );
+        vn = itk::CrossProduct( v1, vn );
         vn.Normalize();
 
-        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]); 
+        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
 
         m_PlaneNormal = vn;
         break;
@@ -1181,62 +924,42 @@ ReslicerPlaneSpatialObject
       case OffSagittal:
       {
                 
-        vx.Fill( 0.0 );
-        vx[2] = 1;
+        v1.Fill( 0.0 );
+        v1[2] = 1;
       
-        if ( fabs(vx*probeVector) < 1e-9 )
+        if ( fabs(v1*vn) < 1e-9 )
         {
         // FIXME: need to handle this situation too
         igstkLogMacro( DEBUG, "The two vectors are parallel \n");
         }
 
-        vn = itk::CrossProduct( vx, probeVector );
+        vn = itk::CrossProduct( v1, vn );
         vn.Normalize();
 
         m_PlaneNormal = vn;
 
-        vy = itk::CrossProduct( vn, vx );
-        vy.Normalize();
-
-//        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]); 
-
-        double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
-        double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
-
-        m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
-        m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
-        m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
+        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
         
         break;
       }
 
     case OffCoronal:
       {
-        vx.Fill( 0.0 );
-        vx[1] = 1;
+        v1.Fill( 0.0 );
+        v1[1] = 1;
       
-        if ( fabs(vx*probeVector) < 1e-9 )
+        if ( fabs(v1*vn) < 1e-9 )
         {
         // FIXME: need to handle this situation too
         igstkLogMacro( DEBUG, "The two vectors are parallel \n");
         }
 
-        vn = itk::CrossProduct( vx, probeVector );
+        vn = itk::CrossProduct( v1, vn );
         vn.Normalize();
 
         m_PlaneNormal = vn;
 
-        vy = itk::CrossProduct( vn, vx );
-        vy.Normalize();
-
-//        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]); 
-
-        double dist0 = (m_ImageBounds[1]-m_ImageBounds[0])/2;
-        double dist1 = (m_ImageBounds[3]-m_ImageBounds[2])/2;
-
-        m_PlaneOrigin = m_ToolPosition-probeVector*dist0;
-        m_PlanePoint1 = m_ToolPosition-probeVector*dist0-vx*dist0-vy*dist0;
-        m_PlanePoint2 = m_ToolPosition-probeVector*dist0+vx*dist0-vy*dist0;
+        m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);        
 
         break;
       }      
@@ -1248,62 +971,6 @@ ReslicerPlaneSpatialObject
         }
     }
 }
-
-/** Get distance to closest plane in the image bounding box 
-* work in progress ...
-* p: is the tool position
-* pv: is the tool´s long axis vector
-* pi: is the plane index in the bounding box
-*/
-double
-ReslicerPlaneSpatialObject
-::GetDistanceToPlane(VectorType p, VectorType pv, unsigned int pi)
-{
-  double u = 0.0;
-
-  // first check that p does not lay on the plane pi
-  if ( fabs( (p - m_BoundsCenters[pi])*m_BoundsNormals[pi] ) < 1e-9 )
-    return u;
-
-  u = (m_BoundsNormals[pi]*m_BoundsCenters[pi] - m_BoundsCenters[pi]*p)/
-    (m_BoundsNormals[pi]*pv);
-
-  return u;
-}
-
-/** Get reslicing plane equation */
-/*
-vtkPlaneSource *
-ReslicerPlaneSpatialObject
-::GetReslicingPlane()
-{
-  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::GetReslicingPlane called...\n");
-  return m_PlaneSource;
-}*/
-
-/** Request Get reslicing axes matrix */
-/*
-vtkMatrix4x4 *
-ReslicerPlaneSpatialObject
-::GetResliceAxes()
-{
-  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::GetResliceAxes called...\n");
-  return m_ResliceAxes;
-}
-*/
-/** Request Get reslicing transform*/
-/*
-vtkTransform *
-ReslicerPlaneSpatialObject
-::GetResliceTransform()
-{
-  igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
-                       ::GetResliceTransform called...\n");
-  return m_ResliceTransform;
-}
-*/
 
 /** Report invalid reslicing mode */
 void
@@ -1340,6 +1007,21 @@ ReslicerPlaneSpatialObject
 ::GetToolTransform( ) const
 {
   return this->m_ToolTransformWRTImageCoordinateSystem;
+}
+
+//ReslicerPlaneSpatialObject::VectorType
+//ReslicerPlaneSpatialObject
+//::GetReslicerPlaneNormal() const
+//{
+//  return m_PlaneNormal;
+//}
+
+//todo: get tool position as an event
+ReslicerPlaneSpatialObject::VectorType
+ReslicerPlaneSpatialObject
+::GetToolPosition() const
+{
+  return m_PlaneCenter;
 }
 
 /** Check if tool spatial object is set to drive the reslicing*/

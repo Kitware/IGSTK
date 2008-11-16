@@ -24,8 +24,11 @@
 #include "igstkStateMachine.h"
 
 class vtkPlaneSource;
+class vtkPlane;
 class vtkMatrix4x4;
 class vtkTransform;
+class vtkCutter;
+class vtkOutlineFilter;
 
 namespace igstk
 {
@@ -65,14 +68,19 @@ public:
 public:
 
   /** Typedefs */
-  typedef SpatialObject                                 BoundingBoxProviderSpatialObjectType;
-  typedef BoundingBoxProviderSpatialObjectType::ConstPointer      BoundingBoxProviderSpatialObjectConstPointer;
+  typedef SpatialObject                          BoundingBoxProviderSpatialObjectType;
+  typedef BoundingBoxProviderSpatialObjectType::ConstPointer      
+                                                 BoundingBoxProviderSpatialObjectConstPointer;
 
   typedef SpatialObject                                 ToolSpatialObjectType;
   typedef ToolSpatialObjectType::Pointer                ToolSpatialObjectPointer;
 
   typedef igstk::Transform::VectorType                  VectorType;
   typedef igstk::Transform::VersorType                  VersorType;
+
+  igstkLoadedEventMacro( ToolTipPositionEvent, IGSTKEvent, VectorType );
+  igstkLoadedEventMacro( ReslicerPlaneNormalEvent, IGSTKEvent, VectorType );
+  igstkLoadedEventMacro( ReslicerPlaneCenterEvent, IGSTKEvent, VectorType );
 
   /** Reslicing modes */
   enum ReslicingMode
@@ -121,8 +129,8 @@ public:
   /** Request get tool position */
   void RequestGetToolPosition();
 
-  /** Request get reslicing plane */
-  void RequestGetVTKPlane();
+  /** Request get reslicing plane parameters */
+  void RequestGetReslicingPlaneParameters();
 
   /** Request compute reslicing plane */
   void RequestComputeReslicingPlane(); 
@@ -140,6 +148,12 @@ public:
 
   /** Get tool transform */
   igstk::Transform GetToolTransform() const;
+
+  /** fixme: put this into events */
+  VectorType GetToolPosition() const;
+
+  /** fixme: put this into events */
+  //VectorType GetReslicerPlaneNormal() const;
 
   /** Inquiry if a tool spatial object is set for reslicing */
   bool  IsToolSpatialObjectSet();
@@ -174,7 +188,7 @@ private:
   igstkDeclareInputMacro( ValidCursorPosition );
   igstkDeclareInputMacro( InValidCursorPosition );
   igstkDeclareInputMacro( GetToolPosition );
-  igstkDeclareInputMacro( GetVTKPlane );
+  igstkDeclareInputMacro( GetReslicingPlaneParameters );
   igstkDeclareInputMacro( GetToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkDeclareInputMacro( ComputeReslicePlane );
@@ -238,11 +252,7 @@ private:
   void ReportToolPositionProcessing( void );
 
   /** Report plane */
-  void ReportVTKPlaneProcessing( void );
-
-  /** Auxiliary function to get the distance to the bounding plane in the 
-  direction of the tool*/
-  double GetDistanceToPlane(VectorType p, VectorType pv, unsigned int pi);
+  void ReportReslicingPlaneParametersProcessing( void );
 
   /** Methods to compute reslcing plane for the different modes*/
   void ComputeOrthogonalReslicingPlane();
@@ -263,22 +273,11 @@ private:
 
   /** Variables for managing tool spatial object */
   ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
-  ToolSpatialObjectPointer     m_ToolSpatialObject;
-  
-  /** reslicing plane */
-  vtkPlaneSource *                  m_PlaneSource;
-
-  /** reslicing matrix */
-  //vtkMatrix4x4 *                    m_ResliceAxes; 
-
-//  vtkTransform *                    m_ResliceTransform;
+  ToolSpatialObjectPointer     m_ToolSpatialObject;  
   
   /** Plane parameters */
   VectorType                        m_PlaneNormal;
   VectorType                        m_PlaneCenter;
-  VectorType                        m_PlanePoint1;
-  VectorType                        m_PlanePoint2;
-  VectorType                        m_PlaneOrigin;
 
   // Event macro setup to receive the tool spatial object transform
   // with respect to the reference spatial object coordinate system
@@ -289,7 +288,7 @@ private:
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
 
   /** Observer for the bounding box event */
-  igstkObserverConstObjectMacro( BoundingBox, SpatialObject::BoundingBoxEvent,
+  igstkObserverObjectMacro( BoundingBox, SpatialObject::BoundingBoxEvent,
                                               SpatialObject::BoundingBoxType);
 
   /** Cursor position member variables */
@@ -301,7 +300,7 @@ private:
 
   double               m_ImageBounds[6];
 
-  BoundingBoxType::ConstPointer       m_BoundingBox;
+  BoundingBoxType::Pointer       m_BoundingBox;
   
 
   std::vector< VectorType > m_BoundsCenters;
