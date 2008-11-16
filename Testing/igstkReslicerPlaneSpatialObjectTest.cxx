@@ -37,10 +37,16 @@ namespace ReslicerPlaneSpatialObjectTest
 igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 
-// an observer that will receive a VTK plane source from the
-//ImageResliceSpatialObject 
-igstkObserverMacro( VTKPlane, ::igstk::VTKPlaneModifiedEvent,
-                      ::igstk::EventHelperType::VTKPlaneSourcePointerType)
+/** Declare the observers that will receive the reslicing plane parameters from the
+   * ReslicerPlaneSpatialObject */
+
+  typedef ::igstk::ReslicerPlaneSpatialObject               ReslicerPlaneType;
+
+  igstkObserverMacro( ReslicerPlaneCenter, ReslicerPlaneType::ReslicerPlaneCenterEvent,
+                      ReslicerPlaneType::VectorType);
+
+  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                      ReslicerPlaneType::VectorType);
 }
 
 /** This test demonstrates how to set the necessary inputs to the ReslicerPlaneSpatialObject */
@@ -157,42 +163,52 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, axesObject );
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  ReslicerPlaneSpatialObjectTest::VTKPlaneObserver::Pointer  planeObserver;
+  // setup two observers: one for the reslicer plane center and another for the reslicer plane normal
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneCenterObserver::Pointer  planeCenterObserver;
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneNormalObserver::Pointer  planeNormalObserver;
 
-  unsigned int obsID = 
-    reslicerPlaneSpatialObject->AddObserver( ::igstk::VTKPlaneModifiedEvent(),
-                                      planeObserver );
-  
-  planeObserver->Reset();
+  unsigned int planeCenterObserverID = 
+    reslicerPlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneCenterEvent(),
+                                      planeCenterObserver );
 
-  reslicerPlaneSpatialObject->RequestGetVTKPlane();
+  unsigned int planeNormalObserverID = 
+    reslicerPlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                      planeNormalObserver );
   
-  if( !planeObserver->GotVTKPlane() )
+  planeCenterObserver->Reset();
+  planeNormalObserver->Reset();
+
+  reslicerPlaneSpatialObject->RequestGetReslicingPlaneParameters();
+  
+  if( !planeCenterObserver->GotReslicerPlaneCenter() )
     {
-    std::cout << "VTKPlaneObserver failed!" << std::endl;
+    std::cout << "could not get ReslicerPlaneCenterEvent()!" << std::endl;
     return EXIT_FAILURE;
     }
 
-  // This const_cast<> is needed here due to 
-  // the lack of const-correctness in VTK 
-  //m_PlaneSource = 
-  vtkPlaneSource* plane = const_cast< vtkPlaneSource *>( planeObserver->GetVTKPlane() );
-
-  if( !plane )
-    {
-    std::cout << "Retrieved planes is NULL!" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  double* center = plane->GetCenter();
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType &center = 
+  planeCenterObserver->GetReslicerPlaneCenter();
+  
   std::cout << "Plane center: " << "(" << center[0] << "," 
-                                     << center[1] << ","
-                                     << center[2] << ")" << std::endl;
-   
-  reslicerPlaneSpatialObject->RemoveObserver( obsID );
+                                       << center[1] << ","
+                                       << center[2] << ")" << std::endl;     
+  
+  if( !planeNormalObserver->GotReslicerPlaneNormal() )
+    {
+    std::cout << "could not get ReslicerPlaneNormalEvent()!" << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  // todo: compare the position given to the tool spatial object and the 
-  // center of the retrieved resliced plane 
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType &normal = 
+    planeNormalObserver->GetReslicerPlaneNormal();
+  
+  std::cout << "Plane normal: " << "(" << normal[0] << "," 
+                                       << normal[1] << ","
+                                       << normal[2] << ")" << std::endl;
+   
+  // remove the two observers
+  reslicerPlaneSpatialObject->RemoveObserver( planeCenterObserverID );
+  reslicerPlaneSpatialObject->RemoveObserver( planeNormalObserverID );
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
