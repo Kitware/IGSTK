@@ -27,7 +27,7 @@
 
 class vtkPlane;
 class vtkCutter;
-class vtkTubeFilter;
+class vtkProperty;
 
 namespace igstk
 {
@@ -101,12 +101,18 @@ protected:
 
 private:
   
-  /** Declare the observer that will receive a VTK plane source from the
-   * ImageResliceSpatialObject */
-  igstkObserverMacro( VTKPlane, VTKPlaneModifiedEvent,
-                      EventHelperType::VTKPlaneSourcePointerType);
+  /** Declare the observers that will receive the reslicing plane parameters from the
+   * ReslicerPlaneSpatialObject */
 
-  VTKPlaneObserver::Pointer  m_VTKPlaneObserver;
+  igstkObserverMacro( ReslicerPlaneCenter, ReslicerPlaneType::ReslicerPlaneCenterEvent,
+                      ReslicerPlaneType::VectorType);
+
+  ReslicerPlaneCenterObserver::Pointer  m_ReslicerPlaneCenterObserver;
+
+  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                      ReslicerPlaneType::VectorType);
+
+  ReslicerPlaneNormalObserver::Pointer  m_ReslicerPlaneNormalObserver;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -117,17 +123,9 @@ private:
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
- 
-  /** Reslice processing */
-  //void ResliceProcessing();
 
   /** Set reslice plane spatial object processing */
   void SetReslicePlaneSpatialObjectProcessing();
-
-  /** Sets the vtkPlaneSource from the ImageReslicePlaneSpatialObject object. 
-  * This method MUST be private in order to prevent unsafe access from the 
-  * VTK plane source layer. */
-  void SetPlane( const vtkPlaneSource * plane );
 
 private:
 
@@ -156,7 +154,8 @@ private:
   /** Plane defining the contour */
   vtkPlane*  m_Plane;
   vtkCutter* m_Cutter;
-  vtkTubeFilter* m_Tuber;
+  vtkProperty* m_ContourProperty;
+//  vtkTubeFilter* m_Tuber;
   double                          m_LineWidth;
 };
 

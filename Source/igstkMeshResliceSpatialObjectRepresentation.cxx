@@ -26,11 +26,11 @@
 #include <vtkPolyData.h>
 #include <vtkPoints.h>
 #include <vtkIdList.h>
-#include <vtkDataSetMapper.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkPlane.h>
 #include <vtkCutter.h>
-#include <vtkTubeFilter.h>
+#include <vtkProperty.h>
 
 
 namespace igstk
@@ -107,11 +107,18 @@ MeshResliceSpatialObjectRepresentation
   m_Plane->SetOrigin(0,0,0);
   m_Plane->SetNormal(1,0,0);
 
-  m_Tuber = vtkTubeFilter::New();
+  m_LineWidth = 1.0;
 
   m_Cutter = vtkCutter::New();
-  m_VTKPlaneObserver = VTKPlaneObserver::New();
-  m_LineWidth = 1.0;
+  m_ReslicerPlaneCenterObserver = ReslicerPlaneCenterObserver::New();
+  m_ReslicerPlaneNormalObserver = ReslicerPlaneNormalObserver::New();
+  
+  m_ContourProperty = vtkProperty::New();
+  m_ContourProperty->SetAmbient(1);
+  m_ContourProperty->SetRepresentationToWireframe();
+  m_ContourProperty->SetInterpolationToFlat();
+  m_ContourProperty->SetLineWidth(m_LineWidth);
+
 } 
 
 /** Destructor */
@@ -121,23 +128,9 @@ MeshResliceSpatialObjectRepresentation
   // This must be called in order to avoid memory leaks.
   this->DeleteActors();
   
-  if ( m_Plane )
-    {
-    m_Plane->Delete();
-    m_Plane = NULL;
-    }
-
-  if ( m_Cutter )
-    {
-    m_Cutter->Delete();
-    m_Cutter = NULL;
-    }
-
-   if ( m_Tuber )
-    {
-    m_Tuber->Delete();
-    m_Tuber = NULL;
-    }
+  m_Plane->Delete();
+  m_Cutter->Delete();
+  m_ContourProperty->Delete();
 }
 
 
@@ -206,9 +199,11 @@ MeshResliceSpatialObjectRepresentation
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
-  m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
-                                            m_VTKPlaneObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneCenterEvent(),
+                                            m_ReslicerPlaneCenterObserver );
 
+  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                            m_ReslicerPlaneNormalObserver );
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();  
 }
@@ -232,37 +227,33 @@ void MeshResliceSpatialObjectRepresentation
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
-  //unsigned int planeObsID = 
-  //    m_ReslicePlaneSpatialObject->AddObserver( VTKPlaneModifiedEvent(),
-  //                                    m_VTKPlaneObserver );
+  m_ReslicerPlaneCenterObserver->Reset();
+  m_ReslicerPlaneNormalObserver->Reset();
+  m_ReslicePlaneSpatialObject->RequestGetReslicingPlaneParameters();
   
-  m_VTKPlaneObserver->Reset();
-
-  m_ReslicePlaneSpatialObject->RequestGetVTKPlane();
-  
-  if( m_VTKPlaneObserver->GotVTKPlane() )
+  ReslicerPlaneType::VectorType center;
+  if( m_ReslicerPlaneCenterObserver->GotReslicerPlaneCenter() )
     {
-    this->SetPlane( m_VTKPlaneObserver->GetVTKPlane() );
+      center = m_ReslicerPlaneCenterObserver->GetReslicerPlaneCenter();     
     }
+  else
+    return;
 
-//  m_ReslicePlaneSpatialObject->RemoveObserver( planeObsID );
+  ReslicerPlaneType::VectorType normal;
+  if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
+    {
+      normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
+    }
+  else
+    return;
 
-}
+  // shift a bit the contour to appear onto the reslicer plane
+  center[0] -= normal[0]*0.1;
+  center[1] -= normal[1]*0.1;
+  center[2] -= normal[2]*0.1;
 
-
-void MeshResliceSpatialObjectRepresentation
-::SetPlane( const vtkPlaneSource * plane )
-{
-  igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
-                        ::SetPlane called...\n");
-
-  // This const_cast<> is needed here due to 
-  // the lack of const-correctness in VTK 
-  //m_PlaneSource = 
-  vtkPlaneSource* auxPlane = const_cast< vtkPlaneSource *>( plane );
-
-  m_Plane->SetOrigin( auxPlane->GetCenter() );
-  m_Plane->SetNormal( auxPlane->GetNormal() );
+  m_Plane->SetNormal( normal[0], normal[1], normal[2] );
+  m_Plane->SetOrigin( center[0], center[1], center[2] );
 }
 
 /** Create the vtk Actors */
@@ -328,31 +319,31 @@ void MeshResliceSpatialObjectRepresentation
       }
     pts->Delete();
     }
-  
-  vtkDataSetMapper *pointMapper = vtkDataSetMapper::New();
+
+  polyData->SetPoints(polyPoints);
+
   m_Cutter->SetInput(polyData);
   m_Cutter->SetCutFunction(m_Plane);
 
-  vtkActor* meshActor = vtkActor::New();
+  vtkActor* contourActor = vtkActor::New();
+  vtkPolyDataMapper* contourMapper = vtkPolyDataMapper::New();
+  contourMapper->SetResolveCoincidentTopologyToPolygonOffset();
 
-  meshActor->GetProperty()->SetColor(this->GetRed(),
-                                     this->GetGreen(),
-                                     this->GetBlue());
-  polyData->SetPoints(polyPoints);
+  m_ContourProperty->SetColor(this->GetRed(),
+                               this->GetGreen(),
+                               this->GetBlue());
 
-  m_Tuber->SetInput ( m_Cutter->GetOutput() );
-  m_Tuber->SetRadius (m_LineWidth);
-  m_Tuber->SetNumberOfSides(4);
+  contourMapper->SetInput(m_Cutter->GetOutput());
+  contourActor->SetMapper(contourMapper);
+  contourActor->SetProperty(m_ContourProperty);
 
-  pointMapper->SetInput(m_Tuber->GetOutput());
+  contourMapper->Delete();
 
-  meshActor->SetMapper(pointMapper);
-
-  this->AddActor( meshActor );
+  this->AddActor( contourActor );
 
   polyPoints->Delete();
   polyData->Delete();
-  pointMapper->Delete();
+
 }
 
 /** Create a copy of the current object representation */
@@ -381,7 +372,7 @@ void MeshResliceSpatialObjectRepresentation
     }
   this->m_LineWidth = width;
 
-  m_Tuber->SetRadius (m_LineWidth);
+  m_ContourProperty->SetLineWidth(m_LineWidth);
 }
 
 /** Set the actor´s visibility */
