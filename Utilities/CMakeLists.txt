@@ -15,6 +15,3 @@ IF(IGSTKSandbox_USE_vtkKWImage )
     SUBDIRS( vtkKWImage )
 ENDIF( IGSTKSandbox_USE_vtkKWImage )
 
-IF(IGSTKSandbox_USE_KWSTYLE)
-    SUBDIRS( KWStyle )
-ENDIF( IGSTKSandbox_USE_KWSTYLE)
