@@ -54,15 +54,15 @@ NavigatorQuadrantViews::NavigatorQuadrantViews(int X, int Y, int W, int H, const
 
   // axial view
   m_AxialView    = ViewType2D::New();
-  m_AxialView->RequestSetOrientation( View2D::Axial );
+//  m_AxialView->RequestSetOrientation( View2D::Axial );
 
   // sagittal view
   m_SagittalView = ViewType2D::New();
-  m_SagittalView->RequestSetOrientation( View2D::Sagittal );
+//  m_SagittalView->RequestSetOrientation( View2D::Sagittal );
 
   // coronal view
   m_CoronalView  = ViewType2D::New();
-  m_CoronalView->RequestSetOrientation( View2D::Coronal );
+//  m_CoronalView->RequestSetOrientation( View2D::Coronal );
 
   m_3DView = ViewType3D::New();
 

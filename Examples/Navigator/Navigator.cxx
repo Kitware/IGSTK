@@ -34,8 +34,8 @@
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
 
-#define VIEW_2D_REFRESH_RATE 15
-#define VIEW_3D_REFRESH_RATE 12
+#define VIEW_2D_REFRESH_RATE 10
+#define VIEW_3D_REFRESH_RATE 10
 // name of the tool that is going to drive the reslicing
 #define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 // name of the tool that is going to be used as dynamic reference
@@ -67,6 +67,7 @@ Navigator::Navigator() :
   m_TrackerControllerObserver = TrackerControllerObserver::New();
   m_TrackerControllerObserver->SetParent( this );
 
+  // todo: replace this with igstk observers
   m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
     m_TrackerControllerObserver );
 
@@ -1251,8 +1252,8 @@ bool Navigator::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::P
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -1315,8 +1316,8 @@ bool Navigator::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileRea
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                             ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -1378,8 +1379,8 @@ bool Navigator::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::P
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -1441,8 +1442,8 @@ bool Navigator::ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileRe
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -1504,8 +1505,8 @@ bool Navigator::ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileR
   // need to observe if the request read succeeds or fails
   // there is a third option that the read is invalid, if the
   // file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -2454,24 +2455,24 @@ void Navigator::LoadMeshProcessing()
 
    // build axial mesh reslice representation
    MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-   axialContour->SetOpacity(1.0); 
-   axialContour->SetLineWidth(1.0);
+   axialContour->SetOpacity(1); 
+   axialContour->SetLineWidth(3);
    axialContour->SetColor(r, g, b);     
    axialContour->RequestSetMeshObject( meshSpatialObject );
    axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );   
 
    // build sagittal mesh reslice representation
    MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
-   sagittalContour->SetOpacity(1.0);
-   sagittalContour->SetLineWidth(1.0);
+   sagittalContour->SetOpacity(1);
+   sagittalContour->SetLineWidth(3);
    sagittalContour->SetColor(r, g, b);
    sagittalContour->RequestSetMeshObject( meshSpatialObject );
    sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
    
    // build coronal mesh reslice representation
    MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
-   coronalContour->SetOpacity(1.0);
-   coronalContour->SetLineWidth(1.0);
+   coronalContour->SetOpacity(1);
+   coronalContour->SetLineWidth(3);
    coronalContour->SetColor(r, g, b);
    coronalContour->RequestSetMeshObject( meshSpatialObject );
    coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
@@ -2630,24 +2631,32 @@ void Navigator::InitializeTrackerProcessing()
 
   m_ToolSpatialObject->RequestDetachFromParent();
   m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
+/*
+  m_AxialPlaneSpatialObject->RequestDetachFromParent();
+  m_SagittalPlaneSpatialObject->RequestDetachFromParent();
+  m_CoronalPlaneSpatialObject->RequestDetachFromParent();
 
+  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
+  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
+*/
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
   { 
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
 
-  if (!m_TrackerConfiguration)
-  {
-    std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
-    fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG,
-      "Tracker Starting error\n" )
-    m_StateMachine.PushInput( m_FailureInput );
-    m_StateMachine.ProcessInputs();
-    return;
-  }
+  //if (!m_TrackerConfiguration)
+  //{
+  //  std::string errorMessage;
+  //  fl_alert( errorMessage.c_str() );
+  //  fl_beep( FL_BEEP_ERROR );
+  //  igstkLogMacro2( m_Logger, DEBUG,
+  //    "Tracker Starting error\n" )
+  //  m_StateMachine.PushInput( m_FailureInput );
+  //  m_StateMachine.ProcessInputs();
+  //  return;
+  //}
 
   m_TrackerController->RequestStartTracking();
   
@@ -2999,42 +3008,22 @@ void Navigator::ConnectImageRepresentation()
 
   // create reslice plane representation for axial view
   m_AxialPlaneRepresentation = ImageRepresentationType::New();
-  //m_AxialPlaneRepresentation->SetLogger( this->GetLogger() );
+  m_AxialPlaneRepresentation->SetFrameColor(1,0,0);
   m_AxialPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
   m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
 
   // create reslice plane representation for sagittal view
   m_SagittalPlaneRepresentation = ImageRepresentationType::New();
+  m_SagittalPlaneRepresentation->SetFrameColor(0,1,0);
   m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
   m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
 
   // create reslice plane representation for coronal view
   m_CoronalPlaneRepresentation = ImageRepresentationType::New();
+  m_CoronalPlaneRepresentation->SetFrameColor(0,0,1);
   m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );  
 
-  // set up camera observers
-  m_AxialReslicePlaneCameraModifiedObserver = LoadedObserverType::New();
-  m_AxialReslicePlaneCameraModifiedObserver->SetCallbackFunction(
-    this, &Navigator::AxialReslicePlaneCameraModifiedCallback );
-
-  m_SagittalReslicePlaneCameraModifiedObserver = LoadedObserverType::New();
-  m_SagittalReslicePlaneCameraModifiedObserver->SetCallbackFunction(
-    this, &Navigator::SagittalReslicePlaneCameraModifiedCallback );
-
-  m_CoronalReslicePlaneCameraModifiedObserver = LoadedObserverType::New();
-  m_CoronalReslicePlaneCameraModifiedObserver->SetCallbackFunction(
-    this, &Navigator::CoronalReslicePlaneCameraModifiedCallback );
-
-  m_AxialPlaneRepresentation->AddObserver( 
-    igstk::VTKCameraModifiedEvent(), m_AxialReslicePlaneCameraModifiedObserver );
-
-  m_SagittalPlaneRepresentation->AddObserver(
-    igstk::VTKCameraModifiedEvent(), m_SagittalReslicePlaneCameraModifiedObserver );
-
-  m_CoronalPlaneRepresentation->AddObserver(
-    igstk::VTKCameraModifiedEvent(), m_CoronalReslicePlaneCameraModifiedObserver );
-  
    /** 
    *  Request information about the slice bounds. The answer will be
    *  received in the form of an event. This will be used to initialize
@@ -3056,8 +3045,6 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
     const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
-    // todo: see if SetSliceNumber is working correctly and if we actually need it
- //   m_AxialPlaneSpatialObject->RequestSetSliceNumber( zslice );
     m_ViewerGroup->m_Sliders[0]->minimum( zmin );
     m_ViewerGroup->m_Sliders[0]->maximum( zmax );
     m_ViewerGroup->m_Sliders[0]->value( zslice );
@@ -3066,8 +3053,6 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
     const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
-    // todo: see if SetSliceNumber is working correctly and if we actually need it
- //   m_SagittalPlaneSpatialObject->RequestSetSliceNumber( yslice );
     m_ViewerGroup->m_Sliders[1]->minimum( ymin );
     m_ViewerGroup->m_Sliders[1]->maximum( ymax );
     m_ViewerGroup->m_Sliders[1]->value( yslice );
@@ -3076,8 +3061,6 @@ void Navigator::ConnectImageRepresentation()
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
     const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
-    // todo: see if SetSliceNumber is working correctly and if we actually need it
-//    m_CoronalPlaneSpatialObject->RequestSetSliceNumber( xslice );
     m_ViewerGroup->m_Sliders[2]->minimum( xmin );
     m_ViewerGroup->m_Sliders[2]->maximum( xmax );
     m_ViewerGroup->m_Sliders[2]->value( xslice );
@@ -3096,9 +3079,9 @@ void Navigator::ConnectImageRepresentation()
   m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
   // add the cross hair representation to the different views
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+//  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+//  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+//  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
   m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation->Copy() );
 
   // set background color to the views
@@ -3125,19 +3108,6 @@ void Navigator::ConnectImageRepresentation()
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
-      identity, m_WorldReference );
-
-  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent(
-      identity, m_WorldReference );
-
-  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
-      identity, m_WorldReference );
-
-  m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
-      identity, m_ViewerGroup->m_AxialView );
-
-
   // set transform and parent to the image spatial object
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -3145,6 +3115,18 @@ void Navigator::ConnectImageRepresentation()
   m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
   m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
   m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+   m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
+      identity, m_AxialPlaneSpatialObject );
+
+  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent(
+      identity, m_SagittalPlaneSpatialObject );
+
+  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
+      identity, m_CoronalPlaneSpatialObject );
+
+  m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
+      identity, m_WorldReference );
 
   // set transform and parent to the cross hair object
   m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
@@ -3304,12 +3286,12 @@ void Navigator::RequestChangeSelectedViewMode()
       break;
 
     case 1:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
       m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
       break;
 
     case 2:
@@ -3571,84 +3553,6 @@ void Navigator::DisableOrthogonalPlanes()
   m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation );
   m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation );
 
-}
-
-/** -----------------------------------------------------------------
-*  Callback function for ReslicePlaneCameraUpdateEvent
-*  This function sets the camera parameters to the Views
-*  according to the data in the ReslicePlaneCameraUpdateEvent.
-*---------------------------------------------------------------------
-*/
-void Navigator::AxialReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      m_ViewerGroup->m_AxialView->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !m_AxialViewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        m_ViewerGroup->m_AxialView->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        m_ViewerGroup->m_AxialView->SetCameraPosition(position[0], position[1], position[2] );
-        m_AxialViewInitialized = true;
-      }
-    }
-  }
-}
-
-void Navigator::SagittalReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      m_ViewerGroup->m_SagittalView->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !m_SagittalViewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        m_ViewerGroup->m_SagittalView->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        m_ViewerGroup->m_SagittalView->SetCameraPosition(position[0], position[1], position[2] );
-        m_SagittalViewInitialized = true;
-      }
-    }
-  }
-}
-
-void Navigator::CoronalReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      m_ViewerGroup->m_CoronalView->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !m_CoronalViewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        m_ViewerGroup->m_CoronalView->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        m_ViewerGroup->m_CoronalView->SetCameraPosition(position[0], position[1], position[2] );
-        m_CoronalViewInitialized = true;
-      }
-    }
-  }
 }
 
 void Navigator::ToolAvailableCallback(const itk::EventObject & event )
