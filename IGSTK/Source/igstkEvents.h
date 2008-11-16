@@ -22,7 +22,7 @@
 
 #include "igstkTransform.h"
 #include "vtkImageData.h"
-#include "vtkPlaneSource.h"
+//#include "vtkPlaneSource.h"
 #include "vtkCamera.h"
 
 namespace igstk 
@@ -59,7 +59,7 @@ namespace EventHelperType
 typedef itk::Point< double, 3 >    PointType;
 typedef std::string                StringType;
 typedef vtkImageData *             VTKImagePointerType;
-typedef vtkPlaneSource *           VTKPlaneSourcePointerType;
+//typedef vtkPlaneSource *           VTKPlaneSourcePointerType;
 typedef vtkCamera *                VTKCameraPointerType;
 typedef unsigned int               UnsignedIntType;
 typedef signed int                 SignedIntType;
@@ -218,8 +218,8 @@ igstkLoadedEventMacro( ImageExtentEvent, IGSTKEvent,
 igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
                        EventHelperType::VTKImagePointerType );
 
-igstkLoadedEventMacro( VTKPlaneModifiedEvent, IGSTKEvent,
-                       EventHelperType::VTKPlaneSourcePointerType );
+//igstkLoadedEventMacro( VTKPlaneModifiedEvent, IGSTKEvent,
+//                       EventHelperType::VTKPlaneSourcePointerType );
 
 igstkLoadedEventMacro( VTKCameraModifiedEvent, IGSTKEvent,
                        EventHelperType::VTKCameraPointerType );
