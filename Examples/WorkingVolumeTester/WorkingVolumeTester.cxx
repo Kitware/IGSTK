@@ -483,8 +483,8 @@ bool WorkingVolumeTester::ReadPolarisVicraConfiguration(igstk::TrackerConfigurat
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -539,8 +539,8 @@ bool WorkingVolumeTester::ReadMicronConfiguration(igstk::TrackerConfigurationFil
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
@@ -600,8 +600,8 @@ bool WorkingVolumeTester::ReadAuroraConfiguration(igstk::TrackerConfigurationFil
    //need to observe if the request read succeeds or fails
    //there is a third option that the read is invalid, if the
    //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserver::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserver::New();
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
 
   reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
                                     trackerReaderObserver );
