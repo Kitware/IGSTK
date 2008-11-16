@@ -150,6 +150,14 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
   ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
+
+  IF(IGSTKSandbox_USE_MicronTracker)
+     SET(SandboxTests_SRCS
+      ${SandboxTests_SRCS}
+      igstkMicronTrackerToolObserverToSocketRelayTest.cxx
+      )
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
+
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkAffineTransformTest  ${IGSTKSandbox_TESTS} igstkAffineTransformTest )
@@ -210,6 +218,18 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
       ${TRACKER_FREQUENCY}
       )
   ENDIF(IGSTKSandbox_USE_OpenIGTLink)
+
+  IF(IGSTKSandbox_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerToolObserverToSocketRelayTest
+      ${IGSTKSandbox_TESTS}
+      igstkMicronTrackerToolObserverToSocketRelayTest
+      localhost 16666 1000 
+      ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
+      ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
+      ${IGSTK_DATA_ROOT}/Input/Markers )
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
