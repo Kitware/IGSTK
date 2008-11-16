@@ -129,6 +129,9 @@ public:
    */
   void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
+  /** Set the content of the transformation from a vtkMatrix4x4.
+   */
+  void ImportTransform( vtkMatrix4x4 & matrix );
 
   /** Compare two transforms for equivalence, in the 
    *  sense that these are the same objects in memory.

@@ -149,6 +149,27 @@ Transform
     }
 }
 
+void 
+Transform
+::ImportTransform( ::vtkMatrix4x4 & inmatrix )
+{
+  igstk::Transform::VersorType::MatrixType matrix = m_Rotation.GetMatrix();
+ 
+  for(unsigned int i=0; i<3; i++ )
+    {
+    for(unsigned int j=0; j<3; j++ )
+      {
+      matrix.GetVnlMatrix().put(i,j,inmatrix.GetElement(i,j));   
+      }
+    }
+
+  m_Rotation.Set( matrix );
+
+  m_Translation[0] = inmatrix.GetElement(0,3);
+  m_Translation[1] = inmatrix.GetElement(1,3);
+  m_Translation[2] = inmatrix.GetElement(2,3);
+}
+
 
 bool 
 Transform
