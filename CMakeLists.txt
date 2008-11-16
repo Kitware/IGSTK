@@ -303,7 +303,7 @@ IF(IGSTKSandbox_USE_KWSTYLE)
   CONFIGURE_FILE(${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
                ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
 
-  SET(KWSTYLE_ARGUMENTS -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o
+  SET(KWSTYLE_ARGUMENTS -xml ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml -o
 ${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D
 ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
   )
