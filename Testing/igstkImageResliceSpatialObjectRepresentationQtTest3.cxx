@@ -210,7 +210,7 @@ int igstkImageResliceSpatialObjectRepresentationQtTest3( int argc , char * argv 
   qtWidget2D->SetLogger( logger );
   qtMainWindow->setCentralWidget( qtWidget2D );
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 40 );
+  view2D->SetRefreshRate( 10 );
 
   qtMainWindow->show();
   
@@ -240,6 +240,12 @@ int igstkImageResliceSpatialObjectRepresentationQtTest3( int argc , char * argv 
   // Set the reslicer plane spatial object to the image representation
   imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
+  // set the view as child of the reslicer plane spatial object. This allows to
+  // have the view's camera facing the reslicer plane
+
+  view2D->RequestDetachFromParent();
+  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+
   // add the image representation to the view
   view2D->RequestAddObject( imageRepresentation );
 
@@ -262,7 +268,7 @@ int igstkImageResliceSpatialObjectRepresentationQtTest3( int argc , char * argv 
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   /* Change slice orientation to PlaneOrientationWithXAxesNormal */
-  view2D->RequestSetOrientation( View2DType::Axial );
+//  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
   bool viewInitialized = false;
 
@@ -324,7 +330,7 @@ int igstkImageResliceSpatialObjectRepresentationQtTest3( int argc , char * argv 
 
   /* Change slice orientation to PlaneOrientationWithYAxesNormal */
   std::cout << "Sagittal view: " << std::endl;
-  view2D->RequestSetOrientation( View2DType::Sagittal );
+  //view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
 
   // position the tool on one side of the image in the sagittal direction
@@ -377,7 +383,7 @@ int igstkImageResliceSpatialObjectRepresentationQtTest3( int argc , char * argv 
 
   /* Change slice orientation to PlaneOrientationWithZAxesNormal */
   std::cout << "Coronal view: " << std::endl;
-  view2D->RequestSetOrientation( View2DType::Coronal );
+  //view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
 
   // position the tool on one side of the image in the coronal direction

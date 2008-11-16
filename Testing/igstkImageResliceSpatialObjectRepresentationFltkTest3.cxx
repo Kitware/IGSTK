@@ -42,11 +42,6 @@ igstkObserverObjectMacro(CTImage,
 
 igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent, 
                        ::igstk::EventHelperType::VTKImagePointerType );
-
-void AxialReslicePlaneCameraModifiedCallback(const itk::EventObject & event );
-void SagittalReslicePlaneCameraModifiedCallback(const itk::EventObject & event );
-void CoronalReslicePlaneCameraModifiedCallback(const itk::EventObject & event );
-
 }
 
 
@@ -212,7 +207,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 //  fltkWidget2D->SetLogger( logger );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 40 );
+  view2D->SetRefreshRate( 10 );
 
   form->end();
   form->show();
@@ -243,6 +238,12 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   // Set the reslicer plane spatial object to the image representation
   imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
+  // set the view as child of the reslicer plane spatial object. This allows to
+  // have the view's camera facing the reslicer plane
+
+  view2D->RequestDetachFromParent();
+  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+
   // add the image representation to the view
   view2D->RequestAddObject( imageRepresentation );
 
@@ -265,7 +266,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   /* Change slice orientation to PlaneOrientationWithXAxesNormal */
-  view2D->RequestSetOrientation( View2DType::Axial );
+  //view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
   bool viewInitialized = false;
 
@@ -327,7 +328,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 
   /* Change slice orientation to PlaneOrientationWithYAxesNormal */
   std::cout << "Sagittal view: " << std::endl;
-  view2D->RequestSetOrientation( View2DType::Sagittal );
+  //view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
 
   // position the tool on one side of the image in the sagittal direction
@@ -380,7 +381,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 
   /* Change slice orientation to PlaneOrientationWithZAxesNormal */
   std::cout << "Coronal view: " << std::endl;
-  view2D->RequestSetOrientation( View2DType::Coronal );
+  //view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
 
   // position the tool on one side of the image in the coronal direction
@@ -453,85 +454,3 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   return EXIT_SUCCESS;
 }
 
-
-// todo add these callbacks for the camera modified event
-
-/** -----------------------------------------------------------------
-*  Callback function for ReslicePlaneCameraUpdateEvent
-*  This function sets the camera parameters to the Views
-*  according to the data in the ReslicePlaneCameraUpdateEvent.
-*---------------------------------------------------------------------
-*/
-/*
-void ImageResliceSpatialObjectRepresentationFltkTest3::AxialReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      view2D->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !viewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        view2D->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        view2D->SetCameraPosition(position[0], position[1], position[2] );
-        viewInitialized = true;
-      }
-    }
-  }
-}
-
-void ImageResliceSpatialObjectRepresentationFltkTest3::SagittalReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      view2D->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !viewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        view2D->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        view2D->SetCameraPosition(position[0], position[1], position[2] );
-        viewInitialized = true;
-      }
-    }
-  }
-}
-
-void ImageResliceSpatialObjectRepresentationFltkTest3::CoronalReslicePlaneCameraModifiedCallback(const itk::EventObject & event )
-{
-  if ( igstk::VTKCameraModifiedEvent().CheckEvent( &event ) )
-  {
-    const igstk::VTKCameraModifiedEvent *cameraModifiedEvent =
-      dynamic_cast< const igstk::VTKCameraModifiedEvent * > (&event);
-
-    if (cameraModifiedEvent)
-    {
-      vtkCamera * camera = cameraModifiedEvent->Get();
-      double* viewup = camera->GetViewUp();
-      view2D->SetCameraViewUp(viewup[0],viewup[1],viewup[2]);
-      if ( !viewInitialized )
-      {
-        double* focalpoint = camera->GetFocalPoint();
-        view2D->SetCameraFocalPoint( focalpoint[0], focalpoint[1], focalpoint[2] );
-        double* position = camera->GetPosition();
-        view2D->SetCameraPosition(position[0], position[1], position[2] );
-        viewInitialized = true;
-      }
-    }
-  }
-}
-*/
