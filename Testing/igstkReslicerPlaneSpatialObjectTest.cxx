@@ -186,7 +186,7 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
     return EXIT_FAILURE;
     }
 
-  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType &center = 
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType center = 
   planeCenterObserver->GetReslicerPlaneCenter();
   
   std::cout << "Plane center: " << "(" << center[0] << "," 
@@ -199,7 +199,7 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
     return EXIT_FAILURE;
     }
 
-  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType &normal = 
+  ReslicerPlaneSpatialObjectTest::ReslicerPlaneType::VectorType normal = 
     planeNormalObserver->GetReslicerPlaneNormal();
   
   std::cout << "Plane normal: " << "(" << normal[0] << "," 

@@ -155,6 +155,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
      SET(SandboxTests_SRCS
       ${SandboxTests_SRCS}
       igstkMicronTrackerToolObserverToSocketRelayTest.cxx
+      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
 
@@ -229,6 +230,15 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
       ${IGSTK_DATA_ROOT}/Input/Markers )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+  IF(IGSTKSandbox_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTKSandbox_TESTS}
+      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 
+      ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
+      ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
+      ${IGSTK_DATA_ROOT}/Input/Markers )
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 

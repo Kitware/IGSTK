@@ -64,6 +64,7 @@ void RegisterTests()
 #endif  
 #ifdef IGSTKSandbox_USE_MicronTracker
   REGISTER_TEST( igstkMicronTrackerToolObserverToSocketRelayTest );
+  REGISTER_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest );
 #endif  
 #endif
 
