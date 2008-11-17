@@ -34,7 +34,7 @@
 #include <vtkPlaneSource.h>
 #include <vtkPlane.h>
 #include <vtkCutter.h>
-#include <vtkPolydata.h>
+#include <vtkPolyData.h>
 #include <vtkOutlineFilter.h>
 #include <vtkCamera.h>
 #include <vtkMath.h>
