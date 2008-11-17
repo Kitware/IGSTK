@@ -22,6 +22,8 @@
 
 #include "OneViewAndTrackingImplementation.h"
 
+using namespace igstk;
+
 int main(int , char** )
 { 
   /**

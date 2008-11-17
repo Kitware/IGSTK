@@ -34,6 +34,9 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace igstk
+{
+
 class OneViewAndTrackingImplementation : public OneViewAndTrackingGUI
 {
 public:
@@ -151,5 +154,7 @@ private:
   
   std::ofstream           m_LogFile;
 };
+
+} // end namespace igstk
 
 #endif
