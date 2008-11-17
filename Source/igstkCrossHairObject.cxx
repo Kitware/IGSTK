@@ -365,7 +365,6 @@ CrossHairObject
 
   if( boundingBoxObserver->GotBoundingBox() ) 
   {
-    //SpatialObjectType::BoundingBoxType::ConstPointer bbox = boundingBoxObserver->GetBoundingBox();
     m_BoundingBox = boundingBoxObserver->GetBoundingBox();
   }
 }

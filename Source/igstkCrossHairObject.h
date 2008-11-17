@@ -29,7 +29,7 @@ namespace igstk
 
 /** \class CrossHairObject
  * 
- * \brief This class represents a Axes object. 
+ * \brief This class represents a cross hair spatial object. 
  *
  * This class ...
  * 

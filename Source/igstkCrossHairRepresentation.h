@@ -24,8 +24,8 @@
 #include "igstkStateMachine.h"
 
 class vtkLineSource;
-class vtkTubeFilter;
-class vtkPolyDataMapper;
+//class vtkTubeFilter;
+//class vtkPolyDataMapper;
 
 namespace igstk
 {
@@ -110,14 +110,6 @@ private:
   vtkLineSource* m_LineSourceX;
   vtkLineSource* m_LineSourceY;
   vtkLineSource* m_LineSourceZ;
-
-  vtkTubeFilter *m_TuberX;
-  vtkTubeFilter *m_TuberY;
-  vtkTubeFilter *m_TuberZ;
-
-  vtkPolyDataMapper* m_LineMapperX;
-  vtkPolyDataMapper* m_LineMapperY;
-  vtkPolyDataMapper* m_LineMapperZ;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidCrossHairObject );
