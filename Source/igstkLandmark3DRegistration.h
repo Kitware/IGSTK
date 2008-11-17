@@ -135,7 +135,8 @@ public:
 
   /** TransformComputationFailureEvent event will be invoked if the transform
       computation fails */
-  igstkEventMacro( TransformComputationFailureEvent,TransformInitializerErrorEvent );
+  igstkEventMacro( TransformComputationFailureEvent,
+                                              TransformInitializerErrorEvent );
 
   /** TransformComputationSuccessEvent event will be invoked if the transform
       computation is succesful */ 

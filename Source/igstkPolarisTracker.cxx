@@ -143,7 +143,8 @@ PolarisTracker::ResultType PolarisTracker
 
     //Make several attempts to find uninitialized port
     const unsigned int NUMBER_OF_ATTEMPTS = 256;
-    for(unsigned int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
+    for(unsigned int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; 
+                                                                safetyCount++)
       {
       commandInterpreter->PHSR(
         CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
@@ -170,7 +171,8 @@ PolarisTracker::ResultType PolarisTracker
         ph = commandInterpreter->GetPHSRHandle( toolNumber );
         
         // Get port handle information
-        commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_PORT_LOCATION);
+        commandInterpreter->PHINF(ph, 
+                                   CommandInterpreterType::NDI_PORT_LOCATION);
 
         // get the physical port identifier
         char location[512];
@@ -328,7 +330,7 @@ PolarisTracker::ResultType PolarisTracker
       igstkLogMacro(CRITICAL, 
         "The part number specified doesn't match with the information from: "
         "the port handle \n");
-        return FAILURE;
+      return FAILURE;
       }
     }
 

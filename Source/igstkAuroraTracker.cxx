@@ -98,17 +98,18 @@ AuroraTracker::ResultType AuroraTracker
   // search ports with uninitialized handles
   bool foundTool = false;
 
-  for( unsigned int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; safetyCount++)
+  for( unsigned int safetyCount = 0; safetyCount < NUMBER_OF_ATTEMPTS; 
+                                                               safetyCount++)
     {
     commandInterpreter->PHSR(
     CommandInterpreterType::NDI_UNINITIALIZED_HANDLES);
 
     if (this->CheckError(commandInterpreter) == FAILURE)
-    {
-    igstkLogMacro( WARNING, 
-       "igstk::AuroraTracker::Error searching for uninitialized ports \n");
-    return FAILURE;
-    }
+      {
+      igstkLogMacro( WARNING, 
+         "igstk::AuroraTracker::Error searching for uninitialized ports \n");
+      return FAILURE;
+      }
 
     unsigned int ntools = commandInterpreter->GetPHSRNumberOfHandles();
     igstkLogMacro( INFO, "Uninitialized number of handles found: " 
@@ -232,7 +233,8 @@ AuroraTracker::ResultType AuroraTracker
   int ph2;
 
   // If it is a 5DOF tool and the port has not been initialized ()
-  if ( auroraTrackerTool->IsTrackerTool5DOF()  && !m_HasSpliter[auroraTrackerTool->GetPortNumber()] )
+  if ( auroraTrackerTool->IsTrackerTool5DOF()  && 
+                          !m_HasSpliter[auroraTrackerTool->GetPortNumber()] )
     {
     // search for splits
     commandInterpreter->PHSR( CommandInterpreterType::NDI_UNENABLED_HANDLES);
@@ -274,7 +276,8 @@ AuroraTracker::ResultType AuroraTracker
           {
             // found two port handles on the same port
             // There is a channel spliter 
-            igstkLogMacro( DEBUG, "Found channel split on port:" << port << "\n" );
+            igstkLogMacro( DEBUG, "Found channel split on port:" 
+                                                           << port << "\n" );
             m_HasSpliter[port]       = 1;
             m_SpliterHandle[port][0] = ph;
             m_SpliterHandle[port][1] = ph2;
@@ -286,7 +289,7 @@ AuroraTracker::ResultType AuroraTracker
             break;
           }
         }
-      }      
+      }
     }
 
     }
@@ -295,12 +298,13 @@ AuroraTracker::ResultType AuroraTracker
       unsigned int port = auroraTrackerTool->GetPortNumber();
       unsigned int channel = auroraTrackerTool->GetChannelNumber();
       
-      // There are only two channels 0 and 1, use 1 if channel is not set      
+      // There are only two channels 0 and 1, use 1 if channel is not set
       if (channel > MAX_CHANNEL_NUMBER)
       {
-        channel = MAX_CHANNEL_NUMBER;
+      channel = MAX_CHANNEL_NUMBER;
       }
-      ph = m_SpliterHandle[port][channel];
+
+    ph = m_SpliterHandle[port][channel];
     }
   
   commandInterpreter->PHINF(ph, CommandInterpreterType::NDI_BASIC);
@@ -434,9 +438,9 @@ RemoveTrackerToolFromInternalDataContainers
     "called ...\n");
 
   if ( trackerTool == NULL )
-  {
+    {
     return FAILURE;
-  }
+    }
 
   TrackerToolType * trackerToolNonConst = 
                                   const_cast<TrackerToolType*>(trackerTool);
@@ -445,7 +449,7 @@ RemoveTrackerToolFromInternalDataContainers
             dynamic_cast< AuroraTrackerToolType * > ( trackerToolNonConst );   
 
   
- m_HasSpliter[auroraTrackerTool->GetPortNumber()] = 0;
+  m_HasSpliter[auroraTrackerTool->GetPortNumber()] = 0;
 
   return Superclass::RemoveTrackerToolFromInternalDataContainers( trackerTool);
 }

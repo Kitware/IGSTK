@@ -52,8 +52,8 @@ public: \
     m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
   template < class TParentPointer > \
-  void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent, \
-                                     TParentPointer parent ) \
+  void RequestSetTransformAndParent( const ::igstk::Transform & \
+                                 transformToParent, TParentPointer parent ) \
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \

@@ -306,7 +306,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   const double nonFlickeringConstant = 10;
 
   const TimePeriodType DEFAULT_VALIDITY_TIME = 
-                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant ;
+                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used
@@ -345,7 +345,8 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
       m_ReferenceTool = trackerTool;
       m_ReferenceTool->RequestDetachFromParent();
 
-      //VERY IMPORTANT: Make the reference tracker tool the parent of the tracker
+      //VERY IMPORTANT: Make the reference tracker tool the parent of the 
+      // tracker
       this->RequestSetTransformAndParent( identityTransform, trackerTool );
       }
     else
@@ -1101,7 +1102,8 @@ Tracker::ReportTrackingToolNotAvailable( TrackerToolType * trackerTool ) const
 void 
 Tracker::ReportTrackingToolVisible( TrackerToolType * trackerTool ) const
 {
-  igstkLogMacro( DEBUG, "igstk::Tracker::ReportTrackingToolVisible called...\n");
+  igstkLogMacro( DEBUG, 
+                     "igstk::Tracker::ReportTrackingToolVisible called...\n");
   trackerTool->RequestReportTrackingToolVisible();
 }
 

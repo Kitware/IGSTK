@@ -134,7 +134,7 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
                           TargetPointRegistrationErrorEstimationFailure,
                           TargetPointSet,
-                          ReportFailureInTargePointRegistrationErrorEstimation );
+                        ReportFailureInTargePointRegistrationErrorEstimation );
 
   //Transitions from TargetRegistrationErrorEstimated 
   igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 

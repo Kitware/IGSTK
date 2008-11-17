@@ -87,8 +87,7 @@ Object::RegisterObservedObject(
     m_ObservedObjectPairContainer.push_back( delTagPair );
     }
 
-  /* Keep track of the object we're observing and the observer tag.
-   */
+  // Keep track of the object we're observing and the observer tag.  
   ObservedObjectTagPair objTagPair;
   objTagPair.first = object;
   objTagPair.second = tag;

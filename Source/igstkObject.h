@@ -109,8 +109,8 @@ private:
   class ObservedObjectTagPairObjectMatchPredicate
     {
     public:
-      ObservedObjectTagPairObjectMatchPredicate(
-        const itk::Object* obj) : m_TargetObject( obj )
+    ObservedObjectTagPairObjectMatchPredicate( const itk::Object* obj )
+      : m_TargetObject( obj )
       {
       }
 

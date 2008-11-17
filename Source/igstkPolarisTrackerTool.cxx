@@ -282,7 +282,7 @@ void PolarisTrackerTool::RequestSetPartNumber( const std::string & partNumber )
 void PolarisTrackerTool::ReportWirelessTrackerToolSelectedProcessing( )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::PolarisTrackerTool::ReportWirelessTrackerToolSelected called ...\n");
+  "igstk::PolarisTrackerTool::ReportWirelessTrackerToolSelected called ...\n");
 
   m_WirelessTrackerToolSelected = true;
 }

@@ -609,8 +609,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
       if(Marker2CurrCameraXf != NULL)
         {
         // Tooltip calibration information which could be available in the
-        // marker template file will not be used here. If needed, the calibration
-        // transform should be set to the tracker tool using the
+        // marker template file will not be used here. If needed, the 
+        // calibration transform should be set to the tracker tool using the
         // SetCalibrationTransform method in the trackertool and the Tracker
         // base class will computed the composition.
 

@@ -221,11 +221,12 @@ protected:
   virtual ResultType 
         VerifyTrackerToolInformation( const TrackerToolType * ) = 0; 
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is 
-   * valid for the tracking device that is being used. This method is to be 
-   * overridden in the derived tracking-device specific classes to take 
-   * into account the maximum frequency possible in the tracking device
-  */
+  /** The "ValidateSpecifiedFrequency" method checks if the specified  
+   * frequency is valid for the tracking device that is being used. This 
+   * method is to be overridden in the derived tracking-device specific  
+   * classes to take into account the maximum frequency possible in the 
+   * tracking device
+   */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
   /** This method will remove entries of the traceker tool from internal

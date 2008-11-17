@@ -214,8 +214,8 @@ void Annotation2D::ChangeFontSizeProcessing( )
   m_TextProperty[m_AnnotationIndexFontSizeToBeChanged]->SetFontSize(
                                   m_FontSize);
 
-  this->m_AnnotationActor[m_AnnotationIndexFontSizeToBeChanged]->SetTextProperty(
-                       m_TextProperty[m_AnnotationIndexFontSizeToBeChanged]);
+  this->m_AnnotationActor[m_AnnotationIndexFontSizeToBeChanged]
+     ->SetTextProperty( m_TextProperty[m_AnnotationIndexFontSizeToBeChanged]);
 }
  
  

@@ -453,8 +453,8 @@ void View::ResetCameraProcessing()
   ObjectListType::iterator itr    = this->m_Objects.begin();
   ObjectListType::iterator endItr = this->m_Objects.end();
 
-  typedef igstk::Friends::CoordinateSystemHelper 
-                          CoordinateSystemHelperType;
+  typedef igstk::Friends::CoordinateSystemHelper     CoordinateSystemHelperType;
+                          
   const CoordinateSystem* thisCS = 
     CoordinateSystemHelperType::GetCoordinateSystem( this );
   while( itr != endItr )
@@ -615,9 +615,8 @@ void View::RefreshRender()
   ObjectListType::iterator itr    = this->m_Objects.begin();
   ObjectListType::iterator endItr = this->m_Objects.end();
 
-  typedef igstk::Friends::CoordinateSystemHelper 
-                          CoordinateSystemHelperType;
- 
+  typedef igstk::Friends::CoordinateSystemHelper     CoordinateSystemHelperType;
+  
   const CoordinateSystem* thisCS = 
      CoordinateSystemHelperType::GetCoordinateSystem( this );  
 

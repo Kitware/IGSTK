@@ -83,9 +83,9 @@ public:
   void RequestReadObject();
 
   /** This method will invoke a event from derived reader class, such as:
-    * MeshModifiedEvent for igstkMeshReader
-    * TubeModifiedEvent for igstkTubeReader
-    */
+   *  MeshModifiedEvent for igstkMeshReader
+   *  TubeModifiedEvent for igstkTubeReader
+   */
   void RequestGetOutput();
 
   igstkEventMacro( ObjectReaderEvent,              IGSTKEvent        );

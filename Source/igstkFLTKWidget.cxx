@@ -215,7 +215,7 @@ void FLTKWidget::RequestDisableInteractions()
 void FLTKWidget::EnableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
-                "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
+              "igstkFLTKWidget::EnableInteractionsProcessing() called ...\n");
   this->m_InteractionHandling = true;
 }
 
@@ -223,7 +223,7 @@ void FLTKWidget::EnableInteractionsProcessing()
 void FLTKWidget::DisableInteractionsProcessing()
 {
   igstkLogMacro( DEBUG,
-                "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
+             "igstkFLTKWidget::DisableInteractionsProcessing() called ...\n");
   this->m_InteractionHandling = false;
 }
 

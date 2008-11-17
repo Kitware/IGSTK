@@ -562,10 +562,8 @@ Landmark3DRegistration::ComputeRMSError()
 
   //Check if the transformation parameters were evaluated correctly
 
-  PointsContainerConstIterator
-      mitr = m_TrackerLandmarks.begin();
-  PointsContainerConstIterator
-      fitr = m_ImageLandmarks.begin();
+  PointsContainerConstIterator      mitr = m_TrackerLandmarks.begin();
+  PointsContainerConstIterator      fitr = m_ImageLandmarks.begin();
 
   TransformType::OutputVectorType   errortr;
   TransformType::OutputVectorType::RealValueType sum;
@@ -594,7 +592,7 @@ void
 Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistration::\
-                         GetTransformFromTrackerToImageProcessing called...\n" );
+                      GetTransformFromTrackerToImageProcessing called...\n" );
 
   igstk::Transform  transform;
 
@@ -614,8 +612,7 @@ Landmark3DRegistration::GetTransformFromTrackerToImageProcessing()
   CoordinateSystemTransformToResult transformCarrier;
   transformCarrier.Initialize( transform,
     m_TrackerCoordinateSystem,
-    m_ImageCoordinateSystem
-    );
+    m_ImageCoordinateSystem );
 
   CoordinateSystemTransformToEvent transformEvent; 
   transformEvent.Set( transformCarrier );
@@ -650,8 +647,7 @@ Landmark3DRegistration::GetTransformFromImageToTrackerProcessing()
   CoordinateSystemTransformToResult transformCarrier;
   transformCarrier.Initialize( transform.GetInverse(),
     m_ImageCoordinateSystem,
-    m_TrackerCoordinateSystem
-    );
+    m_TrackerCoordinateSystem );
 
   CoordinateSystemTransformToEvent transformEvent; 
   transformEvent.Set( transformCarrier );

@@ -64,8 +64,8 @@ protected:
   /** Verify tracker tool information */
   virtual ResultType VerifyTrackerToolInformation( const TrackerToolType * );
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is 
-   * valid for the tracking device that is being used. */
+  /** The "ValidateSpecifiedFrequency" method checks if the specified  
+   *  frequency is valid for the tracking device that is being used. */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
  
   /** Print object information */

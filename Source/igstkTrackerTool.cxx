@@ -102,7 +102,7 @@ TrackerTool::TrackerTool(void):m_StateMachine(this)
                            AttemptingToAttachTrackerToolToTracker,
                            AttemptToAttachTrackerToolToTracker);
 
- // Transitions from the AttemptingToAttachTrackerToolToTracker
+  // Transitions from the AttemptingToAttachTrackerToolToTracker
   igstkAddTransitionMacro( AttemptingToAttachTrackerToolToTracker,
                            AttachmentToTrackerSuccess,
                            Attached,

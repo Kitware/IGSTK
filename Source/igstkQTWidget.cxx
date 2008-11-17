@@ -311,7 +311,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
     (e->modifiers() & Qt::ShiftModifier  ) > 0 ? 1 : 0);
 #endif
 
- interactor->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+  interactor->InvokeEvent(vtkCommand::MouseMoveEvent, e);
 
   if(e->buttons() == Qt::LeftButton)
     {
@@ -344,7 +344,7 @@ void QTWidget::wheelEvent(QWheelEvent* e)
                           (e->state() & Qt::ControlButton) > 0 ? 1 : 0, 
                           (e->state() & Qt::ShiftButton ) > 0 ? 1 : 0);
   #else
-    interactor->SetEventInformationFlipY(e->x(), e->y(), 
+  interactor->SetEventInformationFlipY(e->x(), e->y(), 
                           (e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0, 
                           (e->modifiers() & Qt::ShiftModifier ) > 0 ? 1 : 0);
   #endif

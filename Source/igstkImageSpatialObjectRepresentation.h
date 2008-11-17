@@ -36,8 +36,8 @@ namespace igstk
  * based representation.
  *
  * You can select the orientation of the slice to be Axial, Sagittal or Coronal.
- * The number of the slice to be rendered can also be selected, as well as values
- * of opacity, window and level.
+ * The number of the slice to be rendered can also be selected, as well as 
+ * values of opacity, window and level.
  * 
  *\image html igstkImageSpatialObjectRepresentation.png "State Machine Diagram"
  *

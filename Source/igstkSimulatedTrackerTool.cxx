@@ -54,7 +54,7 @@ bool
 SimulatedTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
   igstkLogMacro( DEBUG, 
-        "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+      "igstk::PolarisTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
   return m_TrackerToolConfigured;
 }
 
