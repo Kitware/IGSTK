@@ -3082,7 +3082,7 @@ void Navigator::ConnectImageRepresentation()
 //  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
 //  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
 //  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
 
   // set background color to the views
   m_ViewerGroup->m_AxialView->SetRendererBackgroundColor(0,0,0);
@@ -3143,12 +3143,17 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
 
   // add reslice plane representations to the 3D views
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation->Copy() );    
-  m_ViewerGroup->m_3DView->RequestResetCamera();
+  m_AxialPlaneRepresentation2 = m_AxialPlaneRepresentation->Copy();
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
+
+  m_SagittalPlaneRepresentation2 = m_SagittalPlaneRepresentation->Copy();
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
+
+  m_CoronalPlaneRepresentation2 = m_CoronalPlaneRepresentation->Copy();
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
 
   // set up view parameters
+
   m_ViewerGroup->m_AxialView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_AxialView->RequestStart();
   m_ViewerGroup->m_AxialWidget->RequestEnableInteractions();  
@@ -3162,7 +3167,15 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CoronalWidget->RequestEnableInteractions();
 
   m_ViewerGroup->m_3DView->SetRefreshRate( VIEW_3D_REFRESH_RATE );
+  m_ViewerGroup->m_3DView->RequestAddOrientationBox();
   m_ViewerGroup->m_3DView->RequestStart();
+
+
+  //m_ViewerGroup->m_AxialView->SetRectangleEnabled(true);
+  //m_ViewerGroup->m_SagittalView->SetRectangleEnabled(true);
+  //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
+  //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
+
 
   // reset the cameras in the different views
   m_ViewerGroup->m_AxialView->RequestResetCamera();
@@ -3491,7 +3504,9 @@ void Navigator::HandleMousePressed (
     m_SagittalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
     m_CoronalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 
-    Fl::check();
+    m_AxialPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_SagittalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CoronalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 }
 
 void Navigator::HandleKeyPressed ( 

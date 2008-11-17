@@ -341,6 +341,10 @@ private:
   ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation;
   ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation;
 
+  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation2;
+  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation2;
+  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation2;
+
   std::vector< MeshRepresentationType::Pointer >        m_MeshRepresentationVector;
 
   std::vector< MeshResliceRepresentationType::Pointer > m_AxialMeshResliceRepresentationVector;
