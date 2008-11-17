@@ -3167,7 +3167,7 @@ void Navigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CoronalWidget->RequestEnableInteractions();
 
   m_ViewerGroup->m_3DView->SetRefreshRate( VIEW_3D_REFRESH_RATE );
-  m_ViewerGroup->m_3DView->RequestAddOrientationBox();
+  //m_ViewerGroup->m_3DView->RequestAddOrientationBox();
   m_ViewerGroup->m_3DView->RequestStart();
 
 
