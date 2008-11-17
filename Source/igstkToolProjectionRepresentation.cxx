@@ -239,9 +239,10 @@ void ToolProjectionRepresentation
 
   m_ReslicePlaneSpatialObject->RequestGetReslicingPlaneParameters();
   
+  ReslicerPlaneType::VectorType normal;
   if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
   {
-      ReslicerPlaneType::VectorType &normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
+      normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
 
       VectorType toolProy = itk::CrossProduct( normal, itk::CrossProduct(toolAxis, normal) );
 
