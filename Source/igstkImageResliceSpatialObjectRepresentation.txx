@@ -94,6 +94,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   // Set background level to TRANSLUCENT (see Geometry2DDataVtkMapper3D)
   m_Reslice->SetBackgroundLevel( 0 );
   m_Reslice->TransformInputSamplingOff();
+  m_Reslice->SetOutputDimensionality(2);
 
   m_ResliceAxes        = vtkMatrix4x4::New();
   m_Texture            = vtkTexture::New();
