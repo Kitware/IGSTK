@@ -22,6 +22,8 @@
 
 #include "FourViewsAndTrackingImplementation.h"
 
+using namespace igstk;
+
 int main(int , char** )
 { 
 

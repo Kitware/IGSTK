@@ -56,6 +56,9 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
+namespace igstk
+{
+
 class FourViewsAndTrackingImplementation : public FourViewsAndTrackingGUI
 {
 
@@ -72,19 +75,19 @@ public:
 
   FourViewsAndTrackingImplementation()
     {
-    this->Display3D = ViewType3D::New();
-    this->DisplayAxial = ViewType2D::New();
-    this->DisplayCoronal = ViewType2D::New();
-    this->DisplaySagittal = ViewType2D::New();
+    this->m_Display3D = ViewType3D::New();
+    this->m_DisplayAxial = ViewType2D::New();
+    this->m_DisplayCoronal = ViewType2D::New();
+    this->m_DisplaySagittal = ViewType2D::New();
 
-    this->DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
-    this->DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
-    this->DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
+    this->m_DisplayAxial->RequestSetOrientation( ViewType2D::Axial );
+    this->m_DisplaySagittal->RequestSetOrientation( ViewType2D::Sagittal );
+    this->m_DisplayCoronal->RequestSetOrientation( ViewType2D::Coronal );
 
-    this->Display3DWidget->RequestSetView( this->Display3D );
-    this->DisplayAxialWidget->RequestSetView( this->DisplayAxial );
-    this->DisplayCoronalWidget->RequestSetView( this->DisplayCoronal );
-    this->DisplaySagittalWidget->RequestSetView( this->DisplaySagittal );
+    this->Display3DWidget->RequestSetView( this->m_Display3D );
+    this->DisplayAxialWidget->RequestSetView( this->m_DisplayAxial );
+    this->DisplayCoronalWidget->RequestSetView( this->m_DisplayCoronal );
+    this->DisplaySagittalWidget->RequestSetView( this->m_DisplaySagittal );
 
     m_Tracker = TrackerType::New();
     m_TrackerTool = TrackerToolType::New();
@@ -131,21 +134,21 @@ public:
     m_Tracker->RequestOpen();
 
     // Set up the four quadrant views
-    this->Display3D->RequestResetCamera();
+    this->m_Display3D->RequestResetCamera();
     this->Display3DWidget->RequestEnableInteractions();
-    this->Display3D->SetRefreshRate( 60 ); // 60 Hz
+    this->m_Display3D->SetRefreshRate( 60 ); // 60 Hz
 
-    this->DisplayAxial->RequestResetCamera();
+    this->m_DisplayAxial->RequestResetCamera();
     this->DisplayAxialWidget->RequestEnableInteractions();
-    this->DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
+    this->m_DisplayAxial->SetRefreshRate( 60 ); // 60 Hz
 
-    this->DisplayCoronal->RequestResetCamera();
+    this->m_DisplayCoronal->RequestResetCamera();
     this->DisplayCoronalWidget->RequestEnableInteractions();
-    this->DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
+    this->m_DisplayCoronal->SetRefreshRate( 60 ); // 60 Hz
 
-    this->DisplaySagittal->RequestResetCamera();
+    this->m_DisplaySagittal->RequestResetCamera();
     this->DisplaySagittalWidget->RequestEnableInteractions();
-    this->DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
+    this->m_DisplaySagittal->SetRefreshRate( 60 ); // 60 Hz
       
     m_Tracking = false;
     }
@@ -173,19 +176,19 @@ public:
   void AddCylinder( igstk::CylinderObjectRepresentation * 
                                                       cylinderRepresentation )
     {
-    this->Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
-    this->DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
-    this->DisplayCoronal->RequestAddObject(  cylinderRepresentation->Copy() );
-    this->DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
+    this->m_Display3D->RequestAddObject(       cylinderRepresentation->Copy() );
+    this->m_DisplayAxial->RequestAddObject(    cylinderRepresentation->Copy() );
+    this->m_DisplayCoronal->RequestAddObject(  cylinderRepresentation->Copy() );
+    this->m_DisplaySagittal->RequestAddObject( cylinderRepresentation->Copy() );
     }
     
   void AddEllipsoid( igstk::EllipsoidObjectRepresentation * 
                                                      ellipsoidRepresentation )
     {
-    this->Display3D->RequestAddObject(       ellipsoidRepresentation->Copy() );
-    this->DisplayAxial->RequestAddObject(    ellipsoidRepresentation->Copy() );
-    this->DisplayCoronal->RequestAddObject(  ellipsoidRepresentation->Copy() );
-    this->DisplaySagittal->RequestAddObject( ellipsoidRepresentation->Copy() );
+    this->m_Display3D->RequestAddObject(      ellipsoidRepresentation->Copy() );
+    this->m_DisplayAxial->RequestAddObject(   ellipsoidRepresentation->Copy() );
+    this->m_DisplayCoronal->RequestAddObject( ellipsoidRepresentation->Copy() );
+    this->m_DisplaySagittal->RequestAddObject(ellipsoidRepresentation->Copy() );
     }
 
   void AttachObjectToTrack( igstk::SpatialObject * objectToTrack )
@@ -197,26 +200,26 @@ public:
 
   void ResetCameras()
     {
-    this->Display3D->RequestResetCamera();
-    this->DisplayAxial->RequestResetCamera();
-    this->DisplayCoronal->RequestResetCamera();
-    this->DisplaySagittal->RequestResetCamera();
+    this->m_Display3D->RequestResetCamera();
+    this->m_DisplayAxial->RequestResetCamera();
+    this->m_DisplayCoronal->RequestResetCamera();
+    this->m_DisplaySagittal->RequestResetCamera();
     }
 
   void StartViews()
     {
-    this->Display3D->RequestStart();
-    this->DisplayAxial->RequestStart();
-    this->DisplayCoronal->RequestStart();
-    this->DisplaySagittal->RequestStart();
+    this->m_Display3D->RequestStart();
+    this->m_DisplayAxial->RequestStart();
+    this->m_DisplayCoronal->RequestStart();
+    this->m_DisplaySagittal->RequestStart();
     }
 
   void StopViews()
     {
-    this->Display3D->RequestStop();
-    this->DisplayAxial->RequestStop();
-    this->DisplayCoronal->RequestStop();
-    this->DisplaySagittal->RequestStop();
+    this->m_Display3D->RequestStop();
+    this->m_DisplayAxial->RequestStop();
+    this->m_DisplayCoronal->RequestStop();
+    this->m_DisplaySagittal->RequestStop();
     }
 
 
@@ -225,10 +228,10 @@ public:
     igstk::Transform trans;
     trans.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-    this->Display3D->RequestSetTransformAndParent( trans, so );
-    this->DisplayAxial->RequestSetTransformAndParent( trans, so );
-    this->DisplayCoronal->RequestSetTransformAndParent( trans, so );
-    this->DisplaySagittal->RequestSetTransformAndParent( trans, so );
+    this->m_Display3D->RequestSetTransformAndParent( trans, so );
+    this->m_DisplayAxial->RequestSetTransformAndParent( trans, so );
+    this->m_DisplayCoronal->RequestSetTransformAndParent( trans, so );
+    this->m_DisplaySagittal->RequestSetTransformAndParent( trans, so );
     }
 
 private:
@@ -246,11 +249,12 @@ private:
     
   std::ofstream           m_LogFile;
 
-  ViewType2D::Pointer DisplayAxial;
-  ViewType2D::Pointer DisplayCoronal;
-  ViewType2D::Pointer DisplaySagittal;
-  ViewType3D::Pointer Display3D;
+  ViewType2D::Pointer m_DisplayAxial;
+  ViewType2D::Pointer m_DisplayCoronal;
+  ViewType2D::Pointer m_DisplaySagittal;
+  ViewType3D::Pointer m_Display3D;
 };
 
+} // end namespace igstk
 
 #endif
