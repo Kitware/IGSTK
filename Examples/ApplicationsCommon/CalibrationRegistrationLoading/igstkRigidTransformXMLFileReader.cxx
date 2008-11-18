@@ -22,17 +22,19 @@ RigidTransformXMLFileReader::ProcessTransformation()
       //check that we got to the end of the stream, (assumes that the string 
       //m_CurrentTagData has no trailing white spaces)
   if( !instr.eof() )
+    {
     throw FileFormatException( 
-    "Error in transformation data, possibly non numeric values" );
-      //check that we got all seven values
+      "Error in transformation data, possibly non numeric values" );
+    }
+  //check that we got all seven values
   if( instr.fail() )
     throw FileFormatException( "Missing transformation data" ); 
           //check that the quaternion is a versor (unit norm)
   if( fabs( qx*qx + qy*qy + qz*qz + qw*qw - 1 ) > eps )
-  {
+    {
     throw FileFormatException( 
       "Quaternion entries do not define a rotation (norm not equal one)." );
-  }
+    }
 
   q.Set(qx, qy, qz, qw);
 
