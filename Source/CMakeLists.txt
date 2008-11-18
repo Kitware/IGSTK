@@ -319,6 +319,10 @@ SET(IGSTKSandbox_HEADS
   igstkCrossHairObject.h
   igstkCrossHairRepresentation.h
 
+# Video grabber support
+  igstkVideoFrameSpatialObject.h
+  igstkVideoFrameRepresentation.h
+  
   igstkTransformBase.h
   igstkAffineTransform.h
   igstkPerspectiveTransform.h
@@ -416,6 +420,10 @@ SET(IGSTKSandbox_SRCS
   igstkCrossHairObject.cxx
   igstkCrossHairRepresentation.cxx
 
+# Video grabber support
+  igstkVideoFrameSpatialObject.cxx
+  igstkVideoFrameRepresentation.cxx
+  
   igstkTransformBase.cxx
   igstkAffineTransform.cxx
   igstkPerspectiveTransform.cxx
