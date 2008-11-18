@@ -5,9 +5,9 @@ namespace igstk
 { 
 
 TransformFileReader::TransformFileReader() : 
-  m_StateMachine( this )
+m_StateMachine( this )
 {
-        //define the state machine's states 
+  //define the state machine's states 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingSetFileName );
   igstkAddStateMacro( AttemptingSetReader );
@@ -19,7 +19,7 @@ TransformFileReader::TransformFileReader() :
   igstkAddStateMacro( AttemptingRead );
   igstkAddStateMacro( HaveData );
 
-           //define the state machines inputs
+  //define the state machines inputs
   igstkAddInputMacro( SetReader );
   igstkAddInputMacro( SetFileName );
   igstkAddInputMacro( Read );
@@ -27,7 +27,7 @@ TransformFileReader::TransformFileReader() :
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
 
-            //define the state machine's transitions
+  //define the state machine's transitions
   igstkAddTransitionMacro( Idle,
                            SetReader,
                            AttemptingSetReader,
@@ -278,10 +278,10 @@ TransformFileReader::TransformFileReader() :
                            HaveData,
                            ReportInvalidRequest );  
 
-          //set the initial state of the state machine
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();  
 }
 
@@ -352,15 +352,15 @@ void
 TransformFileReader::SetReaderProcessing()
 {
   if( this->m_TmpXMLFileReader.IsNull() )
-  {
+    {
     igstkPushInputMacro( Failure );
-  }
+    }
   else
-  {
+    {
     this->m_XMLFileReader = this->m_TmpXMLFileReader;
     this->m_TmpXMLFileReader = NULL;
     igstkPushInputMacro( Success );
-  }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -388,15 +388,15 @@ void
 TransformFileReader::SetFileNameProcessing()
 {
   if( this->m_TmpFileName.empty() )
-  {
+    {
     igstkPushInputMacro( Failure );
-  }
+    }
   else
-  {
+    {
     this->m_FileName = this->m_TmpFileName;
     this->m_TmpFileName.clear();
     igstkPushInputMacro( Success );
-  }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -424,8 +424,8 @@ TransformFileReader::ReportSetFileNameFailureProcessing()
 void 
 TransformFileReader::ReadProcessing()
 {
-            //check that the file name is valid, the file exists, and is not
-            //a directory
+  //check that the file name is valid, the file exists, and is not
+  //a directory
   if(itksys::SystemTools::FileLength( this->m_FileName.c_str() ) == 0 ||
     !itksys::SystemTools::FileExists( this->m_FileName.c_str() ) ||
     itksys::SystemTools::FileIsDirectory( this->m_FileName.c_str() ) )
@@ -433,38 +433,40 @@ TransformFileReader::ReadProcessing()
     std::ostringstream msg;
     msg<<"File ("<<this->m_FileName<<") does not exist or is a directory";
     this->m_ReadFailureErrorMessage = msg.str();
-    igstkPushInputMacro( Failure );    
+    igstkPushInputMacro( Failure );
   }
   else
-  {
+    {
     this->m_XMLFileReader->SetFilename( this->m_FileName );
-    try {       //read the xml file
+    try 
+      {       //read the xml file
       this->m_XMLFileReader->GenerateOutputInformation();
-                    //xml reading is successful (no exception generation) even 
-                    //when the file is empty, need to check that the data was
-                    //actually read
+      //xml reading is successful (no exception generation) even 
+      //when the file is empty, need to check that the data was
+      //actually read
       if( this->m_XMLFileReader->HaveTransformData() )
-      {
+        {
         this->m_TransformData = this->m_XMLFileReader->GetTransformData();
-        igstkPushInputMacro( Success );    
-      }     //we successfuly read the file, it just didn't contain the data, so
-            //data loading is considered a failure
+        igstkPushInputMacro( Success );
+        }
+      //we successfuly read the file, it just didn't contain the data, 
+      //so data loading is considered a failure
       else
-      {
+        {
         this->m_ReadFailureErrorMessage = 
           "XML file does not contain transformation data"; 
-        igstkPushInputMacro( Failure );    
+        igstkPushInputMacro( Failure );
+        }
+      }
+    //an itk exception is thrown if the xml is malformed, and a 
+    //FileFormatException is thrown if the data format is incorrect.
+    //both are decendants of std::exception 
+    catch( std::exception &e ) 
+      { 
+      this->m_ReadFailureErrorMessage = e.what();
+      igstkPushInputMacro( Failure );
       }
     }
-               //an itk exception is thrown if the xml is malformed, and a 
-               //FileFormatException is thrown if the data format is incorrect.
-               //both are decendants of std::exception 
-    catch( std::exception &e ) 
-    { 
-      this->m_ReadFailureErrorMessage = e.what();
-      igstkPushInputMacro( Failure );    
-    }
-  }
   this->m_StateMachine.ProcessInputs();
 }
 
