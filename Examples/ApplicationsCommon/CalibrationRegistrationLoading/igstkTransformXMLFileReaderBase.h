@@ -45,19 +45,19 @@ class TransformXMLFileReaderBase : public itk::XMLReaderBase
 {
 public:
   /**
-   * This is the exception that is thrown if there is a problem with the
+   * \class This is the exception that is thrown if there is a problem with the
    * file format (does not follow the expected format).
    */
   class FileFormatException : public std::exception
-  {
-  public:
+    {
+    public:
     /**
      * Construct an exception with a specifc message.
      */
     FileFormatException(const std::string &errorMessage) 
-    {
-      this->errorMessage = errorMessage;
-    }
+      {
+      this->m_ErrorMessage = errorMessage;
+      }
 
     /**
      * Virtual destructor.
@@ -67,25 +67,25 @@ public:
     /**
      * Get the error message.
      */
-     virtual const char* what() const throw() 
-     {
-       return errorMessage.c_str();
-     }
-  private:
-    std::string errorMessage;
-  };
+    virtual const char* what() const throw() 
+      {
+      return m_ErrorMessage.c_str();
+      }
+    private:
+    std::string m_ErrorMessage;
+    };
 
-    //standard typedefs
+  //standard typedefs
   typedef TransformXMLFileReaderBase    Self;
-  typedef itk::XMLReaderBase        Superclass;
-  typedef itk::SmartPointer<Self>   Pointer;
+  typedef itk::XMLReaderBase            Superclass;
+  typedef itk::SmartPointer<Self>       Pointer;
 
            //run-time type information (and related methods)
   itkTypeMacro( TransformXMLFileReaderBase, itk::XMLReaderBase );
 
 
   /**
-   * Check that the given name isn't a zero length string, that the file exists, 
+   * Check that the given name isn't a zero length string, that the file exists,
    * and that it isn't a directory.
    */
   virtual int CanReadFile(const char* name);
@@ -132,16 +132,16 @@ protected:
   ~TransformXMLFileReaderBase() { delete m_Transform; }
 
   void ProcessDescription() 
-    throw ( FileFormatException );
+  throw ( FileFormatException );
 
   void ProcessDate() 
-    throw ( FileFormatException );
+  throw ( FileFormatException );
  
   virtual void ProcessTransformation() 
-    throw (FileFormatException ) = 0;
+  throw (FileFormatException ) = 0;
 
   void ProcessTransformationAttributes( const char ** atts )
-    throw ( FileFormatException );
+  throw ( FileFormatException );
 
 
   bool m_ReadingTransformData;
@@ -154,10 +154,10 @@ protected:
   
   std::string m_CurrentTagData;
 
-  std::string m_Description;
-  PrecomputedTransformData::DateType m_Date;
-  PrecomputedTransformData::ErrorType m_EstimationError;
-  PrecomputedTransformData::TransformType* m_Transform; 
+  std::string                               m_Description;
+  PrecomputedTransformData::DateType        m_Date;
+  PrecomputedTransformData::ErrorType       m_EstimationError;
+  PrecomputedTransformData::TransformType*  m_Transform; 
 
 private:
   TransformXMLFileReaderBase( 
