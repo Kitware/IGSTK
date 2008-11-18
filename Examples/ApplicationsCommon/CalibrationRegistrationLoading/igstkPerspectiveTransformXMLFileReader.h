@@ -47,8 +47,8 @@ public:
 
     //standard typedefs
   typedef PerspectiveTransformXMLFileReader   Self;
-  typedef TransformXMLFileReaderBase     Superclass;
-  typedef itk::SmartPointer<Self>        Pointer;
+  typedef TransformXMLFileReaderBase          Superclass;
+  typedef itk::SmartPointer<Self>             Pointer;
 
            //run-time type information (and related methods)
   itkTypeMacro( PerspectiveTransformXMLFileReader, TransformXMLFileReaderBase );
