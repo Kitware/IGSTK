@@ -321,7 +321,10 @@ SET(IGSTKSandbox_HEADS
 
 # Video grabber support
   igstkVideoFrameSpatialObject.h
-  igstkVideoFrameRepresentation.h
+  igstkVideoFrameRepresentation.h 
+  igstkFrame.h
+  igstkImager.h
+  igstkImagerTool.h
   
   igstkTransformBase.h
   igstkAffineTransform.h
@@ -423,6 +426,9 @@ SET(IGSTKSandbox_SRCS
 # Video grabber support
   igstkVideoFrameSpatialObject.cxx
   igstkVideoFrameRepresentation.cxx
+  igstkFrame.cxx
+  igstkImager.cxx
+  igstkImagerTool.cxx
   
   igstkTransformBase.cxx
   igstkAffineTransform.cxx
