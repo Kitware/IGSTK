@@ -30,13 +30,6 @@
 #include <vtkMath.h>
 #include <vtkPNGWriter.h>
 
-#include "Spectrum.h"
-#include "HotMetal.h"
-#include "GEColor.h"
-#include "Flow.h"
-#include "LONI.h"
-#include "LONI2.h"
-#include "Asymmetry.h"
 
 namespace igstk
 {
