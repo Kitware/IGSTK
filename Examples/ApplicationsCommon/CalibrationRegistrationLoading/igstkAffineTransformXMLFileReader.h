@@ -28,7 +28,7 @@ namespace igstk
     <transformation estimation_error="0.5">
        a b c d
        e f g h
-       i j k l       
+       i j k l
     </transformation>
   
    </precomputed_transform>
