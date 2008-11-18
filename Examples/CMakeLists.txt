@@ -26,6 +26,8 @@ IF (IGSTKSandbox_USE_FLTK)
     View
     Logging
     Navigator
+    UltrasoundNavigator
+    BronchoscopyNavigator
     WorkingVolumeTester
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
