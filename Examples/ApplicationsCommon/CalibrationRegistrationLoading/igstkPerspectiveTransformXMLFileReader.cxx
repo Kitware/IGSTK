@@ -20,15 +20,18 @@ PerspectiveTransformXMLFileReader::ProcessTransformation()
   instr>>Rt(1,0)>>Rt(1,1)>>Rt(1,2)>>Rt(1,3);
   instr>>Rt(2,0)>>Rt(2,1)>>Rt(2,2)>>Rt(2,3);
 
-      //check that we got to the end of the stream, (assumes that the string 
-      //m_CurrentTagData has no trailing white spaces)
+  //check that we got to the end of the stream, (assumes that the string 
+  //m_CurrentTagData has no trailing white spaces)
   if( !instr.eof() )
+    {
     throw FileFormatException( 
-    "Error in transformation data, possibly non numeric values" );
-      //check that we got all 12 values
+      "Error in transformation data, possibly non numeric values" );
+    }
+  //check that we got all 12 values
   if( instr.fail() )
+    {
     throw FileFormatException( "Missing transformation data"); 
-
+    }
   delete this->m_Transform;
   PerspectiveTransform *perspectiveTransform = new PerspectiveTransform();
 
