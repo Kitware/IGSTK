@@ -80,6 +80,13 @@ public:
       }
     }
 
+  // This method updates the transform between this object and its parent 
+  void RequestUpdateTransformToParent( const Transform & transformToParent )
+  {      
+    this->m_CoordinateSystem->RequestUpdateTransformToParent(
+                                                         transformToParent);
+  }
+
   /** Returns the transform to the parent if available. */
   void RequestGetTransformToParent();
 

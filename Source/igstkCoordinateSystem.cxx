@@ -69,6 +69,9 @@ CoordinateSystem
   igstkAddInputMacro( Disconnected                   );
   igstkAddInputMacro( ParentCausesCycle              );
 
+  // RequestUpdateTransformToParent
+  igstkAddInputMacro( UpdateTransformToParent        );
+
   // RequestDetach
   igstkAddInputMacro( DetachFromParent               );
 
@@ -77,7 +80,7 @@ CoordinateSystem
   // ---------------
 
   // Should be |state| * |input| transitions...
-  // i.e. 4 * 9 = 36
+  // i.e. 4 * 10 = 40
 
   /* Transitions from Initialized */
   igstkAddTransitionMacro( Initialized, ValidParent,
@@ -101,6 +104,8 @@ CoordinateSystem
   igstkAddTransitionMacro( Initialized, AncestorFound,
                            Initialized, InvalidRequest );
   igstkAddTransitionMacro( Initialized, Disconnected ,
+                           Initialized, InvalidRequest );
+  igstkAddTransitionMacro( Initialized, UpdateTransformToParent ,
                            Initialized, InvalidRequest );
 
   /* Transitions from ParentSet */
@@ -126,6 +131,8 @@ CoordinateSystem
                            ParentSet, InvalidRequest );
   igstkAddTransitionMacro( ParentSet  , Disconnected,
                            ParentSet, InvalidRequest );
+  igstkAddTransitionMacro( ParentSet, UpdateTransformToParent ,
+                           ParentSet, UpdateTransformToParent );
 
   /* Transitions from AttemptingComputeTransformToInInitialized */
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
@@ -174,6 +181,10 @@ CoordinateSystem
   igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized,
                            DetachFromParent,
                            AttemptingComputeTransformToInInitialized,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformToInInitialized, 
+                           UpdateTransformToParent ,
+                           AttemptingComputeTransformToInInitialized, 
                            InvalidRequest );
 
   /* Transitions from AttemptingComputeTransformTo */
@@ -226,6 +237,10 @@ CoordinateSystem
   igstkAddTransitionMacro( AttemptingComputeTransformTo,
                            DetachFromParent,
                            AttemptingComputeTransformTo,
+                           InvalidRequest );
+  igstkAddTransitionMacro( AttemptingComputeTransformTo, 
+                           UpdateTransformToParent ,
+                           AttemptingComputeTransformTo, 
                            InvalidRequest );
 
   igstkSetInitialStateMacro( Initialized );
@@ -501,6 +516,20 @@ void CoordinateSystem
 ::SetTransformAndParentProcessing()
 {
   this->m_Parent = this->m_ParentFromRequestSetTransformAndParent;
+  this->m_TransformToParent = this->m_TransformFromRequestSetTransformAndParent;
+}
+
+void CoordinateSystem
+::RequestUpdateTransformToParent(const Transform & transform)
+{
+  this->m_TransformFromRequestSetTransformAndParent = transform;
+  igstkPushInputMacro( UpdateTransformToParent );
+  m_StateMachine.ProcessInputs();
+}
+
+void CoordinateSystem
+::UpdateTransformToParentProcessing()
+{  
   this->m_TransformToParent = this->m_TransformFromRequestSetTransformAndParent;
 }
 

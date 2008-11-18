@@ -97,6 +97,9 @@ public:
   void RequestSetTransformAndParent(const Transform & t,
                                     const CoordinateSystem* parent);
 
+  // Tries to update the transform to its parents   
+  void RequestUpdateTransformToParent(const Transform & t);
+
   /** Request the transform to parent. */
   void RequestGetTransformToParent();
 
@@ -192,6 +195,10 @@ private:
   /** Input for detaching from parent.
    */
   igstkDeclareInputMacro( DetachFromParent               );
+  
+  /** Input for updating just transform.
+  */
+  igstkDeclareInputMacro( UpdateTransformToParent        );
 
   /** These variables hold the inputs from RequestSetTransformAndParent
    *  for later use by methods invoked from the state machine.
@@ -212,6 +219,9 @@ private:
 
   /** Default processing for RequestSetTransformAndParent. */
   void SetTransformAndParentProcessing();
+
+  /** Default processing for RequestUpdateTransformToParent. */
+  void UpdateTransformToParentProcessing();
 
   /** This variable holds the target coordinate system passed to 
    *  RequestComputeTransformTo so that later methods invoked by 

@@ -52,8 +52,8 @@ public: \
     m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
   template < class TParentPointer > \
-  void RequestSetTransformAndParent( const ::igstk::Transform & \
-                                 transformToParent, TParentPointer parent ) \
+  void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent, \
+                                     TParentPointer parent ) \
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \
@@ -69,6 +69,23 @@ public: \
                                               internalTransform ); \
       m_CoordinateSystemDelegator->RequestSetTransformAndParent( \
                           transformToParentWithInternalTransform, parent); \
+      }\
+    } \
+  void RequestUpdateTransformToParent( const ::igstk::Transform & transformToParent ) \
+    { \
+    if ( this->IsInternalTransformRequired() == false ) \
+      { \
+      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( transformToParent ); \
+      } \
+    else \
+      { \
+      ::igstk::Transform internalTransform = this->GetInternalTransform(); \
+      ::igstk::Transform transformToParentWithInternalTransform = \
+      ::igstk::Transform::TransformCompose( \
+                                           transformToParent, \
+                                           internalTransform ); \
+      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( \
+                                   transformToParentWithInternalTransform); \
       }\
     } \
   bool IsCoordinateSystem(const ::igstk::CoordinateSystem* inCS) const  \
