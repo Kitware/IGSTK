@@ -4,20 +4,20 @@ namespace igstk
 { 
 
 PrecomputedTransformData::PrecomputedTransformData() : 
-  m_StateMachine( this )
+m_StateMachine( this )
 {
-        //define the state machine's states 
+  //define the state machine's states 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( Initialized );
 
-                   //define the state machines inputs
+  //define the state machines inputs
   igstkAddInputMacro( Initialize );
   igstkAddInputMacro( GetTransform  );
   igstkAddInputMacro( GetEstimationError  );
   igstkAddInputMacro( GetDescription  );
   igstkAddInputMacro( GetDate  );
 
-            //define the state machine's transitions
+  //define the state machine's transitions
   igstkAddTransitionMacro( Idle,
                            Initialize,
                            Initialized,
@@ -60,10 +60,10 @@ PrecomputedTransformData::PrecomputedTransformData() :
                            Initialized,
                            GetDate );
 
-         //set the initial state of the state machine
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();  
 }
 
