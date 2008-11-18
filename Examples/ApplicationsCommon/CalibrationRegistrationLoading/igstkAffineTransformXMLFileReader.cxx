@@ -18,15 +18,18 @@ AffineTransformXMLFileReader::ProcessTransformation()
   instr>>A(1,0)>>A(1,1)>>A(1,2)>>t[1];
   instr>>A(2,0)>>A(2,1)>>A(2,2)>>t[2];
 
-      //check that we got to the end of the stream, (assumes that the string 
-      //m_CurrentTagData has no trailing white spaces)
+  //check that we got to the end of the stream, (assumes that the string 
+  //m_CurrentTagData has no trailing white spaces)
   if( !instr.eof() )
+    {
     throw FileFormatException( 
-    "Error in transformation data, possibly non numeric values" );
-      //check that we got all 12 values
+      "Error in transformation data, possibly non numeric values" );
+    }
+  //check that we got all 12 values
   if( instr.fail() )
+    {
     throw FileFormatException( "Missing transformation data"); 
-
+    }
   delete this->m_Transform;
   AffineTransform *affineTransform = new AffineTransform();
 
