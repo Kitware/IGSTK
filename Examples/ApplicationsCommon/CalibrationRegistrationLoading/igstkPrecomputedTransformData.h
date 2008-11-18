@@ -76,14 +76,17 @@ public:
    *  available). */
   void RequestComputationDateAndTime();
 
-  /** This event is generated when the transformation is requested and the
-   *  data was initialized. */
+  /** \class This event is generated when the transformation is requested and 
+    *        the data was initialized. */
   class  TransformTypeEvent : public IGSTKEvent
-  {
-  public:  
+    {
+    public:  
     TransformTypeEvent() {} 
     virtual ~TransformTypeEvent() {} 
-    virtual const char * GetEventName() const { return "TransformTypeEvent"; } 
+    virtual const char * GetEventName() const 
+      { 
+      return "TransformTypeEvent"; 
+      } 
     virtual bool CheckEvent(const ::itk::EventObject* e) const 
       { return dynamic_cast<const TransformTypeEvent*>(e); } 
     virtual ::itk::EventObject* MakeObject() const 
@@ -93,10 +96,10 @@ public:
       { return m_Payload; }  
     void Set( PrecomputedTransformData::TransformType* p ) 
       { m_Payload = p; }  
-  private: 
+    private: 
     void operator=(const TransformTypeEvent &);  
     TransformType*  m_Payload; 
-  };
+    };
 
 
   /** This event is generated when the transformation estimation error is 
