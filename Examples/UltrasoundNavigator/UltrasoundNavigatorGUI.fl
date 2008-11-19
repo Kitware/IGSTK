@@ -8,8 +8,7 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 class UltrasoundNavigatorGUI {open : {public igstk::Object}
 } {
-  Function {UltrasoundNavigatorGUI()} {open
-  } {
+  Function {UltrasoundNavigatorGUI()} {} {
     Fl_Window mainWindow {
       label {IGSTK - Ultrasound Navigator Application}
       callback {Quit();}
@@ -91,6 +90,25 @@ class UltrasoundNavigatorGUI {open : {public igstk::Object}
           label Register
           callback {RequestStartSetTrackerFiducials();}
           tooltip {Register tracker system to image} xywh {10 447 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Group m_LiveUltrasoundGroup {
+          xywh {10 512 130 113} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
+        } {
+          Fl_Button m_ToggleRunUltrasoundButton {
+            label Run
+            callback {RequestToggleRunUltrasound();}
+            tooltip {run/stop US tracking} xywh {29 589 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12 deactivate
+          }
+          Fl_Button m_ConfigureUltrasoundButton {
+            label Configure
+            callback {RequestConfigureUltrasound();}
+            tooltip {Configure US tracking} xywh {30 555 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12 deactivate
+          }
+          Fl_Button m_ToggleEnableUltrasoundButton {
+            label {Enable US}
+            callback {RequestToggleEnableUltrasound();}
+            tooltip {Enable US tracking} xywh {30 521 95 25} type Toggle box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12
+          }
         }
       }
       Fl_Group m_ViewerGroup {open
@@ -199,7 +217,7 @@ this->RequestRejectRegistration();}
       }
     }
   }
-  Function {~UltrasoundNavigatorGUI()} {open selected return_type virtual
+  Function {~UltrasoundNavigatorGUI()} {open return_type virtual
   } {}
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
@@ -258,10 +276,16 @@ m_ViewModeList->deactivate();} {}
   }
   Function {RequestLoadToolSpatialObject()} {return_type {virtual void}
   } {}
-  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {open return_type void
+  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
   } {
     code {int px = mainWindow->x() + (mainWindow->w() - childWindow->w()) / 2;
 int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
 childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
   }
+  Function {RequestToggleEnableUltrasound()} {open return_type {virtual void}
+  } {}
+  Function {RequestConfigureUltrasound()} {open return_type {virtual void}
+  } {}
+  Function {RequestToggleRunUltrasound()} {open selected return_type {virtual void}
+  } {}
 } 

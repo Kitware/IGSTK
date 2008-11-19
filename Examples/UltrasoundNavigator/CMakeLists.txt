@@ -26,6 +26,12 @@ SET(UltrasoundNavigator_SRCS
   igstkPathPlan.cxx
   igstkPathPlanIO.h
   igstkPathPlanIO.cxx
+  igstkImagerController.h
+  igstkImagerController.cxx
+  igstkImagerConfiguration.h
+  igstkImagerConfiguration.cxx
+  igstkTerasonImagerConfiguration.cxx
+  igstkTerasonImagerConfiguration.h
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx

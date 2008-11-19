@@ -239,7 +239,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddInputMacro( LoadImage );
   igstkAddInputMacro( ConfirmImagePatientName );
   igstkAddInputMacro( LoadMesh );
-  igstkAddInputMacro( LoadToolSpatialObject );
+  igstkAddInputMacro( LoadTrackerToolSpatialObject );
   igstkAddInputMacro( StartSetImageFiducials );
   igstkAddInputMacro( SetPickingPosition );
   igstkAddInputMacro( EndSetImageFiducials );  
@@ -268,7 +268,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, LoadMesh, 
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( Initial, LoadTrackerToolSpatialObject, 
                            Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, StartSetImageFiducials, 
                            Initial, ReportInvalidRequest );
@@ -310,7 +310,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, LoadMesh, 
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( LoadingImage, LoadTrackerToolSpatialObject, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, StartSetImageFiducials, 
                            LoadingImage, ReportInvalidRequest );
@@ -353,7 +353,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, LoadMesh, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadTrackerToolSpatialObject, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetImageFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
@@ -384,8 +384,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   
   igstkAddTransitionMacro( ImageReady, LoadMesh,
                            LoadingMesh, LoadMesh );
-  igstkAddTransitionMacro( ImageReady, LoadToolSpatialObject,
-                           LoadingToolSpatialObject, LoadToolSpatialObject );
+  igstkAddTransitionMacro( ImageReady, LoadTrackerToolSpatialObject,
+                           LoadingToolSpatialObject, LoadTrackerToolSpatialObject );
   igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
                            ImageReady, SetImagePicking );
   igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
@@ -438,7 +438,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingToolSpatialObject, LoadMesh,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadToolSpatialObject,
+  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadTrackerToolSpatialObject,
                            LoadingToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetImageFiducials, 
                            LoadingToolSpatialObject, ReportInvalidRequest );
@@ -481,7 +481,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, LoadMesh, 
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( LoadingMesh, LoadTrackerToolSpatialObject, 
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, StartSetImageFiducials, 
                            LoadingMesh, ReportInvalidRequest );
@@ -530,7 +530,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, LoadMesh, 
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( SettingImageFiducials, LoadTrackerToolSpatialObject, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials, 
                            SettingImageFiducials, ReportInvalidRequest );
@@ -569,7 +569,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, LoadMesh, 
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( ConfiguringTracker, LoadTrackerToolSpatialObject, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartSetImageFiducials, 
                            ConfiguringTracker, ReportInvalidRequest ); 
@@ -613,7 +613,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadMesh, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadTrackerToolSpatialObject, 
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartSetImageFiducials, 
                            TrackerConfigurationReady, ReportInvalidRequest ); 
@@ -655,7 +655,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, LoadMesh, 
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( InitializingTracker, LoadTrackerToolSpatialObject, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartSetImageFiducials, 
                            InitializingTracker, ReportInvalidRequest ); 
@@ -702,7 +702,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, LoadMesh, 
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadTrackerToolSpatialObject, 
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StartSetImageFiducials, 
                            TrackerInitializationReady, ReportInvalidRequest ); 
@@ -745,7 +745,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, LoadMesh, 
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadTrackerToolSpatialObject, 
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, StartSetImageFiducials, 
                            SettingTrackerFiducials, ReportInvalidRequest ); 
@@ -784,7 +784,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadMesh, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadTrackerToolSpatialObject, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetImageFiducials, 
                            EndingSetTrackerFiducials, ReportInvalidRequest ); 
@@ -828,7 +828,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, LoadMesh, 
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadTrackerToolSpatialObject, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, StartSetImageFiducials, 
                            TrackerFiducialsReady, ReportInvalidRequest ); 
@@ -868,7 +868,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, LoadMesh, 
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( RegisteringTracker, LoadTrackerToolSpatialObject, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, StartSetImageFiducials, 
                            RegisteringTracker, ReportInvalidRequest ); 
@@ -911,7 +911,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, LoadMesh, 
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( AcceptingRegistration, LoadTrackerToolSpatialObject, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, StartSetImageFiducials, 
                            AcceptingRegistration, ReportInvalidRequest ); 
@@ -959,7 +959,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, LoadMesh, 
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( RegistrationReady, LoadTrackerToolSpatialObject, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, StartSetImageFiducials, 
                            RegistrationReady, ReportInvalidRequest ); 
@@ -998,7 +998,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, LoadMesh, 
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( StartingTracker, LoadTrackerToolSpatialObject, 
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StartSetImageFiducials, 
                            StartingTracker, ReportInvalidRequest ); 
@@ -1045,7 +1045,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, LoadMesh, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( Tracking, LoadTrackerToolSpatialObject, 
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StartSetImageFiducials, 
                            Tracking, ReportInvalidRequest ); 
@@ -1084,7 +1084,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, LoadMesh, 
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( StoppingTracker, LoadTrackerToolSpatialObject, 
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StartSetImageFiducials, 
                            StoppingTracker, ReportInvalidRequest ); 
@@ -1127,7 +1127,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, LoadMesh, 
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( DisconnectingTracker, LoadTrackerToolSpatialObject, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StartSetImageFiducials, 
                            DisconnectingTracker, ReportInvalidRequest ); 
@@ -1566,11 +1566,11 @@ void UltrasoundNavigator::RequestLoadMesh()
   m_StateMachine.ProcessInputs();
 }
 
-void UltrasoundNavigator::RequestLoadToolSpatialObject()
+void UltrasoundNavigator::RequestLoadTrackerToolSpatialObject()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::RequestLoadToolSpatialObject called...\n" )
-  m_StateMachine.PushInput( m_LoadToolSpatialObjectInput );
+             "UltrasoundNavigator::RequestLoadTrackerToolSpatialObject called...\n" )
+  m_StateMachine.PushInput( m_LoadTrackerToolSpatialObjectInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1988,11 +1988,11 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
                  "ReportSuccessAcceptingRegistration called...\n");  
 
   // add the tool object to the image planes
-  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );   
-  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
+  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );   
+  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject ); 
 
-  m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
+  m_CrossHair->RequestSetToolSpatialObject( m_TrackerToolSpatialObject ); 
     
   // Set up tool projection for each view
   igstk::Transform identity;
@@ -2021,7 +2021,7 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
 
   // add tool representation to the 3D view
-  m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
 
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
  // m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
@@ -2325,21 +2325,21 @@ void UltrasoundNavigator::RequestAcceptImageLoad()
 
 
 /** -----------------------------------------------------------------
-* Load tool spatial object mesh. This method asks for a file with the 
+* Load tool spatial object mesh for the tracker. This method asks for a file with the 
 * spatial object mesh in the .msh format (see mesh SpatialObject in ITK)
 *  -----------------------------------------------------------------
 */
-void UltrasoundNavigator::LoadToolSpatialObjectProcessing()
+void UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "UltrasoundNavigator::LoadToolSpatialObjectProcessing called...\n" )
+                    "UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing called...\n" )
 
    const char*  fileName = 
     fl_file_chooser("Chose a tool spatial object mesh", "*.msh", "");
 
    if ( !fileName )
     {
-     igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadToolSpatialObjectProcessing No file was selected\n" )
+     igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing No file was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
      return;
@@ -2358,25 +2358,69 @@ void UltrasoundNavigator::LoadToolSpatialObjectProcessing()
 
    if( !observer->GotMeshObject() )
    {
-       igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadToolSpatialObjectProcessing cannot read mesh\n" )
+       igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing cannot read mesh\n" )
        m_StateMachine.PushInput( m_FailureInput );
        m_StateMachine.ProcessInputs();
        return;
    }
 
-   m_ToolSpatialObject = observer->GetMeshObject();
+   m_TrackerToolSpatialObject = observer->GetMeshObject();
 
-   /*
-    // build a tool spatial object using a cylinder spatial object
-    m_ToolSpatialObject = CylinderType::New();  
-    m_ToolSpatialObject->SetRadius( 1.0 );
-    m_ToolSpatialObject->SetHeight( 150 );
-  */
+   m_TrackerToolRepresentation = MeshRepresentationType::New();
+   m_TrackerToolRepresentation->RequestSetMeshObject( m_TrackerToolSpatialObject );
+   m_TrackerToolRepresentation->SetOpacity(1.0);
+   m_TrackerToolRepresentation->SetColor(0,0,1);
 
-    m_ToolRepresentation = MeshRepresentationType::New();
-    m_ToolRepresentation->RequestSetMeshObject( m_ToolSpatialObject );
-    m_ToolRepresentation->SetOpacity(1.0);
-    m_ToolRepresentation->SetColor(0,0,1);
+   m_StateMachine.PushInput( m_SuccessInput);
+   m_StateMachine.ProcessInputs();
+}
+
+/** -----------------------------------------------------------------
+* Load tool spatial object mesh for the imager. This method asks for a file with the 
+* spatial object mesh in the .msh format (see mesh SpatialObject in ITK)
+*  -----------------------------------------------------------------
+*/
+void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing called...\n" )
+
+   const char*  fileName = 
+    fl_file_chooser("Chose a tool spatial object mesh for the imager (e.g. ultrasound probe)", "*.msh", "");
+
+   if ( !fileName )
+    {
+     igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing No file was selected\n" )
+     m_StateMachine.PushInput( m_FailureInput );
+     m_StateMachine.ProcessInputs();
+     return;
+    }
+
+   MeshReaderType::Pointer reader = MeshReaderType::New();
+   reader->RequestSetFileName( fileName );
+
+   reader->RequestReadObject();
+ 
+   MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
+
+   reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
+
+   reader->RequestGetOutput();
+
+   if( !observer->GotMeshObject() )
+   {
+       igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing cannot read mesh\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+
+   m_ImagerToolSpatialObject = observer->GetMeshObject();
+
+   m_ImagerToolRepresentation = MeshRepresentationType::New();
+   m_ImagerToolRepresentation->RequestSetMeshObject( m_ImagerToolSpatialObject );
+   m_ImagerToolRepresentation->SetOpacity(1.0);
+   m_ImagerToolRepresentation->SetColor(0,0,1);
 
    m_StateMachine.PushInput( m_SuccessInput);
    m_StateMachine.ProcessInputs();
@@ -2621,7 +2665,7 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
-  if ( m_ToolSpatialObject.IsNull() )
+  if ( m_TrackerToolSpatialObject.IsNull() )
   {
     igstkLogMacro2( m_Logger, DEBUG, "Tool spatial object not available\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2629,34 +2673,14 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
     return;
   }
 
-  m_ToolSpatialObject->RequestDetachFromParent();
-  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
-/*
-  m_AxialPlaneSpatialObject->RequestDetachFromParent();
-  m_SagittalPlaneSpatialObject->RequestDetachFromParent();
-  m_CoronalPlaneSpatialObject->RequestDetachFromParent();
+  m_TrackerToolSpatialObject->RequestDetachFromParent();
+  m_TrackerToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
 
-  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-*/
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
   { 
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
-
-  //if (!m_TrackerConfiguration)
-  //{
-  //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
-  //  fl_beep( FL_BEEP_ERROR );
-  //  igstkLogMacro2( m_Logger, DEBUG,
-  //    "Tracker Starting error\n" )
-  //  m_StateMachine.PushInput( m_FailureInput );
-  //  m_StateMachine.ProcessInputs();
-  //  return;
-  //}
 
   m_TrackerController->RequestStartTracking();
   

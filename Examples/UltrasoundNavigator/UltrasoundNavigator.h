@@ -62,6 +62,9 @@
 #include "igstkFiducialsPlanIO.h"
 #include "igstkPathPlanIO.h"
 
+#include "igstkImagerController.h"
+#include "igstkImagerConfiguration.h"
+
 #include "igstkTrackerController.h"
 #include "igstkTrackerConfiguration.h"
 #include "igstkCoordinateSystemTransformToResult.h"
@@ -148,7 +151,7 @@ public:
   virtual void RequestCancelImageLoad();
   virtual void RequestAcceptImageLoad();
   virtual void RequestLoadMesh();
-  virtual void RequestLoadToolSpatialObject();
+  virtual void RequestLoadTrackerToolSpatialObject();
   virtual void RequestToggleSetImageFiducials();
   virtual void RequestStartSetTrackerFiducials();
   virtual void RequestEndSetTrackerFiducials();
@@ -265,7 +268,7 @@ private:
   igstkDeclareInputMacro( LoadImage );
   igstkDeclareInputMacro( ConfirmImagePatientName );
   igstkDeclareInputMacro( LoadMesh );
-  igstkDeclareInputMacro( LoadToolSpatialObject );
+  igstkDeclareInputMacro( LoadTrackerToolSpatialObject );
   igstkDeclareInputMacro( ConfigureTracker );
   igstkDeclareInputMacro( StartSetImageFiducials );
   igstkDeclareInputMacro( SetPickingPosition );
@@ -329,9 +332,13 @@ private:
   /** a vector of mesh spatial objects */
   std::vector< MeshType::Pointer >                      m_MeshVector;
 
-  /** tool spatial object and representation */
-  MeshType::Pointer                                     m_ToolSpatialObject;
-  MeshRepresentationType::Pointer                       m_ToolRepresentation;
+  /** tracker tool spatial object and representation */
+  MeshType::Pointer                                     m_TrackerToolSpatialObject;
+  MeshRepresentationType::Pointer                       m_TrackerToolRepresentation;
+
+  /** imager tool spatial object and representation */
+  MeshType::Pointer                                     m_ImagerToolSpatialObject;
+  MeshRepresentationType::Pointer                       m_ImagerToolRepresentation;
 
   ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
   ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
@@ -416,8 +423,16 @@ private:
   /** tracker configuration object */
   const igstk::TrackerConfiguration *                   m_TrackerConfiguration;
 
+  /** imager configuration object */
+  const igstk::ImagerConfiguration *                    m_ImagerConfiguration;
+
+  /** imager object and imager tool*/
+  igstk::Imager::Pointer                                m_Imager;
+  igstk::ImagerTool::Pointer                            m_TerasonImagerTool;
+
+
   /** typedef for the vector of tracker tools */
-  typedef std::vector < igstk::TrackerTool::Pointer >    ToolVectorType;
+  //typedef std::vector < igstk::TrackerTool::Pointer >    ToolVectorType;
 
   igstk::TrackerTool::Pointer                           m_TrackerTool;
   igstk::TrackerTool::Pointer                           m_ReferenceTool;
@@ -455,7 +470,7 @@ private:
   void LoadImageProcessing();
   void ConfirmPatientNameProcessing();  
   void LoadMeshProcessing();
-  void LoadToolSpatialObjectProcessing();
+  void LoadTrackerToolSpatialObjectProcessing();
   void SetImageFiducialProcessing();
   void SetImagePickingProcessing();
   void StartSetTrackerFiducialsProcessing();
@@ -467,6 +482,16 @@ private:
   void StartTrackingProcessing();
   void StopTrackingProcessing();
   void DisconnectTrackerProcessing();
+
+  //imager-related stuff
+  void LoadImagerToolSpatialObjectProcessing();
+  void ReportSuccessImagerConfigurationProcessing();
+  void ReportFailureImagerConfigurationProcessing();
+  void ReportSuccessImagerInitializationProcessing();
+  void ReportFailureImagerInitializationProcessing();
+  void StartImagingProcessing();
+  void StopImagingProcessing();
+  void DisconnectImagerProcessing();
 
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
