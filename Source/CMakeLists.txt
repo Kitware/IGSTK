@@ -382,6 +382,16 @@ IF(IGSTKSandbox_USE_FLTK)
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
+IF (IGSTKSandbox_USE_OpenIGTLink)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkTerasonImager.h
+      igstkTerasonImager.cxx
+      igstkTerasonImagerTool.h
+      igstkTerasonImagerTool.cxx
+      )
+ENDIF (IGSTKSandbox_USE_OpenIGTLink)
+
 IF( WIN32 )
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
@@ -550,5 +560,5 @@ ADD_LIBRARY(IGSTKSandbox ${IGSTKSandbox_HEADS} ${IGSTKSandbox_SRCS} ${IGSTKLates
 TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
-    vtkIO vtkFiltering vtkCommon ${EXTRA_LIBS})
+    vtkIO vtkFiltering vtkCommon vtkWidgets ${EXTRA_LIBS})
     
