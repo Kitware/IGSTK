@@ -62,6 +62,9 @@
 #include "igstkFiducialsPlanIO.h"
 #include "igstkPathPlanIO.h"
 
+#include "igstkVideoFrameSpatialObject.h"
+#include "igstkVideoFrameRepresentation.h"
+
 #include "igstkImagerController.h"
 #include "igstkImagerConfiguration.h"
 
@@ -315,6 +318,13 @@ private:
   /** image spatial object */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
 
+  /** video frame spatial object and representation*/
+  typedef igstk::VideoFrameSpatialObject                 VideoFrameSpatialObjectType;
+  VideoFrameSpatialObjectType::Pointer                  m_VideoFrame;
+
+  typedef igstk::VideoFrameRepresentation               VideoFrameRepresentationType;
+  VideoFrameRepresentationType::Pointer                 m_VideoFrameRepresentation;
+
   /** tool projection spatial object */
   ToolProjectionType::Pointer                           m_ToolProjection;
 
@@ -322,9 +332,8 @@ private:
   CrossHairType::Pointer                                m_CrossHair;
 
   /** tool projection representations */
-  ToolProjectionRepresentationType::Pointer             m_AxialToolProjectionRepresentation;
-  ToolProjectionRepresentationType::Pointer             m_SagittalToolProjectionRepresentation;
-  ToolProjectionRepresentationType::Pointer             m_CoronalToolProjectionRepresentation;
+  ToolProjectionRepresentationType::Pointer             m_CTView1ToolProjectionRepresentation;
+  ToolProjectionRepresentationType::Pointer             m_CTView2ToolProjectionRepresentation;
 
   /** cross hair representation */
   CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
@@ -340,23 +349,25 @@ private:
   MeshType::Pointer                                     m_ImagerToolSpatialObject;
   MeshRepresentationType::Pointer                       m_ImagerToolRepresentation;
 
-  ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_CoronalPlaneSpatialObject;
+  /** reslicer plane spatial object */
+  ReslicerPlaneType::Pointer                            m_CTView1PlaneSpatialObject;
+  ReslicerPlaneType::Pointer                            m_CTView2PlaneSpatialObject;
 
-  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation;
-  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation;
-  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation;
+  /** reslicer plane representations for the 2D views */
+  ImageRepresentationType::Pointer                      m_CTView1ImageRepresentation;
+  ImageRepresentationType::Pointer                      m_CTView2ImageRepresentation;
 
-  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation2;
-  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation2;
-  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation2;
+  /** reslicer plane representations for the 3D views */
+  ImageRepresentationType::Pointer                      m_CTView1ImageRepresentation2;
+  ImageRepresentationType::Pointer                      m_CTView2ImageRepresentation2;
 
+  /** vector of loaded meshes */
   std::vector< MeshRepresentationType::Pointer >        m_MeshRepresentationVector;
 
-  std::vector< MeshResliceRepresentationType::Pointer > m_AxialMeshResliceRepresentationVector;
-  std::vector< MeshResliceRepresentationType::Pointer > m_SagittalMeshResliceRepresentationVector;
-  std::vector< MeshResliceRepresentationType::Pointer > m_CoronalMeshResliceRepresentationVector; 
+  /** vector of mesh contours */
+  std::vector< MeshResliceRepresentationType::Pointer > m_CTView1MeshResliceRepresentationVector;
+  std::vector< MeshResliceRepresentationType::Pointer > m_CTView2MeshResliceRepresentationVector;
+  std::vector< MeshResliceRepresentationType::Pointer > m_VideoViewMeshResliceRepresentationVector;
   
   /** Landmark registration points containers */
   LandmarkPointContainerType                            m_LandmarksContainer;
@@ -572,8 +583,8 @@ private:
   bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   void HandleKeyPressed ( igstk::UltrasoundNavigatorQuadrantViews::KeyboardCommandType keyCommand );
   void HandleMousePressed ( igstk::UltrasoundNavigatorQuadrantViews::MouseCommandType mouseCommand );
-  void EnableOrthogonalPlanes();
-  void DisableOrthogonalPlanes();
+  void AddImagePlanesTo3DView();
+  void RemoveImagePlanesTo3DView();
 
   /** Callback functions for picking and reslicing image events. */  
   void ImagePickingCallback( const itk::EventObject & event );

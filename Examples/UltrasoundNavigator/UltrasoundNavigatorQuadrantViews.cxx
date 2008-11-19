@@ -43,38 +43,29 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
   // Create widgets
   typedef igstk::FLTKWidget   WidgetType;
 
-  m_AxialWidget    = new WidgetType(X, Y, m_WW, m_HH, "Display 0");
-  m_SagittalWidget = new WidgetType(X+m_WW+C, Y, m_WW, m_HH, "Display 1");
-  m_CoronalWidget  = new WidgetType(X, Y+m_HH+N, m_WW, m_HH, "Display 2");
-  m_3DWidget       = new WidgetType(X+m_WW+C, Y+m_HH+N, m_WW, m_HH+N, "Display 3");       
+  // top left view
+  m_CTWidget1    = new WidgetType(X, Y, m_WW, m_HH, "Display 0");
+  // top right
+  m_CTWidget2    = new WidgetType(X+m_WW+C, Y, m_WW, m_HH, "Display 1");
+  // bottom left
+  m_VideoWidget  = new WidgetType(X, Y+m_HH+N, m_WW, m_HH, "Display 2");
+  // botom right
+  m_3DWidget     = new WidgetType(X+m_WW+C, Y+m_HH+N, m_WW, m_HH+N, "Display 3");       
 
   // Create views
-
-  // axial view
-  m_AxialView    = ViewType2D::New();
-//  m_AxialView->SetRectangleColor(1,0,0);
-
-  // sagittal view
-  m_SagittalView = ViewType2D::New();
-//  m_SagittalView->SetRectangleColor(0,1,0);
-
-  // coronal view
-  m_CoronalView  = ViewType2D::New();
-//  m_CoronalView->SetRectangleColor(0,0,1);
-
+  m_CTView1    = ViewType2D::New();
+  m_CTView2 = ViewType2D::New();
+  m_VideoView  = ViewType2D::New();
   m_3DView = ViewType3D::New();
-//  m_3DView->SetRectangleColor(1,1,0);
 
-  m_AxialWidget->RequestSetView( m_AxialView );
-  m_SagittalWidget->RequestSetView( m_SagittalView );
-  m_CoronalWidget->RequestSetView( m_CoronalView );
+  m_CTWidget1->RequestSetView( m_CTView1 );
+  m_CTWidget2->RequestSetView( m_CTView2 );
+  m_VideoWidget->RequestSetView( m_VideoView );
   m_3DWidget->RequestSetView( m_3DView );
 
   m_AxialViewAnnotation = igstk::Annotation2D::New();
   m_SagittalViewAnnotation = igstk::Annotation2D::New();
   m_CoronalViewAnnotation = igstk::Annotation2D::New();
-
-//  this->RequestUpdateOverlays();
 
   // Create slider bars
   m_Sliders.clear();
@@ -132,9 +123,9 @@ UltrasoundNavigatorQuadrantViews::~UltrasoundNavigatorQuadrantViews()
 //  m_Views.clear();
   m_Sliders.clear();
 
-  delete m_AxialWidget;
-  delete m_SagittalWidget;
-  delete m_CoronalWidget;
+  delete m_CTWidget1;
+  delete m_CTWidget2;
+  delete m_VideoWidget;
   delete m_3DWidget;
 }
 
@@ -263,13 +254,6 @@ int UltrasoundNavigatorQuadrantViews::handle_mouse(int event, MouseCommandType &
     m_Reporter->InvokeEvent( mpEvent );
     damage(1); 
     return 1;
-}
-
-void UltrasoundNavigatorQuadrantViews::RequestUpdateOverlays()
-{
-  m_AxialView->RequestAddAnnotation2D( m_AxialViewAnnotation );
-  m_SagittalView->RequestAddAnnotation2D( m_SagittalViewAnnotation );
-  m_CoronalView->RequestAddAnnotation2D( m_CoronalViewAnnotation );
 }
 
 } // end namespace igstk

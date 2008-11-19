@@ -66,9 +66,9 @@ public:
   typedef igstk::View3D        ViewType3D;
 
   // Declare View objects
-  ViewType2D::Pointer          m_AxialView;
-  ViewType2D::Pointer          m_SagittalView;
-  ViewType2D::Pointer          m_CoronalView;
+  ViewType2D::Pointer          m_CTView1;
+  ViewType2D::Pointer          m_CTView2;
+  ViewType2D::Pointer          m_VideoView;
   ViewType3D::Pointer          m_3DView;
 
   /** Annotation is used for displaying 2D texts on View */
@@ -77,9 +77,9 @@ public:
   igstk::Annotation2D::Pointer        m_CoronalViewAnnotation;
 
   // Declare FLTKWidgetNew objects
-  igstk::FLTKWidget * m_AxialWidget;
-  igstk::FLTKWidget * m_SagittalWidget;
-  igstk::FLTKWidget * m_CoronalWidget;
+  igstk::FLTKWidget * m_CTWidget1;
+  igstk::FLTKWidget * m_CTWidget2;
+  igstk::FLTKWidget * m_VideoWidget;
 
   igstk::FLTKWidget * m_3DWidget;
 
@@ -129,8 +129,6 @@ public:
 
   unsigned long AddObserver( 
     const ::itk::EventObject & event, ::itk::Command * observer );
-
-  void RequestUpdateOverlays();
 
   void RemoveObserver( unsigned long tag );
   void RemoveAllObservers();

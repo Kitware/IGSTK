@@ -430,7 +430,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingToolSpatialObject, Failure,
                            ImageReady, ReportFailuredToolSpatialObjectLoaded );
 
-  //complete table for state: LoadingMesh
+  //complete table for state: LoadingToolSpatialObject
 
   igstkAddTransitionMacro( LoadingToolSpatialObject, LoadImage, 
                            LoadingToolSpatialObject, ReportInvalidRequest );
@@ -1686,11 +1686,11 @@ void UltrasoundNavigator::RequestToggleOrthogonalPlanes()
   m_ImagePlanesIn3DViewEnabled = !m_ImagePlanesIn3DViewEnabled;
   if (m_ImagePlanesIn3DViewEnabled)
   {
-    this->EnableOrthogonalPlanes();
+    this->AddImagePlanesTo3DView();
   }
   else
   {
-    this->DisableOrthogonalPlanes();
+    this->RemoveImagePlanesTo3DView();
   }
 }
 
@@ -1733,9 +1733,7 @@ UltrasoundNavigator::ReportSuccessImageLoadedProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
@@ -1857,9 +1855,7 @@ UltrasoundNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
@@ -1987,50 +1983,50 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
     igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportSuccessAcceptingRegistration called...\n");  
 
-  // add the tool object to the image planes
-  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );   
-  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject ); 
+  // add the tool spatial object to the image planes
+  // we want to add it now, because otherwise it would've appeared in any place of my scene 
+  // (i.e. it was not registered to the image)
+  m_CTView1PlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );   
+  m_CTView2PlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
 
+  // add the tool spatial object to the cross hair spatial object.
+  // (the tool spatial object drives the cross hair)
   m_CrossHair->RequestSetToolSpatialObject( m_TrackerToolSpatialObject ); 
-    
-  // Set up tool projection for each view
+  
+  // build the scene view
+
+  // first of all, let's have an identity transform that lasts for ever
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  // setup a tool projection spatial object
   m_ToolProjection = igstk::ToolProjectionObject::New();
+  // todo: get the length from the tracker tool spatial object
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
 
-  // setup axial tool projection
-  m_AxialToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_AxialToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_AxialToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-  m_AxialToolProjectionRepresentation->SetColor( 1,1,0 );
+  // setup tool projection representation for CTView1
+  m_CTView1ToolProjectionRepresentation = ToolProjectionRepresentationType::New();
+  m_CTView1ToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
+  m_CTView1ToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );
+  m_CTView1ToolProjectionRepresentation->SetColor( 1,1,0 );
+  m_CTView1ToolProjectionRepresentation->SetLineWidth( 2 );
 
-  // setup sagittal tool projection
-  m_SagittalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_SagittalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_SagittalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-  m_SagittalToolProjectionRepresentation->SetColor( 1,1,0 );
-
-  // setup coronal tool projection
-  m_CoronalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_CoronalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_CoronalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-  m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
+  // setup tool projection representation for CTView2
+  m_CTView2ToolProjectionRepresentation = ToolProjectionRepresentationType::New();
+  m_CTView2ToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
+  m_CTView2ToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView2PlaneSpatialObject );
+  m_CTView2ToolProjectionRepresentation->SetColor( 1,1,0 );
+  m_CTView2ToolProjectionRepresentation->SetLineWidth( 2 );
 
   // add tool representation to the 3D view
   m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
+  m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ToolProjectionRepresentation );
+ // m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ToolProjectionRepresentation->Copy() );
 
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalToolProjectionRepresentation->Copy() );
-
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
+  m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2ToolProjectionRepresentation );
+ // m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ToolProjectionRepresentation->Copy() );
 
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
@@ -2415,12 +2411,26 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
        return;
    }
 
+   // retrieve the mesh from the reader
    m_ImagerToolSpatialObject = observer->GetMeshObject();
 
-   m_ImagerToolRepresentation = MeshRepresentationType::New();
-   m_ImagerToolRepresentation->RequestSetMeshObject( m_ImagerToolSpatialObject );
-   m_ImagerToolRepresentation->SetOpacity(1.0);
-   m_ImagerToolRepresentation->SetColor(0,0,1);
+   // setup the video frame spatial object   
+   m_VideoFrame = VideoFrameSpatialObjectType::New();
+   m_VideoFrame->SetWidth(640);
+   m_VideoFrame->SetHeight(480);
+   m_VideoFrame->SetPixelSizeX(0.4); // in mm
+   m_VideoFrame->SetPixelSizeY(0.4); // in mm
+   m_VideoFrame->SetNumberOfScalarComponents(1);
+   m_VideoFrame->Initialize();
+
+   m_VideoFrameRepresentation = VideoFrameRepresentationType::New();
+   m_VideoFrameRepresentation->RequestSetVideoFrameSpatialObject( m_VideoFrame );
+
+   m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentation );
+
+   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();  
+   m_ViewerGroup->m_VideoView->RequestStart();
 
    m_StateMachine.PushInput( m_SuccessInput);
    m_StateMachine.ProcessInputs();
@@ -2495,44 +2505,42 @@ void UltrasoundNavigator::LoadMeshProcessing()
    meshRepresentation->RequestSetMeshObject( meshSpatialObject );
    meshRepresentation->SetOpacity(0.7);
    meshRepresentation->SetColor(r, g, b);
-   m_MeshRepresentationVector.push_back( meshRepresentation );
 
-   // build axial mesh reslice representation
-   MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-   axialContour->SetOpacity(1); 
-   axialContour->SetLineWidth(3);
-   axialContour->SetColor(r, g, b);     
-   axialContour->RequestSetMeshObject( meshSpatialObject );
-   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );   
+   // build mesh reslice representation for CTView1
+   MeshResliceRepresentationType::Pointer view1ContourRepresentation = MeshResliceRepresentationType::New();
+   view1ContourRepresentation->SetOpacity(1); 
+   view1ContourRepresentation->SetLineWidth(3);
+   view1ContourRepresentation->SetColor(r, g, b);     
+   view1ContourRepresentation->RequestSetMeshObject( meshSpatialObject );
+   view1ContourRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );   
 
-   // build sagittal mesh reslice representation
-   MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
-   sagittalContour->SetOpacity(1);
-   sagittalContour->SetLineWidth(3);
-   sagittalContour->SetColor(r, g, b);
-   sagittalContour->RequestSetMeshObject( meshSpatialObject );
-   sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-   
-   // build coronal mesh reslice representation
-   MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
-   coronalContour->SetOpacity(1);
-   coronalContour->SetLineWidth(3);
-   coronalContour->SetColor(r, g, b);
-   coronalContour->RequestSetMeshObject( meshSpatialObject );
-   coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-      
-   // add repressentations to the views
-   m_ViewerGroup->m_AxialView->RequestAddObject( axialContour );
-   m_ViewerGroup->m_SagittalView->RequestAddObject( sagittalContour );
-   m_ViewerGroup->m_CoronalView->RequestAddObject( coronalContour );     
-   m_ViewerGroup->m_3DView->RequestAddObject( meshRepresentation );
-   m_ViewerGroup->m_3DView->RequestResetCamera();
+   // build mesh reslice representation for CTView2
+   MeshResliceRepresentationType::Pointer view2ContourRepresentation = MeshResliceRepresentationType::New(); 
+   view2ContourRepresentation->SetOpacity(1);
+   view2ContourRepresentation->SetLineWidth(3);
+   view2ContourRepresentation->SetColor(r, g, b);
+   view2ContourRepresentation->RequestSetMeshObject( meshSpatialObject );
+   view2ContourRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView2PlaneSpatialObject );
 
    // keep the mesh and contours in corresponding vectors
-   m_MeshVector.push_back( meshSpatialObject );
-   m_AxialMeshResliceRepresentationVector.push_back( axialContour );
-   m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
-   m_CoronalMeshResliceRepresentationVector.push_back( coronalContour );  
+   m_MeshRepresentationVector.push_back( meshRepresentation );
+
+   // we have two mesh contour containers
+   m_CTView1MeshResliceRepresentationVector.push_back( view1ContourRepresentation );
+   m_CTView2MeshResliceRepresentationVector.push_back( view2ContourRepresentation );
+   // we need to do a copy here because the same representation cannot
+   // be assigned to two different views
+   m_VideoViewMeshResliceRepresentationVector.push_back( view2ContourRepresentation->Copy() );
+
+   // add mesh and contour representations to the corresponding views
+   unsigned int currentMeshIndex = m_CTView1MeshResliceRepresentationVector.size()-1;
+   m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1MeshResliceRepresentationVector[currentMeshIndex] );
+   m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2MeshResliceRepresentationVector[currentMeshIndex] );
+   m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoViewMeshResliceRepresentationVector[currentMeshIndex] );
+   m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentationVector[currentMeshIndex] );
+
+   // finally reset the 3D view
+   m_ViewerGroup->m_3DView->RequestResetCamera();
 
    m_StateMachine.PushInput( m_SuccessInput );
    m_StateMachine.ProcessInputs();     
@@ -2556,9 +2564,9 @@ void UltrasoundNavigator::SetImagePickingProcessing()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
+
     m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
   }
@@ -2608,9 +2616,8 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
 
       const double *data = point.GetVnlVector().data_block();
 
-      m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
-      m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
-      m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+      m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+//      m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
       m_CrossHair->RequestSetCursorPosition( data );
 
       this->ResliceImage( index );
@@ -3012,41 +3019,27 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ImagePickerObserver = LoadedObserverType::New();
   m_ImagePickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::ImagePickingCallback );
 
-  // create reslice plane spatial object for axial view
-  m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
-  m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  // create reslice plane spatial object for CTView1
+  m_CTView1PlaneSpatialObject = ReslicerPlaneType::New();
+  m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  m_CTView1PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
-  // create reslice plane spatial object for sagittal view
-  m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
-  m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-  m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
-
-  // create reslice plane spatial object for coronal view
-  m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
-  m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-  m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  // create reslice plane spatial object for CTView2
+  m_CTView2PlaneSpatialObject = ReslicerPlaneType::New();
+  m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+  m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+  m_CTView2PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane representation for axial view
-  m_AxialPlaneRepresentation = ImageRepresentationType::New();
-  m_AxialPlaneRepresentation->SetFrameColor(1,0,0);
-  m_AxialPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+  m_CTView1ImageRepresentation = ImageRepresentationType::New();
+  m_CTView1ImageRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_CTView1ImageRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );
 
   // create reslice plane representation for sagittal view
-  m_SagittalPlaneRepresentation = ImageRepresentationType::New();
-  m_SagittalPlaneRepresentation->SetFrameColor(0,1,0);
-  m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-
-  // create reslice plane representation for coronal view
-  m_CoronalPlaneRepresentation = ImageRepresentationType::New();
-  m_CoronalPlaneRepresentation->SetFrameColor(0,0,1);
-  m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );  
+  m_CTView2ImageRepresentation = ImageRepresentationType::New();
+  m_CTView2ImageRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+  m_CTView2ImageRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView2PlaneSpatialObject );
 
    /** 
    *  Request information about the slice bounds. The answer will be
@@ -3109,9 +3102,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
 
   // set background color to the views
-  m_ViewerGroup->m_AxialView->SetRendererBackgroundColor(0,0,0);
-  m_ViewerGroup->m_SagittalView->SetRendererBackgroundColor(0,0,0);
-  m_ViewerGroup->m_CoronalView->SetRendererBackgroundColor(0,0,0);
+  m_ViewerGroup->m_CTView1->SetRendererBackgroundColor(0,0,0);
+  m_ViewerGroup->m_CTView2->SetRendererBackgroundColor(0,0,0);
+  m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(1,1,1);
   m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
  
   /**
@@ -3136,18 +3129,18 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
   // set transform and parent to the image plane reslice spatial objects
-  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_CTView1PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_CTView2PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
-   m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
-      identity, m_AxialPlaneSpatialObject );
+  /* important: we set the 2D views as child of correpsponding reslicing planes
+  * so that they can "follow" the plane and always face their normals (the camera position
+  * in the views is not changed though)
+  */
+  m_ViewerGroup->m_CTView1->RequestSetTransformAndParent(
+      identity, m_CTView1PlaneSpatialObject );
 
-  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent(
-      identity, m_SagittalPlaneSpatialObject );
-
-  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
-      identity, m_CoronalPlaneSpatialObject );
+  m_ViewerGroup->m_CTView2->RequestSetTransformAndParent(
+      identity, m_CTView2PlaneSpatialObject );
 
   m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
       identity, m_WorldReference );
@@ -3162,33 +3155,25 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );  
 
   // add reslice plane representations to the orthogonal views
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ImageRepresentation );
+  m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2ImageRepresentation );
 
   // add reslice plane representations to the 3D views
-  m_AxialPlaneRepresentation2 = m_AxialPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
+  m_CTView1ImageRepresentation2 = m_CTView1ImageRepresentation->Copy();
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ImageRepresentation2 );
 
-  m_SagittalPlaneRepresentation2 = m_SagittalPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
-
-  m_CoronalPlaneRepresentation2 = m_CoronalPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+  m_CTView2ImageRepresentation2 = m_CTView2ImageRepresentation->Copy();
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ImageRepresentation2 );
 
   // set up view parameters
 
-  m_ViewerGroup->m_AxialView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-  m_ViewerGroup->m_AxialView->RequestStart();
-  m_ViewerGroup->m_AxialWidget->RequestEnableInteractions();  
+  m_ViewerGroup->m_CTView1->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+  m_ViewerGroup->m_CTWidget1->RequestEnableInteractions();  
+  m_ViewerGroup->m_CTView1->RequestStart();
 
-  m_ViewerGroup->m_SagittalView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-  m_ViewerGroup->m_SagittalView->RequestStart();
-  m_ViewerGroup->m_SagittalWidget->RequestEnableInteractions();
-
-  m_ViewerGroup->m_CoronalView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-  m_ViewerGroup->m_CoronalView->RequestStart();
-  m_ViewerGroup->m_CoronalWidget->RequestEnableInteractions();
+  m_ViewerGroup->m_CTView2->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+  m_ViewerGroup->m_CTWidget2->RequestEnableInteractions();  
+  m_ViewerGroup->m_CTView2->RequestStart();
 
   m_ViewerGroup->m_3DView->SetRefreshRate( VIEW_3D_REFRESH_RATE );
   //m_ViewerGroup->m_3DView->RequestAddOrientationBox();
@@ -3202,20 +3187,20 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
 
   // reset the cameras in the different views
-  m_ViewerGroup->m_AxialView->RequestResetCamera();
-  m_ViewerGroup->m_SagittalView->RequestResetCamera();
-  m_ViewerGroup->m_CoronalView->RequestResetCamera();
+  m_ViewerGroup->m_CTView1->RequestResetCamera();
+  m_ViewerGroup->m_CTView2->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   /** Adding observers for picking events in the 2D views */
-  m_ViewerGroup->m_AxialView->AddObserver(
+  m_ViewerGroup->m_CTView1->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
 
-  m_ViewerGroup->m_SagittalView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+//  m_ViewerGroup->m_CTView1->AddObserver(
+//      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
 
-  m_ViewerGroup->m_CoronalView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+//  m_ViewerGroup->m_VideoView->AddObserver(
+//      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+
 
   /** Adding observer for slider bar reslicing event */
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::ManualReslicingEvent(),
@@ -3314,30 +3299,24 @@ void UltrasoundNavigator::RequestChangeSelectedViewMode()
   switch (choice)
   {
     case 0:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
       break;
 
     case 1:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
       break;
 
     case 2:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
       break;
 
   default:
@@ -3382,15 +3361,11 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialFiducialRepresentationVector[choice] );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalFiducialRepresentationVector[choice] );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_CTView1->RequestAddObject( m_AxialFiducialRepresentationVector[choice] );
   m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewFiducialRepresentationVector[choice] );
 
   char buf[50];
@@ -3407,8 +3382,6 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
 
-//  m_ViewerGroup->RequestUpdateOverlays();
-
   /** Reslice image to the selected point position */
   if( m_ImageSpatialObject->IsInside( point ) )
   {
@@ -3417,9 +3390,8 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
     m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
   }
@@ -3454,9 +3426,8 @@ void UltrasoundNavigator::ResliceImageCallback( const itk::EventObject & event )
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_AxialPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_SagittalPlaneSpatialObject->RequestSetCursorPosition( data );
-    m_CoronalPlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
     m_CrossHair->RequestSetCursorPosition( data );
   }
 }
@@ -3524,13 +3495,12 @@ void UltrasoundNavigator::HandleMousePressed (
 
     m_WindowLevel += mouseCommand.dy * 2;
 
-    m_AxialPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CTView1ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CTView2ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 
-    m_AxialPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CTView1ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_CTView2ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+
 }
 
 void UltrasoundNavigator::HandleKeyPressed ( 
@@ -3572,25 +3542,23 @@ void UltrasoundNavigator::ResliceImage ( IndexType index )
   Fl::check();
 }
 
-void UltrasoundNavigator::EnableOrthogonalPlanes()
+void UltrasoundNavigator::AddImagePlanesTo3DView()
 {
     igstkLogMacro2( m_Logger, DEBUG, 
-                    "UltrasoundNavigator::EnableOrthogonalPlanes called...\n" )
+                    "UltrasoundNavigator::AddImagePlanesTo3DView called...\n" )
 
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ImageRepresentation2 );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ImageRepresentation2 );
 
 }
 
-void UltrasoundNavigator::DisableOrthogonalPlanes()
+void UltrasoundNavigator::RemoveImagePlanesTo3DView()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "UltrasoundNavigator::DisableOrthogonalPlanes called...\n" )
+                    "UltrasoundNavigator::RemoveImagePlanesTo3DView called...\n" )
 
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CTView1ImageRepresentation2 );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CTView1ImageRepresentation2 );
 
 }
 
