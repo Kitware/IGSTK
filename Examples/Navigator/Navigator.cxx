@@ -3144,13 +3144,13 @@ void Navigator::ConnectImageRepresentation()
 
   // add reslice plane representations to the 3D views
   m_AxialPlaneRepresentation2 = m_AxialPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
+//  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
 
   m_SagittalPlaneRepresentation2 = m_SagittalPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
+//  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
 
   m_CoronalPlaneRepresentation2 = m_CoronalPlaneRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+//  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
 
   // set up view parameters
 
@@ -3170,6 +3170,10 @@ void Navigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_3DView->RequestAddOrientationBox();
   m_ViewerGroup->m_3DView->RequestStart();
 
+
+  m_ViewerGroup->m_AxialView->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_SagittalView->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_CoronalView->SetCameraParallelProjection(true);
 
   //m_ViewerGroup->m_AxialView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_SagittalView->SetRectangleEnabled(true);
@@ -3519,6 +3523,9 @@ void Navigator::HandleKeyPressed (
         break;
 
     case 'r': // reset 3D view
+        m_ViewerGroup->m_AxialView->RequestResetCamera();
+        m_ViewerGroup->m_SagittalView->RequestResetCamera();
+        m_ViewerGroup->m_CoronalView->RequestResetCamera();
         m_ViewerGroup->m_3DView->RequestResetCamera();
         break;
 
