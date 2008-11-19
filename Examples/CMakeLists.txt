@@ -25,8 +25,7 @@ IF (IGSTKSandbox_USE_FLTK)
     DeckOfCardRobot
     View
     Logging
-    Navigator
-    UltrasoundNavigator
+    Navigator    
     BronchoscopyNavigator
     WorkingVolumeTester
     )
@@ -37,6 +36,14 @@ IF (IGSTKSandbox_USE_FLTK)
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
   ENDIF ( WIN32 )
 ENDIF (IGSTKSandbox_USE_FLTK)
+
+IF (IGSTKSandbox_USE_OpenIGTLink)
+   IF (IGSTKSandbox_USE_MicronTracker) 
+       SUBDIRS(
+         UltrasoundNavigator
+       )
+   ENDIF (IGSTKSandbox_USE_MicronTracker)
+ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
 IF (IGSTKSandbox_USE_Qt)
   SUBDIRS( OneViewAndTrackingUsingQTWidget )
