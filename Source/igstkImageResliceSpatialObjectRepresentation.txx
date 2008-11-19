@@ -33,16 +33,14 @@
 #include <vtkActor.h>
 #include <vtkPlaneSource.h>
 #include <vtkPlane.h>
-#include <vtkCutter.h>
 #include <vtkPolyData.h>
 #include <vtkOutlineFilter.h>
 #include <vtkCamera.h>
 #include <vtkMath.h>
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
-#include <vtkTubeFilter.h>
-#include <vtkFeatureEdges.h>
 #include <vtkImageMapToColors.h>
+#include <vtkCutter.h>
 
 namespace igstk
 {
@@ -106,14 +104,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_LookupTable->SetValueRange( 0 ,1);
   m_LookupTable->SetAlphaRange( 1, 1);
   m_LookupTable->Build();
-  // for debuggin purpose
-//  m_Sphere             = vtkSphereSource::New();
-//  m_Sphere->SetRadius(2.5);
-  //m_Edges              = vtkFeatureEdges::New();
-  //m_EdgesTuber         = vtkTubeFilter::New();
-  //m_EdgesTuber->SetNumberOfSides(12);
-  //m_EdgesProperty      = vtkProperty::New();
-
 
   // Define some default point coordinates
   //
@@ -124,8 +114,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   bounds[3] =  0.5;
   bounds[4] = -0.5;
   bounds[5] =  0.5;
-
-//  this->PlacePlane(bounds);
 
   double center[3];
   center[0] = (bounds[0] + bounds[1])/2.0;
@@ -161,7 +149,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicerPlaneCenterObserver = ReslicerPlaneCenterObserver::New();
   m_ReslicerPlaneNormalObserver = ReslicerPlaneNormalObserver::New();
- // m_ImageTransformObserver = ImageTransformObserver::New();
 
   igstkAddInputMacro( ValidImageSpatialObject );
   igstkAddInputMacro( InValidImageSpatialObject );
@@ -568,29 +555,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Plane->SetNormal( m_PlaneSource->GetNormal() );
 
   this->UpdatePlane();
-/*
-  this->m_ImageTransformObserver->Reset();
-
-  this->m_ImageSpatialObject->RequestGetImageTransform();
-
-  if( this->m_ImageTransformObserver->GotImageTransform() ) 
-    {
-      const CoordinateSystemTransformToResult transformCarrier =
-        this->m_ImageTransformObserver->GetImageTransform();
-
-      igstk::Transform imageTransform = transformCarrier.GetTransform();
-
-      // Image Actor takes care of the image origin position internally.
-      m_ImageActor->SetPosition(0,0,0);
-
-      vtkMatrix4x4 * imageTransformMatrix = vtkMatrix4x4::New();
-
-      imageTransform.ExportTransform( *imageTransformMatrix );
-
-      this->m_ImageActor->SetUserMatrix( imageTransformMatrix );
-      imageTransformMatrix->Delete();
-    }
-*/
 }
 
 
@@ -789,22 +753,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor->SetProperty(m_PlaneProperty);
   
   texturePlaneMapper->Delete();
-
-  //for debugging purpose
-  //vtkPolyDataMapper* sphereMapper = vtkPolyDataMapper::New();
-  //sphereMapper->SetInput(
-  //  vtkPolyData::SafeDownCast(m_Sphere->GetOutput()));  
-  //m_SphereActor->SetMapper( sphereMapper );
-  //m_SphereActor->GetProperty()->SetColor(this->GetFrameRed(),this->GetFrameGreen(),this->GetFrameBlue());
-  //sphereMapper->Delete();
-
-  //vtkPolyDataMapper* edgesMapper = vtkPolyDataMapper::New();
-  //edgesMapper->SetInput(
-  //  vtkPolyData::SafeDownCast(m_EdgesTuber->GetOutput()));
-  //m_EdgesActor->SetMapper( edgesMapper );
-  //m_EdgesProperty->SetColor(this->GetFrameRed(),this->GetFrameGreen(),this->GetFrameBlue());
-  //m_EdgesActor->SetProperty(m_EdgesProperty);
-  //edgesMapper->Delete();
 }
 
 template < class TImageSpatialObject >

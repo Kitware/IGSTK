@@ -23,22 +23,16 @@
 #include "igstkSpatialObject.h"
 #include "igstkStateMachine.h"
 
-class vtkPlaneSource;
-class vtkPlane;
-class vtkMatrix4x4;
-class vtkTransform;
-class vtkCutter;
-class vtkOutlineFilter;
 
 namespace igstk
 {
 
 /** \class ReslicerPlaneSpatialObject
  * 
- * \brief This class generates a reslicing plane equation.  
+ * \brief This class generates reslicing plane equation.  
  *
- * The computed plane is used by e.g. igstkImageResliceSpatialObjectRepresentation and
- * igstkMeshResliceSpatialObjectRepresentation.
+ * The computed plane is used by spatial object representation classes such as 
+ * igstkImageResliceSpatialObjectRepresentation and igstkMeshResliceSpatialObjectRepresentation.
  *
  * The class provides three modes of reslicing i.e Orthogonal, OffOrthogonal and Oblique. 
  *
@@ -151,9 +145,6 @@ public:
 
   /** fixme: put this into events */
   VectorType GetToolPosition() const;
-
-  /** fixme: put this into events */
-  //VectorType GetReslicerPlaneNormal() const;
 
   /** Inquiry if a tool spatial object is set for reslicing */
   bool  IsToolSpatialObjectSet();

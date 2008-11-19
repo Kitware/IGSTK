@@ -21,14 +21,10 @@
 #include "igstkReslicerPlaneSpatialObject.h"
 #include "igstkEvents.h"
 
-#include "vtkMatrix4x4.h"
 #include "vtkPlaneSource.h"
 #include "vtkPlane.h"
 #include "vtkMath.h"
 #include "vtkTransform.h"
-#include "vtkCutter.h"
-#include "vtkOutlineFilter.h"
-
 
 namespace igstk
 { 
@@ -45,10 +41,6 @@ ReslicerPlaneSpatialObject
 
   m_BoundingBoxProviderSpatialObject = NULL;
   m_ToolSpatialObject = NULL; 
-
-  // Create the observer to VTK image events 
-//  m_VTKImageObserver = VTKImageObserver::New();
-  //m_ImageTransformObserver = ImageTransformObserver::New();
 
   //tool spatial object check flag
   m_ToolSpatialObjectSet  = false;
@@ -1008,13 +1000,6 @@ ReslicerPlaneSpatialObject
 {
   return this->m_ToolTransformWRTImageCoordinateSystem;
 }
-
-//ReslicerPlaneSpatialObject::VectorType
-//ReslicerPlaneSpatialObject
-//::GetReslicerPlaneNormal() const
-//{
-//  return m_PlaneNormal;
-//}
 
 //todo: get tool position as an event
 ReslicerPlaneSpatialObject::VectorType

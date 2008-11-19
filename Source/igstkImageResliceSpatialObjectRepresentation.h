@@ -35,8 +35,6 @@ class vtkPolyData;
 class vtkCutter;
 class vtkSphereSource;
 class vtkProperty;
-class vtkFeatureEdges;
-class vtkTubeFilter;
 class vtkImageMapToColors;
 
 
@@ -148,12 +146,6 @@ private:
   vtkPlane             *m_Plane;
   vtkImageData         *m_Box;
   vtkCutter            *m_Cutter;
-  //vtkFeatureEdges      *m_Edges;
-  //vtkTubeFilter        *m_EdgesTuber;
-  //vtkSphereSource      *m_Sphere;
-  //vtkActor             *m_SphereActor;
-  //vtkActor             *m_EdgesActor;
-  //vtkProperty          *m_EdgesProperty;
   
 
   /** Main color of the representation. This should be RGB components, each one
@@ -241,7 +233,6 @@ private:
      CoordinateSystemTransformToResult );
 
   typename VTKImageObserver::Pointer  m_VTKImageObserver;
- // typename ImageTransformObserver::Pointer   m_ImageTransformObserver;
 
 private:
 
