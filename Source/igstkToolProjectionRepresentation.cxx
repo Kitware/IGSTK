@@ -19,13 +19,10 @@
 #include "igstkEvents.h"
 
 #include <vtkActor.h>
-#include <vtkAxisActor2D.h>
 #include <vtkProperty.h>
 #include <vtkLineSource.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkTubeFilter.h>
 #include <vtkPlaneSource.h>
-
 
 
 namespace igstk
@@ -37,8 +34,7 @@ ToolProjectionRepresentation
 {
 
   m_LineSource = NULL;
-  m_Tuber = NULL;
-  m_LineMapper = NULL;
+  m_LineProperty = NULL;
 
   m_ToolProjectionSpatialObject = NULL;
 
@@ -115,18 +111,11 @@ ToolProjectionRepresentation
     m_LineSource=NULL;
   }
 
-  if (m_Tuber != NULL)
+  if (m_LineProperty != NULL)
   {
-    m_Tuber->Delete();
-    m_Tuber=NULL;
+    m_LineProperty->Delete();
+    m_LineProperty=NULL;
   }
-
-  if (m_LineMapper != NULL)
-  {
-    m_LineMapper->Delete();
-    m_LineMapper=NULL;
-  }
-
 }
 
 
@@ -244,10 +233,15 @@ void ToolProjectionRepresentation
   {
       normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
 
+      // displace point1 a little bit so that it's always onto the reslicer plane (i.e. visible)
+      point1 += 0.1*normal;
+
       VectorType toolProy = itk::CrossProduct( normal, itk::CrossProduct(toolAxis, normal) );
 
       point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
   }
+  else
+    return;
 
   if ( (point2-point1).GetNorm() > 0.1 )
   {
@@ -318,6 +312,20 @@ ToolProjectionRepresentation
     }
 }
 
+/** Set the line width */
+
+void ToolProjectionRepresentation
+::SetLineWidth(double width)
+{
+  if( this->m_LineWidth == width )
+    {
+    return;
+    }
+  this->m_LineWidth = width;
+
+  m_LineProperty->SetLineWidth(m_LineWidth);
+}
+
 /** Create the vtk Actors */
 void ToolProjectionRepresentation
 ::CreateActors()
@@ -330,18 +338,21 @@ void ToolProjectionRepresentation
   m_LineSource->SetPoint1( 0, 0, 0 );
   m_LineSource->SetPoint2( 1, 1, 1 );
 
-  m_Tuber = vtkTubeFilter::New();
-  m_Tuber->SetInput ( m_LineSource->GetOutput() );
-  m_Tuber->SetRadius (1);
-  m_Tuber->SetNumberOfSides(3);
+  m_LineProperty = vtkProperty::New();
+  m_LineProperty->SetAmbient(1);
+  m_LineProperty->SetRepresentationToWireframe();
+  m_LineProperty->SetInterpolationToFlat();
+  m_LineProperty->SetLineWidth(m_LineWidth);
+  m_LineProperty->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
 
-  m_LineMapper = vtkPolyDataMapper::New();
-  m_LineMapper->SetInput ( m_Tuber->GetOutput() );
+  vtkPolyDataMapper* lineMapper = vtkPolyDataMapper::New();
+  lineMapper->SetInput ( m_LineSource->GetOutput() );
+  lineMapper->SetResolveCoincidentTopologyToPolygonOffset();
 
   vtkActor* lineActor = vtkActor::New();
-  lineActor->SetMapper (m_LineMapper);
-
-  lineActor->GetProperty()->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
+  lineActor->SetMapper (lineMapper);
+  lineActor->SetProperty(m_LineProperty);
+  lineMapper->Delete(); 
 
   this->AddActor( lineActor );
 }

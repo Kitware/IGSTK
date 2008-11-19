@@ -25,8 +25,7 @@
 #include "igstkStateMachine.h"
 
 class vtkLineSource;
-class vtkTubeFilter;
-class vtkPolyDataMapper;
+class vtkProperty;
 
 namespace igstk
 {
@@ -74,6 +73,10 @@ public:
                                                              toolProjectionObject );
 
   virtual void SetVisibility ( bool visible);
+
+  /** Set/Get line width */
+  void SetLineWidth(double LineWidth);
+  igstkGetMacro( LineWidth, double );
 
 protected:
 
@@ -131,9 +134,10 @@ private:
   ReslicerPlanePointerType  m_ReslicePlaneSpatialObjectToBeSet;
   ReslicerPlanePointerType  m_ReslicePlaneSpatialObject;
 
-  vtkLineSource* m_LineSource;
-  vtkTubeFilter *m_Tuber;
-  vtkPolyDataMapper* m_LineMapper;
+  vtkLineSource* m_LineSource;  
+  vtkProperty* m_LineProperty;
+
+  double m_LineWidth;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidToolProjectionObject );

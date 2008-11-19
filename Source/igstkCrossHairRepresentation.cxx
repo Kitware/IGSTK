@@ -19,12 +19,9 @@
 #include "igstkEvents.h"
 
 #include <vtkActor.h>
-#include <vtkAxisActor2D.h>
 #include <vtkProperty.h>
 #include <vtkLineSource.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkTubeFilter.h>
-
 
 
 namespace igstk
@@ -37,6 +34,7 @@ CrossHairRepresentation::CrossHairRepresentation():m_StateMachine(this)
   m_LineSourceZ = NULL;
   m_LineSourceY = NULL;
   m_LineSourceX = NULL;
+  m_LineProperty = NULL;
 
   m_ImageBounds[0] = 0;
   m_ImageBounds[1] = 0;
@@ -84,6 +82,12 @@ CrossHairRepresentation
 ::~CrossHairRepresentation()  
 {
   this->DeleteActors();
+  
+  if (m_LineProperty != NULL)
+  {
+    m_LineProperty->Delete();
+    m_LineProperty=NULL;
+  }
 
   if (m_LineSourceZ != NULL)
   {
@@ -121,6 +125,19 @@ CrossHairRepresentation
       }
     it++;
     }
+}
+
+void 
+CrossHairRepresentation
+::SetLineWidth(double width)
+{
+  if( this->m_LineWidth == width )
+    {
+    return;
+    }
+  this->m_LineWidth = width;
+
+  m_LineProperty->SetLineWidth(m_LineWidth);
 }
 
 /** Verify time stamp of the attached tool*/
@@ -252,6 +269,13 @@ void CrossHairRepresentation
   // to avoid duplicates we clean the previous actors
   this->DeleteActors();
 
+  m_LineProperty = vtkProperty::New();
+  m_LineProperty->SetAmbient(1);
+  m_LineProperty->SetRepresentationToWireframe();
+  m_LineProperty->SetInterpolationToFlat();
+  m_LineProperty->SetLineWidth(m_LineWidth);
+  m_LineProperty->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
+
   // build x cross hair
 
   //give any initial value
@@ -266,7 +290,6 @@ void CrossHairRepresentation
 
   vtkActor* lineActorX = vtkActor::New();
   lineActorX->SetMapper (lineMapperX);
-  lineActorX->GetProperty()->SetColor(this->GetRed(),this->GetGreen(),this->GetBlue());
 
   lineMapperX->Delete();
   this->AddActor( lineActorX );

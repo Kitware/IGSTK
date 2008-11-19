@@ -24,8 +24,7 @@
 #include "igstkStateMachine.h"
 
 class vtkLineSource;
-//class vtkTubeFilter;
-//class vtkPolyDataMapper;
+class vtkProperty;
 
 namespace igstk
 {
@@ -65,6 +64,10 @@ public:
   void RequestSetCrossHairObject( const CrossHairSpatialObjectType * CrossHairObject );
 
   virtual void SetVisibility ( bool visible);
+
+  /** Set/Get line width */
+  void SetLineWidth(double LineWidth);
+  igstkGetMacro( LineWidth, double );
 
 protected:
 
@@ -110,6 +113,10 @@ private:
   vtkLineSource* m_LineSourceX;
   vtkLineSource* m_LineSourceY;
   vtkLineSource* m_LineSourceZ;
+
+  vtkProperty* m_LineProperty;
+
+  double m_LineWidth;
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidCrossHairObject );
