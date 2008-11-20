@@ -38,6 +38,8 @@ VideoFrameSpatialObject::VideoFrameSpatialObject() :
   m_PixelSizeX = 0;
   m_PixelSizeY = 0;
 
+  m_NumberOfScalarComponents = 0;
+
   m_StateMachine.SetReadyToRun();
 } 
 
@@ -54,7 +56,7 @@ VideoFrameSpatialObject::Initialize()
   m_ImageData = vtkImageData::New();
   m_ImageData->SetScalarTypeToUnsignedChar();
   m_ImageData->SetSpacing (m_PixelSizeX, m_PixelSizeY, 1.0);
-  m_ImageData->SetNumberOfScalarComponents( 1 );
+  m_ImageData->SetNumberOfScalarComponents( m_NumberOfScalarComponents );
   m_ImageData->SetExtent(0, m_Width - 1,
                          0, m_Height - 1, 0, 0);
 

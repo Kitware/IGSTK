@@ -48,15 +48,22 @@ public:
   vtkImageData* GetImageData();
 
   igstkSetMacro(Width, unsigned int);
+  igstkGetMacro(Width, unsigned int);
 
   igstkSetMacro(Height, unsigned int);
+  igstkGetMacro(Height, unsigned int);
+
+  igstkSetMacro(NumberOfScalarComponents, unsigned int);
+  igstkGetMacro(NumberOfScalarComponents, unsigned int);
 
   igstkSetMacro(PixelSizeX, double);
+  igstkGetMacro(PixelSizeX, double);
 
   igstkSetMacro(PixelSizeY, double);
+  igstkGetMacro(PixelSizeY, double);
 
-  igstkGetMacro(CalibrationTransform, igstk::Transform);
   igstkSetMacro(CalibrationTransform, igstk::Transform);
+  igstkGetMacro(CalibrationTransform, igstk::Transform);
 
   /** Request to get the VTK image as a const pointer payload into an event.
    *  Both the const and non-const versions are needed. */
@@ -77,6 +84,7 @@ private:
   unsigned int              m_Height;
   double                    m_PixelSizeX;
   double                    m_PixelSizeY;
+  unsigned int              m_NumberOfScalarComponents;
   igstk::Transform          m_CalibrationTransform;
 };
 
