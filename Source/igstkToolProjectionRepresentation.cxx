@@ -38,6 +38,8 @@ ToolProjectionRepresentation
 
   m_ToolProjectionSpatialObject = NULL;
 
+  m_LineWidth = 2;
+
   m_ReslicerPlaneNormalObserver = ReslicerPlaneNormalObserver::New();
 
   this->RequestSetSpatialObject( m_ToolProjectionSpatialObject );
@@ -213,6 +215,7 @@ void ToolProjectionRepresentation
   // todo: get the tool's direction directly. do not calculate it again
   igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
   VectorType point1 = toolTransform.GetTranslation();
+
   VectorType point2;
   point2.Fill(0);
 
@@ -232,9 +235,6 @@ void ToolProjectionRepresentation
   if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
   {
       normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
-
-      // displace point1 a little bit so that it's always onto the reslicer plane (i.e. visible)
-      point1 += 0.1*normal;
 
       VectorType toolProy = itk::CrossProduct( normal, itk::CrossProduct(toolAxis, normal) );
 
@@ -348,6 +348,7 @@ void ToolProjectionRepresentation
   vtkPolyDataMapper* lineMapper = vtkPolyDataMapper::New();
   lineMapper->SetInput ( m_LineSource->GetOutput() );
   lineMapper->SetResolveCoincidentTopologyToPolygonOffset();
+  lineMapper->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
 
   vtkActor* lineActor = vtkActor::New();
   lineActor->SetMapper (lineMapper);

@@ -506,9 +506,14 @@ ReslicerPlaneSpatialObject
     }
   }
 
+  // we start in the middle of the bounding box
   m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
   m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
   m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+  
+  m_PlaneCenter[0] = m_ToolPosition[0];
+  m_PlaneCenter[1] = m_ToolPosition[1];
+  m_PlaneCenter[2] = m_ToolPosition[2];
 
 }
 
@@ -1006,7 +1011,7 @@ ReslicerPlaneSpatialObject::VectorType
 ReslicerPlaneSpatialObject
 ::GetToolPosition() const
 {
-  return m_PlaneCenter;
+  return m_ToolPosition;
 }
 
 /** Check if tool spatial object is set to drive the reslicing*/

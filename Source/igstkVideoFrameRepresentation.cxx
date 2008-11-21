@@ -327,4 +327,20 @@ VideoFrameRepresentation
   m_ImageActor->SetPickable( 0 );  
 }
 
+/** Create a copy of the current object representation */
+VideoFrameRepresentation::Pointer
+VideoFrameRepresentation
+::Copy() const
+{
+  igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation\
+                        ::Copy called...\n");
+
+  Pointer newOR = VideoFrameRepresentation::New();
+  newOR->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
+  newOR->SetOpacity( this->GetOpacity() );
+  newOR->RequestSetVideoFrameSpatialObject( m_VideoFrameSpatialObject );
+
+  return newOR;
+}
+
 } // namespace

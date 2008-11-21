@@ -247,11 +247,6 @@ void MeshResliceSpatialObjectRepresentation
   else
     return;
 
-  // shift a bit the contour to appear onto the reslicer plane
-  center[0] -= normal[0]*0.1;
-  center[1] -= normal[1]*0.1;
-  center[2] -= normal[2]*0.1;
-
   m_Plane->SetNormal( normal[0], normal[1], normal[2] );
   m_Plane->SetOrigin( center[0], center[1], center[2] );
 }
@@ -328,10 +323,11 @@ void MeshResliceSpatialObjectRepresentation
   vtkActor* contourActor = vtkActor::New();
   vtkPolyDataMapper* contourMapper = vtkPolyDataMapper::New();
   contourMapper->SetResolveCoincidentTopologyToPolygonOffset();
+  contourMapper->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
 
   m_ContourProperty->SetColor(this->GetRed(),
-                               this->GetGreen(),
-                               this->GetBlue());
+                              this->GetGreen(),
+                              this->GetBlue());
 
   contourMapper->SetInput(m_Cutter->GetOutput());
   contourActor->SetMapper(contourMapper);

@@ -321,55 +321,8 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
                                             m_ReslicerPlaneNormalObserver );
-  /* todo: set different plane dimensions depending on the Orientation Type
-  * see if having the maximum extension alters vtkImageReslice performance 
-  * (the background is not visible though)
-  */
-/*
-  switch( m_ReslicePlaneSpatialObject->GetOrientationType() )
-  {
 
-  case ReslicerPlaneType::Axial:
-  case ReslicerPlaneType::OffAxial:
-    {
-      m_PlaneSource->SetOrigin(m_xbounds[0],m_ybounds[0],m_zbounds[0]);
-      m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
-      m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
-
-      m_Plane->SetOrigin( m_PlaneSource->GetCenter() );
-      m_Plane->SetNormal( m_PlaneSource->GetNormal() );
-      break;
-    }
-  case ReslicerPlaneType::Sagittal:
-  case ReslicerPlaneType::OffSagittal:
-  case ReslicerPlaneType::PlaneOrientationWithZAxesNormal:
-  case ReslicerPlaneType::PlaneOrientationWithYAxesNormal:
-    {
-      m_PlaneSource->SetOrigin(m_xbounds[0],m_ybounds[0],m_zbounds[0]);
-      m_PlaneSource->SetPoint1(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
-      m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
-
-      m_Plane->SetOrigin( m_PlaneSource->GetCenter() );
-      m_Plane->SetNormal( m_PlaneSource->GetNormal() );
-      break;
-    }
-  case ReslicerPlaneType::Coronal:
-  case ReslicerPlaneType::OffCoronal:
-  case ReslicerPlaneType::PlaneOrientationWithXAxesNormal:
-    {
-      m_PlaneSource->SetOrigin(m_xbounds[0],m_ybounds[0],m_zbounds[0]);
-      m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
-      m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
-
-      m_Plane->SetOrigin( m_PlaneSource->GetCenter() );
-      m_Plane->SetNormal( m_PlaneSource->GetNormal() );
-      break;
-    }
-
-  }
-
-  this->UpdatePlane();
-*/
+  m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 }
 
 /** Verify time stamp of the attached tool*/

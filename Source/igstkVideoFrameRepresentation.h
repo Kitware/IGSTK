@@ -64,6 +64,10 @@ public:
 
   void SaveScreenShot( const std::string & filename );
 
+  /** Return a copy of the current object representation */
+  Pointer Copy() const;
+
+
 protected:
   VideoFrameRepresentation(void);
   
