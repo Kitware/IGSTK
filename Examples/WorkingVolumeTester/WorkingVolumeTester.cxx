@@ -939,7 +939,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
     m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
+    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
     m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create reslice plane spatial object for sagittal view
@@ -984,7 +984,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
 
     // todo: see the camera issue within childs and parents for the case of
     // a View and a ReslicerPlaneSpatialObjet, respectively.
-    /*
+    
     m_ViewerGroup->m_AxialView->RequestDetachFromParent();
     m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
       identity, m_AxialPlaneSpatialObject );
@@ -996,7 +996,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_ViewerGroup->m_CoronalView->RequestDetachFromParent();
     m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
       identity, m_CoronalPlaneSpatialObject );
-    */
+    
 
     // add axial mesh reslice representation to the 2D and 3D views
     m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialMeshResliceRepresentation );
@@ -1015,6 +1015,11 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_ViewerGroup->m_SagittalView->SetRendererBackgroundColor(0,0,0);
     m_ViewerGroup->m_CoronalView->SetRendererBackgroundColor(0,0,0);
     m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
+
+    // set parallel projection to the camera
+    m_ViewerGroup->m_AxialView->SetCameraParallelProjection(true);
+    m_ViewerGroup->m_SagittalView->SetCameraParallelProjection(true);
+    m_ViewerGroup->m_CoronalView->SetCameraParallelProjection(true);
 
     // reset cameras in the different views
     m_ViewerGroup->m_AxialView->RequestResetCamera();
