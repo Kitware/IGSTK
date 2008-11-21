@@ -84,15 +84,7 @@ public:
   igstk::FLTKWidget * m_3DWidget;
 
   // Define slider bars
-  Fl_Value_Slider * m_SuperiorLeftSlider;
   Fl_Value_Slider * m_SuperiorRightSlider;
-  Fl_Value_Slider * m_InferiorLeftSlider;
-  Fl_Value_Slider * m_InferiorRightSlider;
-
-  // Array of pointer to the View, Widget, and Slider bar
-  //std::vector< igstk::FLTKWidget * >   m_Displays;
- // std::vector< ViewType::Pointer   >   m_Views;
-  std::vector< Fl_Value_Slider   * >   m_Sliders;
 
   /** Event for reslicing from slider bar */
   typedef CTImageSpatialObject::IndexType  IndexType;
@@ -140,12 +132,8 @@ protected:
 private:
 
   // Call backs
-  void cb_SuperiorLeftSlider_i(Fl_Value_Slider*, void*);
-  static void cb_SuperiorLeftSlider(Fl_Value_Slider*, void*);
   void cb_SuperiorRightSlider_i(Fl_Value_Slider*, void*);
   static void cb_SuperiorRightSlider(Fl_Value_Slider*, void*);
-  void cb_InferiorLeftSlider_i(Fl_Value_Slider*, void*);
-  static void cb_InferiorLeftSlider(Fl_Value_Slider*, void*);
 
   ::itk::Object::Pointer    m_Reporter;
 

@@ -22,31 +22,31 @@ class UltrasoundNavigatorGUI {open : {public igstk::Object}
         Fl_Button m_QuitButton {
           label Quit
           callback {Quit();}
-          tooltip {Quit application} xywh {10 964 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Quit application} xywh {8 984 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Box m_InstitutionBox {
           image {IGSTK.jpg} xywh {20 9 110 51} color 7 labelsize 23 labelcolor 15
         }
         Fl_Box m_TrackingSemaphore {
           label OFF
-          xywh {10 852 130 30} box PLASTIC_UP_BOX
+          xywh {10 825 130 30} box PLASTIC_UP_BOX
         }
         Fl_Box m_ReferenceSemaphore {
           label OFF
-          xywh {10 778 130 30} box PLASTIC_UP_BOX
+          xywh {10 751 130 30} box PLASTIC_UP_BOX
         }
         Fl_Box {} {
           label {Reference Status:}
-          xywh {10 741 130 37} labelsize 17
+          xywh {10 714 130 37} labelsize 15
         }
         Fl_Box {} {
-          label {Tool Status:}
-          xywh {10 814 130 37} labelsize 17
+          label {Tracker Tool Status:}
+          xywh {10 787 130 37} labelsize 15
         }
         Fl_Choice m_ViewModeList {
           label {Viewing Mode}
           callback {RequestChangeSelectedViewMode();} open
-          xywh {10 676 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
+          xywh {10 630 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
         } {
           MenuItem {} {
             label Orthogonal
@@ -74,41 +74,49 @@ class UltrasoundNavigatorGUI {open : {public igstk::Object}
         Fl_Choice m_FiducialsPointList {
           label Fiducials
           callback {RequestChangeSelectedFiducial();}
-          xywh {10 264 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
+          xywh {10 218 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
         } {}
         Fl_Button m_ModifyFiducialsButton {
           label {Modify Fiducials}
           callback {RequestToggleSetImageFiducials();}
-          tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {10 317 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {10 271 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_ConfigureTrackerButton {
           label {Configure Tracker}
-          callback {RequestLoadToolSpatialObject();}
-          tooltip {Configue tracker system} xywh {10 388 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          callback {RequestLoadTrackerToolSpatialObject();}
+          tooltip {Configue tracker system} xywh {10 342 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_RegisterButton {
           label Register
           callback {RequestStartSetTrackerFiducials();}
-          tooltip {Register tracker system to image} xywh {10 447 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Register tracker system to image} xywh {10 401 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Group m_LiveUltrasoundGroup {
-          xywh {10 512 130 113} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
+          xywh {10 466 130 113} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
         } {
-          Fl_Button m_ToggleRunUltrasoundButton {
+          Fl_Button m_ToggleRunVideoButton {
             label Run
-            callback {RequestToggleRunUltrasound();}
-            tooltip {run/stop US tracking} xywh {29 589 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12 deactivate
+            callback {RequestToggleRunVideo();}
+            tooltip {run/stop US tracking} xywh {29 543 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
           }
-          Fl_Button m_ConfigureUltrasoundButton {
+          Fl_Button m_ConfigureVideoButton {
             label Configure
-            callback {RequestConfigureUltrasound();}
-            tooltip {Configure US tracking} xywh {30 555 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12 deactivate
+            callback {RequestConfigureVideo();}
+            tooltip {Configure US tracking} xywh {30 509 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
           }
-          Fl_Button m_ToggleEnableUltrasoundButton {
-            label {Enable US}
-            callback {RequestToggleEnableUltrasound();}
-            tooltip {Enable US tracking} xywh {30 521 95 25} type Toggle box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 254 selection_color 134 labelsize 12
+          Fl_Button m_ToggleEnableVideoButton {
+            label {Enable video}
+            callback {RequestToggleEnableVideo();}
+            tooltip {Enable US tracking} xywh {30 475 95 25} type Toggle box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
           }
+        }
+        Fl_Box m_ImagerSemaphore {
+          label OFF selected
+          xywh {8 899 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Imager Tool Status:}
+          xywh {10 861 130 37} labelsize 15
         }
       }
       Fl_Group m_ViewerGroup {open
@@ -221,7 +229,7 @@ this->RequestRejectRegistration();}
   } {}
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
-  Function {Quit()} {open return_type void
+  Function {Quit()} {return_type void
   } {
     code {m_ConfirmToQuitWindow->show();
 CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
@@ -274,7 +282,7 @@ m_ConfigureTrackerButton->deactivate();
 m_RegisterButton->deactivate();
 m_ViewModeList->deactivate();} {}
   }
-  Function {RequestLoadToolSpatialObject()} {return_type {virtual void}
+  Function {RequestLoadTrackerToolSpatialObject()} {return_type {virtual void}
   } {}
   Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
   } {
@@ -282,10 +290,10 @@ m_ViewModeList->deactivate();} {}
 int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
 childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
   }
-  Function {RequestToggleEnableUltrasound()} {open return_type {virtual void}
+  Function {RequestToggleEnableVideo()} {open return_type {virtual void}
   } {}
-  Function {RequestConfigureUltrasound()} {open return_type {virtual void}
+  Function {RequestConfigureVideo()} {open return_type {virtual void}
   } {}
-  Function {RequestToggleRunUltrasound()} {open selected return_type {virtual void}
+  Function {RequestToggleRunVideo()} {open return_type {virtual void}
   } {}
 } 

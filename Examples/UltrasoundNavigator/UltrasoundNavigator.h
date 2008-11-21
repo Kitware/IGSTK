@@ -161,7 +161,13 @@ public:
   virtual void RequestAcceptTrackerFiducial();
   virtual void RequestPrepareToQuit();
 
-  /** Public request methods from the GUI to help operation workflow */
+  void RequestLoadImagerToolSpatialObject();
+
+  void EnableVideo();
+  void DisableVideo();
+
+  virtual void RequestToggleEnableVideo();
+//  virtual void RequestToggleRunVideo();
 
   /**
    * Open the relevant tracker settings dialog (Polaris/Aurora/Micron/Ascension)
@@ -246,9 +252,10 @@ private:
   igstkDeclareStateMacro( LoadingImage );
   igstkDeclareStateMacro( ConfirmingImagePatientName );
   igstkDeclareStateMacro( ImageReady );
-  igstkDeclareStateMacro( LoadingToolSpatialObject );
+  igstkDeclareStateMacro( LoadingTrackerToolSpatialObject );
   igstkDeclareStateMacro( LoadingMesh );
   igstkDeclareStateMacro( SettingImageFiducials );
+  igstkDeclareStateMacro( TrackerToolSpatialObjectReady );
   igstkDeclareStateMacro( SettingTrackerFiducials );
   igstkDeclareStateMacro( EndingSetTrackerFiducials );
   igstkDeclareStateMacro( TrackerFiducialsReady );
@@ -263,7 +270,12 @@ private:
   igstkDeclareStateMacro( StoppingTracker );
   igstkDeclareStateMacro( DisconnectingTracker );
   igstkDeclareStateMacro( Tracking );
-  
+  igstkDeclareStateMacro( LoadingImagerToolSpatialObject );
+  igstkDeclareStateMacro( TrackingAndImaging );
+  igstkDeclareStateMacro( StartingImager );
+  igstkDeclareStateMacro( StoppingImager );
+  igstkDeclareStateMacro( DisconnectingImager );
+
    /** Inputs to the state machine and it's designed transitions */
 
   igstkDeclareInputMacro( Success );
@@ -272,6 +284,7 @@ private:
   igstkDeclareInputMacro( ConfirmImagePatientName );
   igstkDeclareInputMacro( LoadMesh );
   igstkDeclareInputMacro( LoadTrackerToolSpatialObject );
+  igstkDeclareInputMacro( LoadImagerToolSpatialObject );
   igstkDeclareInputMacro( ConfigureTracker );
   igstkDeclareInputMacro( StartSetImageFiducials );
   igstkDeclareInputMacro( SetPickingPosition );
@@ -284,6 +297,9 @@ private:
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( DisconnectTracker );
+  igstkDeclareInputMacro( StartImaging );
+  igstkDeclareInputMacro( StopImaging );
+  igstkDeclareInputMacro( DisconnectImager );
 
   /** DICOM image reader */
   ImageReaderType::Pointer                              m_ImageReader;
@@ -303,12 +319,8 @@ private:
   double                                                m_WindowWidth;
 
   double                                                m_TrackerRMS;
-  bool                                                  m_ResliceEnabled;
+  bool                                                  m_VideoEnabled;
   
-  bool                                                  m_AxialViewInitialized;
-  bool                                                  m_SagittalViewInitialized;
-  bool                                                  m_CoronalViewInitialized;
-
   bool                                                  m_ImagePlanesIn3DViewEnabled;
   bool                                                  m_ModifyImageFiducialsEnabled;
 
@@ -323,7 +335,8 @@ private:
   VideoFrameSpatialObjectType::Pointer                  m_VideoFrame;
 
   typedef igstk::VideoFrameRepresentation               VideoFrameRepresentationType;
-  VideoFrameRepresentationType::Pointer                 m_VideoFrameRepresentation;
+  VideoFrameRepresentationType::Pointer                 m_VideoFrameRepresentationForVideoView;
+  VideoFrameRepresentationType::Pointer                 m_VideoFrameRepresentationFor3DView;
 
   /** tool projection spatial object */
   ToolProjectionType::Pointer                           m_ToolProjection;
@@ -347,7 +360,8 @@ private:
 
   /** imager tool spatial object and representation */
   MeshType::Pointer                                     m_ImagerToolSpatialObject;
-  MeshRepresentationType::Pointer                       m_ImagerToolRepresentation;
+  MeshRepresentationType::Pointer                       m_ImagerToolRepresentationForVideoView;
+  MeshRepresentationType::Pointer                       m_ImagerToolRepresentationFor3DView;
 
   /** reslicer plane spatial object */
   ReslicerPlaneType::Pointer                            m_CTView1PlaneSpatialObject;
@@ -441,11 +455,13 @@ private:
   igstk::Imager::Pointer                                m_Imager;
   igstk::ImagerTool::Pointer                            m_TerasonImagerTool;
 
-
-  /** typedef for the vector of tracker tools */
-  //typedef std::vector < igstk::TrackerTool::Pointer >    ToolVectorType;
-
+  /** tracker and tracker tool objects */
   igstk::TrackerTool::Pointer                           m_TrackerTool;
+
+  /** imager and tracker tool objects */
+  igstk::TrackerTool::Pointer                           m_ImagerTool;
+
+  /** reference tool object */
   igstk::TrackerTool::Pointer                           m_ReferenceTool;
   
   /** Action methods to be invoked only by the state machine */
@@ -453,8 +469,10 @@ private:
   void ReportInvalidRequestProcessing();
   void ReportSuccessImageLoadedProcessing();
   void ReportFailuredImageLoadedProcessing();
-  void ReportSuccessToolSpatialObjectLoadedProcessing();
-  void ReportFailuredToolSpatialObjectLoadedProcessing();
+  void ReportSuccessTrackerToolSpatialObjectLoadedProcessing();
+  void ReportFailuredTrackerToolSpatialObjectLoadedProcessing();
+  void ReportSuccessImagerToolSpatialObjectLoadedProcessing();
+  void ReportFailuredImagerToolSpatialObjectLoadedProcessing();
   void ReportSuccessMeshLoadedProcessing();
   void ReportFailuredMeshLoadedProcessing();
   void ReportSuccessStartSetImageFiducialsProcessing();
@@ -504,6 +522,7 @@ private:
   void StopImagingProcessing();
   void DisconnectImagerProcessing();
 
+
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
@@ -513,9 +532,11 @@ private:
   LoadedObserverType::Pointer               m_ManualReslicingObserver;
   LoadedObserverType::Pointer               m_KeyPressedObserver;
   LoadedObserverType::Pointer               m_MousePressedObserver;
-  LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
+//  LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
   LoadedObserverType::Pointer               m_TrackerToolNotAvailableObserver;
   LoadedObserverType::Pointer               m_TrackerToolAvailableObserver;
+  LoadedObserverType::Pointer               m_ImagerToolNotAvailableObserver;
+  LoadedObserverType::Pointer               m_ImagerToolAvailableObserver;
   LoadedObserverType::Pointer               m_ReferenceNotAvailableObserver;
   LoadedObserverType::Pointer               m_ReferenceAvailableObserver;
 
@@ -539,6 +560,11 @@ private:
 
   /** Log file */
   std::ofstream                                   m_LogFile;  
+
+  unsigned int                                    m_xslice;
+  unsigned int                                    m_yslice;
+  unsigned int                                    m_zslice;
+
 
   /** Utility functions, conversion between points and transform */
   inline 
@@ -591,12 +617,12 @@ private:
   void ResliceImageCallback( const itk::EventObject & event );
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event ); 
-  void ToolNotAvailableCallback( const itk::EventObject & event ); 
-  void ToolAvailableCallback( const itk::EventObject & event ); 
+  void TrackerToolNotAvailableCallback( const itk::EventObject & event ); 
+  void TrackerToolAvailableCallback( const itk::EventObject & event ); 
+  void ImagerToolNotAvailableCallback( const itk::EventObject & event ); 
+  void ImagerToolAvailableCallback( const itk::EventObject & event ); 
   void ReferenceNotAvailableCallback( const itk::EventObject & event ); 
   void ReferenceAvailableCallback( const itk::EventObject & event ); 
-  void OffOrthogonalResliceCallback( const itk::EventObject & event ); 
-  void OrthogonalResliceCallback( const itk::EventObject & event ); 
   void NullActionCallback(const itk::EventObject & event ){};
   void OnITKProgressEvent(itk::Object *source, const itk::EventObject &);
 

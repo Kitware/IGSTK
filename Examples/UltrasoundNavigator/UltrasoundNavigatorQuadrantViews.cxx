@@ -68,46 +68,17 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
   m_CoronalViewAnnotation = igstk::Annotation2D::New();
 
   // Create slider bars
-  m_Sliders.clear();
 
-    {
-    Fl_Value_Slider* o = m_SuperiorLeftSlider = 
-      new Fl_Value_Slider(X, Y+m_HH, m_WW, N);
-    o->type(5);
-    o->box(FL_DOWN_FRAME);
-    o->maximum(3);
-    o->step(1);
-    o->callback((Fl_Callback*)cb_SuperiorLeftSlider);
-    o->deactivate();
-    }
-
-  m_Sliders.push_back( m_SuperiorLeftSlider );
-
-    {
-    Fl_Value_Slider* o = m_SuperiorRightSlider =
-      new Fl_Value_Slider(X+m_WW+C, Y+m_HH, m_WW, N);
-    o->type(5);
-    o->box(FL_DOWN_FRAME);
-    o->maximum(3);
-    o->step(1);
-    o->callback((Fl_Callback*)cb_SuperiorRightSlider);
-    o->deactivate();
-    }
-
-  m_Sliders.push_back( m_SuperiorRightSlider );
-
-    {
-    Fl_Value_Slider* o = m_InferiorLeftSlider = 
-      new Fl_Value_Slider(X, Y+m_HH*2+N, m_WW, N);
-    o->type(5);
-    o->box(FL_DOWN_FRAME);
-    o->maximum(3);
-    o->step(1);
-    o->callback((Fl_Callback*)cb_InferiorLeftSlider);
-    o->deactivate();
-    }
-
-  m_Sliders.push_back( m_InferiorLeftSlider );
+  {
+  Fl_Value_Slider* o = m_SuperiorRightSlider =
+    new Fl_Value_Slider(X+m_WW+C, Y+m_HH, m_WW, N);
+  o->type(5);
+  o->box(FL_DOWN_FRAME);
+  o->maximum(3);
+  o->step(1);
+  o->callback((Fl_Callback*)cb_SuperiorRightSlider);
+  o->deactivate();
+  }
 
   m_wl.current_x = 0;
   m_wl.current_y = 0;
@@ -119,10 +90,6 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
 
 UltrasoundNavigatorQuadrantViews::~UltrasoundNavigatorQuadrantViews()
 {
-//  m_Displays.clear();
-//  m_Views.clear();
-  m_Sliders.clear();
-
   delete m_CTWidget1;
   delete m_CTWidget2;
   delete m_VideoWidget;
@@ -134,25 +101,18 @@ void UltrasoundNavigatorQuadrantViews::RequestResliceImage(void)
   // callback function for slider bars, to invoke the ReslicingEvent
   IndexType index;
 
-  index[2]  = ( int ) m_SuperiorLeftSlider->value();
-  index[0]  = ( int ) m_SuperiorRightSlider->value();
-  index[1]  = ( int ) m_InferiorLeftSlider->value();
+//  index[2]  = ( int ) m_SuperiorLeftSlider->value();
+//  index[0]  = ( int ) m_SuperiorRightSlider->value();
+//  index[1]  = ( int ) m_InferiorLeftSlider->value();
+
+  // todo: fix it so that when the user sets the uppper right view to e.g.
+  // sagittal, the slider updates the correct index
+  index[2]  = ( int ) m_SuperiorRightSlider->value();
 
   ManualReslicingEvent reslicingEvent;
   reslicingEvent.Set( index );
   m_Reporter->InvokeEvent( reslicingEvent );
 
-}
-
-void UltrasoundNavigatorQuadrantViews::cb_SuperiorLeftSlider_i(Fl_Value_Slider*, void*)
-{
-  this->redraw();
-  this->RequestResliceImage();
-}
-
-void UltrasoundNavigatorQuadrantViews::cb_SuperiorLeftSlider(Fl_Value_Slider* o, void* v)
-{
-  ((UltrasoundNavigatorQuadrantViews*)(o->parent()))->cb_SuperiorLeftSlider_i(o,v);
 }
 
 void UltrasoundNavigatorQuadrantViews::cb_SuperiorRightSlider_i(Fl_Value_Slider*, void*)
@@ -164,17 +124,6 @@ void UltrasoundNavigatorQuadrantViews::cb_SuperiorRightSlider_i(Fl_Value_Slider*
 void UltrasoundNavigatorQuadrantViews::cb_SuperiorRightSlider(Fl_Value_Slider* o, void* v)
 {
   ((UltrasoundNavigatorQuadrantViews*)(o->parent()))->cb_SuperiorRightSlider_i(o,v);
-}
-
-void UltrasoundNavigatorQuadrantViews::cb_InferiorLeftSlider_i(Fl_Value_Slider*, void*)
-{
-  this->redraw();
-  this->RequestResliceImage();
-}
-
-void UltrasoundNavigatorQuadrantViews::cb_InferiorLeftSlider(Fl_Value_Slider* o, void* v)
-{
-  ((UltrasoundNavigatorQuadrantViews*)(o->parent()))->cb_InferiorLeftSlider_i(o,v);
 }
 
 unsigned long UltrasoundNavigatorQuadrantViews::AddObserver(

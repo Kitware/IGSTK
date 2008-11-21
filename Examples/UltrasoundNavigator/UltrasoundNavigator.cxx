@@ -37,7 +37,8 @@
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
 // name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+#define TRACKER_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+#define IMAGER_TOOL_NAME "sProbe" //sPtr // bayonet // hybrid_pointer
 // name of the tool that is going to be used as dynamic reference
 #define REFERENCE_NAME "reference"
 
@@ -55,9 +56,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
 
   m_ImagePlanesIn3DViewEnabled = true;
 
-  m_AxialViewInitialized = false;
-  m_SagittalViewInitialized = false;
-  m_CoronalViewInitialized = false;
+  m_VideoEnabled = false;
   
   m_ModifyImageFiducialsEnabled = false;
 
@@ -194,11 +193,19 @@ UltrasoundNavigator::UltrasoundNavigator() :
 
   m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
   m_TrackerToolNotAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ToolNotAvailableCallback );
+                                                 &UltrasoundNavigator::TrackerToolNotAvailableCallback );
 
   m_TrackerToolAvailableObserver = LoadedObserverType::New();
   m_TrackerToolAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ToolAvailableCallback ); 
+                                                 &UltrasoundNavigator::TrackerToolAvailableCallback ); 
+
+  m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
+  m_ImagerToolNotAvailableObserver->SetCallbackFunction( this,
+                                                 &UltrasoundNavigator::ImagerToolNotAvailableCallback );
+
+  m_ImagerToolAvailableObserver = LoadedObserverType::New();
+  m_ImagerToolAvailableObserver->SetCallbackFunction( this,
+                                                 &UltrasoundNavigator::ImagerToolAvailableCallback ); 
 
   m_ReferenceNotAvailableObserver = LoadedObserverType::New();
   m_ReferenceNotAvailableObserver->SetCallbackFunction( this,
@@ -208,15 +215,17 @@ UltrasoundNavigator::UltrasoundNavigator() :
   m_ReferenceAvailableObserver->SetCallbackFunction( this,
                                                  &UltrasoundNavigator::ReferenceAvailableCallback );  
 
-  /** Machine States*/
+  /** Machine States */
 
   igstkAddStateMacro( Initial );
   igstkAddStateMacro( LoadingImage );
   igstkAddStateMacro( ConfirmingImagePatientName );
   igstkAddStateMacro( ImageReady );
-  igstkAddStateMacro( LoadingToolSpatialObject ); 
+  igstkAddStateMacro( LoadingTrackerToolSpatialObject );
+  igstkAddStateMacro( LoadingImagerToolSpatialObject ); 
   igstkAddStateMacro( LoadingMesh ); 
   igstkAddStateMacro( SettingImageFiducials );
+  igstkAddStateMacro( TrackerToolSpatialObjectReady );
   igstkAddStateMacro( ConfiguringTracker );
   igstkAddStateMacro( TrackerConfigurationReady );
   igstkAddStateMacro( InitializingTracker );
@@ -231,6 +240,10 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddStateMacro( StoppingTracker ); 
   igstkAddStateMacro( DisconnectingTracker ); 
   igstkAddStateMacro( Tracking );
+  igstkAddStateMacro( TrackingAndImaging );
+  igstkAddStateMacro( StartingImager ); 
+  igstkAddStateMacro( StoppingImager ); 
+  igstkAddStateMacro( DisconnectingImager ); 
 
   /** Machine Inputs*/
   
@@ -240,6 +253,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddInputMacro( ConfirmImagePatientName );
   igstkAddInputMacro( LoadMesh );
   igstkAddInputMacro( LoadTrackerToolSpatialObject );
+  igstkAddInputMacro( LoadImagerToolSpatialObject );
   igstkAddInputMacro( StartSetImageFiducials );
   igstkAddInputMacro( SetPickingPosition );
   igstkAddInputMacro( EndSetImageFiducials );  
@@ -269,6 +283,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( Initial, LoadMesh, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, LoadTrackerToolSpatialObject, 
+                           Initial, ReportInvalidRequest );  
+  igstkAddTransitionMacro( Initial, LoadImagerToolSpatialObject, 
                            Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, StartSetImageFiducials, 
                            Initial, ReportInvalidRequest );
@@ -311,6 +327,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingImage, LoadMesh, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, LoadTrackerToolSpatialObject, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, LoadImagerToolSpatialObject, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, StartSetImageFiducials, 
                            LoadingImage, ReportInvalidRequest );
@@ -355,6 +373,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, LoadTrackerToolSpatialObject, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadImagerToolSpatialObject, 
+                           ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetImageFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, SetPickingPosition,
@@ -385,13 +405,11 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( ImageReady, LoadMesh,
                            LoadingMesh, LoadMesh );
   igstkAddTransitionMacro( ImageReady, LoadTrackerToolSpatialObject,
-                           LoadingToolSpatialObject, LoadTrackerToolSpatialObject );
+                           LoadingTrackerToolSpatialObject, LoadTrackerToolSpatialObject );
   igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
                            ImageReady, SetImagePicking );
   igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
                            SettingImageFiducials, ReportSuccessStartSetImageFiducials );
-  igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
-                           ConfiguringTracker, ConfigureTracker );  
 
   //complete table for state: ImageReady
   igstkAddTransitionMacro( ImageReady, Success, 
@@ -420,51 +438,11 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ImageReady, ReportInvalidRequest );  
   igstkAddTransitionMacro( ImageReady, DisconnectTracker,
                            ImageReady, ReportInvalidRequest );
-  
-   
-  /** LoadingToolSpatialObject State */
+  igstkAddTransitionMacro( ImageReady, LoadImagerToolSpatialObject,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
+                           ImageReady, ReportInvalidRequest );  
 
-  igstkAddTransitionMacro( LoadingToolSpatialObject, Success,
-                           ImageReady, ReportSuccessToolSpatialObjectLoaded );
-
-  igstkAddTransitionMacro( LoadingToolSpatialObject, Failure,
-                           ImageReady, ReportFailuredToolSpatialObjectLoaded );
-
-  //complete table for state: LoadingToolSpatialObject
-
-  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadImage, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfirmImagePatientName, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadMesh,
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadTrackerToolSpatialObject,
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetImageFiducials, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, SetPickingPosition, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetImageFiducials, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, RegisterTracker, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetTrackerFiducials, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, AcceptTrackerFiducial, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetTrackerFiducials, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfigureTracker, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, InitializeTracker, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartTracking, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StopTracking, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, DisconnectTracker, 
-                           LoadingToolSpatialObject, ReportInvalidRequest );
-  
   /** LoadingMesh State */
 
   igstkAddTransitionMacro( LoadingMesh, Success,
@@ -482,6 +460,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingMesh, LoadMesh, 
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, LoadTrackerToolSpatialObject, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, LoadImagerToolSpatialObject, 
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, StartSetImageFiducials, 
                            LoadingMesh, ReportInvalidRequest );
@@ -501,7 +481,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, InitializeTracker, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, StartTracking, 
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, StopTracking, 
@@ -509,7 +488,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingMesh, DisconnectTracker, 
                            LoadingMesh, ReportInvalidRequest );
   
-
   /** SettingImageFiducials State */  
 
   igstkAddTransitionMacro( SettingImageFiducials, SetPickingPosition, 
@@ -532,6 +510,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, LoadTrackerToolSpatialObject, 
                            SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, LoadImagerToolSpatialObject, 
+                           SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials, 
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, ConfigureTracker, 
@@ -553,13 +533,139 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( SettingImageFiducials, DisconnectTracker, 
                            SettingImageFiducials, ReportInvalidRequest );
   
+  /** ImageReady State */
+  
+  igstkAddTransitionMacro( ImageReady, LoadMesh,
+                           LoadingMesh, LoadMesh );
+  igstkAddTransitionMacro( ImageReady, LoadTrackerToolSpatialObject,
+                           LoadingTrackerToolSpatialObject, LoadTrackerToolSpatialObject );
+  igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
+                           ImageReady, SetImagePicking );
+  igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
+                           SettingImageFiducials, ReportSuccessStartSetImageFiducials );
+
+  //complete table for state: ImageReady
+  igstkAddTransitionMacro( ImageReady, Success, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, Failure, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, LoadImage, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, ConfirmImagePatientName, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, EndSetImageFiducials,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, InitializeTracker, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, RegisterTracker,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, StartSetTrackerFiducials, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, AcceptTrackerFiducial,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, EndSetTrackerFiducials, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, StartTracking,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, StopTracking,
+                           ImageReady, ReportInvalidRequest );  
+  igstkAddTransitionMacro( ImageReady, DisconnectTracker,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, LoadImagerToolSpatialObject,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
+                           ImageReady, ReportInvalidRequest );  
+
+   /** LoadingTrackerToolSpatialObject State */
+
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, Success,
+                           TrackerToolSpatialObjectReady, ReportSuccessTrackerToolSpatialObjectLoaded );
+
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, Failure,
+                           ImageReady, ReportFailuredTrackerToolSpatialObjectLoaded );
+
+  //complete table for state: LoadingTrackerToolSpatialObject
+
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadImage, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, ConfirmImagePatientName, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadMesh,
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadTrackerToolSpatialObject,
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadImagerToolSpatialObject,
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartSetImageFiducials, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, SetPickingPosition, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, EndSetImageFiducials, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, RegisterTracker, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartSetTrackerFiducials, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, AcceptTrackerFiducial, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, EndSetTrackerFiducials, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, ConfigureTracker, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeTracker, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartTracking, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StopTracking, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectTracker, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+
+  
+  /** TrackerToolSpatialObjectReady State */
+  
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, ConfigureTracker, 
+                           ConfiguringTracker, ConfigureTracker );
+
+  //complete table for state: ImageReady
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, Success, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, Failure, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImage, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, ConfirmImagePatientName, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, EndSetImageFiducials,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeTracker, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, RegisterTracker,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartSetTrackerFiducials, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, AcceptTrackerFiducial,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, EndSetTrackerFiducials, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartTracking,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopTracking,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );  
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectTracker,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImagerToolSpatialObject,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, ConfigureTracker, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );  
+
   /** ConfiguringTracker State */
 
   igstkAddTransitionMacro( ConfiguringTracker, Success, 
                            TrackerConfigurationReady, ReportSuccessTrackerConfiguration );
 
   igstkAddTransitionMacro( ConfiguringTracker, Failure, 
-                           ImageReady, ReportFailureTrackerConfiguration );
+                           TrackerToolSpatialObjectReady, ReportFailureTrackerConfiguration );
 
   //complete table for state: ConfiguringTracker
 
@@ -570,6 +676,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( ConfiguringTracker, LoadMesh, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, LoadTrackerToolSpatialObject, 
+                           ConfiguringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfiguringTracker, LoadImagerToolSpatialObject, 
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartSetImageFiducials, 
                            ConfiguringTracker, ReportInvalidRequest ); 
@@ -615,6 +723,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadTrackerToolSpatialObject, 
                            TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadImagerToolSpatialObject, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartSetImageFiducials, 
                            TrackerConfigurationReady, ReportInvalidRequest ); 
   igstkAddTransitionMacro( TrackerConfigurationReady, SetPickingPosition, 
@@ -656,6 +766,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( InitializingTracker, LoadMesh, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, LoadTrackerToolSpatialObject, 
+                           InitializingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingTracker, LoadImagerToolSpatialObject, 
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartSetImageFiducials, 
                            InitializingTracker, ReportInvalidRequest ); 
@@ -704,6 +816,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, LoadTrackerToolSpatialObject, 
                            TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadImagerToolSpatialObject, 
+                           TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StartSetImageFiducials, 
                            TrackerInitializationReady, ReportInvalidRequest ); 
   igstkAddTransitionMacro( TrackerInitializationReady, EndSetImageFiducials, 
@@ -747,6 +861,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, LoadTrackerToolSpatialObject, 
                            SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadImagerToolSpatialObject, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, StartSetImageFiducials, 
                            SettingTrackerFiducials, ReportInvalidRequest ); 
   igstkAddTransitionMacro( SettingTrackerFiducials, SetPickingPosition, 
@@ -785,6 +901,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadMesh, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadTrackerToolSpatialObject, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadImagerToolSpatialObject, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetImageFiducials, 
                            EndingSetTrackerFiducials, ReportInvalidRequest ); 
@@ -830,6 +948,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, LoadTrackerToolSpatialObject, 
                            TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadImagerToolSpatialObject, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, StartSetImageFiducials, 
                            TrackerFiducialsReady, ReportInvalidRequest ); 
   igstkAddTransitionMacro( TrackerFiducialsReady, SetPickingPosition, 
@@ -869,6 +989,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( RegisteringTracker, LoadMesh, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, LoadTrackerToolSpatialObject, 
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, LoadImagerToolSpatialObject, 
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, StartSetImageFiducials, 
                            RegisteringTracker, ReportInvalidRequest ); 
@@ -912,6 +1034,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( AcceptingRegistration, LoadMesh, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, LoadTrackerToolSpatialObject, 
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, LoadImagerToolSpatialObject, 
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, StartSetImageFiducials, 
                            AcceptingRegistration, ReportInvalidRequest ); 
@@ -961,6 +1085,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, LoadTrackerToolSpatialObject, 
                            RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, LoadImagerToolSpatialObject, 
+                           RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, StartSetImageFiducials, 
                            RegistrationReady, ReportInvalidRequest ); 
   igstkAddTransitionMacro( RegistrationReady, SetPickingPosition, 
@@ -1000,6 +1126,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, LoadTrackerToolSpatialObject, 
                            StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, LoadImagerToolSpatialObject, 
+                           StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StartSetImageFiducials, 
                            StartingTracker, ReportInvalidRequest ); 
   igstkAddTransitionMacro( StartingTracker, SetPickingPosition, 
@@ -1032,6 +1160,9 @@ UltrasoundNavigator::UltrasoundNavigator() :
 
   igstkAddTransitionMacro( Tracking, StartSetTrackerFiducials, 
                            SettingTrackerFiducials, StartSetTrackerFiducials );
+
+  igstkAddTransitionMacro( Tracking, LoadImagerToolSpatialObject, 
+                           LoadingImagerToolSpatialObject, LoadImagerToolSpatialObject );
 
   //complete table for state: Tracking
 
@@ -1153,6 +1284,52 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker, 
                            DisconnectingTracker, ReportInvalidRequest );
+
+
+  /** LoadingImagerToolSpatialObject State */
+
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, Success,
+                           Tracking, ReportSuccessImagerToolSpatialObjectLoaded );
+
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, Failure,
+                           Tracking, ReportFailuredImagerToolSpatialObjectLoaded );
+
+  //complete table for state: LoadingImagerToolSpatialObject
+
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadImage, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, ConfirmImagePatientName, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadMesh,
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadTrackerToolSpatialObject,
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadImagerToolSpatialObject,
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartSetImageFiducials, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, SetPickingPosition, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, EndSetImageFiducials, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, RegisterTracker, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartSetTrackerFiducials, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, AcceptTrackerFiducial, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, EndSetTrackerFiducials, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, ConfigureTracker, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeTracker, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartTracking, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StopTracking, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, DisconnectTracker, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
 
   /** Set Initial State */
 
@@ -1574,6 +1751,70 @@ void UltrasoundNavigator::RequestLoadTrackerToolSpatialObject()
   m_StateMachine.ProcessInputs();
 }
 
+void UltrasoundNavigator::RequestLoadImagerToolSpatialObject()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "UltrasoundNavigator::RequestLoadImagerToolSpatialObject called...\n" )
+  m_StateMachine.PushInput( m_LoadImagerToolSpatialObjectInput );
+  m_StateMachine.ProcessInputs();
+}
+
+void UltrasoundNavigator::RequestToggleEnableVideo()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::RequestToggleEnableVideo called...\n" )
+
+  if (m_VideoEnabled)
+  {
+    this->DisableVideo();
+  }
+  else
+  {
+    this->EnableVideo();
+  }
+
+  m_VideoEnabled != m_VideoEnabled;
+
+}
+
+void UltrasoundNavigator::EnableVideo()
+{
+  if (m_VideoFrame.IsNull())
+  {
+    this->RequestLoadImagerToolSpatialObject();
+  }
+
+  if (m_VideoFrame.IsNotNull())
+  {
+    m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_VideoFrameRepresentationFor3DView );
+    
+    m_ViewerGroup->m_VideoView->RequestAddObject( m_ImagerToolRepresentationForVideoView );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_ImagerToolRepresentationFor3DView );
+  }
+
+  m_ViewerGroup->m_VideoView->RequestResetCamera();
+  m_ViewerGroup->m_3DView->RequestResetCamera();
+
+  m_ConfigureVideoButton->activate();
+  m_ToggleEnableVideoButton->label("Disable video");
+}
+
+void UltrasoundNavigator::DisableVideo()
+{
+  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_VideoFrameRepresentationFor3DView );
+  
+  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_ImagerToolRepresentationForVideoView );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_ImagerToolRepresentationFor3DView );
+
+  m_ViewerGroup->m_VideoView->RequestResetCamera();
+  m_ViewerGroup->m_3DView->RequestResetCamera();
+  
+  m_ConfigureVideoButton->deactivate();
+  m_ToggleEnableVideoButton->label("Enable video");
+}
+
 void UltrasoundNavigator::RequestToggleSetImageFiducials()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -1733,7 +1974,7 @@ UltrasoundNavigator::ReportSuccessImageLoadedProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView2->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
@@ -1756,22 +1997,41 @@ UltrasoundNavigator::ReportFailuredImageLoadedProcessing()
                  "ReportFailuredImageLoadedProcessing called...\n");
 }
 
-/** Method to be invoked on successful spatial object loading */
+/** Method to be invoked on successful tracker tool spatial object loading */
 void 
-UltrasoundNavigator::ReportSuccessToolSpatialObjectLoadedProcessing()
+UltrasoundNavigator::ReportSuccessTrackerToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportSuccessToolSpatialObjectLoadedProcessing called...\n");    
+                 "ReportSuccessTrackerToolSpatialObjectLoadedProcessing called...\n");    
 
   this->RequestConfigureTracker();
 }
 
-/** Method to be invoked on failured spatial object loading */
+/** Method to be invoked on failured tracker tool spatial object loading */
 void 
-UltrasoundNavigator::ReportFailuredToolSpatialObjectLoadedProcessing()
+UltrasoundNavigator::ReportFailuredTrackerToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportFailuredToolSpatialObjectLoadedProcessing called...\n");
+                 "ReportFailuredTrackerToolSpatialObjectLoadedProcessing called...\n");
+
+}
+
+/** Method to be invoked on successful imager tool spatial object loading */
+void 
+UltrasoundNavigator::ReportSuccessImagerToolSpatialObjectLoadedProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportSuccessImagerToolSpatialObjectLoadedProcessing called...\n");    
+
+//  this->RequestConfigureImager();
+}
+
+/** Method to be invoked on failured imager tool spatial object loading */
+void 
+UltrasoundNavigator::ReportFailuredImagerToolSpatialObjectLoadedProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportFailuredImagerToolSpatialObjectLoadedProcessing called...\n");
 
 }
 
@@ -1855,7 +2115,7 @@ UltrasoundNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView2->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
@@ -1986,7 +2246,7 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   // add the tool spatial object to the image planes
   // we want to add it now, because otherwise it would've appeared in any place of my scene 
   // (i.e. it was not registered to the image)
-  m_CTView1PlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );   
+   
   m_CTView2PlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
 
   // add the tool spatial object to the cross hair spatial object.
@@ -2022,17 +2282,20 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   // add tool representation to the 3D view
   m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
 
+  // add tool projection to the 2D views
   m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ToolProjectionRepresentation->Copy() );
-
   m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2ToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ToolProjectionRepresentation->Copy() );
 
+  // reset camera in all views
+  m_ViewerGroup->m_CTView1->RequestResetCamera();
+  m_ViewerGroup->m_CTView2->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   this->DisableAll();
 
   m_ViewModeList->activate();
+
+  this->RequestStartTracking();
 }
 
 /** Method to be invoked on failure registration acceptance */
@@ -2331,7 +2594,7 @@ void UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing()
                     "UltrasoundNavigator::LoadTrackerToolSpatialObjectProcessing called...\n" )
 
    const char*  fileName = 
-    fl_file_chooser("Chose a tool spatial object mesh", "*.msh", "");
+    fl_file_chooser("Chose a tool spatial object mesh for the tracker", "*.msh", "");
 
    if ( !fileName )
     {
@@ -2382,7 +2645,7 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
                     "UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing called...\n" )
 
    const char*  fileName = 
-    fl_file_chooser("Chose a tool spatial object mesh for the imager (e.g. ultrasound probe)", "*.msh", "");
+    fl_file_chooser("Chose a tool spatial object mesh for the imager", "*.msh", "");
 
    if ( !fileName )
     {
@@ -2411,8 +2674,34 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
        return;
    }
 
-   // retrieve the mesh from the reader
    m_ImagerToolSpatialObject = observer->GetMeshObject();
+
+   if (m_ImagerToolSpatialObject.IsNull() )
+   {
+       igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing\
+                                        could not get spatial object\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+
+   igstk::Transform identity;
+   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+
+   m_ImagerToolSpatialObject->RequestDetachFromParent();
+   m_ImagerToolSpatialObject->RequestSetTransformAndParent( identity, m_ImagerTool );  
+
+   // set the imager tool spatial object as the driver of the CTView1 plane
+   m_CTView1PlaneSpatialObject->RequestSetToolSpatialObject( m_ImagerToolSpatialObject );  
+
+   // setup the imager tool representation for the video view
+   m_ImagerToolRepresentationForVideoView = MeshRepresentationType::New();
+   m_ImagerToolRepresentationForVideoView->RequestSetMeshObject( m_ImagerToolSpatialObject );
+   m_ImagerToolRepresentationForVideoView->SetOpacity(1.0);
+   m_ImagerToolRepresentationForVideoView->SetColor(1,1,0);
+
+   // setup the imager tool representation for the 3d view
+   m_ImagerToolRepresentationFor3DView = m_ImagerToolRepresentationForVideoView->Copy();
 
    // setup the video frame spatial object   
    m_VideoFrame = VideoFrameSpatialObjectType::New();
@@ -2423,14 +2712,12 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
    m_VideoFrame->SetNumberOfScalarComponents(1);
    m_VideoFrame->Initialize();
 
-   m_VideoFrameRepresentation = VideoFrameRepresentationType::New();
-   m_VideoFrameRepresentation->RequestSetVideoFrameSpatialObject( m_VideoFrame );
+   m_VideoFrame->RequestSetTransformAndParent( identity, m_CTView1PlaneSpatialObject );
 
-   m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentation );
+   m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
+   m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
 
-   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();  
-   m_ViewerGroup->m_VideoView->RequestStart();
+   m_VideoFrameRepresentationFor3DView = m_VideoFrameRepresentationForVideoView->Copy();
 
    m_StateMachine.PushInput( m_SuccessInput);
    m_StateMachine.ProcessInputs();
@@ -2564,7 +2851,7 @@ void UltrasoundNavigator::SetImagePickingProcessing()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
 //    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
 
     m_CrossHair->RequestSetCursorPosition( data );
@@ -3027,8 +3314,8 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
   // create reslice plane spatial object for CTView2
   m_CTView2PlaneSpatialObject = ReslicerPlaneType::New();
-  m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-  m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+  m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   m_CTView2PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // create reslice plane representation for axial view
@@ -3047,6 +3334,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
    *  the reslicing sliders and set initial slice position
    */
 
+  // todo: fix it so that when the user sets the uppper right view to e.g.
+  // sagittal, the slider updates the correct index
+
   ImageExtentObserver::Pointer extentObserver = ImageExtentObserver::New();
   
   unsigned int extentObserverID;
@@ -3061,27 +3351,19 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
-    const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
-    m_ViewerGroup->m_Sliders[0]->minimum( zmin );
-    m_ViewerGroup->m_Sliders[0]->maximum( zmax );
-    m_ViewerGroup->m_Sliders[0]->value( zslice );
-    m_ViewerGroup->m_Sliders[0]->activate();
+    m_zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
+    m_ViewerGroup->m_SuperiorRightSlider->minimum( zmin );
+    m_ViewerGroup->m_SuperiorRightSlider->maximum( zmax );
+    m_ViewerGroup->m_SuperiorRightSlider->value( m_zslice );
+    m_ViewerGroup->m_SuperiorRightSlider->activate();
 
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
-    const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
-    m_ViewerGroup->m_Sliders[1]->minimum( ymin );
-    m_ViewerGroup->m_Sliders[1]->maximum( ymax );
-    m_ViewerGroup->m_Sliders[1]->value( yslice );
-    m_ViewerGroup->m_Sliders[1]->activate();
+    m_yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
 
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
-    const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
-    m_ViewerGroup->m_Sliders[2]->minimum( xmin );
-    m_ViewerGroup->m_Sliders[2]->maximum( xmax );
-    m_ViewerGroup->m_Sliders[2]->value( xslice );
-    m_ViewerGroup->m_Sliders[2]->activate();
+    m_xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
   }
 
   m_ImageSpatialObject->RemoveObserver( extentObserverID );
@@ -3096,7 +3378,7 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
   // add the cross hair representation to the different views
-//  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+  m_ViewerGroup->m_CTView2->RequestAddObject( m_CrossHairRepresentation->Copy() );
 //  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
 //  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
   m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
@@ -3142,6 +3424,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CTView2->RequestSetTransformAndParent(
       identity, m_CTView2PlaneSpatialObject );
 
+  m_ViewerGroup->m_VideoView->RequestSetTransformAndParent(
+      identity, m_CTView1PlaneSpatialObject );
+
   m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
       identity, m_WorldReference );
 
@@ -3165,6 +3450,17 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_CTView2ImageRepresentation2 = m_CTView2ImageRepresentation->Copy();
   m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ImageRepresentation2 );
 
+  // set parallel projection in the 2D views
+  m_ViewerGroup->m_CTView1->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_CTView2->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_VideoView->SetCameraParallelProjection(true);
+
+  // reset the cameras in the different views
+  m_ViewerGroup->m_CTView1->RequestResetCamera();
+  m_ViewerGroup->m_CTView2->RequestResetCamera();
+  m_ViewerGroup->m_VideoView->RequestResetCamera();
+  m_ViewerGroup->m_3DView->RequestResetCamera();
+
   // set up view parameters
 
   m_ViewerGroup->m_CTView1->SetRefreshRate( VIEW_2D_REFRESH_RATE );
@@ -3185,14 +3481,8 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
 
-
-  // reset the cameras in the different views
-  m_ViewerGroup->m_CTView1->RequestResetCamera();
-  m_ViewerGroup->m_CTView2->RequestResetCamera();
-  m_ViewerGroup->m_3DView->RequestResetCamera();
-
   /** Adding observers for picking events in the 2D views */
-  m_ViewerGroup->m_CTView1->AddObserver(
+  m_ViewerGroup->m_CTView2->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
 
 //  m_ViewerGroup->m_CTView1->AddObserver(
@@ -3299,24 +3589,27 @@ void UltrasoundNavigator::RequestChangeSelectedViewMode()
   switch (choice)
   {
     case 0:
-      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
       break;
 
     case 1:
-      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
       break;
 
     case 2:
-      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+      m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+      m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+
+      m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+      m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
       break;
 
   default:
@@ -3325,13 +3618,8 @@ void UltrasoundNavigator::RequestChangeSelectedViewMode()
     return;
   }
 
-  m_AxialViewInitialized = false;
-  m_SagittalViewInitialized = false;
-  m_CoronalViewInitialized = false;
-
   m_ViewerGroup->redraw();
   Fl::check();
-
 }
 
 /** -----------------------------------------------------------------
@@ -3361,11 +3649,11 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_CTView1->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CTView2->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
   }
 
-  m_ViewerGroup->m_CTView1->RequestAddObject( m_AxialFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_CTView2->RequestAddObject( m_AxialFiducialRepresentationVector[choice] );
   m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewFiducialRepresentationVector[choice] );
 
   char buf[50];
@@ -3390,7 +3678,7 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
 //    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
     m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
@@ -3421,12 +3709,15 @@ void UltrasoundNavigator::ResliceImageCallback( const itk::EventObject & event )
     ( igstk::UltrasoundNavigatorQuadrantViews::ManualReslicingEvent *) & event;
     ImageSpatialObjectType::IndexType index = resliceEvent->Get();
 
+    index[0] = m_xslice;
+    index[1] = m_yslice;
+
     PointType point;
     m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
     const double *data = point.GetVnlVector().data_block();
 
-    m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
 //    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
     m_CrossHair->RequestSetCursorPosition( data );
   }
@@ -3513,6 +3804,10 @@ void UltrasoundNavigator::HandleKeyPressed (
         break;
 
     case 'r': // reset 3D view
+        // reset the cameras in the different views
+        m_ViewerGroup->m_CTView1->RequestResetCamera();
+        m_ViewerGroup->m_CTView2->RequestResetCamera();
+        m_ViewerGroup->m_VideoView->RequestResetCamera();
         m_ViewerGroup->m_3DView->RequestResetCamera();
         break;
 
@@ -3534,10 +3829,15 @@ void UltrasoundNavigator::HandleKeyPressed (
 *---------------------------------------------------------------------
 */
 void UltrasoundNavigator::ResliceImage ( IndexType index )
-{   
-  m_ViewerGroup->m_SuperiorLeftSlider->value( index[2] );
-  m_ViewerGroup->m_SuperiorRightSlider->value( index[0] );
-  m_ViewerGroup->m_InferiorLeftSlider->value( index[1] );
+{ 
+//  m_ViewerGroup->m_SuperiorLeftSlider->value( index[2] );
+//  m_ViewerGroup->m_SuperiorRightSlider->value( index[0] );
+//  m_ViewerGroup->m_InferiorLeftSlider->value( index[1] );
+
+   // todo: fix it so that when the user sets the uppper right view to e.g.
+  // sagittal, the slider updates the correct index
+  m_ViewerGroup->m_SuperiorRightSlider->value( index[2] );
+
   m_ViewerGroup->redraw();
   Fl::check();
 }
@@ -3562,7 +3862,7 @@ void UltrasoundNavigator::RemoveImagePlanesTo3DView()
 
 }
 
-void UltrasoundNavigator::ToolAvailableCallback(const itk::EventObject & event )
+void UltrasoundNavigator::TrackerToolAvailableCallback(const itk::EventObject & event )
 {
   m_TrackingSemaphore->color(FL_GREEN);
   m_TrackingSemaphore->label("tracking");
@@ -3570,10 +3870,26 @@ void UltrasoundNavigator::ToolAvailableCallback(const itk::EventObject & event )
   Fl::check();
 }
 
-void UltrasoundNavigator::ToolNotAvailableCallback(const itk::EventObject & event )
+void UltrasoundNavigator::TrackerToolNotAvailableCallback(const itk::EventObject & event )
 {
   m_TrackingSemaphore->color(FL_RED);
   m_TrackingSemaphore->label("not visible");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
+void UltrasoundNavigator::ImagerToolAvailableCallback(const itk::EventObject & event )
+{
+  m_ImagerSemaphore->color(FL_GREEN);
+  m_ImagerSemaphore->label("tracking");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
+void UltrasoundNavigator::ImagerToolNotAvailableCallback(const itk::EventObject & event )
+{
+  m_ImagerSemaphore->color(FL_RED);
+  m_ImagerSemaphore->label("not visible");
   m_ControlGroup->redraw();  
   Fl::check();
 }
@@ -3650,17 +3966,30 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find(DRIVING_TOOL_NAME);
+    igstk::TrackerController::ToolContainerType::iterator trackerIter = toolContainer.find(TRACKER_TOOL_NAME);
 
-    if ( iter!=toolContainer.end() )
+    if ( trackerIter!=toolContainer.end() )
     {      
-        m_Parent->m_TrackerTool = (*iter).second;
+        m_Parent->m_TrackerTool = (*trackerIter).second;
 
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
    
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
+    }
+
+    igstk::TrackerController::ToolContainerType::iterator imagerIter = toolContainer.find(IMAGER_TOOL_NAME);
+
+    if ( imagerIter!=toolContainer.end() )
+    {      
+        m_Parent->m_ImagerTool = (*imagerIter).second;
+
+        m_Parent->m_ImagerTool->AddObserver(
+         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ImagerToolNotAvailableObserver);
+   
+        m_Parent->m_ImagerTool->AddObserver(
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ImagerToolAvailableObserver);
     }
   }
   else if ( evt4 )
