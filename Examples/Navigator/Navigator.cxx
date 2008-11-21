@@ -2032,6 +2032,10 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalToolProjectionRepresentation );
  // m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
 
+  // reset the cameras in the different views
+  m_ViewerGroup->m_AxialView->RequestResetCamera();
+  m_ViewerGroup->m_SagittalView->RequestResetCamera();
+  m_ViewerGroup->m_CoronalView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
   this->DisableAll();
@@ -2489,6 +2493,12 @@ void Navigator::LoadMeshProcessing()
    m_AxialMeshResliceRepresentationVector.push_back( axialContour );
    m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
    m_CoronalMeshResliceRepresentationVector.push_back( coronalContour );  
+
+   // reset the cameras in the different views
+   m_ViewerGroup->m_AxialView->RequestResetCamera();
+   m_ViewerGroup->m_SagittalView->RequestResetCamera();
+   m_ViewerGroup->m_CoronalView->RequestResetCamera();
+   m_ViewerGroup->m_3DView->RequestResetCamera();
 
    m_StateMachine.PushInput( m_SuccessInput );
    m_StateMachine.ProcessInputs();     
@@ -3076,12 +3086,13 @@ void Navigator::ConnectImageRepresentation()
   // buid the cross hair representation and add the cross hair object
   m_CrossHairRepresentation = CrossHairRepresentationType::New();
   m_CrossHairRepresentation->SetColor(0,1,0);
+  m_CrossHairRepresentation->SetLineWidth(2);
   m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
 
   // add the cross hair representation to the different views
-//  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-//  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-//  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
   m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
 
   // set background color to the views
@@ -3144,16 +3155,26 @@ void Navigator::ConnectImageRepresentation()
 
   // add reslice plane representations to the 3D views
   m_AxialPlaneRepresentation2 = m_AxialPlaneRepresentation->Copy();
-//  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation2 );
 
   m_SagittalPlaneRepresentation2 = m_SagittalPlaneRepresentation->Copy();
-//  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalPlaneRepresentation2 );
 
   m_CoronalPlaneRepresentation2 = m_CoronalPlaneRepresentation->Copy();
-//  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalPlaneRepresentation2 );
+
+  // set parallel projection in the 2D views
+  m_ViewerGroup->m_AxialView->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_SagittalView->SetCameraParallelProjection(true);
+  m_ViewerGroup->m_CoronalView->SetCameraParallelProjection(true);
+
+  // reset the cameras in the different views
+  m_ViewerGroup->m_AxialView->RequestResetCamera();
+  m_ViewerGroup->m_SagittalView->RequestResetCamera();
+  m_ViewerGroup->m_CoronalView->RequestResetCamera();
+  m_ViewerGroup->m_3DView->RequestResetCamera();
 
   // set up view parameters
-
   m_ViewerGroup->m_AxialView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_AxialView->RequestStart();
   m_ViewerGroup->m_AxialWidget->RequestEnableInteractions();  
@@ -3170,22 +3191,10 @@ void Navigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_3DView->RequestAddOrientationBox();
   m_ViewerGroup->m_3DView->RequestStart();
 
-
-  m_ViewerGroup->m_AxialView->SetCameraParallelProjection(true);
-  m_ViewerGroup->m_SagittalView->SetCameraParallelProjection(true);
-  m_ViewerGroup->m_CoronalView->SetCameraParallelProjection(true);
-
   //m_ViewerGroup->m_AxialView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_SagittalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
-
-
-  // reset the cameras in the different views
-  m_ViewerGroup->m_AxialView->RequestResetCamera();
-  m_ViewerGroup->m_SagittalView->RequestResetCamera();
-  m_ViewerGroup->m_CoronalView->RequestResetCamera();
-  m_ViewerGroup->m_3DView->RequestResetCamera();
 
   /** Adding observers for picking events in the 2D views */
   m_ViewerGroup->m_AxialView->AddObserver(

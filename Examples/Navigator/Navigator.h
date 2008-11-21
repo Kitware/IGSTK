@@ -296,9 +296,7 @@ private:
   double                                                m_WindowLevel;
   double                                                m_WindowWidth;
 
-  double                                                m_TrackerRMS;
-  bool                                                  m_ResliceEnabled;
-  
+  double                                                m_TrackerRMS;  
   bool                                                  m_AxialViewInitialized;
   bool                                                  m_SagittalViewInitialized;
   bool                                                  m_CoronalViewInitialized;
