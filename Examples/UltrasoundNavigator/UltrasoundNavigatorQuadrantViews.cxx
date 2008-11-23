@@ -107,7 +107,9 @@ void UltrasoundNavigatorQuadrantViews::RequestResliceImage(void)
 
   // todo: fix it so that when the user sets the uppper right view to e.g.
   // sagittal, the slider updates the correct index
-  index[2]  = ( int ) m_SuperiorRightSlider->value();
+  index[0] = 0;
+  index[1] = 0;
+  index[2] = ( int ) m_SuperiorRightSlider->value();
 
   ManualReslicingEvent reslicingEvent;
   reslicingEvent.Set( index );

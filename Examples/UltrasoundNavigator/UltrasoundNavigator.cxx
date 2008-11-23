@@ -146,32 +146,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
   m_CoronalFiducialRepresentationVector.resize(4);
   m_3DViewFiducialRepresentationVector.resize(4);
 
-  for (int i=0; i<4; i++)
-  {
-    m_FiducialPointVector[i] = EllipsoidType::New();
-    m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
-
-    m_AxialFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_AxialFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_SagittalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_SagittalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_CoronalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_CoronalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_3DViewFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-  }  
-
   /** Creating observers and their callback functions */
 
   // Initialize the progress command
@@ -2846,15 +2820,17 @@ void UltrasoundNavigator::SetImagePickingProcessing()
 
   if ( m_ImageSpatialObject->IsInside( point ) )
   {
-    ImageSpatialObjectType::IndexType index;
-    m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-
     const double *data = point.GetVnlVector().data_block();
-
     m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
-//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
 
     m_CrossHair->RequestSetCursorPosition( data );
+
+    ImageSpatialObjectType::IndexType index;
+    m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index); 
+
+    m_xslice = index[0];
+    m_yslice = index[1];
+
     this->ResliceImage( index );
   }
   else
@@ -2892,8 +2868,6 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
 
       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
-
-//      m_ViewerGroup->RequestUpdateOverlays();
 
       /** Write the updated plan to file */
       this->WriteFiducials();
@@ -3302,9 +3276,43 @@ void UltrasoundNavigator::DisconnectTrackerProcessing()
 */
 void UltrasoundNavigator::ConnectImageRepresentation()
 {
-  // observe picking event on the views
-  m_ImagePickerObserver = LoadedObserverType::New();
-  m_ImagePickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::ImagePickingCallback );
+  // setup picking event observe on the views
+  m_CTView1PickerObserver = LoadedObserverType::New();
+  m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
+
+  m_CTView2PickerObserver = LoadedObserverType::New();
+  m_CTView2PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView2PickingCallback );
+
+  m_VideoViewPickerObserver = LoadedObserverType::New();
+  m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
+
+  // set up fiducual representations
+
+  for (int i=0; i<4; i++)
+  {
+    m_FiducialPointVector[i] = EllipsoidType::New();
+    m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
+
+    m_AxialFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_AxialFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_SagittalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_SagittalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_CoronalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_CoronalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_3DViewFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+  }  
 
   // create reslice plane spatial object for CTView1
   m_CTView1PlaneSpatialObject = ReslicerPlaneType::New();
@@ -3332,10 +3340,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
    *  Request information about the slice bounds. The answer will be
    *  received in the form of an event. This will be used to initialize
    *  the reslicing sliders and set initial slice position
+   *  todo: fix me so that when the user sets the uppper right view to e.g.
+   *  sagittal, the slider updates the correct index
    */
-
-  // todo: fix it so that when the user sets the uppper right view to e.g.
-  // sagittal, the slider updates the correct index
 
   ImageExtentObserver::Pointer extentObserver = ImageExtentObserver::New();
   
@@ -3351,7 +3358,7 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
-    m_zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
+    m_zslice = static_cast< unsigned int > ( (zmin + zmax) / 3.0 );
     m_ViewerGroup->m_SuperiorRightSlider->minimum( zmin );
     m_ViewerGroup->m_SuperiorRightSlider->maximum( zmax );
     m_ViewerGroup->m_SuperiorRightSlider->value( m_zslice );
@@ -3359,11 +3366,11 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
-    m_yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
+    m_yslice = static_cast< unsigned int > ( (ymin + ymax) / 3.0 );
 
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
-    m_xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
+    m_xslice = static_cast< unsigned int > ( (xmin + xmax) / 3.0 );
   }
 
   m_ImageSpatialObject->RemoveObserver( extentObserverID );
@@ -3482,14 +3489,14 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
 
   /** Adding observers for picking events in the 2D views */
+  m_ViewerGroup->m_CTView1->AddObserver(
+      igstk::CoordinateSystemTransformToEvent(), m_CTView1PickerObserver );
+
   m_ViewerGroup->m_CTView2->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+      igstk::CoordinateSystemTransformToEvent(), m_CTView2PickerObserver );
 
-//  m_ViewerGroup->m_CTView1->AddObserver(
-//      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
-
-//  m_ViewerGroup->m_VideoView->AddObserver(
-//      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+  m_ViewerGroup->m_VideoView->AddObserver(
+      igstk::CoordinateSystemTransformToEvent(), m_VideoViewPickerObserver );
 
 
   /** Adding observer for slider bar reslicing event */
@@ -3657,7 +3664,6 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
   m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewFiducialRepresentationVector[choice] );
 
   char buf[50];
-
   sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
  
   /** Display point position as annotation */    
@@ -3718,7 +3724,7 @@ void UltrasoundNavigator::ResliceImageCallback( const itk::EventObject & event )
     const double *data = point.GetVnlVector().data_block();
 
     m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
-//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
+
     m_CrossHair->RequestSetCursorPosition( data );
   }
 }
@@ -3752,13 +3758,12 @@ void UltrasoundNavigator::HandleMousePressedCallback( const itk::EventObject & e
 }
 
 /** -----------------------------------------------------------------
-*  Callback function for picking event.
+*  Callback function for picking event in the CTView1 view.
 *  Upon receiving a valid picking event, this method will reslice the 
-*  image to that location and update the annotation with the new point 
-*  position.
+*  image to that location.
 *---------------------------------------------------------------------
 */
-void UltrasoundNavigator::ImagePickingCallback( const itk::EventObject & event)
+void UltrasoundNavigator::CTView1PickingCallback( const itk::EventObject & event)
 {
   if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
   {
@@ -3766,15 +3771,133 @@ void UltrasoundNavigator::ImagePickingCallback( const itk::EventObject & event)
     const TransformEventType * tmevent =
     dynamic_cast< const TransformEventType *>( & event );
 
+    // get the transform from the view to its parent (reslicer plane)
     igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
     m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    unsigned int obsId = m_CTView1PlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::CTView1PickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_CTView1PlaneSpatialObject->RemoveObserver( obsId );
 
     m_StateMachine.PushInput( m_SetPickingPositionInput );
     m_StateMachine.ProcessInputs();
   }
 }
 
+/** -----------------------------------------------------------------
+*  Callback function for picking event in the CTView2 view.
+*  Upon receiving a valid picking event, this method will reslice the 
+*  image to that location.
+*---------------------------------------------------------------------
+*/
+void UltrasoundNavigator::CTView2PickingCallback( const itk::EventObject & event)
+{
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent =
+    dynamic_cast< const TransformEventType *>( & event );
 
+    // get the transform from the view to its parent (reslicer plane)
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    unsigned int obsId = m_CTView2PlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_CTView2PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::CTView2PickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_CTView2PlaneSpatialObject->RemoveObserver( obsId );
+
+    m_StateMachine.PushInput( m_SetPickingPositionInput );
+    m_StateMachine.ProcessInputs();
+  }
+}
+
+/** -----------------------------------------------------------------
+*  Callback function for picking event in the Video view.
+*  Upon receiving a valid picking event, this method will reslice the 
+*  image to that location.
+*---------------------------------------------------------------------
+*/
+void UltrasoundNavigator::VideoViewPickingCallback( const itk::EventObject & event)
+{
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent =
+    dynamic_cast< const TransformEventType *>( & event );
+
+    // get the transform from the view to its parent (reslicer plane)
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    // important: we don't have a reslicer plane for the video
+    unsigned int obsId = m_CTView1PlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::VideoViewPickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_CTView1PlaneSpatialObject->RemoveObserver( obsId );
+
+    m_StateMachine.PushInput( m_SetPickingPositionInput );
+    m_StateMachine.ProcessInputs();
+  }
+}
 
 void UltrasoundNavigator::HandleMousePressed ( 
   igstk::UltrasoundNavigatorQuadrantViews::MouseCommandType mouseCommand )

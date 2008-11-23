@@ -196,6 +196,10 @@ public:
                       igstk::TransformFileReader::TransformDataEvent, 
                       igstk::PrecomputedTransformData::Pointer )
 
+  igstkObserverMacro( CoordinateSystemTransform, 
+                      igstk::CoordinateSystemTransformToEvent, 
+                      igstk::CoordinateSystemTransformToResult )
+
   igstkObserverMacro( TransformationDescription, 
                       igstk::StringEvent, 
                       std::string )
@@ -528,7 +532,10 @@ private:
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   typedef itk::SimpleMemberCommand < Self > CancelObserverType;
   
-  LoadedObserverType::Pointer               m_ImagePickerObserver;
+  LoadedObserverType::Pointer               m_CTView1PickerObserver;
+  LoadedObserverType::Pointer               m_CTView2PickerObserver;
+  LoadedObserverType::Pointer               m_VideoViewPickerObserver;
+
   LoadedObserverType::Pointer               m_ManualReslicingObserver;
   LoadedObserverType::Pointer               m_KeyPressedObserver;
   LoadedObserverType::Pointer               m_MousePressedObserver;
@@ -613,7 +620,10 @@ private:
   void RemoveImagePlanesTo3DView();
 
   /** Callback functions for picking and reslicing image events. */  
-  void ImagePickingCallback( const itk::EventObject & event );
+  void CTView1PickingCallback( const itk::EventObject & event );
+  void CTView2PickingCallback( const itk::EventObject & event );
+  void VideoViewPickingCallback( const itk::EventObject & event );
+
   void ResliceImageCallback( const itk::EventObject & event );
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event ); 
