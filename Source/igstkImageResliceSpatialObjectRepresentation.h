@@ -130,12 +130,12 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
    /** Variables for maanging reslice plane spatial object */
-  ReslicerPlanePointerType                   m_ReslicePlaneSpatialObjectToBeSet;
-  ReslicerPlanePointerType                   m_ReslicePlaneSpatialObject;
+  ReslicerPlanePointerType               m_ReslicePlaneSpatialObjectToBeSet;
+  ReslicerPlanePointerType               m_ReslicePlaneSpatialObject;
     
   /** VTK classes that support display of an image */
   vtkImageData         *m_ImageData;
-  vtkImageReslice      *m_Reslice;
+  vtkImageReslice      *m_ImageReslicer;
   vtkMatrix4x4         *m_ResliceAxes;
   vtkActor             *m_ImageActor;
   vtkProperty          *m_PlaneProperty;

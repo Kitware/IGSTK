@@ -88,11 +88,11 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   // Represent the resliced image plane
   m_ColorMap           = vtkImageMapToColors::New();
-  m_Reslice            = vtkImageReslice::New();
+  m_ImageReslicer            = vtkImageReslice::New();
   // Set background level to TRANSLUCENT (see Geometry2DDataVtkMapper3D)
-  m_Reslice->SetBackgroundLevel( 0 );
-  m_Reslice->TransformInputSamplingOff();
-  m_Reslice->SetOutputDimensionality(2);
+  m_ImageReslicer->SetBackgroundLevel( 0 );
+  m_ImageReslicer->TransformInputSamplingOff();
+  m_ImageReslicer->SetOutputDimensionality(2);
 
   m_ResliceAxes        = vtkMatrix4x4::New();
   m_Texture            = vtkTexture::New();
@@ -143,7 +143,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Level = 0;
   m_Window = 0;
 
-  m_Reslice->SetBackgroundLevel( m_Level - m_Window/2.0 );
+  m_ImageReslicer->SetBackgroundLevel( m_Level - m_Window/2.0 );
 
   m_VTKImageObserver = VTKImageObserver::New();
 
@@ -197,7 +197,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_Plane->Delete();
 
   m_ResliceAxes->Delete();
-  m_Reslice->Delete();
+  m_ImageReslicer->Delete();
 
   if ( m_LookupTable )
     {
@@ -455,9 +455,9 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   this->SetResliceInterpolate(interpolate);
 
-  m_Reslice->SetInput(m_ColorMap->GetOutput());
+  m_ImageReslicer->SetInput(m_ColorMap->GetOutput());
 
-  m_Texture->SetInput(m_Reslice->GetOutput());
+  m_Texture->SetInput(m_ImageReslicer->GetOutput());
   m_Texture->SetInterpolate(m_TextureInterpolate);
  
   m_ImageData->GetWholeExtent(m_ImageExtent);
@@ -588,13 +588,6 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_PlaneSource->SetNormal(reslicerPlaneNormal[0],reslicerPlaneNormal[1],reslicerPlaneNormal[2]);
 
   this->UpdatePlane();
-
-  // update the current reslicer transformation in the reslicer plane spatial object
-  igstk::Transform updatedTransform;
-  updatedTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  updatedTransform.ImportTransform( *m_ResliceAxes );
-
-  m_ReslicePlaneSpatialObject->RequestUpdateTransformToParent( updatedTransform );
 }
 
 /** Set the color */
@@ -702,6 +695,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   m_ImageActor->SetMapper(texturePlaneMapper);
   m_ImageActor->SetTexture(m_Texture);
+  
   m_ImageActor->PickableOff();
   m_ImageActor->SetProperty(m_PlaneProperty);
   
@@ -736,8 +730,8 @@ template < class TImageSpatialObject >
 void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 ::UpdatePlane()
 {
-  if ( !m_Reslice ||
-       !(m_ImageData = vtkImageData::SafeDownCast(m_Reslice->GetInput())) )
+  if ( !m_ImageReslicer ||
+       !(m_ImageData = vtkImageData::SafeDownCast(m_ImageReslicer->GetInput())) )
     {
     return;
     }
@@ -836,6 +830,17 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ResliceAxes->MultiplyPoint(planeOrigin, originXYZW);
 
   m_ResliceAxes->Transpose();
+
+  if ( m_ReslicePlaneSpatialObject.IsNotNull() )
+  {
+    // update the current reslicer transformation in the reslicer plane spatial object
+    igstk::Transform updatedTransform;
+    updatedTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    updatedTransform.ImportTransform( *m_ResliceAxes );
+
+    m_ReslicePlaneSpatialObject->RequestUpdateTransformToParent( updatedTransform );
+  }
+
   double neworiginXYZW[4];
   m_ResliceAxes->MultiplyPoint(originXYZW, neworiginXYZW);
 
@@ -843,7 +848,7 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ResliceAxes->SetElement(1,3,neworiginXYZW[1]);
   m_ResliceAxes->SetElement(2,3,neworiginXYZW[2]);
 
-  m_Reslice->SetResliceAxes(m_ResliceAxes);
+  m_ImageReslicer->SetResliceAxes(m_ResliceAxes);
 
   double spacingX = fabs(planeAxis1[0]*m_ImageSpacing[0])+
                    fabs(planeAxis1[1]*m_ImageSpacing[1])+
@@ -897,9 +902,9 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   double outputSpacingX = (planeSizeX == 0) ? 1.0 : planeSizeX/extentX;
   double outputSpacingY = (planeSizeY == 0) ? 1.0 : planeSizeY/extentY;
-  m_Reslice->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
-  m_Reslice->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
-  m_Reslice->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
+  m_ImageReslicer->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
+  m_ImageReslicer->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
+  m_ImageReslicer->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
 
 }
 
@@ -913,22 +918,22 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
     }
   m_ResliceInterpolate = i;
 
-  if ( !m_Reslice )
+  if ( !m_ImageReslicer )
     {
     return;
     }
   
   if ( i == VTK_NEAREST_RESLICE )
     {
-    m_Reslice->SetInterpolationModeToNearestNeighbor();
+    m_ImageReslicer->SetInterpolationModeToNearestNeighbor();
     }
   else if ( i == VTK_LINEAR_RESLICE)
     {
-    m_Reslice->SetInterpolationModeToLinear();
+    m_ImageReslicer->SetInterpolationModeToLinear();
     }
   else
     {
-    m_Reslice->SetInterpolationModeToCubic();
+    m_ImageReslicer->SetInterpolationModeToCubic();
     }
   m_Texture->SetInterpolate(m_TextureInterpolate);
 }
