@@ -165,7 +165,10 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
 
   // setup two observers: one for the reslicer plane center and another for the reslicer plane normal
   ReslicerPlaneSpatialObjectTest::ReslicerPlaneCenterObserver::Pointer  planeCenterObserver;
+  planeCenterObserver = ReslicerPlaneSpatialObjectTest::ReslicerPlaneCenterObserver::New();
+
   ReslicerPlaneSpatialObjectTest::ReslicerPlaneNormalObserver::Pointer  planeNormalObserver;
+  planeNormalObserver = ReslicerPlaneSpatialObjectTest::ReslicerPlaneNormalObserver::New();
 
   unsigned int planeCenterObserverID = 
     reslicerPlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneCenterEvent(),
