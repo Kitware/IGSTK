@@ -184,6 +184,10 @@ public:
                       igstk::TransformFileReader::TransformDataEvent, 
                       igstk::PrecomputedTransformData::Pointer )
 
+  igstkObserverMacro( CoordinateSystemTransform, 
+                      igstk::CoordinateSystemTransformToEvent, 
+                      igstk::CoordinateSystemTransformToResult )
+
   igstkObserverMacro( TransformationDescription, 
                       igstk::StringEvent, 
                       std::string )
@@ -471,7 +475,10 @@ private:
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   typedef itk::SimpleMemberCommand < Self > CancelObserverType;
   
-  LoadedObserverType::Pointer               m_ImagePickerObserver;
+  LoadedObserverType::Pointer               m_AxialViewPickerObserver;
+  LoadedObserverType::Pointer               m_SagittalViewPickerObserver;
+  LoadedObserverType::Pointer               m_CoronalViewPickerObserver;
+
   LoadedObserverType::Pointer               m_ManualReslicingObserver;
   LoadedObserverType::Pointer               m_KeyPressedObserver;
   LoadedObserverType::Pointer               m_MousePressedObserver;
@@ -549,7 +556,9 @@ private:
   void DisableOrthogonalPlanes();
 
   /** Callback functions for picking and reslicing image events. */  
-  void ImagePickingCallback( const itk::EventObject & event );
+  void AxialViewPickingCallback( const itk::EventObject & event );
+  void SagittalViewPickingCallback( const itk::EventObject & event );
+  void CoronalViewPickingCallback( const itk::EventObject & event );
   void ResliceImageCallback( const itk::EventObject & event );
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event ); 

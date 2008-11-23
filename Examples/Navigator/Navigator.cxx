@@ -2453,13 +2453,13 @@ void Navigator::LoadMeshProcessing()
    // setup a mesh representation
    MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
    meshRepresentation->RequestSetMeshObject( meshSpatialObject );
-   meshRepresentation->SetOpacity(0.7);
+   meshRepresentation->SetOpacity(1);
    meshRepresentation->SetColor(r, g, b);
    m_MeshRepresentationVector.push_back( meshRepresentation );
 
    // build axial mesh reslice representation
    MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-   axialContour->SetOpacity(1); 
+   axialContour->SetOpacity(1);
    axialContour->SetLineWidth(3);
    axialContour->SetColor(r, g, b);     
    axialContour->RequestSetMeshObject( meshSpatialObject );
@@ -2995,8 +2995,14 @@ void Navigator::DisconnectTrackerProcessing()
 void Navigator::ConnectImageRepresentation()
 {
   // observe picking event on the views
-  m_ImagePickerObserver = LoadedObserverType::New();
-  m_ImagePickerObserver->SetCallbackFunction( this, &Navigator::ImagePickingCallback );
+  m_AxialViewPickerObserver = LoadedObserverType::New();
+  m_AxialViewPickerObserver->SetCallbackFunction( this, &Navigator::AxialViewPickingCallback );
+
+  m_SagittalViewPickerObserver = LoadedObserverType::New();
+  m_SagittalViewPickerObserver->SetCallbackFunction( this, &Navigator::SagittalViewPickingCallback );
+
+  m_CoronalViewPickerObserver = LoadedObserverType::New();
+  m_CoronalViewPickerObserver->SetCallbackFunction( this, &Navigator::CoronalViewPickingCallback );
 
   // create reslice plane spatial object for axial view
   m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
@@ -3198,13 +3204,13 @@ void Navigator::ConnectImageRepresentation()
 
   /** Adding observers for picking events in the 2D views */
   m_ViewerGroup->m_AxialView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+      igstk::CoordinateSystemTransformToEvent(), m_AxialViewPickerObserver );
 
   m_ViewerGroup->m_SagittalView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+      igstk::CoordinateSystemTransformToEvent(), m_SagittalViewPickerObserver );
 
   m_ViewerGroup->m_CoronalView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_ImagePickerObserver );
+      igstk::CoordinateSystemTransformToEvent(), m_CoronalViewPickerObserver );
 
   /** Adding observer for slider bar reslicing event */
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
@@ -3479,13 +3485,12 @@ void Navigator::HandleMousePressedCallback( const itk::EventObject & event )
 }
 
 /** -----------------------------------------------------------------
-*  Callback function for picking event.
+*  Callback function for picking event in the axial view.
 *  Upon receiving a valid picking event, this method will reslice the 
-*  image to that location and update the annotation with the new point 
-*  position.
+*  image to that location.
 *---------------------------------------------------------------------
 */
-void Navigator::ImagePickingCallback( const itk::EventObject & event)
+void Navigator::AxialViewPickingCallback( const itk::EventObject & event)
 {
   if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
   {
@@ -3493,15 +3498,132 @@ void Navigator::ImagePickingCallback( const itk::EventObject & event)
     const TransformEventType * tmevent =
     dynamic_cast< const TransformEventType *>( & event );
 
+    // get the transform from the view to its parent (reslicer plane)
     igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
     m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    unsigned int obsId = m_AxialPlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_AxialPlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::AxialViewPickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_AxialPlaneSpatialObject->RemoveObserver( obsId );
 
     m_StateMachine.PushInput( m_SetPickingPositionInput );
     m_StateMachine.ProcessInputs();
   }
 }
 
+/** -----------------------------------------------------------------
+*  Callback function for picking event in the sagittal view.
+*  Upon receiving a valid picking event, this method will reslice the 
+*  image to that location.
+*---------------------------------------------------------------------
+*/
+void Navigator::SagittalViewPickingCallback( const itk::EventObject & event)
+{
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent =
+    dynamic_cast< const TransformEventType *>( & event );
 
+    // get the transform from the view to its parent (reslicer plane)
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    unsigned int obsId = m_SagittalPlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_SagittalPlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::SagittalViewPickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_SagittalPlaneSpatialObject->RemoveObserver( obsId );
+
+    m_StateMachine.PushInput( m_SetPickingPositionInput );
+    m_StateMachine.ProcessInputs();
+  }
+}
+
+/** -----------------------------------------------------------------
+*  Callback function for picking event in the coronal view.
+*  Upon receiving a valid picking event, this method will reslice the 
+*  image to that location.
+*---------------------------------------------------------------------
+*/
+void Navigator::CoronalViewPickingCallback( const itk::EventObject & event)
+{
+  if ( igstk::CoordinateSystemTransformToEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
+    const TransformEventType * tmevent =
+    dynamic_cast< const TransformEventType *>( & event );
+
+    // get the transform from the view to its parent (reslicer plane)
+    igstk::CoordinateSystemTransformToResult transformCarrier = tmevent->Get();
+    m_PickingTransform = transformCarrier.GetTransform();
+
+    // get the transform from the reslicer plane to its parent (world reference)
+    CoordinateSystemTransformObserver::Pointer coordinateObserver = 
+      CoordinateSystemTransformObserver::New();
+
+    unsigned int obsId = m_CoronalPlaneSpatialObject->AddObserver( 
+      igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
+
+    m_CoronalPlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+
+    if( coordinateObserver->GotCoordinateSystemTransform() )
+    {
+      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+    }
+    else
+    {
+      igstkLogMacro2( m_Logger, DEBUG, 
+                    "Navigator::CoronalViewPickingCallback could not get coordinate system transform...\n" )
+      return;
+    }
+
+    m_CoronalPlaneSpatialObject->RemoveObserver( obsId );
+
+    m_StateMachine.PushInput( m_SetPickingPositionInput );
+    m_StateMachine.ProcessInputs();
+  }
+}
 
 void Navigator::HandleMousePressed ( 
   igstk::NavigatorQuadrantViews::MouseCommandType mouseCommand )
