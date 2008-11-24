@@ -225,7 +225,7 @@ this->RequestRejectRegistration();}
       }
     }
   }
-  Function {~UltrasoundNavigatorGUI()} {open return_type virtual
+  Function {~UltrasoundNavigatorGUI()} {open
   } {
     code {delete m_ViewerGroup;} {selected
     }

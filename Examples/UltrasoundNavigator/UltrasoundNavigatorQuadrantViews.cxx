@@ -90,7 +90,6 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
 
 UltrasoundNavigatorQuadrantViews::~UltrasoundNavigatorQuadrantViews()
 {
-  std::cout << " UltrasoundNavigatorQuadrantViews destructor " << std::endl;
   delete m_CTWidget1;
   delete m_CTWidget2;
   delete m_VideoWidget;
