@@ -8,11 +8,10 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 class NavigatorGUI {open : {public igstk::Object}
 } {
-  Function {NavigatorGUI()} {open
-  } {
+  Function {NavigatorGUI()} {} {
     Fl_Window mainWindow {
       label {IGSTK - Navigator Application}
-      callback {Quit();} open
+      callback {Quit();}
       xywh {0 0 1280 1024} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"}
       code1 {\#include <time.h>} noborder visible
@@ -46,7 +45,7 @@ class NavigatorGUI {open : {public igstk::Object}
         }
         Fl_Choice m_ViewModeList {
           label {Viewing Mode}
-          callback {RequestChangeSelectedViewMode();} open
+          callback {RequestChangeSelectedViewMode();}
           xywh {10 676 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
         } {
           MenuItem {} {
@@ -93,7 +92,7 @@ class NavigatorGUI {open : {public igstk::Object}
           tooltip {Register tracker system to image} xywh {10 447 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
       }
-      Fl_Group m_ViewerGroup {open
+      Fl_Group m_ViewerGroup {selected
         xywh {150 4 1127 1018} box PLASTIC_DOWN_BOX
         code0 {\#include "NavigatorQuadrantViews.h"}
         class {igstk::NavigatorQuadrantViews}
@@ -171,7 +170,7 @@ this->RequestCancelImageLoad();}
       }
     }
     Fl_Window m_AcceptRegistrationWindow {
-      label {Confirm To Proceed} open
+      label {Confirm To Proceed}
       xywh {741 273 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
     } {
       Fl_Box {} {
@@ -200,14 +199,15 @@ this->RequestRejectRegistration();}
     }
   }
   Function {~NavigatorGUI()} {open return_type virtual
-  } {}
+  } {
+    code {delete m_ViewerGroup;} {}
+  }
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
   Function {Quit()} {open return_type void
   } {
     code {m_ConfirmToQuitWindow->show();
-CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {selected
-    }
+CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
   }
   Function {HasQuitted()} {return_type bool
   } {
