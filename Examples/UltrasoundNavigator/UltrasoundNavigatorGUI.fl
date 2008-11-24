@@ -227,9 +227,7 @@ this->RequestRejectRegistration();}
   }
   Function {~UltrasoundNavigatorGUI()} {open return_type virtual
   } {
-    code {std::cout << "UltrasoundNavigatorGUI destructor (virtual)" << std::endl;
-delete m_ViewerGroup;
-std::cout << "UltrasoundNavigatorGUI destructor passed delete" << std::endl;} {selected
+    code {delete m_ViewerGroup;} {selected
     }
   }
   decl {clock_t  m_SplashScreenStartTime;} {}
