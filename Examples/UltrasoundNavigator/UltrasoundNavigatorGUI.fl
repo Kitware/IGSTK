@@ -111,7 +111,7 @@ class UltrasoundNavigatorGUI {open : {public igstk::Object}
           }
         }
         Fl_Box m_ImagerSemaphore {
-          label OFF selected
+          label OFF
           xywh {8 899 130 30} box PLASTIC_UP_BOX
         }
         Fl_Box {} {
@@ -226,7 +226,12 @@ this->RequestRejectRegistration();}
     }
   }
   Function {~UltrasoundNavigatorGUI()} {open return_type virtual
-  } {}
+  } {
+    code {std::cout << "UltrasoundNavigatorGUI destructor (virtual)" << std::endl;
+delete m_ViewerGroup;
+std::cout << "UltrasoundNavigatorGUI destructor passed delete" << std::endl;} {selected
+    }
+  }
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
   Function {Quit()} {return_type void

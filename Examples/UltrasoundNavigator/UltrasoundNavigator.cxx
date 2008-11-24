@@ -52,16 +52,16 @@ UltrasoundNavigator::UltrasoundNavigator() :
 {
   std::srand( 5 );
 
+  /** member variables initialization */
   m_ImageDir = "";
-
   m_ImagePlanesIn3DViewEnabled = true;
-
   m_VideoEnabled = false;
-  
   m_ModifyImageFiducialsEnabled = false;
+  m_TrackerRMS = 0.0;
+  m_WindowWidth = 542;
+  m_WindowLevel = 52;
 
-
-  /** Setup logger, for all igstk components. */
+  /** Setup logger, for all igstk components */
   m_Logger   = LoggerType::New();
   this->GetLogger()->SetTimeStampFormat( itk::LoggerBase::HUMANREADABLE );
   this->GetLogger()->SetHumanReadableFormat("%Y %b %d, %H:%M:%S");
@@ -94,57 +94,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
                                                     << logFileName << "\n" );
     return;
   }
-
-  /** Initialize all member variables  */  
-  m_ImageReader         = ImageReaderType::New();
-  m_ImageReader->SetGlobalWarningDisplay(false);
-
-  m_TrackerRMS = 0.0;
-  m_WindowWidth = 542;
-  m_WindowLevel = 52;
-
-  /** Creating observers and their callback functions */
-
-  // Initialize the progress command
-  m_ProgressCommand = ProgressCommandType::New();
-  m_ProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnITKProgressEvent );
-
-  /** These observe reslicing events from Quadrant class */
-  m_ManualReslicingObserver = LoadedObserverType::New();
-  m_ManualReslicingObserver->SetCallbackFunction( this,
-    &UltrasoundNavigator::ResliceImageCallback );
-
-  m_KeyPressedObserver = LoadedObserverType::New();
-  m_KeyPressedObserver->SetCallbackFunction( this,
-    &UltrasoundNavigator::HandleKeyPressedCallback );
-
-  m_MousePressedObserver = LoadedObserverType::New();
-  m_MousePressedObserver->SetCallbackFunction( this,
-    &UltrasoundNavigator::HandleMousePressedCallback );
-
-  m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
-  m_TrackerToolNotAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::TrackerToolNotAvailableCallback );
-
-  m_TrackerToolAvailableObserver = LoadedObserverType::New();
-  m_TrackerToolAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::TrackerToolAvailableCallback ); 
-
-  m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
-  m_ImagerToolNotAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ImagerToolNotAvailableCallback );
-
-  m_ImagerToolAvailableObserver = LoadedObserverType::New();
-  m_ImagerToolAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ImagerToolAvailableCallback ); 
-
-  m_ReferenceNotAvailableObserver = LoadedObserverType::New();
-  m_ReferenceNotAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ReferenceNotAvailableCallback );
-
-  m_ReferenceAvailableObserver = LoadedObserverType::New();
-  m_ReferenceAvailableObserver->SetCallbackFunction( this,
-                                                 &UltrasoundNavigator::ReferenceAvailableCallback );  
 
   /** Machine States */
 
@@ -1052,6 +1001,9 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( Tracking, StopTracking, 
                            StoppingTracker, StopTracking );
 
+  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
+                           DisconnectingTracker, DisconnectTracker );
+
   igstkAddTransitionMacro( Tracking, StartSetTrackerFiducials, 
                            SettingTrackerFiducials, StartSetTrackerFiducials );
 
@@ -1090,8 +1042,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StartTracking, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
-                           Tracking, ReportInvalidRequest );
+//  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
+//                           Tracking, ReportInvalidRequest );
 
    /** StoppingTracker State */
 
@@ -1670,7 +1622,7 @@ void UltrasoundNavigator::RequestToggleEnableVideo()
     this->EnableVideo();
   }
 
-  m_VideoEnabled != m_VideoEnabled;
+  m_VideoEnabled = !m_VideoEnabled;
 
 }
 
@@ -1863,11 +1815,9 @@ UltrasoundNavigator::ReportSuccessImageLoadedProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportSuccessImageLoadedProcessing called...\n");
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 0, "" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 0, "" );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 0, "" );
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 0, "" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 0, "" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 0, "" );
 
   for (int i=0; i<4; i++)
   {
@@ -1966,11 +1916,9 @@ UltrasoundNavigator::ReportSuccessEndSetImageFiducialsProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportSuccessEndSetImageFiducialsProcessing called...\n");
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, " " );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, " " );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, " " );
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, " " );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, " " );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, " " );
 
   m_ModifyFiducialsButton->color((Fl_Color)55);
 
@@ -2256,16 +2204,14 @@ UltrasoundNavigator::ReportSuccessTrackerDisconnectionProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportSuccessTrackerDisconnectionProcessing called...\n");
   
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
 }
 
@@ -2279,16 +2225,14 @@ UltrasoundNavigator::ReportSuccessStartTrackingProcessing()
   char buf[50];
   sprintf( buf, "TRACKING (%.2f)", m_TrackerRMS);
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
   
   for (unsigned int i=0; i<4; i++)
   {
@@ -2324,19 +2268,15 @@ UltrasoundNavigator::ReportSuccessStopTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportSuccessStopTrackingProcessing called...\n")
  
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
   
-//  m_RunStopButton->label("Run");
-
   Fl::check();
 }
 
@@ -2367,6 +2307,13 @@ void UltrasoundNavigator::LoadImageProcessing()
 
    igstkLogMacro2( m_Logger, DEBUG, 
                       "Set ImageReader directory: " << directoryName << "\n" )
+
+   /** Setup image reader */  
+   m_ImageReader         = ImageReaderType::New();
+   m_ImageReader->SetGlobalWarningDisplay(false);
+   // Initialize the progress command
+   m_ProgressCommand = ProgressCommandType::New();
+   m_ProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnITKProgressEvent );
 
    m_ImageReader->RequestSetDirectory( directoryName );
 
@@ -2453,19 +2400,17 @@ void UltrasoundNavigator::RequestAcceptImageLoad()
   igstkLogMacro2( m_Logger, DEBUG, 
               "UltrasoundNavigator::RequestAcceptImageLoad called...\n" )
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, "AXIAL VIEW");
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontSize(3, 12);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, "AXIAL VIEW");
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontSize(3, 12);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(3, "SAGITTAL VIEW");
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontSize(3, 12);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(3, "SAGITTAL VIEW");
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontSize(3, 12);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(3, "CORONAL VIEW");
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontSize(3, 12);
-
-//  m_ViewerGroup->RequestUpdateOverlays();
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(3, "CORONAL VIEW");
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontSize(3, 12);
 
   if ( m_ImageObserver.IsNotNull() )
   {
@@ -2781,16 +2726,16 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
 
       m_Plan->m_FiducialPoints[choice] = point;
 
-      char buf[50];
-      sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
-      m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+      //char buf[50];
+      //sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
+      //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
+      //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
-      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+      //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
+      //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
-      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
+      //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
+      //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
 
       /** Write the updated plan to file */
       this->WriteFiducials();
@@ -2944,14 +2889,14 @@ void UltrasoundNavigator::StartSetTrackerFiducialsProcessing()
   m_RegisterButton->color(FL_RED); 
   m_RegisterButton->label("Registering...");
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
 //  m_ViewerGroup->RequestUpdateOverlays(); 
 
@@ -3068,16 +3013,15 @@ void UltrasoundNavigator::TrackerRegistrationProcessing()
        sprintf( buf, "TRACKING (%.2f)", m_TrackerRMS);
        //sprintf( buf, "TRACKING");
 
-       m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+       //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
+       //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
 
-       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+       //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
+       //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
 
-       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
+       //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
+       //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
 
-//       m_ViewerGroup->RequestUpdateOverlays();    
     }
     else
     {
@@ -3241,7 +3185,6 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_SagittalFiducialRepresentationVector.resize(4);
   m_CoronalFiducialRepresentationVector.resize(4);
   m_3DViewFiducialRepresentationVector.resize(4);
-
 
   for (int i=0; i<4; i++)
   {
@@ -3464,14 +3407,23 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
 
   /** Adding observer for slider bar reslicing event */
+  m_ManualReslicingObserver = LoadedObserverType::New();
+  m_ManualReslicingObserver->SetCallbackFunction( this, &UltrasoundNavigator::ResliceImageCallback );
+
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::ManualReslicingEvent(),
     m_ManualReslicingObserver );
 
   /** Adding observer for key pressed event */
+  m_KeyPressedObserver = LoadedObserverType::New();
+  m_KeyPressedObserver->SetCallbackFunction( this, &UltrasoundNavigator::HandleKeyPressedCallback );
+
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::KeyPressedEvent(),
     m_KeyPressedObserver );
 
   /** Adding observer for mouse pressed event */
+  m_MousePressedObserver = LoadedObserverType::New();
+  m_MousePressedObserver->SetCallbackFunction( this, &UltrasoundNavigator::HandleMousePressedCallback );
+
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::MousePressedEvent(),
     m_MousePressedObserver );  
 
@@ -3631,14 +3583,14 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
   sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
  
   /** Display point position as annotation */    
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
 
   /** Reslice image to the selected point position */
   if( m_ImageSpatialObject->IsInside( point ) )
@@ -4059,9 +4011,19 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     {      
         m_Parent->m_TrackerTool = (*trackerIter).second;
 
+        // observe tracker tool not available events
+        m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::TrackerToolNotAvailableCallback );
+
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
    
+        // observe tracker tool available events
+        m_Parent->m_TrackerToolAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_TrackerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::TrackerToolAvailableCallback ); 
+
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
     }
@@ -4072,9 +4034,18 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     {      
         m_Parent->m_ImagerTool = (*imagerIter).second;
 
+        // observer imager tool not available events
+        m_Parent->m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ImagerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::ImagerToolNotAvailableCallback );
         m_Parent->m_ImagerTool->AddObserver(
          igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ImagerToolNotAvailableObserver);
    
+        // observer imager tool available events
+        m_Parent->m_ImagerToolAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ImagerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::ImagerToolAvailableCallback ); 
+
         m_Parent->m_ImagerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ImagerToolAvailableObserver);
     }
@@ -4086,8 +4057,16 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     {
         m_Parent->m_ReferenceTool = entry.second;
 
+        m_Parent->m_ReferenceNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ReferenceNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::ReferenceNotAvailableCallback );
+
         m_Parent->m_ReferenceTool->AddObserver(
             igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ReferenceNotAvailableObserver);
+
+        m_Parent->m_ReferenceAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ReferenceAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundNavigator::ReferenceAvailableCallback );  
 
         m_Parent->m_ReferenceTool->AddObserver(
             igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ReferenceAvailableObserver);

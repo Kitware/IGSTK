@@ -63,9 +63,9 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
   m_VideoWidget->RequestSetView( m_VideoView );
   m_3DWidget->RequestSetView( m_3DView );
 
-  m_AxialViewAnnotation = igstk::Annotation2D::New();
-  m_SagittalViewAnnotation = igstk::Annotation2D::New();
-  m_CoronalViewAnnotation = igstk::Annotation2D::New();
+  //m_AxialViewAnnotation = igstk::Annotation2D::New();
+  //m_SagittalViewAnnotation = igstk::Annotation2D::New();
+  //m_CoronalViewAnnotation = igstk::Annotation2D::New();
 
   // Create slider bars
 
@@ -90,6 +90,7 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
 
 UltrasoundNavigatorQuadrantViews::~UltrasoundNavigatorQuadrantViews()
 {
+  std::cout << " UltrasoundNavigatorQuadrantViews destructor " << std::endl;
   delete m_CTWidget1;
   delete m_CTWidget2;
   delete m_VideoWidget;

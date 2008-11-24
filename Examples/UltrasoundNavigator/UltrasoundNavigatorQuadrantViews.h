@@ -59,7 +59,7 @@ public:
 
   UltrasoundNavigatorQuadrantViews(int X, int Y, int W, int H, const char *L = 0);
 
-  virtual ~UltrasoundNavigatorQuadrantViews(void);
+  ~UltrasoundNavigatorQuadrantViews(void);
 
   typedef igstk::View          ViewType;
   typedef igstk::View2D        ViewType2D;
@@ -72,9 +72,9 @@ public:
   ViewType3D::Pointer          m_3DView;
 
   /** Annotation is used for displaying 2D texts on View */
-  igstk::Annotation2D::Pointer        m_AxialViewAnnotation;
-  igstk::Annotation2D::Pointer        m_SagittalViewAnnotation;
-  igstk::Annotation2D::Pointer        m_CoronalViewAnnotation;
+  //igstk::Annotation2D::Pointer        m_AxialViewAnnotation;
+  //igstk::Annotation2D::Pointer        m_SagittalViewAnnotation;
+  //igstk::Annotation2D::Pointer        m_CoronalViewAnnotation;
 
   // Declare FLTKWidgetNew objects
   igstk::FLTKWidget * m_CTWidget1;
