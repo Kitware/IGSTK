@@ -60,36 +60,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
   
   m_ModifyImageFiducialsEnabled = false;
 
-  /** Create the controller for the tracker and assign observers to him*/
-  m_TrackerController = igstk::TrackerController::New();
-
-  m_TrackerControllerObserver = TrackerControllerObserver::New();
-  m_TrackerControllerObserver->SetParent( this );
-
-  // todo: replace this with igstk observers
-  m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStartTrackingEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStartTrackingErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStopTrackingEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStopTrackingErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
-    m_TrackerControllerObserver );
- 
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
-    m_TrackerControllerObserver );  
 
   /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
@@ -125,26 +95,13 @@ UltrasoundNavigator::UltrasoundNavigator() :
     return;
   }
 
-  // set logger to the controller
-  m_TrackerController->SetLogger(this->GetLogger());
-
   /** Initialize all member variables  */  
   m_ImageReader         = ImageReaderType::New();
   m_ImageReader->SetGlobalWarningDisplay(false);
 
-  m_WorldReference      = igstk::AxesObject::New();
-
-  m_Plan                = new igstk::FiducialsPlan;
-
   m_TrackerRMS = 0.0;
   m_WindowWidth = 542;
   m_WindowLevel = 52;
-
-  m_FiducialPointVector.resize(4);
-  m_AxialFiducialRepresentationVector.resize(4);
-  m_SagittalFiducialRepresentationVector.resize(4);
-  m_CoronalFiducialRepresentationVector.resize(4);
-  m_3DViewFiducialRepresentationVector.resize(4);
 
   /** Creating observers and their callback functions */
 
@@ -2911,6 +2868,40 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
     return;
   }
 
+  /** Create the controller for the tracker and assign observers to him*/
+  m_TrackerController = igstk::TrackerController::New();
+
+  // set logger to the controller
+  m_TrackerController->SetLogger(this->GetLogger());
+
+  m_TrackerControllerObserver = TrackerControllerObserver::New();
+  m_TrackerControllerObserver->SetParent( this );
+
+  // todo: replace this with igstk observers
+  m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStartTrackingEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStartTrackingErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStopTrackingEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStopTrackingErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
+    m_TrackerControllerObserver );
+ 
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
+    m_TrackerControllerObserver );  
+
   m_TrackerController->RequestInitialize( m_TrackerConfiguration );
                
   //check that initialization was successful
@@ -3276,17 +3267,15 @@ void UltrasoundNavigator::DisconnectTrackerProcessing()
 */
 void UltrasoundNavigator::ConnectImageRepresentation()
 {
-  // setup picking event observe on the views
-  m_CTView1PickerObserver = LoadedObserverType::New();
-  m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
-
-  m_CTView2PickerObserver = LoadedObserverType::New();
-  m_CTView2PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView2PickingCallback );
-
-  m_VideoViewPickerObserver = LoadedObserverType::New();
-  m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
 
   // set up fiducual representations
+
+  m_FiducialPointVector.resize(4);
+  m_AxialFiducialRepresentationVector.resize(4);
+  m_SagittalFiducialRepresentationVector.resize(4);
+  m_CoronalFiducialRepresentationVector.resize(4);
+  m_3DViewFiducialRepresentationVector.resize(4);
+
 
   for (int i=0; i<4; i++)
   {
@@ -3414,6 +3403,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  // our principal node in the scene graph: the world reference
+  m_WorldReference  = igstk::AxesObject::New();
+
   // set transform and parent to the image spatial object
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -3488,13 +3480,19 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
 
-  /** Adding observers for picking events in the 2D views */
+  // setup picking event observe on the views
+  m_CTView1PickerObserver = LoadedObserverType::New();
+  m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
   m_ViewerGroup->m_CTView1->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CTView1PickerObserver );
 
+  m_CTView2PickerObserver = LoadedObserverType::New();
+  m_CTView2PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView2PickingCallback );
   m_ViewerGroup->m_CTView2->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CTView2PickerObserver );
 
+  m_VideoViewPickerObserver = LoadedObserverType::New();
+  m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
   m_ViewerGroup->m_VideoView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_VideoViewPickerObserver );
 
