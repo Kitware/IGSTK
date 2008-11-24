@@ -54,43 +54,14 @@ Navigator::Navigator() :
   m_ImageDir = "";
 
   m_ImagePlanesIn3DViewEnabled = true;
-
   m_AxialViewInitialized = false;
   m_SagittalViewInitialized = false;
   m_CoronalViewInitialized = false;
-  
-  m_ModifyImageFiducialsEnabled = false;
+  m_ModifyImageFiducialsEnabled = false;  
 
-  /** Create the controller for the tracker and assign observers to him*/
-  m_TrackerController = igstk::TrackerController::New();
-
-  m_TrackerControllerObserver = TrackerControllerObserver::New();
-  m_TrackerControllerObserver->SetParent( this );
-
-  // todo: replace this with igstk observers
-  m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStartTrackingEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStartTrackingErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStopTrackingEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerStopTrackingErrorEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolEvent(),
-    m_TrackerControllerObserver );
-
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
-    m_TrackerControllerObserver );
- 
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
-    m_TrackerControllerObserver );  
+  m_TrackerRMS = 0.0;
+  m_WindowWidth = 542;
+  m_WindowLevel = 52;
 
   /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
@@ -126,87 +97,13 @@ Navigator::Navigator() :
     return;
   }
 
-  // set logger to the controller
-  m_TrackerController->SetLogger(this->GetLogger());
-
-  /** Initialize all member variables  */  
+  /** Build image reader  */  
   m_ImageReader         = ImageReaderType::New();
   m_ImageReader->SetGlobalWarningDisplay(false);
-
-  m_WorldReference      = igstk::AxesObject::New();
-
-  m_Plan                = new igstk::FiducialsPlan;
-
-  m_TrackerRMS = 0.0;
-  m_WindowWidth = 542;
-  m_WindowLevel = 52;
-
-  m_FiducialPointVector.resize(4);
-  m_AxialFiducialRepresentationVector.resize(4);
-  m_SagittalFiducialRepresentationVector.resize(4);
-  m_CoronalFiducialRepresentationVector.resize(4);
-  m_3DViewFiducialRepresentationVector.resize(4);
-
-  for (int i=0; i<4; i++)
-  {
-    m_FiducialPointVector[i] = EllipsoidType::New();
-    m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
-
-    m_AxialFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_AxialFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_SagittalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_SagittalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_CoronalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_CoronalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-
-    m_3DViewFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
-    m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
-    m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-  }  
-
-  /** Creating observers and their callback functions */
-
-  // Initialize the progress command
+  /** Build itk progress command to assess image load progress */  
   m_ProgressCommand = ProgressCommandType::New();
+  /** Set the callback to the itk progress command */
   m_ProgressCommand->SetCallbackFunction( this, &Navigator::OnITKProgressEvent );
-
-  /** These observe reslicing events from Quadrant class */
-  m_ManualReslicingObserver = LoadedObserverType::New();
-  m_ManualReslicingObserver->SetCallbackFunction( this,
-    &Navigator::ResliceImageCallback );
-
-  m_KeyPressedObserver = LoadedObserverType::New();
-  m_KeyPressedObserver->SetCallbackFunction( this,
-    &Navigator::HandleKeyPressedCallback );
-
-  m_MousePressedObserver = LoadedObserverType::New();
-  m_MousePressedObserver->SetCallbackFunction( this,
-    &Navigator::HandleMousePressedCallback );
-
-  m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
-  m_TrackerToolNotAvailableObserver->SetCallbackFunction( this,
-                                                 &Navigator::ToolNotAvailableCallback );
-
-  m_TrackerToolAvailableObserver = LoadedObserverType::New();
-  m_TrackerToolAvailableObserver->SetCallbackFunction( this,
-                                                 &Navigator::ToolAvailableCallback ); 
-
-  m_ReferenceNotAvailableObserver = LoadedObserverType::New();
-  m_ReferenceNotAvailableObserver->SetCallbackFunction( this,
-                                                 &Navigator::ReferenceNotAvailableCallback );
-
-  m_ReferenceAvailableObserver = LoadedObserverType::New();
-  m_ReferenceAvailableObserver->SetCallbackFunction( this,
-                                                 &Navigator::ReferenceAvailableCallback );  
 
   /** Machine States*/
 
@@ -2609,6 +2506,41 @@ void Navigator::InitializeTrackerProcessing()
     return;
   }
 
+  /** Create the controller for the tracker */
+  m_TrackerController = igstk::TrackerController::New();
+
+  /** Set the logger to the controller */
+  m_TrackerController->SetLogger(this->GetLogger());
+
+  /** Create an observer for the controller */
+  m_TrackerControllerObserver = TrackerControllerObserver::New();
+  m_TrackerControllerObserver->SetParent( this );
+
+  // todo: replace these with igstk observers
+  m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStartTrackingEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStartTrackingErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStopTrackingEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerStopTrackingErrorEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolEvent(),
+    m_TrackerControllerObserver );
+
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
+    m_TrackerControllerObserver );
+ 
+  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
+    m_TrackerControllerObserver );
+
   m_TrackerController->RequestInitialize( m_TrackerConfiguration );
                
   //check that initialization was successful
@@ -2641,15 +2573,7 @@ void Navigator::InitializeTrackerProcessing()
 
   m_ToolSpatialObject->RequestDetachFromParent();
   m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
-/*
-  m_AxialPlaneSpatialObject->RequestDetachFromParent();
-  m_SagittalPlaneSpatialObject->RequestDetachFromParent();
-  m_CoronalPlaneSpatialObject->RequestDetachFromParent();
 
-  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_ToolSpatialObject );
-*/
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
   { 
@@ -2994,15 +2918,38 @@ void Navigator::DisconnectTrackerProcessing()
 */
 void Navigator::ConnectImageRepresentation()
 {
-  // observe picking event on the views
-  m_AxialViewPickerObserver = LoadedObserverType::New();
-  m_AxialViewPickerObserver->SetCallbackFunction( this, &Navigator::AxialViewPickingCallback );
+  m_Plan = new igstk::FiducialsPlan;
+  m_FiducialPointVector.resize(4);
+  m_AxialFiducialRepresentationVector.resize(4);
+  m_SagittalFiducialRepresentationVector.resize(4);
+  m_CoronalFiducialRepresentationVector.resize(4);
+  m_3DViewFiducialRepresentationVector.resize(4);
 
-  m_SagittalViewPickerObserver = LoadedObserverType::New();
-  m_SagittalViewPickerObserver->SetCallbackFunction( this, &Navigator::SagittalViewPickingCallback );
+  for (int i=0; i<4; i++)
+  {
+    m_FiducialPointVector[i] = EllipsoidType::New();
+    m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
 
-  m_CoronalViewPickerObserver = LoadedObserverType::New();
-  m_CoronalViewPickerObserver->SetCallbackFunction( this, &Navigator::CoronalViewPickingCallback );
+    m_AxialFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_AxialFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_SagittalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_SagittalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_CoronalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_CoronalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+
+    m_3DViewFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
+    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
+    m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
+  }  
 
   // create reslice plane spatial object for axial view
   m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
@@ -3125,6 +3072,9 @@ void Navigator::ConnectImageRepresentation()
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  // our principal node in the scene graph: the world reference
+  m_WorldReference  = igstk::AxesObject::New();
+
   // set transform and parent to the image spatial object
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -3133,17 +3083,13 @@ void Navigator::ConnectImageRepresentation()
   m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
   m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
-   m_ViewerGroup->m_AxialView->RequestSetTransformAndParent(
-      identity, m_AxialPlaneSpatialObject );
+  m_ViewerGroup->m_AxialView->RequestSetTransformAndParent( identity, m_AxialPlaneSpatialObject );
 
-  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent(
-      identity, m_SagittalPlaneSpatialObject );
+  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent( identity, m_SagittalPlaneSpatialObject );
 
-  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent(
-      identity, m_CoronalPlaneSpatialObject );
+  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent( identity, m_CoronalPlaneSpatialObject );
 
-  m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
-      identity, m_WorldReference );
+  m_ViewerGroup->m_3DView->RequestSetTransformAndParent( identity, m_WorldReference );
 
   // set transform and parent to the cross hair object
   m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
@@ -3202,25 +3148,48 @@ void Navigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
 
-  /** Adding observers for picking events in the 2D views */
+  /** Add observer for picking events in the Axial view */
+  m_AxialViewPickerObserver = LoadedObserverType::New();
+  m_AxialViewPickerObserver->SetCallbackFunction( this, &Navigator::AxialViewPickingCallback );
+
   m_ViewerGroup->m_AxialView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_AxialViewPickerObserver );
+
+  /** Add observer for picking events in the Axial view */
+  m_SagittalViewPickerObserver = LoadedObserverType::New();
+  m_SagittalViewPickerObserver->SetCallbackFunction( this, &Navigator::SagittalViewPickingCallback );
 
   m_ViewerGroup->m_SagittalView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_SagittalViewPickerObserver );
 
+  /** Add observer for picking events in the Axial view */
+  m_CoronalViewPickerObserver = LoadedObserverType::New();
+  m_CoronalViewPickerObserver->SetCallbackFunction( this, &Navigator::CoronalViewPickingCallback );
+
   m_ViewerGroup->m_CoronalView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CoronalViewPickerObserver );
 
-  /** Adding observer for slider bar reslicing event */
+  /** Add observer for slider bar reslicing event */
+  m_ManualReslicingObserver = LoadedObserverType::New();
+  m_ManualReslicingObserver->SetCallbackFunction( this,
+    &Navigator::ResliceImageCallback );
+
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
     m_ManualReslicingObserver );
 
-  /** Adding observer for key pressed event */
+  /** Add observer for key pressed event */
+  m_KeyPressedObserver = LoadedObserverType::New();
+  m_KeyPressedObserver->SetCallbackFunction( this,
+    &Navigator::HandleKeyPressedCallback );
+
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::KeyPressedEvent(),
     m_KeyPressedObserver );
 
-  /** Adding observer for mouse pressed event */
+  /** Add observer for mouse pressed event */
+  m_MousePressedObserver = LoadedObserverType::New();
+  m_MousePressedObserver->SetCallbackFunction( this,
+    &Navigator::HandleMousePressedCallback );
+
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::MousePressedEvent(),
     m_MousePressedObserver );  
 
@@ -3802,9 +3771,19 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     {      
         m_Parent->m_TrackerTool = (*iter).second;
 
+        m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
+
+        m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                   &Navigator::ToolNotAvailableCallback );
+
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
    
+        m_Parent->m_TrackerToolAvailableObserver = LoadedObserverType::New();
+
+        m_Parent->m_TrackerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &Navigator::ToolAvailableCallback ); 
+
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
     }
@@ -3816,31 +3795,20 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     {
         m_Parent->m_ReferenceTool = entry.second;
 
+        m_Parent->m_ReferenceNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ReferenceNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &Navigator::ReferenceNotAvailableCallback );
         m_Parent->m_ReferenceTool->AddObserver(
             igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ReferenceNotAvailableObserver);
+
+        m_Parent->m_ReferenceAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ReferenceAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &Navigator::ReferenceAvailableCallback );
 
         m_Parent->m_ReferenceTool->AddObserver(
             igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ReferenceAvailableObserver);
     }
   }
-  /*
-  else if ( evt3 )
-  {
-    igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find("sPtr");
-
-    if ( iter!=toolContainer.end() )
-    {      
-        m_Parent->m_TrackerTool = (*iter).second;
-    }
-  }
-  else if ( evt4 )
-  {
-    igstk::TrackerController::ToolEntryType entry = evt4->Get();
-      if ( entry.first == "reference" )
-        m_Parent->m_ReferenceTool = entry.second;
-  }
-  */
 }
 
 void 
