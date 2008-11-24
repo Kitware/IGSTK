@@ -130,12 +130,10 @@ public:
   void RequestComputeReslicingPlane(); 
 
   /** Retrieve current orientation mode*/
-  OrientationType GetOrientationType()
-  { return m_OrientationType; };
+  OrientationType GetOrientationType() const;
 
   /** Retrieve current reslicing mode */
-  ReslicingMode GetReslicingMode()
-  { return m_ReslicingMode; };
+  ReslicingMode GetReslicingMode() const;
 
   /** Request update tool transform WRT reference spatial object coordinate system */
   void RequestUpdateToolTransformWRTImageCoordinateSystem();
@@ -283,22 +281,18 @@ private:
                                               SpatialObject::BoundingBoxType);
 
   /** Cursor position member variables */
-  double               m_CursorPositionToBeSet[3];
-  double               m_CursorPosition[3];
-  bool                 m_CursorPositionSetFlag;
+  double                        m_CursorPositionToBeSet[3];
+  double                        m_CursorPosition[3];
+  bool                          m_CursorPositionSetFlag;
 
-  VectorType           m_ToolPosition;
+  VectorType                    m_ToolPosition;
 
-  double               m_ImageBounds[6];
+  double                        m_Bounds[6];
 
-  BoundingBoxType::Pointer       m_BoundingBox;
-  
-
-  std::vector< VectorType > m_BoundsCenters;
-  std::vector< VectorType > m_BoundsNormals;
- 
+  BoundingBoxType::Pointer      m_BoundingBox;
+   
   /** flag indicating that a tool spatial object for reslicing is set */
-  bool                 m_ToolSpatialObjectSet;
+  bool                          m_ToolSpatialObjectSet;
 
 };
 

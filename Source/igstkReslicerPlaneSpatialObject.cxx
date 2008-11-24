@@ -196,10 +196,33 @@ ReslicerPlaneSpatialObject
   igstkLogMacro( DEBUG,"igstk::ReslicerPlaneSpatialObject\
                        ::RequestSetReslicingMode called...\n");
 
-  m_ReslicingModeToBeSet = reslicingMode;
-  m_StateMachine.PushInput( m_ValidReslicingModeInput );
+  bool validReslicingMode = false;
 
-  //FIXME: Check conditions for InValidReslicing mode
+  if( reslicingMode == Orthogonal )
+    {
+     validReslicingMode = true;
+    }
+
+  if( reslicingMode == OffOrthogonal )
+    {
+     validReslicingMode = true;
+    }
+
+  if( reslicingMode == Oblique )
+    {
+     validReslicingMode = true;
+    }
+
+  if ( validReslicingMode )
+  {
+    m_ReslicingModeToBeSet = reslicingMode;
+    m_StateMachine.PushInput( m_ValidReslicingModeInput );
+  }
+  else
+  {
+    m_StateMachine.PushInput( m_InValidReslicingModeInput );
+  }
+
   m_StateMachine.ProcessInputs();
 }
 
@@ -242,6 +265,26 @@ ReslicerPlaneSpatialObject
   ToolTipPositionEvent event;
   event.Set( m_ToolPosition );
   this->InvokeEvent( event );
+}
+
+ReslicerPlaneSpatialObject::ReslicingMode 
+ReslicerPlaneSpatialObject
+::GetReslicingMode() const
+{ 
+  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
+                        ::GetReslicingMode called...\n");
+
+  return m_ReslicingMode; 
+}
+
+ReslicerPlaneSpatialObject::OrientationType
+ReslicerPlaneSpatialObject
+::GetOrientationType() const
+{ 
+  igstkLogMacro( DEBUG, "igstk::ReslicerPlaneSpatialObject\
+                        ::GetOrientationType called...\n");
+
+  return m_OrientationType; 
 }
 
 void
@@ -290,22 +333,22 @@ ReslicerPlaneSpatialObject
     switch( m_OrientationType )
       {
       case Axial:
-        if( m_CursorPositionToBeSet[2] >= m_ImageBounds[4] && 
-            m_CursorPositionToBeSet[2] <= m_ImageBounds[5] )
+        if( m_CursorPositionToBeSet[2] >= m_Bounds[4] && 
+            m_CursorPositionToBeSet[2] <= m_Bounds[5] )
           {
           validPosition = true;
           }
           break;
       case Sagittal:
-        if( m_CursorPositionToBeSet[0] >= m_ImageBounds[0] && 
-            m_CursorPositionToBeSet[0] <= m_ImageBounds[1] )
+        if( m_CursorPositionToBeSet[0] >= m_Bounds[0] && 
+            m_CursorPositionToBeSet[0] <= m_Bounds[1] )
           {
           validPosition = true;
           }
         break;
       case Coronal:
-        if( m_CursorPositionToBeSet[1] >= m_ImageBounds[2] && 
-            m_CursorPositionToBeSet[1] <= m_ImageBounds[3] )
+        if( m_CursorPositionToBeSet[1] >= m_Bounds[2] && 
+            m_CursorPositionToBeSet[1] <= m_Bounds[3] )
           {
           validPosition = true;
           }
@@ -489,27 +532,27 @@ ReslicerPlaneSpatialObject
 
   const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
 
-  m_ImageBounds[0] = bounds[0];
-  m_ImageBounds[1] = bounds[1];
-  m_ImageBounds[2] = bounds[2];
-  m_ImageBounds[3] = bounds[3];
-  m_ImageBounds[4] = bounds[4];
-  m_ImageBounds[5] = bounds[5];
+  m_Bounds[0] = bounds[0];
+  m_Bounds[1] = bounds[1];
+  m_Bounds[2] = bounds[2];
+  m_Bounds[3] = bounds[3];
+  m_Bounds[4] = bounds[4];
+  m_Bounds[5] = bounds[5];
 
   for ( unsigned int i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
   {
-    if ( m_ImageBounds[i] > m_ImageBounds[i+1] )
+    if ( m_Bounds[i] > m_Bounds[i+1] )
     {
-      double t = m_ImageBounds[i+1];
-      m_ImageBounds[i+1] = m_ImageBounds[i];
-      m_ImageBounds[i] = t;
+      double t = m_Bounds[i+1];
+      m_Bounds[i+1] = m_Bounds[i];
+      m_Bounds[i] = t;
     }
   }
 
   // we start in the middle of the bounding box
-  m_ToolPosition[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-  m_ToolPosition[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-  m_ToolPosition[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+  m_ToolPosition[0] = 0.5*(m_Bounds[0] + m_Bounds[1]);
+  m_ToolPosition[1] = 0.5*(m_Bounds[2] + m_Bounds[3]);
+  m_ToolPosition[2] = 0.5*(m_Bounds[4] + m_Bounds[5]);
   
   m_PlaneCenter[0] = m_ToolPosition[0];
   m_PlaneCenter[1] = m_ToolPosition[1];
@@ -697,8 +740,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 0.0;
               m_PlaneNormal[2] = 1.0;
 
-              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
-              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
+              m_PlaneCenter[0] = 0.5*(m_Bounds[0]+m_Bounds[1]);
+              m_PlaneCenter[1] = 0.5*(m_Bounds[2]+m_Bounds[3]);
 
               break;
             }
@@ -709,8 +752,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 0.0;
               m_PlaneNormal[2] = 0.0;
 
-              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);
-              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+              m_PlaneCenter[1] = 0.5*(m_Bounds[2]+m_Bounds[3]);
+              m_PlaneCenter[2] = 0.5*(m_Bounds[4]+m_Bounds[5]);
 
               break;
             }
@@ -721,8 +764,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 1.0;
               m_PlaneNormal[2] = 0.0;
 
-              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
-              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+              m_PlaneCenter[0] = 0.5*(m_Bounds[0]+m_Bounds[1]);
+              m_PlaneCenter[2] = 0.5*(m_Bounds[4]+m_Bounds[5]);
 
               break;
             }
@@ -745,8 +788,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 0.0;
               m_PlaneNormal[2] = 1.0;
 
-              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
+              m_PlaneCenter[0] = 0.5*(m_Bounds[0] + m_Bounds[1]);
+              m_PlaneCenter[1] = 0.5*(m_Bounds[2] + m_Bounds[3]);
               
               if ( m_CursorPositionSetFlag )
               {
@@ -762,8 +805,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 0.0;
               m_PlaneNormal[2] = 0.0;
 
-              m_PlaneCenter[1] = 0.5*(m_ImageBounds[2] + m_ImageBounds[3]);
-              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);              
+              m_PlaneCenter[1] = 0.5*(m_Bounds[2] + m_Bounds[3]);
+              m_PlaneCenter[2] = 0.5*(m_Bounds[4] + m_Bounds[5]);              
 
               if ( m_CursorPositionSetFlag )
               {
@@ -779,8 +822,8 @@ ReslicerPlaneSpatialObject
               m_PlaneNormal[1] = 1.0;
               m_PlaneNormal[2] = 0.0;
 
-              m_PlaneCenter[0] = 0.5*(m_ImageBounds[0] + m_ImageBounds[1]);
-              m_PlaneCenter[2] = 0.5*(m_ImageBounds[4] + m_ImageBounds[5]);
+              m_PlaneCenter[0] = 0.5*(m_Bounds[0] + m_Bounds[1]);
+              m_PlaneCenter[2] = 0.5*(m_Bounds[4] + m_Bounds[5]);
 
               if ( m_CursorPositionSetFlag )
               {
@@ -912,7 +955,7 @@ ReslicerPlaneSpatialObject
         vn = itk::CrossProduct( v1, vn );
         vn.Normalize();
 
-        m_PlaneCenter[0] = 0.5*(m_ImageBounds[0]+m_ImageBounds[1]);
+        m_PlaneCenter[0] = 0.5*(m_Bounds[0]+m_Bounds[1]);
 
         m_PlaneNormal = vn;
         break;
@@ -935,7 +978,7 @@ ReslicerPlaneSpatialObject
 
         m_PlaneNormal = vn;
 
-        m_PlaneCenter[2] = 0.5*(m_ImageBounds[4]+m_ImageBounds[5]);
+        m_PlaneCenter[2] = 0.5*(m_Bounds[4]+m_Bounds[5]);
         
         break;
       }
@@ -956,7 +999,7 @@ ReslicerPlaneSpatialObject
 
         m_PlaneNormal = vn;
 
-        m_PlaneCenter[1] = 0.5*(m_ImageBounds[2]+m_ImageBounds[3]);        
+        m_PlaneCenter[1] = 0.5*(m_Bounds[2]+m_Bounds[3]);        
 
         break;
       }      
@@ -1028,6 +1071,76 @@ ReslicerPlaneSpatialObject
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "Plane normal" << std::endl;
+  os << indent << m_PlaneNormal[0] << " " << m_PlaneNormal[1] << " " << m_PlaneNormal[2] << " " << std::endl;
+  os << indent << "Plane center" << std::endl;
+  os << indent << m_PlaneCenter[0] << " " << m_PlaneCenter[1] << " " << m_PlaneCenter[2] << " " << std::endl;
+  os << indent << "Tool spatial object set?" << std::endl;
+  os << indent << m_ToolSpatialObjectSet << std::endl;
+  os << indent << "Tool position" << std::endl;
+  os << indent << m_ToolPosition[0] << " " << m_ToolPosition[1] << " " << m_ToolPosition[2] << " " << std::endl;
+  os << indent << "Cursor position" << std::endl;
+  os << indent << m_CursorPosition[0] << " " << m_CursorPosition[1] << " " << m_CursorPosition[2] << " " << std::endl;  
+  os << indent << "Bounding box:" << std::endl;
+  os << indent << "x: " << m_Bounds[0] << " " << m_Bounds[1] << std::endl;
+  os << indent << "y: " << m_Bounds[2] << " " << m_Bounds[3] << std::endl;
+  os << indent << "z: " << m_Bounds[4] << " " << m_Bounds[5] << std::endl;
+
+  os << indent << "Reslicing mode:" << std::endl;
+
+  if( m_ReslicingMode == Orthogonal )
+  {
+  os << indent << "Orthogonal" << std::endl;
+  }
+  if( m_ReslicingMode == OffOrthogonal )
+  {
+  os << indent << "OffOrthogonal" << std::endl;
+  }
+  if( m_ReslicingMode == Oblique )
+  {
+  os << indent << "Oblique" << std::endl;
+  }
+
+  os << indent << "Orientation type:" << std::endl;
+
+  if( m_OrientationType == Axial )
+  {
+  os << indent << "Axial" << std::endl;
+  }
+  if( m_OrientationType == Sagittal )
+  {
+  os << indent << "Sagittal" << std::endl;
+  }
+  if( m_OrientationType == Coronal )
+  {
+  os << indent << "Coronal" << std::endl;
+  }
+
+  if( m_OrientationType == OffAxial )
+  {
+  os << indent << "OffAxial" << std::endl;
+  }
+  if( m_OrientationType == OffSagittal )
+  {
+  os << indent << "OffSagittal" << std::endl;
+  }
+  if( m_OrientationType == OffCoronal )
+  {
+  os << indent << "OffCoronal" << std::endl;
+  }
+  
+  if( m_OrientationType == PlaneOrientationWithZAxesNormal )
+  {
+  os << indent << "PlaneOrientationWithZAxesNormal" << std::endl;
+  }
+  if( m_OrientationType == PlaneOrientationWithXAxesNormal )
+  {
+  os << indent << "PlaneOrientationWithXAxesNormal" << std::endl;
+  }
+  if( m_OrientationType == PlaneOrientationWithYAxesNormal )
+  {
+  os << indent << "PlaneOrientationWithYAxesNormal" << std::endl;
+  }
 }
 
 } // end namespace igstk

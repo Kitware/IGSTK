@@ -96,12 +96,6 @@ public:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 
-  /** Get each frame color component */
-  ColorScalarType GetFrameRed() const; 
-  ColorScalarType GetFrameGreen() const;
-  ColorScalarType GetFrameBlue() const;
-
-
 protected:
 
   /** Constructor */
@@ -115,6 +109,11 @@ protected:
 
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
+
+  /** Get each frame color component */
+  ColorScalarType GetFrameRed() const; 
+  ColorScalarType GetFrameGreen() const;
+  ColorScalarType GetFrameBlue() const;
 
   /** Verify time stamp. Use the reslicing tool transform to verify 
   * the time stamp */
