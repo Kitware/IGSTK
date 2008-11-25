@@ -6,18 +6,21 @@
 
 namespace igstk
 {
-  
+/**
+ * \class MicronConfigurationXMLFileReader This class is used to read the xml
+ *        configuration file for Claron Technology Inc. Micron tracker.
+ */  
 class MicronConfigurationXMLFileReader : 
    public TrackerConfigurationXMLFileReaderBase 
 {
 public:
 
-    //standard typedefs
+  //standard typedefs
   typedef MicronConfigurationXMLFileReader          Self;
   typedef TrackerConfigurationXMLFileReaderBase     Superclass;
   typedef itk::SmartPointer<Self>                   Pointer;
 
-           //run-time type information (and related methods)
+  //run-time type information (and related methods)
   itkTypeMacro( MicronConfigurationXMLFileReader, 
                 TrackerConfigurationXMLFileReaderBase );
 
@@ -55,24 +58,19 @@ protected:
   virtual double GetMaximalRefreshRate();
   virtual std::string GetSystemType();
 
-          //this is the constructor that is called by the factory to 
-         //create a new object
-  MicronConfigurationXMLFileReader() : 
-         TrackerConfigurationXMLFileReaderBase()
-         {}
+  //this is the constructor that is called by the factory to 
+  //create a new object
+  MicronConfigurationXMLFileReader() : TrackerConfigurationXMLFileReaderBase()
+  { }
   virtual ~MicronConfigurationXMLFileReader() {}
 
-  void ProcessMicronCalibrationDirectory() 
-    throw ( FileFormatException );
+  void ProcessMicronCalibrationDirectory() throw ( FileFormatException );
 
-  void ProcessMicronInitializationFile() 
-    throw ( FileFormatException );
+  void ProcessMicronInitializationFile() throw ( FileFormatException );
 
-  void ProcessMicronTemplatesDirectory() 
-    throw ( FileFormatException );
+  void ProcessMicronTemplatesDirectory() throw ( FileFormatException );
 
-  virtual void ProcessToolData() 
-    throw ( FileFormatException );
+  virtual void ProcessToolData() throw ( FileFormatException );
 
   std::string m_MicronCalibrationDirectory;
   std::string m_MicronInitializationFile;
