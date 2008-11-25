@@ -2856,9 +2856,7 @@ void Navigator::StopTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::StopTrackingProcessing called...\n" )
 
-/*
-  //fix me
-  m_TrackerController->RequestStop( );
+  m_TrackerController->RequestStopTracking( );
                //check that stop was successful
   if( m_TrackerControllerObserver->Error() )
   {
@@ -2873,7 +2871,7 @@ void Navigator::StopTrackingProcessing()
     m_StateMachine.ProcessInputs();
     return;
   }
-*/
+
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
   return;
@@ -3841,6 +3839,7 @@ void
 Navigator
 ::RequestPrepareToQuit()
 {
+  this->RequestStopTracking();
   this->RequestDisconnectTracker();
 }
 
