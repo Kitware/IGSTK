@@ -25,7 +25,9 @@ namespace igstk
 
 
 /**
- * An Aurora tool. By default the tool is assumed to be a 6DOF tool connected to
+ * \class AuroraToolConfiguration This class represents the configuration data
+ *        required by an Aurora tool. 
+ * By default the tool is assumed to be a 6DOF tool connected to
  * the control box on physical port 1. To indicate that the tool is a 5DOF tool
  * the user sets the tool's channel which has the side effect of indicating that
  * the tool is a 5DOF tool.
@@ -60,34 +62,34 @@ public:
   virtual std::string GetToolTypeAsString();
 
 protected:
-        //physical port to which the wired tool is attached
-  unsigned m_PortNumber;
+  //physical port to which the wired tool is attached
+  unsigned     m_PortNumber;
 
-              //if this is a five degree of freedom tool it can be attached to
-              //the toolbox with a splitter that supports two 5DOF tools on a 
-              //single port, we then have to specify the channel [0,1]
-  unsigned m_ChannelNumber;
+  //if this is a five degree of freedom tool it can be attached to
+  //the toolbox with a splitter that supports two 5DOF tools on a 
+  //single port, we then have to specify the channel [0,1]
+  unsigned     m_ChannelNumber;
 
-  bool m_Is5DOF;
+  bool         m_Is5DOF;
 
-        //SROM file to use with the tool, required for wireless, optional for
-        //wired
-  std::string m_SROMFile;
+  //SROM file to use with the tool, required for wireless, optional for
+  //wired
+  std::string  m_SROMFile;
 };
 
 
-
 /**
- * Configuration for the Aurora tracker.
+ * \class AuroraTrackerConfiguration This class represents the configuration 
+ *        data required by the Aurora tracker.
  */
 class AuroraTrackerConfiguration : 
   public SerialCommunicatingTrackerConfiguration
 {
 public:
-          //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( AuroraTrackerConfiguration, 
                                       SerialCommunicatingTrackerConfiguration )
-         //method for creation through the object factory
+  //method for creation through the object factory
   igstkNewMacro( Self );
 
   /**
@@ -104,17 +106,15 @@ protected:
                                 bool isReference );
 
 private:
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 
-                   //maximal number of physical ports 
+  //maximal number of physical ports 
   static const unsigned MAXIMAL_PORT_NUMBER;
 
-                   //maximal channel number on port
+  //maximal channel number on port
   static const unsigned MAXIMAL_CHANNEL_NUMBER;
 };
-
-
 
 } // end of name space
 #endif
