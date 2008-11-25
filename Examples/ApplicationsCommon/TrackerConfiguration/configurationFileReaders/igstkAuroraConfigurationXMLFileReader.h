@@ -7,12 +7,16 @@
 
 namespace igstk
 {
+/**
+ * \class AuroraConfigurationXMLFileReader This class is used to read the xml
+ *        configuration file for NDI's Aurora tracker.
+ */
 class AuroraConfigurationXMLFileReader : 
    public SerialCommunicatingTrackerConfigurationXMLFileReader 
 {
 public:
 
-    //standard typedefs
+  //standard typedefs
   typedef AuroraConfigurationXMLFileReader                        Self;
   typedef SerialCommunicatingTrackerConfigurationXMLFileReader    Superclass;
   typedef itk::SmartPointer<Self>                                 Pointer;
@@ -47,40 +51,36 @@ public:
    * Return a pointer to the object containing the configuration data.
    */
   virtual const igstk::TrackerConfiguration::Pointer 
-    GetTrackerConfigurationData() throw ( FileFormatException );
-
+  GetTrackerConfigurationData() throw ( FileFormatException );
 
 protected:
           //this is the constructor that is called by the factory to 
          //create a new object
   AuroraConfigurationXMLFileReader() : 
-    SerialCommunicatingTrackerConfigurationXMLFileReader(),     
-    m_HaveCurrentControlBoxPort( false ),
-    m_HaveCurrentControlBoxChannel( false )    
-         {}
-  virtual ~AuroraConfigurationXMLFileReader() {}
+  SerialCommunicatingTrackerConfigurationXMLFileReader(),
+  m_HaveCurrentControlBoxPort( false ),
+  m_HaveCurrentControlBoxChannel( false ) { }
 
-  void ProcessSromFile() 
-    throw ( FileFormatException );
+  virtual ~AuroraConfigurationXMLFileReader() { }
 
-  void ProcessControlBoxPort() 
-    throw ( FileFormatException );
+  void ProcessSromFile() throw ( FileFormatException );
 
-  void ProcessControlBoxChannel() 
-    throw ( FileFormatException );
+  void ProcessControlBoxPort() throw ( FileFormatException );
 
-  virtual void ProcessToolData() 
-    throw ( FileFormatException );
+  void ProcessControlBoxChannel() throw ( FileFormatException );
+
+  virtual void ProcessToolData() throw ( FileFormatException );
 
   virtual double GetMaximalRefreshRate();
+
   virtual std::string GetSystemType();
 
-  std::string m_CurrentSromFileName;
-  unsigned int m_CurrentControlBoxPort;
-  unsigned int m_CurrentControlBoxChannel;
+  std::string   m_CurrentSromFileName;
+  unsigned int  m_CurrentControlBoxPort;
+  unsigned int  m_CurrentControlBoxChannel;
 
-  bool m_HaveCurrentControlBoxPort;
-  bool m_HaveCurrentControlBoxChannel;
+  bool          m_HaveCurrentControlBoxPort;
+  bool          m_HaveCurrentControlBoxChannel;
 
 private:
   AuroraConfigurationXMLFileReader( 
