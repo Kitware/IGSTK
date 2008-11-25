@@ -99,9 +99,9 @@ class UltrasoundNavigatorGUI {open : {public igstk::Object}
             callback {RequestToggleRunVideo();}
             tooltip {run/stop US tracking} xywh {29 543 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
           }
-          Fl_Button m_ConfigureVideoButton {
-            label Configure
-            callback {RequestConfigureVideo();}
+          Fl_Button m_ConnectVideoButton {
+            label Connect
+            callback {RequestToogleConnectVideo();}
             tooltip {Configure US tracking} xywh {30 509 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
           }
           Fl_Button m_ToggleEnableVideoButton {
@@ -227,8 +227,7 @@ this->RequestRejectRegistration();}
   }
   Function {~UltrasoundNavigatorGUI()} {open
   } {
-    code {delete m_ViewerGroup;} {selected
-    }
+    code {delete m_ViewerGroup;} {}
   }
   decl {clock_t  m_SplashScreenStartTime;} {}
   decl {bool hasQuitted;} {}
@@ -295,7 +294,7 @@ childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
   }
   Function {RequestToggleEnableVideo()} {open return_type {virtual void}
   } {}
-  Function {RequestConfigureVideo()} {open return_type {virtual void}
+  Function {RequestToogleConnectVideo()} {open selected return_type {virtual void}
   } {}
   Function {RequestToggleRunVideo()} {open return_type {virtual void}
   } {}

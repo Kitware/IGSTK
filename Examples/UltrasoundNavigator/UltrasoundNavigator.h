@@ -166,7 +166,11 @@ public:
   void EnableVideo();
   void DisableVideo();
 
+  void ConnectVideo();
+  void DisconnectVideo();
+
   virtual void RequestToggleEnableVideo();
+  virtual void RequestToogleConnectVideo();
 //  virtual void RequestToggleRunVideo();
 
   /**
@@ -311,6 +315,7 @@ private:
   /** DICOM image observers */
   ImageObserver::Pointer                                m_ImageObserver;
 
+  /** Container with points collected in the registration */
   LandmarkPointContainerType                            m_CandidateLandmarks;
 
   std::string                                           m_ImageDir;
@@ -324,6 +329,7 @@ private:
 
   double                                                m_TrackerRMS;
   bool                                                  m_VideoEnabled;
+  bool                                                  m_VideoConnected;
   
   bool                                                  m_ImagePlanesIn3DViewEnabled;
   bool                                                  m_ModifyImageFiducialsEnabled;
@@ -349,11 +355,11 @@ private:
   CrossHairType::Pointer                                m_CrossHair;
 
   /** tool projection representations */
-  ToolProjectionRepresentationType::Pointer             m_CTView1ToolProjectionRepresentation;
   ToolProjectionRepresentationType::Pointer             m_CTView2ToolProjectionRepresentation;
 
   /** cross hair representation */
-  CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
+  CrossHairRepresentationType::Pointer                  m_CrossHairRepresentationForCTView2;
+  CrossHairRepresentationType::Pointer                  m_CrossHairRepresentationFor3DView;
 
   /** a vector of mesh spatial objects */
   std::vector< MeshType::Pointer >                      m_MeshVector;

@@ -44,11 +44,11 @@ UltrasoundNavigatorQuadrantViews::UltrasoundNavigatorQuadrantViews(int X, int Y,
   typedef igstk::FLTKWidget   WidgetType;
 
   // top left view
-  m_CTWidget1    = new WidgetType(X, Y, m_WW, m_HH, "Display 0");
+  m_CTWidget1    = new WidgetType(X, Y, m_WW, m_HH+N, "Display 0");
   // top right
   m_CTWidget2    = new WidgetType(X+m_WW+C, Y, m_WW, m_HH, "Display 1");
   // bottom left
-  m_VideoWidget  = new WidgetType(X, Y+m_HH+N, m_WW, m_HH, "Display 2");
+  m_VideoWidget  = new WidgetType(X, Y+m_HH+N, m_WW, m_HH+N, "Display 2");
   // botom right
   m_3DWidget     = new WidgetType(X+m_WW+C, Y+m_HH+N, m_WW, m_HH+N, "Display 3");       
 

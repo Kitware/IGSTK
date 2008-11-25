@@ -54,8 +54,9 @@ UltrasoundNavigator::UltrasoundNavigator() :
 
   /** member variables initialization */
   m_ImageDir = "";
-  m_ImagePlanesIn3DViewEnabled = true;
+  m_ImagePlanesIn3DViewEnabled = false;
   m_VideoEnabled = false;
+  m_VideoConnected = false;
   m_ModifyImageFiducialsEnabled = false;
   m_TrackerRMS = 0.0;
   m_WindowWidth = 542;
@@ -1626,8 +1627,28 @@ void UltrasoundNavigator::RequestToggleEnableVideo()
 
 }
 
+void UltrasoundNavigator::RequestToogleConnectVideo()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::RequestToggleConnectVideo called...\n" )
+
+  if (m_VideoConnected)
+  {
+    this->DisconnectVideo();
+  }
+  else
+  {
+    this->ConnectVideo();
+  }
+
+  m_VideoConnected = !m_VideoConnected;
+
+}
+
 void UltrasoundNavigator::EnableVideo()
 {
+  // we put here stuff that we want to do once
+  // fixme: set a proper state machine action
   if (m_VideoFrame.IsNull())
   {
     this->RequestLoadImagerToolSpatialObject();
@@ -1637,6 +1658,8 @@ void UltrasoundNavigator::EnableVideo()
   {
     m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
     m_ViewerGroup->m_3DView->RequestAddObject( m_VideoFrameRepresentationFor3DView );
+    m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ImageRepresentation );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ImageRepresentation2 );
     
     m_ViewerGroup->m_VideoView->RequestAddObject( m_ImagerToolRepresentationForVideoView );
     m_ViewerGroup->m_3DView->RequestAddObject( m_ImagerToolRepresentationFor3DView );
@@ -1645,14 +1668,15 @@ void UltrasoundNavigator::EnableVideo()
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
-  m_ConfigureVideoButton->activate();
-  m_ToggleEnableVideoButton->label("Disable video");
+  m_ConnectVideoButton->activate();
 }
 
 void UltrasoundNavigator::DisableVideo()
 {
   m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
   m_ViewerGroup->m_3DView->RequestRemoveObject( m_VideoFrameRepresentationFor3DView );
+  m_ViewerGroup->m_CTView1->RequestRemoveObject( m_CTView1ImageRepresentation );
+  m_ViewerGroup->m_3DView->RequestRemoveObject( m_CTView1ImageRepresentation2 );
   
   m_ViewerGroup->m_VideoView->RequestRemoveObject( m_ImagerToolRepresentationForVideoView );
   m_ViewerGroup->m_3DView->RequestRemoveObject( m_ImagerToolRepresentationFor3DView );
@@ -1660,8 +1684,17 @@ void UltrasoundNavigator::DisableVideo()
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
   
-  m_ConfigureVideoButton->deactivate();
-  m_ToggleEnableVideoButton->label("Enable video");
+  m_ConnectVideoButton->deactivate();
+}
+
+void UltrasoundNavigator::DisconnectVideo()
+{
+
+}
+
+void UltrasoundNavigator::ConnectVideo()
+{
+
 }
 
 void UltrasoundNavigator::RequestToggleSetImageFiducials()
@@ -1773,7 +1806,6 @@ void UltrasoundNavigator::RequestToggleOrthogonalPlanes()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "UltrasoundNavigator::RequestToggleOrthogonalPlanes called...\n" )
   
-  m_ImagePlanesIn3DViewEnabled = !m_ImagePlanesIn3DViewEnabled;
   if (m_ImagePlanesIn3DViewEnabled)
   {
     this->AddImagePlanesTo3DView();
@@ -1782,6 +1814,8 @@ void UltrasoundNavigator::RequestToggleOrthogonalPlanes()
   {
     this->RemoveImagePlanesTo3DView();
   }
+
+  m_ImagePlanesIn3DViewEnabled = !m_ImagePlanesIn3DViewEnabled;
 }
 
 void UltrasoundNavigator::RequestDisconnectTracker()
@@ -2110,13 +2144,6 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
 
-  // setup tool projection representation for CTView1
-  m_CTView1ToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_CTView1ToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_CTView1ToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );
-  m_CTView1ToolProjectionRepresentation->SetColor( 1,1,0 );
-  m_CTView1ToolProjectionRepresentation->SetLineWidth( 2 );
-
   // setup tool projection representation for CTView2
   m_CTView2ToolProjectionRepresentation = ToolProjectionRepresentationType::New();
   m_CTView2ToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
@@ -2128,7 +2155,6 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
 
   // add tool projection to the 2D views
-  m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ToolProjectionRepresentation );
   m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2ToolProjectionRepresentation );
 
   // reset camera in all views
@@ -2277,7 +2303,7 @@ UltrasoundNavigator::ReportSuccessStopTrackingProcessing()
   //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
   //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
   
-  Fl::check();
+//  Fl::check();
 }
 
 
@@ -2316,7 +2342,6 @@ void UltrasoundNavigator::LoadImageProcessing()
    m_ProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnITKProgressEvent );
 
    m_ImageReader->RequestSetDirectory( directoryName );
-
 
    // Provide a progress observer to the image reader      
    m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
@@ -2530,8 +2555,41 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
    igstk::Transform identity;
    identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
+   // set imager tool spatial object as child of imager tool
    m_ImagerToolSpatialObject->RequestDetachFromParent();
    m_ImagerToolSpatialObject->RequestSetTransformAndParent( identity, m_ImagerTool );  
+
+   // create reslice plane spatial object for CTView1
+   m_CTView1PlaneSpatialObject = ReslicerPlaneType::New();
+   // todo: change to Oblique
+   m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal ); 
+   // todo: change to PlaneOrientationWithXAxesNormal
+   m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+   m_CTView1PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+
+   // create reslice plane representation for axial view
+   m_CTView1ImageRepresentation = ImageRepresentationType::New();
+   m_CTView1ImageRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
+   m_CTView1ImageRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );
+
+   //
+   m_CTView1PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
+   // add reslice plane representation to the 2D view
+   m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ImageRepresentation );
+
+   // add reslice plane representations to the 3D view
+   m_CTView1ImageRepresentation2 = m_CTView1ImageRepresentation->Copy();
+   m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ImageRepresentation2 );
+
+   // make the CTView1 child of CTView1 reslicer plane spatial object
+   m_ViewerGroup->m_CTView1->RequestSetTransformAndParent(
+      identity, m_CTView1PlaneSpatialObject );
+
+   // make the VideoView also child of CTView1 reslicer plane spatial object
+   // todo: see if it's better to set the video view as child of video frame spatial object
+   m_ViewerGroup->m_VideoView->RequestSetTransformAndParent(
+      identity, m_ImagerToolSpatialObject );
 
    // set the imager tool spatial object as the driver of the CTView1 plane
    m_CTView1PlaneSpatialObject->RequestSetToolSpatialObject( m_ImagerToolSpatialObject );  
@@ -2554,12 +2612,44 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
    m_VideoFrame->SetNumberOfScalarComponents(1);
    m_VideoFrame->Initialize();
 
-   m_VideoFrame->RequestSetTransformAndParent( identity, m_CTView1PlaneSpatialObject );
+   // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to 
+   // ultrasound calibration
+   m_VideoFrame->RequestSetTransformAndParent( identity, m_ImagerToolSpatialObject );
 
+   // create a video frame representation for the video view
    m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
    m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
 
+   // create a video frame representation for the 3D view
    m_VideoFrameRepresentationFor3DView = m_VideoFrameRepresentationForVideoView->Copy();
+
+   // setup CTView1
+   m_ViewerGroup->m_CTView1->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+   m_ViewerGroup->m_CTWidget1->RequestEnableInteractions();  
+   m_ViewerGroup->m_CTView1->RequestStart();
+
+   // setup Video
+   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();  
+   m_ViewerGroup->m_VideoView->RequestStart();
+
+   //add picking observer to CTView1
+   m_CTView1PickerObserver = LoadedObserverType::New();
+   m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
+   m_ViewerGroup->m_CTView1->AddObserver(
+      igstk::CoordinateSystemTransformToEvent(), m_CTView1PickerObserver );
+
+   //add picking observer to video view
+   m_VideoViewPickerObserver = LoadedObserverType::New();
+   m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
+   m_ViewerGroup->m_VideoView->AddObserver(
+      igstk::CoordinateSystemTransformToEvent(), m_VideoViewPickerObserver );
+
+
+   //finally, reset cameras
+   m_ViewerGroup->m_CTView1->RequestResetCamera();
+   m_ViewerGroup->m_VideoView->RequestResetCamera();
+   m_ViewerGroup->m_3DView->RequestResetCamera();
 
    m_StateMachine.PushInput( m_SuccessInput);
    m_StateMachine.ProcessInputs();
@@ -2571,7 +2661,7 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
 * Any number of meshes can be loaded. Both, spatial object and representation 
 * will be kept in a vector.
 * -----------------------------------------------------------------
-*/
+*/  
 void UltrasoundNavigator::LoadMeshProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -2746,7 +2836,6 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
       const double *data = point.GetVnlVector().data_block();
 
       m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
-//      m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
       m_CrossHair->RequestSetCursorPosition( data );
 
       this->ResliceImage( index );
@@ -3115,9 +3204,7 @@ void UltrasoundNavigator::StopTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "UltrasoundNavigator::StopTrackingProcessing called...\n" )
 
-/*
-  //fix me
-  m_TrackerController->RequestStop( );
+  m_TrackerController->RequestStopTracking( );
                //check that stop was successful
   if( m_TrackerControllerObserver->Error() )
   {
@@ -3132,7 +3219,7 @@ void UltrasoundNavigator::StopTrackingProcessing()
     m_StateMachine.ProcessInputs();
     return;
   }
-*/
+
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
   return;
@@ -3212,22 +3299,11 @@ void UltrasoundNavigator::ConnectImageRepresentation()
     m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
   }  
 
-  // create reslice plane spatial object for CTView1
-  m_CTView1PlaneSpatialObject = ReslicerPlaneType::New();
-  m_CTView1PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_CTView1PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  m_CTView1PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
-
   // create reslice plane spatial object for CTView2
   m_CTView2PlaneSpatialObject = ReslicerPlaneType::New();
   m_CTView2PlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
   m_CTView2PlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   m_CTView2PlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
-
-  // create reslice plane representation for axial view
-  m_CTView1ImageRepresentation = ImageRepresentationType::New();
-  m_CTView1ImageRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CTView1ImageRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView1PlaneSpatialObject );
 
   // create reslice plane representation for sagittal view
   m_CTView2ImageRepresentation = ImageRepresentationType::New();
@@ -3278,15 +3354,15 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_CrossHair->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
   // buid the cross hair representation and add the cross hair object
-  m_CrossHairRepresentation = CrossHairRepresentationType::New();
-  m_CrossHairRepresentation->SetColor(0,1,0);
-  m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
+  m_CrossHairRepresentationForCTView2 = CrossHairRepresentationType::New();
+  m_CrossHairRepresentationForCTView2->SetColor(0,1,0);
+  m_CrossHairRepresentationForCTView2->RequestSetCrossHairObject( m_CrossHair );
+
+  m_CrossHairRepresentationFor3DView = m_CrossHairRepresentationForCTView2->Copy();
 
   // add the cross hair representation to the different views
-  m_ViewerGroup->m_CTView2->RequestAddObject( m_CrossHairRepresentation->Copy() );
-//  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-//  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
+  m_ViewerGroup->m_CTView2->RequestAddObject( m_CrossHairRepresentationForCTView2 );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentationFor3DView );
 
   // set background color to the views
   m_ViewerGroup->m_CTView1->SetRendererBackgroundColor(0,0,0);
@@ -3319,21 +3395,16 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
   // set transform and parent to the image plane reslice spatial objects
-  m_CTView1PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+
   m_CTView2PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
   /* important: we set the 2D views as child of correpsponding reslicing planes
   * so that they can "follow" the plane and always face their normals (the camera position
   * in the views is not changed though)
   */
-  m_ViewerGroup->m_CTView1->RequestSetTransformAndParent(
-      identity, m_CTView1PlaneSpatialObject );
 
   m_ViewerGroup->m_CTView2->RequestSetTransformAndParent(
       identity, m_CTView2PlaneSpatialObject );
-
-  m_ViewerGroup->m_VideoView->RequestSetTransformAndParent(
-      identity, m_CTView1PlaneSpatialObject );
 
   m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
       identity, m_WorldReference );
@@ -3348,12 +3419,7 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );  
 
   // add reslice plane representations to the orthogonal views
-  m_ViewerGroup->m_CTView1->RequestAddObject( m_CTView1ImageRepresentation );
   m_ViewerGroup->m_CTView2->RequestAddObject( m_CTView2ImageRepresentation );
-
-  // add reslice plane representations to the 3D views
-  m_CTView1ImageRepresentation2 = m_CTView1ImageRepresentation->Copy();
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CTView1ImageRepresentation2 );
 
   m_CTView2ImageRepresentation2 = m_CTView2ImageRepresentation->Copy();
   m_ViewerGroup->m_3DView->RequestAddObject( m_CTView2ImageRepresentation2 );
@@ -3371,10 +3437,6 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
   // set up view parameters
 
-  m_ViewerGroup->m_CTView1->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-  m_ViewerGroup->m_CTWidget1->RequestEnableInteractions();  
-  m_ViewerGroup->m_CTView1->RequestStart();
-
   m_ViewerGroup->m_CTView2->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_CTWidget2->RequestEnableInteractions();  
   m_ViewerGroup->m_CTView2->RequestStart();
@@ -3383,28 +3445,16 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   //m_ViewerGroup->m_3DView->RequestAddOrientationBox();
   m_ViewerGroup->m_3DView->RequestStart();
 
-
   //m_ViewerGroup->m_AxialView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_SagittalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_CoronalView->SetRectangleEnabled(true);
   //m_ViewerGroup->m_3DView->SetRectangleEnabled(true);
 
-  // setup picking event observe on the views
-  m_CTView1PickerObserver = LoadedObserverType::New();
-  m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
-  m_ViewerGroup->m_CTView1->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_CTView1PickerObserver );
-
+  // setup picking event observe on CTView1
   m_CTView2PickerObserver = LoadedObserverType::New();
   m_CTView2PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView2PickingCallback );
   m_ViewerGroup->m_CTView2->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CTView2PickerObserver );
-
-  m_VideoViewPickerObserver = LoadedObserverType::New();
-  m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
-  m_ViewerGroup->m_VideoView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_VideoViewPickerObserver );
-
 
   /** Adding observer for slider bar reslicing event */
   m_ManualReslicingObserver = LoadedObserverType::New();
@@ -3597,11 +3647,10 @@ void UltrasoundNavigator::RequestChangeSelectedFiducial()
   {
     ImageSpatialObjectType::IndexType index;
     m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-
     const double *data = point.GetVnlVector().data_block();
 
     m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
-//    m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
+
     m_CrossHair->RequestSetCursorPosition( data );
     this->ResliceImage( index );
   }
@@ -3636,7 +3685,6 @@ void UltrasoundNavigator::ResliceImageCallback( const itk::EventObject & event )
 
     PointType point;
     m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-
     const double *data = point.GetVnlVector().data_block();
 
     m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
@@ -3698,7 +3746,7 @@ void UltrasoundNavigator::CTView1PickingCallback( const itk::EventObject & event
     unsigned int obsId = m_CTView1PlaneSpatialObject->AddObserver( 
       igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
 
-    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_ImageSpatialObject );
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
@@ -3745,7 +3793,7 @@ void UltrasoundNavigator::CTView2PickingCallback( const itk::EventObject & event
     unsigned int obsId = m_CTView2PlaneSpatialObject->AddObserver( 
       igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
 
-    m_CTView2PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+    m_CTView2PlaneSpatialObject->RequestComputeTransformTo( m_ImageSpatialObject );
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
@@ -3793,7 +3841,7 @@ void UltrasoundNavigator::VideoViewPickingCallback( const itk::EventObject & eve
     unsigned int obsId = m_CTView1PlaneSpatialObject->AddObserver( 
       igstk::CoordinateSystemTransformToEvent(), coordinateObserver );
 
-    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_WorldReference );
+    m_CTView1PlaneSpatialObject->RequestComputeTransformTo( m_ImageSpatialObject );
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
@@ -3825,11 +3873,17 @@ void UltrasoundNavigator::HandleMousePressed (
 
     m_WindowLevel += mouseCommand.dy * 2;
 
-    m_CTView1ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CTView2ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    if ( m_CTView1ImageRepresentation.IsNotNull() )
+      m_CTView1ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 
-    m_CTView1ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CTView2ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    if ( m_CTView2ImageRepresentation.IsNotNull() )
+      m_CTView2ImageRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+
+    if ( m_CTView1ImageRepresentation2.IsNotNull() )
+      m_CTView1ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+
+    if ( m_CTView2ImageRepresentation2.IsNotNull() )
+      m_CTView2ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 
 }
 
@@ -4122,6 +4176,7 @@ void
 UltrasoundNavigator
 ::RequestPrepareToQuit()
 {
+  this->RequestStopTracking();
   this->RequestDisconnectTracker();
 }
 
