@@ -22,11 +22,13 @@
 
     <tool>
       <name> bayonetProbe </name> 
+      <marker_name> t1 </marker_name> 
       <calibration_file>E:/users/zivy/bayonetCalibration.xml</calibration_file>
     </tool>
 
     <tool>
       <name> usProbe </name> 
+      <marker_name> t2 </marker_name> 
       <calibration_file>E:/users/zivy/USCalibration.xml</calibration_file>
     </tool>
 
