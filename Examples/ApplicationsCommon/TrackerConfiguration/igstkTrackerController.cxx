@@ -1656,7 +1656,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
 {
   MicronTrackerTool::Pointer trackerTool = MicronTrackerTool::New();
  
-  trackerTool->RequestSetMarkerName( toolConfiguration->GetToolName() );
+  trackerTool->RequestSetMarkerName( toolConfiguration->GetMarkerName() );
  
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
