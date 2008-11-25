@@ -54,52 +54,52 @@ AuroraTrackerConfiguration::InternalAddTool(
   unsigned int newChannelNumber = wiredTool->GetChannelNumber();
 
   if( wiredTool == NULL )
-  {
+    {
     fe.Set( "Given tool configuration type not compatible with tracker type." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( newPortNumber > this->MAXIMAL_PORT_NUMBER )
-  {
+    {
     fe.Set( "Specified physical port number is invalid." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( newChannelNumber > this->MAXIMAL_CHANNEL_NUMBER )
-  {
+    {
     fe.Set( "Specified channel number is invalid." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
 
   std::map<std::string, TrackerToolConfiguration *>::const_iterator it, end;
   it = this->m_TrackerToolList.begin();
   end = this->m_TrackerToolList.end();
-  for( ; it!=end; it++ )
-  {
+  for(; it!=end; it++ )
+    {
     const AuroraToolConfiguration *currentTool = 
       static_cast<const AuroraToolConfiguration *>( it->second );
     if( currentTool->GetPortNumber() == newPortNumber &&
       currentTool->GetChannelNumber() == newChannelNumber )
-    {
+      {
       fe.Set( "Multiple tools with same port and channel are not allowed.");
       this->InvokeEvent( fe );
       return;
+      }
     }
-  }
-        //copy the tool and add it as a standard or dynamic reference tool
+  //copy the tool and add it as a standard or dynamic reference tool
   AuroraToolConfiguration *newTool = new AuroraToolConfiguration( *wiredTool );
   
   if( !isReference )
-  {
+    {
     this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
       (newTool->GetToolName(), newTool) );
-  }
+    }
   else
-  {
+    {
     delete this->m_ReferenceTool;
     this->m_ReferenceTool = newTool; 
-  }
+    }
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
