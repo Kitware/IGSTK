@@ -57,7 +57,10 @@ public:
 public:  
 
   /** Inquiry if a tool spatial object is set */
-  bool  IsToolSpatialObjectSet();
+  bool IsToolSpatialObjectSet();
+
+  /** Inquiry if tool position is inside bounds */
+  bool IsInsideBounds();
 
   /** Request get cross hair position */
   void RequestGetCrossHairPosition();
@@ -74,6 +77,7 @@ public:
   /** Get tool transform */
   igstk::Transform GetToolTransform() const;
 
+  /** Get boundings by index */
   double GetBoundingBoxDimensionByIndex(unsigned int index);
  
 protected:
@@ -145,6 +149,7 @@ private:
 
   /** tool spatial object member variables */
   bool                         m_ToolSpatialObjectSet;
+  bool                         m_InsideBounds;
   SpatialObjectPointerType     m_ToolSpatialObjectToBeSet;
   SpatialObjectPointerType     m_ToolSpatialObject;
 
@@ -184,6 +189,18 @@ private:
 
   igstkObserverConstObjectMacro( BoundingBox, SpatialObjectType::BoundingBoxEvent,
                                               SpatialObjectType::BoundingBoxType);
+
+  inline 
+  PointType 
+  TransformToPoint( igstk::Transform transform )
+  {
+    PointType point;
+    for (int i=0; i<3; i++)
+      {
+      point[i] = transform.GetTranslation()[i];
+      }
+    return point;
+  }
 
 };
 

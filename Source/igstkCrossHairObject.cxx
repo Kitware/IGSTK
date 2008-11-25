@@ -28,7 +28,10 @@ CrossHairObject::CrossHairObject():m_StateMachine(this)
   m_ToolSpatialObject = NULL; 
 
   //tool spatial object check flag
-  m_ToolSpatialObjectSet  = false;
+  m_ToolSpatialObjectSet = false;
+
+  //tool inside bounds check flag
+  m_InsideBounds = false;
 
   // List of states
   igstkAddStateMacro( Initial );
@@ -166,8 +169,14 @@ CrossHairObject
 //  igstkLogMacro( DEBUG, "ReceiveToolTransformWRTImageCoordinateSystemProcessing " 
 //                 << this->m_ToolTransformWRTImageCoordinateSystem );
 
-  this->m_ToolTransformWRTImageCoordinateSystem =
-    this->m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
+  m_ToolTransformWRTImageCoordinateSystem =
+    m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
+
+  // if tool position is outside bounding box, make the spatial object not valid
+  PointType point = TransformToPoint( m_ToolTransformWRTImageCoordinateSystem );
+
+  // set the inside bounds flag
+  m_InsideBounds = m_BoundingBox->IsInside( point );
 }
 
 void 
@@ -247,20 +256,6 @@ CrossHairObject
   //turn on the flag
   m_CursorPositionSetFlag = true;
 }
-
-//void
-//CrossHairObject
-//::RequestSetBoundingBox( const BoundingBoxType* boundingBox )
-//{
-//  igstkLogMacro( DEBUG,"igstk::CrossHairObject\
-//                       ::RequestSetBoundingBox called...\n");
-//
-//  m_BoundingBoxToBeSet = const_cast< BoundingBoxType *>(boundingBox);
-//
-//  m_StateMachine.PushInput( m_SetBoundingBoxInput );
-//
-//  m_StateMachine.ProcessInputs();
-//}
 
 void
 CrossHairObject
@@ -416,6 +411,13 @@ CrossHairObject
 ::IsToolSpatialObjectSet()
 {
   return this->m_ToolSpatialObjectSet;
+}
+
+bool 
+CrossHairObject
+::IsInsideBounds()
+{
+  return this->m_InsideBounds;
 }
 
 /** Compute reslicing plane */

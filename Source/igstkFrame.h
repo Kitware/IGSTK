@@ -75,7 +75,7 @@ public:
 
 
   /** Returns the time at which the validity of this information expires. The
-   * data in this transform should not be used for scenes to be rendered
+   * data in this frame should not be used for scenes to be rendered
    * after that validity time. The time is returned in milliseconds. 
    *
    * \sa TimeStamp 

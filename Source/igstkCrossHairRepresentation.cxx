@@ -129,6 +129,7 @@ CrossHairRepresentation
     }
 }
 
+/** Set the line's width */
 void 
 CrossHairRepresentation
 ::SetLineWidth(double width)
@@ -150,41 +151,42 @@ CrossHairRepresentation
   igstkLogMacro( DEBUG, 
     "igstk::CrossHairRepresentation::VerifyTimeStamp called...\n");
 
-  if( m_CrossHairSpatialObject.IsNull() )
-    {
+  if ( !m_CrossHairSpatialObject->IsToolSpatialObjectSet() )
+  {
+    return true;
+  }
+
+  if ( !m_CrossHairSpatialObject->IsInsideBounds() )
+  {
     return false;
-    }
+  }
 
   // if a tool spatial object is driving the reslicing, compare the 
   //   tool spatial object transform with the view render time
-  if( m_CrossHairSpatialObject->IsToolSpatialObjectSet() )
-    {
-      if( this->GetRenderTimeStamp().GetExpirationTime() <
-        this->m_CrossHairSpatialObject->GetToolTransform().GetStartTime() ||
-        this->GetRenderTimeStamp().GetStartTime() >
-        this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime() )
-        {
-          // fixme
-          double diff = 
-            this->GetRenderTimeStamp().GetStartTime() - this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
 
-          if (diff > 250 )
-          {
-            //std::cout << diff << std::endl;
-            return false;
-          }
-          else
-            return true;
-        }
+  if( this->GetRenderTimeStamp().GetStartTime() >
+      this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime() )
+  {
+
+   // fixme
+      double diff = 
+      this->GetRenderTimeStamp().GetStartTime() - 
+      this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
+
+      if (diff > 150 )
+      {
+        return false;
+      }
       else
-        {
+      {
         return true;
-        }
-    }
+      }
+  }
   else
-    {
-    return true;
-    }
+  {
+  return true;
+  }
+
 }
 
 /** Request to Set the CrossHairSpatial Object */
@@ -249,19 +251,19 @@ void CrossHairRepresentation
 
   m_CrossHairSpatialObject->RequestGetCrossHairPosition();
   
-  if( m_CrossHairPositionObserver->GotCrossHairPosition() )
-    {
-      const PointType& position = m_CrossHairPositionObserver->GetCrossHairPosition();
+  if( !m_CrossHairPositionObserver->GotCrossHairPosition() )
+    return;
 
-      m_LineSourceY->SetPoint1( position[0], m_ImageBounds[2], position[2] );
-      m_LineSourceY->SetPoint2( position[0], m_ImageBounds[3], position[2] );
+  const PointType& position = m_CrossHairPositionObserver->GetCrossHairPosition();
 
-      m_LineSourceX->SetPoint1( m_ImageBounds[0], position[1], position[2] );
-      m_LineSourceX->SetPoint2( m_ImageBounds[1], position[1], position[2] );
+  m_LineSourceY->SetPoint1( position[0], m_ImageBounds[2], position[2] );
+  m_LineSourceY->SetPoint2( position[0], m_ImageBounds[3], position[2] );
 
-      m_LineSourceZ->SetPoint1( position[0], position[1], m_ImageBounds[4] );
-      m_LineSourceZ->SetPoint2( position[0], position[1], m_ImageBounds[5] );
-    }
+  m_LineSourceX->SetPoint1( m_ImageBounds[0], position[1], position[2] );
+  m_LineSourceX->SetPoint2( m_ImageBounds[1], position[1], position[2] );
+
+  m_LineSourceZ->SetPoint1( position[0], position[1], m_ImageBounds[4] );
+  m_LineSourceZ->SetPoint2( position[0], position[1], m_ImageBounds[5] );
 }
 
 /** Create the vtk Actors */

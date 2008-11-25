@@ -300,11 +300,14 @@ ToolProjectionRepresentation
 
       if (diff > 250 )
       {
-        //std::cout << diff << std::endl;
+        std::cout << "nv: " << diff << std::endl;
         return false;
       }
       else
+      {
+        std::cout << "v: " << diff << std::endl;
         return true;
+      }
     }
   else
     {
