@@ -25,9 +25,12 @@ namespace igstk
 
 
 /**
- * A micron tracker tool. 
- * NOTE: The tool name, TrackerToolConfiguration::SetToolName(), has to be
- *       the same as the marker template file name.
+ * \class MicronToolConfiguration This class represents the configuration data
+ *        required by an Micron tool. 
+ * NOTE: The tool and marker names are two distinct entities. The tool name 
+ *       is the name the user decides to assign the specific tool (US, bayonet
+ *       probe, etc.). The marker name is the name of the tracked marker which
+ *       is attached to the tool.
  */
 class MicronToolConfiguration : public TrackerToolConfiguration
 {
@@ -46,16 +49,17 @@ protected:
 
 
 /**
- * Configuration for the Micron tracker.
+ * \class MicronTrackerConfiguration This class represents the configuration 
+ *        data required by the Micron tracker.
  */
 class MicronTrackerConfiguration : public TrackerConfiguration
 {
 public:
-        //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( MicronTrackerConfiguration, 
                                       TrackerConfiguration )
 
-         //method for creation through the object factory
+  //method for creation through the object factory
   igstkNewMacro( Self );
 
   /**
@@ -83,7 +87,7 @@ private:
   std::string     m_InitializationFile;
   std::string     m_TemplatesDirectory;  
 
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 };
 
