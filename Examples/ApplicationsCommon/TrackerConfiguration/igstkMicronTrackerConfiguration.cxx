@@ -23,9 +23,9 @@ const double MicronTrackerConfiguration::MAXIMAL_REFERESH_RATE = 48;
 
 
 MicronTrackerConfiguration::MicronTrackerConfiguration() :
-  m_CameraCalibrationFileDirectory(""),
-  m_InitializationFile(""),
-  m_TemplatesDirectory("")
+m_CameraCalibrationFileDirectory(""),
+m_InitializationFile(""),
+m_TemplatesDirectory("")
 {
   this->m_Frequency = this->MAXIMAL_REFERESH_RATE;
 }
@@ -52,22 +52,24 @@ MicronTrackerConfiguration::InternalAddTool(
     dynamic_cast<const MicronToolConfiguration *>( tool );
 
   if( wirelessTool == NULL )
-  {
+    {
     fe.Set( "Given tool configuration type not compatible with tracker type." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( !isReference )
-  {
+    {
     this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
       (wirelessTool->GetToolName(), new MicronToolConfiguration( *wirelessTool )) );
-  }
+    }
   else
-  {
+    {
     if (this->m_ReferenceTool)
+      {
       delete this->m_ReferenceTool;
+      }
     this->m_ReferenceTool = new MicronToolConfiguration( *wirelessTool );
-  }
+    }
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
