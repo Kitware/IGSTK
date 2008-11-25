@@ -7,16 +7,19 @@
 
 namespace igstk
 {
-  
+/**
+ * \class PolarisHybridConfigurationXMLFileReader This class is used to read the 
+ *        xml configuration file for NDI's old hybrid Polaris tracker.
+ */  
 class PolarisHybridConfigurationXMLFileReader : 
    public SerialCommunicatingTrackerConfigurationXMLFileReader 
 {
 public:
 
-    //standard typedefs
+  //standard typedefs
   typedef PolarisHybridConfigurationXMLFileReader                  Self;
-  typedef SerialCommunicatingTrackerConfigurationXMLFileReader    Superclass;
-  typedef itk::SmartPointer<Self>                                 Pointer;
+  typedef SerialCommunicatingTrackerConfigurationXMLFileReader     Superclass;
+  typedef itk::SmartPointer<Self>                                  Pointer;
 
            //run-time type information (and related methods)
   itkTypeMacro( PolarisHybridConfigurationXMLFileReader, 
@@ -57,29 +60,26 @@ protected:
   virtual double GetMaximalRefreshRate();
   virtual std::string GetSystemType();
 
-          //this is the constructor that is called by the factory to 
-         //create a new object
+  //this is the constructor that is called by the factory to 
+  //create a new object
   PolarisHybridConfigurationXMLFileReader() : 
-         SerialCommunicatingTrackerConfigurationXMLFileReader()
-         {}
-  virtual ~PolarisHybridConfigurationXMLFileReader() {}
+    SerialCommunicatingTrackerConfigurationXMLFileReader() { }
 
-  void ProcessSromFile() 
-    throw ( FileFormatException );
+  virtual ~PolarisHybridConfigurationXMLFileReader() { }
+
+  void ProcessSromFile() throw ( FileFormatException );
 
   void 
-  ProcessControlBoxPort() 
-    throw ( FileFormatException );
+  ProcessControlBoxPort() throw ( FileFormatException );
 
-  virtual void ProcessToolData() 
-    throw ( FileFormatException );
+  virtual void ProcessToolData() throw ( FileFormatException );
 
   virtual igstk::PolarisHybridTrackerConfiguration::Pointer
     GetPolarisConfiguration();
 
-  std::string m_CurrentSromFileName;
-  unsigned int m_CurrentControlBoxPort;
-  bool m_HaveCurrentControlBoxPort;
+  std::string    m_CurrentSromFileName;
+  unsigned int   m_CurrentControlBoxPort;
+  bool           m_HaveCurrentControlBoxPort;
 
 private:
   PolarisHybridConfigurationXMLFileReader( 
@@ -89,7 +89,6 @@ private:
   const PolarisHybridConfigurationXMLFileReader & operator=( 
     const PolarisHybridConfigurationXMLFileReader & right );
 };
-
 
 }
 #endif //__igstkPolarisHybridConfigurationXMLFileReader_h
