@@ -70,11 +70,14 @@ protected:
 
   void ProcessMicronTemplatesDirectory() throw ( FileFormatException );
 
+  void ProcessMarkerName() throw ( FileFormatException );
+
   virtual void ProcessToolData() throw ( FileFormatException );
 
   std::string m_MicronCalibrationDirectory;
   std::string m_MicronInitializationFile;
   std::string m_MicronTemplatesDirectory;
+  std::string m_CurrentMarkerName;
 
 private:
   MicronConfigurationXMLFileReader( 

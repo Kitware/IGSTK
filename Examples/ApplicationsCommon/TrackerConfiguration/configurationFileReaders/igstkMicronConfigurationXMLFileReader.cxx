@@ -50,6 +50,11 @@ MicronConfigurationXMLFileReader::EndElement(
     {
     ProcessMicronTemplatesDirectory();
     }
+  else if( m_ReadingToolConfiguration &&
+           itksys::SystemTools::Strucmp( name, "marker_name" ) == 0 )
+    {
+    ProcessMarkerName();
+    }
 }
 
 
@@ -108,6 +113,13 @@ throw ( FileFormatException )
   this->m_MicronTemplatesDirectory = this->m_CurrentTagData;
 }
 
+void 
+MicronConfigurationXMLFileReader::ProcessMarkerName() 
+throw ( FileFormatException )
+{
+  this->m_CurrentMarkerName = this->m_CurrentTagData;
+}
+
 
 void 
 MicronConfigurationXMLFileReader::ProcessToolData() 
@@ -116,6 +128,10 @@ throw ( FileFormatException )
   if( this->m_CurrentToolName.empty() )
     {
     throw FileFormatException( "\"name\" missing for one of the tools." );
+    }
+  if( this->m_CurrentMarkerName.empty() )
+    {
+    throw FileFormatException( "\"marker_name\" missing for one of the tools." );
     }
 
   //if the tool section does not have a "calibration_file" tag 
@@ -137,6 +153,7 @@ throw ( FileFormatException )
 
   //reset all tool data to initial state
   this->m_CurrentToolName.clear();
+  this->m_CurrentMarkerName.clear();
   this->m_CurrentToolCalibration.SetToIdentity( 
     igstk::TimeStamp::GetLongestPossibleTime() );
 }
