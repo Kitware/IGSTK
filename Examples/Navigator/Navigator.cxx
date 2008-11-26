@@ -3732,9 +3732,6 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     const igstk::TrackerStopTrackingErrorEvent *evt1c =
     dynamic_cast< const igstk::TrackerStopTrackingErrorEvent * > (&event);
 
- /* const igstk::TrackerController::RequestTrackerEvent *evt2 =
-    dynamic_cast< const igstk::TrackerController::RequestTrackerEvent * > (&event);*/
-
    const igstk::TrackerController::RequestToolsEvent *evt3 = 
     dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
 
@@ -3756,10 +3753,6 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     m_ErrorOccured = true;
     m_ErrorMessage = evt1c->Get();
   }
-  //else if ( evt2 )
-  //{
-  //  m_Parent->m_Tracker = evt2->Get();
-  //}
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
@@ -3767,6 +3760,9 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
 
     if ( iter!=toolContainer.end() )
     {      
+        igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
+                    "Navigator::TrackerControllerObserver found driving tool...\n" )
+
         m_Parent->m_TrackerTool = (*iter).second;
 
         m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
@@ -3791,6 +3787,9 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     igstk::TrackerController::ToolEntryType entry = evt4->Get();
     if ( entry.first == REFERENCE_NAME )
     {
+        igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
+                    "Navigator::TrackerControllerObserver found reference tool...\n" )
+
         m_Parent->m_ReferenceTool = entry.second;
 
         m_Parent->m_ReferenceNotAvailableObserver = LoadedObserverType::New();
