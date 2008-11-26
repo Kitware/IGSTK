@@ -33,6 +33,9 @@
 #include "igstkTerasonImagerConfiguration.h"
 #include "igstkTerasonImagerTool.h"
 
+//#include "igstkImagingSourceImagerConfiguration.h"
+//#include "igstkImagingSourceImagerTool.h"
+
 #include "igtlServerSocket.h"
 
 
@@ -61,17 +64,19 @@ public:
    *  Machine etc.). */
   igstkStandardClassTraitsMacro( ImagerController, Object )
  
+  typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
+
   /**
-   * Initialize a tracker using the given configuration. The tracker and 
-   * communication are established and the tracker is in tracking mode.
-   * NOTE: If a tracker was already initialized using this object it will be 
-   *       shut down (stop tracking, close communication, and if using serial
+   * Initialize a imager using the given configuration. The imager and 
+   * communication are established and the imager is in imaging mode.
+   * NOTE: If an imager was already initialized using this object it will be 
+   *       shut down (stop imaging, close communication, and if using serial
    *       communication that will be closed too).
    *
-   * @param configuration A specific imager configuration (Terason ...)
+   * @param configuration A specific imager configuration (Terason, ImagingSource, etc)
    *                      which is identified at runtime.
    * This method generates two events, InitializationSuccessEvent if everything
-   * went well and, InitializationFailureEvent if the tracker could not be 
+   * went well and, InitializationFailureEvent if the imager could not be 
    * initialized (the specific error is described in the string contained in the
    * error object).
    */
@@ -81,6 +86,7 @@ public:
 
   void RequestStart();
 
+  void SetWaitForClientUpdateObserver( LoadedObserverType* observer );
   /**
    * Stop the tracker and close its communication.
    * This method generates ShutdownSuccessEvent if everything
@@ -157,6 +163,7 @@ private:
   igstkDeclareStateMacro( AttemptingToShutdown );
   
   igstkDeclareStateMacro( AttemptingToInitializeTerason );
+  igstkDeclareStateMacro( AttemptingToInitializeImagingSource  );
 
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( Started );
@@ -168,6 +175,7 @@ private:
   igstkDeclareInputMacro( ImagerShutdown );
 
   igstkDeclareInputMacro( TerasonInitialize );
+  igstkDeclareInputMacro( ImagingSourceInitialize );
 
   igstkDeclareInputMacro( Failed  );
   igstkDeclareInputMacro( Succeeded  );
@@ -181,6 +189,7 @@ private:
   void ImagerShutdownProcessing();
   
   void TerasonInitializeProcessing();
+  void ImagingSourceInitializeProcessing();
 
   void GetImagerProcessing();
   void GetToolsProcessing();
@@ -203,6 +212,9 @@ private:
 
   TerasonImagerTool::Pointer InitializeTerasonTool(
     const TerasonToolConfiguration *toolConfiguration );
+
+//  ImagingSourceImagerTool::Pointer InitializeTerasonTool(
+//    const ImagingSourceToolConfiguration *toolConfiguration );
 
 
   class ErrorObserver : public itk::Command
@@ -260,11 +272,13 @@ private:
 
   ImagerConfiguration  *m_TmpImagerConfiguration;
   ImagerConfiguration  *m_ImagerConfiguration;
-  Imager::Pointer m_Imager;
-  ImagerTool::Pointer m_ReferenceTool;
+  Imager::Pointer       m_Imager;
   std::vector<ImagerTool::Pointer> m_Tools;
   igtl::ServerSocket::Pointer m_SocketCommunication;
+  SerialCommunication::Pointer m_SerialCommunication;  
   //igtl::ClientSocket::Pointer m_SocketCommunication;
+
+  LoadedObserverType::Pointer      m_WaitForClientUpdateObserver;
 };
 
 } // end of namespace

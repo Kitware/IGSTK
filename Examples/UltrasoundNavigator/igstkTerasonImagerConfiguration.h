@@ -59,8 +59,7 @@ public:
   virtual double GetMaximalRefreshRate();
 
 protected:
-  virtual void InternalAddTool( const ImagerToolConfiguration *tool, 
-                                bool isReference );
+  virtual void InternalAddTool( const ImagerToolConfiguration *tool );
 
 private:
 

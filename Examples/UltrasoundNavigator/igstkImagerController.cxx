@@ -23,6 +23,7 @@
 #include "itksys/Directory.hxx"
 
 #include "igstkTerasonImager.h"
+//#include "igstkImagingSourceImager.h"
 
 //#include "igstkCalibrationIO.h"
 
@@ -36,10 +37,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
             //create error observer
   this->m_ErrorObserver = ErrorObserver::New();
 
-        //define the state machine's states 
+  //define the state machine's states 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToInitialize );
   igstkAddStateMacro( AttemptingToInitializeTerason );
+  igstkAddStateMacro( AttemptingToInitializeImagingSource );
 
   igstkAddStateMacro( AttemptingToShutdown );
   igstkAddStateMacro( Initialized );
@@ -49,20 +51,21 @@ ImagerController::ImagerController() : m_StateMachine( this )
 
   igstkAddStateMacro( Started );  
 
-                   //define the state machine's inputs
+  //define the state machine's inputs
   igstkAddInputMacro( ImagerInitialize );
   igstkAddInputMacro( ImagerStart );
   igstkAddInputMacro( ImagerStop );
   igstkAddInputMacro( ImagerShutdown );
   igstkAddInputMacro( TerasonInitialize );
+  igstkAddInputMacro( ImagingSourceInitialize );
   igstkAddInputMacro( Failed  );
   igstkAddInputMacro( Succeeded  );
   igstkAddInputMacro( GetImager  );
   igstkAddInputMacro( GetTools  );
 
-            //define the state machine's transitions
+  //define the state machine's transitions
 
-                         //transitions from Idle state
+  //transitions from Idle state
   igstkAddTransitionMacro(Idle,
                           ImagerInitialize,
                           AttemptingToInitialize,
@@ -75,6 +78,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro(Idle,
                           TerasonInitialize,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Idle,
+                          ImagingSourceInitialize,
                           Idle,
                           ReportInvalidRequest);
     
@@ -98,7 +106,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Idle,
                           ReportInvalidRequest);
 
-                  //transitions from AttemptingToInitialize state
+  //transitions from AttemptingToInitialize state
   igstkAddTransitionMacro(AttemptingToInitialize,
                           Failed,
                           Idle,
@@ -108,6 +116,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           TerasonInitialize,
                           AttemptingToInitializeTerason,
                           TerasonInitialize);
+
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          ImagingSourceInitialize,
+                          AttemptingToInitializeImagingSource,
+                          ImagingSourceInitialize);
 
   igstkAddTransitionMacro(AttemptingToInitialize,
                           ImagerInitialize,
@@ -134,7 +147,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Idle,
                           ReportInvalidRequest);
   
-          //transitions from AttemptingToInitializeTerason state
+  //transitions from AttemptingToInitializeTerason state
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           Failed,
                           Idle,
@@ -169,6 +182,42 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
+
+    //transitions from AttemptingToInitializeImagingSource state
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          Failed,
+                          Idle,
+                          ReportInitializationFailure);
+  
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          Succeeded,
+                          Initialized,
+                          ReportInitializationSuccess);
+
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          ImagerInitialize,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          ImagerShutdown,
+                          Idle,
+                          ReportInvalidRequest);
+  
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          TerasonInitialize,
+                          Idle,
+                          ReportInvalidRequest);
+  
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          GetImager,
+                          Idle,
+                          ReportInvalidRequest);
+  
+  igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
+                          GetTools,
+                          Idle,
+                          ReportInvalidRequest);
           
           //transitions from Initialized state
   igstkAddTransitionMacro(Initialized,
@@ -198,6 +247,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro(Initialized,
                           TerasonInitialize,
+                          Initialized,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Initialized,
+                          ImagingSourceInitialize,
                           Initialized,
                           ReportInvalidRequest);
   
@@ -259,6 +313,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ReportInvalidRequest);
 
   igstkAddTransitionMacro(AttemptingToStart,
+                          ImagingSourceInitialize,
+                          AttemptingToStart,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToStart,
                           ImagerStop,
                           AttemptingToStart,
                           ReportInvalidRequest);
@@ -272,6 +331,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro(Started,
                           TerasonInitialize,
+                          Started,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Started,
+                          ImagingSourceInitialize,
                           Started,
                           ReportInvalidRequest);
 
@@ -338,6 +402,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ReportInvalidRequest);
 
   igstkAddTransitionMacro(AttemptingToStop,
+                          ImagingSourceInitialize,
+                          AttemptingToStop,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToStop,
                           ImagerStop,
                           AttemptingToStop,
                           ReportInvalidRequest);
@@ -361,6 +430,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro(AttemptingToShutdown,
                           TerasonInitialize,
+                          AttemptingToShutdown,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToShutdown,
+                          ImagingSourceInitialize,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
 
@@ -404,6 +478,12 @@ ImagerController::RequestInitialize(
   this->m_StateMachine.ProcessInputs();
 }
 
+void 
+ImagerController::SetWaitForClientUpdateObserver( LoadedObserverType* observer )
+{
+  m_WaitForClientUpdateObserver = dynamic_cast< LoadedObserverType* > ( observer );
+}
+
 void
 ImagerController::RequestStart()
 {
@@ -444,7 +524,7 @@ void
 ImagerController::RequestGetToolList()
 {
   igstkLogMacro( DEBUG, 
-                 "igstkImagerController::RequestGetNonReferenceToolList called...\n" );
+                 "igstkImagerController::RequestGetToolList called...\n" );
   igstkPushInputMacro( GetTools );
   this->m_StateMachine.ProcessInputs();
 }
@@ -466,6 +546,12 @@ ImagerController::ImagerInitializeProcessing()
       this->m_ImagerConfiguration = m_TmpImagerConfiguration;
       igstkPushInputMacro( TerasonInitialize );
     }
+    /*if( dynamic_cast<ImagingSourceImagerConfiguration *>
+      ( this->m_TmpImagerConfiguration ) )
+    {
+      this->m_ImagerConfiguration = m_TmpImagerConfiguration;
+      igstkPushInputMacro( ImagingSourceInitialize );
+    }*/
     else
     {
       this->m_ErrorMessage = "Unknown imager configuration type.";
@@ -581,6 +667,41 @@ ImagerController::ImagerShutdownProcessing()
 }
 
 bool 
+ImagerController::InitializeSerialCommunication()
+{
+  SerialCommunicatingImagerConfiguration *serialImagerConfiguration =
+    dynamic_cast<SerialCommunicatingImagerConfiguration *>( this->m_ImagerConfiguration );
+  
+                 //create serial communication
+  this->m_SerialCommunication = igstk::SerialCommunication::New();
+
+              //observe errors generated by the serial communication
+  unsigned long observerID = 
+    this->m_SerialCommunication->AddObserver( OpenPortErrorEvent(),
+                                              this->m_ErrorObserver );
+
+  this->m_SerialCommunication->SetPortNumber( serialImagerConfiguration->GetCOMPort() );
+  this->m_SerialCommunication->SetParity( serialImagerConfiguration->GetParity() );
+  this->m_SerialCommunication->SetBaudRate( serialImagerConfiguration->GetBaudRate() );
+  this->m_SerialCommunication->SetDataBits( serialImagerConfiguration->GetDataBits() );
+  this->m_SerialCommunication->SetStopBits( serialImagerConfiguration->GetStopBits() );
+  this->m_SerialCommunication->SetHardwareHandshake( serialImagerConfiguration->GetHandshake() );
+
+  this->m_SerialCommunication->OpenCommunication();
+                     //remove the observer, if an error occured we have already
+                     //been notified
+  this->m_SerialCommunication->RemoveObserver(observerID);
+
+  if( this->m_ErrorObserver->ErrorOccured() )
+  {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    return false;
+  }
+  return true;
+}
+
+bool 
 ImagerController::InitializeSocketCommunication()
 {
   SocketCommunicatingImagerConfiguration *socketImagerConfiguration =
@@ -630,6 +751,28 @@ TerasonImagerTool::Pointer ImagerController::InitializeTerasonTool(
   return imagerTool;
 }
 
+/*
+ImagerTool::Pointer ImagerController::InitializeImagingSourceTool(
+    const ImagingSourceToolConfiguration *toolConfiguration )
+{
+  ImagingSourceImagerTool::Pointer imagerTool = ImagingSourceImagerTool::New();
+ 
+  unsigned int dims[3];
+  toolConfiguration->GetFrameDimensions(dims);
+  imagerTool->SetFrameDimensions(dims);
+
+  imagerTool->SetPixelDepth(toolConfiguration->GetPixelDepth());
+  imagerTool->RequestSetImagerToolName( toolConfiguration->GetToolUniqueIdentifier() );
+  imagerTool->RequestConfigure();
+
+ // imagerTool->SetCalibrationTransform( identity );
+
+  imagerTool->RequestConfigure();
+
+  return imagerTool;
+}
+*/
+
 void ImagerController::TerasonInitializeProcessing()
 {
   if( !InitializeSocketCommunication() )
@@ -641,6 +784,11 @@ void ImagerController::TerasonInitializeProcessing()
                       //create imager
       igstk::TerasonImager::Pointer imager = igstk::TerasonImager::New();
       this->m_Imager = imager; 
+
+      if ( m_WaitForClientUpdateObserver.IsNotNull() )
+        this->m_Imager->AddObserver ( igstk::DoubleTypeEvent(),
+                                      m_WaitForClientUpdateObserver );
+
                      //don't need to observe this for errors because the 
                      //configuration class ensures that the frequency is valid
       imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
@@ -648,16 +796,7 @@ void ImagerController::TerasonInitializeProcessing()
       imager->SetCommunication( this->m_SocketCommunication );
 
       TerasonImagerConfiguration *imagerConfiguration =
-        dynamic_cast<TerasonImagerConfiguration *>( this->m_ImagerConfiguration );
-      
-    //  imager->SetCameraCalibrationFilesDirectory( 
-    //    imagerConfiguration->GetCameraCalibrationFileDirectory() );
-
-    //  imager->SetInitializationFile(
-    //    imagerConfiguration->GetInitializationFile() );
-        
-    //  imager->SetMarkerTemplatesDirectory( 
-    //    imagerConfiguration->GetTemplatesDirectory() );
+        dynamic_cast<TerasonImagerConfiguration *>( this->m_ImagerConfiguration );     
         
       unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
                                                        this->m_ErrorObserver );
@@ -693,6 +832,68 @@ void ImagerController::TerasonInitializeProcessing()
         m_Imager->RemoveObserver(observerID);
         igstkPushInputMacro( Succeeded );
       }
+  }
+  this->m_StateMachine.ProcessInputs();
+
+}
+
+
+void ImagerController::ImagingSourceInitializeProcessing()
+{
+  if( !InitializeSerialCommunication() )
+  {
+    igstkPushInputMacro( Failed );
+  }
+  else
+  {
+    /*
+      //create imager
+      igstk::ImagingSourceImager::Pointer imager = igstk::ImagingSourceImager::New();
+      this->m_Imager = imager; 
+      //don't need to observe this for errors because the 
+      //configuration class ensures that the frequency is valid
+      imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
+
+      imager->SetCommunication( this->m_SerialCommunication );
+
+      ImagingSourceImagerConfiguration *imagerConfiguration =
+        dynamic_cast<ImagingSourceImagerConfiguration *>( this->m_ImagerConfiguration );     
+        
+      unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
+                                                       this->m_ErrorObserver );
+      imager->RequestOpen();
+      
+      if( this->m_ErrorObserver->ErrorOccured() )
+      {
+        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+        this->m_ErrorObserver->ClearError();
+        imager->RemoveObserver(observerID);    
+        igstkPushInputMacro( Failed );
+      }
+      else   //attach the tools and start communication 
+      {
+        std::vector< ImagerToolConfiguration * > toolConfigurations = 
+            this->m_ImagerConfiguration->GetImagerToolList();
+                              //attach tools
+        std::vector< ImagerToolConfiguration * >::const_iterator it;
+        std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
+          toolConfigurations.end();
+        ImagerTool::Pointer imagerTool;
+        TerasonToolConfiguration * currentToolConfig;
+
+        for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+        {
+          currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
+
+          imagerTool = this->InitializeTerasonTool( currentToolConfig );
+          this->m_Tools.push_back( imagerTool );
+          imagerTool->RequestAttachToImager( imager );
+        }   
+
+        m_Imager->RemoveObserver(observerID);
+        igstkPushInputMacro( Succeeded );
+      }
+      */
   }
   this->m_StateMachine.ProcessInputs();
 

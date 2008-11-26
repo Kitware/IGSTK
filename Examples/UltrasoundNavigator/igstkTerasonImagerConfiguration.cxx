@@ -42,7 +42,7 @@ TerasonImagerConfiguration::GetMaximalRefreshRate()
 
 void 
 TerasonImagerConfiguration::InternalAddTool( const
-  ImagerToolConfiguration *tool, bool isReference )
+  ImagerToolConfiguration *tool )
 {
   AddToolFailureEvent fe;
 

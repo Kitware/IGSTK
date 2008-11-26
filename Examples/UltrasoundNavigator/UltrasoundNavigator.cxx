@@ -36,6 +36,7 @@
 
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
+#define IMAGER_DEFAULT_REFRESH_RATE 15
 // name of the tool that is going to drive the reslicing
 #define TRACKER_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 #define IMAGER_TOOL_NAME "sProbe" //sPtr // bayonet // hybrid_pointer
@@ -48,6 +49,7 @@
 */
 UltrasoundNavigator::UltrasoundNavigator() : 
   m_TrackerConfiguration( NULL ),
+  m_ImagerConfiguration( NULL ),
   m_StateMachine(this)
 {
   std::srand( 5 );
@@ -56,6 +58,8 @@ UltrasoundNavigator::UltrasoundNavigator() :
   m_ImageDir = "";
   m_ImagePlanesIn3DViewEnabled = false;
   m_VideoEnabled = false;
+  m_VideoRunning = false;
+  m_ImagerInitialized = false;
   m_VideoConnected = false;
   m_ModifyImageFiducialsEnabled = false;
   m_TrackerRMS = 0.0;
@@ -121,10 +125,11 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddStateMacro( StoppingTracker ); 
   igstkAddStateMacro( DisconnectingTracker ); 
   igstkAddStateMacro( Tracking );
-//  igstkAddStateMacro( TrackingAndImaging );
-//  igstkAddStateMacro( StartingImager ); 
-//  igstkAddStateMacro( StoppingImager ); 
-//  igstkAddStateMacro( DisconnectingImager ); 
+  igstkAddStateMacro( TrackingAndImaging );
+  igstkAddStateMacro( InitializingImager );
+  igstkAddStateMacro( StartingImager ); 
+  igstkAddStateMacro( StoppingImager ); 
+  igstkAddStateMacro( DisconnectingImager ); 
 
   /** Machine Inputs*/
   
@@ -147,6 +152,11 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( DisconnectTracker );
+
+  igstkAddInputMacro( InitializeImager );
+  igstkAddInputMacro( StartImaging );
+  igstkAddInputMacro( StopImaging );
+  igstkAddInputMacro( DisconnectImager );
 
   /** Initial State */
 
@@ -190,6 +200,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( Initial, StopTracking, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, DisconnectTracker, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, InitializeImager, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, StartImaging, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, StopImaging, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, DisconnectImager, 
                            Initial, ReportInvalidRequest ); 
 
   /** LoadingImage State */
@@ -234,6 +252,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingImage, StopTracking, 
                            LoadingImage, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImage, DisconnectTracker, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, StartImaging, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, StopImaging, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, DisconnectImager, 
+                           LoadingImage, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImage, InitializeImager, 
                            LoadingImage, ReportInvalidRequest );
   
    /** ConfirmingImagePatientName State */
@@ -280,6 +306,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, DisconnectTracker, 
                            ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, StartImaging, 
+                           ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, StopImaging, 
+                           ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, DisconnectImager, 
+                           ConfirmingImagePatientName, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfirmingImagePatientName, InitializeImager,
+                           ConfirmingImagePatientName, ReportInvalidRequest );
 
   /** ImageReady State */
   
@@ -323,6 +357,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
                            ImageReady, ReportInvalidRequest );  
+  igstkAddTransitionMacro( ImageReady, StartImaging, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, StopImaging, 
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, DisconnectImager,
+                           ImageReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( ImageReady, InitializeImager, 
+                           ImageReady, ReportInvalidRequest );
 
   /** LoadingMesh State */
 
@@ -367,6 +409,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingMesh, StopTracking, 
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, DisconnectTracker, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StartImaging, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StopImaging, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, DisconnectImager, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, InitializeImager, 
                            LoadingMesh, ReportInvalidRequest );
   
   /** SettingImageFiducials State */  
@@ -413,6 +463,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, DisconnectTracker, 
                            SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, StartImaging, 
+                           SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, StopImaging, 
+                           SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, DisconnectImager, 
+                           SettingImageFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingImageFiducials, InitializeImager, 
+                           SettingImageFiducials, ReportInvalidRequest );
 
    /** LoadingTrackerToolSpatialObject State */
 
@@ -458,7 +516,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectTracker, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartImaging, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StopImaging, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectImager, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeImager, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
   
   /** TrackerToolSpatialObjectReady State */
   
@@ -501,6 +566,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, SetPickingPosition,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImagerToolSpatialObject,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartImaging, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopImaging, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectImager,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeImager, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
 
   /** ConfiguringTracker State */
@@ -547,7 +620,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( ConfiguringTracker, StartImaging, 
+                           ConfiguringTracker, ReportInvalidRequest );  
+  igstkAddTransitionMacro( ConfiguringTracker, StopImaging, 
+                           ConfiguringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfiguringTracker, DisconnectImager, 
+                           ConfiguringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfiguringTracker, InitializeImager, 
+                           ConfiguringTracker, ReportInvalidRequest );  
 
   /** TrackerConfigurationReady State */
 
@@ -591,7 +671,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( TrackerConfigurationReady, StartImaging, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, StopImaging, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectImager, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeImager, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
 
   /** InitializingTracker State */
 
@@ -637,7 +724,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, DisconnectTracker, 
                            InitializingTracker, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( InitializingTracker, StartImaging, 
+                           InitializingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingTracker, StopImaging, 
+                           InitializingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingTracker, DisconnectImager, 
+                           InitializingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingTracker, InitializeImager, 
+                           InitializingTracker, ReportInvalidRequest );
 
   /** TrackerInitializationReady State */
 
@@ -682,7 +776,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StopTracking, 
                            TrackerInitializationReady, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( TrackerInitializationReady, StartImaging, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, StopImaging, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectImager, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, InitializeImager, 
+                           TrackerInitializationReady, ReportInvalidRequest );
 
   /** SettingTrackerFiducials State*/
 
@@ -721,12 +822,19 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, StartSetTrackerFiducials, 
                            SettingTrackerFiducials, ReportInvalidRequest );
-
   igstkAddTransitionMacro( SettingTrackerFiducials, StartTracking, 
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, StopTracking, 
                            SettingTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingTrackerFiducials, DisconnectTracker, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, StartImaging, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, StopImaging, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, DisconnectImager, 
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, InitializeImager, 
                            SettingTrackerFiducials, ReportInvalidRequest );
 
   /** EndingSetTrackerFiducials State*/
@@ -772,6 +880,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, DisconnectTracker, 
                            EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartImaging, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StopImaging, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, DisconnectImager, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, InitializeImager, 
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
 
   /** TrackerFiducialsReady State*/
 
@@ -815,6 +931,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( TrackerFiducialsReady, StopTracking, 
                            TrackerFiducialsReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerFiducialsReady, DisconnectTracker, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, StartImaging, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, StopImaging, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, DisconnectImager, 
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, InitializeImager, 
                            TrackerFiducialsReady, ReportInvalidRequest );
 
   /** RegisteringTracker State*/
@@ -860,7 +984,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, DisconnectTracker, 
                            RegisteringTracker, ReportInvalidRequest );
-
+  igstkAddTransitionMacro( RegisteringTracker, StartImaging, 
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, StopImaging, 
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, DisconnectImager, 
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, InitializeImager, 
+                           RegisteringTracker, ReportInvalidRequest );
 
   /** AcceptingRegistration State*/
 
@@ -905,6 +1036,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            AcceptingRegistration, ReportInvalidRequest );
   igstkAddTransitionMacro( AcceptingRegistration, DisconnectTracker, 
                            AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, StartImaging, 
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, StopImaging, 
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, DisconnectImager, 
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, InitializeImager, 
+                           AcceptingRegistration, ReportInvalidRequest );
 
   /** ReagistrationReady State*/
 
@@ -920,7 +1059,6 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, Failure, 
                            RegistrationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( RegistrationReady, LoadImage, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, ConfirmImagePatientName, 
@@ -950,6 +1088,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( RegistrationReady, EndSetTrackerFiducials, 
                            RegistrationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( RegistrationReady, StopTracking, 
+                           RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, StartImaging, 
+                           RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, StopImaging, 
+                           RegistrationReady, ReportInvalidRequest );  
+  igstkAddTransitionMacro( RegistrationReady, DisconnectImager, 
+                           RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, InitializeImager, 
                            RegistrationReady, ReportInvalidRequest );
 
   /** StartingTracker State*/
@@ -996,14 +1142,25 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, DisconnectTracker, 
                            StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, StartImaging, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, StopImaging, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, DisconnectImager, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, InitializeImager, 
+                           StartingTracker, ReportInvalidRequest );
 
   /** Tracking State */
 
   igstkAddTransitionMacro( Tracking, StopTracking, 
                            StoppingTracker, StopTracking );
 
-  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
-                           DisconnectingTracker, DisconnectTracker );
+  igstkAddTransitionMacro( Tracking, InitializeImager, 
+                           InitializingImager, InitializeImager );  
+
+  igstkAddTransitionMacro( Tracking, StartImaging, 
+                           StartingImager, StartImaging );  
 
   igstkAddTransitionMacro( Tracking, StartSetTrackerFiducials, 
                            SettingTrackerFiducials, StartSetTrackerFiducials );
@@ -1043,10 +1200,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StartTracking, 
                            Tracking, ReportInvalidRequest );
-//  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
-//                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, StopImaging, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, DisconnectImager, 
+                           Tracking, ReportInvalidRequest );
 
-   /** StoppingTracker State */
+  /** StoppingTracker State */
 
   igstkAddTransitionMacro( StoppingTracker, Success, 
                            RegistrationReady, ReportSuccessStopTracking);
@@ -1090,8 +1251,16 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, LoadImagerToolSpatialObject,
                            StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, StartImaging, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, StopImaging, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, DisconnectImager, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, InitializeImager, 
+                           StoppingTracker, ReportInvalidRequest );
 
-   /** DisconnectingTracker Tracker */
+  /** DisconnectingTracker Tracker */
 
   igstkAddTransitionMacro( DisconnectingTracker, Success, 
                            ImageReady, ReportSuccessTrackerDisconnection);
@@ -1134,6 +1303,14 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker, 
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, LoadImagerToolSpatialObject,
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, StartImaging, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, StopImaging, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, DisconnectImager, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, InitializeImager, 
                            DisconnectingTracker, ReportInvalidRequest );
 
   /** LoadingImagerToolSpatialObject State */
@@ -1180,7 +1357,278 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, DisconnectTracker, 
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartImaging, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StopImaging, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, DisconnectImager, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeImager, 
+                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
 
+  /** InitializingImager State */
+
+  igstkAddTransitionMacro( InitializingImager, Success, 
+                           Tracking, ReportSuccessImagerInitialization );
+
+  igstkAddTransitionMacro( InitializingImager, Failure, 
+                           Tracking, ReportFailureImagerInitialization );
+
+  //complete table for state: InitializingImager
+
+  igstkAddTransitionMacro( InitializingImager, LoadImage, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, ConfirmImagePatientName, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, LoadMesh, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, LoadTrackerToolSpatialObject, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, LoadImagerToolSpatialObject, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StartSetImageFiducials, 
+                           InitializingImager, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( InitializingImager, SetPickingPosition, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, EndSetImageFiducials, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, ConfigureTracker, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, InitializeTracker, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, RegisterTracker, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StartSetTrackerFiducials, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, AcceptTrackerFiducial, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, EndSetTrackerFiducials, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StartTracking, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StopTracking, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, DisconnectTracker, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StartImaging, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, StopImaging, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, DisconnectImager, 
+                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, InitializeImager, 
+                           InitializingImager, ReportInvalidRequest );
+
+  /** StartingImager State*/
+
+  igstkAddTransitionMacro( StartingImager, Success, 
+                           TrackingAndImaging, ReportSuccessStartImaging );
+
+  igstkAddTransitionMacro( StartingImager, Failure, 
+                           Tracking, ReportFailureStartImaging );
+
+  //complete table for state: StartingImager
+
+  igstkAddTransitionMacro( StartingImager, LoadImage, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, ConfirmImagePatientName, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, LoadMesh, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, LoadTrackerToolSpatialObject, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, LoadImagerToolSpatialObject, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StartSetImageFiducials, 
+                           StartingImager, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( StartingImager, SetPickingPosition, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StartSetTrackerFiducials, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, EndSetImageFiducials, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, ConfigureTracker, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, InitializeTracker, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, RegisterTracker, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, AcceptTrackerFiducial, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, EndSetTrackerFiducials, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StartTracking, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StopTracking, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, DisconnectTracker, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StartImaging, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, StopImaging, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, DisconnectImager, 
+                           StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, InitializeImager, 
+                           StartingImager, ReportInvalidRequest );
+
+  /** TrackingAndImagingAndImaging State */
+
+  igstkAddTransitionMacro( TrackingAndImaging, StopImaging, 
+                           StoppingImager, StopImaging );
+
+  //complete table for state: TrackingAndImaging
+
+  igstkAddTransitionMacro( TrackingAndImaging, Success, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, Failure, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadImage, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, ConfirmImagePatientName, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadMesh, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadTrackerToolSpatialObject, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, StartSetImageFiducials, 
+                           TrackingAndImaging, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( TrackingAndImaging, EndSetImageFiducials, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, StartSetTrackerFiducials, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadImagerToolSpatialObject, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, InitializeTracker, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, ConfigureTracker, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, RegisterTracker, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, AcceptTrackerFiducial, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, EndSetTrackerFiducials, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, SetPickingPosition, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, StartTracking, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, StopTracking, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, DisconnectTracker, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, StartImaging, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, InitializeImager, 
+                           TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, DisconnectImager, 
+                           TrackingAndImaging, ReportInvalidRequest );
+
+  /** StoppingImager State */
+
+  igstkAddTransitionMacro( StoppingImager, Success, 
+                           Tracking, ReportSuccessStopImaging);
+
+  igstkAddTransitionMacro( StoppingImager, Failure,
+                           TrackingAndImaging, ReportFailureStopImaging );
+
+  //complete table for state: StoppingImager
+
+  igstkAddTransitionMacro( StoppingImager, LoadImage, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, ConfirmImagePatientName, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, LoadMesh, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, LoadTrackerToolSpatialObject, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StartSetImageFiducials, 
+                           StoppingImager, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( StoppingImager, SetPickingPosition, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, EndSetImageFiducials, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, InitializeTracker, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, ConfigureTracker, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, RegisterTracker, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StartSetTrackerFiducials, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, AcceptTrackerFiducial, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, EndSetTrackerFiducials, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StartTracking, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StopTracking, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, DisconnectTracker, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, LoadImagerToolSpatialObject,
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StartImaging, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, StopImaging, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, DisconnectImager, 
+                           StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, InitializeImager, 
+                           StoppingImager, ReportInvalidRequest );
+
+  /** DisconnectingImager */
+
+  igstkAddTransitionMacro( DisconnectingImager, Success, 
+                           Tracking, ReportSuccessImagerDisconnection);
+
+  igstkAddTransitionMacro( DisconnectingImager, Failure,
+                           Tracking, ReportFailureTrackerDisconnection );
+
+  //complete table for state: DisconnectingImager
+
+  igstkAddTransitionMacro( DisconnectingImager, LoadImage, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, ConfirmImagePatientName, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, LoadMesh, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, LoadTrackerToolSpatialObject, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StartSetImageFiducials, 
+                           DisconnectingImager, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( DisconnectingImager, SetPickingPosition, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, EndSetImageFiducials, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, InitializeTracker, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, ConfigureTracker, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, RegisterTracker, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StartSetTrackerFiducials, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, AcceptTrackerFiducial, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, EndSetTrackerFiducials, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StartTracking, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StopTracking, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, DisconnectTracker, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, LoadImagerToolSpatialObject,
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StartImaging, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, StopImaging, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, DisconnectImager, 
+                           DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, InitializeImager, 
+                           DisconnectingImager, ReportInvalidRequest );
   /** Set Initial State */
 
   igstkSetInitialStateMacro( Initial );
@@ -1627,22 +2075,21 @@ void UltrasoundNavigator::RequestToggleEnableVideo()
 
 }
 
-void UltrasoundNavigator::RequestToogleConnectVideo()
+void UltrasoundNavigator::RequestToggleRunVideo()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "UltrasoundNavigator::RequestToggleConnectVideo called...\n" )
+                    "UltrasoundNavigator::RequestToggleRunVideo called...\n" )
 
-  if (m_VideoConnected)
+  if (m_VideoRunning)
   {
-    this->DisconnectVideo();
+    this->StopVideo();
   }
   else
   {
-    this->ConnectVideo();
+    this->StartVideo();
   }
 
-  m_VideoConnected = !m_VideoConnected;
-
+  m_VideoRunning = !m_VideoRunning;
 }
 
 void UltrasoundNavigator::EnableVideo()
@@ -1663,12 +2110,12 @@ void UltrasoundNavigator::EnableVideo()
     
     m_ViewerGroup->m_VideoView->RequestAddObject( m_ImagerToolRepresentationForVideoView );
     m_ViewerGroup->m_3DView->RequestAddObject( m_ImagerToolRepresentationFor3DView );
+
+    m_ToggleRunVideoButton->activate();
   }
 
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
-
-  m_ConnectVideoButton->activate();
 }
 
 void UltrasoundNavigator::DisableVideo()
@@ -1683,18 +2130,24 @@ void UltrasoundNavigator::DisableVideo()
 
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
-  
-  m_ConnectVideoButton->deactivate();
+
+  m_ToggleRunVideoButton->deactivate();
 }
 
-void UltrasoundNavigator::DisconnectVideo()
+void UltrasoundNavigator::StopVideo()
 {
-
+  this->RequestStopImaging();
 }
 
-void UltrasoundNavigator::ConnectVideo()
+void UltrasoundNavigator::StartVideo()
 {
+  // if we are not initialize
+  if (!m_ImagerInitialized)
+  {
+    this->RequestInitializeImager();
+  }
 
+  this->RequestStartImaging();
 }
 
 void UltrasoundNavigator::RequestToggleSetImageFiducials()
@@ -1746,6 +2199,15 @@ void UltrasoundNavigator::RequestInitializeTracker()
   m_StateMachine.ProcessInputs();
 }
 
+void UltrasoundNavigator::RequestInitializeImager()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+             "UltrasoundNavigator::RequestInitializeImager called...\n" )
+
+  m_StateMachine.PushInput( m_InitializeImagerInput );
+  m_StateMachine.ProcessInputs();
+}
+
 void UltrasoundNavigator::RequestStartSetTrackerFiducials()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -1791,6 +2253,15 @@ void UltrasoundNavigator::RequestStartTracking()
   m_StateMachine.ProcessInputs();  
 }
 
+void UltrasoundNavigator::RequestStartImaging()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::RequestStartImaging called...\n" )
+
+  m_StateMachine.PushInput( m_StartImagingInput );
+  m_StateMachine.ProcessInputs();  
+}
+
 void UltrasoundNavigator::RequestStopTracking()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -1800,6 +2271,14 @@ void UltrasoundNavigator::RequestStopTracking()
   m_StateMachine.ProcessInputs();  
 }
 
+void UltrasoundNavigator::RequestStopImaging()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::RequestStopImaging called...\n" )
+
+  m_StateMachine.PushInput( m_StopImagingInput );
+  m_StateMachine.ProcessInputs();  
+}
 
 void UltrasoundNavigator::RequestToggleOrthogonalPlanes()
 {
@@ -1827,10 +2306,13 @@ void UltrasoundNavigator::RequestDisconnectTracker()
   m_StateMachine.ProcessInputs();  
 }
 
-/** Method to be invoked when no operation is required */
-void UltrasoundNavigator::NoProcessing()
+void UltrasoundNavigator::RequestDisconnectImager()
 {
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::RequestDisconnectImager called...\n" )
 
+  m_StateMachine.PushInput( m_DisconnectImagerInput );
+  m_StateMachine.ProcessInputs();  
 }
 
 /** Method to be invoked when an invalid operation was requested */
@@ -2115,6 +2597,28 @@ UltrasoundNavigator::ReportSuccessTrackerInitializationProcessing()
   this->RequestStartSetTrackerFiducials();
 }
 
+/** Method to be invoked on failured imager initialization */
+void 
+UltrasoundNavigator::ReportFailureImagerInitializationProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportFailureImagerInitializationProcessing called...\n");
+
+  std::string errorMessage;
+  errorMessage = "Could not initialize imager device";
+  fl_alert( errorMessage.c_str() );
+  fl_beep( FL_BEEP_ERROR );
+}
+
+
+/** Method to be invoked on successful imager initialization */
+void 
+UltrasoundNavigator::ReportSuccessImagerInitializationProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportSuccessImagerInitializationProcessing called...\n");
+}
+
 /** Method to be invoked on successful registration acceptance */
 void 
 UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
@@ -2241,6 +2745,32 @@ UltrasoundNavigator::ReportSuccessTrackerDisconnectionProcessing()
 
 }
 
+/** Method to be invoked on failure imager disconnection */
+void 
+UltrasoundNavigator::ReportFailureImagerDisconnectionProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportFailureImagerDisconnectionProcessing called...\n");
+}
+
+/** Method to be invoked on successful imager disconnection */
+void 
+UltrasoundNavigator::ReportSuccessImagerDisconnectionProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportSuccessImagerDisconnectionProcessing called...\n");
+  
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+
+}
+
 /** Method to be invoked on successful tracker start */
 void 
 UltrasoundNavigator::ReportSuccessStartTrackingProcessing()
@@ -2270,6 +2800,21 @@ UltrasoundNavigator::ReportSuccessStartTrackingProcessing()
   Fl::check();
 }
 
+/** Method to be invoked on successful imager start */
+void 
+UltrasoundNavigator::ReportSuccessStartImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportSuccessStartImagingProcessing called...\n")
+}
+
+/** Method to be invoked on failured imager start */
+void 
+UltrasoundNavigator::ReportFailureStartImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportFailureStartImagingProcessing called...\n")
+}
 
 /** Method to be invoked on failured tracker start */
 void 
@@ -2285,6 +2830,14 @@ UltrasoundNavigator::ReportFailureStopTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
                  "ReportFailureStopTrackingProcessing called...\n")
+}
+
+/** Method to be invoked on failured imager stop */
+void 
+UltrasoundNavigator::ReportFailureStopImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportFailureStopImagingProcessing called...\n")
 }
 
 /** Method to be invoked on successful tracker stop */
@@ -2306,6 +2859,24 @@ UltrasoundNavigator::ReportSuccessStopTrackingProcessing()
 //  Fl::check();
 }
 
+/** Method to be invoked on successful imager stop */
+void 
+UltrasoundNavigator::ReportSuccessStopImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+                 "ReportSuccessStopImagingProcessing called...\n")
+ 
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
+
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
+
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
+  
+//  Fl::check();
+}
 
 void UltrasoundNavigator::LoadImageProcessing()
 {
@@ -2964,6 +3535,98 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
 
+}
+
+void UltrasoundNavigator::InitializeImagerProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::InitializeImagerProcessing called...\n" )
+
+  m_ImagerConfiguration = new igstk::TerasonImagerConfiguration();
+
+  //set the tool parameters
+  igstk::TerasonToolConfiguration toolconfig;
+
+  unsigned int dims[3];
+  dims[0] = 640;
+  dims[1] = 480;
+  dims[2] = 1;
+
+  toolconfig.SetFrameDimensions(dims); 
+  toolconfig.SetPixelDepth(8);
+  std::string deviceName = "Terason2000";
+//  toolconfig.SetCalibrationFileName( "Terason2000_Calibration.igstk" );
+  toolconfig.SetToolUniqueIdentifier( deviceName );
+  
+  m_ImagerConfiguration->RequestAddTool( &toolconfig );
+  m_ImagerConfiguration->SetSocketPort( 18944 );
+
+  m_ImagerConfiguration->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+
+  if (!m_ImagerConfiguration)
+  {
+    std::string errorMessage;
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  /** Create the controller for the imager and assign observers to it*/
+  m_ImagerController = igstk::ImagerController::New();
+
+  m_ImagerControllerObserver = ImagerControllerObserver::New();
+  m_ImagerControllerObserver->SetParent( this );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::InitializeFailureEvent(),
+    m_ImagerControllerObserver );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::StartFailureEvent(),
+    m_ImagerControllerObserver );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::StopFailureEvent(),
+    m_ImagerControllerObserver );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::ShutdownFailureEvent(),
+    m_ImagerControllerObserver );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::RequestImagerEvent(),
+    m_ImagerControllerObserver );
+
+  m_ImagerController->AddObserver(igstk::ImagerController::RequestToolsEvent(),
+    m_ImagerControllerObserver );
+
+  // initialize the imager controller with our image configuration file
+  m_ImagerController->RequestInitialize( m_ImagerConfiguration );
+
+  //check that initialization was successful
+  if( m_ImagerControllerObserver->Error() )
+  {
+    std::string errorMessage;
+    m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_ImagerControllerObserver->ClearError();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_ImagerController->RequestGetImager();
+  m_ImagerController->RequestGetToolList();
+
+  igstk::Frame frame;
+  frame.SetImagePtr( m_VideoFrame->GetImagePtr(), 
+                                  igstk::TimeStamp::GetLongestPossibleTime() );
+
+  m_TerasonImagerTool->SetInternalFrame(frame);
+  
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();
+  return;
 }
 
 void UltrasoundNavigator::StartSetTrackerFiducialsProcessing()
@@ -4126,24 +4789,6 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
             igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ReferenceAvailableObserver);
     }
   }
-  /*
-  else if ( evt3 )
-  {
-    igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find("sPtr");
-
-    if ( iter!=toolContainer.end() )
-    {      
-        m_Parent->m_TrackerTool = (*iter).second;
-    }
-  }
-  else if ( evt4 )
-  {
-    igstk::TrackerController::ToolEntryType entry = evt4->Get();
-      if ( entry.first == "reference" )
-        m_Parent->m_ReferenceTool = entry.second;
-  }
-  */
 }
 
 void 
@@ -4172,6 +4817,7 @@ UltrasoundNavigator
   Fl::check();
 }
 
+
 void
 UltrasoundNavigator
 ::RequestPrepareToQuit()
@@ -4180,4 +4826,172 @@ UltrasoundNavigator
   this->RequestDisconnectTracker();
 }
 
+/** -----------------------------------------------------------------
+* Starts imaging provided it is initialized and connected to the 
+* communication port
+*---------------------------------------------------------------------
+*/
+void UltrasoundNavigator::StartImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::StartImagingProcessing called...\n" )
+
+  m_ImagerController->RequestStart();
+  
+  //check if succeded
+  if( m_ImagerControllerObserver->Error() )
+  {
+    std::string errorMessage;
+    m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_ImagerControllerObserver->ClearError();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();
+  return;
+}
+
+/** -----------------------------------------------------------------
+* Stops imaging but keeps the imager connected to the 
+* communication port
+*---------------------------------------------------------------------
+*/
+void UltrasoundNavigator::StopImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::StopImagingProcessing called...\n" )
+
+  // try to stop
+  m_ImagerController->RequestStop( );
+  
+  //check if succeded
+  if( m_ImagerControllerObserver->Error() )
+  {
+    std::string errorMessage;
+    m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_ImagerControllerObserver->ClearError();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, 
+      "Imager stop error\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();
+  return;
+
+}
+/** -----------------------------------------------------------------
+* Disconnects the imager and closes the socket
+*---------------------------------------------------------------------
+*/
+void UltrasoundNavigator::DisconnectImagerProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundNavigator::DisconnectImagerProcessing called...\n" )
+
+  // try to disconnect
+  m_ImagerController->RequestShutdown( );
+
+  //check if succeded
+  if( m_ImagerControllerObserver->Error() )
+  {
+    std::string errorMessage;
+    m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_ImagerControllerObserver->ClearError();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, 
+      "Imager disconnect error\n" )
+
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();
+  return;
+}
+
+void 
+UltrasoundNavigator::ImagerControllerObserver::SetParent(
+  UltrasoundNavigator *p ) 
+{
+  m_Parent = p;
+}
+
+void 
+UltrasoundNavigator::ImagerControllerObserver::Execute( const itk::Object *caller, 
+                                                             const itk::EventObject & event )
+{
+  const itk::Object * constCaller = caller;
+  this->Execute(constCaller, event);
+}
+  
+void 
+UltrasoundNavigator::ImagerControllerObserver::Execute( itk::Object *caller, 
+                                                             const itk::EventObject & event )
+{
+  const igstk::ImagerController::InitializeFailureEvent *evt1a =
+    dynamic_cast< const igstk::ImagerController::InitializeFailureEvent * > (&event);
+
+  const igstk::ImagerController::StartFailureEvent *evt1b =
+    dynamic_cast< const igstk::ImagerController::StartFailureEvent * > (&event);
+
+    const igstk::ImagerController::StopFailureEvent *evt1c =
+    dynamic_cast< const igstk::ImagerController::StopFailureEvent * > (&event);
+
+  const igstk::ImagerController::RequestImagerEvent *evt2 =
+    dynamic_cast< const igstk::ImagerController::RequestImagerEvent * > (&event);
+
+  const igstk::ImagerController::RequestToolsEvent *evt3 = 
+    dynamic_cast< const igstk::ImagerController::RequestToolsEvent * > (&event);
+
+  const igstk::ImagerController::OpenCommunicationFailureEvent *evt4 = 
+    dynamic_cast< const igstk::ImagerController::OpenCommunicationFailureEvent * > (&event);
+
+  if( evt1a ) 
+  {            
+    m_ErrorOccured = true;
+     m_ErrorMessage = evt1a->Get();
+  }
+  else if ( evt1b )
+  {
+    m_ErrorOccured = true;
+    m_ErrorMessage = evt1b->Get();
+  }
+  else if ( evt1c )
+  {
+    m_ErrorOccured = true;
+    m_ErrorMessage = evt1c->Get();
+  }
+  else if ( evt2 )
+  {
+    m_Parent->m_Imager = evt2->Get();
+  }
+  else if ( evt3 )
+  {
+    const std::vector<igstk::ImagerTool::Pointer> &tools = evt3->Get();
+
+    igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
+                    "UltrasoundNavigator::ImagerControllerObserver found imager tool!\n" )
+
+    m_Parent->m_TerasonImagerTool = tools[0];
+  }
+  else if ( evt4 )
+  {
+    m_ErrorOccured = true;
+    m_ErrorMessage = evt4->Get();
+  }
+}
 
