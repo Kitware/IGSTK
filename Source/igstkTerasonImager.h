@@ -56,6 +56,7 @@ public:
   typedef igtl::ServerSocket     CommunicationType;
   //typedef igtl::ClientSocket     CommunicationType;
 
+
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */
   void SetCommunication( CommunicationType *communication );

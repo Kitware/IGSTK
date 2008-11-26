@@ -25,6 +25,8 @@
 
 #include "igstkTerasonImager.h"
 
+#include "igstkEvents.h"
+
 #include "vtkImageData.h"
 
 #include <itksys/SystemTools.hxx>
@@ -215,12 +217,32 @@ TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
   m_Communication->Print(std::cout);
 
   // Waiting for Connection
-  this->m_Socket = this->m_Communication->WaitForConnection(1000);
+  m_Socket = NULL;
+  
+  unsigned int times = 0;
+  unsigned int maxTimes = 10;
 
-  if ( this->m_Socket.IsNull() )
+  do 
   {
-    std::cout << " m_Socket is null" << std::endl;
+    times++;
+
+    igstk::DoubleTypeEvent evt;
+    evt.Set( (double)maxTimes/(double)times );
+    this->InvokeEvent( evt );
+
+    m_Socket = m_Communication->WaitForConnection(1000);
+  } while ( !( times<maxTimes ) && ( m_Socket.IsNull() ) );
+
+  if ( times>=10 )
+  {
+    std::cout << " Could not find a client!" << std::endl;
     return FAILURE;
+  }
+  else
+  {
+    igstk::DoubleTypeEvent evt;
+    evt.Set( 1.0 );
+    this->InvokeEvent( evt );
   }
 
   return SUCCESS;

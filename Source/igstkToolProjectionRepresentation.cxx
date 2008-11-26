@@ -299,13 +299,11 @@ ToolProjectionRepresentation
         this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
 
       if (diff > 250 )
-      {
-        std::cout << "nv: " << diff << std::endl;
+      {       
         return false;
       }
       else
       {
-        std::cout << "v: " << diff << std::endl;
         return true;
       }
     }
