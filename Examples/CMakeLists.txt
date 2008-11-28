@@ -38,12 +38,8 @@ IF (IGSTKSandbox_USE_FLTK)
 ENDIF (IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
-   IF (IGSTKSandbox_USE_MicronTracker) 
-       SUBDIRS(
-         UltrasoundNavigator
-         UltrasoundCalibrationWizard
-       )
-   ENDIF (IGSTKSandbox_USE_MicronTracker)
+    SUBDIRS( UltrasoundNavigator )
+    SUBDIRS( UltrasoundCalibrationWizard )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
 IF (IGSTKSandbox_USE_Qt)
