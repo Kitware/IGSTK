@@ -296,13 +296,8 @@ ImageSpatialObject< TPixelType, VDimension >
 {
   igstkLogMacro( DEBUG, "ReportImageExtentProcessing() called ....\n");
 
-  vtkImageData* image = m_VtkImporter->GetOutput();
-
-  if (!image)
-    return;
-
   int extent[6];
-  image->GetExtent(extent);
+  m_VtkImporter->GetWholeExtent(extent);
 
   EventHelperType::ImageExtentType imageExtent;
   imageExtent.xmin = extent[0];
