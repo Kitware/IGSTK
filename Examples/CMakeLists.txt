@@ -27,7 +27,7 @@ IF (IGSTKSandbox_USE_FLTK)
     Logging
     Navigator    
     BronchoscopyNavigator
-    WorkingVolumeTester
+    WorkingVolumeTester    
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
@@ -41,6 +41,7 @@ IF (IGSTKSandbox_USE_OpenIGTLink)
    IF (IGSTKSandbox_USE_MicronTracker) 
        SUBDIRS(
          UltrasoundNavigator
+         UltrasoundCalibrationWizard
        )
    ENDIF (IGSTKSandbox_USE_MicronTracker)
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
