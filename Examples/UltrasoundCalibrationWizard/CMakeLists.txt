@@ -1,0 +1,107 @@
+PROJECT(UltrasoundCalibrationWizard)
+
+INCLUDE_DIRECTORIES (
+  ${IGSTKSandbox_BINARY_DIR}
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
+) 
+ 
+SET(UltrasoundCalibrationWizard_GUI_SRCS
+    UltrasoundCalibrationWizardGUI.fl
+  )
+  
+SET(UltrasoundCalibrationWizard_SRCS
+  main.cxx
+  UltrasoundCalibrationWizard.h
+  UltrasoundCalibrationWizard.cxx
+  UltrasoundCalibrationWizardQuadrantViews.h
+  UltrasoundCalibrationWizardQuadrantViews.cxx
+
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMedSafeTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMedSafeTrackerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.h
+  )
+  
+IF(UltrasoundCalibrationWizard_USE_MicronTracker)
+  SET(UltrasoundCalibrationWizard_SRCS ${UltrasoundCalibrationWizard_SRCS}
+  # MicronTracker related classes
+  )
+ENDIF(UltrasoundCalibrationWizard_USE_MicronTracker)
+
+INCLUDE_DIRECTORIES(
+  ${UltrasoundCalibrationWizard_SOURCE_DIR}
+  ${UltrasoundCalibrationWizard_BINARY_DIR}
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
+  )
+
+FLTK_WRAP_UI(UltrasoundCalibrationWizard ${UltrasoundCalibrationWizard_GUI_SRCS})
+ADD_EXECUTABLE(UltrasoundCalibrationWizard ${UltrasoundCalibrationWizard_FLTK_UI_SRCS} ${UltrasoundCalibrationWizard_SRCS})
+TARGET_LINK_LIBRARIES(UltrasoundCalibrationWizard IGSTKSandbox )
