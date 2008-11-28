@@ -3,6 +3,8 @@ PROJECT(UltrasoundNavigator)
 INCLUDE_DIRECTORIES (
 ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
 
@@ -26,12 +28,6 @@ SET(UltrasoundNavigator_SRCS
   igstkPathPlan.cxx
   igstkPathPlanIO.h
   igstkPathPlanIO.cxx
-  igstkImagerController.h
-  igstkImagerController.cxx
-  igstkImagerConfiguration.h
-  igstkImagerConfiguration.cxx
-  igstkTerasonImagerConfiguration.cxx
-  igstkTerasonImagerConfiguration.h
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
@@ -63,6 +59,11 @@ ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/conf
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.cxx
 
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.cxx
+
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
@@ -86,6 +87,12 @@ ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/conf
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.h
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMedSafeTrackerConfiguration.h
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.h
+
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h

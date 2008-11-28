@@ -114,6 +114,7 @@ public:
     int y;
     int state;
     int key;
+    int quadrant;
   };
 
   igstkLoadedEventMacro( KeyPressedEvent, IGSTKEvent, KeyboardCommandType );

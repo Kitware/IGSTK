@@ -200,9 +200,44 @@ int UltrasoundNavigatorQuadrantViews::handle_key(int event, KeyboardCommandType 
 
 int UltrasoundNavigatorQuadrantViews::handle_mouse(int event, MouseCommandType &mouseCommand) 
 {
-    MousePressedEvent mpEvent;
+   /* MousePressedEvent mpEvent;
     mpEvent.Set( mouseCommand );
     m_Reporter->InvokeEvent( mpEvent );
+    damage(1); 
+    return 1;*/
+
+     if ( ( mouseCommand.x < m_X+m_WW ) && ( mouseCommand.y < m_Y+m_HH ) )
+    {
+      mouseCommand.quadrant = 0;
+      MousePressedEvent mousePressedEvent;
+      mousePressedEvent.Set( mouseCommand );
+      m_Reporter->InvokeEvent( mousePressedEvent );
+    }
+
+    if ( ( mouseCommand.x > m_X+m_WW ) && ( mouseCommand.y < m_Y+m_HH ) )
+    {
+      mouseCommand.quadrant = 1;
+      MousePressedEvent mousePressedEvent;
+      mousePressedEvent.Set( mouseCommand );
+      m_Reporter->InvokeEvent( mousePressedEvent );
+    }
+    
+    if ( ( mouseCommand.x < m_X+m_WW ) && ( mouseCommand.y > m_Y+m_HH ) )
+    {
+      mouseCommand.quadrant = 2;
+      MousePressedEvent mousePressedEvent;
+      mousePressedEvent.Set( mouseCommand );
+      m_Reporter->InvokeEvent( mousePressedEvent );
+    }
+
+    if ( ( mouseCommand.x >  m_X+m_WW ) && ( mouseCommand.y > m_Y+m_HH ) )
+    {
+      mouseCommand.quadrant = 3;
+      MousePressedEvent mousePressedEvent;
+      mousePressedEvent.Set( mouseCommand );
+      m_Reporter->InvokeEvent( mousePressedEvent );
+    }
+
     damage(1); 
     return 1;
 }

@@ -332,6 +332,9 @@ private:
   double                                                m_WindowLevel;
   double                                                m_WindowWidth;
 
+  double                                                m_WindowLevelVideo;
+  double                                                m_WindowWidthVideo;
+
   double                                                m_TrackerRMS;
   bool                                                  m_VideoEnabled;
   bool                                                  m_VideoRunning;
@@ -341,13 +344,14 @@ private:
   bool                                                  m_ModifyImageFiducialsEnabled;
 
   /* Command used for progress tracking */
-  itk::SmartPointer<ProgressCommandType>                m_ProgressCommand;  
+  itk::SmartPointer<ProgressCommandType>                m_DICOMProgressCommand;  
+  itk::SmartPointer<ProgressCommandType>                m_SocketProgressCommand;  
   
   /** image spatial object */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
 
   /** video frame spatial object and representation*/
-  typedef igstk::VideoFrameSpatialObject                 VideoFrameSpatialObjectType;
+  typedef igstk::VideoFrameSpatialObject                VideoFrameSpatialObjectType;
   VideoFrameSpatialObjectType::Pointer                  m_VideoFrame;
 
   typedef igstk::VideoFrameRepresentation               VideoFrameRepresentationType;
@@ -549,13 +553,13 @@ private:
   /** Action methods to be invoked only by the state machine */
   void ReportInvalidRequestProcessing();
   void ReportSuccessImageLoadedProcessing();
-  void ReportFailuredImageLoadedProcessing();
+  void ReportFailureImageLoadedProcessing();
   void ReportSuccessTrackerToolSpatialObjectLoadedProcessing();
-  void ReportFailuredTrackerToolSpatialObjectLoadedProcessing();
+  void ReportFailureTrackerToolSpatialObjectLoadedProcessing();
   void ReportSuccessImagerToolSpatialObjectLoadedProcessing();
-  void ReportFailuredImagerToolSpatialObjectLoadedProcessing();
+  void ReportFailureImagerToolSpatialObjectLoadedProcessing();
   void ReportSuccessMeshLoadedProcessing();
-  void ReportFailuredMeshLoadedProcessing();
+  void ReportFailureMeshLoadedProcessing();
   void ReportSuccessStartSetImageFiducialsProcessing();
   void ReportSuccessEndSetImageFiducialsProcessing();
   void ReportSuccessStartSetTrackerFiducialsProcessing();
@@ -617,9 +621,6 @@ private:
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   typedef itk::SimpleMemberCommand < Self > CancelObserverType;
   
-  igstk::ImagerController::LoadedObserverType::Pointer               
-                                            m_WaitForClientUpdateObserver;
-
   LoadedObserverType::Pointer               m_CTView1PickerObserver;
   LoadedObserverType::Pointer               m_CTView2PickerObserver;
   LoadedObserverType::Pointer               m_VideoViewPickerObserver;
@@ -709,6 +710,7 @@ private:
 
   /** Callback functions for picking and reslicing image events. */  
 
+  
   void CTView1PickingCallback( const itk::EventObject & event );
   void CTView2PickingCallback( const itk::EventObject & event );
   void VideoViewPickingCallback( const itk::EventObject & event );
@@ -723,6 +725,8 @@ private:
   void ReferenceAvailableCallback( const itk::EventObject & event ); 
   void NullActionCallback(const itk::EventObject & event ){};
   void OnITKProgressEvent(itk::Object *source, const itk::EventObject &);
+  void OnSocketProgressEvent(itk::Object *source, const itk::EventObject &);
+  
 
 };
 

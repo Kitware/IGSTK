@@ -66,6 +66,9 @@ UltrasoundNavigator::UltrasoundNavigator() :
   m_WindowWidth = 542;
   m_WindowLevel = 52;
 
+  m_WindowWidthVideo = 286;
+  m_WindowLevelVideo = 108;
+
   /** Setup logger, for all igstk components */
   m_Logger   = LoggerType::New();
   this->GetLogger()->SetTimeStampFormat( itk::LoggerBase::HUMANREADABLE );
@@ -86,19 +89,19 @@ UltrasoundNavigator::UltrasoundNavigator() :
   logFileName = "logNavigator"
   + itksys::SystemTools::GetCurrentDateTime( "_%Y_%m_%d_%H_%M_%S" ) + ".txt";
   m_LogFile.open( logFileName.c_str() );
-  if( !m_LogFile.fail() )
-  {
-    m_LogFileOutput->SetStream( m_LogFile );
-    this->GetLogger()->AddLogOutput( m_LogFileOutput );
-    igstkLogMacro2( m_Logger, DEBUG, "Successfully opened Log file:" << logFileName << "\n" );
-  }
-  else
+  
+  if( m_LogFile.fail() )
   {
     //Return if fail to open the log file
-    igstkLogMacro2( m_Logger, DEBUG, "Problem opening Log file:"
-                                                    << logFileName << "\n" );
+    igstkLogMacro2( m_Logger, DEBUG, 
+      "Problem opening Log file:" << logFileName << "\n" );
     return;
   }
+
+  m_LogFileOutput->SetStream( m_LogFile );
+  this->GetLogger()->AddLogOutput( m_LogFileOutput );
+  igstkLogMacro2( m_Logger, DEBUG, 
+    "Successfully opened Log file:" << logFileName << "\n" );
 
   /** Machine States */
 
@@ -215,7 +218,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
   igstkAddTransitionMacro( LoadingImage, Success,
                            ConfirmingImagePatientName, ConfirmPatientName );
   igstkAddTransitionMacro( LoadingImage, Failure, 
-                           Initial, ReportFailuredImageLoaded );
+                           Initial, ReportFailureImageLoaded );
 
  //complete table for state: LoadingImage State
 
@@ -268,7 +271,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ImageReady, ReportSuccessImageLoaded );
 
   igstkAddTransitionMacro( ConfirmingImagePatientName, Failure, 
-                           Initial, ReportFailuredImageLoaded );
+                           Initial, ReportFailureImageLoaded );
 
   //complete table for state: ConfirmingImagePatientName
 
@@ -372,7 +375,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            ImageReady, ReportSuccessMeshLoaded );
 
   igstkAddTransitionMacro( LoadingMesh, Failure,
-                           ImageReady, ReportFailuredMeshLoaded );
+                           ImageReady, ReportFailureMeshLoaded );
 
   //complete table for state: LoadingMesh
 
@@ -478,7 +481,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            TrackerToolSpatialObjectReady, ReportSuccessTrackerToolSpatialObjectLoaded );
 
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, Failure,
-                           ImageReady, ReportFailuredTrackerToolSpatialObjectLoaded );
+                           ImageReady, ReportFailureTrackerToolSpatialObjectLoaded );
 
   //complete table for state: LoadingTrackerToolSpatialObject
 
@@ -1319,7 +1322,7 @@ UltrasoundNavigator::UltrasoundNavigator() :
                            Tracking, ReportSuccessImagerToolSpatialObjectLoaded );
 
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, Failure,
-                           Tracking, ReportFailuredImagerToolSpatialObjectLoaded );
+                           Tracking, ReportFailureImagerToolSpatialObjectLoaded );
 
   //complete table for state: LoadingImagerToolSpatialObject
 
@@ -2072,7 +2075,6 @@ void UltrasoundNavigator::RequestToggleEnableVideo()
   }
 
   m_VideoEnabled = !m_VideoEnabled;
-
 }
 
 void UltrasoundNavigator::RequestToggleRunVideo()
@@ -2114,6 +2116,7 @@ void UltrasoundNavigator::EnableVideo()
     m_ToggleRunVideoButton->activate();
   }
 
+  m_ToggleEnableVideoButton->label("Disable");
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 }
@@ -2131,7 +2134,8 @@ void UltrasoundNavigator::DisableVideo()
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   m_ViewerGroup->m_3DView->RequestResetCamera();
 
-  m_ToggleRunVideoButton->deactivate();
+  m_ToggleEnableVideoButton->label("Enable");
+  m_ToggleRunVideoButton->deactivate();  
 }
 
 void UltrasoundNavigator::StopVideo()
@@ -2319,7 +2323,7 @@ void UltrasoundNavigator::RequestDisconnectImager()
 void 
 UltrasoundNavigator::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportInvalidRequestProcessing called...\n");
   this->InvokeEvent(InvalidRequestErrorEvent());
 }
@@ -2328,7 +2332,7 @@ UltrasoundNavigator::ReportInvalidRequestProcessing()
 void 
 UltrasoundNavigator::ReportSuccessImageLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessImageLoadedProcessing called...\n");
 
   //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 0, "" );
@@ -2352,30 +2356,30 @@ UltrasoundNavigator::ReportSuccessImageLoadedProcessing()
   Fl::check();
 }
 
-/** Method to be invoked on failured image loading */
+/** Method to be invoked on Failure image loading */
 void 
-UltrasoundNavigator::ReportFailuredImageLoadedProcessing()
+UltrasoundNavigator::ReportFailureImageLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportFailuredImageLoadedProcessing called...\n");
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
+                 "ReportFailureImageLoadedProcessing called...\n");
 }
 
 /** Method to be invoked on successful tracker tool spatial object loading */
 void 
 UltrasoundNavigator::ReportSuccessTrackerToolSpatialObjectLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessTrackerToolSpatialObjectLoadedProcessing called...\n");    
 
   this->RequestConfigureTracker();
 }
 
-/** Method to be invoked on failured tracker tool spatial object loading */
+/** Method to be invoked on Failure tracker tool spatial object loading */
 void 
-UltrasoundNavigator::ReportFailuredTrackerToolSpatialObjectLoadedProcessing()
+UltrasoundNavigator::ReportFailureTrackerToolSpatialObjectLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportFailuredTrackerToolSpatialObjectLoadedProcessing called...\n");
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
+                 "ReportFailureTrackerToolSpatialObjectLoadedProcessing called...\n");
 
 }
 
@@ -2383,18 +2387,18 @@ UltrasoundNavigator::ReportFailuredTrackerToolSpatialObjectLoadedProcessing()
 void 
 UltrasoundNavigator::ReportSuccessImagerToolSpatialObjectLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessImagerToolSpatialObjectLoadedProcessing called...\n");    
 
 //  this->RequestConfigureImager();
 }
 
-/** Method to be invoked on failured imager tool spatial object loading */
+/** Method to be invoked on Failure imager tool spatial object loading */
 void 
-UltrasoundNavigator::ReportFailuredImagerToolSpatialObjectLoadedProcessing()
+UltrasoundNavigator::ReportFailureImagerToolSpatialObjectLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportFailuredImagerToolSpatialObjectLoadedProcessing called...\n");
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
+                 "ReportFailureImagerToolSpatialObjectLoadedProcessing called...\n");
 
 }
 
@@ -2402,23 +2406,23 @@ UltrasoundNavigator::ReportFailuredImagerToolSpatialObjectLoadedProcessing()
 void 
 UltrasoundNavigator::ReportSuccessMeshLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessMeshLoadedProcessing called...\n");
 }
 
-/** Method to be invoked on failured target mesh loading */
+/** Method to be invoked on Failure target mesh loading */
 void 
-UltrasoundNavigator::ReportFailuredMeshLoadedProcessing()
+UltrasoundNavigator::ReportFailureMeshLoadedProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
-                 "ReportFailuredMeshLoadedProcessing called...\n");
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
+                 "ReportFailureMeshLoadedProcessing called...\n");
 }
 
 /** Method to be invoked on successful start set image fiducials */
 void 
 UltrasoundNavigator::ReportSuccessStartSetImageFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStartSetImageFiducialsProcessing called...\n");
   m_ModifyFiducialsButton->color(FL_YELLOW);
 
@@ -2429,7 +2433,7 @@ UltrasoundNavigator::ReportSuccessStartSetImageFiducialsProcessing()
 void 
 UltrasoundNavigator::ReportSuccessEndSetImageFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessEndSetImageFiducialsProcessing called...\n");
 
   //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, " " );
@@ -2445,7 +2449,7 @@ UltrasoundNavigator::ReportSuccessEndSetImageFiducialsProcessing()
 void 
 UltrasoundNavigator::ReportSuccessStartSetTrackerFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStartSetTrackerFiducialsProcessing called...\n");
 
 }
@@ -2455,7 +2459,7 @@ UltrasoundNavigator::ReportSuccessStartSetTrackerFiducialsProcessing()
 void 
 UltrasoundNavigator::ReportSuccessPinpointingTrackerFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessPinpointingTrackerFiducialProcessing called...\n");
 }
 
@@ -2463,7 +2467,7 @@ UltrasoundNavigator::ReportSuccessPinpointingTrackerFiducialProcessing()
 void 
 UltrasoundNavigator::ReportFailurePinpointingTrackerFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailurePinpointingTrackerFiducialProcessing called...\n");
 }
 
@@ -2471,7 +2475,7 @@ UltrasoundNavigator::ReportFailurePinpointingTrackerFiducialProcessing()
 void 
 UltrasoundNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessEndSetTrackerFiducialsProcessing called...\n");
 
   for (int i=0; i<4; i++)
@@ -2486,7 +2490,7 @@ UltrasoundNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 void 
 UltrasoundNavigator::AcceptTrackerFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "AcceptTrackerFiducialProcessing called...\n");
 
   typedef igstk::TransformObserver ObserverType;
@@ -2542,7 +2546,7 @@ UltrasoundNavigator::AcceptTrackerFiducialProcessing()
 void 
 UltrasoundNavigator::ReportFailureEndSetTrackerFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureEndSetTrackerFiducialsProcessing called...\n");
 }
 
@@ -2550,17 +2554,17 @@ UltrasoundNavigator::ReportFailureEndSetTrackerFiducialsProcessing()
 void 
 UltrasoundNavigator::ReportSuccessTrackerConfigurationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessTrackerConfigurationProcessing called...\n");
 
   this->RequestInitializeTracker();
 }
 
-/** Method to be invoked on failured tracker configuration */
+/** Method to be invoked on Failure tracker configuration */
 void 
 UltrasoundNavigator::ReportFailureTrackerConfigurationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureTrackerConfigurationProcessing called...\n");
 
   std::string errorMessage;
@@ -2569,11 +2573,11 @@ UltrasoundNavigator::ReportFailureTrackerConfigurationProcessing()
   fl_beep( FL_BEEP_ERROR );
 }
 
-/** Method to be invoked on failured tracker initialization */
+/** Method to be invoked on Failure tracker initialization */
 void 
 UltrasoundNavigator::ReportFailureTrackerInitializationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureTrackerConfigurationProcessing called...\n");
 
   std::string errorMessage;
@@ -2587,7 +2591,7 @@ UltrasoundNavigator::ReportFailureTrackerInitializationProcessing()
 void 
 UltrasoundNavigator::ReportSuccessTrackerInitializationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessTrackerInitializationProcessing called...\n");
 
   this->DisableAll();
@@ -2597,11 +2601,11 @@ UltrasoundNavigator::ReportSuccessTrackerInitializationProcessing()
   this->RequestStartSetTrackerFiducials();
 }
 
-/** Method to be invoked on failured imager initialization */
+/** Method to be invoked on Failure imager initialization */
 void 
 UltrasoundNavigator::ReportFailureImagerInitializationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureImagerInitializationProcessing called...\n");
 
   std::string errorMessage;
@@ -2615,7 +2619,7 @@ UltrasoundNavigator::ReportFailureImagerInitializationProcessing()
 void 
 UltrasoundNavigator::ReportSuccessImagerInitializationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessImagerInitializationProcessing called...\n");
 }
 
@@ -2623,7 +2627,7 @@ UltrasoundNavigator::ReportSuccessImagerInitializationProcessing()
 void 
 UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
 {
-    igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+    igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessAcceptingRegistration called...\n");  
 
   // add the tool spatial object to the image planes
@@ -2677,7 +2681,7 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
 void 
 UltrasoundNavigator::ReportFailureAcceptingRegistrationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureAcceptingRegistration called...\n");
 
   for (unsigned int i=0; i<4; i++)
@@ -2695,7 +2699,7 @@ UltrasoundNavigator::ReportFailureAcceptingRegistrationProcessing()
 void 
 UltrasoundNavigator::ReportSuccessTrackerRegistrationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessTrackerRegistrationProcessing called...\n");
 
    // ask the user to accept registration RMS error
@@ -2715,7 +2719,7 @@ UltrasoundNavigator::ReportSuccessTrackerRegistrationProcessing()
 void 
 UltrasoundNavigator::ReportFailureTrackerRegistrationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureTrackerRegistrationProcessing called...\n");
 }
 
@@ -2723,7 +2727,7 @@ UltrasoundNavigator::ReportFailureTrackerRegistrationProcessing()
 void 
 UltrasoundNavigator::ReportFailureTrackerDisconnectionProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureTrackerDisconnectionProcessing called...\n");
 }
 
@@ -2731,7 +2735,7 @@ UltrasoundNavigator::ReportFailureTrackerDisconnectionProcessing()
 void 
 UltrasoundNavigator::ReportSuccessTrackerDisconnectionProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessTrackerDisconnectionProcessing called...\n");
   
   //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
@@ -2749,7 +2753,7 @@ UltrasoundNavigator::ReportSuccessTrackerDisconnectionProcessing()
 void 
 UltrasoundNavigator::ReportFailureImagerDisconnectionProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureImagerDisconnectionProcessing called...\n");
 }
 
@@ -2757,25 +2761,15 @@ UltrasoundNavigator::ReportFailureImagerDisconnectionProcessing()
 void 
 UltrasoundNavigator::ReportSuccessImagerDisconnectionProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessImagerDisconnectionProcessing called...\n");
-  
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
-
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
-
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
-
 }
 
 /** Method to be invoked on successful tracker start */
 void 
 UltrasoundNavigator::ReportSuccessStartTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStartTrackingProcessing called...\n")
 
   char buf[50];
@@ -2804,39 +2798,41 @@ UltrasoundNavigator::ReportSuccessStartTrackingProcessing()
 void 
 UltrasoundNavigator::ReportSuccessStartImagingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStartImagingProcessing called...\n")
+
+  m_ToggleRunVideoButton->label("Stop");
 }
 
-/** Method to be invoked on failured imager start */
+/** Method to be invoked on Failure imager start */
 void 
 UltrasoundNavigator::ReportFailureStartImagingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureStartImagingProcessing called...\n")
 }
 
-/** Method to be invoked on failured tracker start */
+/** Method to be invoked on Failure tracker start */
 void 
 UltrasoundNavigator::ReportFailureStartTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureStartTrackingProcessing called...\n")
 }
 
-/** Method to be invoked on failured tracker stop */
+/** Method to be invoked on Failure tracker stop */
 void 
 UltrasoundNavigator::ReportFailureStopTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureStopTrackingProcessing called...\n")
 }
 
-/** Method to be invoked on failured imager stop */
+/** Method to be invoked on Failure imager stop */
 void 
 UltrasoundNavigator::ReportFailureStopImagingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportFailureStopImagingProcessing called...\n")
 }
 
@@ -2844,7 +2840,7 @@ UltrasoundNavigator::ReportFailureStopImagingProcessing()
 void 
 UltrasoundNavigator::ReportSuccessStopTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStopTrackingProcessing called...\n")
  
   //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
@@ -2863,19 +2859,10 @@ UltrasoundNavigator::ReportSuccessStopTrackingProcessing()
 void 
 UltrasoundNavigator::ReportSuccessStopImagingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, "igstk::UltrasoundNavigator::"
+  igstkLogMacro2( m_Logger, DEBUG, "UltrasoundNavigator::"
                  "ReportSuccessStopImagingProcessing called...\n")
  
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
-
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
-
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
-  
-//  Fl::check();
+  m_ToggleRunVideoButton->label("Run");
 }
 
 void UltrasoundNavigator::LoadImageProcessing()
@@ -2909,13 +2896,13 @@ void UltrasoundNavigator::LoadImageProcessing()
    m_ImageReader         = ImageReaderType::New();
    m_ImageReader->SetGlobalWarningDisplay(false);
    // Initialize the progress command
-   m_ProgressCommand = ProgressCommandType::New();
-   m_ProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnITKProgressEvent );
+   m_DICOMProgressCommand = ProgressCommandType::New();
+   m_DICOMProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnITKProgressEvent );
 
    m_ImageReader->RequestSetDirectory( directoryName );
 
    // Provide a progress observer to the image reader      
-   m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
+   m_ImageReader->RequestSetProgressCallback( m_DICOMProgressCommand );
 
    m_ImageReader->RequestReadImage();
 
@@ -2995,18 +2982,6 @@ void UltrasoundNavigator::RequestAcceptImageLoad()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
               "UltrasoundNavigator::RequestAcceptImageLoad called...\n" )
-
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, "AXIAL VIEW");
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontSize(3, 12);
-
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(3, "SAGITTAL VIEW");
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontSize(3, 12);
-
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(3, "CORONAL VIEW");
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
-  //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontSize(3, 12);
 
   if ( m_ImageObserver.IsNotNull() )
   {
@@ -3190,6 +3165,8 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
    // create a video frame representation for the video view
    m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
    m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
+   m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+   m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
 
    // create a video frame representation for the 3D view
    m_VideoFrameRepresentationFor3DView = m_VideoFrameRepresentationForVideoView->Copy();
@@ -3204,18 +3181,12 @@ void UltrasoundNavigator::LoadImagerToolSpatialObjectProcessing()
    m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();  
    m_ViewerGroup->m_VideoView->RequestStart();
 
-   //add picking observer to CTView1
+   //add picking observer to CTView1   
+
    m_CTView1PickerObserver = LoadedObserverType::New();
    m_CTView1PickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::CTView1PickingCallback );
    m_ViewerGroup->m_CTView1->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CTView1PickerObserver );
-
-   //add picking observer to video view
-   m_VideoViewPickerObserver = LoadedObserverType::New();
-   m_VideoViewPickerObserver->SetCallbackFunction( this, &UltrasoundNavigator::VideoViewPickingCallback );
-   m_ViewerGroup->m_VideoView->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(), m_VideoViewPickerObserver );
-
 
    //finally, reset cameras
    m_ViewerGroup->m_CTView1->RequestResetCamera();
@@ -3374,7 +3345,7 @@ void UltrasoundNavigator::SetImagePickingProcessing()
 */
 void UltrasoundNavigator::SetImageFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG, 
                     "UltrasoundNavigator::SetImageFiducialProcessing called...\n" )
 
     ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
@@ -3383,22 +3354,12 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
     {
       int choice = m_FiducialsPointList->value();
 
-      m_FiducialPointVector[choice]->RequestSetTransformAndParent(m_PickingTransform, m_WorldReference );
+      m_FiducialPointVector[choice]->RequestSetTransformAndParent(
+                                              m_PickingTransform, m_WorldReference );
 
       m_Plan->m_FiducialPoints[choice] = point;
 
-      //char buf[50];
-      //sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
-      //m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
-      //m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
-
-      //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      //m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
-
-      //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      //m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
-
-      /** Write the updated plan to file */
+      // Write the updated plan to file
       this->WriteFiducials();
 
       ImageSpatialObjectType::IndexType index;
@@ -3406,7 +3367,7 @@ void UltrasoundNavigator::SetImageFiducialProcessing()
 
       const double *data = point.GetVnlVector().data_block();
 
-      m_CTView1PlaneSpatialObject->RequestSetCursorPosition( data );
+      m_CTView2PlaneSpatialObject->RequestSetCursorPosition( data );
       m_CrossHair->RequestSetCursorPosition( data );
 
       this->ResliceImage( index );
@@ -3598,6 +3559,13 @@ void UltrasoundNavigator::InitializeImagerProcessing()
   m_ImagerController->AddObserver(igstk::ImagerController::RequestToolsEvent(),
     m_ImagerControllerObserver );
 
+  // Initialize the progress command
+  m_SocketProgressCommand = ProgressCommandType::New();
+  m_SocketProgressCommand->SetCallbackFunction( this, &UltrasoundNavigator::OnSocketProgressEvent );
+
+  // Provide a progress observer to the imager controller
+  m_ImagerController->RequestSetProgressCallback( m_SocketProgressCommand );
+
   // initialize the imager controller with our image configuration file
   m_ImagerController->RequestInitialize( m_ImagerConfiguration );
 
@@ -3626,7 +3594,7 @@ void UltrasoundNavigator::InitializeImagerProcessing()
   
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
-  return;
+
 }
 
 void UltrasoundNavigator::StartSetTrackerFiducialsProcessing()
@@ -3927,9 +3895,10 @@ void UltrasoundNavigator::DisconnectTrackerProcessing()
 */
 void UltrasoundNavigator::ConnectImageRepresentation()
 {
+  // instantiate a plan object
+  m_Plan = new igstk::FiducialsPlan;
 
   // set up fiducual representations
-
   m_FiducialPointVector.resize(4);
   m_AxialFiducialRepresentationVector.resize(4);
   m_SagittalFiducialRepresentationVector.resize(4);
@@ -3973,13 +3942,7 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_CTView2ImageRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
   m_CTView2ImageRepresentation->RequestSetReslicePlaneSpatialObject( m_CTView2PlaneSpatialObject );
 
-   /** 
-   *  Request information about the slice bounds. The answer will be
-   *  received in the form of an event. This will be used to initialize
-   *  the reslicing sliders and set initial slice position
-   *  todo: fix me so that when the user sets the uppper right view to e.g.
-   *  sagittal, the slider updates the correct index
-   */
+  // Request information about the slice bounds
 
   ImageExtentObserver::Pointer extentObserver = ImageExtentObserver::New();
   
@@ -4022,7 +3985,7 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_CrossHairRepresentationForCTView2->RequestSetCrossHairObject( m_CrossHair );
 
   m_CrossHairRepresentationFor3DView = m_CrossHairRepresentationForCTView2->Copy();
-
+   
   // add the cross hair representation to the different views
   m_ViewerGroup->m_CTView2->RequestAddObject( m_CrossHairRepresentationForCTView2 );
   m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentationFor3DView );
@@ -4032,22 +3995,8 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CTView2->SetRendererBackgroundColor(0,0,0);
   m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(1,1,1);
   m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
- 
-  /**
-  *  Connect the scene graph
-  *  Here we create a virtual world reference system (as the root) and
-  *  attached all the objects as its children.
-  *  This is for the convenience in the following implementation. You can
-  *  use any spatial object, view, tracker, or tracker tool as a 
-  *  reference system in IGSTK. And you can create your own class to
-  *  use the coordinate system API by using this macro:
-  *     igstkCoordinateSystemClassInterfaceMacro()
-  *  Refer to:
-  *      igstkCoordinateSystemInterfaceMacros.h
-  *  Class:
-  *      igstkCoordinateSystem
-  *      igstkCoordinateSystemDelegator
-  */
+
+  //  Connect the scene graph
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
@@ -4061,10 +4010,9 @@ void UltrasoundNavigator::ConnectImageRepresentation()
 
   m_CTView2PlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
-  /* important: we set the 2D views as child of correpsponding reslicing planes
-  * so that they can "follow" the plane and always face their normals (the camera position
-  * in the views is not changed though)
-  */
+  // important: we set the 2D views as child of coresponding reslicing planes
+  // so that they can "follow" the plane and always face their normals (the camera position
+  // in the views is not changed though)
 
   m_ViewerGroup->m_CTView2->RequestSetTransformAndParent(
       identity, m_CTView2PlaneSpatialObject );
@@ -4119,21 +4067,21 @@ void UltrasoundNavigator::ConnectImageRepresentation()
   m_ViewerGroup->m_CTView2->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CTView2PickerObserver );
 
-  /** Adding observer for slider bar reslicing event */
+  //  Adding observer for slider bar reslicing event
   m_ManualReslicingObserver = LoadedObserverType::New();
   m_ManualReslicingObserver->SetCallbackFunction( this, &UltrasoundNavigator::ResliceImageCallback );
 
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::ManualReslicingEvent(),
     m_ManualReslicingObserver );
 
-  /** Adding observer for key pressed event */
+  // Adding observer for key pressed event
   m_KeyPressedObserver = LoadedObserverType::New();
   m_KeyPressedObserver->SetCallbackFunction( this, &UltrasoundNavigator::HandleKeyPressedCallback );
 
   m_ViewerGroup->AddObserver( igstk::UltrasoundNavigatorQuadrantViews::KeyPressedEvent(),
     m_KeyPressedObserver );
 
-  /** Adding observer for mouse pressed event */
+  //Adding observer for mouse pressed event 
   m_MousePressedObserver = LoadedObserverType::New();
   m_MousePressedObserver->SetCallbackFunction( this, &UltrasoundNavigator::HandleMousePressedCallback );
 
@@ -4157,8 +4105,6 @@ void UltrasoundNavigator::ReadFiducials()
 
   igstkLogMacro2( m_Logger, DEBUG, 
                     "Reading fiducials from " << m_PlanFilename << "\n")
-
-  m_Plan = new igstk::FiducialsPlan;
 
   if (itksys::SystemTools::FileExists( m_PlanFilename.c_str()))
   {
@@ -4187,6 +4133,8 @@ void UltrasoundNavigator::ReadFiducials()
 
   m_FiducialsPointList->value(0);
   this->RequestChangeSelectedFiducial();
+
+  delete reader;
 }
 
 /** -----------------------------------------------------------------
@@ -4202,6 +4150,7 @@ void UltrasoundNavigator::WriteFiducials()
   writer->SetFileName( m_PlanFilename );
   writer->SetFiducialsPlan( m_Plan );
   writer->RequestWrite();
+  delete writer;
 }
 
 /** -----------------------------------------------------------------
@@ -4530,6 +4479,8 @@ void UltrasoundNavigator::HandleMousePressed (
   igstk::UltrasoundNavigatorQuadrantViews::MouseCommandType mouseCommand )
 { 
 
+   if ( mouseCommand.quadrant != 2 )
+   {
     m_WindowWidth += mouseCommand.dx * 2;
     if (m_WindowWidth < 1)
       m_WindowWidth = 1;
@@ -4547,7 +4498,21 @@ void UltrasoundNavigator::HandleMousePressed (
 
     if ( m_CTView2ImageRepresentation2.IsNotNull() )
       m_CTView2ImageRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+   }
+   else
+   {
+      m_WindowWidthVideo += mouseCommand.dx;
+      if (m_WindowWidthVideo < 1)
+        m_WindowWidthVideo = 1;
 
+      m_WindowLevelVideo += mouseCommand.dy;
+
+      if ( m_VideoFrameRepresentationForVideoView.IsNotNull() )
+        m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+
+      if ( m_VideoFrameRepresentationFor3DView.IsNotNull() )
+        m_VideoFrameRepresentationFor3DView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+   }
 }
 
 void UltrasoundNavigator::HandleKeyPressed ( 
@@ -4817,6 +4782,39 @@ UltrasoundNavigator
   Fl::check();
 }
 
+void 
+UltrasoundNavigator
+::OnSocketProgressEvent(itk::Object *source, const itk::EventObject & event)
+{
+  const igstk::DoubleTypeEvent *evt =
+    dynamic_cast< const igstk::DoubleTypeEvent * > (&event);
+
+  if ( evt )
+  {
+    igstk::EventHelperType::DoubleType progress = evt->Get();
+
+    // Get the value of the progress
+    //float progress = reinterpret_cast<igstk::DoubleTypeEvent *>(source)->GetProgress();
+
+    // Update the progress bar and value
+    m_OutProgressMeter->value(100 * progress);
+    m_OutProgressCounter->value(100 * progress);
+
+    // Show or hide progress bar if necessary
+    if(progress < 1.0f && !m_WinProgress->visible())
+      {
+      m_WinProgress->show();
+      this->CenterChildWindowInParentWindow( m_WinProgress );
+      }
+    else if (progress == 1.0f && m_WinProgress->visible())
+      {
+      m_WinProgress->hide();
+      }
+
+    // Update the screen
+    Fl::check();
+  }
+}
 
 void
 UltrasoundNavigator
@@ -4920,7 +4918,7 @@ void UltrasoundNavigator::DisconnectImagerProcessing()
 
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
-  return;
+
 }
 
 void 
