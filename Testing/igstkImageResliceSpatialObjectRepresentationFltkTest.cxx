@@ -92,7 +92,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
 
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
- // reader->SetLogger( logger );
+  reader->SetLogger( logger );
 
   //set up CT image observer
   typedef ImageResliceSpatialObjectRepresentationFltkTest::CTImageObserver 
@@ -201,7 +201,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
     
   // instantiate FLTK widget 
   FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType(0,0,512,512,"2D View");
+       new FLTKWidgetType(0,0,512,512,"2D View");
 
   fltkWidget2D->RequestSetView( view2D );
   fltkWidget2D->SetLogger( logger );
@@ -219,9 +219,11 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
                                         ImageResliceRepresentationType; 
 
-  ImageResliceRepresentationType::Pointer  imageResliceRepresentation =  ImageResliceRepresentationType::New(); 
+  ImageResliceRepresentationType::Pointer  imageResliceRepresentation = 
+    ImageResliceRepresentationType::New(); 
+
   imageResliceRepresentation->SetLogger( logger );
-//  imageResliceRepresentation->SetWindowLevel( 1559, -244 );
+  imageResliceRepresentation->SetWindowLevel( 1559, -244 );
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
   // build a tool spatial object using a cylinder object
@@ -433,6 +435,8 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
   view2D->RequestSaveScreenShot( filename );
 
+
+  form->hide();
 
   delete fltkWidget2D;
   delete form;
