@@ -91,8 +91,8 @@ private:
   vtkPlaneSource            *m_PlaneSource;
   vtkPolyDataMapper         *m_VideoMapper; 
   vtkTexture                *m_VideoTexture;
-  vtkLookupTable            *m_LUT;
-  vtkImageMapToColors       *m_MapColors;
+  vtkLookupTable            *m_LookupTable;
+  vtkImageMapToColors       *m_ColorMap;
 
   double                                 m_Level;
   double                                 m_Window;

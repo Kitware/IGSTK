@@ -41,8 +41,8 @@ VideoFrameRepresentation::VideoFrameRepresentation(void) :
   m_PlaneSource(NULL),
   m_VideoMapper(NULL),
   m_VideoTexture(NULL),
-  m_MapColors(NULL),
-  m_LUT(NULL)
+  m_ColorMap(NULL),
+  m_LookupTable(NULL)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation constructor called ...\n");
   
@@ -60,8 +60,18 @@ VideoFrameRepresentation::VideoFrameRepresentation(void) :
   m_VideoMapper = vtkPolyDataMapper::New();
   m_VideoTexture = vtkTexture::New();
   m_PlaneSource = vtkPlaneSource::New();
-  m_MapColors  = vtkImageMapToColors::New();
-  m_LUT        = vtkLookupTable::New();  
+  
+  m_ColorMap  = vtkImageMapToColors::New();
+  m_ColorMap->SetOutputFormatToRGBA();
+  m_ColorMap->PassAlphaToOutputOn();
+
+  m_LookupTable = vtkLookupTable::New();  
+  m_LookupTable->SetNumberOfColors( 256);
+  m_LookupTable->SetHueRange( 0, 0);
+  m_LookupTable->SetSaturationRange( 0, 0);
+  m_LookupTable->SetValueRange( 0 ,1);
+  m_LookupTable->SetAlphaRange( 1, 1);
+  m_LookupTable->Build();
 
   // Create the observer to VTK image events 
   m_VTKImageObserver = VTKImageObserver::New();  
@@ -102,18 +112,18 @@ VideoFrameRepresentation::~VideoFrameRepresentation(void)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation destructor called ...\n");
 
-  if( m_MapColors )
+  if( m_ColorMap )
   {
-    m_MapColors->SetLookupTable( NULL );
-    m_MapColors->SetInput( NULL );
-    m_MapColors->Delete();
-    m_MapColors = NULL;
+    m_ColorMap->SetLookupTable( NULL );
+    m_ColorMap->SetInput( NULL );
+    m_ColorMap->Delete();
+    m_ColorMap = NULL;
   }
 
-  if( m_LUT )
+  if( m_LookupTable )
   {
-    m_LUT->Delete();
-    m_LUT = NULL;
+    m_LookupTable->Delete();
+    m_LookupTable = NULL;
   }
 
   if ( m_VideoMapper )
@@ -209,19 +219,37 @@ VideoFrameRepresentation
   if( m_VTKImageObserver->GotVTKImage() ) 
   {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
+
     if( m_ImageData )
     {
       m_ImageData->Update();      
 
-      // Set default values for window and level
-      m_Window = 286;
-      m_Level = 108;     
+      double range[2];
+      m_ImageData->GetScalarRange(range);
+
+      m_LookupTable->SetTableRange(range[0],range[1]);
+      m_LookupTable->Build();
+
+      m_Window = range[1] - range[0];
+      m_Level = 0.5*(range[0] + range[1]);
       
-      m_MapColors->SetLookupTable( m_LUT );
+      if( fabs( m_Window ) < 0.001 )
+        {
+        m_Window = 0.001 * ( m_Window < 0.0 ? -1 : 1 );
+        }
 
-      m_MapColors->SetInput( m_ImageData );
+      if( fabs( m_Level ) < 0.001 )
+        {
+        m_Level = 0.001 * ( m_Level < 0.0 ? -1 : 1 );
+        }
 
-      m_VideoTexture->SetInput( m_MapColors->GetOutput() );
+      this->SetWindowLevel( m_Window, m_Level );
+
+      m_ColorMap->SetLookupTable( m_LookupTable );
+
+      m_ColorMap->SetInput( m_ImageData );
+
+      m_VideoTexture->SetInput( m_ColorMap->GetOutput() );
   
       int dims[3];
       m_ImageData->GetDimensions(dims);
@@ -255,7 +283,8 @@ VideoFrameRepresentation
   m_Window = window;
   m_Level = level;
 
-  m_LUT->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LookupTable->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LookupTable->Build();
 }
 
 /** Save current screenshot */
@@ -267,7 +296,7 @@ VideoFrameRepresentation
 
   vtkPNGWriter * writer = vtkPNGWriter::New();
 
-  writer->SetInput( m_MapColors->GetOutput() );
+  writer->SetInput( m_ColorMap->GetOutput() );
   
   writer->SetFileName( filename.c_str() );
   
@@ -298,11 +327,6 @@ CreateActors()
 
   this->AddActor( m_ImageActor );  
 
-  // Set default values for window and level
-  m_Window = 286;
-  m_Level = 108;  
-  
-  m_MapColors->SetLookupTable( m_LUT );
     
   m_StateMachine.ProcessInputs(); 
 }

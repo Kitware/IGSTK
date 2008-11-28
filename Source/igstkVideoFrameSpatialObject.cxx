@@ -40,12 +40,20 @@ VideoFrameSpatialObject::VideoFrameSpatialObject() :
 
   m_NumberOfScalarComponents = 0;
 
+  m_ImageData = NULL;
+
   m_StateMachine.SetReadyToRun();
 } 
 
 VideoFrameSpatialObject::~VideoFrameSpatialObject()  
 {
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
+
+  if (m_ImageData != NULL)
+  {
+    m_ImageData->Delete();
+    m_ImageData = NULL;
+  }
 }
 
 void

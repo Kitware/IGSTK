@@ -210,7 +210,7 @@ TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
 
   if ( m_Communication.IsNull() )
   {
-  std::cout << " m_Communication is NULL. cannot start " << std::endl;
+    std::cout << " m_Communication is NULL. cannot start " << std::endl;
     return FAILURE;
   }
 
@@ -220,18 +220,18 @@ TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
   m_Socket = NULL;
   
   unsigned int times = 0;
-  unsigned int maxTimes = 10;
+  unsigned int maxTimes = 20;
 
   do 
   {
     times++;
 
     igstk::DoubleTypeEvent evt;
-    evt.Set( (double)maxTimes/(double)times );
+    evt.Set( (double)times/(double)maxTimes );
     this->InvokeEvent( evt );
 
     m_Socket = m_Communication->WaitForConnection(1000);
-  } while ( !( times<maxTimes ) && ( m_Socket.IsNull() ) );
+  } while ( (times<maxTimes) && ( m_Socket.IsNull() ) );
 
   if ( times>=10 )
   {

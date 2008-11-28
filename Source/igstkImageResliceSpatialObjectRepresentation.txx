@@ -53,8 +53,22 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 {
   // We create the image spatial object
   m_ImageSpatialObject = NULL;
-
   this->RequestSetSpatialObject( m_ImageSpatialObject );
+
+  m_PlaneProperty = NULL;
+  m_PlaneSource = NULL;
+  m_Plane = NULL;
+  m_ResliceAxes = NULL;
+  m_ImageReslicer = NULL;
+  m_LookupTable = NULL;
+  m_ColorMap = NULL;
+  m_Texture = NULL;
+  m_Box = NULL;
+  m_Cutter = NULL;
+  m_ImageData = NULL;
+
+  //m_Edges->Delete();
+  //m_EdgesTuber->Delete();
 
   // Create classes for displaying images
   m_ImageActor = vtkActor::New();
@@ -76,27 +90,20 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_FrameColor[1] = 1;
   m_FrameColor[2] = 0;
 
-  // Represent the plane's outline
-  //
   m_PlaneSource = vtkPlaneSource::New();
   m_PlaneSource->SetXResolution(1);
   m_PlaneSource->SetYResolution(1);
 
-  m_PlaneProperty = vtkProperty::New();
-  m_PlaneProperty->SetAmbient(1.0);
-  m_PlaneProperty->SetAmbientColor(1.0,1.0,1.0);
+  m_ColorMap = vtkImageMapToColors::New();
 
-  // Represent the resliced image plane
-  m_ColorMap           = vtkImageMapToColors::New();
-  m_ImageReslicer            = vtkImageReslice::New();
-  // Set background level to TRANSLUCENT (see Geometry2DDataVtkMapper3D)
+  m_ImageReslicer = vtkImageReslice::New();
   m_ImageReslicer->SetBackgroundLevel( 0 );
   m_ImageReslicer->TransformInputSamplingOff();
   m_ImageReslicer->SetOutputDimensionality(2);
 
   m_ResliceAxes        = vtkMatrix4x4::New();
   m_Texture            = vtkTexture::New();
-  m_ImageData          = 0;
+
   m_LookupTable        = vtkLookupTable::New();
   m_LookupTable->SetNumberOfColors( 256);
   m_LookupTable->SetHueRange( 0, 0);
@@ -192,31 +199,73 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   //m_EdgesProperty->Delete();
+  if ( m_PlaneProperty != NULL )
+  {
   m_PlaneProperty->Delete();
-  m_PlaneSource->Delete();
-  m_Plane->Delete();
+  m_PlaneProperty = NULL;
+  }
 
+  if ( m_PlaneSource != NULL )
+  {
+  m_PlaneSource->Delete();
+  m_PlaneSource = NULL;
+  }
+
+  if ( m_Plane != NULL )
+  {
+  m_Plane->Delete();
+  m_Plane = NULL;
+  }
+
+  if ( m_ResliceAxes != NULL )
+  {
   m_ResliceAxes->Delete();
+  m_ResliceAxes = NULL;
+  }
+
+  if ( m_ImageReslicer != NULL )
+  {
   m_ImageReslicer->Delete();
+  m_ImageReslicer = NULL;
+  }
 
   if ( m_LookupTable )
-    {
-    m_LookupTable->Delete();
-    }
+  {
+  m_LookupTable->Delete();
+  m_LookupTable = NULL;
+  }
 
+  if ( m_ColorMap )
+  {
   m_ColorMap->Delete();
-  m_Texture->Delete();
+  m_ColorMap = NULL;
+  }
 
+  if ( m_Texture )
+  {
+  m_Texture->Delete();
+  m_Texture = NULL;
+  }
+
+  if ( m_Box )
+  {
   m_Box->Delete();
+  m_Box = NULL;
+  }
+
+  if ( m_Cutter )
+  {
   m_Cutter->Delete();
+  m_Cutter = NULL;
+  }
 
   //m_Edges->Delete();
   //m_EdgesTuber->Delete();
 
   if ( m_ImageData )
-    {
-    m_ImageData = 0;
-    }
+  {
+  m_ImageData = NULL;
+  }
 
 }
 
@@ -339,31 +388,29 @@ ImageResliceSpatialObjectRepresentation < TImageSpatialObject >
     return false;
     }
 
-  /* if a tool spatial object is driving the reslicing, compare the 
-     tool spatial object transform with the view render time*/
-  if( this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet())
-    {
-    if( this->GetRenderTimeStamp().GetExpirationTime() <
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
-      this->GetRenderTimeStamp().GetStartTime() >
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
-      {
-        // fixme
-        double diff = 
-          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+  if( !this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
+    return true;
 
-        if (diff > 450 )
-        {
-          //std::cout << diff << std::endl;
-          return false;
-        }
-        else
-          return true;
-      }
-    else
+  /* if a tool spatial object is driving the reslicing, compare the 
+  *  tool spatial object transform with the view render time
+  */
+  if( this->GetRenderTimeStamp().GetExpirationTime() <
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
+    this->GetRenderTimeStamp().GetStartTime() >
+    this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+    {
+      // fixme
+      double diff = 
+        this->GetRenderTimeStamp().GetStartTime() - 
+        m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+
+      if (diff > 450 )
       {
-      return true;
+        //std::cout << diff << std::endl;
+        return false;
       }
+      else
+        return true;
     }
   else
     {
@@ -645,6 +692,12 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkActor::New();
+
+  m_PlaneProperty = vtkProperty::New();
+  m_PlaneProperty->SetAmbient(1.0);
+  m_PlaneProperty->SetAmbientColor(1.0,1.0,1.0);
+
+
   this->AddActor( m_ImageActor );  
 
   // for dubugging purpose
