@@ -83,19 +83,19 @@ Navigator::Navigator() :
   logFileName = "logNavigator"
   + itksys::SystemTools::GetCurrentDateTime( "_%Y_%m_%d_%H_%M_%S" ) + ".txt";
   m_LogFile.open( logFileName.c_str() );
-  if( !m_LogFile.fail() )
-  {
-    m_LogFileOutput->SetStream( m_LogFile );
-    this->GetLogger()->AddLogOutput( m_LogFileOutput );
-    igstkLogMacro2( m_Logger, DEBUG, "Successfully opened Log file:" << logFileName << "\n" );
-  }
-  else
+
+  if( m_LogFile.fail() )
   {
     //Return if fail to open the log file
-    igstkLogMacro2( m_Logger, DEBUG, "Problem opening Log file:"
-                                                    << logFileName << "\n" );
+    igstkLogMacro2( m_Logger, DEBUG, 
+      "Problem opening Log file:" << logFileName << "\n" );
     return;
   }
+
+  m_LogFileOutput->SetStream( m_LogFile );
+  this->GetLogger()->AddLogOutput( m_LogFileOutput );
+  igstkLogMacro2( m_Logger, DEBUG, 
+    "Successfully opened Log file:" << logFileName << "\n" );
 
   /** Build image reader  */  
   m_ImageReader         = ImageReaderType::New();
@@ -2437,7 +2437,7 @@ void Navigator::SetImagePickingProcessing()
 */
 void Navigator::SetImageFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::SetImageFiducialProcessing called...\n" )
 
     ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
@@ -2446,7 +2446,8 @@ void Navigator::SetImageFiducialProcessing()
     {
       int choice = m_FiducialsPointList->value();
 
-      m_FiducialPointVector[choice]->RequestSetTransformAndParent(m_PickingTransform, m_WorldReference );
+      m_FiducialPointVector[choice]->RequestSetTransformAndParent(
+                                              m_PickingTransform, m_WorldReference );
 
       m_Plan->m_FiducialPoints[choice] = point;
 
@@ -2916,7 +2917,10 @@ void Navigator::DisconnectTrackerProcessing()
 */
 void Navigator::ConnectImageRepresentation()
 {
+  // instantiate a plan object
   m_Plan = new igstk::FiducialsPlan;
+
+  // set up fiducual representations
   m_FiducialPointVector.resize(4);
   m_AxialFiducialRepresentationVector.resize(4);
   m_SagittalFiducialRepresentationVector.resize(4);
