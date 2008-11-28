@@ -1,129 +1,66 @@
 # data file for the Fltk User Interface Designer (fluid)
-
 version 1.0107 
-
 header_name {.h} 
-
 code_name {.cxx}
-
 decl {\#include <FL/fl_ask.H>} {} 
-
-
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-
-
 class WorkingVolumeTesterGUI {open : {public igstk::Object}
-
 } {
-
   Function {WorkingVolumeTesterGUI()} {open
-
   } {
-
     Fl_Window mainWindow {
-
       label {IGSTK - Working Volume Tester}
-
-      callback {Quit();} open selected
-
+      callback {Quit();} open
       xywh {0 0 1280 1024} type Double box PLASTIC_UP_BOX resizable
-
       code0 {\#include "igstkFLTKWidget.h"} noborder visible
-
     } {
-
       Fl_Group m_ControlGroup {
-
         xywh {3 5 145 1017} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
-
       } {
-
         Fl_Box m_InstitutionBox {
-
           image {IGSTK.jpg} xywh {11 27 130 61} color 7 labelsize 23 labelcolor 15
-
         }
-
         Fl_Button {} {
-
           label Quit
-
           callback {Quit();}
-
           tooltip {Load segmentation (.msh)} xywh {10 965 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-
         }
-
         Fl_Button {} {
-
           label Load
-
           callback {RequestLoadTrackerMesh();}
-
           tooltip {Load tracker mesh  (.msh)} xywh {10 220 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-
         }
-
         Fl_Button {} {
-
           label Load
-
           callback {RequestLoadWorkingVolumeMesh();}
-
           tooltip {Load working volume mesh (.msh)} xywh {10 300 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-
         }
-
         Fl_Button {} {
-
           label Load
-
           callback {RequestConfigureTracker();}
-
           tooltip {Start application} xywh {10 145 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-
         }
-
         Fl_Box {} {
-
           label {Working Volume Rep.}
-
           xywh {10 260 130 37} labelsize 13
-
         }
-
         Fl_Box {} {
-
           label {Tracker Rep.}
-
           xywh {10 183 130 37} labelsize 13
-
         }
-
         Fl_Box {} {
-
           label {Tracker Configuration}
-
           xywh {10 108 130 37} labelsize 13
-
         }
-
       }
-
       Fl_Group m_ViewerGroup {
-
         xywh {150 4 1127 1018} box PLASTIC_DOWN_BOX
-
         code0 {\#include "WorkingVolumeTesterQuadrantViews.h"}
-
         class {igstk::WorkingVolumeTesterQuadrantViews}
-
       } {}
-
     }
-
     code {mainWindow->show();
 
 
@@ -131,94 +68,54 @@ class WorkingVolumeTesterGUI {open : {public igstk::Object}
 mainWindow->fullscreen();
 
 hasQuitted = false;} {}
-
     Fl_Window m_ConfirmToQuitWindow {
-
-      label {Shut down system} open
-
+      label {Shut down system}
       xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
-
     } {
-
       Fl_Box {} {
-
         label {Are you sure you want to quit?}
-
         xywh {40 24 335 51} labelsize 22
-
       }
-
       Fl_Button {} {
-
         label Yes
-
         callback {m_ConfirmToQuitWindow->hide();
 
 this->RequestPrepareToQuit();
 
 this->hasQuitted = true;}
-
         xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 254 selection_color 95
-
       }
-
       Fl_Button {} {
-
         label Cancel
-
         callback {m_ConfirmToQuitWindow->hide();
 
 this->hasQuitted = false;}
-
         xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 254 selection_color 95
-
       }
-
     }
-
   }
-
-  Function {~WorkingVolumeTesterGUI()} {return_type virtual
-
-  } {}
-
+  Function {~WorkingVolumeTesterGUI()} {open return_type virtual
+  } {
+    code {delete m_ViewerGroup;} {selected
+    }
+  }
   decl {bool hasQuitted;} {}
-
   Function {Quit()} {open return_type void
-
   } {
-
     code {m_ConfirmToQuitWindow->show();} {}
-
   }
-
   Function {HasQuitted()} {open return_type bool
-
   } {
-
     code {return this->hasQuitted;} {}
-
   }
-
   Function {RequestDisconnectTracker()} {return_type {virtual void}
-
   } {}
-
   Function {RequestConfigureTracker()} {return_type {virtual void}
-
   } {}
-
   Function {RequestPrepareToQuit()} {return_type {virtual void}
-
   } {}
-
   Function {RequestLoadTrackerMesh()} {return_type {virtual void}
-
   } {}
-
   Function {RequestLoadWorkingVolumeMesh()} {return_type {virtual void}
-
   } {}
-
 } 
-

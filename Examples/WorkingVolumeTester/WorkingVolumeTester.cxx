@@ -272,6 +272,9 @@ WorkingVolumeTester::WorkingVolumeTester() :
   igstkAddTransitionMacro( TrackerInitializationReady, StartTracking, 
                            StartingTracker, StartTracking );
 
+  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectTracker, 
+                           DisconnectingTracker, DisconnectTracker );
+
   //complete table for state: TrackerInitializationReady
   igstkAddTransitionMacro( TrackerInitializationReady, Success, 
                            TrackerInitializationReady, ReportInvalidRequest );
@@ -283,8 +286,6 @@ WorkingVolumeTester::WorkingVolumeTester() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StopTracking,
                            TrackerInitializationReady, ReportInvalidRequest );  
-  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectTracker,
-                           TrackerInitializationReady, ReportInvalidRequest );
 
   /** LoadingMesh State */
 
@@ -381,11 +382,11 @@ WorkingVolumeTester::WorkingVolumeTester() :
 
    /** StoppingTracker State */
 
+  igstkAddTransitionMacro( StoppingTracker, Success,
+                           TrackerInitializationReady, ReportSuccessStopTracking );
+
   igstkAddTransitionMacro( StoppingTracker, Failure,
                            Tracking, ReportFailureStopTracking );
-
-  igstkAddTransitionMacro( StoppingTracker, Success,
-                           Tracking, ReportSuccessStopTracking );
 
   //complete table for state: StoppingTracker
   
@@ -1292,9 +1293,7 @@ void WorkingVolumeTester::StopTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                     "WorkingVolumeTester::StopTrackingProcessing called...\n" )
 
-/*
-  //fix me
-  m_TrackerController->RequestStop( );
+  m_TrackerController->RequestStopTracking( );
                //check that stop was successful
   if( m_TrackerControllerObserver->Error() )
   {
@@ -1309,11 +1308,9 @@ void WorkingVolumeTester::StopTrackingProcessing()
     m_StateMachine.ProcessInputs();
     return;
   }
-*/
+
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
-  return;
-
 }
 /** -----------------------------------------------------------------
 * Disconnects the tracker and closes the communication port
@@ -1343,7 +1340,6 @@ void WorkingVolumeTester::DisconnectTrackerProcessing()
 
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
-  return;
 }
 
 
@@ -1372,10 +1368,7 @@ WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object *caller,
   const igstk::TrackerStopTrackingErrorEvent *evt1c =
     dynamic_cast< const igstk::TrackerStopTrackingErrorEvent * > (&event);
 
-  //const igstk::TrackerController::RequestTrackerEvent *evt2 =
-  //  dynamic_cast< const igstk::TrackerController::RequestTrackerEvent * > (&event);
-
-   const igstk::TrackerController::RequestToolsEvent *evt3 = 
+  const igstk::TrackerController::RequestToolsEvent *evt3 = 
     dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
 
   const igstk::TrackerController::RequestToolEvent *evt4 = 
@@ -1396,10 +1389,6 @@ WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object *caller,
     m_ErrorOccured = true;
     m_ErrorMessage = evt1c->Get();
   }
-  /*else if ( evt2 )
-  {
-    m_Parent->m_Tracker = evt2->Get();
-  }*/
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
@@ -1426,6 +1415,7 @@ void
 WorkingVolumeTester
 ::RequestPrepareToQuit()
 {
+  this->RequestStopTracking();
   this->RequestDisconnectTracker();
 }
 
