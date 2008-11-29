@@ -421,6 +421,13 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_FileNames = itk::GDCMSeriesFileNames::New();
   m_FileNames->SetRecursive(false);
   m_FileNames->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
+
+  // add more criteria to distinguish between different series
+  m_FileNames->SetUseSeriesDetails( true );
+
+  // add acquisition number
+  m_FileNames->AddSeriesRestriction( "0020|0012" );
+
   m_ImageIO = itk::GDCMImageIO::New();
   m_ImageIO->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
   m_ImageSeriesReader = ImageSeriesReaderType::New();
