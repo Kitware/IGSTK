@@ -106,6 +106,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   igstkAddStateMacro( StoppingTracker ); 
   igstkAddStateMacro( DisconnectingTracker ); 
   igstkAddStateMacro( Tracking );
+  igstkAddStateMacro( LoadingImagerToolSpatialObject );
   igstkAddStateMacro( TrackingAndImaging );
   igstkAddStateMacro( InitializingImager );
   igstkAddStateMacro( StartingImager ); 
@@ -113,7 +114,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   igstkAddStateMacro( DisconnectingImager );
 
   /** Machine Inputs*/
-  
+
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
   igstkAddInputMacro( LoadTrackerMesh );
@@ -124,12 +125,11 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( DisconnectTracker );
-
+  igstkAddInputMacro( LoadImagerToolSpatialObject );  
   igstkAddInputMacro( InitializeImager );
   igstkAddInputMacro( StartImaging );
   igstkAddInputMacro( StopImaging );
   igstkAddInputMacro( DisconnectImager );
-
 
   /** Initial State */  
   
@@ -155,6 +155,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            Initial, ReportInvalidRequest );  
   igstkAddTransitionMacro( Initial, DisconnectTracker,
                            Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, LoadImagerToolSpatialObject,
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, InitializeImager, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, StartImaging, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, StopImaging, 
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, DisconnectImager, 
+                           Initial, ReportInvalidRequest );
 
   /** LoadingTrackerToolSpatialObject State */
 
@@ -171,23 +181,27 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadTrackerMesh, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadTrackerToolSpatialObject,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, ConfigureTracker, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeTracker, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartTracking, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StopTracking, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectTracker, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeImager, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadImagerToolSpatialObject,
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartImaging, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StopImaging, 
+                           LoadingTrackerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectImager, 
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
 
   /** TrackerToolSpatialObjectReady State */
@@ -224,6 +238,21 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectTracker, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
 
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeImager, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImagerToolSpatialObject,
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartImaging, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopImaging, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+
+    igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectImager, 
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
+
   /** ConfiguringTracker State */
 
   igstkAddTransitionMacro( ConfiguringTracker, Success, 
@@ -256,6 +285,21 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            ConfiguringTracker, ReportInvalidRequest );
 
   igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker, 
+                           ConfiguringTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ConfiguringTracker, InitializeImager, 
+                           ConfiguringTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ConfiguringTracker, LoadImagerToolSpatialObject,
+                           ConfiguringTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ConfiguringTracker, StartImaging, 
+                           ConfiguringTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ConfiguringTracker, StopImaging, 
+                           ConfiguringTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( ConfiguringTracker, DisconnectImager, 
                            ConfiguringTracker, ReportInvalidRequest );
 
   /** TrackerConfigurationReady State */
@@ -291,6 +335,21 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker, 
                            TrackerConfigurationReady, ReportInvalidRequest );
 
+  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeImager, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadImagerToolSpatialObject,
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerConfigurationReady, StartImaging, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerConfigurationReady, StopImaging, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectImager, 
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
   /** InitializingTracker State */
 
   igstkAddTransitionMacro( InitializingTracker, Success, 
@@ -324,7 +383,22 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( InitializingTracker, DisconnectTracker, 
                            InitializingTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( InitializingTracker, InitializeImager, 
+                           InitializingTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( InitializingTracker, LoadImagerToolSpatialObject,
+                           InitializingTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( InitializingTracker, StartImaging, 
+                           InitializingTracker, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( InitializingTracker, StopImaging, 
+                           InitializingTracker, ReportInvalidRequest );
   
+  igstkAddTransitionMacro( InitializingTracker, DisconnectImager, 
+                           InitializingTracker, ReportInvalidRequest );
+
   /** TrackerInitializationReady State */  
 
   igstkAddTransitionMacro( TrackerInitializationReady, StartTracking, 
@@ -334,6 +408,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            DisconnectingTracker, DisconnectTracker );
 
   //complete table for state: TrackerInitializationReady
+
   igstkAddTransitionMacro( TrackerInitializationReady, LoadTrackerToolSpatialObject,
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, LoadWorkingVolumeMesh,
@@ -350,7 +425,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StopTracking,
                            TrackerInitializationReady, ReportInvalidRequest );  
-
+  igstkAddTransitionMacro( TrackerInitializationReady, InitializeImager, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadImagerToolSpatialObject,
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, StartImaging, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, StopImaging, 
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectImager, 
+                           TrackerInitializationReady, ReportInvalidRequest );
   /** LoadingMesh State */
 
   igstkAddTransitionMacro( LoadingMesh, Success,
@@ -363,26 +447,29 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( LoadingMesh, LoadTrackerToolSpatialObject,
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, LoadWorkingVolumeMesh, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, LoadTrackerMesh, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, ConfigureTracker, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, InitializeTracker, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, StartTracking, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, StopTracking, 
                            LoadingMesh, ReportInvalidRequest );
-
   igstkAddTransitionMacro( LoadingMesh, DisconnectTracker, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, InitializeImager, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, LoadImagerToolSpatialObject,
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StartImaging, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, StopImaging, 
+                           LoadingMesh, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingMesh, DisconnectImager, 
                            LoadingMesh, ReportInvalidRequest );
 
   /** StartingTracker State*/
@@ -397,36 +484,36 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   
   igstkAddTransitionMacro( StartingTracker, LoadTrackerToolSpatialObject,
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, LoadWorkingVolumeMesh, 
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, LoadTrackerMesh, 
                            StartingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( StartingTracker, ConfigureTracker, 
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, InitializeTracker, 
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, StartTracking, 
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, StopTracking, 
                            StartingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StartingTracker, DisconnectTracker, 
                            StartingTracker, ReportInvalidRequest );
-
+  igstkAddTransitionMacro( StartingTracker, InitializeImager, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, LoadImagerToolSpatialObject,
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, StartImaging, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, StopImaging, 
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, DisconnectImager, 
+                           StartingTracker, ReportInvalidRequest );
   /** Tracking State */
 
   igstkAddTransitionMacro( Tracking, StopTracking, 
                            StoppingTracker, StopTracking );
-
   igstkAddTransitionMacro( Tracking, LoadWorkingVolumeMesh,
                            LoadingMesh, LoadWorkingVolumeMesh );
-
   igstkAddTransitionMacro( Tracking, LoadTrackerMesh,
                            LoadingMesh, LoadTrackerMesh );
 
@@ -434,25 +521,28 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( Tracking, Success, 
                            Tracking, ReportInvalidRequest );
-
   igstkAddTransitionMacro( Tracking, Failure, 
                            Tracking, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( Tracking, LoadTrackerToolSpatialObject,
                            Tracking, ReportInvalidRequest );
-
   igstkAddTransitionMacro( Tracking, InitializeTracker, 
                            Tracking, ReportInvalidRequest );
-
   igstkAddTransitionMacro( Tracking, ConfigureTracker, 
                            Tracking, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( Tracking, StartTracking, 
                            Tracking, ReportInvalidRequest );
-
   igstkAddTransitionMacro( Tracking, DisconnectTracker, 
                            Tracking, ReportInvalidRequest );
-
+  igstkAddTransitionMacro( Tracking, InitializeImager, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, LoadImagerToolSpatialObject,
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, StartImaging, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, StopImaging, 
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, DisconnectImager, 
+                           Tracking, ReportInvalidRequest );
    /** StoppingTracker State */
 
   igstkAddTransitionMacro( StoppingTracker, Success,
@@ -466,28 +556,30 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( StoppingTracker, LoadTrackerToolSpatialObject,
                            StoppingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StoppingTracker, LoadWorkingVolumeMesh, 
                            StoppingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StoppingTracker, LoadTrackerMesh, 
                            StoppingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( StoppingTracker, InitializeTracker, 
                            StoppingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StoppingTracker, ConfigureTracker, 
                            StoppingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( StoppingTracker, StartTracking, 
                            StoppingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StoppingTracker, StopTracking, 
                            StoppingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( StoppingTracker, DisconnectTracker, 
                            StoppingTracker, ReportInvalidRequest );
-
+  igstkAddTransitionMacro( StoppingTracker, InitializeImager, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, LoadImagerToolSpatialObject,
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, StartImaging, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, StopImaging, 
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, DisconnectImager, 
+                           StoppingTracker, ReportInvalidRequest );
    /** DisconnectingTracker Tracker */
 
   igstkAddTransitionMacro( DisconnectingTracker, Success, 
@@ -500,26 +592,29 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( DisconnectingTracker, LoadTrackerToolSpatialObject,
                            DisconnectingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( DisconnectingTracker, LoadWorkingVolumeMesh, 
                            DisconnectingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( DisconnectingTracker, LoadTrackerMesh, 
                            DisconnectingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( DisconnectingTracker, InitializeTracker, 
                            DisconnectingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( DisconnectingTracker, ConfigureTracker, 
                            DisconnectingTracker, ReportInvalidRequest );
-    
   igstkAddTransitionMacro( DisconnectingTracker, StartTracking, 
                            DisconnectingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( DisconnectingTracker, StopTracking, 
                            DisconnectingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, LoadImagerToolSpatialObject,
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, InitializeImager, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, StartImaging, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, StopImaging, 
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, DisconnectImager, 
                            DisconnectingTracker, ReportInvalidRequest );
 
     /** LoadingImagerToolSpatialObject State */
@@ -532,24 +627,12 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   //complete table for state: LoadingImagerToolSpatialObject
 
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadWorkingVolumeMesh,
+                           LoadingImagerToolSpatialObject, LoadWorkingVolumeMesh );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadTrackerToolSpatialObject,
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadImagerToolSpatialObject,
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartSetImageFiducials, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, SetPickingPosition, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, EndSetImageFiducials, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, RegisterTracker, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartSetTrackerFiducials, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, AcceptTrackerFiducial, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  //igstkAddTransitionMacro( LoadingImagerToolSpatialObject, EndSetTrackerFiducials, 
-  //                         LoadingImagerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, ConfigureTracker, 
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeTracker, 
@@ -568,6 +651,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeImager, 
                            LoadingImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadTrackerMesh,
+                           LoadingImagerToolSpatialObject, LoadTrackerMesh );
 
   /** InitializingImager State */
 
@@ -579,34 +664,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   //complete table for state: InitializingImager
 
-  //igstkAddTransitionMacro( InitializingImager, LoadImage, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, ConfirmImagePatientName, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, LoadMesh, 
-  //                         InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, LoadWorkingVolumeMesh,
+                           InitializingImager, LoadWorkingVolumeMesh );
   igstkAddTransitionMacro( InitializingImager, LoadTrackerToolSpatialObject, 
                            InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, LoadImagerToolSpatialObject, 
                            InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, StartSetImageFiducials, 
-  //                         InitializingImager, ReportInvalidRequest ); 
-  //igstkAddTransitionMacro( InitializingImager, SetPickingPosition, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, EndSetImageFiducials, 
-  //                         InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, ConfigureTracker, 
                            InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, InitializeTracker, 
                            InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, RegisterTracker, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, StartSetTrackerFiducials, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, AcceptTrackerFiducial, 
-  //                         InitializingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( InitializingImager, EndSetTrackerFiducials, 
-  //                         InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, StartTracking, 
                            InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, StopTracking, 
@@ -621,6 +688,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            InitializingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingImager, InitializeImager, 
                            InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingImager, LoadTrackerMesh,
+                           InitializingImager, LoadTrackerMesh );
 
   /** StartingImager State*/
 
@@ -632,34 +701,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   //complete table for state: StartingImager
 
-  //igstkAddTransitionMacro( StartingImager, LoadImage, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, ConfirmImagePatientName, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, LoadMesh, 
-  //                         StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, LoadWorkingVolumeMesh,
+                           StartingImager, LoadWorkingVolumeMesh );
   igstkAddTransitionMacro( StartingImager, LoadTrackerToolSpatialObject, 
                            StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, LoadImagerToolSpatialObject, 
                            StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, StartSetImageFiducials, 
-  //                         StartingImager, ReportInvalidRequest ); 
-  //igstkAddTransitionMacro( StartingImager, SetPickingPosition, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, StartSetTrackerFiducials, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, EndSetImageFiducials, 
-  //                         StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, ConfigureTracker, 
                            StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, InitializeTracker, 
                            StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, RegisterTracker, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, AcceptTrackerFiducial, 
-  //                         StartingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StartingImager, EndSetTrackerFiducials, 
-  //                         StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, StartTracking, 
                            StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, StopTracking, 
@@ -674,6 +725,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            StartingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingImager, InitializeImager, 
                            StartingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingImager, LoadTrackerMesh,
+                           StartingImager, LoadTrackerMesh );
 
   /** TrackingAndImagingAndImaging State */
 
@@ -686,34 +739,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, Failure, 
                            TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, LoadImage, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, ConfirmImagePatientName, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, LoadMesh, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadWorkingVolumeMesh,
+                           TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, LoadTrackerToolSpatialObject, 
                            TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, StartSetImageFiducials, 
-  //                         TrackingAndImaging, ReportInvalidRequest ); 
-  //igstkAddTransitionMacro( TrackingAndImaging, EndSetImageFiducials, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, StartSetTrackerFiducials, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, LoadImagerToolSpatialObject, 
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, InitializeTracker, 
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, ConfigureTracker, 
                            TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, RegisterTracker, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, AcceptTrackerFiducial, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, EndSetTrackerFiducials, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
-  //igstkAddTransitionMacro( TrackingAndImaging, SetPickingPosition, 
-  //                         TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, StartTracking, 
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, StopTracking, 
@@ -726,6 +761,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, DisconnectImager, 
                            TrackingAndImaging, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackingAndImaging, LoadTrackerMesh,
+                           TrackingAndImaging, LoadTrackerMesh );
 
   /** StoppingImager State */
 
@@ -737,32 +774,14 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   //complete table for state: StoppingImager
 
-  //igstkAddTransitionMacro( StoppingImager, LoadImage, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, ConfirmImagePatientName, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, LoadMesh, 
-  //                         StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, LoadTrackerToolSpatialObject, 
                            StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, StartSetImageFiducials, 
-  //                         StoppingImager, ReportInvalidRequest ); 
-  //igstkAddTransitionMacro( StoppingImager, SetPickingPosition, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, EndSetImageFiducials, 
-  //                         StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, LoadWorkingVolumeMesh,
+                           StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, InitializeTracker, 
                            StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, ConfigureTracker, 
                            StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, RegisterTracker, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, StartSetTrackerFiducials, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, AcceptTrackerFiducial, 
-  //                         StoppingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( StoppingImager, EndSetTrackerFiducials, 
-  //                         StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, StartTracking, 
                            StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, StopTracking, 
@@ -779,6 +798,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            StoppingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingImager, InitializeImager, 
                            StoppingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingImager, LoadTrackerMesh,
+                           StoppingImager, LoadTrackerMesh );
 
   /** DisconnectingImager */
 
@@ -790,32 +811,14 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   //complete table for state: DisconnectingImager
 
-  //igstkAddTransitionMacro( DisconnectingImager, LoadImage, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, ConfirmImagePatientName, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, LoadMesh, 
-  //                         DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, LoadWorkingVolumeMesh,
+                           DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, LoadTrackerToolSpatialObject, 
                            DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, StartSetImageFiducials, 
-  //                         DisconnectingImager, ReportInvalidRequest ); 
-  //igstkAddTransitionMacro( DisconnectingImager, SetPickingPosition, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, EndSetImageFiducials, 
-  //                         DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, InitializeTracker, 
                            DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, ConfigureTracker, 
                            DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, RegisterTracker, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, StartSetTrackerFiducials, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, AcceptTrackerFiducial, 
-  //                         DisconnectingImager, ReportInvalidRequest );
-  //igstkAddTransitionMacro( DisconnectingImager, EndSetTrackerFiducials, 
-  //                         DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, StartTracking, 
                            DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, StopTracking, 
@@ -832,6 +835,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            DisconnectingImager, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingImager, InitializeImager, 
                            DisconnectingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingImager, LoadTrackerMesh,
+                           DisconnectingImager, LoadTrackerMesh );
 
   /** Set Initial State */
 
