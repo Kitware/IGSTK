@@ -794,13 +794,14 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   int i;
 
   for (i = 0; i < 3; i++)
+  {
+    if (m_ImageExtent[2*i] > m_ImageExtent[2*i + 1])
     {
-      if (m_ImageExtent[2*i] > m_ImageExtent[2*i + 1])
-        {
-          std::cerr << "Invalid extent" << std::endl;
-          break;
-        }
+      igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+            invalid extent!\n");
+      return;
     }
+  }
 
   if ( m_RestrictPlaneToVolume )
     {
@@ -923,7 +924,8 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   // * if spacingX is 0, things will blow up.
   if (realExtentX > (VTK_INT_MAX >> 1))
     {
-    std::cerr << "Invalid X extent: " << realExtentX << std::endl;
+    igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                   invalid X extent: " << realExtentX << " \n");
     extentX = 0;
     }
   else
@@ -941,7 +943,8 @@ void ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   int extentY;
   if (realExtentY > (VTK_INT_MAX >> 1))
     {
-    std::cerr << "Invalid Y extent: " << realExtentY << std::endl;
+    igstkLogMacro( DEBUG, "igstk::ImageResliceSpatialObjectRepresentation\
+                   invalid Y extent: " << realExtentY << " \n");
     extentY = 0;
     }
   else
