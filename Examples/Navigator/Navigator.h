@@ -201,14 +201,37 @@ public:
 
   typedef igstk::PrecomputedTransformData::TransformType *  TransformTypePointer;
 
-  igstkObserverMacro( TransformRequest,
-                    igstk::PrecomputedTransformData::TransformTypeEvent,
-                    TransformTypePointer )
+//  igstkObserverMacro( TransformRequest,
+//                      igstk::PrecomputedTransformData::TransformTypeEvent,
+//                      TransformTypePointer )
 
-  igstkObserverMacro( TransformError, 
-                      igstk::PrecomputedTransformData::TransformErrorTypeEvent, 
-                      igstk::PrecomputedTransformData::ErrorType )
+//  igstkObserverMacro( TransformError, 
+//                      igstk::PrecomputedTransformData::TransformErrorTypeEvent, 
+//                      igstk::PrecomputedTransformData::ErrorType )
 
+  igstkObserverMacro( DICOMImageReaderInvalidDirectoryNameError, 
+                      igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent, 
+                      std::string )
+
+  igstkObserverMacro( DICOMImageReaderNonExistingDirectoryError, 
+                      igstk::DICOMImageDirectoryDoesNotExistErrorEvent, 
+                      igstk::EventHelperType::StringType )
+
+  igstkObserverMacro( DICOMImageReaderEmptyDirectoryError, 
+                      igstk::DICOMImageDirectoryEmptyErrorEvent, 
+                      igstk::EventHelperType::StringType )
+
+  igstkObserverMacro( DICOMImageDirectoryNameDoesNotHaveEnoughFilesError, 
+                      igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, 
+                      igstk::EventHelperType::StringType )
+
+  igstkObserverMacro( DICOMImageDirectoryDoesNotContainValidDICOMSeriesError, 
+                      igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent, 
+                      igstk::EventHelperType::StringType )
+
+  igstkObserverMacro( DICOMImageInvalidError, 
+                      igstk::DICOMImageReadingErrorEvent, 
+                      igstk::EventHelperType::StringType )
 
   /** Define observers for event communication */
   igstkObserverObjectMacro( Image, igstk::CTImageReader::ImageModifiedEvent,

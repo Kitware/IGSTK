@@ -8,45 +8,46 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 class NavigatorGUI {open : {public igstk::Object}
 } {
-  Function {NavigatorGUI()} {} {
+  Function {NavigatorGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK - Navigator Application}
       callback {Quit();}
-      xywh {0 0 1280 1024} type Double box PLASTIC_UP_BOX resizable
+      xywh {0 28 1276 800} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"}
       code1 {\#include <time.h>} noborder visible
     } {
-      Fl_Group m_ControlGroup {open
-        xywh {3 5 151 1017} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
+      Fl_Group m_ControlGroup {open selected
+        xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 128 resizable
       } {
         Fl_Button m_QuitButton {
           label Quit
           callback {Quit();}
-          tooltip {Quit application} xywh {10 964 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Quit application} xywh {8 756 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Box m_InstitutionBox {
-          image {IGSTK.jpg} xywh {20 9 110 51} color 7 labelsize 23 labelcolor 15
+          image {IGSTK.jpg} xywh {21 18 110 51} color 7 labelsize 23 labelcolor 15
         }
         Fl_Box m_TrackingSemaphore {
           label OFF
-          xywh {10 852 130 30} box PLASTIC_UP_BOX
+          xywh {8 675 130 30} box PLASTIC_UP_BOX
         }
         Fl_Box m_ReferenceSemaphore {
           label OFF
-          xywh {10 778 130 30} box PLASTIC_UP_BOX
+          xywh {8 595 130 30} box PLASTIC_UP_BOX
         }
         Fl_Box {} {
           label {Reference Status:}
-          xywh {10 741 130 37} labelsize 17
+          xywh {8 558 130 37} labelsize 17
         }
         Fl_Box {} {
           label {Tool Status:}
-          xywh {10 814 130 37} labelsize 17
+          xywh {8 637 130 37} labelsize 17
         }
         Fl_Choice m_ViewModeList {
           label {Viewing Mode}
           callback {RequestChangeSelectedViewMode();}
-          xywh {10 676 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
+          xywh {8 493 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
         } {
           MenuItem {} {
             label Orthogonal
@@ -64,36 +65,36 @@ class NavigatorGUI {open : {public igstk::Object}
         Fl_Button m_LoadImageButton {
           label {Load Image}
           callback {RequestLoadImage();}
-          tooltip {Load CT data set} xywh {10 83 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Load CT data set} xywh {8 87 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_LoadMeshButton {
           label {Load Mesh}
           callback {RequestLoadMesh();}
-          tooltip {Load segmentation (.msh)} xywh {10 140 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Load segmentation (.msh)} xywh {8 126 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Choice m_FiducialsPointList {
           label Fiducials
           callback {RequestChangeSelectedFiducial();}
-          xywh {10 264 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
+          xywh {8 186 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
         } {}
         Fl_Button m_ModifyFiducialsButton {
           label {Modify Fiducials}
           callback {RequestToggleSetImageFiducials();}
-          tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {10 317 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {8 239 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_ConfigureTrackerButton {
           label {Configure Tracker}
           callback {RequestLoadToolSpatialObject();}
-          tooltip {Configue tracker system} xywh {10 388 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Configue tracker system} xywh {8 310 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
         Fl_Button m_RegisterButton {
           label Register
           callback {RequestStartSetTrackerFiducials();}
-          tooltip {Register tracker system to image} xywh {10 447 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+          tooltip {Register tracker system to image} xywh {8 369 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
         }
       }
-      Fl_Group m_ViewerGroup {selected
-        xywh {150 4 1127 1018} box PLASTIC_DOWN_BOX
+      Fl_Group m_ViewerGroup {
+        xywh {151 0 1127 800} box PLASTIC_DOWN_BOX
         code0 {\#include "NavigatorQuadrantViews.h"}
         class {igstk::NavigatorQuadrantViews}
       } {}

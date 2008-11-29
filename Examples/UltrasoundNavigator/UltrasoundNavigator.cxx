@@ -2673,6 +2673,7 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   this->DisableAll();
 
   m_ViewModeList->activate();
+  m_VideoGroup->activate();
 
   this->RequestStartTracking();
 }
@@ -2947,13 +2948,24 @@ void UltrasoundNavigator::ConfirmPatientNameProcessing()
 
    if ( m_ImageObserver.IsNotNull() )
    {
-       m_PatientNameLabel->value( m_ImageReader->GetPatientName().c_str() );
+     if ( m_ImageReader->FileSuccessfullyRead() )
+     {
+        m_PatientNameLabel->value( m_ImageReader->GetPatientName().c_str() );
+     }
+     else
+     {
+     fl_beep( FL_BEEP_ERROR );
+     igstkLogMacro2( m_Logger, DEBUG, 
+     "UltrasoundNavigator::ConfirmImagePatientNameProcessing \
+     file was not successfully read!\n" )
+     m_StateMachine.PushInput( m_FailureInput);
+     m_StateMachine.ProcessInputs();
+     return;
+     }
    }
    
    m_PatientNameWindow->show();
    this->CenterChildWindowInParentWindow( m_PatientNameWindow );
-
-   Fl::check();       
 }
 
 /** -----------------------------------------------------------------

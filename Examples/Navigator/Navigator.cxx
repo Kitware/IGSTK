@@ -97,13 +97,6 @@ Navigator::Navigator() :
   igstkLogMacro2( m_Logger, DEBUG, 
     "Successfully opened Log file:" << logFileName << "\n" );
 
-  /** Build image reader  */  
-  m_ImageReader         = ImageReaderType::New();
-  m_ImageReader->SetGlobalWarningDisplay(false);
-  /** Build itk progress command to assess image load progress */  
-  m_ProgressCommand = ProgressCommandType::New();
-  /** Set the callback to the itk progress command */
-  m_ProgressCommand->SetCallbackFunction( this, &Navigator::OnITKProgressEvent );
 
   /** Machine States*/
 
@@ -2113,12 +2106,100 @@ void Navigator::LoadImageProcessing()
    igstkLogMacro2( m_Logger, DEBUG, 
                       "Set ImageReader directory: " << directoryName << "\n" )
 
-   m_ImageReader->RequestSetDirectory( directoryName );
+   /** Setup image reader  */  
+   m_ImageReader        = ImageReaderType::New();
+   m_ImageReader->SetLogger( this->GetLogger() );
+   m_ImageReader->SetGlobalWarningDisplay(true);
+   m_ImageReader->DebugOn();
 
+   /** Build itk progress command to assess image load progress */  
+   m_ProgressCommand = ProgressCommandType::New();
+
+   /** Set the callback to the itk progress command */
+   m_ProgressCommand->SetCallbackFunction( this, &Navigator::OnITKProgressEvent );
 
    // Provide a progress observer to the image reader      
    m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
 
+   //Add observer for invalid directory 
+   DICOMImageReaderInvalidDirectoryNameErrorObserver::Pointer didcb = 
+                    DICOMImageReaderInvalidDirectoryNameErrorObserver::New();
+   m_ImageReader->AddObserver( 
+          igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent(), didcb );
+
+   //Add observer for a non-existing directory 
+   DICOMImageReaderNonExistingDirectoryErrorObserver::Pointer dndcb = 
+                      DICOMImageReaderNonExistingDirectoryErrorObserver::New();
+   m_ImageReader->AddObserver( 
+          igstk::DICOMImageDirectoryDoesNotExistErrorEvent(), dndcb );
+    
+   //Add observer for a an empty directory name (null string) 
+   DICOMImageReaderEmptyDirectoryErrorObserver::Pointer decb = 
+                      DICOMImageReaderEmptyDirectoryErrorObserver::New();
+   m_ImageReader->AddObserver( igstk::DICOMImageDirectoryEmptyErrorEvent(), decb );
+
+   //Add observer for a directory which does not have enough number of files 
+   DICOMImageDirectoryNameDoesNotHaveEnoughFilesErrorObserver::Pointer ddhefcb = 
+            DICOMImageDirectoryNameDoesNotHaveEnoughFilesErrorObserver::New();
+   m_ImageReader->AddObserver( 
+      igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent(), ddhefcb );
+
+   //Add observer for a directory containing non-DICOM files 
+   DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::Pointer disgcb = 
+            DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::New();
+   m_ImageReader->AddObserver( 
+      igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent(), disgcb );
+  
+   //Add observer for reading invalid/corrupted dicom files 
+   DICOMImageInvalidErrorObserver::Pointer dircb = 
+                      DICOMImageInvalidErrorObserver::New();
+   m_ImageReader->AddObserver( igstk::DICOMImageReadingErrorEvent(), dircb );
+
+   // Set directory
+   m_ImageReader->RequestSetDirectory( directoryName );
+
+   if( didcb->GotDICOMImageReaderInvalidDirectoryNameError() )
+    {
+    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderInvalidDirectoryNameError\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+   if( dndcb->GotDICOMImageReaderNonExistingDirectoryError() )
+    {
+    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderNonExistingDirectoryError\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+   if( decb->GotDICOMImageReaderEmptyDirectoryError() )
+    {
+    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderEmptyDirectoryError\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+   if( ddhefcb->GotDICOMImageDirectoryNameDoesNotHaveEnoughFilesError() )
+    {
+    igstkLogMacro2( m_Logger, DEBUG, 
+              "Got DICOMImageDirectoryNameDoesNotHaveEnoughFilesError\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+   if( disgcb->GotDICOMImageDirectoryDoesNotContainValidDICOMSeriesError() )
+    {
+    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageDirectoryDoesNotContainValidDICOMSeriesError\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+    }
+
+   // Read Image
    m_ImageReader->RequestReadImage();
 
    m_ImageObserver = ImageObserver::New();
@@ -2156,19 +2237,27 @@ void Navigator::LoadImageProcessing()
 void Navigator::ConfirmPatientNameProcessing()
 {
    igstkLogMacro2( m_Logger, DEBUG, 
-                  "Navigator::ConfirmImagePatientNameProcessing called...\n" )
+                  "Navigator::ConfirmPatientNameProcessing called...\n" )
 
    // ask the user to confirm patient's name
 
-   if ( m_ImageObserver.IsNotNull() )
+   if ( m_ImageReader->FileSuccessfullyRead() )
    {
-       m_PatientNameLabel->value( m_ImageReader->GetPatientName().c_str() );
+        m_PatientNameLabel->value( m_ImageReader->GetPatientName().c_str() );
+   }
+   else
+   {
+     fl_beep( FL_BEEP_ERROR );
+     igstkLogMacro2( m_Logger, DEBUG, 
+     "Navigator::ConfirmPatientNameProcessing \
+     file was not successfully read!\n" )
+     m_StateMachine.PushInput( m_FailureInput);
+     m_StateMachine.ProcessInputs();
+     return;
    }
    
    m_PatientNameWindow->show();
    this->CenterChildWindowInParentWindow( m_PatientNameWindow );
-
-   Fl::check();       
 }
 
 /** -----------------------------------------------------------------
