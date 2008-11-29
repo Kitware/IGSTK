@@ -132,7 +132,7 @@ public:
    * considered unsafe because it is not subject to the control of the internal
    * state machine.  The method GetPatientName() should only be invoked if the
    * precondition method FileSuccessfullyRead() has already been called and it
-   * has returned true. Calling GetPatientID() in any other situation will lead
+   * has returned true. Calling GetPatientName() in any other situation will lead
    * to unpredictable behavior. */
   igstkUnsafeGetMacro( PatientName, DICOMInformationType );
 

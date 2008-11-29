@@ -544,8 +544,17 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
   
   m_FileNames->SetInputDirectory( m_ImageDirectoryName );
  
-  const std::vector< std:: string > & seriesUID = 
+  const std::vector< std::string > & seriesUID = 
                                                m_FileNames -> GetSeriesUIDs();
+   
+  std::vector< std::string >::const_iterator iter = seriesUID.begin();
+  
+  for (; iter != seriesUID.end(); iter++)
+  {
+     igstkLogMacro( DEBUG, 
+              "igstk::DICOMImageReader::seriesUID " << (*iter) << "\n");
+  }
+              
   if ( seriesUID.empty() ) 
     {
     this->m_ImageReadingErrorInformation = 
@@ -557,7 +566,12 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
     } 
  
  // m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
+ 
+  igstkLogMacro( DEBUG, 
+              "igstk::DICOMImageReader will open seriesUID: " << seriesUID.front().c_str() << "\n");
+                            
   m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( seriesUID.front().c_str() )  );
+  
   this->m_StateMachine.PushInput( 
                    this->m_ImageSeriesFileNamesGeneratingSuccessInput );
   this->m_StateMachine.ProcessInputs();
