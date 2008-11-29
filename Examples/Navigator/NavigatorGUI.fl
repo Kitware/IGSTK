@@ -13,12 +13,12 @@ class NavigatorGUI {open : {public igstk::Object}
     Fl_Window mainWindow {
       label {IGSTK - Navigator Application}
       callback {Quit();}
-      xywh {0 28 1276 800} type Double box PLASTIC_UP_BOX resizable
+      xywh {4 28 1276 800} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"}
-      code1 {\#include <time.h>} noborder visible
+      code1 {\#include <time.h>} visible
     } {
-      Fl_Group m_ControlGroup {open selected
-        xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 128 resizable
+      Fl_Group m_ControlGroup {
+        xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
       } {
         Fl_Button m_QuitButton {
           label Quit
@@ -94,15 +94,24 @@ class NavigatorGUI {open : {public igstk::Object}
         }
       }
       Fl_Group m_ViewerGroup {
-        xywh {151 0 1127 800} box PLASTIC_DOWN_BOX
+        xywh {151 0 1127 800} box PLASTIC_DOWN_BOX resizable
         code0 {\#include "NavigatorQuadrantViews.h"}
         class {igstk::NavigatorQuadrantViews}
       } {}
     }
     code {mainWindow->show();
 
-mainWindow->fullscreen();
-hasQuitted = false;} {}
+//mainWindow->fullscreen();
+hasQuitted = false;
+
+// force the control panel to 150
+int x = m_ControlGroup->x();
+int y = m_ControlGroup->y();
+int width = m_ControlGroup->w();
+int height = m_ControlGroup->h();
+
+m_ControlGroup->resize(x,y,150,height);} {selected
+    }
     Fl_Window m_WinProgress {
       label {SNAP Progress Meter}
       xywh {464 491 485 70} type Double box BORDER_BOX color 53 modal noborder visible

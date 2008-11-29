@@ -199,7 +199,7 @@ public:
   typedef igstk::TrackerConfigurationFileReader::ReadTrackerConfigurationFailSuccessObserver
                     ReadTrackerConfigurationFailSuccessObserverType;
 
-  typedef igstk::PrecomputedTransformData::TransformType *  TransformTypePointer;
+//  typedef igstk::PrecomputedTransformData::TransformType *  TransformTypePointer;
 
 //  igstkObserverMacro( TransformRequest,
 //                      igstk::PrecomputedTransformData::TransformTypeEvent,

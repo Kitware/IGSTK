@@ -37,7 +37,7 @@ NavigatorQuadrantViews::NavigatorQuadrantViews(int X, int Y, int W, int H, const
   m_Y = 0;
 
   m_Width = parentGroup->w() - m_X;
-  m_Height = parentGroup->h() - 8; 
+  m_Height = parentGroup->h(); 
 
   m_WW = (int) (m_Width-2*C)/2;
   m_HH = (int) (m_Height- (N*2) )/2;
