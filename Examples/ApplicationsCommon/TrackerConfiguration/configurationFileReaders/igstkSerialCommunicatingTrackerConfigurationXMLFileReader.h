@@ -18,12 +18,12 @@ class SerialCommunicatingTrackerConfigurationXMLFileReader :
 {
 public:
 
-    //standard typedefs
+  //standard typedefs
   typedef SerialCommunicatingTrackerConfigurationXMLFileReader    Self;
   typedef TrackerConfigurationXMLFileReaderBase                   Superclass;
   typedef itk::SmartPointer<Self>                                 Pointer;
 
-           //run-time type information (and related methods)
+  //run-time type information (and related methods)
   itkTypeMacro( SerialCommunicatingTrackerConfigurationXMLFileReader, 
                 TrackerConfigurationXMLFileReaderBase );
 
@@ -39,8 +39,8 @@ public:
 
 
 protected:
-          //this is the constructor that is called by the factory to 
-         //create a new object
+  //this is the constructor that is called by the factory to 
+  //create a new object
   SerialCommunicatingTrackerConfigurationXMLFileReader() : 
          TrackerConfigurationXMLFileReaderBase(),
          m_ReadingSerialCommunication( false ),
@@ -49,9 +49,9 @@ protected:
          m_HaveDataBits( false ),  
          m_HaveParity( false ),  
          m_HaveStopBits( false ),  
-         m_HaveHandshake( false ) 
-         {}
-  virtual ~SerialCommunicatingTrackerConfigurationXMLFileReader() {}
+         m_HaveHandshake( false ) { }
+
+  virtual ~SerialCommunicatingTrackerConfigurationXMLFileReader() { }
 
   void ProcessComport() throw ( FileFormatException );
   void ProcessBaudRate() throw ( FileFormatException );
@@ -64,11 +64,11 @@ protected:
   bool m_ReadingSerialCommunication;
 
   igstk::SerialCommunication::PortNumberType m_COMPort;
-  igstk::SerialCommunication::BaudRateType m_BaudRate;
-  igstk::SerialCommunication::DataBitsType m_DataBits;
-  igstk::SerialCommunication::ParityType m_Parity;
-  igstk::SerialCommunication::StopBitsType m_StopBits;
-  igstk::SerialCommunication::HandshakeType m_Handshake;
+  igstk::SerialCommunication::BaudRateType   m_BaudRate;
+  igstk::SerialCommunication::DataBitsType   m_DataBits;
+  igstk::SerialCommunication::ParityType     m_Parity;
+  igstk::SerialCommunication::StopBitsType   m_StopBits;
+  igstk::SerialCommunication::HandshakeType  m_Handshake;
 
   bool m_HaveComPort;
   bool m_HaveBaudRate;
