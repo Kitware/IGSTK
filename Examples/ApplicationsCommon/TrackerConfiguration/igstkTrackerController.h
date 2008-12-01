@@ -139,45 +139,44 @@ public:
   void RequestGetReferenceTool();
 
   /** 
-  * 
-  * Sets the tracker's parent spatial object
-  */
+   * 
+   * Sets the tracker's parent spatial object
+   */
   void RequestSetParentSpatialObject( TransformType transform, 
                                       SpatialObjectType * spatialObject);
 
   /** 
   * Adds a Spatial Object as a child of the tracker. For example, if you want 
-  * to display the tracker's working volume (e.g. frustum or cube)
-  */
+  * to display the tracker's working volume (e.g. frustum or cube).*/
   void RequestAddChildSpatialObject( TransformType transform, 
                                      SpatialObjectType * spatialObject);
 
-   /** This event is generated if the initialization succeeds. */
+  /** This event is generated if the initialization succeeds. */
   igstkEventMacro( InitializeEvent, IGSTKEvent );
 
-   /** This event is generated if the initialization fails.*/
+  /** This event is generated if the initialization fails.*/
   igstkEventMacro( InitializeErrorEvent, IGSTKErrorWithStringEvent ); 
 
-   /** This event is generated if the communication was closed successfully. */
+  /** This event is generated if the communication was closed successfully. */
   igstkEventMacro( CloseCommunicationEvent, IGSTKEvent );
 
-   /** This event is generated if closing communication failed.*/
+  /** This event is generated if closing communication failed.*/
   igstkEventMacro( CloseCommunicationErrorEvent, IGSTKErrorWithStringEvent ); 
 
-   /** This event is generated if the user requests the tracker tools and the 
-    *  tracker is initialized. */
+  /** This event is generated if the user requests the tracker tools and the 
+   *  tracker is initialized. */
   igstkLoadedEventMacro( RequestToolsEvent, 
                          IGSTKEvent, 
                          ToolContainerType );
 
-   /** This event is generated if the user requests a specific tracker tool and 
-    *  the tracker is initialized. */
+  /** This event is generated if the user requests a specific tracker tool and 
+   *  the tracker is initialized. */
   igstkLoadedEventMacro( RequestToolEvent, 
                          IGSTKEvent, 
                          ToolEntryType );
 
-   /** This event is generated if the user requested a specific tracker tool and
-    *  the tool does not exist.*/
+  /** This event is generated if the user requested a specific tracker tool and
+   *  the tool does not exist.*/
   igstkEventMacro( RequestToolErrorEvent, 
                    IGSTKErrorEvent );
 
@@ -271,8 +270,8 @@ private:
 
 
   class ErrorObserver : public itk::Command
-  {
-  public:
+    {
+    public:
     typedef ErrorObserver                    Self;
     typedef ::itk::Command                   Superclass;
     typedef ::itk::SmartPointer<Self>        Pointer;
@@ -299,9 +298,9 @@ private:
     bool ErrorOccured() { return this->m_ErrorOccured; }
     /**Get the error message associated with the last IGSTK error.*/
     void GetErrorMessage(std::string &errorMessage) 
-    {
+      {
       errorMessage = this->m_ErrorMessage;
-    }
+      }
 
   protected:
 
@@ -310,22 +309,23 @@ private:
     ErrorObserver();
     virtual ~ErrorObserver(){}
   private:
-    bool m_ErrorOccured;
-    std::string m_ErrorMessage;
-    std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
+    bool                               m_ErrorOccured;
+    std::string                        m_ErrorMessage;
+    std::map<std::string,std::string>  m_ErrorEvent2ErrorMessage;
 
-             //purposely not implemented
+    //purposely not implemented
     ErrorObserver(const Self&);
     void operator=(const Self&); 
-  };
+    };
 
   class TrackerUpdateObserver : public itk::Command
-  {
-  public:
+    {
+
+    public:
     typedef TrackerUpdateObserver                    Self;
-    typedef ::itk::Command                   Superclass;
-    typedef ::itk::SmartPointer<Self>        Pointer;
-    typedef ::itk::SmartPointer<const Self>  ConstPointer;
+    typedef ::itk::Command                           Superclass;
+    typedef ::itk::SmartPointer<Self>                Pointer;
+    typedef ::itk::SmartPointer<const Self>          ConstPointer;
 
     void SetParent( TrackerController *parent );
 
@@ -341,13 +341,15 @@ private:
      *  with the appropriate error event object as a parameter.*/
     virtual void Execute(const itk::Object *caller, 
                          const itk::EventObject & event) throw (std::exception);
-  private:
+    private:
+
     TrackerController *m_parent;
-  };
-       //this object observes the tracker's igstk::TrackerUpdateStatusEvent and
-      //igstk::TrackerUpdateStatusErrorEvent it then causes its parent to invoke
-      //these events too. In this manner the user is inderictly observing the 
-      //tracker
+    };
+
+  //this object observes the tracker's igstk::TrackerUpdateStatusEvent and
+  //igstk::TrackerUpdateStatusErrorEvent it then causes its parent to invoke
+  //these events too. In this manner the user is inderictly observing the 
+  //tracker
   TrackerUpdateObserver::Pointer m_TrackerUpdateStatusObserver;
 
   ErrorObserver::Pointer m_ErrorObserver;
