@@ -37,15 +37,15 @@ namespace igstk
 
 TrackerController::TrackerController() : m_StateMachine( this )
 {
-            //create error observer
+  //create error observer
   this->m_ErrorObserver = ErrorObserver::New();
 
-           //create observer for the tracker update status events
+  //create observer for the tracker update status events
   this->m_TrackerUpdateStatusObserver = 
     TrackerUpdateObserver::New();
   this->m_TrackerUpdateStatusObserver->SetParent( this );
 
-        //define the state machine's states 
+  //define the state machine's states 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToInitialize );
   igstkAddStateMacro( AttemptingToInitializePolarisVicra );
@@ -59,7 +59,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToCloseCommunication );
   igstkAddStateMacro( AttemptingToStopTracking );
 
-                   //define the state machine's inputs
+  //define the state machine's inputs
   igstkAddInputMacro( TrackerInitialize );
   igstkAddInputMacro( PolarisVicraInitialize );
   igstkAddInputMacro( PolarisHybridInitialize );
@@ -78,9 +78,9 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( SetChildSpatialObject  );
 
 
-            //define the state machine's transitions
+  //define the state machine's transitions
 
-                         //transitions from Idle state
+  //transitions from Idle state
   igstkAddTransitionMacro( Idle,
                            TrackerInitialize,
                            AttemptingToInitialize,
@@ -156,16 +156,16 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
-    igstkAddTransitionMacro( Idle,
+  igstkAddTransitionMacro( Idle,
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
-                  //transitions from AttemptingToInitialize state
+  //transitions from AttemptingToInitialize state
   igstkAddTransitionMacro( AttemptingToInitialize,
                            Failed,
                            Idle,
-                           ReportInitializationFailure );                          
+                           ReportInitializationFailure );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            PolarisVicraInitialize,
@@ -242,7 +242,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
-           //transitions from AttemptingToInitializePolarisVicra state
+  //transitions from AttemptingToInitializePolarisVicra state
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            Failed,
                            Idle,
@@ -323,7 +323,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
-           //transitions from AttemptingToInitializePolarisHybrid state
+  //transitions from AttemptingToInitializePolarisHybrid state
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            Failed,
                            Idle,
@@ -399,12 +399,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
-    igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
-          //transitions from AttemptingToInitializeAurora state
+  //transitions from AttemptingToInitializeAurora state
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            Failed,
                            Idle,
@@ -480,12 +480,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
-    igstkAddTransitionMacro( AttemptingToInitializeAurora,
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
-          //transitions from AttemptingToInitializeMicron state
+  //transitions from AttemptingToInitializeMicron state
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            Failed,
                            Idle,
@@ -566,7 +566,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest);
 
-          //transitions from AttemptingToInitializeMedSafe state
+  //transitions from AttemptingToInitializeMedSafe state
   igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
                            Failed,
                            Idle,
@@ -642,12 +642,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
   
-    igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest );
 
-          //transitions from Initialized state
+  //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
                            GetTools,
                            Initialized,
@@ -668,7 +668,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Initialized,
                            SetParentSpatialObject );
 
-    igstkAddTransitionMacro( Initialized,
+  igstkAddTransitionMacro( Initialized,
                            SetChildSpatialObject,
                            Initialized,
                            SetChildSpatialObject );
@@ -728,7 +728,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Initialized,
                            ReportInvalidRequest );
 
-         //transitions from AttemptingToStartTracking state
+  //transitions from AttemptingToStartTracking state
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            Succeeded,
                            Tracking,
@@ -799,17 +799,17 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
-    igstkAddTransitionMacro( AttemptingToStartTracking,
+  igstkAddTransitionMacro( AttemptingToStartTracking,
                            SetParentSpatialObject,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
-    igstkAddTransitionMacro( AttemptingToStartTracking,
+  igstkAddTransitionMacro( AttemptingToStartTracking,
                            SetChildSpatialObject,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
-        //transitions from Tracking state
+  //transitions from Tracking state
   igstkAddTransitionMacro( Tracking,
                            StopTracking,
                            AttemptingToStopTracking,
@@ -890,7 +890,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Tracking,
                            SetChildSpatialObject );
 
-     //transitions from AttemtingtoStop state
+  //transitions from AttemtingtoStop state
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            Succeeded,
                            Initialized,
@@ -971,7 +971,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
 
-       //transitions from AttemptingToCloseCommunication state
+  //transitions from AttemptingToCloseCommunication state
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            Succeeded,
@@ -981,7 +981,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            Failed,
                            Initialized,
-                           ReportCloseCommunicationFailure );                          
+                           ReportCloseCommunicationFailure );
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            TrackerInitialize,
@@ -1053,10 +1053,10 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
-              //set the initial state of the state machine
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();
 } 
 
@@ -1065,6 +1065,7 @@ TrackerController::~TrackerController()
 {
      
 }
+
 
 void
 TrackerController::RequestInitialize(
@@ -1078,6 +1079,7 @@ TrackerController::RequestInitialize(
   this->m_StateMachine.ProcessInputs();
 }
 
+
 void
 TrackerController::RequestStartTracking( )
 {
@@ -1087,6 +1089,7 @@ TrackerController::RequestStartTracking( )
   this->m_StateMachine.ProcessInputs();
 }
 
+
 void
 TrackerController::RequestStopTracking()
 {
@@ -1095,6 +1098,7 @@ TrackerController::RequestStopTracking()
   igstkPushInputMacro( StopTracking );
   this->m_StateMachine.ProcessInputs();
 }
+
 
 void
 TrackerController::RequestShutdown()
@@ -1137,6 +1141,7 @@ TrackerController::RequestGetReferenceTool()
   this->m_StateMachine.ProcessInputs();
 }
 
+
 void 
 TrackerController::RequestSetParentSpatialObject( igstk::Transform transform, 
                                 igstk::SpatialObject * spatialObject)
@@ -1150,6 +1155,7 @@ TrackerController::RequestSetParentSpatialObject( igstk::Transform transform,
   igstkPushInputMacro( SetParentSpatialObject );
   this->m_StateMachine.ProcessInputs();
 }
+
 
 void 
 TrackerController::RequestAddChildSpatialObject( igstk::Transform transform, 
@@ -1165,41 +1171,42 @@ TrackerController::RequestAddChildSpatialObject( igstk::Transform transform,
   this->m_StateMachine.ProcessInputs();
 }
 
+
 void 
 TrackerController::TrackerInitializeProcessing()
 {
   if( this->m_TmpTrackerConfiguration == NULL )
-  {
+    {
     this->m_ErrorMessage = "Null tracker configuration received.";
     igstkPushInputMacro( Failed );
-  }
+    }
   else 
-  {
+    {
     if( dynamic_cast<PolarisVicraTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
-    {
+      {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( PolarisVicraInitialize );
-    }
+      }
     else if( dynamic_cast<PolarisHybridTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
-    {
+      {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( PolarisHybridInitialize );
-    }
+      }
     else if( dynamic_cast<AuroraTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
-    {
+      {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
-    }
+      }
    #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
-    {
+      {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
-    }
+      }
    #endif
    /* 
     else if( dynamic_cast<MedSafeTrackerConfiguration *>
@@ -1210,11 +1217,11 @@ TrackerController::TrackerInitializeProcessing()
     }
    */
     else
-    {
+      {
       this->m_ErrorMessage = "Unknown tracker configuration type.";
       igstkPushInputMacro( Failed );
+      }
     }
-  }
  this->m_StateMachine.ProcessInputs();
 }
 
@@ -1222,24 +1229,24 @@ TrackerController::TrackerInitializeProcessing()
 void 
 TrackerController::StartTrackingProcessing()
 {  
-    unsigned long observerID;
+  unsigned long observerID;
               
-    observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
-                                               this->m_ErrorObserver );
-    m_Tracker->RequestStartTracking();
-    this->m_Tracker->RemoveObserver(observerID);
+  observerID = this->m_Tracker->AddObserver( IGSTKErrorEvent(), 
+                                             this->m_ErrorObserver );
+  m_Tracker->RequestStartTracking();
+  this->m_Tracker->RemoveObserver(observerID);
 
-    if( this->m_ErrorObserver->ErrorOccured() )
+  if( this->m_ErrorObserver->ErrorOccured() )
     {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();    
-      igstkPushInputMacro( Failed );
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    igstkPushInputMacro( Failed );
     }
-    else
+  else
     {
-      igstkPushInputMacro( Succeeded );
+    igstkPushInputMacro( Succeeded );
     }
-    this->m_StateMachine.ProcessInputs();
+  this->m_StateMachine.ProcessInputs();
 }
 
 
@@ -1254,15 +1261,15 @@ TrackerController::StopTrackingProcessing()
   this->m_Tracker->RemoveObserver(observerID);
 
   if( this->m_ErrorObserver->ErrorOccured() )
-  {
+    {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     igstkPushInputMacro( Failed );
-   }
+    }
   else
-  {
+    {
     igstkPushInputMacro( Succeeded );
-   }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1280,36 +1287,36 @@ TrackerController::CloseCommunicationProcessing()
   this->m_Tracker->RemoveObserver( observerID );
 
   if( this->m_ErrorObserver->ErrorOccured() )
-  {
+    {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     igstkPushInputMacro( Failed );
-  }
+    }
   else
-  {
-                   //if serial communication, close COM port
-   if( this->m_SerialCommunication.IsNotNull() )
-   {
-     observerID = this->m_SerialCommunication->AddObserver( ClosePortErrorEvent(),
-                                                            this->m_ErrorObserver );
-     this->m_SerialCommunication->CloseCommunication();
-     this->m_SerialCommunication->RemoveObserver(observerID);
-     if( this->m_ErrorObserver->ErrorOccured() )
-     {
-       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-       this->m_ErrorObserver->ClearError();
-       igstkPushInputMacro( Failed );
-     }
-     else
-     {
-       igstkPushInputMacro( Succeeded );
-     }
-   }
-   else //not serial communication
-   {
-     igstkPushInputMacro( Succeeded );
-   }
-  }
+    {
+    //if serial communication, close COM port
+    if( this->m_SerialCommunication.IsNotNull() )
+      {
+      observerID = this->m_SerialCommunication->AddObserver( ClosePortErrorEvent(),
+                                                             this->m_ErrorObserver );
+      this->m_SerialCommunication->CloseCommunication();
+      this->m_SerialCommunication->RemoveObserver(observerID);
+      if( this->m_ErrorObserver->ErrorOccured() )
+        {
+        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+        this->m_ErrorObserver->ClearError();
+        igstkPushInputMacro( Failed );
+        }
+      else
+        {
+        igstkPushInputMacro( Succeeded );
+        }
+      }
+    else //not serial communication
+      {
+      igstkPushInputMacro( Succeeded );
+      }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1341,11 +1348,11 @@ TrackerController::InitializeSerialCommunication()
   this->m_SerialCommunication->RemoveObserver(observerID);
 
   if( this->m_ErrorObserver->ErrorOccured() )
-  {
+    {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     return false;
-  }
+    }
   return true;
 }
 
@@ -1375,9 +1382,9 @@ TrackerController::InitializePolarisWiredTool(
   trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() );
   std::string sromFileName = toolConfiguration->GetSROMFile();
   if( !sromFileName.empty() )
-  {
+    {
     trackerTool->RequestSetSROMFileName( sromFileName );
-  }
+    }
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
   trackerTool->RequestConfigure();
@@ -1389,21 +1396,21 @@ void
 TrackerController::PolarisVicraInitializeProcessing()
 {
   if( !InitializeSerialCommunication() )
-  {
+    {
     igstkPushInputMacro( Failed );
-  }
+    }
   else
-  {
-                                  //create tracker
+    {
+    //create tracker
     igstk::PolarisTracker::Pointer tracker = igstk::PolarisTracker::New();
     this->m_Tracker = tracker; 
-                 //don't need to observe this for errors because the 
-                 //configuration class ensures that the frequency is valid
+    //don't need to observe this for errors because the 
+    //configuration class ensures that the frequency is valid
     tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
 
 
-                //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
+    //observe all possible errors generated by the tracker
+    //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
     tracker->SetCommunication( this->m_SerialCommunication );
@@ -1411,37 +1418,37 @@ TrackerController::PolarisVicraInitializeProcessing()
     tracker->RemoveObserver(observerID);
 
     if( this->m_ErrorObserver->ErrorOccured() )
-    {
+      {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();      
+      this->m_ErrorObserver->ClearError();
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
-    }
+      }
     else   //attach the tools 
-    {
+      {
       std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
         this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
       std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();      
+        toolConfigurations.end();
       TrackerTool::Pointer currentTool;
       PolarisWirelessToolConfiguration * currentToolConfig;
 
-      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
-      {
+      for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
+        {
         currentToolConfig = 
           static_cast<PolarisWirelessToolConfiguration *>( it->second );
         currentTool = InitializePolarisWirelessTool( currentToolConfig );
         this->m_Tools.insert(
           std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
         currentTool->RequestAttachToTracker( tracker );
-      }
+        }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
         this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
-      {
+        {
         currentToolConfig = 
           static_cast<PolarisWirelessToolConfiguration *>( referenceToolConfiguration );
 
@@ -1449,10 +1456,10 @@ TrackerController::PolarisVicraInitializeProcessing()
         this->m_ReferenceTool = currentTool;
         currentTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( currentTool );
-      }
+        }
       igstkPushInputMacro( Succeeded );
-    }
-  }  
+      }
+    }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1461,21 +1468,21 @@ void
 TrackerController::PolarisHybridInitializeProcessing()
 {
   if( !InitializeSerialCommunication() )
-  {
+    {
     igstkPushInputMacro( Failed );
-  }
+    }
   else
-  {
-                                  //create tracker
+    {
+    //create tracker
     igstk::PolarisTracker::Pointer tracker = igstk::PolarisTracker::New();
     this->m_Tracker = tracker; 
-                 //don't need to observe this for errors because the 
-                 //configuration class ensures that the frequency is valid
+    //don't need to observe this for errors because the 
+    //configuration class ensures that the frequency is valid
     tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
 
 
-                //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
+    //observe all possible errors generated by the tracker
+    //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
     tracker->SetCommunication( this->m_SerialCommunication );
@@ -1483,64 +1490,64 @@ TrackerController::PolarisHybridInitializeProcessing()
     tracker->RemoveObserver(observerID);
 
     if( this->m_ErrorObserver->ErrorOccured() )
-    {
+      {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();      
+      this->m_ErrorObserver->ClearError();
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
-    }
+      }
     else   //attach the tools 
-    {
+      {
       std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
         this->m_TrackerConfiguration->m_TrackerToolList;
-                   //attach tools
+      //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
       std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();      
+        toolConfigurations.end();
       TrackerTool::Pointer trackerTool;
       PolarisWirelessToolConfiguration * wirelessToolConfig;
       PolarisWiredToolConfiguration * wiredToolConfig;
 
-      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
-      {
+      for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
+        {
         if( ( wirelessToolConfig = 
              dynamic_cast<PolarisWirelessToolConfiguration *>( it->second ) ) )
-        {
+          {
           trackerTool = InitializePolarisWirelessTool( wirelessToolConfig );
-        }
+          }
         else 
-        {
+          {
           wiredToolConfig = 
             dynamic_cast<PolarisWiredToolConfiguration *>( it->second );
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
-        }
+          }
         this->m_Tools.insert(
           std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
         trackerTool->RequestAttachToTracker( tracker );
-      }
+        }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
         this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
-      {
+        {
         if ( ( wirelessToolConfig = 
           dynamic_cast<PolarisWirelessToolConfiguration *>( referenceToolConfiguration ) ) )
-        {
+          {
           trackerTool = InitializePolarisWirelessTool( wirelessToolConfig );
-        }
+          }
         else
-        {
+          {
           wiredToolConfig = 
               dynamic_cast<PolarisWiredToolConfiguration *>( referenceToolConfiguration );
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
-        }
+          }
         this->m_ReferenceTool = trackerTool;
         trackerTool->RequestAttachToTracker( tracker );
         tracker->RequestSetReferenceTool( trackerTool );
-      }
+        }
       igstkPushInputMacro( Succeeded );
-    }
-  }  
+      }
+    }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1586,16 +1593,16 @@ TrackerController::AuroraInitializeProcessing()
   }
   else
   {
-                                  //create tracker
+    //create tracker
     igstk::AuroraTracker::Pointer tracker = igstk::AuroraTracker::New();
     this->m_Tracker = tracker; 
-                 //don't need to observe this for errors because the 
-                 //configuration class ensures that the frequency is valid
+    //don't need to observe this for errors because the 
+    //configuration class ensures that the frequency is valid
     tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
 
 
-                //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)               
+    //observe all possible errors generated by the tracker
+    //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
     tracker->SetCommunication( this->m_SerialCommunication );
@@ -1605,7 +1612,7 @@ TrackerController::AuroraInitializeProcessing()
     if( this->m_ErrorObserver->ErrorOccured() )
     {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();      
+      this->m_ErrorObserver->ClearError();
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
     }
@@ -1616,11 +1623,11 @@ TrackerController::AuroraInitializeProcessing()
                    //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
       std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();      
+        toolConfigurations.end();
       TrackerTool::Pointer currentTool;
       AuroraToolConfiguration * currentToolConfig;
 
-      for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
+      for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
       {
         currentToolConfig = 
           static_cast<AuroraToolConfiguration *>( it->second );
@@ -1692,7 +1699,7 @@ void TrackerController::MicronInitializeProcessing()
   unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                    this->m_ErrorObserver );
   tracker->RequestOpen();
-  tracker->RemoveObserver(observerID);    
+  tracker->RemoveObserver(observerID);
   
   if( this->m_ErrorObserver->ErrorOccured() )
   {
@@ -1711,11 +1718,11 @@ void TrackerController::MicronInitializeProcessing()
     TrackerTool::Pointer trackerTool;
     MicronToolConfiguration * currentToolConfig;
 
-    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
     {
       currentToolConfig = static_cast<MicronToolConfiguration *>(it->second);
 
-      trackerTool = InitializeMicronTool( currentToolConfig );      
+      trackerTool = InitializeMicronTool( currentToolConfig );
       this->m_Tools.insert(
           std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
       trackerTool->RequestAttachToTracker( tracker );
@@ -1887,14 +1894,14 @@ TrackerController::GetToolProcessing()
   this->m_RequestedToolName.clear();
 
   if( it == this->m_Tools.end() ) 
-  {  
+    {  
     this->InvokeEvent( fevt );
-  }
+    }
   else
-  {
+    {
     sevt.Set( *it );
     this->InvokeEvent( sevt );
-  }
+    }
 }
 
 
@@ -1906,12 +1913,12 @@ TrackerController::GetReferenceToolProcessing()
                   "GetReferenceToolProcessing called...\n");
   RequestToolEvent evt;
   RequestToolErrorEvent fevt;
-               //we don't have a reference
+  //we don't have a reference
   if( this->m_ReferenceTool.IsNull() )
-  {
+    {
     this->InvokeEvent( fevt );
     return;
-  }
+    }
 
   evt.Set( std::pair<std::string, igstk::TrackerTool::Pointer>( 
            "reference",
@@ -2042,14 +2049,14 @@ TrackerController::ReportInvalidRequestProcessing()
 
 
 TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured( false )
-{                              //serial communication errors
+{ //serial communication errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( OpenPortErrorEvent().GetEventName(),
                                        "Error opening com port." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ClosePortErrorEvent().GetEventName(),
                                         "Error closing com port." ) );
-                              //tracker errors
+  //tracker errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( TrackerOpenErrorEvent().GetEventName(),
                                         "Error opening tracker communication." ) );
@@ -2077,10 +2084,10 @@ TrackerController::ErrorObserver::Execute(
   it = this->m_ErrorEvent2ErrorMessage.find(className);
 
   if( it != this->m_ErrorEvent2ErrorMessage.end() )
-  {
+    {
     this->m_ErrorOccured = true;
     this->m_ErrorMessage = (*it).second;
-  }
+    }
   //if the event we got wasn't in the error events map then we
   //silently ignore it
 }
@@ -2109,7 +2116,9 @@ TrackerController::TrackerUpdateObserver::Execute(
 {
   if( igstk::TrackerUpdateStatusEvent().CheckEvent( &event ) ||
       igstk::TrackerUpdateStatusErrorEvent().CheckEvent( &event ) )
+    {
     this->m_parent->InvokeEvent( event );
+    }
 }
 
 
