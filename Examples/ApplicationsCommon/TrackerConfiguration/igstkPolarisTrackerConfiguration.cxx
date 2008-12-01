@@ -34,28 +34,28 @@ PolarisWirelessTrackerConfiguration::InternalAddTool(
     dynamic_cast<const PolarisWirelessToolConfiguration *>( tool );
 
   if( wirelessTool == NULL )
-  {
+    {
     fe.Set( "Given tool configuration type not compatible with tracker type." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( wirelessTool->GetSROMFile().empty() )
-  {
+    {
     fe.Set( "SROM file not specified for wireless tool." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( !isReference )
-  {
+    {
     this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
       (wirelessTool->GetToolName(), new PolarisWirelessToolConfiguration( *wirelessTool )) );
-  }
+    }
   else
-  {
+    {
     delete this->m_ReferenceTool;
     this->m_ReferenceTool = new PolarisWirelessToolConfiguration( 
                                                               *wirelessTool );
-  }
+    }
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
@@ -128,66 +128,66 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   
 
   if( wirelessTool == NULL  && wiredTool == NULL )
-  {
+    {
     fe.Set( "Given tool configuration type not compatible with tracker type." );
     this->InvokeEvent( fe );
     return;
-  }
+    }
   if( wirelessTool ) 
-  {
-    if( wirelessTool->GetSROMFile().empty() )
     {
+    if( wirelessTool->GetSROMFile().empty() )
+      {
       fe.Set( "SROM file not specified for wireless tool." );
       this->InvokeEvent( fe );
       return;
+      }
     }
-  }
   else   //we have a wired tool
-  {
+    {
     unsigned int newPortNumber = wiredTool->GetPortNumber();
     if( newPortNumber==0 ||
         newPortNumber > this->MAXIMAL_PORT_NUMBER )
-    {
+      {
       fe.Set( "Specified physical port number is invalid." );
       this->InvokeEvent( fe );
       return;
-    }
+      }
     std::map<std::string, TrackerToolConfiguration *>::const_iterator it, end;
     it = this->m_TrackerToolList.begin();
     end = this->m_TrackerToolList.end();
-    for( ; it!=end; it++ )
-    {
+    for(; it!=end; it++ )
+      {
       const PolarisWiredToolConfiguration *currentTool = 
         static_cast<const PolarisWiredToolConfiguration *>( it->second );
       if( currentTool->GetPortNumber() == newPortNumber )
-      {
+        {
         fe.Set( "Multiple tools with same port are not allowed.");
         this->InvokeEvent( fe );
         return;
+        }
       }
     }
-  }
-        //copy the tool and add it as a standard or dynamic reference tool
+  //copy the tool and add it as a standard or dynamic reference tool
   TrackerToolConfiguration *newTool;
   if(wirelessTool)
-  {
+    {
     newTool = new PolarisWirelessToolConfiguration( *wirelessTool );
-  }
+    }
   else
-  {
+    {
     newTool = new PolarisWiredToolConfiguration( *wiredTool );
-  }
+    }
   
   if( !isReference )
-  {
-   this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+    {
+    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
      (newTool->GetToolName(), newTool) );
-  }
+    }
   else
-  {
+    {
     delete this->m_ReferenceTool;
     this->m_ReferenceTool = newTool; 
-  }
+    }
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
@@ -216,13 +216,13 @@ PolarisWiredToolConfiguration::GetToolTypeAsString()
   return "PolarisWiredToolConfiguration";
 }
 
-PolarisWirelessToolConfiguration::PolarisWirelessToolConfiguration() :                                                              
+PolarisWirelessToolConfiguration::PolarisWirelessToolConfiguration() :
                                                               m_SROMFile( "" )
 {
 }
 
 PolarisWirelessToolConfiguration::PolarisWirelessToolConfiguration( const 
-  PolarisWirelessToolConfiguration &other ) : TrackerToolConfiguration( other )
+PolarisWirelessToolConfiguration &other ) : TrackerToolConfiguration( other )
 {
   this->m_SROMFile = other.m_SROMFile;
 }
