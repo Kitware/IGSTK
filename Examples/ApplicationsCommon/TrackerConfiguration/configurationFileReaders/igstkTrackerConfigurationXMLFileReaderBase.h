@@ -17,19 +17,20 @@ class TrackerConfigurationXMLFileReaderBase : public itk::XMLReaderBase
 {
 public:
   /**
-   * This is the exception that is thrown if there is a problem with the
-   * file format (does not follow the expected format).
+   * \class FileFormatException This is the exception that is thrown if there 
+   *        is a problem with the file format (does not follow the expected 
+   *        format).
    */
   class FileFormatException : public std::exception
-  {
-  public:
+    {
+    public:
     /**
      * Construct an exception with a specifc message.
      */
     FileFormatException(const std::string &errorMessage) 
-    {
-      this->errorMessage = errorMessage;
-    }
+      {
+      this->m_ErrorMessage = errorMessage;
+      }
 
     /**
      * Virtual destructor.
@@ -39,21 +40,21 @@ public:
     /**
      * Get the error message.
      */
-     virtual const char* what() const throw() 
-     {
-       return errorMessage.c_str();
-     }
-  private:
-    std::string errorMessage;
-  };
+    virtual const char* what() const throw() 
+      {
+      return m_ErrorMessage.c_str();
+      }
+    private:
+    std::string m_ErrorMessage;
+    };
 
-    //standard typedefs
+  //standard typedefs
   typedef TrackerConfigurationXMLFileReaderBase    Self;
   typedef itk::XMLReaderBase                       Superclass;
   typedef itk::SmartPointer<Self>                  Pointer;
   typedef itk::SmartPointer < const Self >         ConstPointer;
 
-           //run-time type information (and related methods)
+  //run-time type information (and related methods)
   itkTypeMacro( TrackerConfigurationXMLFileReaderBase, itk::XMLReaderBase );
 
   /**
@@ -91,25 +92,28 @@ public:
     throw ( FileFormatException ) = 0;
 
 protected:
-          //this is the constructor that is called by the factory to 
-         //create a new object
+  //this is the constructor that is called by the factory to 
+  //create a new object
   TrackerConfigurationXMLFileReaderBase()
-  {
-  m_ReadingTrackerConfiguration = false;
-  m_ReadingToolConfiguration = false;
-  m_HaveRefreshRate = false;
-  m_ReferenceTool = NULL;
-  m_CurrentToolIsReference = false;
-  }
-  virtual ~TrackerConfigurationXMLFileReaderBase() {
+    {
+    m_ReadingTrackerConfiguration = false;
+    m_ReadingToolConfiguration = false;
+    m_HaveRefreshRate = false;
+    m_ReferenceTool = NULL;
+    m_CurrentToolIsReference = false;
+    }
+  virtual ~TrackerConfigurationXMLFileReaderBase() 
+    {
     std::vector<TrackerToolConfiguration *>::iterator it = 
       this->m_TrackerToolList.begin();
     std::vector<TrackerToolConfiguration *>::iterator end =  
       this->m_TrackerToolList.end();
     for(; it!=end; it++)
+      {
       delete (*it);
+      }
     delete m_ReferenceTool;
-  }
+    }
 
   igstkObserverMacro( AddToolFailure, 
                       igstk::TrackerConfiguration::AddToolFailureEvent, 
@@ -123,20 +127,15 @@ protected:
   void ProcessTrackingSystemAttributes( const char **atts )
     throw ( FileFormatException );
 
-  void ProcessRefreshRate() 
-    throw ( FileFormatException );
+  void ProcessRefreshRate() throw ( FileFormatException );
 
-  void ProcessToolAttributes( const char **atts )
-    throw ( FileFormatException );
+  void ProcessToolAttributes( const char **atts ) throw ( FileFormatException );
 
-  void ProcessToolName() 
-    throw ( FileFormatException );
+  void ProcessToolName() throw ( FileFormatException );
 
-  void ProcessToolCalibration() 
-    throw ( FileFormatException );
+  void ProcessToolCalibration() throw ( FileFormatException );
    
-  virtual void ProcessToolData() 
-    throw ( FileFormatException ) = 0;
+  virtual void ProcessToolData() throw ( FileFormatException ) = 0;
   
   virtual double GetMaximalRefreshRate()=0;
 
@@ -148,13 +147,13 @@ protected:
 
   std::string m_CurrentTagData;
 
-  igstk::Transform m_CurrentToolCalibration;
-  std::string m_CurrentToolName;
-  bool m_CurrentToolIsReference;
+  igstk::Transform   m_CurrentToolCalibration;
+  std::string        m_CurrentToolName;
+  bool               m_CurrentToolIsReference;
 
-  double m_RefreshRate; 
-  std::vector<TrackerToolConfiguration *> m_TrackerToolList;   
-  TrackerToolConfiguration * m_ReferenceTool; 
+  double                                    m_RefreshRate; 
+  std::vector<TrackerToolConfiguration *>   m_TrackerToolList;   
+  TrackerToolConfiguration *                m_ReferenceTool; 
 
 private:
   TrackerConfigurationXMLFileReaderBase( 
