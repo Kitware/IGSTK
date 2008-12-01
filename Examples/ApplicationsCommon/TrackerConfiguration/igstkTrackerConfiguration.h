@@ -23,7 +23,8 @@
 namespace igstk
 {
 
-/** \class TrackerConfiguration
+/** 
+* \class TrackerConfiguration
 * 
 * \brief Superclass for the different tracker configurations.
 *
@@ -42,8 +43,9 @@ namespace igstk
 
 
 /**
- * Generic tracker tool settings container with the variables common to all 
- * tools.
+ * \class TrackerToolConfiguration Generic tracker tool settings container with 
+ *        the variables common to all tools (name and rigid calibration 
+ *        transformation).
  */
 class TrackerToolConfiguration
 {
@@ -59,7 +61,7 @@ public:
   igstkGetMacro( CalibrationTransform, igstk::Transform );
 
 
-  /**     
+  /**
    * Set and Get the tool's human readable name. Note that this is not the 
    * unique tool identifier we get when invoking 
    * igstk::TrackerTool::GetTrackerToolIdentifier(), that identifier is set 
@@ -72,23 +74,21 @@ public:
 
   /**
    *Get the tracker tool type as a string. The only reason that this method 
-   *exists is to make the TrackerToolConfiguration class an abstract base class. 
+   *exists is to make the TrackerToolConfiguration class an abstract base class.
    */
   virtual std::string GetToolTypeAsString() = 0;
 
-
-
 protected:
-       //the tool's calibration transformation
+  //the tool's calibration transformation
   igstk::Transform   m_CalibrationTransform;
-       //the tool's name
+  //the tool's name
   std::string m_ToolName;
 };
 
 
-
 /**
- * Abstract base class for all tracker configurations.
+ * \class TrackerConfiguration Abstract base class for all tracker 
+ *        configurations.
  */
 class TrackerConfiguration : public Object
 {
@@ -96,7 +96,7 @@ public:
 
   friend class TrackerController;
 
-        //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( TrackerConfiguration, igstk::Object )
 
   /** This event is generated when the frequency was set successfuly. */
@@ -168,24 +168,24 @@ protected:
   virtual void InternalAddTool( const TrackerToolConfiguration *tool, 
                                 bool isReference )=0;
 
-       //the frequency at which the tracker is queried for new transforms [Hz]
+  //the frequency at which the tracker is queried for new transforms [Hz]
   double m_Frequency;
 
-             //the list of tools we want to connect to the tracker (excluding
-             //the reference tool)
-  std::map<std::string, TrackerToolConfiguration *> m_TrackerToolList;   
-  TrackerToolConfiguration * m_ReferenceTool; 
+  //the list of tools we want to connect to the tracker (excluding
+  //the reference tool)
+  std::map<std::string, TrackerToolConfiguration *>    m_TrackerToolList;   
+  TrackerToolConfiguration *                           m_ReferenceTool; 
 };
 
 
 /**
- * A base class for all tracker configurations that require serial 
- * communication.
+ * \class SerialCommunicatingTrackerConfiguration A base class for all tracker 
+ *        configurations that require serial communication.
  */
 class SerialCommunicatingTrackerConfiguration : public TrackerConfiguration
 {
 public:
-        //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( SerialCommunicatingTrackerConfiguration, 
                                       TrackerConfiguration )
 
@@ -203,7 +203,8 @@ public:
   /**
    * Set the com port to the given value. Generates ComPortSetEvent if 
    * successful otherwise ComPortSetErrorEvent.*/
-  void RequestSetCOMPort( igstk::SerialCommunication::PortNumberType portNumber);
+  void RequestSetCOMPort( igstk::SerialCommunication::PortNumberType 
+    portNumber);
   igstkGetMacro( COMPort, igstk::SerialCommunication::PortNumberType );
 
 
@@ -218,8 +219,8 @@ public:
 
 
   /**
-   * Set the baud rate to the given value. Generates BaudRateSetEvent if 
-   * successful otherwise BaudRateSetErrorEvent.*/
+  * Set the baud rate to the given value. Generates BaudRateSetEvent if 
+  * successful otherwise BaudRateSetErrorEvent.*/
   void RequestSetBaudRate( igstk::SerialCommunication::BaudRateType baudRate );
   igstkGetMacro( BaudRate, igstk::SerialCommunication::BaudRateType );
 
@@ -254,20 +255,21 @@ public:
 
   igstkEventMacro( HandshakeSetErrorEvent, IGSTKErrorWithStringEvent );
 
-  void RequestSetHandshake( igstk::SerialCommunication::HandshakeType handShake );
+  void RequestSetHandshake( igstk::SerialCommunication::HandshakeType 
+    handShake );
   igstkGetMacro( Handshake, igstk::SerialCommunication::HandshakeType );
 
 protected:
-    SerialCommunicatingTrackerConfiguration();
-    virtual ~SerialCommunicatingTrackerConfiguration();
+  SerialCommunicatingTrackerConfiguration();
+  virtual ~SerialCommunicatingTrackerConfiguration();
 
 private:
-  igstk::SerialCommunication::PortNumberType m_COMPort;
-  igstk::SerialCommunication::BaudRateType m_BaudRate;
-  igstk::SerialCommunication::DataBitsType m_DataBits;
-  igstk::SerialCommunication::ParityType m_Parity;
-  igstk::SerialCommunication::StopBitsType m_StopBits;
-  igstk::SerialCommunication::HandshakeType m_Handshake;
+  igstk::SerialCommunication::PortNumberType   m_COMPort;
+  igstk::SerialCommunication::BaudRateType     m_BaudRate;
+  igstk::SerialCommunication::DataBitsType     m_DataBits;
+  igstk::SerialCommunication::ParityType       m_Parity;
+  igstk::SerialCommunication::StopBitsType     m_StopBits;
+  igstk::SerialCommunication::HandshakeType    m_Handshake;
 };
 
 } // end of name space
