@@ -8,17 +8,22 @@
 namespace igstk
 {
   
+/**
+ * \class PolarisWirelessConfigurationXMLFileReader This class is a super class
+ *        for all of the wireless polaris (NDI) trackers. 
+ *        NOTE: Only its decendants are actually used.
+ */
 class PolarisWirelessConfigurationXMLFileReader : 
    public SerialCommunicatingTrackerConfigurationXMLFileReader 
 {
 public:
 
-    //standard typedefs
-  typedef PolarisWirelessConfigurationXMLFileReader                  Self;
+  //standard typedefs
+  typedef PolarisWirelessConfigurationXMLFileReader               Self;
   typedef SerialCommunicatingTrackerConfigurationXMLFileReader    Superclass;
   typedef itk::SmartPointer<Self>                                 Pointer;
 
-           //run-time type information (and related methods)
+  //run-time type information (and related methods)
   itkTypeMacro( PolarisWirelessConfigurationXMLFileReader, 
                 SerialCommunicatingTrackerConfigurationXMLFileReader );
 
@@ -50,18 +55,15 @@ public:
 
 
 protected:
-          //this is the constructor that is called by the factory to 
-         //create a new object
+  //this is the constructor that is called by the factory to 
+  //create a new object
   PolarisWirelessConfigurationXMLFileReader() : 
-         SerialCommunicatingTrackerConfigurationXMLFileReader()
-         {}
-  virtual ~PolarisWirelessConfigurationXMLFileReader() {}
+         SerialCommunicatingTrackerConfigurationXMLFileReader() { }
+  virtual ~PolarisWirelessConfigurationXMLFileReader() { }
 
-  void ProcessSromFile() 
-    throw ( FileFormatException );
+  void ProcessSromFile() throw ( FileFormatException );
 
-  virtual void ProcessToolData() 
-    throw ( FileFormatException );
+  virtual void ProcessToolData() throw ( FileFormatException );
 
   virtual igstk::PolarisWirelessTrackerConfiguration::Pointer
     GetPolarisConfiguration()=0;
