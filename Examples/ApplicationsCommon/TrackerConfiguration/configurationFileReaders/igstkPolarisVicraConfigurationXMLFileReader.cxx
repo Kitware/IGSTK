@@ -23,7 +23,7 @@ PolarisVicraConfigurationXMLFileReader::GetSystemType()
 igstk::PolarisWirelessTrackerConfiguration::Pointer
 PolarisVicraConfigurationXMLFileReader::GetPolarisConfiguration()
 {
-      //explicitly upcast to avoid the compiler warning
+  //explicitly upcast to avoid the compiler warning
   igstk::PolarisWirelessTrackerConfiguration::Pointer polarisWireless;
   polarisWireless  = PolarisVicraTrackerConfiguration::New();
   return polarisWireless;
