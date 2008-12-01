@@ -37,9 +37,10 @@ namespace igstk
 */
 
 
-
 /**
- * A wireless polaris tool.
+ * \class PolarisWirelessToolConfiguration This class represents the 
+ *        configuration data required by a wireless polaris tool 
+ *        (srom file name). 
  */
 class PolarisWirelessToolConfiguration :
   public TrackerToolConfiguration
@@ -56,13 +57,15 @@ public:
   virtual std::string GetToolTypeAsString();
 
 protected:
-        //SROM file to use with the tool, required for wireless, optional for
-        //wired
+  //SROM file to use with the tool, required for wireless, optional for
+  //wired
   std::string        m_SROMFile;
 };
 
 /**
- * A wired polaris tool.
+ * \class PolarisWiredToolConfiguration This class represents the 
+ *        configuration data required by a wired polaris tool ( control box port 
+ *        number, and the srom file name which is optional). 
  */
 class PolarisWiredToolConfiguration :
   public TrackerToolConfiguration
@@ -82,23 +85,25 @@ public:
   virtual std::string GetToolTypeAsString();
 
 protected:
-        //physical port to which the wired tool is attached
+  //physical port to which the wired tool is attached
   unsigned m_PortNumber;
 
-        //SROM file to use with the tool, required for wireless, optional for
-        //wired
+  //SROM file to use with the tool, required for wireless, optional for
+  //wired
   std::string m_SROMFile;
 };
 
 
 /**
- * Configuration for the Polaris Vicra tracker.
+ * \class PolarisWirelessTrackerConfiguration This class represents the 
+ *        configuration data required by polaris trackers that are wireless
+ *        (vicra and spectra).
  */
 class PolarisWirelessTrackerConfiguration : 
   public SerialCommunicatingTrackerConfiguration
 {
 public:
-          //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( PolarisWirelessTrackerConfiguration, 
                                       SerialCommunicatingTrackerConfiguration )
 protected:
@@ -111,13 +116,16 @@ protected:
 
 
 /**
- * Configuration for the Polaris Vicra tracker.
+ * \class PolarisVicraTrackerConfiguration This class represents the 
+ *        configuration data required by polaris vicra tracker.
+ * The class inherits the functionality from PolarisWirelessTrackerConfiguration
+ * and only adds the vicra specific maximal refresh rate.
  */
 class PolarisVicraTrackerConfiguration : 
   public PolarisWirelessTrackerConfiguration
 {
 public:
-          //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( PolarisVicraTrackerConfiguration, 
                                       PolarisWirelessTrackerConfiguration )
 
@@ -129,23 +137,26 @@ public:
   virtual double GetMaximalRefreshRate();
 
 protected:
-    PolarisVicraTrackerConfiguration();
-    virtual ~PolarisVicraTrackerConfiguration();
+  PolarisVicraTrackerConfiguration();
+  virtual ~PolarisVicraTrackerConfiguration();
 
-private:                  
-                //manufacturer specified maximal refresh rate [Hz]
+private:
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 };
 
 
 /**
- * Configuration for the Polaris Spectra tracker.
+ * \class PolarisSpectraTrackerConfiguration This class represents the 
+ *        configuration data required by polaris spectra tracker.
+ * The class inherits the functionality from PolarisWirelessTrackerConfiguration
+ * and only adds the spectra specific maximal refresh rate.
  */
 class PolarisSpectraTrackerConfiguration : 
   public PolarisWirelessTrackerConfiguration
 {
 public:
-          //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( PolarisSpectraTrackerConfiguration, 
                                       PolarisWirelessTrackerConfiguration )
 
@@ -160,21 +171,23 @@ protected:
   PolarisSpectraTrackerConfiguration();
   virtual ~PolarisSpectraTrackerConfiguration();
 
-private:                  
-                //manufacturer specified maximal refresh rate [Hz]
+private:
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 };
 
 
 /**
- * Configuration for the Hybrid Polaris trackers.
+ * \class PolarisHybridTrackerConfiguration This class represents the 
+ *        configuration data required by polaris hybrid tracker (old combination
+ *        of wired and wireless).
  */
 class PolarisHybridTrackerConfiguration : 
   public SerialCommunicatingTrackerConfiguration
 {
 public:
 
-          //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( PolarisHybridTrackerConfiguration, 
                                       SerialCommunicatingTrackerConfiguration )
 
@@ -193,9 +206,9 @@ protected:
                                 bool isReference );
 
 private:
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
-                 //maximal number of physical ports for attaching wired tools
+  //maximal number of physical ports for attaching wired tools
   static const unsigned MAXIMAL_PORT_NUMBER;
 };
 
