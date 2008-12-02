@@ -4692,10 +4692,6 @@ UltrasoundNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     m_ErrorOccured = true;
     m_ErrorMessage = evt1c->Get();
   }
-  //else if ( evt2 )
-  //{
-  //  m_Parent->m_Tracker = evt2->Get();
-  //}
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();

@@ -541,10 +541,10 @@ private:
   igstk::Imager::Pointer                                m_Imager;
   igstk::ImagerTool::Pointer                            m_TerasonImagerTool;
 
-  /** tracker and tracker tool objects */
+  /** tracker tool object */
   igstk::TrackerTool::Pointer                           m_TrackerTool;
 
-  /** imager and tracker tool objects */
+  /** imager tool object */
   igstk::TrackerTool::Pointer                           m_ImagerTool;
 
   /** reference tool object */
@@ -628,7 +628,6 @@ private:
   LoadedObserverType::Pointer               m_ManualReslicingObserver;
   LoadedObserverType::Pointer               m_KeyPressedObserver;
   LoadedObserverType::Pointer               m_MousePressedObserver;
-//  LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
   LoadedObserverType::Pointer               m_TrackerToolNotAvailableObserver;
   LoadedObserverType::Pointer               m_TrackerToolAvailableObserver;
   LoadedObserverType::Pointer               m_ImagerToolNotAvailableObserver;
