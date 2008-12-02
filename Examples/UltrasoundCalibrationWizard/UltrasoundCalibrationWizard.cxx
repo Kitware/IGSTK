@@ -34,6 +34,8 @@
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
 
+#include "igstkUltrasoundCalibrationIO.h"
+
 #define VIEW_2D_REFRESH_RATE 15
 #define VIEW_3D_REFRESH_RATE 15
 
@@ -104,6 +106,11 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   /** Create the controller for the tracker */
   m_TrackerController = igstk::TrackerController::New();
+
+  m_UltrasoundCalibrationSamples = new igstk::UltrasoundCalibration;
+
+  m_UltrasoundCalibrationSamples->m_PointerTransforms.clear();
+  m_UltrasoundCalibrationSamples->m_ProbeTransforms.clear();
 
   // set logger to the controller
   m_TrackerController->SetLogger(this->GetLogger());
@@ -842,7 +849,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 */
 UltrasoundCalibrationWizard::~UltrasoundCalibrationWizard()
 {  
-
+  delete m_UltrasoundCalibrationSamples;
 }
 
 bool UltrasoundCalibrationWizard::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
@@ -1692,20 +1699,20 @@ void UltrasoundCalibrationWizard::LoadWorkingVolumeMeshProcessing()
     m_ViewerGroup->m_3DView->RequestAddObject( m_MeshRepresentation );
 
     // create reslice plane spatial object for axial view
-    m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
-    m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-    m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-    m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+    //m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
+    //m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+    //m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+    //m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
+    //m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
+    //m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create a mesh reslice representation for axial view
-    MeshResliceRepresentationType::Pointer m_AxialMeshResliceRepresentation = MeshResliceRepresentationType::New();
-    m_AxialMeshResliceRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
-    m_AxialMeshResliceRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
-    m_AxialMeshResliceRepresentation->SetOpacity(1.0);
-    m_AxialMeshResliceRepresentation->SetLineWidth(1.0);
-    m_AxialMeshResliceRepresentation->SetColor(1, 1, 0);
+    //MeshResliceRepresentationType::Pointer m_AxialMeshResliceRepresentation = MeshResliceRepresentationType::New();
+    //m_AxialMeshResliceRepresentation->RequestSetMeshObject( m_MeshSpatialObject );
+    //m_AxialMeshResliceRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+    //m_AxialMeshResliceRepresentation->SetOpacity(1.0);
+    //m_AxialMeshResliceRepresentation->SetLineWidth(1.0);
+    //m_AxialMeshResliceRepresentation->SetColor(1, 1, 0);
 
     // set the video view as child of the reslicing plane
 /*    m_ViewerGroup->m_VideoView->RequestDetachFromParent();
@@ -1714,7 +1721,7 @@ void UltrasoundCalibrationWizard::LoadWorkingVolumeMeshProcessing()
 
     // add axial mesh reslice representation to the 2D and 3D views
 //    m_ViewerGroup->m_VideoView->RequestAddObject( m_AxialMeshResliceRepresentation );
-    m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentation->Copy() );
+//    m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentation->Copy() );
 
     // set background color to the views
     m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(0,0,0);
@@ -2426,10 +2433,12 @@ UltrasoundCalibrationWizard
 
   if (m_VideoEnabled)
   {
+    this->m_ToggleEnableVideoButton->color((Fl_Color)55);
     this->DisableVideo();
   }
   else
   {
+    this->m_ToggleEnableVideoButton->color(FL_GREEN);
     this->EnableVideo();
   }
 
@@ -2622,11 +2631,27 @@ UltrasoundCalibrationWizard
 }
 
 
+/** -----------------------------------------------------------------
+*  Overwrite the file with the sampled points
+*---------------------------------------------------------------------
+*/
+void 
+UltrasoundCalibrationWizard
+::WriteSampledPoints( const char *filename )
+{
+  igstk::UltrasoundCalibrationIO * writer = new igstk::UltrasoundCalibrationIO;
+  writer->SetFileName( filename );
+  writer->SetUltrasoundCalibration( m_UltrasoundCalibrationSamples );
+  writer->RequestWrite();
+}
+
 void 
 UltrasoundCalibrationWizard
 ::TrackerToolUpdateTransformCallback( const itk::EventObject & event )
 {
-  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
+  std::cout << "TrackerToolUpdateTransformCallback entered " << std::endl;
+
+  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
   {
     typedef igstk::TransformObserver ObserverType;
     ObserverType::Pointer transformObserver = ObserverType::New();
@@ -2636,7 +2661,9 @@ UltrasoundCalibrationWizard
     m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
     
     if ( transformObserver->GotTransform() )
-    {       
+    {   
+        std::cout << "TrackerToolUpdateTransformCallback transformObserver->GotTransform() passed " << std::endl;
+
         igstk::Transform transform = transformObserver->GetTransform();       
 
         if ( m_CollectingPointerSamples )
