@@ -4859,8 +4859,7 @@ void UltrasoundNavigator::StartImagingProcessing()
   }
 
   m_StateMachine.PushInput( m_SuccessInput );
-  m_StateMachine.ProcessInputs();
-  return;
+  m_StateMachine.ProcessInputs();  
 }
 
 /** -----------------------------------------------------------------
