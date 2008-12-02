@@ -4,35 +4,30 @@
 
     <refresh_rate> 20 </refresh_rate>
 
-    <send_to_ip> 255.255.255.0</send_to_ip>  
-
-    <communication> 
-      <com_port>3</com_port>
+    <serial_communication> 
+      <com_port>5</com_port>
       <baud_rate>115200</baud_rate> 
       <data_bits>8</data_bits>
       <parity>N</parity> 
       <stop_bits>1</stop_bits> 
       <hand_shake>0</hand_shake> 
-    </communication>
+    </serial_communication>
 
-    <tool usage="reference">
+    <tool>
       <name> reference frame </name> 
       <srom_file>E:/users/zivy/drf.rom</srom_file>
-      <ip_port>1000</ip_port> 
+      <send_to> 255.255.255.0:1000</send_to> 
+      <send_to> 255.255.256.0:1000</send_to> 
     </tool>
 
     <tool>
       <name> bayonet probe </name> 
-      <srom_file>E:/users/zivy/probe.rom</srom_file>
+      <srom_file>E:/users/zivy/probe.rom</srom_file>      
       <calibration_file>E:/users/zivy/bayonetCalibration.xml</calibration_file>
-      <ip_port>1001</ip_port> 
+      <send_to> 255.255.255.0:1001</send_to> 
+      <send_to> 255.255.256.0:1001</send_to> 
     </tool>
 
-    <tool>
-      <name> US probe </name> 
-      <srom_file>E:/users/zivy/us.rom</srom_file>
-      <calibration_file>E:/users/zivy/USCalibration.xml</calibration_file>
-      <ip_port>1002</ip_port> 
-    </tool>
+
 
 </tracking_system>
