@@ -499,8 +499,6 @@ private:
 
   /** imager tool object */
   igstk::TrackerTool::Pointer                           m_ImagerTool;
-
-//  ToolVectorType                                        m_ToolVector;
   
   /** Action methods to be invoked only by the state machine */
   void ReportInvalidRequestProcessing();
@@ -541,16 +539,9 @@ private:
   void DisconnectImagerProcessing();
   void InitializeImagerProcessing();
 
-  /** Observer type for loaded event, 
-   *  the callback can be set to a member function. */
-  typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
-  typedef itk::SimpleMemberCommand < Self > CancelObserverType;
-  
+ 
   typedef itk::MemberCommand<UltrasoundCalibrationWizard>   ProgressCommandType;
   itk::SmartPointer<ProgressCommandType>                m_SocketProgressCommand;  
-
-  CancelObserverType::Pointer               m_TrackerConfigurationCancelObserver;
-
       
   /** Log file */
   std::ofstream                                   m_LogFile;  
