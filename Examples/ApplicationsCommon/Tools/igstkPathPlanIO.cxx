@@ -16,7 +16,7 @@ PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
 #include "igstkPathPlanIO.h"
-#include "stdio.h"
+#include <stdio.h>
 
 namespace igstk
 {

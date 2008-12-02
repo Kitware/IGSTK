@@ -18,7 +18,6 @@
 #define __igstkPathPlan_h
 
 #include "igstkLandmark3DRegistration.h"
-//#include "igstkTrackerConfiguration.h"
 
 namespace igstk
 {
@@ -45,11 +44,6 @@ public:
 
   PointType            m_EntryPoint;
   PointType            m_TargetPoint;
-//  PointListType        m_FiducialPoints;
-
-  // To be added
-  // Add the capability to save tracker configuration in plan
- // std::vector< TrackerConfiguration * >      m_TrackerCofigurations;
 
   PathPlan();
   virtual ~PathPlan();
