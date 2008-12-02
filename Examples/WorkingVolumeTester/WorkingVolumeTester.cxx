@@ -868,15 +868,6 @@ WorkingVolumeTester::ReportSuccessStopTrackingProcessing()
 }
 
 /** -----------------------------------------------------------------
-* Build scene graph with all detected tracking tools
-*  -----------------------------------------------------------------
-*/
-void WorkingVolumeTester::BuildSceneGraph()
-{
-  
-}
-
-/** -----------------------------------------------------------------
 * Load working volume mesh. This method asks for a .msh file
 * -----------------------------------------------------------------
 */

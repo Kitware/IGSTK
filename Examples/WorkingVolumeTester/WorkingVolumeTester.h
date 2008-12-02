@@ -364,13 +364,6 @@ private:
   bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
 
-  void BuildSceneGraph();
-
-  /** Callback functions for picking and reslicing image events. */
-  //void ToolTrackingCallback( const itk::EventObject & event );
-  //void ToolNotAvailableCallback( const itk::EventObject & event );
-  //void ToolAvailableCallback( const itk::EventObject & event );
-  void NullActionCallback(const itk::EventObject & event ){};
 };
 
 #endif
