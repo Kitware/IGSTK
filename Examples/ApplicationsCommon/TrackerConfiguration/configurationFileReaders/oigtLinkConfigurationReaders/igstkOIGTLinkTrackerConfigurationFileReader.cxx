@@ -463,9 +463,7 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
         else 
         {
           oigtLinkXmlReader->GetOIGTLinkToolConfigurationData( 
-            this->m_OIGTLinkTrackerConfiguration.m_ToolNamesAndPorts );
-          this->m_OIGTLinkTrackerConfiguration.m_HostName =
-            oigtLinkXmlReader->GetOIGTLinkHostName();
+            this->m_OIGTLinkTrackerConfiguration.m_ToolNamesAndConnections );
           igstkPushInputMacro( Success );    
         }
       }     //we successfuly read the file, it just didn't contain the data, so

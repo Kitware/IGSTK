@@ -26,7 +26,7 @@ public:
      */
     FileFormatException(const std::string &errorMessage) 
     {
-      this->errorMessage = errorMessage;
+      this->m_ErrorMessage = errorMessage;
     }
 
     /**
@@ -39,10 +39,10 @@ public:
      */
      virtual const char* what() const throw() 
      {
-       return errorMessage.c_str();
+       return m_ErrorMessage.c_str();
      }
   private:
-    std::string errorMessage;
+    std::string m_ErrorMessage;
   };
 
     //standard typedefs
@@ -77,15 +77,15 @@ public:
    */
   virtual void CharacterDataHandler( const char *inData, int inLength );
 
+  typedef std::pair<std::string, unsigned int> ConnectionDataType;
+  typedef std::map<std::string, std::vector<ConnectionDataType> > OIGTLinkDataType;
 
   /**
    * Get the map between tool names and ip ports.
    */
-  void GetOIGTLinkToolConfigurationData( 
-    std::map<std::string, unsigned int> &toolNamesAndPorts );
-  
-  std::string GetOIGTLinkHostName();   
-
+  void GetOIGTLinkToolConfigurationData( OIGTLinkDataType 
+    &toolNamesAndConnections );     
+    
   bool HaveConfigurationData();
 
 protected:
@@ -93,20 +93,16 @@ protected:
          //create a new object
   OIGTLinkTrackerConfigurationXMLFileReader() : 
                                  m_ReadingTrackerConfiguration( false ),                             
-                                 m_ReadingToolConfiguration( false ),
-                                 m_HaveCurrentToolIPPort( false )
+                                 m_ReadingToolConfiguration( false )                                 
                                  {}
   virtual ~OIGTLinkTrackerConfigurationXMLFileReader() {}
 
   void ProcessToolName() 
     throw ( FileFormatException );
 
-  void ProcessToolIPPort() 
+  void ProcessToolConnection() 
     throw ( FileFormatException );
   
-  void ProcessHostName()
-    throw ( FileFormatException );
-
   void ProcessToolData()
     throw ( FileFormatException );
 
@@ -115,11 +111,9 @@ protected:
   
   std::string m_CurrentTagData;
   std::string m_CurrentToolName;
-  unsigned int m_CurrentToolIPPort;
-  bool m_HaveCurrentToolIPPort;
-
-  std::map<std::string, unsigned int> m_ToolNamesAndPorts;   
-  std::string m_HostName; 
+  std::vector<ConnectionDataType> m_CurrentConnections;
+  
+  OIGTLinkDataType m_ToolNamesAndConnections;     
 
 private:
   OIGTLinkTrackerConfigurationXMLFileReader( 
