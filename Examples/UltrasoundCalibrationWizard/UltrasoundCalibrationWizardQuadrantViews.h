@@ -49,8 +49,6 @@ public:
 
   virtual ~UltrasoundCalibrationWizardQuadrantViews(void);
 
-  virtual int handle(int e);
-
   typedef igstk::View          ViewType;
   typedef igstk::View2D        ViewType2D;
   typedef igstk::View3D        ViewType3D;
@@ -118,6 +116,10 @@ private:
   int m_HH;
 
   WindowLevelStructType m_wl;
+
+public:
+
+  virtual int handle(int e);
 };
 
 

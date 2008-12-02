@@ -55,7 +55,9 @@ int UltrasoundCalibrationIO::RequestWrite()
       //x_i y_i US_tx US_ty US_tz US_qx US_qy US_qz US_qw probe_tx probe_ty probe_tz probe_qx probe_qy probe_qz probe_qw
 
 // US probe
-      igstk::Transform probeTr = m_UltrasoundCalibration->m_ProbeTransforms[i];        
+      igstk::Transform probeTr = m_UltrasoundCalibration->m_ProbeTransforms[i];      
+
+      igstk::TimeStamp::TimePeriodType probeTime  = probeTr.GetStartTime();
 
       igstk::Transform::VersorType probeQuat = probeTr.GetRotation();
 
@@ -71,7 +73,7 @@ int UltrasoundCalibrationIO::RequestWrite()
       double  probePosition[3];
       probeTransform->GetPosition( probePosition ); 
             
-
+      calibFile << probeTime << " ";
       calibFile << probePosition[0] << " " << probePosition[1] << " " << probePosition[2] << " ";
 
      // calibFile << probeAngles[0] << " " << probeAngles[1] << " " << probeAngles[2] << " ";
@@ -82,6 +84,8 @@ int UltrasoundCalibrationIO::RequestWrite()
 
 // pointer
       igstk::Transform pointerTr = m_UltrasoundCalibration->m_PointerTransforms[i];    
+
+      igstk::TimeStamp::TimePeriodType pointerTime  = pointerTr.GetStartTime();
 
       igstk::Transform::VersorType pointerQuat = pointerTr.GetRotation();
 
@@ -97,6 +101,7 @@ int UltrasoundCalibrationIO::RequestWrite()
       double  pointerPosition[3];
       pointerTransform->GetPosition( pointerPosition ); 
       
+      calibFile << pointerTime << " ";
       calibFile << pointerPosition[0] << " " << pointerPosition[1] << " " << pointerPosition[2] << " ";
 
       //calibFile << pointerAngles[0] << " " << pointerAngles[1] << " " << pointerAngles[2] << "\n";

@@ -100,10 +100,10 @@ public:
   typedef igstk::EllipsoidObjectRepresentation        EllipsoidRepresentationType;
 
   /** typedef for a vector of ellipsoid spatial objects and representations*/
-  typedef std::vector < EllipsoidType::Pointer >      EllipsoidSpatialObjectVectorType;
+//  typedef std::vector < EllipsoidType::Pointer >      EllipsoidSpatialObjectVectorType;
 
-  typedef std::vector < EllipsoidRepresentationType::Pointer >    
-                                                      EllipsoidRepresentationVectorType;
+//  typedef std::vector < EllipsoidRepresentationType::Pointer >    
+//                                                      EllipsoidRepresentationVectorType;
   /** reslicer plane spatial object */
   typedef igstk::ReslicerPlaneSpatialObject           ReslicerPlaneType;
 
@@ -119,11 +119,15 @@ public:
   typedef igstk::AxesObjectRepresentation             AxesRepresentationType;
 
   /** typedef for a point type */
-  typedef igstk::Transform::PointType           PointType;
+  typedef igstk::Transform::PointType                 PointType;
 
   /** tracker tool spatial object and representation */
   MeshObjectType::Pointer                               m_TrackerToolSpatialObject;
   MeshRepresentationType::Pointer                       m_TrackerToolRepresentation;
+
+  /** imager tool spatial object and representation */
+  EllipsoidType::Pointer                                m_ImagerToolSpatialObject;
+  EllipsoidRepresentationType::Pointer                  m_ImagerToolRepresentation;
 
     /** video frame spatial object and representation*/
   typedef igstk::VideoFrameSpatialObject                VideoFrameSpatialObjectType;
@@ -153,12 +157,25 @@ public:
   /** observer for mouse button pressed event */
   LoadedObserverType::Pointer                           m_MousePressedObserver;
 
+  /** observers for the tracker tool */
+  LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
+  LoadedObserverType::Pointer               m_TrackerToolNotAvailableObserver;
+  LoadedObserverType::Pointer               m_TrackerToolAvailableObserver;
 
+  /** observers for the imager tool */
+  LoadedObserverType::Pointer               m_ImagerToolUpdateObserver;
+  LoadedObserverType::Pointer               m_ImagerToolNotAvailableObserver;
+  LoadedObserverType::Pointer               m_ImagerToolAvailableObserver;
+
+  bool m_CollectorEnabled;
   bool m_VideoEnabled;
   bool m_ImagerInitialized;
   bool m_VideoRunning;
   bool m_CollectingProbeSamples;
   bool m_CollectingPointerSamples;
+
+  unsigned int m_TrackerToolUpdateObserverID;
+  unsigned int m_ImagerToolUpdateObserverID;
 
   unsigned int m_SnapShotCounter;
 
@@ -168,6 +185,7 @@ public:
   virtual void RequestPrepareToQuit();
   virtual void RequestLoadTrackerToolSpatialObject();
   virtual void RequestToggleEnableVideo();
+  virtual void RequestToggleEnableCollector();
   virtual void RequestToggleRunVideo();
 
   void EnableVideo();
@@ -282,8 +300,8 @@ private:
   MeshRepresentationType::Pointer                       m_MeshRepresentation;
 
   /** SpatialObject and representation for the tracker´s tip */
-  EllipsoidSpatialObjectVectorType                      m_TipSpatialObjectVector;
-  EllipsoidRepresentationVectorType                     m_TipRepresentationVector;
+//  EllipsoidSpatialObjectVectorType                      m_TipSpatialObjectVector;
+//  EllipsoidRepresentationVectorType                     m_TipRepresentationVector;
 
   /** cross hair object and representation */
   CrossHairType::Pointer                                m_CrossHair;
@@ -291,8 +309,6 @@ private:
 
   /** plane reslicer spatial objects */
   ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_CoronalPlaneSpatialObject;
  
   MeshResliceRepresentationType::Pointer                m_AxialMeshResliceRepresentation;
   MeshResliceRepresentationType::Pointer                m_SagittalMeshResliceRepresentation;
@@ -535,10 +551,6 @@ private:
 
   CancelObserverType::Pointer               m_TrackerConfigurationCancelObserver;
 
-  LoadedObserverType::Pointer               m_TrackerToolNotAvailableObserver;
-  LoadedObserverType::Pointer               m_TrackerToolAvailableObserver;
-  LoadedObserverType::Pointer               m_ImagerToolNotAvailableObserver;
-  LoadedObserverType::Pointer               m_ImagerToolAvailableObserver;
       
   /** Log file */
   std::ofstream                                   m_LogFile;  
@@ -560,8 +572,8 @@ private:
   void ImagerToolAvailableCallback( const itk::EventObject & event ); 
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event ); 
-  void ProbeTrackingCallback( const itk::EventObject & event ); 
-  void PointerTrackingCallback( const itk::EventObject & event ); 
+  void ImagerToolUpdateTransformCallback( const itk::EventObject & event ); 
+  void TrackerToolUpdateTransformCallback( const itk::EventObject & event ); 
   void NullActionCallback(const itk::EventObject & event ){};
   void OnSocketProgressEvent(itk::Object *source, const itk::EventObject &);
   void HandleMousePressed(igstk::UltrasoundCalibrationWizardQuadrantViews::MouseCommandType mouseCommand);

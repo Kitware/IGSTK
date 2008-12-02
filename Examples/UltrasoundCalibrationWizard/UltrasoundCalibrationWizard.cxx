@@ -42,8 +42,6 @@
 // name of the tool that is going to drive the reslicing
 #define TRACKER_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 #define IMAGER_TOOL_NAME "sProbe" //sPtr // bayonet // hybrid_pointer
-// name of the tool that is going to be used as dynamic reference
-#define REFERENCE_NAME "reference"
 
 
 /** -----------------------------------------------------------------
@@ -57,6 +55,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   std::srand( 5 );
 
   m_VideoEnabled = false;
+  m_CollectorEnabled = false;
   m_ImagerInitialized = false;
   m_VideoRunning = false;
   m_CollectingProbeSamples = false;
@@ -100,8 +99,14 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
     return;
   }
 
-  /** Initialize member variables  */
+  /** Instantiate the world reference */
   m_WorldReference        = AxesObjectType::New();
+
+  /** Create the controller for the tracker */
+  m_TrackerController = igstk::TrackerController::New();
+
+  // set logger to the controller
+  m_TrackerController->SetLogger(this->GetLogger());
 
   // instatiate observer for key pressed event
   m_KeyPressedObserver = LoadedObserverType::New();
@@ -487,12 +492,16 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            StartingTracker, ReportInvalidRequest );
   /** Tracking State */
 
-  igstkAddTransitionMacro( Tracking, StopTracking, 
-                           StoppingTracker, StopTracking );
   igstkAddTransitionMacro( Tracking, LoadWorkingVolumeMesh,
                            LoadingMesh, LoadWorkingVolumeMesh );
   igstkAddTransitionMacro( Tracking, LoadTrackerMesh,
                            LoadingMesh, LoadTrackerMesh );
+  igstkAddTransitionMacro( Tracking, InitializeImager, 
+                           InitializingImager, InitializeImager );
+  igstkAddTransitionMacro( Tracking, StartImaging, 
+                           StartingImager, StartImaging );  
+  igstkAddTransitionMacro( Tracking, StopTracking, 
+                           StoppingTracker, StopTracking );  
 
   //complete table for state: Tracking
 
@@ -510,11 +519,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, DisconnectTracker, 
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, InitializeImager, 
-                           Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, LoadImagerToolSpatialObject,
-                           Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, StartImaging, 
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StopImaging, 
                            Tracking, ReportInvalidRequest );
@@ -1277,6 +1282,37 @@ UltrasoundCalibrationWizard
   m_StateMachine.ProcessInputs();  
 }
 
+/** -----------------------------------------------------------------
+* Starts imaging provided it is initialized and connected to the 
+* communication port
+*---------------------------------------------------------------------
+*/
+void 
+UltrasoundCalibrationWizard
+::StartImagingProcessing()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+                    "UltrasoundCalibrationWizard::StartImagingProcessing called...\n" )
+
+  m_ImagerController->RequestStart();
+  
+  //check if succeded
+  if( m_ImagerControllerObserver->Error() )
+  {
+    std::string errorMessage;
+    m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_ImagerControllerObserver->ClearError();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
+    m_StateMachine.PushInput( m_FailureInput );
+    m_StateMachine.ProcessInputs();
+    return;
+  }
+
+  m_StateMachine.PushInput( m_SuccessInput );
+  m_StateMachine.ProcessInputs();  
+}
 
 /** Method to be invoked on successful imager start */
 void 
@@ -1367,6 +1403,8 @@ UltrasoundCalibrationWizard
   errorMessage = "Could not initialize imager device";
   fl_alert( errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
+
+  m_ImagerInitialized = false;
 }
 
 
@@ -1377,6 +1415,7 @@ UltrasoundCalibrationWizard
 {
   igstkLogMacro2( m_Logger, DEBUG, "UltrasoundCalibrationWizard::"
                  "ReportSuccessImagerInitializationProcessing called...\n");
+  m_ImagerInitialized = true;
 }
 
 /** Method to be invoked on successful mesh loading */
@@ -1657,7 +1696,7 @@ void UltrasoundCalibrationWizard::LoadWorkingVolumeMeshProcessing()
     m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
     m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TrackerToolSpatialObject );
     m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create a mesh reslice representation for axial view
@@ -1668,15 +1707,13 @@ void UltrasoundCalibrationWizard::LoadWorkingVolumeMeshProcessing()
     m_AxialMeshResliceRepresentation->SetLineWidth(1.0);
     m_AxialMeshResliceRepresentation->SetColor(1, 1, 0);
 
-    // todo: see the camera issue within childs and parents for the case of
-    // a View and a ReslicerPlaneSpatialObjet, respectively.
-    
-    m_ViewerGroup->m_VideoView->RequestDetachFromParent();
+    // set the video view as child of the reslicing plane
+/*    m_ViewerGroup->m_VideoView->RequestDetachFromParent();
     m_ViewerGroup->m_VideoView->RequestSetTransformAndParent(
-      identity, m_AxialPlaneSpatialObject );    
+      identity, m_AxialPlaneSpatialObject );   */ 
 
     // add axial mesh reslice representation to the 2D and 3D views
-    m_ViewerGroup->m_VideoView->RequestAddObject( m_AxialMeshResliceRepresentation );
+//    m_ViewerGroup->m_VideoView->RequestAddObject( m_AxialMeshResliceRepresentation );
     m_ViewerGroup->m_3DView->RequestAddObject( m_AxialMeshResliceRepresentation->Copy() );
 
     // set background color to the views
@@ -1869,12 +1906,6 @@ void UltrasoundCalibrationWizard::InitializeTrackerProcessing()
     return;
   }
 
-  /** Create the controller for the tracker and assign observers to it*/
-  m_TrackerController = igstk::TrackerController::New();
-
-  // set logger to the controller
-  m_TrackerController->SetLogger(this->GetLogger());
-
   m_TrackerControllerObserver = TrackerControllerObserver::New();
   m_TrackerControllerObserver->SetParent( this );
 
@@ -1918,8 +1949,8 @@ void UltrasoundCalibrationWizard::InitializeTrackerProcessing()
     return;
   }
 
+  // ask for non reference tools only
   m_TrackerController->RequestGetNonReferenceToolList();
- // m_TrackerController->RequestGetReferenceTool();
   
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
@@ -1971,38 +2002,24 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
     m_WorldReferenceRepresentation->RequestSetAxesObject( m_WorldReference );
     m_WorldReference->SetSize(50,50,50);
 
-/*
-    ToolVectorType::iterator iter = m_ToolVector.begin();
+    m_ImagerToolSpatialObject = EllipsoidType::New();
+    m_ImagerToolSpatialObject->SetRadius(10,10,10);
+    m_ImagerToolSpatialObject->RequestDetachFromParent();
+    m_ImagerToolSpatialObject->RequestSetTransformAndParent( identity, m_ImagerTool );
 
-    int toolCounter = 0;        
+    m_ImagerToolRepresentation = EllipsoidRepresentationType::New();
+    m_ImagerToolRepresentation->RequestSetEllipsoidObject( m_ImagerToolSpatialObject );
+    m_ImagerToolRepresentation->SetColor(0, 1, 1);
 
-    for ( ; iter != m_ToolVector.end(); iter++, toolCounter++ )
-    {
-      EllipsoidType::Pointer so = EllipsoidType::New();
-      so->SetRadius(10,10,10);
-      so->RequestDetachFromParent();
-      so->RequestSetTransformAndParent( identity, (*iter));
+    m_ViewerGroup->m_3DView->RequestAddObject( m_ImagerToolRepresentation );
 
-      m_TipSpatialObjectVector.push_back( so );
-
-      EllipsoidRepresentationType::Pointer rep = EllipsoidRepresentationType::New();
-      rep->RequestSetEllipsoidObject( so );
-
-      double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-      double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-      double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
-
-      rep->SetColor(r, g, b);
-
-      m_TipRepresentationVector.push_back( rep );
-
-      m_ViewerGroup->m_3DView->RequestAddObject( rep->Copy() );
-    }    
-*/
-
-    // set the tools spatial object to the first available tool
+    // set the tool spatial object to the tracker tool
     m_TrackerToolSpatialObject->RequestDetachFromParent();
-    m_TrackerToolSpatialObject->RequestSetTransformAndParent(identity, m_TrackerTool);//Vector[1]);
+    m_TrackerToolSpatialObject->RequestSetTransformAndParent(identity, m_TrackerTool);
+
+    // set the tool spatial object to the imager tool
+    m_ImagerToolSpatialObject->RequestDetachFromParent();
+    m_ImagerToolSpatialObject->RequestSetTransformAndParent(identity, m_ImagerTool);
 
     // add tool spatial object tot the 3D view
     m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
@@ -2179,6 +2196,8 @@ UltrasoundCalibrationWizard
     {      
         m_Parent->m_TrackerTool = (*trackerIter).second;
 
+        std::cout << "found tool: " << TRACKER_TOOL_NAME << std::endl;
+
         // observe tracker tool not available events
         m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
         m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
@@ -2194,6 +2213,10 @@ UltrasoundCalibrationWizard
 
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
+
+        m_Parent->m_TrackerToolUpdateObserver    = LoadedObserverType::New();
+        m_Parent->m_TrackerToolUpdateObserver->SetCallbackFunction( m_Parent,
+                               &UltrasoundCalibrationWizard::TrackerToolUpdateTransformCallback );
     }
 
     igstk::TrackerController::ToolContainerType::iterator imagerIter = toolContainer.find(IMAGER_TOOL_NAME);
@@ -2201,6 +2224,8 @@ UltrasoundCalibrationWizard
     if ( imagerIter!=toolContainer.end() )
     {      
         m_Parent->m_ImagerTool = (*imagerIter).second;
+
+        std::cout << "found tool: " << IMAGER_TOOL_NAME << std::endl;
 
         // observer imager tool not available events
         m_Parent->m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
@@ -2216,6 +2241,11 @@ UltrasoundCalibrationWizard
 
         m_Parent->m_ImagerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ImagerToolAvailableObserver);
+
+        // instantiate it but not add it yet (see toggle collector)
+        m_Parent->m_ImagerToolUpdateObserver    = LoadedObserverType::New();
+        m_Parent->m_ImagerToolUpdateObserver->SetCallbackFunction( m_Parent,
+                               &UltrasoundCalibrationWizard::ImagerToolUpdateTransformCallback );
     }
     /*
     igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.begin();
@@ -2346,7 +2376,49 @@ UltrasoundCalibrationWizard
   }
 }
 
-void UltrasoundCalibrationWizard
+void 
+UltrasoundCalibrationWizard
+::RequestToggleEnableCollector()
+{
+  igstkLogMacro2( m_Logger, DEBUG, 
+   "UltrasoundCalibrationWizard::RequestToggleEnableCollector called...\n" )
+
+  if (m_CollectorEnabled)
+  {
+    this->m_ToggleEnableCollectorButton->color((Fl_Color)55);
+
+    if ( m_TrackerTool.IsNotNull() )
+    {
+    m_TrackerTool->RemoveObserver( m_TrackerToolUpdateObserverID );
+    }
+
+    if ( m_ImagerTool.IsNotNull() )
+    {
+    m_ImagerTool->RemoveObserver( m_ImagerToolUpdateObserverID );
+    }
+  }
+  else
+  {
+    this->m_ToggleEnableCollectorButton->color(FL_GREEN);
+
+    if ( m_TrackerTool.IsNotNull() )
+    {
+      m_TrackerToolUpdateObserverID = m_TrackerTool->AddObserver(
+                    igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
+    }
+
+    if ( m_ImagerTool.IsNotNull() )
+    {
+      m_ImagerToolUpdateObserverID = m_ImagerTool->AddObserver(
+                    igstk::TrackerToolTransformUpdateEvent(), m_ImagerToolUpdateObserver);
+    }
+  }
+
+  m_CollectorEnabled = !m_CollectorEnabled;
+}
+
+void 
+UltrasoundCalibrationWizard
 ::RequestToggleEnableVideo()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -2438,10 +2510,14 @@ UltrasoundCalibrationWizard
   // if we are not initialize
   if (!m_ImagerInitialized)
   {
-    this->RequestInitializeImager();
+  this->RequestInitializeImager();
   }
 
+  if (m_ImagerInitialized)
+  {
   this->RequestStartImaging();
+  }
+  
 }
 
 
@@ -2499,10 +2575,12 @@ UltrasoundCalibrationWizard
         break;
 
     case 'g': // grab tracker and imager transforms
+      if (m_CollectorEnabled)
+      {
          m_CollectingProbeSamples = true;
-         m_CollectingPointerSamples = true;
-         break;
-
+         m_CollectingPointerSamples = true;      
+      }
+      break;
     default:  
          return;
   }
@@ -2546,25 +2624,25 @@ UltrasoundCalibrationWizard
 
 void 
 UltrasoundCalibrationWizard
-::PointerTrackingCallback( const itk::EventObject & event )
+::TrackerToolUpdateTransformCallback( const itk::EventObject & event )
 {
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
   {
     typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer pointerTransformObserver = ObserverType::New();
-    pointerTransformObserver->ObserveTransformEventsFrom( m_ImagerTool );
-    pointerTransformObserver->Clear();
+    ObserverType::Pointer transformObserver = ObserverType::New();
+    transformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    transformObserver->Clear();
     
     m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
     
-    if ( pointerTransformObserver->GotTransform() )
+    if ( transformObserver->GotTransform() )
     {       
-        igstk::Transform pointerTransform = pointerTransformObserver->GetTransform();       
+        igstk::Transform transform = transformObserver->GetTransform();       
 
         if ( m_CollectingPointerSamples )
         {
-            PointType point = TransformToPoint( pointerTransform );
-            m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( pointerTransform );
+            PointType point = TransformToPoint( transform );
+            m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( transform );
             std::cout << "pointer: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
             
             std::stringstream filename;              
@@ -2582,25 +2660,25 @@ UltrasoundCalibrationWizard
 
 void 
 UltrasoundCalibrationWizard
-::ProbeTrackingCallback(const itk::EventObject & event )
+::ImagerToolUpdateTransformCallback(const itk::EventObject & event )
 {
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
   {
     typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer probeTransformObserver = ObserverType::New();
-    probeTransformObserver->ObserveTransformEventsFrom( m_ImagerTool );
-    probeTransformObserver->Clear();
+    ObserverType::Pointer transformObserver = ObserverType::New();
+    transformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    transformObserver->Clear();
     
     m_ImagerTool->RequestComputeTransformTo( m_WorldReference );   
 
-    if ( probeTransformObserver->GotTransform() )
+    if ( transformObserver->GotTransform() )
     {
-       igstk::Transform probeTransform = probeTransformObserver->GetTransform();
+       igstk::Transform transform = transformObserver->GetTransform();
 
        if ( m_CollectingProbeSamples )
        {
-           PointType point = TransformToPoint( probeTransform );
-           m_UltrasoundCalibrationSamples->m_ProbeTransforms.push_back( probeTransform );
+           PointType point = TransformToPoint( transform );
+           m_UltrasoundCalibrationSamples->m_ProbeTransforms.push_back( transform );
            std::cout << "probe:" << point[0] << " " << point[1] << " " << point[2] << std::endl;
            m_CollectingProbeSamples = false;          
        }
