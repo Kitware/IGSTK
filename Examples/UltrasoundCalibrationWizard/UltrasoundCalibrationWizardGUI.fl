@@ -13,8 +13,8 @@ class UltrasoundCalibrationWizardGUI {open : {public igstk::Object}
     Fl_Window mainWindow {
       label {IGSTK - Ultrasound Calibration Wizard}
       callback {Quit();} open
-      xywh {136 155 1280 800} type Double box PLASTIC_UP_BOX resizable
-      code0 {\#include "igstkFLTKWidget.h"} visible
+      xywh {136 155 1280 800} type Double box PLASTIC_UP_BOX hide resizable
+      code0 {\#include "igstkFLTKWidget.h"}
     } {
       Fl_Group m_ControlGroup {
         xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
@@ -69,6 +69,22 @@ RequestLoadTrackerToolSpatialObject();}
             tooltip {Enable/Disable video} xywh {30 411 95 25} type Toggle box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
           }
         }
+        Fl_Box m_TrackerSemaphore {
+          label OFF selected
+          xywh {11 609 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Tracker Tool Status:}
+          xywh {11 572 130 37} labelsize 15
+        }
+        Fl_Box m_ImagerSemaphore {
+          label OFF
+          xywh {9 683 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Imager Tool Status:}
+          xywh {11 648 130 37} labelsize 15
+        }
       }
       Fl_Group m_ViewerGroup {
         xywh {151 0 1127 800} box PLASTIC_DOWN_BOX resizable
@@ -84,8 +100,7 @@ int x = m_ControlGroup->x();
 int y = m_ControlGroup->y();
 int width = m_ControlGroup->w();
 int height = m_ControlGroup->h();
-m_ControlGroup->resize(x,y,150,height);} {selected
-    }
+m_ControlGroup->resize(x,y,150,height);} {}
     Fl_Window m_ConfirmToQuitWindow {
       label {Shut down system} open
       xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
@@ -117,7 +132,7 @@ this->hasQuitted = false;}
     code {delete m_ViewerGroup;} {}
   }
   decl {bool hasQuitted;} {}
-  Function {Quit()} {open return_type void
+  Function {Quit()} {return_type void
   } {
     code {m_ConfirmToQuitWindow->show();
 CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}

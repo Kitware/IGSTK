@@ -39,6 +39,13 @@
 
 #define IMAGER_DEFAULT_REFRESH_RATE 15
 
+// name of the tool that is going to drive the reslicing
+#define TRACKER_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+#define IMAGER_TOOL_NAME "sProbe" //sPtr // bayonet // hybrid_pointer
+// name of the tool that is going to be used as dynamic reference
+#define REFERENCE_NAME "reference"
+
+
 /** -----------------------------------------------------------------
 *     Constructor
 *  -----------------------------------------------------------------
@@ -52,6 +59,10 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   m_VideoEnabled = false;
   m_ImagerInitialized = false;
   m_VideoRunning = false;
+  m_CollectingProbeSamples = false;
+  m_CollectingPointerSamples = false;
+
+  m_SnapShotCounter = 0;
 
   /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
@@ -91,6 +102,22 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   /** Initialize member variables  */
   m_WorldReference        = AxesObjectType::New();
+
+  // instatiate observer for key pressed event
+  m_KeyPressedObserver = LoadedObserverType::New();
+  m_KeyPressedObserver->SetCallbackFunction( this, &UltrasoundCalibrationWizard::HandleKeyPressedCallback );
+
+  // add it to the Viewer group in our GUI
+  m_ViewerGroup->AddObserver( igstk::UltrasoundCalibrationWizardQuadrantViews::KeyPressedEvent(),
+    m_KeyPressedObserver );
+
+  // instantiate observer for mouse pressed event 
+  m_MousePressedObserver = LoadedObserverType::New();
+  m_MousePressedObserver->SetCallbackFunction( this, &UltrasoundCalibrationWizard::HandleMousePressedCallback );
+
+  // add it to the Viewer group in our GUI
+  m_ViewerGroup->AddObserver( igstk::UltrasoundCalibrationWizardQuadrantViews::MousePressedEvent(),
+    m_MousePressedObserver );  
   
   /** Machine States*/
 
@@ -213,44 +240,31 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, Success, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, Failure, 
-                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
-  
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );  
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadTrackerToolSpatialObject,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadWorkingVolumeMesh, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadTrackerMesh, 
-                           TrackerToolSpatialObjectReady, ReportInvalidRequest );
-  
+                           TrackerToolSpatialObjectReady, ReportInvalidRequest );  
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeTracker, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartTracking, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopTracking, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectTracker, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeImager, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImagerToolSpatialObject,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartImaging, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopImaging, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-
-    igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectImager, 
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectImager, 
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
 
   /** ConfiguringTracker State */
@@ -265,40 +279,28 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
 
   igstkAddTransitionMacro( ConfiguringTracker, LoadTrackerToolSpatialObject,
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, LoadWorkingVolumeMesh, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, LoadTrackerMesh, 
                            ConfiguringTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( ConfiguringTracker, ConfigureTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, InitializeTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( ConfiguringTracker, StartTracking, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, StopTracking, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, InitializeImager, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, LoadImagerToolSpatialObject,
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, StartImaging, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, StopImaging, 
                            ConfiguringTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( ConfiguringTracker, DisconnectImager, 
                            ConfiguringTracker, ReportInvalidRequest );
 
@@ -310,43 +312,30 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   //complete table for state: TrackerConfigurationReady
   igstkAddTransitionMacro( TrackerConfigurationReady, Success, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, Failure, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadTrackerToolSpatialObject,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadWorkingVolumeMesh, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadTrackerMesh, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, ConfigureTracker, 
-                           TrackerConfigurationReady, ReportInvalidRequest );
-  
+                           TrackerConfigurationReady, ReportInvalidRequest ); 
   igstkAddTransitionMacro( TrackerConfigurationReady, StartTracking, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, StopTracking, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, InitializeImager, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, LoadImagerToolSpatialObject,
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, StartImaging, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, StopImaging, 
                            TrackerConfigurationReady, ReportInvalidRequest );
-
   igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectImager, 
                            TrackerConfigurationReady, ReportInvalidRequest );
 
@@ -362,40 +351,28 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   
   igstkAddTransitionMacro( InitializingTracker, LoadTrackerToolSpatialObject, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, LoadWorkingVolumeMesh, 
-                           InitializingTracker, ReportInvalidRequest );
-  
+                           InitializingTracker, ReportInvalidRequest ); 
   igstkAddTransitionMacro( InitializingTracker, LoadTrackerMesh, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, ConfigureTracker, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, InitializeTracker, 
-                           InitializingTracker, ReportInvalidRequest );
-    
+                           InitializingTracker, ReportInvalidRequest );  
   igstkAddTransitionMacro( InitializingTracker, StartTracking, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, StopTracking, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, DisconnectTracker, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, InitializeImager, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, LoadImagerToolSpatialObject,
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, StartImaging, 
                            InitializingTracker, ReportInvalidRequest );
-
   igstkAddTransitionMacro( InitializingTracker, StopImaging, 
                            InitializingTracker, ReportInvalidRequest );
-  
   igstkAddTransitionMacro( InitializingTracker, DisconnectImager, 
                            InitializingTracker, ReportInvalidRequest );
 
@@ -543,6 +520,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, DisconnectImager, 
                            Tracking, ReportInvalidRequest );
+
    /** StoppingTracker State */
 
   igstkAddTransitionMacro( StoppingTracker, Success,
@@ -580,6 +558,7 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, DisconnectImager, 
                            StoppingTracker, ReportInvalidRequest );
+
    /** DisconnectingTracker Tracker */
 
   igstkAddTransitionMacro( DisconnectingTracker, Success, 
@@ -1987,11 +1966,12 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
       return;
     }    
 
-    // create a world reference system
+    // create a world reference representation
     m_WorldReferenceRepresentation = AxesRepresentationType::New();
     m_WorldReferenceRepresentation->RequestSetAxesObject( m_WorldReference );
     m_WorldReference->SetSize(50,50,50);
 
+/*
     ToolVectorType::iterator iter = m_ToolVector.begin();
 
     int toolCounter = 0;        
@@ -2016,19 +1996,19 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
 
       m_TipRepresentationVector.push_back( rep );
 
-      m_ViewerGroup->m_VideoView->RequestAddObject( rep->Copy() );
       m_ViewerGroup->m_3DView->RequestAddObject( rep->Copy() );
     }    
+*/
 
     // set the tools spatial object to the first available tool
     m_TrackerToolSpatialObject->RequestDetachFromParent();
-    m_TrackerToolSpatialObject->RequestSetTransformAndParent(identity, m_ToolVector[1]);
+    m_TrackerToolSpatialObject->RequestSetTransformAndParent(identity, m_TrackerTool);//Vector[1]);
 
     // add tool spatial object tot the 3D view
     m_ViewerGroup->m_3DView->RequestAddObject( m_TrackerToolRepresentation );
 
     // set views' background colors
-    m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(0,0,0);
+    m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(1,1,1);
     m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1); 
 
     // build scene graph
@@ -2036,7 +2016,7 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
       identity, m_WorldReference );
 
     m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
-      identity, m_ViewerGroup->m_VideoView );
+      identity, m_WorldReference );
 
     // set up view parameters
     m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
@@ -2047,8 +2027,8 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
     m_ViewerGroup->m_3DView->RequestStart();
 
     // add world reference to the views
-    m_ViewerGroup->m_VideoView->RequestAddObject(m_WorldReferenceRepresentation->Copy());
-    m_ViewerGroup->m_3DView->RequestAddObject(m_WorldReferenceRepresentation->Copy());  
+//    m_ViewerGroup->m_VideoView->RequestAddObject(m_WorldReferenceRepresentation->Copy());
+    m_ViewerGroup->m_3DView->RequestAddObject(m_WorldReferenceRepresentation);  
 
 
     m_ViewerGroup->m_VideoView->RequestResetCamera();
@@ -2092,7 +2072,9 @@ void UltrasoundCalibrationWizard::StopTrackingProcessing()
 * Disconnects the tracker and closes the communication port
 *---------------------------------------------------------------------
 */
-void UltrasoundCalibrationWizard::DisconnectTrackerProcessing()
+void 
+UltrasoundCalibrationWizard
+::DisconnectTrackerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                     "UltrasoundCalibrationWizard::DisconnectTrackerProcessing called...\n" )
@@ -2135,7 +2117,7 @@ UltrasoundCalibrationWizard
                  "ReportSuccessImagerDisconnectionProcessing called...\n");
 }
 
-
+/** Method to set the parent tp the tracker observer */
 void 
 UltrasoundCalibrationWizard
 ::TrackerControllerObserver::SetParent( UltrasoundCalibrationWizard *p ) 
@@ -2143,7 +2125,9 @@ UltrasoundCalibrationWizard
   m_Parent = p;
 }
 
-void UltrasoundCalibrationWizard::TrackerControllerObserver::Execute( const itk::Object *caller, 
+void 
+UltrasoundCalibrationWizard
+::TrackerControllerObserver::Execute( const itk::Object *caller, 
                                                     const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
@@ -2152,8 +2136,7 @@ void UltrasoundCalibrationWizard::TrackerControllerObserver::Execute( const itk:
   
 void 
 UltrasoundCalibrationWizard
-::TrackerControllerObserver::Execute( itk::Object *caller, 
-                                                             const itk::EventObject & event )
+::TrackerControllerObserver::Execute( itk::Object *caller, const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =
     dynamic_cast< const igstk::TrackerController::InitializeErrorEvent * > (&event);
@@ -2163,9 +2146,6 @@ UltrasoundCalibrationWizard
 
   const igstk::TrackerStopTrackingErrorEvent *evt1c =
     dynamic_cast< const igstk::TrackerStopTrackingErrorEvent * > (&event);
-
-  //const igstk::TrackerController::RequestTrackerEvent *evt2 =
-  //  dynamic_cast< const igstk::TrackerController::RequestTrackerEvent * > (&event);
 
    const igstk::TrackerController::RequestToolsEvent *evt3 = 
     dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
@@ -2188,28 +2168,66 @@ UltrasoundCalibrationWizard
     m_ErrorOccured = true;
     m_ErrorMessage = evt1c->Get();
   }
-  /*else if ( evt2 )
-  {
-    m_Parent->m_Tracker = evt2->Get();
-  }*/
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
 
-    
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.begin();
+    igstk::TrackerController::ToolContainerType::iterator 
+                          trackerIter = toolContainer.find(TRACKER_TOOL_NAME);
 
+    if ( trackerIter!=toolContainer.end() )
+    {      
+        m_Parent->m_TrackerTool = (*trackerIter).second;
+
+        // observe tracker tool not available events
+        m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundCalibrationWizard::TrackerToolNotAvailableCallback );
+
+        m_Parent->m_TrackerTool->AddObserver(
+         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
+   
+        // observe tracker tool available events
+        m_Parent->m_TrackerToolAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_TrackerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundCalibrationWizard::TrackerToolAvailableCallback ); 
+
+        m_Parent->m_TrackerTool->AddObserver(
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
+    }
+
+    igstk::TrackerController::ToolContainerType::iterator imagerIter = toolContainer.find(IMAGER_TOOL_NAME);
+
+    if ( imagerIter!=toolContainer.end() )
+    {      
+        m_Parent->m_ImagerTool = (*imagerIter).second;
+
+        // observer imager tool not available events
+        m_Parent->m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ImagerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundCalibrationWizard::ImagerToolNotAvailableCallback );
+        m_Parent->m_ImagerTool->AddObserver(
+         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ImagerToolNotAvailableObserver);
+   
+        // observer imager tool available events
+        m_Parent->m_ImagerToolAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_ImagerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &UltrasoundCalibrationWizard::ImagerToolAvailableCallback ); 
+
+        m_Parent->m_ImagerTool->AddObserver(
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ImagerToolAvailableObserver);
+    }
+    /*
+    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.begin();
     for ( ; iter != toolContainer.end(); iter++ )
     {
       m_Parent->m_ToolVector.push_back( (*iter).second );
       std::cout << "UltrasoundCalibrationWizard::TrackerControllerObserver::Execute() found tool: " << (*iter).first << std::endl;
     }
+    */
   }
   else if ( evt4 )
   {
-   /* igstk::TrackerController::ToolEntryType entry = evt4->Get();
-      if ( entry.first == "reference" )
-        m_Parent->m_ReferenceTool = entry.second;*/
   }
 }
 
@@ -2229,7 +2247,47 @@ UltrasoundCalibrationWizard
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);
 }
-  
+
+void 
+UltrasoundCalibrationWizard
+::TrackerToolAvailableCallback(const itk::EventObject & event )
+{
+  m_TrackerSemaphore->color(FL_GREEN);
+  m_TrackerSemaphore->label("tracking");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
+void 
+UltrasoundCalibrationWizard
+::TrackerToolNotAvailableCallback(const itk::EventObject & event )
+{
+  m_TrackerSemaphore->color(FL_RED);
+  m_TrackerSemaphore->label("not visible");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
+void 
+UltrasoundCalibrationWizard
+::ImagerToolAvailableCallback(const itk::EventObject & event )
+{
+  m_ImagerSemaphore->color(FL_GREEN);
+  m_ImagerSemaphore->label("tracking");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
+void 
+UltrasoundCalibrationWizard
+::ImagerToolNotAvailableCallback(const itk::EventObject & event )
+{
+  m_ImagerSemaphore->color(FL_RED);
+  m_ImagerSemaphore->label("not visible");
+  m_ControlGroup->redraw();  
+  Fl::check();
+}
+
 void 
 UltrasoundCalibrationWizard
 ::ImagerControllerObserver::Execute( itk::Object *caller, 
@@ -2328,11 +2386,17 @@ void UltrasoundCalibrationWizard::EnableVideo()
      // ultrasound calibration
      m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
 
+     m_ViewerGroup->m_VideoView->RequestDetachFromParent();
+     m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity, m_VideoFrame );
+
+     m_WindowWidthVideo = 286;
+     m_WindowLevelVideo = 108;
+
      // create a video frame representation for the video view
      m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
      m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
-//     m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
-//     m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+     m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+     m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
   }
 
   if (m_VideoFrame.IsNotNull())
@@ -2360,12 +2424,16 @@ void UltrasoundCalibrationWizard::DisableVideo()
   m_ToggleRunVideoButton->deactivate();  
 }
 
-void UltrasoundCalibrationWizard::StopVideo()
+void 
+UltrasoundCalibrationWizard
+::StopVideo()
 {
   this->RequestStopImaging();
 }
 
-void UltrasoundCalibrationWizard::StartVideo()
+void 
+UltrasoundCalibrationWizard
+::StartVideo()
 {
   // if we are not initialize
   if (!m_ImagerInitialized)
@@ -2401,4 +2469,141 @@ UltrasoundCalibrationWizard
   this->RequestDisconnectTracker();
 }
 
+/** -----------------------------------------------------------------
+* Callback function for observer listening to a key-pressed event
+*---------------------------------------------------------------------
+*/
+void 
+UltrasoundCalibrationWizard
+::HandleKeyPressedCallback( const itk::EventObject & event )
+{
+  if ( igstk::UltrasoundCalibrationWizardQuadrantViews::KeyPressedEvent().CheckEvent( &event ) )
+  {
+    igstk::UltrasoundCalibrationWizardQuadrantViews::KeyPressedEvent *keyPressedEvent =
+      ( igstk::UltrasoundCalibrationWizardQuadrantViews::KeyPressedEvent *) & event;
+    this->HandleKeyPressed( keyPressedEvent->Get() );
+  }
+}
 
+void 
+UltrasoundCalibrationWizard
+::HandleKeyPressed ( 
+  igstk::UltrasoundCalibrationWizardQuadrantViews::KeyboardCommandType keyCommand )
+{
+  switch ( keyCommand.key ) 
+  { 
+   
+    case 'r': // reset the cameras in the different views
+        m_ViewerGroup->m_VideoView->RequestResetCamera();
+        m_ViewerGroup->m_3DView->RequestResetCamera();
+        break;
+
+    case 'g': // grab tracker and imager transforms
+         m_CollectingProbeSamples = true;
+         m_CollectingPointerSamples = true;
+         break;
+
+    default:  
+         return;
+  }
+}
+
+/** -----------------------------------------------------------------
+* Callback function for observer listening to a mouse-pressed event
+*---------------------------------------------------------------------
+*/
+void 
+UltrasoundCalibrationWizard
+::HandleMousePressedCallback( const itk::EventObject & event )
+{
+  if ( igstk::UltrasoundCalibrationWizardQuadrantViews::MousePressedEvent().CheckEvent( &event ) )
+  {
+    igstk::UltrasoundCalibrationWizardQuadrantViews::MousePressedEvent *mousePressedEvent =
+      ( igstk::UltrasoundCalibrationWizardQuadrantViews::MousePressedEvent *) & event;
+    this->HandleMousePressed( mousePressedEvent->Get() );
+  }
+}
+
+void 
+UltrasoundCalibrationWizard
+::HandleMousePressed ( 
+    igstk::UltrasoundCalibrationWizardQuadrantViews::MouseCommandType mouseCommand )
+{   
+    m_WindowWidthVideo += mouseCommand.dx;
+
+    if (m_WindowWidthVideo < 1)
+      m_WindowWidthVideo = 1;
+
+    m_WindowLevelVideo += mouseCommand.dy;
+
+    if ( m_VideoFrameRepresentationForVideoView.IsNotNull() )
+      m_VideoFrameRepresentationForVideoView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);
+
+    if ( m_VideoFrameRepresentationFor3DView.IsNotNull() )
+      m_VideoFrameRepresentationFor3DView->SetWindowLevel(m_WindowWidthVideo,m_WindowLevelVideo);   
+}
+
+
+void 
+UltrasoundCalibrationWizard
+::PointerTrackingCallback( const itk::EventObject & event )
+{
+  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::TransformObserver ObserverType;
+    ObserverType::Pointer pointerTransformObserver = ObserverType::New();
+    pointerTransformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    pointerTransformObserver->Clear();
+    
+    m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
+    
+    if ( pointerTransformObserver->GotTransform() )
+    {       
+        igstk::Transform pointerTransform = pointerTransformObserver->GetTransform();       
+
+        if ( m_CollectingPointerSamples )
+        {
+            PointType point = TransformToPoint( pointerTransform );
+            m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( pointerTransform );
+            std::cout << "pointer: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+            
+            std::stringstream filename;              
+            filename << "/ultrasound" << m_SnapShotCounter << ".png";
+            m_SnapShotCounter++;              
+            m_VideoFrameRepresentationForVideoView->SaveScreenShot( filename.str().c_str() );              
+            fl_beep( FL_BEEP_MESSAGE );
+
+            m_CollectingPointerSamples = false;
+        }
+    }
+  }
+}
+
+
+void 
+UltrasoundCalibrationWizard
+::ProbeTrackingCallback(const itk::EventObject & event )
+{
+  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
+  {
+    typedef igstk::TransformObserver ObserverType;
+    ObserverType::Pointer probeTransformObserver = ObserverType::New();
+    probeTransformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    probeTransformObserver->Clear();
+    
+    m_ImagerTool->RequestComputeTransformTo( m_WorldReference );   
+
+    if ( probeTransformObserver->GotTransform() )
+    {
+       igstk::Transform probeTransform = probeTransformObserver->GetTransform();
+
+       if ( m_CollectingProbeSamples )
+       {
+           PointType point = TransformToPoint( probeTransform );
+           m_UltrasoundCalibrationSamples->m_ProbeTransforms.push_back( probeTransform );
+           std::cout << "probe:" << point[0] << " " << point[1] << " " << point[2] << std::endl;
+           m_CollectingProbeSamples = false;          
+       }
+    }
+  }
+}

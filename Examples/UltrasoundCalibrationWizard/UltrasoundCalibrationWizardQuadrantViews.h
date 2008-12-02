@@ -49,6 +49,8 @@ public:
 
   virtual ~UltrasoundCalibrationWizardQuadrantViews(void);
 
+  virtual int handle(int e);
+
   typedef igstk::View          ViewType;
   typedef igstk::View2D        ViewType2D;
   typedef igstk::View3D        ViewType3D;
@@ -60,6 +62,35 @@ public:
   // Declare FLTKWidgetNew objects
   igstk::FLTKWidget * m_VideoWidget;
   igstk::FLTKWidget * m_3DWidget;
+
+  typedef struct KeyboardCommandType 
+  {
+    int key;
+    int state;
+  };
+
+  typedef struct MouseCommandType 
+  {
+    int button;
+    int dx;
+    int dy;
+    int x;
+    int y;
+    int state;
+    int key;
+    int quadrant;
+  };
+
+  typedef struct WindowLevelStructType
+  {
+    int current_x;
+    int current_y;
+    int prev_x;
+    int prev_y;
+  };
+
+  igstkLoadedEventMacro( KeyPressedEvent, IGSTKEvent, KeyboardCommandType );
+  igstkLoadedEventMacro( MousePressedEvent, IGSTKEvent, MouseCommandType );
 
   unsigned long AddObserver( 
     const ::itk::EventObject & event, ::itk::Command * observer );
@@ -76,7 +107,8 @@ private:
 
   ::itk::Object::Pointer    m_Reporter;
 
-private:
+  int handle_key(int event, KeyboardCommandType &keyCommand);
+  int handle_mouse(int event, MouseCommandType &mouseCommand);
 
   int m_Width;
   int m_Height;
@@ -85,6 +117,7 @@ private:
   int m_WW;
   int m_HH;
 
+  WindowLevelStructType m_wl;
 };
 
 

@@ -19,7 +19,10 @@ SET(UltrasoundCalibrationWizard_SRCS
   UltrasoundCalibrationWizard.cxx
   UltrasoundCalibrationWizardQuadrantViews.h
   UltrasoundCalibrationWizardQuadrantViews.cxx
-
+  igstkUltrasoundCalibration.cxx
+  igstkUltrasoundCalibration.h
+  igstkUltrasoundCalibrationIO.cxx
+  igstkUltrasoundCalibrationIO.h
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.cxx
