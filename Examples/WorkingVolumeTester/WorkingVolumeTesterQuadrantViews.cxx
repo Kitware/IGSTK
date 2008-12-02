@@ -28,7 +28,6 @@ WorkingVolumeTesterQuadrantViews::WorkingVolumeTesterQuadrantViews(int X, int Y,
 
   m_Reporter = ::itk::Object::New();
  
-  const int N = 15;    // Height of the slider bar
   const int C = 5;    // Width of the vertical separator
 
   Fl_Group * parentGroup = this->parent();
@@ -37,18 +36,18 @@ WorkingVolumeTesterQuadrantViews::WorkingVolumeTesterQuadrantViews(int X, int Y,
   m_Y = 0;
 
   m_Width = parentGroup->w() - m_X;
-  m_Height = parentGroup->h() - 8; 
+  m_Height = parentGroup->h(); 
 
   m_WW = (int) (m_Width-2*C)/2;
-  m_HH = (int) (m_Height- (N*2) )/2;
+  m_HH = (int) (m_Height-2*C)/2;
 
   // Create widgets
   typedef igstk::FLTKWidget   WidgetType;
 
   m_AxialWidget    = new WidgetType(X, Y, m_WW, m_HH, "Display 0");
   m_SagittalWidget = new WidgetType(X+m_WW+C, Y, m_WW, m_HH, "Display 1");
-  m_CoronalWidget  = new WidgetType(X, Y+m_HH+N, m_WW, m_HH, "Display 2");
-  m_3DWidget       = new WidgetType(X+m_WW+C, Y+m_HH+N, m_WW, m_HH+N, "Display 3");       
+  m_CoronalWidget  = new WidgetType(X, Y+m_HH+C, m_WW, m_HH, "Display 2");
+  m_3DWidget       = new WidgetType(X+m_WW+C, Y+m_HH+C, m_WW, m_HH, "Display 3");       
  
   // Create views
   m_AxialView    = ViewType2D::New();
