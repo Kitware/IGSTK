@@ -10,6 +10,8 @@ class HelloWorldGUI {open
   }
   decl {bool quit;} {}
   decl {TrackerPointer m_Tracker;} {}
+  decl {public: std::string fileName;} {}
+  decl {igstk::SceneGraph *m_SceneGraph;} {}
   decl {igstk::View3D::Pointer  View;} {public
   }
   Function {HelloWorldGUI()} {} {
@@ -29,6 +31,18 @@ class HelloWorldGUI {open
         callback {this->SetTracking(o->value());}
         xywh {5 345 85 25} labelsize 11
         code0 {\#include "igstkTracker.h"}
+      }
+      Fl_Light_Button SceneGraphBt {
+        label SceneGraph 
+        callback {this->ShowSceneGraph(o->value());}
+        xywh {95 345 85 25} labelsize 11
+       # code0 {\#include "igstkTracker.h"}
+      }
+      Fl_Button ExportBt {
+        label ExportSceneGraph 
+        callback {this->ExportSceneGraph(fileName);}
+        xywh {185 345 105 25} labelsize 11
+       # code0 {\#include "igstkTracker.h"}
       }
       Fl_Button {} {
         label Quit
@@ -63,6 +77,19 @@ else
   this->m_Tracker->RequestStopTracking();
   }} {}
   }
+  Function {ShowSceneGraph( bool showingSG )} {return_type {virtual void}
+  } {
+  code { m_SceneGraph = igstk::SceneGraph::getInstance();  
+	this->m_SceneGraph->ShowSceneGraph(showingSG);}
+    {}
+   }
+    Function {ExportSceneGraph( std::string fileName)} {return_type {virtual void}
+  } {
+  code { m_SceneGraph = igstk::SceneGraph::getInstance();  
+	this->m_SceneGraph->ExportSceneGraphToDot(fileName);}
+    {}
+   }
+  
   Function {~HelloWorldGUI()} {return_type virtual
   } {
     code {delete Display;} {}
