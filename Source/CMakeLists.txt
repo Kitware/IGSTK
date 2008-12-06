@@ -359,6 +359,12 @@ SET(IGSTKSandbox_HEADS
   igstkVascularNetworkReader.h
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
+  
+  # SceneGraph visualization classes
+  igstkSceneGraphObserver.h
+  igstkSceneGraphNode.h
+  igstkSceneGraph.h
+  igstkCoordinateSystemSetTransformResult.h
  
 )
 
@@ -379,6 +385,8 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkPivotCalibrationFLTKWidget.h
+      #SceneGraph visualization classes
+      igstkSceneGraphUI.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -474,6 +482,11 @@ SET(IGSTKSandbox_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
+  
+  #SceneGraph visualization classes
+  igstkSceneGraphNode.cxx
+  igstkSceneGraph.cxx
+  igstkCoordinateSystemSetTransformResult.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -493,7 +506,9 @@ ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
-   igstkPivotCalibrationFLTKWidget.cxx
+    igstkPivotCalibrationFLTKWidget.cxx
+    #SceneGraph visualization classes
+    igstkSceneGraphUI.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
