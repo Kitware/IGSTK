@@ -28,6 +28,7 @@ IF (IGSTKSandbox_USE_FLTK)
     Navigator    
     BronchoscopyNavigator
     WorkingVolumeTester    
+    ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Examples/HelloWorld
     )
   IF (IGSTKSandbox_USE_MicronTracker) 
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
