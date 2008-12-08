@@ -361,8 +361,6 @@ SET(IGSTKSandbox_HEADS
   igstkVesselObjectRepresentation.h
   
   # SceneGraph visualization classes
-  igstkSceneGraphObserver.h
-  igstkSceneGraph.h
   igstkCoordinateSystemSetTransformResult.h
  
 )
@@ -387,6 +385,8 @@ IF(IGSTKSandbox_USE_FLTK)
       #SceneGraph visualization classes
       igstkSceneGraphUI.h
       igstkSceneGraphNode.h
+      igstkSceneGraphObserver.h
+      igstkSceneGraph.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -484,7 +484,6 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObjectRepresentation.cxx
   
   #SceneGraph visualization classes
-  igstkSceneGraph.cxx
   igstkCoordinateSystemSetTransformResult.cxx
 )
 
@@ -509,6 +508,7 @@ IF(IGSTKSandbox_USE_FLTK)
     #SceneGraph visualization classes
     igstkSceneGraphUI.cxx
     igstkSceneGraphNode.cxx
+    igstkSceneGraph.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
