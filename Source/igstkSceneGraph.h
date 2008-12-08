@@ -18,17 +18,31 @@
 #ifndef __igstkSceneGraph_h
 #define __igstkSceneGraph_h
 
-#include <iostream>
 #include "igstkCoordinateSystemSetTransformResult.h"
 #include "igstkSceneGraphNode.h"
 #include "igstkCoordinateSystem.h"
-#include <string>
-#include "igstkSceneGraphUI.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 
+#include <iostream>
+#include <string>
 namespace igstk 
 {
 
+ /** \class Transition
+ * 
+ * \brief Bean class for storing the transitions
+ * occurred.
+ *
+ */
+
+class Transition
+{
+public:
+  const char * source;
+  const char * destination;
+  const char * cAncestor;
+};
+  
   /** \class SceneGraph
  * 
  * \brief This class represents the Scene Graph of the application.
@@ -46,6 +60,19 @@ class SceneGraph
 {
 
 public:
+
+  /** flag to check if the UI window is open. 
+   */
+  bool isUIBeingShown;
+
+  /** flag to check if the root Nodes have changed 
+   *  to draw the scene graph UI.
+   */
+  bool isChanged;
+
+  /** The data structure to store all the wanted transitions. 
+   */
+  std::list<Transition *> transitionsStore;
 
   /**  Function to add the coordinate system relationships 
   * to the scene graph.
@@ -83,6 +110,10 @@ public:
   */
   void SetNodeDetails(const char* nodeName, bool includeFlag);
 
+  /** Getter for rootNodes 
+  */
+  std::list<SceneGraphNode*> GetRootNodes();
+
 private:
   /** Destructor. 
    */
@@ -91,14 +122,6 @@ private:
    /** The main data structure of the scene graph class. 
    */
    std::list<SceneGraphNode*> rootNodes;
-
-   /** The data structure to store all the wanted transitions. 
-   */
-   std::list<Transition *> transitionsStore;
-
-   /** flag to check if the UI window is open. 
-   */
-    bool isUIBeingShown;
 
    /** Function to check if the parent is existing, when a new relationship
    *  is created.
@@ -151,10 +174,6 @@ private:
    */
   void DrawDescription(std::ostream &ostr,  
     igstk::SceneGraphNode *parentNode);
-
-  /**  The UI instance pointer. 
-   */
-  SceneGraphUI* m_SceneGraphUI;
 
   /**  Function to Optimize the tree structure.
    */
