@@ -21,8 +21,6 @@
 #include <iostream>
 #include "igstkTransform.h"
 #include "igstkCoordinateSystem.h"
-#include "FL/Fl_Box.H"
-#include "FL/Fl_Light_Button.H"
 
 namespace igstk 
 {
@@ -54,14 +52,14 @@ public:
   */
   int yC1;
 
-  /**  Reference to the box object representing this node.
-  */
-  Fl_Light_Button* box;
-
   /**  Flag to set if this node is in the current transform
   * being computed.
   */
   bool isCurrentTransform;
+
+  /**  Flag to indicate if this is selected by the user.
+  */
+  bool isSelected;
 
   /**  Flag to set if this node is in the current inverse transform
   * being computed.
@@ -89,10 +87,6 @@ public:
   /**  List of children.
   */
   std::list<SceneGraphNode*> children;
-
-  /**  Flag to indicate if this is selected by the user.
-  */
-  bool isSelected;
 
   /**  Reference to the transform with parent coordiante system.
   */
