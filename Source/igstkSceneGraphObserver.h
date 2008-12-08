@@ -104,7 +104,10 @@ public:
   {
     const CoordinateSystemTransformToEvent  *transformEvent = 
                  dynamic_cast< const CoordinateSystemTransformToEvent *>( &event );
+  if(transformEvent->Get().GetCommonAncestor() != NULL)
+  {
     m_SceneGraph->ShowTheTransformPath(transformEvent);
+  }
   }
 
     if( NegativeEventType().CheckEvent( &event ) )
