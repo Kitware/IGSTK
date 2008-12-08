@@ -17,13 +17,19 @@
 #ifndef __igstkSceneGraphUI_h
 #define __igstkSceneGraphUI_h
 
+#include <string.h>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.h>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Light_Button.H>
+#include "FL/Fl_Group.H"
+#include <FL/Fl_Multiline_Output.H>
+
 #include "igstkSceneGraphNode.h"
+#include "igstkSceneGraph.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 
 namespace igstk
@@ -106,21 +112,6 @@ protected:
 
 };
 
-/** \class Transition
- * 
- * \brief Bean class for storing the transitions
- * occurred.
- *
- */
-
-class Transition
-{
-public:
-  const char * source;
-  const char * destination;
-  const char * cAncestor;
-};
-
 /** \class SceneGraphUI
  * 
  * \brief This class draws the scene graph built for an application
@@ -135,12 +126,17 @@ class SceneGraphUI
 {
 public:
 
+  /**  Function to get a new instance of the scene graph. Singleton pattern.
+  */
+  static SceneGraphUI* getInstance();
+
   /**  Function called from Scene Graph to Draw the scene graph in a 
   * new window.
   */
-  void DrawSceneGraph(std::list<SceneGraphNode*> rootNodes, 
-    bool showFlag,std::list<Transition *> transitionsStore);
-  
+  void DrawSceneGraph(SceneGraph* sceneGraph);
+
+private:
+
   /**  Constructor.
   */
   SceneGraphUI();
@@ -149,7 +145,13 @@ public:
   */
   ~SceneGraphUI();
 
-private:
+  /**  Flag to check if the singleton class is created.
+   */
+  static bool instanceFlag;
+
+  /**  The variable to hold singleton class.
+   */
+    static SceneGraphUI *single;
 
   /**  Reference to the FLTK window object.
   */
@@ -208,7 +210,7 @@ private:
   /**  Callback function for button click action on each 
   * of the nodes drawn by the user.
   */
-    static void cb_NodeBt(Fl_Light_Button* box, void* data);
+    static void cb_NodeBt(Fl_Light_Button* box, void* data); 
 };
 }
 #endif
