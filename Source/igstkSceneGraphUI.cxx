@@ -16,12 +16,6 @@
 =========================================================================*/
 
 #include "igstkSceneGraphUI.h"
-#include "igstkSceneGraphNode.h"
-#include "igstkSceneGraph.h"
-#include "FL/fl_draw.h"
-#include "FL/Fl_Group.H"
-#include <FL/Fl_Multiline_Output.H>
-#include <string.h>
 
 namespace igstk
 {
@@ -35,10 +29,30 @@ SceneGraphUI::~SceneGraphUI()
 {
 }
 
-void SceneGraphUI
-::DrawSceneGraph(std::list<SceneGraphNode*> rootNodes, 
-         bool showFlag,std::list<Transition *> transitionsStore)
+bool SceneGraphUI::instanceFlag = false;
+SceneGraphUI* SceneGraphUI::single = NULL;
+SceneGraphUI* SceneGraphUI::getInstance()
 {
+    if(! instanceFlag)
+    {
+        single = new SceneGraphUI();
+        instanceFlag = true;
+        return single;
+    }
+    else
+    {
+        return single;
+    }
+}
+
+void SceneGraphUI
+::DrawSceneGraph(SceneGraph* sceneGraph)
+{
+
+  std::list<SceneGraphNode*> rootNodes = sceneGraph->GetRootNodes();
+  bool showFlag     = sceneGraph->isUIBeingShown;
+  std::list<Transition *> transitionsStore = sceneGraph->transitionsStore;
+
   if(showFlag)
   {
     Fl_Window* w;
@@ -53,13 +67,14 @@ void SceneGraphUI
     {
       Fl_Window* o = SceneGraphWindow = new Fl_Window(xDepth * 
         (xDepthMax +1) * 250 + 50,yDepth * 60 + 200,"SceneGraph");
+      o->resizable(o);
       w = o;
       w->show();
     }
     else 
     {
       w = SceneGraphWindow;
-      w->clear();
+      //w->clear();
     }
     int count = 0;
     w->begin();
@@ -84,12 +99,13 @@ void SceneGraphUI
         transitionsStore.begin();
         it != transitionsStore.end(); ++it)
       {
-        strcat(cat, (*it)->source);
-        strcat(cat, "->");
-        strcat(cat, (*it)->cAncestor);
-        strcat(cat, "->");
-        strcat(cat, (*it)->destination);
-        strcat(cat,"\n");
+
+        strncat(cat, (*it)->source, strlen((*it)->source));
+        strncat(cat, "->", strlen("->"));
+        strncat(cat, (*it)->cAncestor, strlen((*it)->cAncestor));
+        strncat(cat, "->", strlen("->"));
+        strncat(cat, (*it)->destination, strlen((*it)->destination));
+        strncat(cat,"\n", strlen("\n"));
       }
       outText->value(cat);
       free(cat);
@@ -118,7 +134,6 @@ void SceneGraphUI
   box->box(FL_UP_BOX);
   box->color(FL_WHITE);
   group->add(box);
-  parentNode->box = box;
   box->callback((Fl_Callback*)cb_NodeBt);
   if(parentNode->isCurrentTransform)
   {
@@ -279,5 +294,6 @@ int SceneGraphUI
 void SceneGraphUI
 ::cb_NodeBt(Fl_Light_Button* o, void* v) {
   SceneGraph::getInstance()->SetNodeDetails(o->label(),o->value());
+  SceneGraphUI::getInstance()->DrawSceneGraph(igstk::SceneGraph::getInstance());
 }
 }
