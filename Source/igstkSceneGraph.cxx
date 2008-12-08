@@ -16,17 +16,15 @@
 =========================================================================*/
 
 #include "igstkSceneGraph.h"
-#include "igstkSceneGraphNode.h"
-#include <iostream>
-#include <string>
 
 namespace igstk
 {
 
 SceneGraph::SceneGraph()
 {
-  m_SceneGraphUI = new igstk::SceneGraphUI();
+  //m_SceneGraphUI = new igstk::SceneGraphUI();
   isUIBeingShown = false;
+  isChanged = false;
 }
 
 SceneGraph::~SceneGraph()
@@ -373,11 +371,11 @@ void SceneGraph
   } 
 }
 
-void SceneGraph::ShowSceneGraph(bool showFlag)
+ void SceneGraph::ShowSceneGraph(bool showFlag)
 {
   isUIBeingShown = showFlag;
-  m_SceneGraphUI->DrawSceneGraph(rootNodes,showFlag,transitionsStore);
-}
+  //m_SceneGraphUI->DrawSceneGraph(rootNodes,showFlag,transitionsStore);
+} 
 
 void SceneGraph::ResetCurrentTransformFlag(SceneGraphNode* parentNode)
 {
@@ -413,8 +411,9 @@ void SceneGraph
         GetName(), transformPathEvent->
         Get().GetDestination()->GetName(), false);
     }
-    m_SceneGraphUI->DrawSceneGraph(rootNodes,
-      isUIBeingShown, transitionsStore);
+    /* m_SceneGraphUI->DrawSceneGraph(rootNodes,
+      isUIBeingShown, transitionsStore); */
+    isChanged = true;
   }
 }
 
@@ -553,7 +552,7 @@ SceneGraphNode* SceneGraph
 
 void SceneGraph::SetNodeDetails(const char* nodeName, bool includeFlag)
 {
-  SceneGraphNode* sceneGraphNode = 
+     SceneGraphNode* sceneGraphNode = 
     LocateSceneGraphNodeWithName(nodeName);
   sceneGraphNode->isSelected = includeFlag;
   for(std::list<SceneGraphNode*>::iterator i = 
@@ -561,8 +560,8 @@ void SceneGraph::SetNodeDetails(const char* nodeName, bool includeFlag)
   {
     ResetCurrentTransformFlag((*i));
   }
-  m_SceneGraphUI->DrawSceneGraph(rootNodes,
-    isUIBeingShown, transitionsStore);
+  /*m_SceneGraphUI->DrawSceneGraph(rootNodes,
+    isUIBeingShown, transitionsStore); */
 }
 
 bool SceneGraph
@@ -614,6 +613,11 @@ bool SceneGraph
     }
   }
   return false;
+}
+
+std::list<SceneGraphNode*> SceneGraph::GetRootNodes()
+{
+  return rootNodes;
 }
 
 } // end namespace igstk
