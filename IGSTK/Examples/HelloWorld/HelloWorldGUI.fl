@@ -11,7 +11,7 @@ class HelloWorldGUI {open
   decl {bool quit;} {}
   decl {TrackerPointer m_Tracker;} {}
   decl {public: std::string fileName;} {}
-  decl {igstk::SceneGraph *m_SceneGraph;} {}
+  decl {igstk::SceneGraphUI *m_SceneGraphUI;} {}
   decl {igstk::View3D::Pointer  View;} {public
   }
   Function {HelloWorldGUI()} {} {
@@ -24,6 +24,8 @@ class HelloWorldGUI {open
         xywh {5 5 505 330} box FLAT_BOX color 0 labelcolor 7
         code0 {\#include "igstkView3D.h"}
         code1 {\#include "igstkFLTKWidget.h"}
+        code2 {\#include "igstkSceneGraphUI.h"}
+        code3 {\#include "igstkSceneGraph.h"}
         class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingBt {
@@ -52,7 +54,8 @@ class HelloWorldGUI {open
     }
     code {this->quit = false;
 this->View = igstk::View3D::New();
-this->Display->RequestSetView( this->View );} {}
+this->Display->RequestSetView( this->View );
+m_SceneGraphUI = igstk::SceneGraphUI::getInstance();} {}
   }
   Function {Show()} {return_type {virtual void}
   } {
@@ -79,14 +82,15 @@ else
   }
   Function {ShowSceneGraph( bool showingSG )} {return_type {virtual void}
   } {
-  code { m_SceneGraph = igstk::SceneGraph::getInstance();  
-	this->m_SceneGraph->ShowSceneGraph(showingSG);}
+  code { igstk::SceneGraph* m_SceneGraph = igstk::SceneGraph::getInstance();  
+  m_SceneGraph->ShowSceneGraph(showingSG);
+        this->m_SceneGraphUI->DrawSceneGraph(m_SceneGraph);}
     {}
    }
     Function {ExportSceneGraph( std::string fileName)} {return_type {virtual void}
   } {
-  code { m_SceneGraph = igstk::SceneGraph::getInstance();  
-	this->m_SceneGraph->ExportSceneGraphToDot(fileName);}
+  code { igstk::SceneGraph *m_SceneGraph = igstk::SceneGraph::getInstance();  
+  m_SceneGraph->ExportSceneGraphToDot(fileName);}
     {}
    }
   
