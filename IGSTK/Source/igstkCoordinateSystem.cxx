@@ -436,7 +436,7 @@ void CoordinateSystem
 
   // Create event
   CoordinateSystemTransformToResult payload;
-  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo);
+  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo, m_LowestCommonAncestor);
 
   CoordinateSystemTransformToEvent event;
   event.Set( payload );
