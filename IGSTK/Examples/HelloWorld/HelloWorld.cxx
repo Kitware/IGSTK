@@ -35,6 +35,7 @@
 
 // BeginCodeSnippet
 #include "HelloWorldGUI.h"
+#include "igstkSceneGraphUI.h"
 // EndCodeSnippet
 
 
@@ -139,7 +140,7 @@ int main(int , char** )
   // 
   // BeginCodeSnippet
   HelloWorldGUI * m_GUI = new HelloWorldGUI();
-  m_GUI->fileName = "igstkHelloWorld.dot";
+  m_GUI->fileName = "C:/IGSTK/igstkHelloWorld.dot";
   // EndCodeSnippet
   // 
   m_GUI->MainWindow->show();
@@ -160,6 +161,7 @@ int main(int , char** )
   // EndLatex
   // BeginCodeSnippet
   ellipsoid->SetRadius(1,1,1);
+
   // EndCodeSnippet
 
   // BeginLatex
@@ -200,7 +202,7 @@ int main(int , char** )
   // EndCodeSnippet
   
   const igstk::CoordinateSystem* coSys = igstk::Friends::CoordinateSystemHelper::GetCoordinateSystem(ellipsoid);
-  
+
   // BeginLatex
   // Next, the spatial objects are added to the view as follows:
   //
@@ -256,6 +258,8 @@ int main(int , char** )
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
+  // EndCodeSnippet
+  //
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
@@ -346,6 +350,13 @@ int main(int , char** )
 
     TransformType             transform;
     VectorType                position;
+  
+  igstk::SceneGraph * m_SceneGraph = igstk::SceneGraph::getInstance();
+  if(m_SceneGraph->isChanged)
+  {
+    m_GUI->m_SceneGraphUI->DrawSceneGraph(m_SceneGraph);
+    m_SceneGraph->isChanged = false;
+  }
 
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
