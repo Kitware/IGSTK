@@ -362,7 +362,9 @@ SET(IGSTKSandbox_HEADS
   
   # SceneGraph visualization classes
   igstkCoordinateSystemSetTransformResult.h
- 
+  igstkSceneGraphObserver.h
+  igstkSceneGraphNode.h
+  igstkSceneGraph.h
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -384,9 +386,6 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkPivotCalibrationFLTKWidget.h
       #SceneGraph visualization classes
       igstkSceneGraphUI.h
-      igstkSceneGraphNode.h
-      igstkSceneGraphObserver.h
-      igstkSceneGraph.h
      )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -485,6 +484,8 @@ SET(IGSTKSandbox_SRCS
   
   #SceneGraph visualization classes
   igstkCoordinateSystemSetTransformResult.cxx
+  igstkSceneGraphNode.cxx
+  igstkSceneGraph.cxx
 )
 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
@@ -507,8 +508,6 @@ IF(IGSTKSandbox_USE_FLTK)
     igstkPivotCalibrationFLTKWidget.cxx
     #SceneGraph visualization classes
     igstkSceneGraphUI.cxx
-    igstkSceneGraphNode.cxx
-    igstkSceneGraph.cxx
     )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
