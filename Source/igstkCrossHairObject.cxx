@@ -354,7 +354,6 @@ CrossHairObject
   // get the bounding box from the reference spatial object
   BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
   boundingBoxObserver->Reset();
-  unsigned long boundingBoxObserverID = 
   m_BoundingBoxProviderSpatialObject->AddObserver( SpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
   m_BoundingBoxProviderSpatialObject->RequestGetBounds();
 
