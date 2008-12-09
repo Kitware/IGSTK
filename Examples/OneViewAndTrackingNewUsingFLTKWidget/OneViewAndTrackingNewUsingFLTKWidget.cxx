@@ -62,9 +62,6 @@ int main(int argc, char* argv[] )
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
   ellipsoid->SetRadius(200,200,300); // about a human skull
   
-  double validityTimeInMilliseconds = 
-                   igstk::TimeStamp::GetLongestPossibleTime(); 
-
   // Create a box representing the active 4 marker planar rigid body
   // probe
   igstk::BoxObject::Pointer box = igstk::BoxObject::New();
