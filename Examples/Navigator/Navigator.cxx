@@ -45,11 +45,11 @@
 *     Constructor
 * -----------------------------------------------------------------
 */
-Navigator::Navigator() : 
-  m_TrackerConfiguration( NULL ),
-  m_StateMachine(this)
+Navigator::Navigator() : m_StateMachine(this)
 {
   std::srand( 5 );
+
+  m_TrackerConfiguration = NULL;
 
   m_ImageDir = "";
 
@@ -1176,11 +1176,11 @@ bool Navigator::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::P
   reader->RequestGetData();
   
   if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "Navigator::ReadMicronConfiguration error: could not get MICRON tracker configuration\n")
-     return false;
-  }
+    {
+    igstkLogMacro2( m_Logger, DEBUG, 
+      "Navigator::ReadMicronConfiguration error: could not get MICRON tracker configuration\n")
+    return false;
+    }
 
   m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
 
