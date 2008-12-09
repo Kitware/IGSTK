@@ -305,7 +305,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   std::cout << "Axial view: " << std::endl;
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the axial direction
-  for(unsigned int i=imageExtent[5]/3; i<imageExtent[5]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[5]/3); i<(unsigned int)(imageExtent[5]/2); i++)
       {
       index[2] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -355,7 +355,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
   /* Iteratively change the tool transform to reslice from one side to the
   *  middle of the image in the sagittal direction
   */
-  for(unsigned int i=imageExtent[1]/3; i<imageExtent[1]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[1]/3); i<(unsigned int)(imageExtent[1]/2); i++)
       {
       index[0] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -406,7 +406,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest( int argc , char * argv
 
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the coronal direction
-  for(unsigned int i=imageExtent[3]/3; i<imageExtent[3]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[3]/3); i<(unsigned int)(imageExtent[3]/2); i++)
       {
       index[1] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );

@@ -236,7 +236,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   view2D->RequestResetCamera();
   form->show();
 
-  for(unsigned int i=imageExtent[4]; i<imageExtent[5]; i++)
+  for(unsigned int i= (unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]); i++)
       {
       index[2] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -267,7 +267,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   form->end();
   form->show();
 
-  for(unsigned int i=imageExtent[0]; i<imageExtent[1]; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
       {
       index[0] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -297,15 +297,15 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest2( int argc , char * arg
   form->end();
   form->show();
 
-  for(unsigned int i=imageExtent[2]; i<imageExtent[3]; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]); i++)
     {
-      index[1] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
-      Fl::wait( 0.01 );
-      igstk::PulseGenerator::CheckTimeouts();
+    index[1] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    const double *data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
     }
   view2D->RequestStop();
 

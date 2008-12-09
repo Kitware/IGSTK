@@ -268,7 +268,6 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   /* Change slice orientation to PlaneOrientationWithXAxesNormal */
   //view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
-  bool viewInitialized = false;
 
   /* Change slice orientation to coronal */
   // position the tool on one side of the image in the axial direction
@@ -304,7 +303,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the axial direction
-  for(unsigned int i=imageExtent[4]; i<imageExtent[5]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]/2); i++)
       {
       index[2] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -356,7 +355,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
 
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the sagittal direction
-  for(unsigned int i=imageExtent[0]; i<imageExtent[1]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]/2); i++)
       {
       index[0] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -411,7 +410,7 @@ int igstkImageResliceSpatialObjectRepresentationFltkTest3( int argc , char * arg
   form->show();
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the coronal direction
-  for(unsigned int i=imageExtent[2]; i<imageExtent[3]/2; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]/2); i++)
       {
       index[1] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
