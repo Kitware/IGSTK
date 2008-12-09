@@ -64,8 +64,8 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
   server->SetCapture( true );
 
   unsigned int num;
-  char* servermessage = "response message from server!";
-  char* clientmessage = "request message from client!";
+  const char * servermessage = "response message from server!";
+  const char * clientmessage = "request message from client!";
   char message[128];
   char buffer[1024];
   ResultType result;
@@ -176,8 +176,8 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
   server->SetCapture( true );
 
   unsigned int num;
-  char* servermessage = "response message from server!";
-  char* clientmessage = "request message from client!";
+  const char * servermessage = "response message from server!";
+  const char * clientmessage = "request message from client!";
   char message[128];
   char buffer[1024];
   ResultType result;
@@ -275,9 +275,9 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction1( void* data)
   client->SetCapture( true );
 
   unsigned int num;
-  char* servermessage = "response message from server!";
-  char* clientmessage = "request message from client!";
-  char* stopserver = "STOPSERVER";
+  const char * servermessage = "response message from server!";
+  const char * clientmessage = "request message from client!";
+  const char * stopserver = "STOPSERVER";
   char message[128];
   char buffer[1024];
   ResultType result;
@@ -362,9 +362,9 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
   client->SetCapture( true );
 
   unsigned int num;
-  char* servermessage = "response message from server!";
-  char* clientmessage = "request message from client!";
-  char* stopserver = "STOPSERVER";
+  const char * servermessage = "response message from server!";
+  const char * clientmessage = "request message from client!";
+  const char * stopserver = "STOPSERVER";
   char message[128];
   char buffer[1024];
   ResultType result;
