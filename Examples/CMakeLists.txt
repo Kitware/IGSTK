@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}/Source
   )
 
-SUBDIRS( 
+SUBDIRS(
   LandmarkRegistration
   LandmarkRegistrationErrorEstimation
   DICOMImageReader
@@ -18,21 +18,21 @@ SUBDIRS(
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
-    OneViewAndTrackingNewUsingFLTKWidget    
+    OneViewAndTrackingNewUsingFLTKWidget
     TwoViews
     FourViewsTrackingWithCT
     FourViews
     DeckOfCardRobot
     View
     Logging
-    Navigator    
+    Navigator
     BronchoscopyNavigator
-    WorkingVolumeTester    
+    WorkingVolumeTester
     ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Examples/HelloWorld
     )
-  IF (IGSTKSandbox_USE_MicronTracker) 
+  IF (IGSTKSandbox_USE_MicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
-  ENDIF(IGSTKSandbox_USE_MicronTracker) 
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
   ENDIF ( WIN32 )
@@ -41,16 +41,16 @@ ENDIF (IGSTKSandbox_USE_FLTK)
 IF (IGSTKSandbox_USE_OpenIGTLink)
     SUBDIRS( UltrasoundNavigator )
     SUBDIRS( UltrasoundCalibrationWizard )
+    SUBDIRS( TransformOIGTLinkBroadcast )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
 IF (IGSTKSandbox_USE_Qt)
   SUBDIRS( OneViewAndTrackingUsingQTWidget )
   SUBDIRS( PolarisTrackingUsingQTWidget )
-  IF (IGSTKSandbox_USE_MicronTracker) 
+  IF (IGSTKSandbox_USE_MicronTracker)
      SUBDIRS( OneViewAndTrackingNewUsingQTWidgetAndMicronTracker )
-  ENDIF(IGSTKSandbox_USE_MicronTracker) 
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
    IF (APPLE)
      SUBDIRS(VideograbbingAndTrackingUsingQTWidget)
    ENDIF(APPLE)
 ENDIF (IGSTKSandbox_USE_Qt)
-
