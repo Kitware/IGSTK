@@ -360,6 +360,7 @@ OIGTLinkTrackerConfigurationFileReader::SetReaderProcessing()
   {
     this->m_XMLFileReader = this->m_TmpXMLFileReader;
     this->m_TmpXMLFileReader = NULL;
+    this->m_ReadFailureErrorMessage.clear();
     igstkPushInputMacro( Success );
   }
   this->m_StateMachine.ProcessInputs();
@@ -474,6 +475,13 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
           "XML file does not contain tracker configuration data"; 
         igstkPushInputMacro( Failure );    
       }
+    }
+    catch( igstk::TrackerConfigurationXMLFileReaderBase::UnexpectedTrackerTypeException
+            & )
+    {
+      this->InvokeEvent( UnexpectedTrackerTypeEvent() );
+      this->m_ReadFailureErrorMessage = "Unexpected tracker type";
+      igstkPushInputMacro( Failure );    
     }
                //an itk exception is thrown if the xml is malformed, and a 
                //FileFormatException is thrown if the data format is incorrect.
