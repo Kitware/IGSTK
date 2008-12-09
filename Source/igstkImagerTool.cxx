@@ -33,13 +33,6 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   // set all transforms to identity 
   typedef double            TimePeriodType;
 
-  const TimePeriodType longestPossibleTime = 
-    igstk::TimeStamp::GetLongestPossibleTime();
-
-//  this->m_Frame.SetToIdentity( longestPossibleTime );  
-//   this->m_CalibratedTransform.SetToIdentity( longestPossibleTime );
-//  this->m_CalibrationTransform.SetToIdentity( longestPossibleTime );  
-
   this->m_Updated = false; // not yet updated
 
   // States
