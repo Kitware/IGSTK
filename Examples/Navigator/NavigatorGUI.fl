@@ -107,7 +107,6 @@ hasQuitted = false;
 // force the control panel to 150
 int x = m_ControlGroup->x();
 int y = m_ControlGroup->y();
-int width = m_ControlGroup->w();
 int height = m_ControlGroup->h();
 
 m_ControlGroup->resize(x,y,150,height);} {selected
