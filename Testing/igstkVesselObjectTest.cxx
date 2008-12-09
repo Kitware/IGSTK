@@ -53,6 +53,18 @@ int igstkVesselObjectTest( int, char * [] )
   ObjectType         * object         = testHelper.GetSpatialObject();
   RepresentationType * representation = testHelper.GetRepresentation();
 
+  if( !object )
+    {
+    std::cerr << "Failure to get object with GetSpatialObject()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if( !representation )
+    {
+    std::cerr << "Failure to get representation with GetRepresentation()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   //
   //  Tests that are specific to this type of SpatialObject
   //
