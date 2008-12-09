@@ -162,7 +162,7 @@ TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes(
       {
       if( itksys::SystemTools::Strucmp( atts[i+1], GetSystemType().c_str() ) != 0 )
         {
-        throw FileFormatException( "Unexpected tracking system type." );
+        throw UnexpectedTrackerTypeException();
         }
       else
         {

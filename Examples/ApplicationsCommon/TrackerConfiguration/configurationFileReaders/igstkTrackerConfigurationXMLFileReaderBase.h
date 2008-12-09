@@ -16,6 +16,14 @@ namespace igstk
 class TrackerConfigurationXMLFileReaderBase : public itk::XMLReaderBase 
 {
 public:
+
+  class UnexpectedTrackerTypeException : public std::exception
+  {
+  public:
+    UnexpectedTrackerTypeException(){ };
+    ~UnexpectedTrackerTypeException(){ };
+  };
+
   /**
    * \class FileFormatException This is the exception that is thrown if there 
    *        is a problem with the file format (does not follow the expected 
