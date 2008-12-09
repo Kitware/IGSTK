@@ -113,16 +113,26 @@ public:
     }
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-    if( const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *rse = 
-        dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
-        m_GotSuccess = true;
-    else if( const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
-             dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
+    const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *rse = 
+      dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event);
+
+    if( rse )
       {
+      m_GotSuccess = true;
+      }
+    else
+      {
+      const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
+        dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event);
+
+      if( rfe )
+        {
         m_GotFailure = true;
         m_FailureMessage = rfe->Get();
+        }
       }
     }
+
     bool GotSuccess() {return this->m_GotSuccess;}
     bool GotFailure() {return this->m_GotFailure;}
     void Reset() 
@@ -137,8 +147,8 @@ public:
     }
   private:
     std::string m_FailureMessage;
-    bool m_GotSuccess;
     bool m_GotFailure;
+    bool m_GotSuccess;
   };
 
     /** This event is generated if setting the xml reader succeeded. */
