@@ -24,6 +24,7 @@ CoordinateSystemSetTransformResult
 {
   m_Source = NULL;
   m_Destination = NULL;
+  isAttach = false;
 }
 
 CoordinateSystemSetTransformResult
@@ -33,6 +34,7 @@ CoordinateSystemSetTransformResult
   m_Transform = in.m_Transform;
   m_Source = in.m_Source;
   m_Destination = in.m_Destination;
+  isAttach  = in.isAttach;
 }
 
 const CoordinateSystemSetTransformResult &
@@ -45,6 +47,7 @@ CoordinateSystemSetTransformResult
     m_Transform = in.m_Transform;
     m_Source = in.m_Source;
     m_Destination = in.m_Destination;
+    isAttach  = in.isAttach;
     }
   return *this;
 }
@@ -56,6 +59,7 @@ CoordinateSystemSetTransformResult
   m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
   m_Source = NULL;
   m_Destination = NULL;
+  isAttach  = false;
 }
 
 void
