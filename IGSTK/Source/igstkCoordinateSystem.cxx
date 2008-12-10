@@ -501,6 +501,7 @@ void CoordinateSystem
     }
   else
     {
+    this->RequestDetachFromParent();
     this->m_TransformFromRequestSetTransformAndParent = transform;
     this->m_ParentFromRequestSetTransformAndParent = parent;
 
