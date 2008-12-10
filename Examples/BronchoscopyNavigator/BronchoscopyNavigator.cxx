@@ -45,10 +45,10 @@
 *     Constructor
 * -----------------------------------------------------------------
 */
-BronchoscopyNavigator::BronchoscopyNavigator() : 
-  m_TrackerConfiguration( NULL ),
-  m_StateMachine(this)
+BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 {
+  m_TrackerConfiguration = NULL;
+
   std::srand( 5 );
 
   m_ImageDir = "";
