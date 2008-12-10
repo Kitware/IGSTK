@@ -237,16 +237,16 @@ int igstkImageResliceSpatialObjectRepresentationQtTest2( int argc , char * argv 
   view2D->RequestResetCamera();
   qtMainWindow->show();
 
-  for(unsigned int i=imageExtent[4]; i<imageExtent[5]; i++)
-      {
-      index[2] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();
-      }
+  for(unsigned int i=(unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]); i++)
+    {
+    index[2] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
   view2D->RequestStop();
 
   /* Change slice orientation to sagittal */
@@ -267,16 +267,16 @@ int igstkImageResliceSpatialObjectRepresentationQtTest2( int argc , char * argv 
 
   qtMainWindow->show();
 
-  for(unsigned int i=imageExtent[0]; i<imageExtent[1]; i++)
-      {
-      index[0] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();      
-      }
+  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
+    {
+    index[0] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    const double *data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();      
+    }
   view2D->RequestStop();
 
   /* Change slice orientation to coronal */
@@ -297,15 +297,15 @@ int igstkImageResliceSpatialObjectRepresentationQtTest2( int argc , char * argv 
 
   qtMainWindow->show();
 
-  for(unsigned int i=imageExtent[2]; i<imageExtent[3]; i++)
+  for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]); i++)
     {
-      index[1] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();
+    index[1] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    const double *data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
     }
   view2D->RequestStop();
 

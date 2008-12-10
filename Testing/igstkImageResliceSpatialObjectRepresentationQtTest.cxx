@@ -304,27 +304,27 @@ int igstkImageResliceSpatialObjectRepresentationQtTest( int argc , char * argv [
   std::cout << "Axial view: " << std::endl;
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the axial direction
-  for(unsigned int i=imageExtent[5]/3; i<imageExtent[5]/2; i++)
-      {
-      index[2] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
+  for(unsigned int i=(unsigned int)(imageExtent[5]/3); i<(unsigned int)(imageExtent[5]/2); i++)
+    {
+    index[2] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
 
-      translation[0] = data[0];
-      translation[1] = data[1];
-      translation[2] = data[2];
+    translation[0] = data[0];
+    translation[1] = data[1];
+    translation[2] = data[2];
 
-      toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
-      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+    toolTransform.SetTranslation(
+                        translation,
+                        transformUncertainty,
+                        igstk::TimeStamp::GetLongestPossibleTime() );
+    toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();
-      }
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
 
   /* Change slice orientation to sagittal */
   std::cout << "Sagittal view: " << std::endl;
@@ -354,27 +354,27 @@ int igstkImageResliceSpatialObjectRepresentationQtTest( int argc , char * argv [
   /* Iteratively change the tool transform to reslice from one side to the
   *  middle of the image in the sagittal direction
   */
-  for(unsigned int i=imageExtent[1]/3; i<imageExtent[1]/2; i++)
-      {
-      index[0] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
+  for(unsigned int i=(unsigned int)(imageExtent[1]/3); i<(unsigned int)(imageExtent[1]/2); i++)
+    {
+    index[0] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    const double *data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
 
-      translation[0] = data[0];
-      translation[1] = data[1];
-      translation[2] = data[2];
+    translation[0] = data[0];
+    translation[1] = data[1];
+    translation[2] = data[2];
 
-      toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
-      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+    toolTransform.SetTranslation(
+                        translation,
+                        transformUncertainty,
+                        igstk::TimeStamp::GetLongestPossibleTime() );
+    toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();
-      }
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
 
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
@@ -405,27 +405,27 @@ int igstkImageResliceSpatialObjectRepresentationQtTest( int argc , char * argv [
 
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the coronal direction
-  for(unsigned int i=imageExtent[3]/3; i<imageExtent[3]/2; i++)
-      {
-      index[1] = i;
-      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-      const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+  for(unsigned int i=(unsigned int)(imageExtent[3]/3); i<(unsigned int)(imageExtent[3]/2); i++)
+    {
+    index[1] = i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+    const double *data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
 
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+    std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
 
-      translation[0] = data[0];
-      translation[1] = data[1];
-      translation[2] = data[2];
-      toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetZeroValue() );
-      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
+    translation[0] = data[0];
+    translation[1] = data[1];
+    translation[2] = data[2];
+    toolTransform.SetTranslation(
+                        translation,
+                        transformUncertainty,
+                        igstk::TimeStamp::GetZeroValue() );
+    toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
-      QTest::qWait(10);
-      igstk::PulseGenerator::CheckTimeouts();
-      }
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();
+    }
 
   //Request refreshing stop to take a screenshot
   view2D->RequestStop();
