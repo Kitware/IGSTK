@@ -34,18 +34,18 @@
 namespace igstk
 {
 
-VideoFrameRepresentation::VideoFrameRepresentation(void) :
-  m_StateMachine(this),
-  m_ImageData(NULL),
-  m_ImageActor(NULL),
-  m_PlaneSource(NULL),
-  m_VideoMapper(NULL),
-  m_VideoTexture(NULL),
-  m_ColorMap(NULL),
-  m_LookupTable(NULL)
+VideoFrameRepresentation::VideoFrameRepresentation(void) : m_StateMachine(this)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation constructor called ...\n");
   
+  m_ImageData = NULL;
+  m_ImageActor = NULL;
+  m_PlaneSource = NULL;
+  m_VideoMapper = NULL;
+  m_VideoTexture = NULL;
+  m_ColorMap = NULL;
+  m_LookupTable = NULL;
+
   // We create the image spatial object
   m_VideoFrameSpatialObject = NULL;
 
