@@ -861,30 +861,38 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   std::cout<<"Next line should report failed calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
   if( !calibrationEventObserver->FailureEventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   calibrationEventObserver->Reset();
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestPivotPoint();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestCalibrationRMSE();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
              //step 2: use a valid data set and give it in one vector, check 
              //        that computation results in expected values
-  for( int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
-  {
+  for( unsigned int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
+    {
     translation[0] = pivotCalibrationValidDataSet[i][0];  
     translation[1] = pivotCalibrationValidDataSet[i][1];  
     translation[2] = pivotCalibrationValidDataSet[i][2];  
@@ -900,18 +908,22 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
                                                 itk::NumericTraits<double>::min(), 
                                                 itk::NumericTraits<double>::max() );
     transformations.push_back( currentTransform );
-  }  
+    }  
   pivotCalibrationAlgorithm->RequestAddTransforms( transformations );
 
   std::cout<<"Next line should report successful calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
   if( !calibrationEventObserver->SuccessEventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   calibrationEventObserver->Reset();
 
   pivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( !transformEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   transformEventObserver->Reset();
   igstk::CoordinateSystemTransformToResult transformCarrier1 = 
     transformEventObserver->Get();
@@ -921,7 +933,9 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
 
   pivotCalibrationAlgorithm->RequestPivotPoint();
   if( !pivotPointEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   pivotPointEventObserver->Reset();
   pivotPoint1 = pivotPointEventObserver->Get();
   std::cout<<"Next line should show the pivot point:\n";
@@ -929,7 +943,9 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
 
   pivotCalibrationAlgorithm->RequestCalibrationRMSE();
   if( !rmseEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   rmseEventObserver->Reset();
   calibrationRMSE1 = rmseEventObserver->Get();
   std::cout<<"Next line should show the transformation RMSE:\n";
@@ -943,29 +959,37 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   std::cout<<"Next line should report failed calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
   if( !calibrationEventObserver->FailureEventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   calibrationEventObserver->Reset();
 
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestPivotPoint();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
   std::cout<<"Next line should report invalid request:\n\t";
   pivotCalibrationAlgorithm->RequestCalibrationRMSE();
   if( !invalidRequestErrorObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   invalidRequestErrorObserver->Reset();
 
-  for( int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
-  {
+  for( unsigned int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
+    {
     translation[0] = pivotCalibrationValidDataSet[i][0];  
     translation[1] = pivotCalibrationValidDataSet[i][1];  
     translation[2] = pivotCalibrationValidDataSet[i][2];  
@@ -981,17 +1005,21 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
                                                 itk::NumericTraits<double>::min(),
                                                 itk::NumericTraits<double>::max() );
     pivotCalibrationAlgorithm->RequestAddTransform( currentTransform );
-  }
+    }
   
   std::cout<<"Next line should report successful calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
   if( !calibrationEventObserver->SuccessEventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   calibrationEventObserver->Reset();
 
   pivotCalibrationAlgorithm->RequestCalibrationTransform();
   if( !transformEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
   transformEventObserver->Reset();
   igstk::CoordinateSystemTransformToResult transformCarrier2 =
     transformEventObserver->Get();
@@ -1003,7 +1031,10 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
 
   pivotCalibrationAlgorithm->RequestPivotPoint();
   if( !pivotPointEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
+
   pivotPointEventObserver->Reset();
   pivotPoint2 = pivotPointEventObserver->Get();
   std::cout<<"Next line should show (0,0,0) [result of subtracting the current";
@@ -1011,8 +1042,12 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
   std::cout<<pivotPoint1 - pivotPoint2<<std::endl;
 
   pivotCalibrationAlgorithm->RequestCalibrationRMSE();
+
   if( !rmseEventObserver->EventOccured() )
+    {
     return EXIT_FAILURE;
+    }
+
   rmseEventObserver->Reset();
   calibrationRMSE2 = rmseEventObserver->Get();
   std::cout<<"Next line should show 0 [result of subtracting the current and";
@@ -1022,8 +1057,8 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
              //step 4: reset and run with degenerate set of transformations
   pivotCalibrationAlgorithm->RequestResetCalibration();
 
-  for( int i=0; i<NUMBER_OF_DEGENERATE_TRANSFORMATIONS; i++ ) 
-  {
+  for( unsigned int i=0; i<NUMBER_OF_DEGENERATE_TRANSFORMATIONS; i++ ) 
+    {
     translation[0] = pivotCalibrationDegenerateDataSet[i][0];  
     translation[1] = pivotCalibrationDegenerateDataSet[i][1];  
     translation[2] = pivotCalibrationDegenerateDataSet[i][2];  
@@ -1039,12 +1074,16 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
                                                 itk::NumericTraits<double>::min(),
                                                 itk::NumericTraits<double>::max() );
     pivotCalibrationAlgorithm->RequestAddTransform( currentTransform );
-  }
+    }
 
   std::cout<<"Next line should report failed calibration:\n\t";
   pivotCalibrationAlgorithm->RequestComputeCalibration();
+
   if( !calibrationEventObserver->FailureEventOccured() )
+    {
     return EXIT_FAILURE;
+    }
+
   calibrationEventObserver->Reset();
 
   return EXIT_SUCCESS;
