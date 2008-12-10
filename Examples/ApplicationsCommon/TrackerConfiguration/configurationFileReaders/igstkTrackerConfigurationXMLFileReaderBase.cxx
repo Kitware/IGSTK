@@ -151,7 +151,7 @@ const char *inData, int inLength )
 
 void 
 TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes( 
-  const char **atts ) throw ( FileFormatException )
+  const char **atts ) throw ( FileFormatException, UnexpectedTrackerTypeException )
 {
   bool systemTypeFound = false;
 
