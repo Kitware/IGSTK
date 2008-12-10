@@ -84,7 +84,7 @@ int FiducialsPlanIO::RequestWrite()
     FiducialsPlan::PointType p;
 
     planFile << "# Fiducial points\n"; // First line, description
-    for ( int i=0; i<m_FiducialsPlan->m_FiducialPoints.size(); i++)
+    for ( unsigned int i=0; i<m_FiducialsPlan->m_FiducialPoints.size(); i++)
       {
       p = m_FiducialsPlan->m_FiducialPoints[i];
       planFile << p[0] << "\t" << p[1] << "\t" << p[2] << "\n";
