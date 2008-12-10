@@ -21,7 +21,7 @@ public:
   {
   public:
     UnexpectedTrackerTypeException(){ };
-    ~UnexpectedTrackerTypeException(){ };
+    virtual ~UnexpectedTrackerTypeException() throw() { };
   };
 
   /**
