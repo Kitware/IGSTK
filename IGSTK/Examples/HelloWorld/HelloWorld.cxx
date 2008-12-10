@@ -203,6 +203,11 @@ int main(int , char** )
   
   const igstk::CoordinateSystem* coSys = igstk::Friends::CoordinateSystemHelper::GetCoordinateSystem(ellipsoid);
 
+  if( !coSys )
+    {
+    std::cerr << "Problem found while getting the ellipsoid coordinate system" << std::endl;
+    }
+
   // BeginLatex
   // Next, the spatial objects are added to the view as follows:
   //
