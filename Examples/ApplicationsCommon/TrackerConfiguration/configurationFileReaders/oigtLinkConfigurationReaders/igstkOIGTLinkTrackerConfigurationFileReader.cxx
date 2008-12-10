@@ -445,6 +445,7 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
                     //xml reading is successful (no exception generation) even 
                     //when the file is empty, need to check that the data was
                     //actually read
+ 
       if( this->m_XMLFileReader->HaveConfigurationData() )
       {
         this->m_OIGTLinkTrackerConfiguration.m_TrackerConfiguration = 
