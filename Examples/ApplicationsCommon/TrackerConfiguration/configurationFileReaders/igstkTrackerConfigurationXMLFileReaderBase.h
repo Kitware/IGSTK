@@ -20,7 +20,7 @@ public:
   class UnexpectedTrackerTypeException : public std::exception
   {
   public:
-    UnexpectedTrackerTypeException(){ };
+    UnexpectedTrackerTypeException() throw() { };
     virtual ~UnexpectedTrackerTypeException() throw() { };
   };
 
@@ -133,7 +133,7 @@ protected:
                       TransformTypePointer);
 
   void ProcessTrackingSystemAttributes( const char **atts )
-    throw ( FileFormatException );
+    throw ( FileFormatException, UnexpectedTrackerTypeException );
 
   void ProcessRefreshRate() throw ( FileFormatException );
 
