@@ -361,13 +361,19 @@ SET(IGSTKSandbox_HEADS
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
   
-  # SceneGraph visualization classes
   igstkCoordinateSystemSetTransformResult.h
-  igstkSceneGraphObserver.h
-  igstkSceneGraphNode.h
-  igstkSceneGraph.h
 )
 
+IF(IGSTK_USE_SceneGraphVisualization)
+  # SceneGraph visualization classes
+  SET(IGSTKSandbox_HEADS
+    ${IGSTKSandbox_HEADS}    
+    igstkSceneGraphObserver.h
+    igstkSceneGraphNode.h
+    igstkSceneGraph.h
+    )
+ENDIF(IGSTK_USE_SceneGraphVisualization)
+  
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(IGSTKSandbox_HEADS
     ${IGSTKSandbox_HEADS}
@@ -385,9 +391,15 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkPivotCalibrationFLTKWidget.h
-      #SceneGraph visualization classes
-      igstkSceneGraphUI.h
-     )
+      )
+  IF(IGSTK_USE_SceneGraphVisualization)
+    #SceneGraph visualization classes
+    SET(IGSTKSandbox_HEADS
+        ${IGSTKSandbox_HEADS}    
+        igstkSceneGraphUI.h
+        )
+  ENDIF(IGSTK_USE_SceneGraphVisualization)
+    
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
@@ -483,12 +495,18 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
   
-  #SceneGraph visualization classes
   igstkCoordinateSystemSetTransformResult.cxx
-  igstkSceneGraphNode.cxx
-  igstkSceneGraph.cxx
 )
 
+IF(IGSTK_USE_SceneGraphVisualization)
+  #SceneGraph visualization classes
+  SET(IGSTKSandbox_SRCS
+    ${IGSTKSandbox_SRCS}
+    igstkSceneGraphNode.cxx
+    igstkSceneGraph.cxx
+    )
+ENDIF(IGSTK_USE_SceneGraphVisualization)
+  
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
@@ -507,9 +525,15 @@ IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
     ${IGSTKSandbox_SRCS}
     igstkPivotCalibrationFLTKWidget.cxx
-    #SceneGraph visualization classes
-    igstkSceneGraphUI.cxx
     )
+  IF(IGSTK_USE_SceneGraphVisualization)
+    #SceneGraph visualization classes
+    SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkSceneGraphUI.cxx
+      )
+  ENDIF(IGSTK_USE_SceneGraphVisualization)
+    
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF( WIN32 )
