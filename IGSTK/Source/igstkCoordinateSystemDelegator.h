@@ -22,7 +22,6 @@
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
 #include "igstkCoordinateSystemSetTransformResult.h"
-#include "igstkSceneGraphObserver.h"
 
 namespace igstk
 {
@@ -201,9 +200,6 @@ private:
   /** Make an observer to watch events on the CoordinateSystem. */
   CoordinateSystemObserverType::Pointer m_CoordinateSystemObserver;
 
-  /** Declaring the SceneGraphObserver */
-  SceneGraphObserver::Pointer    m_SceneGraphObserver;
-  
   /** Call back used by the coordinate system observer which
    *  catches events and re-invokes them.
    */
