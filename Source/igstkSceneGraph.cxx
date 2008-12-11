@@ -69,7 +69,7 @@ void SceneGraph
     CreateNewParentAndAddCoordinateSystem(setTransformEvent);
   }
   OptimizeTree();
-  printNodeDetails();
+  //printNodeDetails();
 }
 
 void SceneGraph::OptimizeTree()
