@@ -93,7 +93,7 @@ public:
   void DetachCoordinateSystem(const 
           CoordinateSystemSetTransformEvent* setTransformEvent);
 
-  /**  Funtion to export the scene graph to dot format.
+  /**  Function to export the scene graph to dot format.
   */
   void ExportSceneGraphToDot(std::string fileName);
 
@@ -101,12 +101,12 @@ public:
   */
   void ShowSceneGraph(bool showFlag);
 
-  /**  Function to Show the transfom path for the given transform event.
+  /**  Function to Show the transform path for the given transform event.
   */
   void ShowTheTransformPath(const 
           CoordinateSystemTransformToEvent* transformPathEvent);
 
-  /**  Funtion to set the node selected when the user selects of deselects it.
+  /**  Function to set the node selected when the user selects of deselects it.
   */
   void SetNodeDetails(const char* nodeName, bool includeFlag);
 
