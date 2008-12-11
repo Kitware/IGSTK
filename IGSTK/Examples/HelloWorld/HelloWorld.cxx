@@ -35,7 +35,6 @@
 
 // BeginCodeSnippet
 #include "HelloWorldGUI.h"
-#include "igstkSceneGraphUI.h"
 // EndCodeSnippet
 
 
@@ -105,8 +104,6 @@
 // EndCodeSnippet
 //
 #include "igstkTransformObserver.h"
-#include "igstkSceneGraphObserver.h"
-
 
 // BeginLatex
 //
@@ -201,13 +198,6 @@ int main(int , char** )
   cylinderRepresentation->SetOpacity(1.0);
   // EndCodeSnippet
   
-  const igstk::CoordinateSystem* coSys = igstk::Friends::CoordinateSystemHelper::GetCoordinateSystem(ellipsoid);
-
-  if( !coSys )
-    {
-    std::cerr << "Problem found while getting the ellipsoid coordinate system" << std::endl;
-    }
-
   // BeginLatex
   // Next, the spatial objects are added to the view as follows:
   //
@@ -356,13 +346,6 @@ int main(int , char** )
     TransformType             transform;
     VectorType                position;
   
-  igstk::SceneGraph * m_SceneGraph = igstk::SceneGraph::getInstance();
-  if(m_SceneGraph->isChanged)
-  {
-    m_GUI->m_SceneGraphUI->DrawSceneGraph(m_SceneGraph);
-    m_SceneGraph->isChanged = false;
-  }
-
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotTransform())
