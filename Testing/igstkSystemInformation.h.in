@@ -8,7 +8,6 @@
 #cmakedefine IGSTKSandbox_USE_Qt
 #cmakedefine IGSTKSandbox_USE_MicronTracker
 #cmakedefine IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS 
-#cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
 #cmakedefine IGSTKSandbox_USE_vtkKWImage
 
 #cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
