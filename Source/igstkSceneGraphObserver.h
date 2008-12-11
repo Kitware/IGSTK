@@ -27,7 +27,6 @@
 #include "igstkCoordinateSystemSetTransformResult.h"
 #include "igstkSceneGraph.h"
 #include "igstkCoordinateSystemTransformToResult.h"
-#include "igstkSandboxConfigure.h"
 
 namespace igstk
 {
@@ -71,14 +70,12 @@ public:
 
   void ObserveTransformEventsFrom( Object * objectToObserve )
     {
-    #ifdef IGSTKSandbox_USE_SceneGraphObserver 
     if( objectToObserve )
       {
       objectToObserve->AddObserver( PositiveEventType(), this );
       objectToObserve->AddObserver( NegativeEventType(), this );
       objectToObserve->AddObserver( CoordinateSystemTransformToEvent(), this);
       }
-    #endif
     }
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
