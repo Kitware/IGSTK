@@ -140,7 +140,7 @@ int main(int , char** )
   // 
   // BeginCodeSnippet
   HelloWorldGUI * m_GUI = new HelloWorldGUI();
-  m_GUI->fileName = "C:/IGSTK/igstkHelloWorld.dot";
+  m_GUI->fileName = "igstkHelloWorld.dot";
   // EndCodeSnippet
   // 
   m_GUI->MainWindow->show();
