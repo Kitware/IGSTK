@@ -171,12 +171,6 @@ OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracke
 OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tests for Trackers" OFF)
 
 #
-# Define the options that enables the use of the Coordinate Reference Systems
-#
-OPTION(IGSTK_USE_COORDINATE_REFERENCE_SYSTEM "Use the new coordinate reference system infrastructure" ON)
-
-
-#
 # Use OpenIGTLink protocol 
 #
 OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)
@@ -191,7 +185,6 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
     MESSAGE( FATAL_ERROR "This application requires OpenIGTLink. One of these components is missing. Please verify configuration")
   ENDIF (OpenIGTLink_USE_FILE)
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
 
 #-----------------------------------------------------------------------------
 # check for header files that we need
