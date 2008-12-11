@@ -189,7 +189,7 @@ ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 #
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree
 #
-OPTION(IGSTKSandbox_USE_SceneGraphObserver "Enable scene graph visualization by allowing the observer to listen to relevant events" ON)
+OPTION(IGSTK_USE_SceneGraphVisualization "Enable scene graph visualization by allowing the observer to listen to relevant events" ON)
 
 #-----------------------------------------------------------------------------
 # check for header files that we need
