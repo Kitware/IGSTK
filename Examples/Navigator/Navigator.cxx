@@ -27,19 +27,21 @@
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
+#include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkAuroraConfigurationXMLFileReader.h"
 #include "igstkPolarisVicraConfigurationXMLFileReader.h"
 #include "igstkPolarisSpectraConfigurationXMLFileReader.h"
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
+#include "igstkAscensionConfigurationXMLFileReader.h"
 
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
 // name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+#define DRIVING_TOOL_NAME "bird1" //sPtr // bayonet // hybrid_pointer
 // name of the tool that is going to be used as dynamic reference
-#define REFERENCE_NAME "reference"
+#define REFERENCE_NAME "bird2" //reference
 
 /** ---------------------------------------------------------------
 *     Constructor
@@ -1078,7 +1080,7 @@ void Navigator::ConfigureTrackerProcessing()
              "Navigator::ConfigureTrackerProcessing called...\n" )
  
   const char*  fileName = 
-    fl_file_chooser("Select a tracker configuration file","*.xml", "auroraConfiguration.xml");
+    fl_file_chooser("Select a tracker configuration file","*.xml","*.xml");
 
   if ( !fileName )
   {
@@ -1095,7 +1097,11 @@ void Navigator::ConfigureTrackerProcessing()
              //observe the trackerConfigReader for their success events
   trackerConfigReader->RequestSetFileName( fileName );
 
-  if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
+  if ( this->ReadAscensionConfiguration( trackerConfigReader ) )
+  {
+    m_StateMachine.PushInput( m_SuccessInput );    
+  }
+  else if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
   {
     m_StateMachine.PushInput( m_SuccessInput );    
   }
@@ -1243,6 +1249,67 @@ bool Navigator::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileRea
   {
      igstkLogMacro2( m_Logger, DEBUG, 
         "Navigator::ReadPolarisVicraConfiguration error: could not get Polaris Vicra tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
+}
+
+bool Navigator::ReadAscensionConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::AscensionConfigurationXMLFileReader::New();
+
+  //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+ // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: could not read ASCENSION tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: could not get ASCENSION tracker configuration\n")
      return false;
   }
 
@@ -3854,7 +3921,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     if ( iter!=toolContainer.end() )
     {      
         igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
-                    "Navigator::TrackerControllerObserver found driving tool...\n" )
+          "Navigator::TrackerControllerObserver found tool with name: " << (*iter).first << "\n" )
 
         m_Parent->m_TrackerTool = (*iter).second;
 
@@ -3881,7 +3948,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     if ( entry.first == REFERENCE_NAME )
     {
         igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
-                    "Navigator::TrackerControllerObserver found reference tool...\n" )
+                    "Navigator::TrackerControllerObserver found reference tool with name: " << entry.first << "\n" )
 
         m_Parent->m_ReferenceTool = entry.second;
 

@@ -199,16 +199,6 @@ public:
   typedef igstk::TrackerConfigurationFileReader::ReadTrackerConfigurationFailSuccessObserver
                     ReadTrackerConfigurationFailSuccessObserverType;
 
-//  typedef igstk::PrecomputedTransformData::TransformType *  TransformTypePointer;
-
-//  igstkObserverMacro( TransformRequest,
-//                      igstk::PrecomputedTransformData::TransformTypeEvent,
-//                      TransformTypePointer )
-
-//  igstkObserverMacro( TransformError, 
-//                      igstk::PrecomputedTransformData::TransformErrorTypeEvent, 
-//                      igstk::PrecomputedTransformData::ErrorType )
-
   igstkObserverMacro( DICOMImageReaderInvalidDirectoryNameError, 
                       igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent, 
                       std::string )
@@ -570,6 +560,7 @@ private:
   bool BuildToolSpatialObject();
   bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
+  bool ReadAscensionConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
