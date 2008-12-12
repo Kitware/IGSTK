@@ -25,6 +25,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <fstream>
 #include <set>
 
+#include <FL/Fl.H>
+
 #include "itkCommand.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -38,6 +40,76 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkFlockOfBirdsTrackerToolNew.h"
 #include "igstkTransform.h"
 #include "igstkTransformObserver.h"
+#include "igstkAxesObject.h"
+
+class TrackerToolUpdateTransformObserver : public itk::Command 
+{
+public:
+  typedef TrackerToolUpdateTransformObserver   Self;
+  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>       Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TrackerToolUpdateTransformObserver() {};
+
+  typedef igstk::Transform::PointType                   PointType;
+
+public:
+  void SetTrackerTool(igstk::TrackerTool *tool)
+  {
+    this->m_TrackerTool = tool;
+  }
+
+  void SetWorldReference(igstk::AxesObject *reference)
+  {
+    this->m_WorldReference = reference;
+  }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    Execute( (const itk::Object *)caller, event);
+    }
+
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+    {
+      if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
+      {
+        typedef igstk::TransformObserver ObserverType;
+        ObserverType::Pointer transformObserver = ObserverType::New();
+        transformObserver->ObserveTransformEventsFrom( m_TrackerTool );
+        transformObserver->Clear();
+        
+        m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
+        
+        if ( transformObserver->GotTransform() )
+        {   
+            igstk::Transform transform = transformObserver->GetTransform();
+            PointType point = TransformToPoint( transform );
+            std::cout << "position: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+        }
+      }
+    }
+
+  protected:
+
+  PointType TransformToPoint( igstk::Transform transform)
+  {
+    PointType point;
+    for (int i=0; i<3; i++)
+      {
+      point[i] = transform.GetTranslation()[i];
+      }
+    return point;
+  }
+
+  /** tracker tool */
+  igstk::TrackerTool::Pointer                           m_TrackerTool;
+  /** world reference */
+  igstk::AxesObject::Pointer                            m_WorldReference;
+
+
+};
 
 class FlockOfBirdsTrackerTest2Command : public itk::Command 
 {
@@ -64,6 +136,7 @@ public:
       std::cout << event.GetEventName() << std::endl;
       }
     }
+
 };
 
 /** This program tests single bird tracker tool */
@@ -85,7 +158,7 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
     }
 
 
-  igstk::FlockOfBirdsTrackerTool::Pointer tool = igstk::FlockOfBirdsTrackerTool::New();
+  igstk::FlockOfBirdsTrackerToolNew::Pointer tool = igstk::FlockOfBirdsTrackerToolNew::New();
 
   igstk::SerialCommunication::Pointer 
                      serialComm = igstk::SerialCommunication::New();
@@ -95,8 +168,8 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
 
   typedef igstk::TransformObserver   ObserverType;
 
-  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
-  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+//  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
+//  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
  
   std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
@@ -133,9 +206,9 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
       return EXIT_FAILURE;
   }
 
-  igstk::FlockOfBirdsTracker::Pointer  tracker;
+  igstk::FlockOfBirdsTrackerNew::Pointer  tracker;
 
-  tracker = igstk::FlockOfBirdsTracker::New();
+  tracker = igstk::FlockOfBirdsTrackerNew::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
 
@@ -147,7 +220,7 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
-  typedef igstk::FlockOfBirdsTrackerTool    TrackerToolType;
+  typedef igstk::FlockOfBirdsTrackerToolNew    TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
   // instantiate and attach tracker tool  
@@ -155,18 +228,37 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
   trackerTool->SetLogger( logger );
 
   //Configure
-  trackerTool->RequestSetBirdName("bird0");
+  trackerTool->RequestSetPortNumber(1);
   trackerTool->RequestConfigure();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
   //Add observer to listen to events thrown by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
+
+  TrackerToolUpdateTransformObserver::Pointer trackerToolUpdateTransformObserver = 
+                                          TrackerToolUpdateTransformObserver::New();
+
+  trackerToolUpdateTransformObserver->SetTrackerTool( trackerTool );  
+
+  // Instantiate a world reference
+  igstk::AxesObject::Pointer worldReference        = igstk::AxesObject::New();
+
+  trackerToolUpdateTransformObserver->SetWorldReference( worldReference );
+
+  tracker->AddObserver( igstk::TrackerToolTransformUpdateEvent(), trackerToolUpdateTransformObserver );
+
   //Add observer to listen to transform events 
-  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
+  //coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
   //start tracking 
   std::cout << "Start tracking..." << std::endl;
   tracker->RequestStartTracking();
 
+  for(unsigned int i=0; i<10; i++)
+  {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+  }
+/*
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
@@ -187,6 +279,8 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
           << ")" << std::endl;
       }
   }
+*/
+
 
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
