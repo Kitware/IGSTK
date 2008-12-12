@@ -28,7 +28,7 @@ namespace igstk
 {
 
 /** Constructor: Initializes all internal variables. */
-FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
+FlockOfBirdsTrackerNew::FlockOfBirdsTrackerNew(void):m_StateMachine(this)
 {
 
   this->SetThreadingEnabled( true );
@@ -36,38 +36,40 @@ FlockOfBirdsTracker::FlockOfBirdsTracker(void):m_StateMachine(this)
   m_BufferLock = itk::MutexLock::New();
   m_Communication = 0;
   m_CommandInterpreter = CommandInterpreterType::New();
+  m_NumberOfTools = 0;
 }
 
 /** Destructor */
-FlockOfBirdsTracker::~FlockOfBirdsTracker(void)
+FlockOfBirdsTrackerNew::~FlockOfBirdsTrackerNew(void)
 {
 }
 
 /** Set the communication object, it will be initialized as necessary
   * for use with the FlockOfBirds */
-void FlockOfBirdsTracker::SetCommunication( CommunicationType *communication )
+void FlockOfBirdsTrackerNew::SetCommunication( CommunicationType *communication )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Entered SetCommunication ...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew:: Entered SetCommunication ...\n");
   m_Communication = communication;
   m_CommandInterpreter->SetCommunication( communication );
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker:: Exiting SetCommunication ...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew:: Exiting SetCommunication ...\n");
 }
 
 /** Open communication with the tracking device. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalOpen( void )
+FlockOfBirdsTrackerNew::ResultType FlockOfBirdsTrackerNew::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew::InternalOpen called ...\n");
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
   m_CommandInterpreter->SetHemisphere(FB_FORWARD);
+//  m_CommandInterpreter->ChangeValue(FB_GROUP_MODE,1);
 
   return SUCCESS;
 }
 
 /** Close communication with the tracking device. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
+FlockOfBirdsTrackerNew::ResultType FlockOfBirdsTrackerNew::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew::InternalClose called ...\n");
 
   m_CommandInterpreter->Close();
 
@@ -75,51 +77,64 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalClose( void )
 }
 
 /** Activate the tools attached to the tracking device. */
-FlockOfBirdsTracker::ResultType 
-FlockOfBirdsTracker::InternalActivateTools( void )
+FlockOfBirdsTrackerNew::ResultType 
+FlockOfBirdsTrackerNew::InternalActivateTools( void )
 {
   igstkLogMacro( DEBUG, 
-               "FlockOfBirdsTracker::InternalActivateTools called ...\n");
+               "FlockOfBirdsTrackerNew::InternalActivateTools called ...\n");
+
   return SUCCESS;
 }
 
 /** Deactivate the tools attached to the tracking device. */
-FlockOfBirdsTracker::ResultType 
-FlockOfBirdsTracker::InternalDeactivateTools( void )
+FlockOfBirdsTrackerNew::ResultType 
+FlockOfBirdsTrackerNew::InternalDeactivateTools( void )
 {
   return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */
-FlockOfBirdsTracker::ResultType 
-FlockOfBirdsTracker::InternalStartTracking( void )
+FlockOfBirdsTrackerNew::ResultType 
+FlockOfBirdsTrackerNew::InternalStartTracking( void )
 {
   igstkLogMacro( DEBUG, 
-                "FlockOfBirdsTracker::InternalStartTracking called ...\n");
+                "FlockOfBirdsTrackerNew::InternalStartTracking called ...\n");
+
+  if ( m_NumberOfTools > 1 )
+  {
+    m_CommandInterpreter->FBBReset();
+    m_CommandInterpreter->FBBAutoConfig(m_NumberOfTools);
+  }
+
+//  m_CommandInterpreter->Stream();
+
   return SUCCESS;
 }
 
 /** Take the tracking device out of tracking mode. */
-FlockOfBirdsTracker::ResultType 
-FlockOfBirdsTracker::InternalStopTracking( void )
+FlockOfBirdsTrackerNew::ResultType 
+FlockOfBirdsTrackerNew::InternalStopTracking( void )
 {
   igstkLogMacro( DEBUG,
-                "FlockOfBirdsTracker::InternalStopTracking called ...\n");
+                "FlockOfBirdsTrackerNew::InternalStopTracking called ...\n");
+
+//  m_CommandInterpreter->EndStream();
+
   return SUCCESS;
 }
 
 /** Reset the tracking device to put it back to its original state. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalReset( void )
+FlockOfBirdsTrackerNew::ResultType FlockOfBirdsTrackerNew::InternalReset( void )
 {
   return SUCCESS;
 }
 
 
 /** Update the status and the transforms for all TrackerTools. */
-FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
+FlockOfBirdsTrackerNew::ResultType FlockOfBirdsTrackerNew::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG, 
-                 "FlockOfBirdsTracker::InternalUpdateStatus called ...\n");
+                 "FlockOfBirdsTrackerNew::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Tracking state.  This method is called from
@@ -140,9 +155,12 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
   while( inputItr != inputEnd )
   {
-      // fixme: m_ToolStatusContainer is not reporting correctly
-      /*
+
       // only report tools that are in view
+      // this is actually not working because the ascension system is always
+      // reporting some data.
+      // todo: decide "tool visibility" in terms of signal fidelity. There should be
+      // some parameter that gives that value. I saw it in the pciCubes application
       if (! this->m_ToolStatusContainer[inputItr->first])
       {
           igstkLogMacro( INFO, "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
@@ -155,7 +173,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
           ++inputItr;
           continue;
       }
-      */
+
       // report to the tracker tool that the tracker is Visible
       this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
@@ -182,8 +200,8 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
       if (normsquared < 1e-6)
       {
           rotation.Set(0.0, 0.0, 0.0, 1.0);
-          igstkLogMacro( WARNING, "igstk::FlockOfBirdsTracker::InternUpdateStatus: bad "
-              "quaternion, norm=" << sqrt(normsquared) << "\n");
+          igstkLogMacro( WARNING, "igstk::FlockOfBirdsTrackerNew::InternUpdateStatus: bad "
+              "quaternion, norm = " << sqrt(normsquared) << "\n");
       }
       else
       {
@@ -210,6 +228,7 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
           trackerToolContainer[inputItr->first], true );
 
       ++inputItr;
+
   }
 
   m_BufferLock->Unlock();
@@ -219,57 +238,67 @@ FlockOfBirdsTracker::ResultType FlockOfBirdsTracker::InternalUpdateStatus()
 
 /** Update the m_StatusBuffer and the transforms. 
     This function is called by a separate thread. */
-FlockOfBirdsTracker::ResultType 
-FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
+FlockOfBirdsTrackerNew::ResultType 
+FlockOfBirdsTrackerNew::InternalThreadedUpdateStatus( void )
 {
 
-    igstkLogMacro( DEBUG, "FlockOfBirdsTracker::InternalThreadedUpdateStatus "
-          "called ...\n");
+    igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew::InternalThreadedUpdateStatus "
+          "called ...\n");    
 
-    // Lock the buffer that this method shares with InternalUpdateStatus
+    // sebastian ordas comments:
+    // cannot fix a 1-2 sec delay present when using more than one bird
+    // I tried everything: point/stream, group mode, different positions of RS232ToFBB, etc
+    // It's only a delay. It seems we are actually not loosing samples (after the delay, the sensor
+    // movement is reproduced without jumps). It's like the serial port buffer is not flushed
+
     m_BufferLock->Lock();
 
-    //reset the status of all the tracker tools
     typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
     InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
     InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
 
     while( inputItr != inputEnd )
-    {
-        this->m_ToolStatusContainer[inputItr->first] = 0;
-        ++inputItr;
-    }
+    {     
+      this->m_ToolStatusContainer[inputItr->first] = 0;
 
-    m_CommandInterpreter->Point();
-    m_CommandInterpreter->Update();
+      if ( inputItr->first == "1" )
+         m_CommandInterpreter->RS232ToFBB(1);
+      if ( inputItr->first == "2" )
+         m_CommandInterpreter->RS232ToFBB(2);
+      if ( inputItr->first == "3" )
+         m_CommandInterpreter->RS232ToFBB(3);
+      if ( inputItr->first == "4" )
+         m_CommandInterpreter->RS232ToFBB(4);
 
-    float offset[3];
-    m_CommandInterpreter->GetPosition(offset);
+      m_CommandInterpreter->Point();
+      m_CommandInterpreter->Update();
 
-    float quaternion[4];
-    m_CommandInterpreter->GetQuaternion(quaternion);
+      float offset[3];              
+      m_CommandInterpreter->GetPosition(offset);
 
-     std::vector< double > transform;
+      float quaternion[4];
+      m_CommandInterpreter->GetQuaternion(quaternion);
 
-     transform.push_back( offset[0] ); 
-     transform.push_back( offset[1] );
-     transform.push_back( offset[2] );
+      std::vector< double > transform;
 
-     // fob quaternion q0, q1, q2, and q3 where q0
-     // is the scaler component
-     // itk versor: void Set( T x, T y, T z, T w );
-     transform.push_back( quaternion[0] );
-     transform.push_back( -quaternion[3] );
-     transform.push_back( quaternion[2] );
-     transform.push_back( quaternion[1] );
+      transform.push_back( offset[0] ); 
+      transform.push_back( offset[1] );
+      transform.push_back( offset[2] );
 
-    inputItr = this->m_ToolTransformBuffer.begin();
+      // fob quaternion q0, q1, q2, and q3 where q0
+      // is the scaler component
+      // itk versor: void Set( T x, T y, T z, T w );
+      transform.push_back( quaternion[0] );
+      transform.push_back( quaternion[3] );
+      transform.push_back( quaternion[2] );
+      transform.push_back( quaternion[1] );
 
-    if( inputItr != this->m_ToolTransformBuffer.end() )
-    {
-        this->m_ToolTransformBuffer[inputItr->first] = transform;
-        this->m_ToolStatusContainer[inputItr->first] = 1;
-    }
+      
+      this->m_ToolTransformBuffer[ inputItr->first ] = transform;
+      this->m_ToolStatusContainer[ inputItr->first ] = 1;      
+
+      inputItr++;
+    } 
 
     m_BufferLock->Unlock();
 
@@ -277,9 +306,9 @@ FlockOfBirdsTracker::InternalThreadedUpdateStatus( void )
 }
 
 /** Enable all tool ports that are occupied. */
-void FlockOfBirdsTracker::EnableToolPorts()
+void FlockOfBirdsTrackerNew::EnableToolPorts()
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::EnableToolPorts called...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew::EnableToolPorts called...\n");
 
 //   for (unsigned int port = 0; port < NumberOfPorts; port++)
 //     {
@@ -289,28 +318,28 @@ void FlockOfBirdsTracker::EnableToolPorts()
 }
 
 /** Disable all tool ports. */
-void FlockOfBirdsTracker::DisableToolPorts( void )
+void FlockOfBirdsTrackerNew::DisableToolPorts( void )
 {
-  igstkLogMacro( DEBUG, "FlockOfBirdsTracker::DisableToolPorts called...\n");
+  igstkLogMacro( DEBUG, "FlockOfBirdsTrackerNew::DisableToolPorts called...\n");
 }
 
 /** Verify tracker tool information */
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker
+FlockOfBirdsTrackerNew::ResultType
+FlockOfBirdsTrackerNew
 ::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
-    "FlockOfBirdsTracker::VerifyTrackerToolInformation called...\n");
+    "FlockOfBirdsTrackerNew::VerifyTrackerToolInformation called...\n");
   return SUCCESS;
 }
 
 /** Remove tracker tool from internal containers */
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker
+FlockOfBirdsTrackerNew::ResultType
+FlockOfBirdsTrackerNew
 ::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
-    "FlockOfBirdsTracker::RemoveTrackerToolFromInternalDataContainers"
+    "FlockOfBirdsTrackerNew::RemoveTrackerToolFromInternalDataContainers"
     " called...\n");
 
    const std::string trackerToolIdentifier =
@@ -332,12 +361,12 @@ FlockOfBirdsTracker
   return SUCCESS;
 }
 
-FlockOfBirdsTracker::ResultType
-FlockOfBirdsTracker::
+FlockOfBirdsTrackerNew::ResultType
+FlockOfBirdsTrackerNew::
 AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
     igstkLogMacro( DEBUG,
-        "igstk::FlockOfBirdsTracker::AddTrackerToolToInternalDataContainers "
+        "igstk::FlockOfBirdsTrackerNew::AddTrackerToolToInternalDataContainers "
         "called ...\n");
 
     if ( trackerTool == NULL )
@@ -360,11 +389,13 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
     this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
 
+    m_NumberOfTools ++;
+
     return SUCCESS;
 }
 
 /** Print Self function */
-void FlockOfBirdsTracker::PrintSelf( std::ostream& os, 
+void FlockOfBirdsTrackerNew::PrintSelf( std::ostream& os, 
                                      itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);

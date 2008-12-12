@@ -40,12 +40,12 @@ namespace igstk
  *
  */
 
-class FlockOfBirdsTracker : public Tracker
+class FlockOfBirdsTrackerNew : public Tracker
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( FlockOfBirdsTracker, Tracker )
+  igstkStandardClassTraitsMacro( FlockOfBirdsTrackerNew, Tracker )
 
 public:
 
@@ -64,9 +64,9 @@ public:
 
 protected:
 
-  FlockOfBirdsTracker(void);
+  FlockOfBirdsTrackerNew(void);
 
-  virtual ~FlockOfBirdsTracker(void);
+  virtual ~FlockOfBirdsTrackerNew(void);
 
   /** typedef for internal boolean return type */
   typedef Tracker::ResultType   ResultType;
@@ -116,11 +116,11 @@ protected:
 
 private:
 
-  FlockOfBirdsTracker(const Self&);   //purposely not implemented
+  FlockOfBirdsTrackerNew(const Self&);   //purposely not implemented
   void operator=(const Self&);        //purposely not implemented
 
   /** typedefs for the tool */
-  typedef igstk::FlockOfBirdsTrackerTool       FlockOfBirdsTrackerToolType;
+  typedef igstk::FlockOfBirdsTrackerToolNew       FlockOfBirdsTrackerToolType;
   typedef FlockOfBirdsTrackerToolType::Pointer FlockOfBirdsTrackerToolPointer;
   typedef FlockOfBirdsTrackerToolType::ConstPointer
                                      FlockOfBirdsTrackerToolConstPointer;

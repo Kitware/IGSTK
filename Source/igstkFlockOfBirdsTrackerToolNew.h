@@ -14,14 +14,14 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __igstkFlockOfBirdsTrackerTool_h
-#define __igstkFlockOfBirdsTrackerTool_h
+#ifndef __igstkFlockOfBirdsTrackerToolNew_h
+#define __igstkFlockOfBirdsTrackerToolNew_h
 
 #include "igstkTrackerTool.h"
 
 namespace igstk
 {
-/** \class FlockOfBirdsTrackerTool
+/** \class FlockOfBirdsTrackerToolNew
  *
  * \brief A FlockOfBirds-specific TrackerTool class.
  *
@@ -34,55 +34,57 @@ namespace igstk
  *
  */
 
-class FlockOfBirdsTrackerTool : public TrackerTool
+class FlockOfBirdsTrackerToolNew : public TrackerTool
 {
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( FlockOfBirdsTrackerTool, TrackerTool )
+  igstkStandardClassTraitsMacro( FlockOfBirdsTrackerToolNew, TrackerTool )
 
-  /** Get Tracker tool bird name */
-  igstkGetStringMacro( BirdName );
+  /** Get tracker tool port number */
+  igstkGetMacro( PortNumber, unsigned int );
 
-  /** Set tracker tool bird name */
-  void RequestSetBirdName( const std::string & birdName); 
+  /** Request setting the port number. The tool can only be attached to a
+   * tracker after its port number has been defined. Valid port numbers are
+   * in [1,4]. */
+  void RequestSetPortNumber( unsigned int portNumber );
 
 protected:
 
-  FlockOfBirdsTrackerTool();
-  ~FlockOfBirdsTrackerTool();
+  FlockOfBirdsTrackerToolNew();
+  ~FlockOfBirdsTrackerToolNew();
 
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
 private:
 
-  FlockOfBirdsTrackerTool(const Self&);    //purposely not implemented
+  FlockOfBirdsTrackerToolNew(const Self&);    //purposely not implemented
   void operator=(const Self&);       //purposely not implemented
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Idle );
-  igstkDeclareStateMacro( BirdNameSpecified );
+  igstkDeclareStateMacro( PortNumberSpecified );
 
   /** Inputs to the State Machine */
-  igstkDeclareInputMacro( ValidBirdName );
-  igstkDeclareInputMacro( InValidBirdName );
+  igstkDeclareInputMacro( ValidPortNumber );
+  igstkDeclareInputMacro( InValidPortNumber );
 
   /** Get boolean variable to check if the tracker tool is 
   * configured or not */
   virtual bool CheckIfTrackerToolIsConfigured() const;
 
   /** Report Invalid bird name specified*/ 
-  void ReportInvalidBirdNameSpecifiedProcessing( );
+  void ReportInvalidPortNumberSpecifiedProcessing( );
 
   /** Report any invalid request to the logger */
   void ReportInvalidRequestProcessing();
 
   /** Set bird name */
-  void SetBirdNameProcessing();
+  void SetPortNumberProcessing();
 
-  std::string     m_BirdName;
-  std::string     m_BirdNameToBeSet;
+  unsigned int    m_PortNumber;
+  unsigned int    m_PortNumberToBeSet;
 
   bool            m_TrackerToolConfigured;
 
@@ -92,4 +94,4 @@ private:
 } // namespace igstk
 
 
-#endif  // __igstk_FlockOfBirdsTrackerTool_h_
+#endif  // __igstk_FlockOfBirdsTrackerToolNew_h_

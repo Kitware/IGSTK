@@ -27,40 +27,42 @@ namespace igstk
 {
 
 /** Constructor (initializes FlockOfBirds-specific tool values) */
-FlockOfBirdsTrackerTool::FlockOfBirdsTrackerTool():m_StateMachine(this)
+FlockOfBirdsTrackerToolNew::FlockOfBirdsTrackerToolNew():m_StateMachine(this)
 {
     m_TrackerToolConfigured = false;
+    m_PortNumber    = 1;
 
     // States
     igstkAddStateMacro( Idle );
-    igstkAddStateMacro( BirdNameSpecified );
+    igstkAddStateMacro( PortNumberSpecified );
 
     // Set the input descriptors
-    igstkAddInputMacro( ValidBirdName );
-    igstkAddInputMacro( InValidBirdName );
+    igstkAddInputMacro( ValidPortNumber );
+    igstkAddInputMacro( InValidPortNumber );
 
 
     // Add transitions
     //
     // Transitions from idle state
     igstkAddTransitionMacro( Idle,
-        ValidBirdName,
-        BirdNameSpecified,
-        SetBirdName );
+        ValidPortNumber,
+        PortNumberSpecified,
+        SetPortNumber );
 
     igstkAddTransitionMacro( Idle,
-        InValidBirdName,
+        InValidPortNumber,
         Idle,
-        ReportInvalidBirdNameSpecified );
+        ReportInvalidPortNumberSpecified );
 
     // Transitions from MarkerName specified
-    igstkAddTransitionMacro( BirdNameSpecified,
-        ValidBirdName,
-        BirdNameSpecified,
+    igstkAddTransitionMacro( PortNumberSpecified,
+        ValidPortNumber,
+        PortNumberSpecified,
         ReportInvalidRequest );
-    igstkAddTransitionMacro( BirdNameSpecified,
-        InValidBirdName,
-        BirdNameSpecified,
+
+    igstkAddTransitionMacro( PortNumberSpecified,
+        InValidPortNumber,
+        PortNumberSpecified,
         ReportInvalidRequest );
 
     // Inputs to the state machine
@@ -70,63 +72,61 @@ FlockOfBirdsTrackerTool::FlockOfBirdsTrackerTool():m_StateMachine(this)
 }
 
 /** Destructor */
-FlockOfBirdsTrackerTool::~FlockOfBirdsTrackerTool()
+FlockOfBirdsTrackerToolNew::~FlockOfBirdsTrackerToolNew()
 {
 }
 
-/** The "RequestAttachToTracker" method attaches 
- * the tracker tool to a tracker. */
-// void RequestAttachToTracker( FlockOfBirdsTracker *  tracker )
-// {
-//   // This delegation is done only to enforce type matching between
-//   // TrackerTool and Tracker. It prevents the user from accidentally 
-//   // mix TrackerTools and Trackers of different type;
-//   this->TrackerTool::RequestAttachToTracker( tracker );
-// }
-
 /** Request set marker name */
-void FlockOfBirdsTrackerTool::RequestSetBirdName( const std::string& birdName )
+void FlockOfBirdsTrackerToolNew::RequestSetPortNumber( unsigned int portNumber )
 {
     igstkLogMacro( DEBUG, 
-         "igstk::FlockOfBirdsTrackerTool::RequestSetBirdName called ...\n");
-    if ( birdName == "" )
+         "igstk::FlockOfBirdsTrackerToolNew::RequestSetPortNumber called ...\n");
+    const unsigned int MAXIMUM_PORT_NUMBER = 4;
+    const unsigned int MINIMUM_PORT_NUMBER = 1;
+
+  if ( (portNumber > MAXIMUM_PORT_NUMBER) ||
+       (portNumber < MINIMUM_PORT_NUMBER) )
     {
-        m_StateMachine.PushInput( m_InValidBirdNameInput );
-        m_StateMachine.ProcessInputs();
+    m_StateMachine.PushInput( m_InValidPortNumberInput );
+    m_StateMachine.ProcessInputs();
     }
-    else 
+  else 
     {
-        m_BirdNameToBeSet = birdName;
-        m_StateMachine.PushInput( m_ValidBirdNameInput );
-        m_StateMachine.ProcessInputs();
+    this->m_PortNumberToBeSet = portNumber;
+    m_StateMachine.PushInput( m_ValidPortNumberInput );
+    m_StateMachine.ProcessInputs();
     }
 }
 
 /** Set valid marker name */ 
-void FlockOfBirdsTrackerTool::SetBirdNameProcessing( )
+void FlockOfBirdsTrackerToolNew::SetPortNumberProcessing( )
 {
     igstkLogMacro( DEBUG, 
-         "igstk::FlockOfBirdsTrackerTool::SetBirdNameProcessing called ...\n");
+         "igstk::FlockOfBirdsTrackerToolNew::SetPortNumberProcessing called ...\n");
 
-    this->m_BirdName = m_BirdNameToBeSet;
+    this->m_PortNumber = m_PortNumberToBeSet;
 
     m_TrackerToolConfigured = true;
 
-    // For MicronTracker, marker name is used as a unique identifier
-    this->SetTrackerToolIdentifier( m_BirdName ); 
+    //Set the tracker tool unique identifier to the port number. If a
+    //channel number is specified a unique identifier will be regenerated
+    //using port and channel number information
+    std::stringstream identifierStream;
+    identifierStream << m_PortNumber;
+    this->SetTrackerToolIdentifier( identifierStream.str() );
 }
 
-/** Report Invalid marker name*/ 
-void FlockOfBirdsTrackerTool::ReportInvalidBirdNameSpecifiedProcessing( )
+/** Report Invalid bird name*/ 
+void FlockOfBirdsTrackerToolNew::ReportInvalidPortNumberSpecifiedProcessing( )
 {
     igstkLogMacro( DEBUG, 
-    "igstk::FlockOfBirdsTrackerTool::ReportInvalidBirdNameSpecifiedProcessing "
+    "igstk::FlockOfBirdsTrackerToolNew::ReportInvalidPortNumberSpecifiedProcessing "
          "called ...\n");
 
     igstkLogMacro( CRITICAL, "Invalid bird name specified ");
 }
 
-void FlockOfBirdsTrackerTool::ReportInvalidRequestProcessing()
+void FlockOfBirdsTrackerToolNew::ReportInvalidRequestProcessing()
 {
    igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
 }
@@ -134,19 +134,19 @@ void FlockOfBirdsTrackerTool::ReportInvalidRequestProcessing()
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
 * tool is configured */ 
 bool
-FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured( ) const
+FlockOfBirdsTrackerToolNew::CheckIfTrackerToolIsConfigured( ) const
 {
    igstkLogMacro( DEBUG, 
-          "igstk::FlockOfBirdsTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+          "igstk::FlockOfBirdsTrackerToolNew::CheckIfTrackerToolIsConfigured called...\n");
    return m_TrackerToolConfigured;
 }
 
 /** Print Self function */
-void FlockOfBirdsTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void FlockOfBirdsTrackerToolNew::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
     Superclass::PrintSelf(os, indent);
 
-    os << indent << "Bird name : "        << m_BirdName << std::endl;
+    os << indent << "Port number : "      << m_PortNumber << std::endl;
     os << indent << "TrackerToolConfigured:"
        << m_TrackerToolConfigured << std::endl;
 }
