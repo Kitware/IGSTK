@@ -6,6 +6,8 @@ ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
 
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools
+
 ) 
  
 SET(BronchoscopyNavigator_GUI_SRCS
@@ -18,14 +20,15 @@ SET(BronchoscopyNavigator_SRCS
   BronchoscopyNavigator.cxx
   BronchoscopyNavigatorQuadrantViews.h
   BronchoscopyNavigatorQuadrantViews.cxx
-  igstkFiducialsPlan.h
-  igstkFiducialsPlan.cxx
-  igstkFiducialsPlanIO.h
-  igstkFiducialsPlanIO.cxx
-  igstkPathPlan.h
-  igstkPathPlan.cxx
-  igstkPathPlanIO.h
-  igstkPathPlanIO.cxx
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlan.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlan.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlanIO.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlanIO.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlan.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlan.cxx
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlanIO.h
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlanIO.cxx
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
