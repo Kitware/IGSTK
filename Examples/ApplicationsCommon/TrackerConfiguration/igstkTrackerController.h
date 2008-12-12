@@ -24,6 +24,7 @@
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkMedSafeTrackerConfiguration.h"
+#include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
@@ -194,6 +195,7 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializePolarisVicra );
   igstkDeclareStateMacro( AttemptingToInitializePolarisHybrid );
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
+  igstkDeclareStateMacro( AttemptingToInitializeAscension );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
   igstkDeclareStateMacro( AttemptingToInitializeMedSafe );  
   igstkDeclareStateMacro( Initialized );
@@ -207,6 +209,7 @@ private:
   igstkDeclareInputMacro( PolarisVicraInitialize );
   igstkDeclareInputMacro( PolarisHybridInitialize );
   igstkDeclareInputMacro( AuroraInitialize );
+  igstkDeclareInputMacro( AscensionInitialize );
   igstkDeclareInputMacro( MicronInitialize );
   igstkDeclareInputMacro( MedSafeInitialize );
   igstkDeclareInputMacro( StartTracking );
@@ -226,6 +229,7 @@ private:
   void PolarisVicraInitializeProcessing();
   void PolarisHybridInitializeProcessing();
   void AuroraInitializeProcessing();
+  void AscensionInitializeProcessing();
   void MicronInitializeProcessing();
   void MedSafeInitializeProcessing();
   void StartTrackingProcessing();
@@ -265,9 +269,11 @@ private:
     const MicronToolConfiguration *toolConfiguration );
 
 #endif
-  FlockOfBirdsTrackerTool::Pointer InitializeMedSafeTool(
+  FlockOfBirdsTrackerToolNew::Pointer InitializeMedSafeTool(
     const MedSafeToolConfiguration *toolConfiguration );
 
+  FlockOfBirdsTrackerToolNew::Pointer InitializeAscensionTool(
+    const AscensionToolConfiguration *toolConfiguration );
 
   class ErrorObserver : public itk::Command
     {

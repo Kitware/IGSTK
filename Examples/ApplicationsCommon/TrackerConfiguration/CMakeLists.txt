@@ -8,6 +8,7 @@ SET(TrackerConfiguration_SRCS
   #igstkAuroraTrackerConfigurationComposer.cxx
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
+  igstkAscensionTrackerConfiguration.cxx
   igstkMedSafeTrackerConfiguration.cxx
   igstkAuroraTrackerConfiguration.cxx
   igstkMicronTrackerConfiguration.cxx

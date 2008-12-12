@@ -24,7 +24,7 @@
 
 #include "igstkPolarisTracker.h"
 #include "igstkAuroraTracker.h"
-//#include "igstkFlockOfBirdsTracker.h"
+#include "igstkFlockOfBirdsTrackerNew.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
@@ -52,6 +52,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializePolarisHybrid );
   igstkAddStateMacro( AttemptingToInitializeAurora );
   igstkAddStateMacro( AttemptingToInitializeMicron );
+  igstkAddStateMacro( AttemptingToInitializeAscension );  
   igstkAddStateMacro( AttemptingToInitializeMedSafe );  
   igstkAddStateMacro( Initialized );
   igstkAddStateMacro( AttemptingToStartTracking );
@@ -64,6 +65,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( PolarisVicraInitialize );
   igstkAddInputMacro( PolarisHybridInitialize );
   igstkAddInputMacro( AuroraInitialize );
+  igstkAddInputMacro( AscensionInitialize );
   igstkAddInputMacro( MicronInitialize );
   igstkAddInputMacro( MedSafeInitialize );
   igstkAddInputMacro( StartTracking );
@@ -76,7 +78,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( GetReferenceTool  );
   igstkAddInputMacro( SetParentSpatialObject  );
   igstkAddInputMacro( SetChildSpatialObject  );
-
 
   //define the state machine's transitions
 
@@ -98,6 +99,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Idle,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Idle,
+                           AscensionInitialize,
                            Idle,
                            ReportInvalidRequest );
   
@@ -181,6 +187,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            AttemptingToInitializeAurora,
                            AuroraInitialize );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           AscensionInitialize,
+                           AttemptingToInitializeAscension,
+                           AscensionInitialize );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            MicronInitialize,
@@ -272,7 +283,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            MicronInitialize,
                            Idle,
@@ -353,7 +369,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            MicronInitialize,
                            Idle,
@@ -434,6 +455,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Idle,
                            ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
   
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            MicronInitialize,
@@ -485,6 +511,92 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+    //transitions from AttemptingToInitializeAscension state
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           MedSafeInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest );
+
   //transitions from AttemptingToInitializeMicron state
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            Failed,
@@ -513,6 +625,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           AscensionInitialize,
                            Idle,
                            ReportInvalidRequest );
   
@@ -596,7 +713,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
                            MicronInitialize,
                            Idle,
@@ -707,6 +829,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Initialized,
                            ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Initialized,
+                           AscensionInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
   
   igstkAddTransitionMacro( Initialized,
                            MicronInitialize,
@@ -758,7 +885,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           AscensionInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            MicronInitialize,
                            AttemptingToStartTracking,
@@ -832,6 +964,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Tracking,
                            AuroraInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           AscensionInitialize,
                            Tracking,
                            ReportInvalidRequest );
   
@@ -920,7 +1057,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
+                           AscensionInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            MicronInitialize,
                            AttemptingToStopTracking,
@@ -1000,6 +1142,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
  
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            AuroraInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+   igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           AscensionInitialize,
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
@@ -1200,6 +1347,12 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AuroraInitialize );
       }
+    else if( dynamic_cast<AscensionTrackerConfiguration *>
+      ( this->m_TmpTrackerConfiguration ) )
+      {
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( AscensionInitialize );
+      }
    #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
@@ -1218,7 +1371,7 @@ TrackerController::TrackerInitializeProcessing()
    */
     else
       {
-      this->m_ErrorMessage = "Unknown tracker configuration type.";
+      this->m_ErrorMessage = "Could not initialize the tracker. See the debug log.";
       igstkPushInputMacro( Failed );
       }
     }
@@ -1583,6 +1736,90 @@ TrackerController::InitializeAuroraTool(
   return trackerTool;
 }
 
+FlockOfBirdsTrackerToolNew::Pointer 
+TrackerController::InitializeAscensionTool(
+    const AscensionToolConfiguration *toolConfiguration )
+{
+  FlockOfBirdsTrackerToolNew::Pointer trackerTool = FlockOfBirdsTrackerToolNew::New();
+
+  trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() );
+
+  trackerTool->SetCalibrationTransform( 
+    toolConfiguration->GetCalibrationTransform() );
+
+  trackerTool->RequestConfigure();
+  return trackerTool;
+}
+
+void 
+TrackerController::AscensionInitializeProcessing()
+{
+  if( !InitializeSerialCommunication() )
+  {
+    igstkPushInputMacro( Failed );
+  }
+  else
+  {
+    //create tracker
+    igstk::FlockOfBirdsTrackerNew::Pointer tracker = igstk::FlockOfBirdsTrackerNew::New();
+    this->m_Tracker = tracker; 
+    //don't need to observe this for errors because the 
+    //configuration class ensures that the frequency is valid
+    tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
+
+
+    //observe all possible errors generated by the tracker
+    //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)
+    unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
+                                                     this->m_ErrorObserver );
+    tracker->SetCommunication( this->m_SerialCommunication );
+    tracker->RequestOpen();
+    tracker->RemoveObserver(observerID);
+
+    if( this->m_ErrorObserver->ErrorOccured() )
+    {
+      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+      this->m_ErrorObserver->ClearError();
+      this->m_SerialCommunication->CloseCommunication();
+      igstkPushInputMacro( Failed );
+    }
+    else   //attach the tools 
+    {
+      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+                   //attach tools
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
+        toolConfigurations.end();
+      TrackerTool::Pointer currentTool;
+      AscensionToolConfiguration * currentToolConfig;
+
+      for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
+      {
+        currentToolConfig = 
+          static_cast<AscensionToolConfiguration *>( it->second );
+          currentTool = InitializeAscensionTool( currentToolConfig );
+        this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
+        currentTool->RequestAttachToTracker( tracker );
+      }
+                      //add the reference if we have one
+      TrackerToolConfiguration* referenceToolConfiguration = 
+        this->m_TrackerConfiguration->m_ReferenceTool;
+      if( referenceToolConfiguration )
+      {
+        currentToolConfig = 
+          static_cast<AscensionToolConfiguration *>( referenceToolConfiguration );
+        currentTool = InitializeAscensionTool( currentToolConfig );
+        this->m_ReferenceTool = currentTool;
+        currentTool->RequestAttachToTracker( tracker );
+        tracker->RequestSetReferenceTool( currentTool );
+      }
+      igstkPushInputMacro( Succeeded );
+    }
+  }  
+  this->m_StateMachine.ProcessInputs();
+}
 
 void 
 TrackerController::AuroraInitializeProcessing()

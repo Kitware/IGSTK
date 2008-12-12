@@ -19,9 +19,12 @@
 
 namespace igstk
 {
-               //maximal refresh rate for the 3D Guidance system with short/mid
+               //maximal refresh rate for the Ascension system with short/mid
                //range transmitters
 const double AscensionTrackerConfiguration::MAXIMAL_REFERESH_RATE = 115200;
+
+               //maximal port number for the Ascension system
+const unsigned AscensionTrackerConfiguration::MAXIMAL_PORT_NUMBER = 4;
 
 
 AscensionTrackerConfiguration::AscensionTrackerConfiguration()  
@@ -57,15 +60,14 @@ AscensionTrackerConfiguration::InternalAddTool( const
     this->InvokeEvent( fe );
     return;
   }
-   //check for valid bird name???
-
- /* if( wiredTool->GetPortNumber()>= this->MAXIMAL_PORT_NUMBER )
+ 
+  if( (wiredTool->GetPortNumber() > this->MAXIMAL_PORT_NUMBER) ||
+      (wiredTool->GetPortNumber() < 1) )
   {
     fe.Set( "Specified physical port number is invalid." );
     this->InvokeEvent( fe );
     return;
   }
-  */
   
          //copy the tool and add it as a standard or dynamic reference tool
   AscensionToolConfiguration *newTool = 
@@ -85,8 +87,7 @@ AscensionTrackerConfiguration::InternalAddTool( const
 }
 
 
-AscensionToolConfiguration::AscensionToolConfiguration() : m_BirdName( "" ),
-                                                           m_PortNumber( 0 )
+AscensionToolConfiguration::AscensionToolConfiguration() : m_PortNumber( 1 )
 {
 }                                                                
 
@@ -94,7 +95,6 @@ AscensionToolConfiguration::AscensionToolConfiguration() : m_BirdName( "" ),
 AscensionToolConfiguration::AscensionToolConfiguration( const 
   AscensionToolConfiguration &other ) : TrackerToolConfiguration( other ) 
 {
-  this->m_BirdName = other.m_BirdName;
   this->m_PortNumber = other.m_PortNumber;
 }                                                                
 
