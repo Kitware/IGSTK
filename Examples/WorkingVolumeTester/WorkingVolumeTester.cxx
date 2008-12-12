@@ -27,8 +27,11 @@
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
+#include "igstkMedSafeTrackerConfiguration.h"
+#include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkAuroraConfigurationXMLFileReader.h"
+#include "igstkAscensionConfigurationXMLFileReader.h"
 #include "igstkPolarisVicraConfigurationXMLFileReader.h"
 #include "igstkPolarisSpectraConfigurationXMLFileReader.h"
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
@@ -585,6 +588,67 @@ bool WorkingVolumeTester::ReadMicronConfiguration(igstk::TrackerConfigurationFil
   return true;
 }
 
+bool WorkingVolumeTester::ReadAscensionConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
+{
+
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
+                                                        trackerCofigurationXMLReader;
+
+  trackerCofigurationXMLReader = igstk::AscensionConfigurationXMLFileReader::New();
+
+  //setting the file name and reader always succeeds so I don't
+             //observe the trackerConfigReader for their success events
+ // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
+  reader->RequestSetReader( trackerCofigurationXMLReader );
+
+   //need to observe if the request read succeeds or fails
+   //there is a third option that the read is invalid, if the
+   //file name or xml reader weren't set
+  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
+                                ReadTrackerConfigurationFailSuccessObserverType::New();
+
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
+                                    trackerReaderObserver );
+  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
+                                    trackerReaderObserver );
+  reader->RequestRead();
+
+  if( trackerReaderObserver->GotFailure() )
+  {
+      igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: "\
+        << trackerReaderObserver->GetFailureMessage() << "\n" )
+      return false;
+  }
+
+  if( !trackerReaderObserver->GotSuccess() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: could not read ASCENSION tracker configuration file\n")
+     return false;
+  }
+
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
+    TrackerConfigurationObserver::New();
+
+  reader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
+
+  reader->RequestGetData();
+  
+  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
+  {
+     igstkLogMacro2( m_Logger, DEBUG, 
+        "WorkingVolumeTester::ReadAscensionConfiguration error: could not get ASCENSION tracker configuration\n")
+     return false;
+  }
+
+  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
+
+  return true;
+}
+
 bool WorkingVolumeTester::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
 {
 
@@ -669,7 +733,11 @@ void WorkingVolumeTester::ConfigureTrackerProcessing()
              //observe the trackerConfigReader for their success events
   trackerConfigReader->RequestSetFileName( fileName );
 
-  if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
+  if ( this->ReadAscensionConfiguration( trackerConfigReader ) )
+  {
+    m_StateMachine.PushInput( m_SuccessInput );    
+  }
+  else if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
   {
     m_StateMachine.PushInput( m_SuccessInput );    
   }
@@ -931,7 +999,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
     m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
     m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create reslice plane spatial object for sagittal view
@@ -939,7 +1007,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
     m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
     m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create reslice plane spatial object for coronal view
@@ -947,7 +1015,7 @@ void WorkingVolumeTester::LoadWorkingVolumeMeshProcessing()
     m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
     m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
     m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_MeshSpatialObject );
-    m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[1] );
+    m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_TipSpatialObjectVector[0] );
     m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
 
     // create a mesh reslice representation for axial view
@@ -1258,12 +1326,7 @@ void WorkingVolumeTester::StartTrackingProcessing()
     m_ViewerGroup->m_CoronalView->RequestAddObject(m_WorldReferenceRepresentation->Copy());
     m_ViewerGroup->m_3DView->RequestAddObject(m_WorldReferenceRepresentation->Copy());  
 
-    // add tool´s tip to the views
-    //m_ViewerGroup->m_AxialView->RequestAddObject(m_TipRepresentation->Copy());
-    //m_ViewerGroup->m_SagittalView->RequestAddObject(m_TipRepresentation->Copy());
-    //m_ViewerGroup->m_CoronalView->RequestAddObject(m_TipRepresentation->Copy());
-    //m_ViewerGroup->m_3DView->RequestAddObject(m_TipRepresentation->Copy());
-
+    // reset cameras in all the views
     m_ViewerGroup->m_AxialView->RequestResetCamera();
     m_ViewerGroup->m_SagittalView->RequestResetCamera();
     m_ViewerGroup->m_CoronalView->RequestResetCamera();

@@ -37,6 +37,8 @@ ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/conf
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
 
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
+
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
@@ -61,6 +63,8 @@ ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/conf
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.h
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
+
+${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
 
 ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
 
