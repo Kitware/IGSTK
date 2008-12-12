@@ -2303,6 +2303,10 @@ UltrasoundCalibrationWizard
   m_TrackerSemaphore->label("not visible");
   m_ControlGroup->redraw();  
   Fl::check();
+
+  m_CollectingProbeSamples = false;
+  m_CollectingPointerSamples = false;
+
 }
 
 void 
@@ -2313,6 +2317,10 @@ UltrasoundCalibrationWizard
   m_ImagerSemaphore->label("tracking");
   m_ControlGroup->redraw();  
   Fl::check();
+
+  m_CollectingProbeSamples = false;
+  m_CollectingPointerSamples = false;
+
 }
 
 void 
@@ -2552,6 +2560,7 @@ UltrasoundCalibrationWizard
 {
   this->RequestStopTracking();
   this->RequestDisconnectTracker();
+  this->WriteSampledPoints("ultrasound/samples.txt");
 }
 
 /** -----------------------------------------------------------------
@@ -2588,8 +2597,18 @@ UltrasoundCalibrationWizard
       {
          m_CollectingProbeSamples = true;
          m_CollectingPointerSamples = true;      
+         std::stringstream filename;              
+         filename << "ultrasound/" << m_SnapShotCounter << ".png";
+         m_SnapShotCounter++;              
+         m_VideoFrameRepresentationForVideoView->SaveScreenShot( filename.str().c_str() );              
+         fl_beep( FL_BEEP_MESSAGE );
       }
       break;
+
+    case 'w': // write transforms
+      this->WriteSampledPoints("ultrasound/samples.txt");
+      break;
+
     default:  
          return;
   }
@@ -2639,57 +2658,59 @@ void
 UltrasoundCalibrationWizard
 ::WriteSampledPoints( const char *filename )
 {
+  igstkLogMacro2( m_Logger, DEBUG, 
+      "UltrasoundCalibrationWizard::WriteSampledPoints called...\n" )
+
   igstk::UltrasoundCalibrationIO * writer = new igstk::UltrasoundCalibrationIO;
   writer->SetFileName( filename );
   writer->SetUltrasoundCalibration( m_UltrasoundCalibrationSamples );
   writer->RequestWrite();
+
+  igstkLogMacro2( m_Logger, DEBUG, 
+      "UltrasoundCalibrationWizard::WriteSampledPoints points successfully writen...\n" )
 }
 
+/** -----------------------------------------------------------------
+*  Callback for the update transform event generated in the tracker tool
+*---------------------------------------------------------------------
+*/
 void 
 UltrasoundCalibrationWizard
 ::TrackerToolUpdateTransformCallback( const itk::EventObject & event )
 {
-  std::cout << "TrackerToolUpdateTransformCallback entered " << std::endl;
-
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
   {
     typedef igstk::TransformObserver ObserverType;
     ObserverType::Pointer transformObserver = ObserverType::New();
-    transformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    transformObserver->ObserveTransformEventsFrom( m_TrackerTool );
     transformObserver->Clear();
     
     m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
     
     if ( transformObserver->GotTransform() )
     {   
-        std::cout << "TrackerToolUpdateTransformCallback transformObserver->GotTransform() passed " << std::endl;
-
         igstk::Transform transform = transformObserver->GetTransform();       
 
         if ( m_CollectingPointerSamples )
         {
             PointType point = TransformToPoint( transform );
             m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( transform );
-            std::cout << "pointer: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
-            
-            std::stringstream filename;              
-            filename << "/ultrasound" << m_SnapShotCounter << ".png";
-            m_SnapShotCounter++;              
-            m_VideoFrameRepresentationForVideoView->SaveScreenShot( filename.str().c_str() );              
-            fl_beep( FL_BEEP_MESSAGE );
-
+            std::cout << "pointer: " << point[0] << " " << point[1] << " " << point[2] << std::endl;                        
             m_CollectingPointerSamples = false;
         }
     }
   }
 }
 
-
+/** -----------------------------------------------------------------
+*  Callback for the update transform event generated in the imager tool
+*---------------------------------------------------------------------
+*/
 void 
 UltrasoundCalibrationWizard
 ::ImagerToolUpdateTransformCallback(const itk::EventObject & event )
 {
-  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
+  if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
   {
     typedef igstk::TransformObserver ObserverType;
     ObserverType::Pointer transformObserver = ObserverType::New();

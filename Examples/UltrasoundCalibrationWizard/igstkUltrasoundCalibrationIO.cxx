@@ -48,7 +48,10 @@ int UltrasoundCalibrationIO::RequestWrite()
     {
     std::string line;
     
+    calibFile << "Samples format: \n";
+    calibFile << "US_time US_tx US_ty US_tz US_qx US_qy US_qz US_qw probe_time probe_tx probe_ty probe_tz probe_qx probe_qy probe_qz probe_qw \n";
     calibFile << "# number of samples: " << probeNumberOfSamples << "\n";
+
     for ( int i=0; i<probeNumberOfSamples; i++)
     {
       // point US calibration format
@@ -72,11 +75,12 @@ int UltrasoundCalibrationIO::RequestWrite()
 
       double  probePosition[3];
       probeTransform->GetPosition( probePosition ); 
-            
-      calibFile << probeTime << " ";
-      calibFile << probePosition[0] << " " << probePosition[1] << " " << probePosition[2] << " ";
 
-     // calibFile << probeAngles[0] << " " << probeAngles[1] << " " << probeAngles[2] << " ";
+//      itk::OStringStream probeOStr;
+//      probeOStr.precision(30);
+//      probeOStr << probeTime;
+//      calibFile << probeOStr.str().c_str() << " ";
+      calibFile << probePosition[0] << " " << probePosition[1] << " " << probePosition[2] << " ";
       calibFile << probeQuat.GetX() << " " << probeQuat.GetY() << " " << probeQuat.GetZ() << " " << probeQuat.GetW() << " ";
 
       probeTransform->Delete();
@@ -101,10 +105,11 @@ int UltrasoundCalibrationIO::RequestWrite()
       double  pointerPosition[3];
       pointerTransform->GetPosition( pointerPosition ); 
       
-      calibFile << pointerTime << " ";
+//      itk::OStringStream pointerOStr;
+//      pointerOStr.precision(30);
+//      pointerOStr << pointerTime;
+//      calibFile << pointerOStr.str().c_str() << " ";
       calibFile << pointerPosition[0] << " " << pointerPosition[1] << " " << pointerPosition[2] << " ";
-
-      //calibFile << pointerAngles[0] << " " << pointerAngles[1] << " " << pointerAngles[2] << "\n";
       calibFile << pointerQuat.GetX() << " " << pointerQuat.GetY() << " " << pointerQuat.GetZ() << " " << pointerQuat.GetW() << "\n";
 
       pointerTransform->Delete();
