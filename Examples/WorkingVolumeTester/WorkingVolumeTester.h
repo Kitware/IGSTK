@@ -32,9 +32,6 @@
 #include "igstkEllipsoidObject.h"
 #include "igstkEllipsoidObjectRepresentation.h"
 
-#include "igstkCrossHairObject.h"
-#include "igstkCrossHairRepresentation.h"
-
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
 
@@ -102,10 +99,6 @@ public:
 
   /** mesh reslice representation */
   typedef igstk::MeshResliceSpatialObjectRepresentation  MeshResliceRepresentationType;
-
-  /** Cross hair object and representation */
-  typedef igstk::CrossHairObject                   CrossHairType;
-  typedef igstk::CrossHairRepresentation           CrossHairRepresentationType; 
 
   /** typedef for axes spatial objects */
   typedef igstk::AxesObject                           AxesObjectType;
@@ -210,10 +203,6 @@ private:
 
   /** tracker configuration object */
   const igstk::TrackerConfiguration *                   m_TrackerConfiguration;
-
-  /** cross hair object and representation */
-  CrossHairType::Pointer                                m_CrossHair;
-  CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
 
   /** plane reslicer spatial objects */
   ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;

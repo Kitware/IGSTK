@@ -78,7 +78,7 @@ public:
   igstk::Transform GetToolTransform() const;
 
   /** Get boundings by index */
-  double GetBoundingBoxDimensionByIndex(unsigned int index);
+  double GetBoundingBoxDimensionByIndex(unsigned int index) const;
  
 protected:
 

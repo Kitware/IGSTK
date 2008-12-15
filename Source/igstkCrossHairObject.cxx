@@ -295,7 +295,7 @@ CrossHairObject
  /** Return a given dimension */
 double
 CrossHairObject
-::GetBoundingBoxDimensionByIndex(unsigned int index)
+::GetBoundingBoxDimensionByIndex(unsigned int index) const
 {
 
   if(index >= 6)
