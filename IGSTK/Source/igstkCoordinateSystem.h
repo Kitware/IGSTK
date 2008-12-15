@@ -21,7 +21,6 @@
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkTransform.h"
-#include "itkTimeProbe.h"
 
 namespace igstk
 {
