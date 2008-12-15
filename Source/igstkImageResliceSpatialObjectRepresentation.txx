@@ -72,6 +72,14 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
 
   // Create classes for displaying images
   m_ImageActor = vtkActor::New();
+
+  m_PlaneProperty = vtkProperty::New();
+  m_PlaneProperty->SetAmbient(1.0);
+  m_PlaneProperty->SetAmbientColor(1.0,1.0,1.0);
+  m_PlaneProperty->SetOpacity(1);
+
+ // m_ImageActor->SetProperty( m_PlaneProperty );
+
   this->AddActor( m_ImageActor );
  
   // for dubugging purpose
@@ -692,12 +700,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkActor::New();
-
-  m_PlaneProperty = vtkProperty::New();
-  m_PlaneProperty->SetAmbient(1.0);
-  m_PlaneProperty->SetAmbientColor(1.0,1.0,1.0);
-
-
+ // m_ImageActor->SetProperty(m_PlaneProperty);
   this->AddActor( m_ImageActor );  
 
   // for dubugging purpose
@@ -750,7 +753,7 @@ ImageResliceSpatialObjectRepresentation< TImageSpatialObject >
   m_ImageActor->SetTexture(m_Texture);
   
   m_ImageActor->PickableOff();
-  m_ImageActor->SetProperty(m_PlaneProperty);
+//  m_ImageActor->SetProperty(m_PlaneProperty);
   
   texturePlaneMapper->Delete();
 }
