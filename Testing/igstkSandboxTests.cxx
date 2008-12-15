@@ -39,6 +39,7 @@ void RegisterTests()
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
   REGISTER_TEST(igstkCrossHairObjectTest);
+  REGISTER_TEST(igstkToolProjectionObjectTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
