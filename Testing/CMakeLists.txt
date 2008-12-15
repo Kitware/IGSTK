@@ -119,6 +119,8 @@ SET(SandboxTests_SRCS
   igstkReslicerPlaneSpatialObjectTest.cxx
   igstkAffineTransformTest.cxx
   igstkPerspectiveTransformTest.cxx
+
+  igstkCrossHairObjectTest.cxx
  )
 
 IF(IGSTKSandbox_USE_Qt)
@@ -251,6 +253,7 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
+ADD_TEST( igstkCrossHairObjectTest ${IGSTKSandbox_TESTS} igstkCrossHairObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
 IF(IGSTKSandbox_USE_Qt)
