@@ -13,8 +13,8 @@ class UltrasoundCalibrationWizardGUI {open : {public igstk::Object}
     Fl_Window mainWindow {
       label {IGSTK - Ultrasound Calibration Wizard}
       callback {Quit();}
-      xywh {-32000 -32000 1280 800} type Double box PLASTIC_UP_BOX hide resizable
-      code0 {\#include "igstkFLTKWidget.h"}
+      xywh {4 23 1280 800} type Double box PLASTIC_UP_BOX resizable
+      code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group m_ControlGroup {
         xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
@@ -94,6 +94,10 @@ RequestLoadTrackerToolSpatialObject();}
             tooltip {Enable/Disable Point Collector} xywh {22 452 106 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
           }
         }
+        Fl_Output m_SamplesLabel {
+          label Samples selected
+          xywh {70 531 65 24}
+        }
       }
       Fl_Group m_ViewerGroup {open
         xywh {151 0 1127 800} box PLASTIC_DOWN_BOX resizable
@@ -136,11 +140,11 @@ this->hasQuitted = false;}
       }
     }
     Fl_Window m_WinProgress {
-      label {SNAP Progress Meter} selected
+      label {SNAP Progress Meter}
       xywh {469 496 485 70} type Double box BORDER_BOX color 53 modal noborder visible
     } {
       Fl_Group {} {
-        label {Working ...} open
+        label {Waiting for client ...} open
         xywh {0 0 480 25} labelfont 1 labelsize 16 align 16
       } {}
       Fl_Group {} {open

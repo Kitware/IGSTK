@@ -42,8 +42,8 @@
 #define IMAGER_DEFAULT_REFRESH_RATE 15
 
 // name of the tool that is going to drive the reslicing
-#define TRACKER_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
-#define IMAGER_TOOL_NAME "sProbe" //sPtr // bayonet // hybrid_pointer
+#define TRACKER_TOOL_NAME "needle1" //sPtr // bayonet // hybrid_pointer
+#define IMAGER_TOOL_NAME "needle2" //sProbe //sPtr // bayonet // hybrid_pointer
 
 
 /** -----------------------------------------------------------------
@@ -60,8 +60,8 @@ UltrasoundCalibrationWizard::UltrasoundCalibrationWizard() :
   m_CollectorEnabled = false;
   m_ImagerInitialized = false;
   m_VideoRunning = false;
-  m_CollectingProbeSamples = false;
-  m_CollectingPointerSamples = false;
+  m_TrackerCollectingSamples = false;
+  m_ImagerCollectingSamples = false;
 
   m_SnapShotCounter = 0;
 
@@ -2254,14 +2254,6 @@ UltrasoundCalibrationWizard
         m_Parent->m_ImagerToolUpdateObserver->SetCallbackFunction( m_Parent,
                                &UltrasoundCalibrationWizard::ImagerToolUpdateTransformCallback );
     }
-    /*
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.begin();
-    for ( ; iter != toolContainer.end(); iter++ )
-    {
-      m_Parent->m_ToolVector.push_back( (*iter).second );
-      std::cout << "UltrasoundCalibrationWizard::TrackerControllerObserver::Execute() found tool: " << (*iter).first << std::endl;
-    }
-    */
   }
   else if ( evt4 )
   {
@@ -2304,9 +2296,8 @@ UltrasoundCalibrationWizard
   m_ControlGroup->redraw();  
   Fl::check();
 
-  m_CollectingProbeSamples = false;
-  m_CollectingPointerSamples = false;
-
+  m_TrackerCollectingSamples = false;
+  m_ImagerCollectingSamples = false;
 }
 
 void 
@@ -2317,10 +2308,6 @@ UltrasoundCalibrationWizard
   m_ImagerSemaphore->label("tracking");
   m_ControlGroup->redraw();  
   Fl::check();
-
-  m_CollectingProbeSamples = false;
-  m_CollectingPointerSamples = false;
-
 }
 
 void 
@@ -2331,6 +2318,9 @@ UltrasoundCalibrationWizard
   m_ImagerSemaphore->label("not visible");
   m_ControlGroup->redraw();  
   Fl::check();
+
+  m_TrackerCollectingSamples = false;
+  m_ImagerCollectingSamples = false;
 }
 
 void 
@@ -2595,13 +2585,8 @@ UltrasoundCalibrationWizard
     case 'g': // grab tracker and imager transforms
       if (m_CollectorEnabled)
       {
-         m_CollectingProbeSamples = true;
-         m_CollectingPointerSamples = true;      
-         std::stringstream filename;              
-         filename << "ultrasound/" << m_SnapShotCounter << ".png";
-         m_SnapShotCounter++;              
-         m_VideoFrameRepresentationForVideoView->SaveScreenShot( filename.str().c_str() );              
-         fl_beep( FL_BEEP_MESSAGE );
+         m_TrackerCollectingSamples = true;
+         m_ImagerCollectingSamples = true;                       
       }
       break;
 
@@ -2678,29 +2663,42 @@ void
 UltrasoundCalibrationWizard
 ::TrackerToolUpdateTransformCallback( const itk::EventObject & event )
 {
+  if ( !m_TrackerCollectingSamples )
+  return;
+
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
   {
     typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer transformObserver = ObserverType::New();
-    transformObserver->ObserveTransformEventsFrom( m_TrackerTool );
-    transformObserver->Clear();
+    ObserverType::Pointer trackerToolTransformObserver = ObserverType::New();
+    trackerToolTransformObserver->ObserveTransformEventsFrom( m_TrackerTool );
+    trackerToolTransformObserver->Clear();
     
     m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
-    
-    if ( transformObserver->GotTransform() )
-    {   
-        igstk::Transform transform = transformObserver->GetTransform();       
 
-        if ( m_CollectingPointerSamples )
-        {
-            PointType point = TransformToPoint( transform );
-            m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( transform );
-            std::cout << "pointer: " << point[0] << " " << point[1] << " " << point[2] << std::endl;                        
-            m_CollectingPointerSamples = false;
-        }
+    // check the first transform is available
+    if ( trackerToolTransformObserver->GotTransform() )
+    {
+      igstk::Transform trackerTransform = trackerToolTransformObserver->GetTransform();       
+      PointType trackerPoint = TransformToPoint( trackerTransform );
+      m_UltrasoundCalibrationSamples->m_PointerTransforms.push_back( trackerTransform );
+      std::cout << "pointer: " << trackerPoint[0] << " " << trackerPoint[1] << " " << trackerPoint[2] << std::endl;        
+      fl_beep( FL_BEEP_MESSAGE );
+
+      // we write the png here beacause the pointer is more likely thant the probe to become invisible
+      std::stringstream filename;              
+      filename << "ultrasound/samples" << m_SnapShotCounter << ".png";
+      m_SnapShotCounter++;              
+      m_VideoFrameRepresentationForVideoView->SaveScreenShot( filename.str().c_str() );
+
+      std::stringstream sample_number;
+      sample_number << m_SnapShotCounter;
+      m_SamplesLabel->value(sample_number.str().c_str());
     }
   }
+  m_TrackerCollectingSamples = false;
 }
+
+
 
 /** -----------------------------------------------------------------
 *  Callback for the update transform event generated in the imager tool
@@ -2708,28 +2706,29 @@ UltrasoundCalibrationWizard
 */
 void 
 UltrasoundCalibrationWizard
-::ImagerToolUpdateTransformCallback(const itk::EventObject & event )
+::ImagerToolUpdateTransformCallback( const itk::EventObject & event )
 {
+  if ( !m_ImagerCollectingSamples )
+  return;
+
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
-  {
-    typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer transformObserver = ObserverType::New();
-    transformObserver->ObserveTransformEventsFrom( m_ImagerTool );
-    transformObserver->Clear();
-    
-    m_ImagerTool->RequestComputeTransformTo( m_WorldReference );   
-
-    if ( transformObserver->GotTransform() )
-    {
-       igstk::Transform transform = transformObserver->GetTransform();
-
-       if ( m_CollectingProbeSamples )
-       {
-           PointType point = TransformToPoint( transform );
-           m_UltrasoundCalibrationSamples->m_ProbeTransforms.push_back( transform );
-           std::cout << "probe:" << point[0] << " " << point[1] << " " << point[2] << std::endl;
-           m_CollectingProbeSamples = false;          
-       }
-    }
+  {   
+      typedef igstk::TransformObserver ObserverType;
+      ObserverType::Pointer imagerToolTransformObserver = ObserverType::New();
+      imagerToolTransformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+      imagerToolTransformObserver->Clear();
+      
+      m_ImagerTool->RequestComputeTransformTo( m_WorldReference );
+      
+      // check the second transform is available
+      if ( imagerToolTransformObserver->GotTransform() )
+      {   
+          igstk::Transform imagerTransform = imagerToolTransformObserver->GetTransform();       
+          PointType imagerPoint = TransformToPoint( imagerTransform );
+          m_UltrasoundCalibrationSamples->m_ProbeTransforms.push_back( imagerTransform );
+          std::cout << "probe: " << imagerPoint[0] << " " << imagerPoint[1] << " " << imagerPoint[2] << std::endl;                                 
+          fl_beep( FL_BEEP_MESSAGE );
+      }
   }
+  m_ImagerCollectingSamples = false;
 }

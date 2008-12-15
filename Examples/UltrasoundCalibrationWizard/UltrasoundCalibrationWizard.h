@@ -171,8 +171,8 @@ public:
   bool m_VideoEnabled;
   bool m_ImagerInitialized;
   bool m_VideoRunning;
-  bool m_CollectingProbeSamples;
-  bool m_CollectingPointerSamples;
+  bool m_TrackerCollectingSamples;
+  bool m_ImagerCollectingSamples;
 
   unsigned int m_TrackerToolUpdateObserverID;
   unsigned int m_ImagerToolUpdateObserverID;
@@ -553,8 +553,8 @@ private:
   void ImagerToolAvailableCallback( const itk::EventObject & event ); 
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event ); 
+  void TrackerToolUpdateTransformCallback( const itk::EventObject & event );
   void ImagerToolUpdateTransformCallback( const itk::EventObject & event ); 
-  void TrackerToolUpdateTransformCallback( const itk::EventObject & event ); 
   void NullActionCallback(const itk::EventObject & event ){};
   void OnSocketProgressEvent(itk::Object *source, const itk::EventObject &);
   void HandleMousePressed(igstk::UltrasoundCalibrationWizardQuadrantViews::MouseCommandType mouseCommand);
