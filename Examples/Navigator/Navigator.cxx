@@ -39,9 +39,9 @@
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
 // name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "bird1" //sPtr // bayonet // hybrid_pointer
+#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
 // name of the tool that is going to be used as dynamic reference
-#define REFERENCE_NAME "bird2" //reference
+#define REFERENCE_NAME "reference" //reference
 
 /** ---------------------------------------------------------------
 *     Constructor
@@ -3194,17 +3194,32 @@ void Navigator::ConnectImageRepresentation()
   m_CrossHair = CrossHairType::New();
   m_CrossHair->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
 
-  // buid the cross hair representation and add the cross hair object
-  m_CrossHairRepresentation = CrossHairRepresentationType::New();
-  m_CrossHairRepresentation->SetColor(0,1,0);
-  m_CrossHairRepresentation->SetLineWidth(2);
-  m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
+  // buid the cross hair representations
+  m_AxialCrossHairRepresentation = CrossHairRepresentationType::New();
+  m_AxialCrossHairRepresentation->SetColor(0,1,0);
+  m_AxialCrossHairRepresentation->SetLineWidth(2);
+  m_AxialCrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
+
+  m_SagittalCrossHairRepresentation = CrossHairRepresentationType::New();
+  m_SagittalCrossHairRepresentation->SetColor(0,1,0);
+  m_SagittalCrossHairRepresentation->SetLineWidth(2);
+  m_SagittalCrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
+
+  m_CoronalCrossHairRepresentation = CrossHairRepresentationType::New();
+  m_CoronalCrossHairRepresentation->SetColor(0,1,0);
+  m_CoronalCrossHairRepresentation->SetLineWidth(2);
+  m_CoronalCrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
+
+  m_3DViewCrossHairRepresentation = CrossHairRepresentationType::New();
+  m_3DViewCrossHairRepresentation->SetColor(1,1,0);
+  m_3DViewCrossHairRepresentation->SetLineWidth(2);
+  m_3DViewCrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
 
   // add the cross hair representation to the different views
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CrossHairRepresentation->Copy() );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_CrossHairRepresentation );
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialCrossHairRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalCrossHairRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalCrossHairRepresentation );
+  m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewCrossHairRepresentation );
 
   // set background color to the views
   m_ViewerGroup->m_AxialView->SetRendererBackgroundColor(0,0,0);
@@ -3442,6 +3457,10 @@ void Navigator::RequestChangeSelectedViewMode()
       m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
       m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
       m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+      m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestAddObject( m_3DViewCrossHairRepresentation );      
       break;
 
     case 1:
@@ -3451,6 +3470,10 @@ void Navigator::RequestChangeSelectedViewMode()
       m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
       m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
       m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+      m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_3DViewCrossHairRepresentation );
       break;
 
     case 2:
@@ -3460,6 +3483,10 @@ void Navigator::RequestChangeSelectedViewMode()
       m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
       m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
       m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+      m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_3DViewCrossHairRepresentation );
       break;
 
   default:
@@ -3467,6 +3494,11 @@ void Navigator::RequestChangeSelectedViewMode()
                     "Navigator::RequestChangeSelectedViewMode invalid choice \n" )
     return;
   }
+
+  m_ViewerGroup->m_AxialView->RequestResetCamera();
+  m_ViewerGroup->m_SagittalView->RequestResetCamera();
+  m_ViewerGroup->m_CoronalView->RequestResetCamera();
+  m_ViewerGroup->m_3DView->RequestResetCamera();
 
   m_AxialViewInitialized = false;
   m_SagittalViewInitialized = false;

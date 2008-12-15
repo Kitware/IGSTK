@@ -339,7 +339,10 @@ private:
   ToolProjectionRepresentationType::Pointer             m_CoronalToolProjectionRepresentation;
 
   /** cross hair representation */
-  CrossHairRepresentationType::Pointer                  m_CrossHairRepresentation;
+  CrossHairRepresentationType::Pointer                  m_AxialCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer                  m_SagittalCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer                  m_CoronalCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer                  m_3DViewCrossHairRepresentation;
 
   /** a vector of mesh spatial objects */
   std::vector< MeshType::Pointer >                      m_MeshVector;
