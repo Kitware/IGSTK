@@ -25,8 +25,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include <fstream>
 #include <set>
 
-#include <FL/Fl.H>
-
 #include "itkCommand.h"
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
@@ -253,11 +251,6 @@ int igstkFlockOfBirdsTrackerTest2( int argc, char * argv[] )
   std::cout << "Start tracking..." << std::endl;
   tracker->RequestStartTracking();
 
-  for(unsigned int i=0; i<10; i++)
-  {
-    Fl::wait( 0.01 );
-    igstk::PulseGenerator::CheckTimeouts();
-  }
 /*
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
