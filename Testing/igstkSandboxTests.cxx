@@ -76,7 +76,8 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest3);
-#endif /* IGSTKSandbox_USE_FLTK */
 
   REGISTER_TEST(igstkFlockOfBirdsTrackerTest2);
+#endif /* IGSTKSandbox_USE_FLTK */
+
 }

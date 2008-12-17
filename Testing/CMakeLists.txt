@@ -95,8 +95,6 @@ SET(SandboxTests_SRCS
 #  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
 #  igstkFlockOfBirdsTrackerTest.cxx
 
-# New test contributed by  Sebastian.Ordas 
-  igstkFlockOfBirdsTrackerTest2.cxx
 
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
@@ -331,15 +329,7 @@ ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS}
              ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
              )
 
-IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
-ADD_TEST( igstkFlockOfBirdsTrackerTest2
-              ${IGSTKSandbox_TESTS}
-              igstkFlockOfBirdsTrackerTest2
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFlockOfBirdTest2LoggerOutput.txt
-              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
-              )
-ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
- 
+
 IF(IGSTKSandbox_USE_FLTK)
 # FIXME: When done debugging, register it inside of the test drivers.
 #ADD_EXECUTABLE( igstkCTImageSpatialObjectReadingAndRepresentationTest4 igstkCTImageSpatialObjectReadingAndRepresentationTest4.cxx)
@@ -360,6 +350,19 @@ IF(IGSTKSandbox_USE_FLTK)
     ${SandboxTests_SRCS}
   igstkImageResliceSpatialObjectRepresentationFltkTest3.cxx)
 
+ SET(SandboxTests_SRCS
+    ${SandboxTests_SRCS}
+  igstkFlockOfBirdsTrackerTest2.cxx)
+
+ IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
+    ADD_TEST( igstkFlockOfBirdsTrackerTest2
+              ${IGSTKSandbox_TESTS}
+              igstkFlockOfBirdsTrackerTest2
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFlockOfBirdTest2LoggerOutput.txt
+              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
+              )
+  ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
+ 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
