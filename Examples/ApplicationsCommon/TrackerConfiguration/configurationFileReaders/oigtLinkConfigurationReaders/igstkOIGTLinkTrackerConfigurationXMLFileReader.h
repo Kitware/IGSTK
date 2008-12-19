@@ -100,6 +100,8 @@ protected:
   void ProcessToolName() 
     throw ( FileFormatException );
 
+  void ProcessToolAttributes( const char **atts );
+
   void ProcessToolConnection() 
     throw ( FileFormatException );
   
@@ -109,8 +111,9 @@ protected:
   bool m_ReadingTrackerConfiguration;
   bool m_ReadingToolConfiguration;
   
-  std::string m_CurrentTagData;
-  std::string m_CurrentToolName;
+  bool                            m_CurrentToolIsReference;
+  std::string                     m_CurrentTagData;
+  std::string                     m_CurrentToolName;
   std::vector<ConnectionDataType> m_CurrentConnections;
   
   OIGTLinkDataType m_ToolNamesAndConnections;     

@@ -47,6 +47,7 @@ OIGTLinkTrackerConfigurationXMLFileReader::StartElement( const char * name,
       throw FileFormatException( "Self nested \"tool\" tag not allowed." );
     else
     {
+      ProcessToolAttributes( atts );
       this->m_ReadingToolConfiguration = true;
     }
   }
@@ -134,7 +135,34 @@ void
 OIGTLinkTrackerConfigurationXMLFileReader::ProcessToolName() 
 throw ( FileFormatException )
 {
+  //see DEVICE_NAME http://www.na-mic.org/Wiki/index.php/OpenIGTLink/Protocol
+  const unsigned int OIGTLINK_DEVICE_NAME_MAX_LENGTH = 20;
+
+  if( this->m_CurrentTagData.size() > OIGTLINK_DEVICE_NAME_MAX_LENGTH )
+    {
+    std::ostringstream outStr; 
+    outStr<<"Device name ("<<this->m_CurrentTagData<<") too long, ";
+    outStr<<"OIGTLink maximal length is "<<OIGTLINK_DEVICE_NAME_MAX_LENGTH;
+    throw FileFormatException( outStr.str() );
+    }
   this->m_CurrentToolName = this->m_CurrentTagData;
+}
+
+
+void 
+OIGTLinkTrackerConfigurationXMLFileReader::ProcessToolAttributes( 
+const char **atts )
+{
+  //by default the tool isn't a reference
+  this->m_CurrentToolIsReference = false;
+
+  //go over all the attribute-value pairs
+  for( int i=0; atts[i] != NULL; i+=2 ) 
+    {
+    if( itksys::SystemTools::Strucmp( atts[i], "usage" ) == 0 &&
+        itksys::SystemTools::Strucmp( atts[i+1], "reference" ) == 0 )
+        this->m_CurrentToolIsReference = true;
+    }
 }
 
 
@@ -183,7 +211,7 @@ throw ( FileFormatException )
 {
   if( this->m_CurrentToolName.empty() )
     throw FileFormatException( "\"name\" tag missing for one of the tools." );
-  if( this->m_CurrentConnections.empty() )
+  if( this->m_CurrentConnections.empty()  && !this->m_CurrentToolIsReference )
     throw FileFormatException( "\"send_to\" tag missing for one of the tools." );
 
   OIGTLinkDataType::const_iterator it, end;
