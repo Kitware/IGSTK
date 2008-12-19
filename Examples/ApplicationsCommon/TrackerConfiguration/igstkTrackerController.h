@@ -187,7 +187,7 @@ protected:
   ~TrackerController( void );
 
 
-private:
+private:   
 
   /** List of state machine states */
   igstkDeclareStateMacro( Idle );
@@ -274,6 +274,52 @@ private:
 
   FlockOfBirdsTrackerToolNew::Pointer InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration );
+
+
+  /**
+   * \class Observer for the TrackerToolAttachmentToTrackerErrorEvent.
+   */
+  class ToolAttachErrorObserver : public ::itk::Command 
+  { 
+  public:
+    typedef  ToolAttachErrorObserver    Self; 
+    typedef  ::itk::Command             Superclass;
+    typedef  ::itk::SmartPointer<Self>  Pointer;
+    itkNewMacro( Self );
+
+    void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    const itk::Object * constCaller = caller;
+    this->Execute( constCaller, event );
+    }
+
+
+    void Execute(const itk::Object *caller, const itk::EventObject & event)
+    {
+      if( dynamic_cast<const TrackerToolAttachmentToTrackerErrorEvent *> ( &event ) )
+      {                
+        m_GotObject = true;
+      }
+    }
+
+    bool GotToolAttachError() const
+    {
+      return m_GotObject;
+    }
+    void Reset() 
+    {
+      m_GotObject = false; 
+    }
+
+  protected:
+    ToolAttachErrorObserver()
+    {
+      m_GotObject = false;
+    }
+    ~ToolAttachErrorObserver() { }
+  private:
+    bool m_GotObject;
+  };
 
   class ErrorObserver : public itk::Command
     {
@@ -371,7 +417,7 @@ private:
   Tracker::Pointer m_Tracker;
   std::map<std::string, TrackerTool::Pointer> m_Tools; 
   TrackerTool::Pointer m_ReferenceTool;
-  SerialCommunication::Pointer m_SerialCommunication;  
+  SerialCommunication::Pointer m_SerialCommunication;     
 };
 
 } // end of namespace
