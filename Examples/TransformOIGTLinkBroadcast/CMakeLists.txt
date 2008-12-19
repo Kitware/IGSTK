@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4)
 
-PROJECT(OIGTLinkTrackerConfigurationExample)
+PROJECT(OIGTLinkTrackerBroadcasting)
 
 #
 #  FIND ITK
@@ -22,6 +22,7 @@ ELSE (USE_VTK_FILE)
   MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
 ENDIF (USE_VTK_FILE)
 
+
 SET(PRECOMPUTED_TRANSFORM_READER_DIR
     ../ApplicationsCommon/CalibrationRegistrationLoading
 )
@@ -37,6 +38,7 @@ SET(TRACKER_CONFIGURATION_READERS_DIR
 SET(OIGTLINK_CONFIGURATION_READERS_DIR
     ../ApplicationsCommon/TrackerConfiguration/configurationFileReaders/oigtLinkConfigurationReaders
 )
+
 
 
 #
@@ -61,7 +63,7 @@ SET(SRCS
     ${TRACKER_CONFIGURATION_READERS_DIR}/igstkMicronConfigurationXMLFileReader.cxx
     ${OIGTLINK_CONFIGURATION_READERS_DIR}/igstkOIGTLinkTrackerConfigurationFileReader.cxx
     ${OIGTLINK_CONFIGURATION_READERS_DIR}/igstkOIGTLinkTrackerConfigurationXMLFileReader.cxx
-    main.cxx
+    OIGTLinkTrackingBroadcaster.cxx
 )
 SET(HDRS
     ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkPrecomputedTransformData.h
@@ -82,28 +84,70 @@ SET(HDRS
     ${TRACKER_CONFIGURATION_READERS_DIR}/igstkMicronConfigurationXMLFileReader.h
     ${OIGTLINK_CONFIGURATION_READERS_DIR}/igstkOIGTLinkTrackerConfigurationFileReader.h
     ${OIGTLINK_CONFIGURATION_READERS_DIR}/igstkOIGTLinkTrackerConfigurationXMLFileReader.h
+    OIGTLinkTrackingBroadcaster.h
 )
 
 #
-#The directories containing all of the header files
+# Include directories.
+# Project's binary directory is part of the includes because cmake runs the fluid
+# "compiler" on the *.fl GUI description files to generate
+# *.cxx, *.h files which are written into the binary directory.
 #
+
 INCLUDE_DIRECTORIES(
 ${TRACKER_CONFIGURATION_DIR}
 ${TRACKER_CONFIGURATION_READERS_DIR}
 ${OIGTLINK_CONFIGURATION_READERS_DIR}
 ${PRECOMPUTED_TRANSFORM_READER_DIR}
 ${IGSTKSandbox_INCLUDE_DIR}
+${OIGTLinkTrackerBroadcasting_SOURCE_DIR}
+${OIGTLinkTrackerBroadcasting_BINARY_DIR}
 )
 
 
-#
-# Link to the following libraries
-#
-LINK_LIBRARIES (
-  IGSTKSandbox
-)
+IF(IGSTKSandbox_USE_FLTK)
+
+  #
+  # FIND FLTK
+  #
+  FIND_PACKAGE(FLTK)
+  IF (FLTK_FOUND)
+    INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
+  ELSE (FLTK_FOUND)
+    MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
+  ENDIF (FLTK_FOUND)
+
+  #
+  # FLTK fluid GUI files for project
+  #
+  SET(OIGTLinkTrackerBroadcasting_GUI_SRCS
+      OIGTLinkTrackingBroadcasterGUI.fl
+    )
+
+  #
+  # Link to the following libraries
+  #
+  LINK_LIBRARIES (
+    IGSTKSandbox
+    ${FLTK_LIBRARIES}
+  )
+
+  FLTK_WRAP_UI(OIGTLinkTrackerBroadcasting ${OIGTLinkTrackerBroadcasting_GUI_SRCS})
+  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainFLTK.cxx ${SRCS} ${HDRS} ${OIGTLinkTrackerBroadcasting_GUI_SRCS})
 
 
-ADD_EXECUTABLE(oigtLinkExample ${SRCS} ${HDRS})
+ELSE(IGSTKSandbox_USE_FLTK)
 
-TARGET_LINK_LIBRARIES(oigtLinkExample ${LINK_LIBRARIES})
+  #
+  # Link to the following libraries
+  #
+  LINK_LIBRARIES (
+    IGSTKSandbox
+  )
+
+  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainCommandLine.cxx ${SRCS} ${HDRS})
+
+ENDIF(IGSTKSandbox_USE_FLTK)
+
+
+TARGET_LINK_LIBRARIES(OIGTLinkTrackerBroadcasting ${LINK_LIBRARIES})

@@ -2,6 +2,7 @@
 
 *.dsp           -crlf
 *.dsw           -crlf
+*.gif           -crlf
 *.jpg           -crlf
 *.png           -crlf
 configure        crlf=input
