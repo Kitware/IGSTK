@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -56,12 +56,12 @@ else {
         private xywh {443 47 56 25} box PLASTIC_UP_BOX
       }
       Fl_Box {} {
-        image {C:/toolkits/IGSTK/IGSTKSandbox/Examples/TransformOIGTLinkBroadcast/IGSTK-thumbnail.gif} xywh {10 35 100 50}
+        image {IGSTK-thumbnail.gif} xywh {10 35 100 50}
       }
     }
     Fl_Window m_Window2 {
       label {OIGTLink Transform Broadcasting}
-      callback {this->Quit();}
+      callback {this->Quit();} open
       private xywh {341 38 549 111} type Double box PLASTIC_UP_BOX color 7 selection_color 7 visible
     } {
       Fl_Button m_StopTrackingButton {
@@ -80,11 +80,11 @@ this->m_StartTrackingButton->deactivate();}
       }
       Fl_Button {} {
         label Quit
-        callback {this->Quit();} selected
+        callback {this->Quit();}
         private xywh {399 14 122 35} box PLASTIC_UP_BOX color 7
       }
-      Fl_Box {} {
-        image {C:/toolkits/IGSTK/IGSTKSandbox/Examples/TransformOIGTLinkBroadcast/IGSTK-thumbnail.gif} xywh {10 50 100 50}
+      Fl_Box {} {selected
+        image {IGSTK-thumbnail.gif} xywh {10 50 100 50}
       }
     }
     code {this->m_Broadcaster = NULL;} {}

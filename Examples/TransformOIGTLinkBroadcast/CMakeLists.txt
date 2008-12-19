@@ -133,7 +133,7 @@ IF(IGSTKSandbox_USE_FLTK)
   )
 
   FLTK_WRAP_UI(OIGTLinkTrackerBroadcasting ${OIGTLinkTrackerBroadcasting_GUI_SRCS})
-  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainFLTK.cxx ${SRCS} ${HDRS} ${OIGTLinkTrackerBroadcasting_GUI_SRCS})
+  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainFLTK.cxx ${SRCS} ${HDRS} ${OIGTLinkTrackerBroadcasting_FLTK_UI_SRCS})
 
 
 ELSE(IGSTKSandbox_USE_FLTK)
