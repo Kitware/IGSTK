@@ -236,11 +236,11 @@ int igstkViewRefreshRateTest( int argc, char *argv [] )
 
     // Add the ellipsoid to the view
     view2D->RequestAddObject( ellipsoidRepresentation );
-    view3D->RequestAddObject( ellipsoidRepresentation );
+    view3D->RequestAddObject( ellipsoidRepresentation->Copy() );
     
     // Add the axes of the reference system to the view
     view2D->RequestAddObject( axesRepresentation );
-    view3D->RequestAddObject( axesRepresentation );
+    view3D->RequestAddObject( axesRepresentation->Copy() );
     
     view2D->RequestResetCamera();
     view3D->RequestResetCamera();
