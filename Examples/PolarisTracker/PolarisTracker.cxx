@@ -31,8 +31,25 @@
 #include "itkVersor.h"
 
 #include "igstkSerialCommunication.h"
+
+// BeginLatex
+// 
+// This example illustrates IGSTK's interface to Polaris optical tracker.
+//
+// EndLatex
+
+ // BeginLatex
+// 
+// To communicate with Polaris tracking device, include the Polaris Tracker
+// header files ( \doxygen{MicronTracker} ) and (\doxygen{MicronTrackerTool}).
+//
+// EndLatex
+
+// BeginCodeSnippet
 #include "igstkPolarisTracker.h"
 #include "igstkPolarisTrackerTool.h"
+// EndCodeSnippet
+
 #include "igstkAuroraTrackerTool.h"
 #include "igstkTransform.h"
 #include "igstkTransformObserver.h"

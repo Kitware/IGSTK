@@ -20,6 +20,16 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #pragma warning( disable : 4786 )
 #endif
 
+// BeginLatex
+// 
+// This example illustrates how to use IGSTK's Tracker component to communicate 
+// with Micron Tracker and gather toolis transform information. MicronTracker is a
+// portable optical tracker that uses video image analysis techniques for
+// localization and tracking of surgical tools.
+//
+// EndLatex
+
+
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -30,8 +40,18 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #include "itkVector.h"
 #include "itkVersor.h"
 
+// BeginLatex
+// 
+// To communicate with MicronTracker tracking device, include the MicronTracker
+// header files \doxygen{MicronTracker} is added:
+//
+// EndLatex
+
+// BeginCodeSnippet
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
+// EndCodeSnippet
+//
 #include "igstkTransform.h"
 
 #include "igstkTransformObserver.h"
