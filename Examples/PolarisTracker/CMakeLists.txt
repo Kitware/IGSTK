@@ -1,0 +1,5 @@
+PROJECT(MicronTracker)
+
+ADD_EXECUTABLE(PolarisTrackerExample PolarisTracker.cxx)
+TARGET_LINK_LIBRARIES(PolarisTrackerExample IGSTKSandbox)
+

@@ -14,7 +14,14 @@ SUBDIRS(
   PivotCalibrationReader
   SpatialObjects
   ApplicationsCommon
+  PolarisTracker
   )
+
+IF( IGSTKSandbox_USE_MicronTracker )
+  SUBDIRS(
+    MicronTracker
+   ) 
+ENDIF( IGSTKSandbox_USE_MicronTracker)
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
