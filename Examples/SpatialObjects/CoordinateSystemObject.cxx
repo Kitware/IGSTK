@@ -21,8 +21,14 @@
 
 // Software Guide : BeginLatex
 //
-// First, we include the appropriate header files. In this case, it is enough
-// to use any spatial objects.
+// This example shows the basic techniques for working with
+// coordinate system objects. 
+//
+// Software Guide : EndLatex 
+
+// Software Guide : BeginLatex
+// 
+// First, we include the appropriate header files. 
 //
 // Software Guide : EndLatex 
 
@@ -33,28 +39,40 @@
 
 int main( int , char *[] )
 {
+
 // Software Guide : BeginLatex
-//
-// We then declare the object using smart pointers, as follows:
+// 
+// Then we construct a cone object and set the radius and height.
 //
 // Software Guide : EndLatex 
+
+
+// Software Guide : BeginCodeSnippet
+  typedef igstk::ConeObject ConeObjectType;
+  ConeObjectType::Pointer cone = ConeObjectType ::New();
+
+  cone->SetRadius(10.0);
+  cone->SetHeight(20.0);
+// Software Guide : EndCodeSnippet
 
 
 // Software Guide : BeginLatex
 // 
-// The relative position to the parent is stored as a Transform.
+// We construct a transform which will hold the
+// relative position to the parent. 
+// We also set some initial values.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
-  const double validityTimeInMilliseconds = 20000.0; // 20 seconds
+  const double validityTimeInMilliseconds = 200.0;
 
   igstk::Transform::VectorType translation;
-  translation[0] =  0.0;
-  translation[1] = 10.0;
+  translation[0] = 10.0;
+  translation[1] =  0.0;
   translation[2] =  0.0;
   igstk::Transform::VersorType rotation;
-  rotation.Set( 0.0, 0.0, 0.0, 1.0 );
+  rotation.Set( -0.707, 0.0, 0.707, 0.0 );
 
   igstk::Transform::ErrorType errorValue = 0.01; // 10 microns
 
@@ -65,39 +83,55 @@ int main( int , char *[] )
 
 // Software Guide : EndCodeSnippet
 
-  typedef igstk::ConeObject ConeObjectType;
-  ConeObjectType::Pointer cone = ConeObjectType ::New();
+// Software Guide : BeginLatex
+// 
+// Next, we construct a cylinder object with a radius and height.
+//
+// Software Guide : EndLatex 
 
-  cone->SetRadius(10.0);
-  cone->SetHeight(20.0);
-
-  double validityTimeInMilliseconds2 = 200.0;
-
-  translation[0] = 10.0;
-  translation[1] =  0.0;
-  translation[2] =  0.0;
-  rotation.Set( -0.707, 0.0, 0.707, 0.0 );
-
-  transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds2 );
+// Software Guide : BeginCodeSnippet
 
   typedef igstk::CylinderObject CylinderObjectType;
   CylinderObjectType::Pointer cylinder = CylinderObjectType ::New();
 
   cylinder->SetRadius(10.0);
   cylinder->SetHeight(20.0);
+// Software Guide : EndCodeSnippet
 
+// Software Guide : BeginLatex
+//
+// Then, we build a very simple scene graph by connecting the 
+// cylinder to the cone. The cone is the parent and transform
+// specifies the transformation from the cylinder's coordinates
+// into the cone's coordinates.
+//
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
   cylinder->RequestSetTransformAndParent( transform, cone );
+// Software Guide : EndCodeSnippet
 
+// Software Guide : BeginLatex
+// Now we can modify the transform. 
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
   translation[0] = -10.0;
   translation[1] =   0.0;
   translation[2] =   0.0;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
 
   transform.SetTranslationAndRotation( 
-      translation, rotation, errorValue, validityTimeInMilliseconds2 );
+      translation, rotation, errorValue, validityTimeInMilliseconds );
+// Software Guide : EndCodeSnippet
 
+// Software Guide : BeginLatex
+// And then we can reconnect the cylinder to the cone with the new transform.
+// Software Guide : EndLatex
+
+// Software Guide : BeginCodeSnippet
   cylinder->RequestSetTransformAndParent( transform, cone );
+// Software Guide : EndCodeSnippet
 
   std::cout << "Cone " << std::endl;
   cone->Print( std::cout );
