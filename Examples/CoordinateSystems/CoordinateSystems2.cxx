@@ -29,7 +29,7 @@
 // This example describes how to build a scene graph
 // with a View, Tracker, and TrackerTool. This example
 // will display the scene from the perspective of 
-// the Tracker.
+// the TrackerTool.
 //
 // First, we include the appropriate header files:
 // Software Guide : EndLatex 
@@ -184,13 +184,9 @@ int main( int , char *[] )
 // using the identity transformation. As a result the axes object will
 // be displayed in tracker coordinates. 
 //
-// Then, we connect the trackerTool to the tracker, also using an identity
-// transform, for now. The transform will be updated later as the tool 
-// is moved (programatically).
-//
-// Finally, we connect the view3D to the tracker tool, using the identity 
-// transformation. This means that we will be looking at things from
-// the tracker tool's coordinates. 
+// Next, we connect the object representing the tracker tool to the 
+// actual tracker tool. We use an identity transformation so that 
+// the toolObject is in the same position as the tracker tool.
 //
 // Software Guide : EndLatex
 
