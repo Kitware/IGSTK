@@ -25,6 +25,7 @@ ENDIF( IGSTKSandbox_USE_MicronTracker)
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
+    CoordinateSystems
     OneViewAndTrackingNewUsingFLTKWidget
     TwoViews
     FourViewsTrackingWithCT
