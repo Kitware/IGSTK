@@ -454,7 +454,7 @@ void ObjectRepresentation::MakeObjectsVisibleProcessing()
 /** Report an invalid request made to the State Machine */
 void ObjectRepresentation::ReportInvalidRequestProcessing()
 {
-  igstkLogMacro( WARNING, "Invalid request in ObjectRepresentation");
+  igstkLogMacro( WARNING, "Invalid request in ObjectRepresentation\n");
   InvalidRequestErrorEvent event;
   this->InvokeEvent( event );
 }
