@@ -285,10 +285,16 @@ ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
 
  ADD_TEST( igstkImageResliceSpatialObjectRepresentationQtTest3
               ${IGSTKSandbox_TESTS}
+              --compare
+${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
+${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkImageResliceSpatialObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
-
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
+ 
 ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_FLTK)
