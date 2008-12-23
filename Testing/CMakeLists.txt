@@ -258,7 +258,11 @@ ADD_TEST( igstkCrossHairObjectTest
               igstkCrossHairObjectTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
          )
-ADD_TEST( igstkToolProjectionObjectTest ${IGSTKSandbox_TESTS} igstkToolProjectionObjectTest)
+ADD_TEST( igstkToolProjectionObjectTest
+              ${IGSTKSandbox_TESTS}
+              igstkToolProjectionObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
 IF(IGSTKSandbox_USE_Qt)

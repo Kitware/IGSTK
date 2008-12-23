@@ -21,66 +21,165 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#ifdef ConnectObjectToRepresentationMacro
-#undef ConnectObjectToRepresentationMacro
-#endif
-
-#define ConnectObjectToRepresentationMacro( object, representation ) \
-  representation->RequestSetToolProjectionObject( object );
-
-
 #include "igstkToolProjectionObject.h"
 #include "igstkToolProjectionRepresentation.h"
-#include "igstkSpatialObjectTestHelper.h"
+#include "igstkImageSpatialObject.h"
+#include "igstkCTImageReader.h"
+#include "igstkLogger.h"
+#include "itkStdStreamLogOutput.h"
+#include "igstkAxesObject.h"
+#include "igstkEvents.h"
+#include "igstkTransform.h"
+#include "igstkVTKLoggerOutput.h"
 
-
-int igstkToolProjectionObjectTest( int, char * [] )
+namespace ToolProjectionObjectTest
 {
+igstkObserverObjectMacro(CTImage,
+    ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 
+igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent, 
+                       ::igstk::EventHelperType::VTKImagePointerType );
+}
+
+
+int igstkToolProjectionObjectTest( int argc, char * argv[] )
+{
+  if( argc < 2 )
+    {
+    std::cerr << " Missing arguments: " << argv[0] << "CTImage " << std::endl; 
+    return EXIT_FAILURE;
+    }
+  typedef short    PixelType;
+  const unsigned int Dimension = 3;
+
+  typedef igstk::ImageSpatialObject<PixelType,Dimension> ImageSpatialObjectType;
+
+  typedef igstk::Object::LoggerType   LoggerType;
+  typedef itk::StdStreamLogOutput     LogOutputType;
+  
+  // logger object created for logging mouse activities
+  LoggerType::Pointer   logger = LoggerType::New();
+  LogOutputType::Pointer logOutput = LogOutputType::New();
+  logOutput->SetStream( std::cout );
+  logger->AddLogOutput( logOutput );
+  logger->SetPriorityLevel( LoggerType::DEBUG );
+
+  // Create an igstk::VTKLoggerOutput and then test it.
+  igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
+                                            igstk::VTKLoggerOutput::New();
+  vtkLoggerOutput->OverrideVTKWindow();
+  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
+                                     // OutputWindow -> logger
+
+  // Create Axes object to act as a reference coordinate system
+  typedef igstk::AxesObject    AxesObjectType;
+  AxesObjectType::Pointer worldReference = AxesObjectType::New();
+  worldReference->SetSize(3.0, 3.0, 3.0);
+
+  // Define identity transform
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+
+  typedef igstk::CTImageReader         ReaderType;
+  ReaderType::Pointer   reader = ReaderType::New();
+  reader->SetLogger( logger );
+
+  //set up CT image observer
+  typedef ToolProjectionObjectTest::CTImageObserver 
+                                                        CTImageObserverType;
+  CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+                            ctImageObserver);
+
+  /* Read in a DICOM series */
+  std::cout << "Reading CT image : " << argv[1] << std::endl;
+
+  ReaderType::DirectoryNameType directoryName = argv[1];
+
+  reader->RequestSetDirectory( directoryName );
+  reader->RequestReadImage();
+  reader->RequestGetImage();
+ 
+  if(!ctImageObserver->GotCTImage())
+    {
+    std::cout << "No CTImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Set input image spatial object
+  ImageSpatialObjectType::Pointer imageSpatialObject = ImageSpatialObjectType::New(); 
+  imageSpatialObject = ctImageObserver->GetCTImage();
+
+  //Connect the image spatial object to the reference coordinate system
+  imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );  
+ 
   typedef igstk::ToolProjectionObject                ObjectType;
   typedef igstk::ToolProjectionRepresentation  RepresentationType;
 
-  ObjectType::Pointer ToolProjectionObject = ObjectType::New();
+  ObjectType::Pointer toolProjectionObject = ObjectType::New();
 
-  typedef igstk::SpatialObjectTestHelper<
-    ObjectType, RepresentationType > TestHelperType;
+  RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
 
-  //
-  // The helper constructor intializes all the elements needed for the test.
-  //
-  TestHelperType  testHelper;
+ toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
 
-  ObjectType         * object         = testHelper.GetSpatialObject();
-  RepresentationType * representation = testHelper.GetRepresentation();
+ //Set the reslicing plane
+ 
+ typedef ::igstk::ReslicerPlaneSpatialObject               ReslicerPlaneType;
+ ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
+  reslicerPlaneSpatialObject->SetLogger( logger );
 
-  if( !object )
+  // Select Orthogonal reslicing mode
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+
+  // Select axial orientation
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  // Set bounding box provider spatial object
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
+
+  toolProjectionObjectRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+
+  bool TestPassed = true;
+
+  // Test Property
+  std::cout << "Testing Property : ";
+  toolProjectionObjectRepresentation->SetColor(0.1,0.2,0.3);
+  toolProjectionObjectRepresentation->SetOpacity(0.4);
+  if(fabs(toolProjectionObjectRepresentation->GetRed()-0.1)>0.00001)
     {
-    std::cerr << "Failure to get object with GetSpatialObject()" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "GetRed() [FAILED]" << std::endl;
+    TestPassed= false;
+    }
+  if(fabs(toolProjectionObjectRepresentation->GetGreen()-0.2)>0.00001)
+    {
+    std::cerr << "GetGreen()[FAILED]" << std::endl;
+    TestPassed = false;
+    }
+  if(fabs(toolProjectionObjectRepresentation->GetBlue()-0.3)>0.00001)
+    {
+    std::cerr << "GetBlue() [FAILED]" << std::endl;
+    TestPassed = false;
+    }
+  if(fabs(toolProjectionObjectRepresentation->GetOpacity()-0.4)>0.00001)
+    {
+    std::cerr << "GetOpacity() [FAILED]" << std::endl;
+    TestPassed = false;
     }
 
-  if( !representation )
+  toolProjectionObjectRepresentation->Print( std::cout );
+  toolProjectionObject->Print( std::cout );
+
+  toolProjectionObjectRepresentation->GetNameOfClass();
+  toolProjectionObject->GetNameOfClass();
+ 
+  if( TestPassed )
     {
-    std::cerr << "Failure to get representation with GetRepresentation()" << std::endl;
+    return EXIT_SUCCESS;
+    } 
+  else
+    {
     return EXIT_FAILURE;
     }
-
-  //
-  //  Tests that are specific to this type of SpatialObject
-  //
-  //
-
-  testHelper.TestRepresentationProperties();
-  testHelper.ExercisePrintSelf();
-  testHelper.TestTransform();
-  testHelper.ExerciseDisplay();
-
-  std::cout << "[PASSED]" << std::endl;
-
-  std::cout << "Test [DONE]" << std::endl;
-
-  testHelper.TestRepresentationCopy();
-  testHelper.ExerciseScreenShot();
-
-  return testHelper.GetFinalTestStatus();
 }
