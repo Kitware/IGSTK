@@ -300,17 +300,10 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
-# FIXME: comment out the FlockOfBirds class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#  igstkFlockOfBirdsCommandInterpreter.h
-#  igstkFlockOfBirdsTracker.h
-#  igstkFlockOfBirdsTrackerTool.h
 
-# New FOB code
-   igstkFlockOfBirdsCommandInterpreter.h
-   igstkFlockOfBirdsTrackerNew.h
-   igstkFlockOfBirdsTrackerToolNew.h
+  igstkAscensionCommandInterpreter.h
+  igstkAscensionTracker.h
+  igstkAscensionTrackerTool.h
 
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.h
@@ -431,18 +424,10 @@ ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
-# FIXME: comment out the FlockOfBirds class just for the
-# time being. It requires major work to make it consistent 
-# with the new Tracker API
-#
-#  igstkFlockOfBirdsCommandInterpreter.cxx
-#  igstkFlockOfBirdsTracker.cxx
-#  igstkFlockOfBirdsTrackerTool.cxx
 
-# NEW FOB code
-   igstkFlockOfBirdsCommandInterpreter.cxx
-   igstkFlockOfBirdsTrackerNew.cxx
-   igstkFlockOfBirdsTrackerToolNew.cxx
+  igstkAscensionCommandInterpreter.cxx
+  igstkAscensionTracker.cxx
+  igstkAscensionTrackerTool.cxx
  
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.cxx
