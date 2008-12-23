@@ -23,7 +23,6 @@
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
-#include "igstkMedSafeTrackerConfiguration.h"
 #include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkStateMachine.h"
@@ -38,7 +37,7 @@
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
-#include "igstkFlockOfBirdsTrackerToolNew.h"
+#include "igstkAscensionTrackerTool.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
@@ -197,7 +196,6 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
   igstkDeclareStateMacro( AttemptingToInitializeAscension );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
-  igstkDeclareStateMacro( AttemptingToInitializeMedSafe );  
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( AttemptingToStartTracking );
   igstkDeclareStateMacro( Tracking );
@@ -210,8 +208,7 @@ private:
   igstkDeclareInputMacro( PolarisHybridInitialize );
   igstkDeclareInputMacro( AuroraInitialize );
   igstkDeclareInputMacro( AscensionInitialize );
-  igstkDeclareInputMacro( MicronInitialize );
-  igstkDeclareInputMacro( MedSafeInitialize );
+  igstkDeclareInputMacro( MicronInitialize );  
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Failed  );
@@ -231,7 +228,6 @@ private:
   void AuroraInitializeProcessing();
   void AscensionInitializeProcessing();
   void MicronInitializeProcessing();
-  void MedSafeInitializeProcessing();
   void StartTrackingProcessing();
   void StopTrackingProcessing();
   void CloseCommunicationProcessing();
@@ -269,10 +265,7 @@ private:
     const MicronToolConfiguration *toolConfiguration );
 
 #endif
-  FlockOfBirdsTrackerToolNew::Pointer InitializeMedSafeTool(
-    const MedSafeToolConfiguration *toolConfiguration );
-
-  FlockOfBirdsTrackerToolNew::Pointer InitializeAscensionTool(
+  AscensionTrackerTool::Pointer InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration );
 
 

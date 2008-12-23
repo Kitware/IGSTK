@@ -24,7 +24,7 @@
 
 #include "igstkPolarisTracker.h"
 #include "igstkAuroraTracker.h"
-#include "igstkFlockOfBirdsTrackerNew.h"
+#include "igstkAscensionTracker.h"
 
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
@@ -53,7 +53,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializeAurora );
   igstkAddStateMacro( AttemptingToInitializeMicron );
   igstkAddStateMacro( AttemptingToInitializeAscension );  
-  igstkAddStateMacro( AttemptingToInitializeMedSafe );  
   igstkAddStateMacro( Initialized );
   igstkAddStateMacro( AttemptingToStartTracking );
   igstkAddStateMacro( Tracking );
@@ -67,7 +66,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( AuroraInitialize );
   igstkAddInputMacro( AscensionInitialize );
   igstkAddInputMacro( MicronInitialize );
-  igstkAddInputMacro( MedSafeInitialize );
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( Failed  );
@@ -111,12 +109,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( Idle,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( Idle,
                            StartTracking,
                            Idle,
@@ -197,11 +190,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            AttemptingToInitializeMicron,
                            MicronInitialize );
-
-  igstkAddTransitionMacro( AttemptingToInitialize,
-                           MedSafeInitialize,
-                           AttemptingToInitializeMedSafe,
-                           MedSafeInitialize );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            TrackerInitialize,
@@ -293,12 +281,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            StartTracking,
                            Idle,
@@ -379,12 +362,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            StartTracking,
                            Idle,
@@ -465,12 +443,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeAurora,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            StartTracking,
                            Idle,
@@ -551,12 +524,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeAscension,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( AttemptingToInitializeAscension,
                            StartTracking,
                            Idle,
@@ -637,12 +605,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMicron,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
+    
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            StartTracking,
                            Idle,
@@ -682,92 +645,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest);
-
-  //transitions from AttemptingToInitializeMedSafe state
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           Failed,
-                           Idle,
-                           ReportInitializationFailure );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           Succeeded,
-                           Initialized,
-                           ReportInitializationSuccess );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           TrackerInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           PolarisVicraInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           PolarisHybridInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           AuroraInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           AscensionInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           MicronInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           MedSafeInitialize,
-                           Idle,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           StartTracking,
-                           Idle,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           StopTracking,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           CloseCommunication,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           GetTools,
-                           Idle,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           GetTool,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           GetReferenceTool,
-                           Idle,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           SetParentSpatialObject,
-                           Idle,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToInitializeMedSafe,
-                           SetChildSpatialObject,
-                           Idle,
-                           ReportInvalidRequest );
 
   //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
@@ -839,11 +716,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Initialized,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( Initialized,
-                           MedSafeInitialize,
-                           Initialized,
-                           ReportInvalidRequest );
 
   igstkAddTransitionMacro( Initialized,
                            Failed,
@@ -893,11 +765,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            MicronInitialize,
-                           AttemptingToStartTracking,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToStartTracking,
-                           MedSafeInitialize,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
   
@@ -974,11 +841,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Tracking,
                            MicronInitialize,
-                           Tracking,
-                           ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( Tracking,
-                           MedSafeInitialize,
                            Tracking,
                            ReportInvalidRequest );
 
@@ -1067,11 +929,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
-  
-  igstkAddTransitionMacro( AttemptingToStopTracking,
-                           MedSafeInitialize,
-                           AttemptingToStopTracking,
-                           ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
                            StartTracking,
@@ -1152,11 +1009,6 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            MicronInitialize,
-                           AttemptingToCloseCommunication,
-                           ReportInvalidRequest );
-
-  igstkAddTransitionMacro( AttemptingToCloseCommunication,
-                           MedSafeInitialize,
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
@@ -1361,14 +1213,6 @@ TrackerController::TrackerInitializeProcessing()
       igstkPushInputMacro( MicronInitialize );
       }
    #endif
-   /* 
-    else if( dynamic_cast<MedSafeTrackerConfiguration *>
-    ( this->m_TmpTrackerConfiguration ) )
-    {
-      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
-      igstkPushInputMacro( MedSafeInitialize );
-    }
-   */
     else
       {
       this->m_ErrorMessage = "Could not initialize the tracker. See the debug log.";
@@ -1782,11 +1626,11 @@ TrackerController::InitializeAuroraTool(
   return trackerTool;
 }
 
-FlockOfBirdsTrackerToolNew::Pointer 
+AscensionTrackerTool::Pointer 
 TrackerController::InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration )
 {
-  FlockOfBirdsTrackerToolNew::Pointer trackerTool = FlockOfBirdsTrackerToolNew::New();
+  AscensionTrackerTool::Pointer trackerTool = AscensionTrackerTool::New();
 
   trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() );
 
@@ -1807,15 +1651,13 @@ TrackerController::AscensionInitializeProcessing()
   else
   {
     //create tracker
-    igstk::FlockOfBirdsTrackerNew::Pointer tracker = igstk::FlockOfBirdsTrackerNew::New();
+    igstk::AscensionTracker::Pointer tracker = igstk::AscensionTracker::New();
     this->m_Tracker = tracker; 
     //don't need to observe this for errors because the 
     //configuration class ensures that the frequency is valid
     tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
 
-
     //observe all possible errors generated by the tracker
-    //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent)
     unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
                                                      this->m_ErrorObserver );
     tracker->SetCommunication( this->m_SerialCommunication );
@@ -2101,123 +1943,6 @@ void TrackerController::MicronInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 #endif
 }
-
-/*
-FlockOfBirdsTrackerTool::Pointer 
-TrackerController::InitializeMedSafeTool(
-    const MedSafeToolConfiguration *toolConfiguration )
-{
-  FlockOfBirdsTrackerTool::Pointer trackerTool = FlockOfBirdsTrackerTool::New();
-
-  trackerTool->RequestSetBirdName( toolConfiguration->GetToolName() );
-  trackerTool->SetCalibrationTransform( 
-    toolConfiguration->GetCalibrationTransform() );
-  trackerTool->RequestConfigure();
-  return trackerTool;
-}
-*/
-
-void 
-TrackerController::MedSafeInitializeProcessing()
-{
-   //see implementation below
-}
-
-/*
-void 
-TrackerController::MedSafeInitializeProcessing()
-{
-  if( !InitializeSerialCommunication() )
-  {
-    igstkPushInputMacro( Failed );
-  }
-  else
-  {
-    this->m_SerialCommunication->Print(std::cout, 0);
-
-                                  //create tracker
-    igstk::FlockOfBirdsTracker::Pointer tracker = igstk::FlockOfBirdsTracker::New();
-    this->m_Tracker = tracker; 
-                 //don't need to observe this for errors because the 
-                 //configuration class ensures that the frequency is valid
-    tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
-
-
-                //observe all possible errors generated by the tracker
-               //(TrackerOpenErrorEvent, TrackerInitializeErrorEvent,
-               //TrackerStartTrackingErrorEvent)
-    unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
-                                                     this->m_ErrorObserver );
-
-    tracker->SetCommunication( this->m_SerialCommunication );
-
-    tracker->Print(std::cout);
-
-    tracker->RequestOpen();
-    if( this->m_ErrorObserver->ErrorOccured() )
-    {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      tracker->RemoveObserver(observerID);
-      this->m_SerialCommunication->CloseCommunication();
-      igstkPushInputMacro( Failed );
-    }
-    else   //attach the tools and start communication 
-    {
-      std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
-        this->m_TrackerConfiguration->m_TrackerToolList;
-                   //attach tools
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();
-      TrackerTool::Pointer trackerTool;
-      MedSafeToolConfiguration * currentToolConfig;
-
-      for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
-      {
-        currentToolConfig = static_cast<MedSafeToolConfiguration *>(it->second);
-
-        trackerTool = InitializeMedSafeTool( currentToolConfig );
-        this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
-        trackerTool->RequestAttachToTracker( tracker );
-      }
-                      //add the reference if we have one
-      TrackerToolConfiguration* referenceToolConfiguration = 
-        this->m_TrackerConfiguration->m_ReferenceTool;
-      if( referenceToolConfiguration )
-      {
-        currentToolConfig = 
-          static_cast<MedSafeToolConfiguration *>( referenceToolConfiguration );
-
-        trackerTool = InitializeMedSafeTool( currentToolConfig );   
-        this->m_ReferenceTool = trackerTool;
-        trackerTool->RequestAttachToTracker( tracker );
-        tracker->RequestSetReferenceTool( trackerTool );
-      }
-      tracker->RequestStartTracking();
-      if( this->m_ErrorObserver->ErrorOccured() )
-      {
-        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-        this->m_ErrorObserver->ClearError();
-        tracker->RemoveObserver( observerID );
-        tracker->RequestClose();
-        this->m_SerialCommunication->CloseCommunication();
-        igstkPushInputMacro( Failed );
-      }
-      else
-      {
-        tracker->RemoveObserver(observerID);
-        igstkPushInputMacro( Succeeded );
-      }
-      //m_Tracker->RemoveObserver(observerID);
-      //igstkPushInputMacro( Succeeded );
-    }
-  }
-  this->m_StateMachine.ProcessInputs();
-}
-*/
-
 
 void 
 TrackerController::GetToolsProcessing()
