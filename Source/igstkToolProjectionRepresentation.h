@@ -34,8 +34,9 @@ namespace igstk
  * 
  * \brief This class provides a visual representation of a ToolProjectionObject. 
  *
+ * This class displays the projection of a tool spatial object ontop of a reslicing plane.
  *
- * \sa ToolProjectionRepresentation
+ * \sa ToolProjectionObject
  *
  * \ingroup ObjectRepresentation
  */

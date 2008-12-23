@@ -31,7 +31,9 @@ namespace igstk
  * 
  * \brief This class represents a cross hair spatial object. 
  *
- * This class ...
+ * This class is used to indicate a position in an input image. The position could 
+ * be manually set using RequestSetCursorPostion or specified using a reslicing tool transform
+ * RequestSetToolSpatialObject
  * 
  * \ingroup Object
  */

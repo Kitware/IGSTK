@@ -166,9 +166,6 @@ CrossHairObject
   igstkLogMacro( DEBUG,"igstk::CrossHairObject\
                        ::ReceiveToolTransformWRTImageCoordinateSystemProcessing called...\n");
 
-//  igstkLogMacro( DEBUG, "ReceiveToolTransformWRTImageCoordinateSystemProcessing " 
-//                 << this->m_ToolTransformWRTImageCoordinateSystem );
-
   m_ToolTransformWRTImageCoordinateSystem =
     m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
 

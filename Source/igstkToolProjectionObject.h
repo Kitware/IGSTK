@@ -27,11 +27,13 @@ namespace igstk
 
 /** \class ToolProjectionObject
  * 
- * \brief This class represents a Axes object. 
+ * \brief This class describes a surgical tool object projected onto
+ *        a reslicing plane. 
  *
- * This class displays the projection of a tool spatial object ontop of a reslicing plane.
- * 
+ * A surgical tool is geometrically described by polyline ( vtkLineSource ) 
+ *
  * \ingroup Object
+ * \sa ToolProjectionRepresentation
  */
 
 class ToolProjectionObject 
