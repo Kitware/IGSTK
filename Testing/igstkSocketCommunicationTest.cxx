@@ -434,8 +434,8 @@ int igstkSocketCommunicationTest( int, char * [] )
   // Test for non-blocking mode
   serverOK = false;
   clientOK = false;  
-  threader->SetMultipleMethod( 0, ServerThreadFunction1, &serverOK);
-  threader->SetMultipleMethod( 1, ClientThreadFunction1, &clientOK);
+  threader->SetMultipleMethod( 1, ServerThreadFunction1, &serverOK);
+  threader->SetMultipleMethod( 0, ClientThreadFunction1, &clientOK);
   threader->MultipleMethodExecute();
 
   if (!(serverOK && clientOK))
@@ -447,8 +447,8 @@ int igstkSocketCommunicationTest( int, char * [] )
   // Test for blocking mode
   serverOK = false;
   clientOK = false;
-  threader->SetMultipleMethod( 0, ServerThreadFunction2, &serverOK);
-  threader->SetMultipleMethod( 1, ClientThreadFunction2, &clientOK);
+  threader->SetMultipleMethod( 1, ServerThreadFunction2, &serverOK);
+  threader->SetMultipleMethod( 0, ClientThreadFunction2, &clientOK);
   threader->MultipleMethodExecute();
 
   if (serverOK && clientOK)
