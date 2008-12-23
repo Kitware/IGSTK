@@ -482,7 +482,7 @@ void DICOMImageReader<TImageSpatialObject>
     this->m_StateMachine.ProcessInputs();
     return;
     }
-/*
+
   // Attempt to load the directory listing.
   itksys::Directory directoryClass;
   directoryClass.Load( directory.c_str() );
@@ -495,7 +495,7 @@ void DICOMImageReader<TImageSpatialObject>
     this->m_StateMachine.ProcessInputs();
     return;
     }
-*/
+
   this->m_StateMachine.PushInput( this->m_ImageDirectoryNameValidInput );
   this->m_StateMachine.ProcessInputs();
 
