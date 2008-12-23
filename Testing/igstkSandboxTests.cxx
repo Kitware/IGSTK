@@ -47,6 +47,8 @@ void RegisterTests()
   REGISTER_TEST(igstkAffineTransformTest);
   REGISTER_TEST(igstkPerspectiveTransformTest);
 
+  REGISTER_TEST(igstkAscensionTrackerTest);
+
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest2);
@@ -76,8 +78,6 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest3);
-
-  REGISTER_TEST(igstkFlockOfBirdsTrackerTest2);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 }

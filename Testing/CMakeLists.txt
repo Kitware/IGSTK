@@ -93,8 +93,8 @@ SET(SandboxTests_SRCS
 #
 #  igstkFlockOfBirdsCommandInterpreterTest.cxx
 #  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
-#  igstkFlockOfBirdsTrackerTest.cxx
 
+  igstkAscensionTrackerTest.cxx
 
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
@@ -371,15 +371,15 @@ IF(IGSTKSandbox_USE_FLTK)
     ${SandboxTests_SRCS}
   igstkImageResliceSpatialObjectRepresentationFltkTest3.cxx)
 
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkFlockOfBirdsTrackerTest2.cxx)
+# SET(SandboxTests_SRCS
+#    ${SandboxTests_SRCS}
+#  igstkAscensionTrackerTest.cxx)
 
  IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
     ADD_TEST( igstkFlockOfBirdsTrackerTest2
               ${IGSTKSandbox_TESTS}
-              igstkFlockOfBirdsTrackerTest2
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkFlockOfBirdTest2LoggerOutput.txt
+              igstkAscensionTrackerTest
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscensionTestLoggerOutput.txt
               ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
   ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
