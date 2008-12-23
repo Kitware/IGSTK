@@ -375,9 +375,9 @@ IF(${IGSTK_USE_FLTK})
     ADD_TEST(igstkMeshObjectTestLiver    ${IGSTK_TESTS} 
               --compare ${BASELINE}/igstkMeshLiver.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png 
-              --toleranceIntensity 10
+              --toleranceIntensity 20
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceNumberOfPixels 25 
               igstkMeshObjectTest2
               ${IGSTK_DATA_ROOT}/Input/liver.msh  
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png
