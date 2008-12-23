@@ -252,7 +252,12 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
-ADD_TEST( igstkCrossHairObjectTest ${IGSTKSandbox_TESTS} igstkCrossHairObjectTest)
+
+ADD_TEST( igstkCrossHairObjectTest
+              ${IGSTKSandbox_TESTS}
+              igstkCrossHairObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
 ADD_TEST( igstkToolProjectionObjectTest ${IGSTKSandbox_TESTS} igstkToolProjectionObjectTest)
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
