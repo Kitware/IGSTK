@@ -24,15 +24,17 @@
 #include "itksys/Directory.hxx"
 #include "igstkTransformObserver.h"
 
-#include "igstkMicronTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
+#include "igstkAscensionTrackerConfiguration.h"
+#include "igstkMicronTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
 
 #include "igstkAuroraConfigurationXMLFileReader.h"
+#include "igstkAscensionConfigurationXMLFileReader.h"
+#include "igstkMicronConfigurationXMLFileReader.h"
 #include "igstkPolarisVicraConfigurationXMLFileReader.h"
 #include "igstkPolarisSpectraConfigurationXMLFileReader.h"
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
-#include "igstkMicronConfigurationXMLFileReader.h"
 
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
@@ -1663,369 +1665,114 @@ UltrasoundNavigator::~UltrasoundNavigator()
 void UltrasoundNavigator::ConfigureTrackerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ConfigureTrackerProcessing called...\n" )
+             "WorkingVolumeTester::ConfigureTrackerProcessing called...\n" )
  
   const char*  fileName = 
     fl_file_chooser("Select a tracker configuration file","*.xml", "auroraConfiguration.xml");
 
-  if ( !fileName )
+  if ( fileName == NULL )
   {
       igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
+             "WorkingVolumeTester::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
       m_StateMachine.PushInput( m_FailureInput );
       m_StateMachine.ProcessInputs();
       return;
   }
 
-  igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader = 
-    igstk::TrackerConfigurationFileReader::New();
-    //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
+  const unsigned int NUM_TRACKER_TYPES = 6;
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer
+       trackerCofigurationXMLReaders[NUM_TRACKER_TYPES];
+  trackerCofigurationXMLReaders[0] =
+       igstk::PolarisVicraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[1] =
+       igstk::PolarisSpectraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[2] =
+       igstk::PolarisHybridConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[3] =
+       igstk::AuroraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[4] =
+       igstk::MicronConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[5] =
+       igstk::AscensionConfigurationXMLFileReader::New();
+
+  igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader =
+        igstk::TrackerConfigurationFileReader::New();
+
+  //need to observe if the request read succeeds or fails
+  //there is a third option that the read is invalid, if the
+  //file name or xml reader weren't set
+  igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::Pointer
+        rfso = igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::New();
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::ReadSuccessEvent(), rfso );
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::ReadFailureEvent(), rfso );
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(), rfso );
+
+  //setting the file name and reader always succeeds so I don't
+  //observe for success event
   trackerConfigReader->RequestSetFileName( fileName );
 
-  if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
+  TrackerConfigurationObserver::Pointer tco = TrackerConfigurationObserver::New();
+
+  for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
   {
-    m_StateMachine.PushInput( m_SuccessInput );    
-  }
-  else if ( this->ReadMicronConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else if ( this->ReadPolarisVicraConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else if ( this->ReadPolarisSpectraConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else if ( this->ReadPolarisHybridConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else
-  {
-    std::string errorMessage;
-    errorMessage = "Could not configure the tracker. Pick another configuration.";
+   //setting the xml reader always succeeds so I don't
+   //observe the success event
+   trackerConfigReader->RequestSetReader( trackerCofigurationXMLReaders[i] );
+
+   trackerConfigReader->RequestRead();
+
+   if( rfso->GotUnexpectedTrackerType() )
+   {
+     rfso->Reset();
+   }
+   else if( rfso->GotFailure() && !rfso->GotUnexpectedTrackerType() )
+   {
+    //throw ExceptionWithMessage( rfso->GetFailureMessage() );
+    std::string errorMessage = rfso->GetFailureMessage();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-
-    m_StateMachine.PushInput( m_FailureInput );
-  } 
-
-  m_StateMachine.ProcessInputs();
-}
-
-bool UltrasoundNavigator::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ReadMicronConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer trackerCofigurationXMLReader;
-  
-  trackerCofigurationXMLReader = igstk::MicronConfigurationXMLFileReader::New();
-
-  reader->RequestSetReader( trackerCofigurationXMLReader );  
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadMicronConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadMicronConfiguration error: could not read MICRON tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadMicronConfiguration error: could not get MICRON tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool UltrasoundNavigator::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ReadPolarisVicraConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::PolarisVicraConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                             ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadPolarisVicraConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadPolarisVicraConfiguration error: could not read Polaris Vicra tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadPolarisVicraConfiguration error: could not get Polaris Vicra tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool UltrasoundNavigator::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ReadAuroraConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::AuroraConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: could not read AURORA tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: could not get AURORA tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool UltrasoundNavigator::ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ReadPolarisHybridConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::PolarisHybridConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadPolarisHybridConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadPolarisHybridConfiguration error: could not read Polaris Hybrid tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: could not get Polaris Hybrid tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool UltrasoundNavigator::ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "UltrasoundNavigator::ReadPolarisSpectraConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::PolarisSpectraConfigurationXMLFileReader::New();
-
-  // setting the file name and reader always succeeds so I don't
-  // observe the trackerConfigReader for their success events
-  // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-  // need to observe if the request read succeeds or fails
-  // there is a third option that the read is invalid, if the
-  // file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: could not read Polaris Spectra tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "UltrasoundNavigator::ReadAuroraConfiguration error: could not get Polaris Spectra tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
+    igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
+
+     m_StateMachine.PushInput( m_FailureInput );
+     m_StateMachine.ProcessInputs();
+     return; 
+   }
+   else if( rfso->GotSuccess() )
+   {
+     //get the configuration data from the reader
+     trackerConfigReader->AddObserver(
+       igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), tco );
+     trackerConfigReader->RequestGetData();
+
+     if( tco->GotTrackerConfiguration() )
+     {
+       m_TrackerConfiguration = tco->GetTrackerConfiguration();
+       m_StateMachine.PushInput( m_SuccessInput );
+     }
+     else
+     {
+       igstkLogMacro2( m_Logger, DEBUG, "Could not get tracker configuration error\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+     }
+
+     m_StateMachine.ProcessInputs();
+     return; 
+   }
+   else
+   {
+    // just to complete all possibilities
+       igstkLogMacro2( m_Logger, DEBUG, "Very strange tracker configuration error\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+  } // for
 }
 
 void UltrasoundNavigator::RequestLoadImage()
