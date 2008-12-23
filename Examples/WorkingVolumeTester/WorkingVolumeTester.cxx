@@ -27,7 +27,6 @@
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
-#include "igstkMedSafeTrackerConfiguration.h"
 #include "igstkAscensionTrackerConfiguration.h"
 
 #include "igstkAuroraConfigurationXMLFileReader.h"
@@ -468,248 +467,6 @@ WorkingVolumeTester::~WorkingVolumeTester()
 
 }
 
-bool WorkingVolumeTester::ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "WorkingVolumeTester::ReadPolarisVicraConfiguration called...\n" )
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::PolarisVicraConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: could not read Polaris Vicra tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadPolarisVicraConfiguration error: could not get Polaris Vicra tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool WorkingVolumeTester::ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer trackerCofigurationXMLReader;
-  
-  trackerCofigurationXMLReader = igstk::MicronConfigurationXMLFileReader::New();
-
-  reader->RequestSetReader( trackerCofigurationXMLReader );  
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadMicronConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadMicronConfiguration error: could not read MICRON tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadMicronConfiguration error: could not get MICRON tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool WorkingVolumeTester::ReadAscensionConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::AscensionConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAscensionConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAscensionConfiguration error: could not read ASCENSION tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAscensionConfiguration error: could not get ASCENSION tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
-bool WorkingVolumeTester::ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer reader)
-{
-
-  igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
-                                                        trackerCofigurationXMLReader;
-
-  trackerCofigurationXMLReader = igstk::AuroraConfigurationXMLFileReader::New();
-
-  //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
- // trackerConfigReader->RequestSetFileName( TRACKER_CONFIGURATION_XML );
-  reader->RequestSetReader( trackerCofigurationXMLReader );
-
-   //need to observe if the request read succeeds or fails
-   //there is a third option that the read is invalid, if the
-   //file name or xml reader weren't set
-  ReadTrackerConfigurationFailSuccessObserverType::Pointer trackerReaderObserver = 
-                                ReadTrackerConfigurationFailSuccessObserverType::New();
-
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    trackerReaderObserver );
-  reader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    trackerReaderObserver );
-  reader->RequestRead();
-
-  if( trackerReaderObserver->GotFailure() )
-  {
-      igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAuroraConfiguration error: "\
-        << trackerReaderObserver->GetFailureMessage() << "\n" )
-      return false;
-  }
-
-  if( !trackerReaderObserver->GotSuccess() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAuroraConfiguration error: could not read AURORA tracker configuration file\n")
-     return false;
-  }
-
-  //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer trackerConfigurationObserver = 
-    TrackerConfigurationObserver::New();
-
-  reader->AddObserver( 
-    igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), trackerConfigurationObserver );
-
-  reader->RequestGetData();
-  
-  if( !trackerConfigurationObserver->GotTrackerConfiguration() )
-  {
-     igstkLogMacro2( m_Logger, DEBUG, 
-        "WorkingVolumeTester::ReadAuroraConfiguration error: could not get AURORA tracker configuration\n")
-     return false;
-  }
-
-  m_TrackerConfiguration = trackerConfigurationObserver->GetTrackerConfiguration();
-
-  return true;
-}
-
 void WorkingVolumeTester::ConfigureTrackerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
@@ -727,34 +484,100 @@ void WorkingVolumeTester::ConfigureTrackerProcessing()
       return;
   }
 
-  igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader = 
-    igstk::TrackerConfigurationFileReader::New();
-    //setting the file name and reader always succeeds so I don't
-             //observe the trackerConfigReader for their success events
+  const unsigned int NUM_TRACKER_TYPES = 6;
+  igstk::TrackerConfigurationXMLFileReaderBase::Pointer
+       trackerCofigurationXMLReaders[NUM_TRACKER_TYPES];
+  trackerCofigurationXMLReaders[0] =
+       igstk::PolarisVicraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[1] =
+       igstk::PolarisSpectraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[2] =
+       igstk::PolarisHybridConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[3] =
+       igstk::AuroraConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[4] =
+       igstk::MicronConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[5] =
+       igstk::AscensionConfigurationXMLFileReader::New();
+
+  igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader =
+        igstk::TrackerConfigurationFileReader::New();
+
+  //need to observe if the request read succeeds or fails
+  //there is a third option that the read is invalid, if the
+  //file name or xml reader weren't set
+  igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::Pointer
+        rfso = igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::New();
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::ReadSuccessEvent(), rfso );
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::ReadFailureEvent(), rfso );
+
+  trackerConfigReader->AddObserver( 
+           igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(), rfso );
+
+  //setting the file name and reader always succeeds so I don't
+  //observe for success event
   trackerConfigReader->RequestSetFileName( fileName );
 
-  if ( this->ReadAscensionConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );    
-  }
-  else if ( this->ReadAuroraConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );    
-  }
-  else if ( this->ReadMicronConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else if ( this->ReadPolarisVicraConfiguration( trackerConfigReader ) )
-  {
-    m_StateMachine.PushInput( m_SuccessInput );
-  }
-  else
-  {
-    m_StateMachine.PushInput( m_FailureInput );
-  } 
+  TrackerConfigurationObserver::Pointer tco = TrackerConfigurationObserver::New();
 
-  m_StateMachine.ProcessInputs();
+  for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
+  {
+   //setting the xml reader always succeeds so I don't
+   //observe the success event
+   trackerConfigReader->RequestSetReader( trackerCofigurationXMLReaders[i] );
+
+   trackerConfigReader->RequestRead();
+
+   if( rfso->GotUnexpectedTrackerType() )
+   {
+     rfso->Reset();
+   }
+   else if( rfso->GotFailure() && !rfso->GotUnexpectedTrackerType() )
+   {
+    //throw ExceptionWithMessage( rfso->GetFailureMessage() );
+    std::string errorMessage = rfso->GetFailureMessage();
+    fl_alert( errorMessage.c_str() );
+    fl_beep( FL_BEEP_ERROR );
+    igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
+
+     m_StateMachine.PushInput( m_FailureInput );
+     m_StateMachine.ProcessInputs();
+     return; 
+   }
+   else if( rfso->GotSuccess() )
+   {
+     //get the configuration data from the reader
+     trackerConfigReader->AddObserver(
+       igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), tco );
+     trackerConfigReader->RequestGetData();
+
+     if( tco->GotTrackerConfiguration() )
+     {
+       m_TrackerConfiguration = tco->GetTrackerConfiguration();
+       m_StateMachine.PushInput( m_SuccessInput );
+     }
+     else
+     {
+       igstkLogMacro2( m_Logger, DEBUG, "Could not get tracker configuration error\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+     }
+
+     m_StateMachine.ProcessInputs();
+     return; 
+   }
+   else
+   {
+    // just to complete all possibilities
+       igstkLogMacro2( m_Logger, DEBUG, "Very strange tracker configuration error\n" )
+       m_StateMachine.PushInput( m_FailureInput );
+       m_StateMachine.ProcessInputs();
+       return;
+   }
+  } // for
 }
 
 void WorkingVolumeTester::RequestLoadTrackerMesh()

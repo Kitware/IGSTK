@@ -345,15 +345,6 @@ private:
   /** Log file */
   std::ofstream                                   m_LogFile;  
 
-//  igstk::Transform* ReadTransformFile( const std::string &);
-
-  bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadAscensionConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-
 };
 
 #endif
