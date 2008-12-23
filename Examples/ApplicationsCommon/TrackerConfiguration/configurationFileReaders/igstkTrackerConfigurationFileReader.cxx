@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTrackerConfigurationFileReader.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #include <itksys/SystemTools.hxx>
 #include "igstkTrackerConfigurationFileReader.h"
 
@@ -439,7 +456,8 @@ TrackerConfigurationFileReader::ReadProcessing()
   else
   {
     this->m_XMLFileReader->SetFilename( this->m_FileName );
-    try {       //read the xml file
+    try 
+    {       //read the xml file
       this->m_XMLFileReader->GenerateOutputInformation();
                     //xml reading is successful (no exception generation) even 
                     //when the file is empty, need to check that the data was
@@ -448,9 +466,9 @@ TrackerConfigurationFileReader::ReadProcessing()
       {
         this->m_TrackerConfiguration = 
           this->m_XMLFileReader->GetTrackerConfigurationData();
-        igstkPushInputMacro( Success );    
-      }     //we successfuly read the file, it just didn't contain the data, so
-            //data loading is considered a failure
+
+        igstkPushInputMacro( Success );
+      }    
       else
       {
         this->m_ReadFailureErrorMessage = 
@@ -458,9 +476,15 @@ TrackerConfigurationFileReader::ReadProcessing()
         igstkPushInputMacro( Failure );    
       }
     }
-               //an itk exception is thrown if the xml is malformed, and a 
-               //FileFormatException is thrown if the data format is incorrect.
-               //both are decendants of std::exception 
+    //an itk exception is thrown if the xml is malformed, and a 
+    //FileFormatException is thrown if the data format is incorrect.
+    //both are decendants of std::exception 
+    catch( igstk::TrackerConfigurationXMLFileReaderBase::UnexpectedTrackerTypeException & )
+    {
+      this->InvokeEvent( UnexpectedTrackerTypeEvent() );
+      this->m_ReadFailureErrorMessage = "Unexpected tracker type";
+      igstkPushInputMacro( Failure );    
+    }
     catch( std::exception &e ) 
     { 
       this->m_ReadFailureErrorMessage = e.what();
@@ -469,7 +493,6 @@ TrackerConfigurationFileReader::ReadProcessing()
   }
   this->m_StateMachine.ProcessInputs();
 }
-
 
 void 
 TrackerConfigurationFileReader::ReportReadSuccessProcessing()
