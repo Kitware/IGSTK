@@ -1,27 +1,4 @@
-cmake_minimum_required(VERSION 2.4)
-
 PROJECT(OIGTLinkTrackerBroadcasting)
-
-#
-#  FIND ITK
-#
-FIND_PACKAGE(ITK)
-IF (USE_ITK_FILE)
-  INCLUDE (${USE_ITK_FILE})
-ELSE (USE_ITK_FILE)
-  MESSAGE( FATAL_ERROR "This application requires ITK. One of these components is missing. Please verify configuration")
-ENDIF (USE_ITK_FILE)
-
-#
-#  FIND VTK
-#
-FIND_PACKAGE(VTK)
-IF (USE_VTK_FILE)
-  INCLUDE (${USE_VTK_FILE})
-ELSE (USE_VTK_FILE)
-  MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
-ENDIF (USE_VTK_FILE)
-
 
 SET(PRECOMPUTED_TRANSFORM_READER_DIR
     ../ApplicationsCommon/CalibrationRegistrationLoading
@@ -104,18 +81,7 @@ ${OIGTLinkTrackerBroadcasting_SOURCE_DIR}
 ${OIGTLinkTrackerBroadcasting_BINARY_DIR}
 )
 
-
 IF(IGSTKSandbox_USE_FLTK)
-
-  #
-  # FIND FLTK
-  #
-  FIND_PACKAGE(FLTK)
-  IF (FLTK_FOUND)
-    INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
-  ELSE (FLTK_FOUND)
-    MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
-  ENDIF (FLTK_FOUND)
 
   #
   # FLTK fluid GUI files for project
@@ -124,30 +90,12 @@ IF(IGSTKSandbox_USE_FLTK)
       OIGTLinkTrackingBroadcasterGUI.fl
     )
 
-  #
-  # Link to the following libraries
-  #
-  LINK_LIBRARIES (
-    IGSTKSandbox
-    ${FLTK_LIBRARIES}
-  )
-
   FLTK_WRAP_UI(OIGTLinkTrackerBroadcasting ${OIGTLinkTrackerBroadcasting_GUI_SRCS})
-  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainFLTK.cxx ${SRCS} ${HDRS} ${OIGTLinkTrackerBroadcasting_FLTK_UI_SRCS})
-
+  ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainFLTK.cxx ${SRCS} ${HDRS} ${OIGTLinkTrackerBroadcasting_FLTK_UI_SRCS})  
 
 ELSE(IGSTKSandbox_USE_FLTK)
-
-  #
-  # Link to the following libraries
-  #
-  LINK_LIBRARIES (
-    IGSTKSandbox
-  )
-
+  
   ADD_EXECUTABLE(OIGTLinkTrackerBroadcasting mainCommandLine.cxx ${SRCS} ${HDRS})
-
 ENDIF(IGSTKSandbox_USE_FLTK)
 
-
-TARGET_LINK_LIBRARIES(OIGTLinkTrackerBroadcasting ${LINK_LIBRARIES})
+TARGET_LINK_LIBRARIES(OIGTLinkTrackerBroadcasting IGSTKSandbox)
