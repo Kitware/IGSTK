@@ -540,11 +540,6 @@ private:
   void RequestToggleOrthogonalPlanes();
   void ResliceImage( IndexType index );
   bool BuildToolSpatialObject();
-  bool ReadMicronConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadAuroraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisVicraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisHybridConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
-  bool ReadPolarisSpectraConfiguration(igstk::TrackerConfigurationFileReader::Pointer baseReader);
   void HandleKeyPressed ( igstk::BronchoscopyNavigatorQuadrantViews::KeyboardCommandType keyCommand );
   void HandleMousePressed ( igstk::BronchoscopyNavigatorQuadrantViews::MouseCommandType mouseCommand );
   void EnableOrthogonalPlanes();
