@@ -51,10 +51,10 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // A mesh is defined as a collection of 3D points (x,y,z) 
-// in space referenced by an identification number.
+// in space referenced by an identification number (ID).
 // In order to add points to the mesh structure, we use the 
 // \code{AddPoint(unsigned int id,float x, float y,float z)} function.
-// Let's add 4 points in our mesh, as follows:
+// Let's add 4 points with consecutive IDs starting at zero, to our mesh:
 //
 // Software Guide : EndLatex 
 
@@ -67,7 +67,7 @@ mesh->AddPoint(3,10,0,10);
 
 // Software Guide : BeginLatex
 // 
-// Then, we can retrieve the list of points using the \code{GetPoints()}
+// The list of points can be retrieve using the \code{GetPoints()}
 // function:
 //
 // Software Guide : EndLatex
@@ -91,7 +91,8 @@ mesh->AddPoint(3,10,0,10);
 // Software Guide : BeginLatex
 // The next step is to define cells for the mesh. IGSTK currently supports
 // two type of cells: tetrahedron and triangle cells. The functions for adding
-// cells to the mesh are defined as follows:
+// cells to the mesh are defined as follows, where the vertices referes to the ID
+// of the points previously defined.
 // 
 // \begin{verbatim}
 //  bool AddTetrahedronCell(unsigned int id,

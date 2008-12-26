@@ -23,7 +23,7 @@
 //
 // \index{igstk::CTImageSpatialObject}
 // In this example we show the main features of the ImageObject classes.
-// IGSTK implements one class per modality for CT, MRI, and ultrasound, as 
+// IGSTK implements one class per modality for CT, MRI, and Ultrasound, as 
 // follows:
 // Software Guide : EndLatex 
 
@@ -48,7 +48,9 @@ int main( int argc, char * argv[] )
 
 // Software Guide : BeginLatex
 //
-// Then, for a given point in physical space, we can ask if this particular
+// Then, in some cases, it might useful to know the intensity value of the image given
+// a point in world coordinate (e.g. what is the intensity value at the tip of the needle).
+// For a given point in physical space, we can ask if this
 // point is inside (or outside) the image using the \code{IsInside()} function:
 //
 // Software Guide : EndLatex 
@@ -99,7 +101,7 @@ int main( int argc, char * argv[] )
 // Software Guide : BeginLatex
 //
 // We can also check if the image is empty by using the \code{IsEmpty()}
-// function.
+// function. An image is considered empty if it has only pixels with zero intensity value.
 //
 // Software Guide : EndLatex 
 
@@ -110,7 +112,7 @@ int main( int argc, char * argv[] )
     }
   else
     {
-    std::cout << "The image has some non black pixel" << std::endl;
+    std::cout << "The image has some non zero pixel" << std::endl;
     }
 // Software Guide : EndCodeSnippet
 

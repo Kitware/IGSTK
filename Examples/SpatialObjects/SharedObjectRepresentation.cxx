@@ -49,8 +49,8 @@ int main( int , char *[] )
   cubeRepresentation->RequestSetBoxObject(cube);
 // Software Guide : BeginLatex
 //
-// We now add a second View to our window. 
-// We have \code{View3D1} and \code{View3D2} as two \doxygen{View3D}s.
+// From the previous example, we add a second View to our window. 
+// We have \code{View3D1} and \code{View3D2} as two \code{View3Ds}.
 //
 // Software Guide : EndLatex 
 
@@ -90,7 +90,7 @@ int main( int , char *[] )
 //
 // For this example, we create a second object representation
 // and we set the color to be red and the opacity to $0.5$.
-// We set the same BoxSpatialObject to the geometry.
+// We set the same \doxygen{BoxSpatialObject} to the geometry.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -153,8 +153,8 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// An important function of the ObjectRepresentation is the 
-// \code{Copy()} function which creates a deep copy of the 
+// Instead of being shared, the ObjectRepresentation can also be copied
+// using the \code{Copy()} function which creates a deep copy of the 
 // current representation as shown below.
 //
 // Software Guide : EndLatex

@@ -24,7 +24,7 @@
 // \index{igstk::TubeObject}
 // This example describes how to use the \doxygen{TubeObject}, which implements
 // a 3D tubular structure in space.
-// The tube is defined by a set of points representing its centerline.
+// The tube is defined by a set of consecutive points representing its centerline.
 // Each point has a position and an associated radius value.
 //
 // Let's start by including the appropriate header file:
@@ -50,8 +50,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // Points can be added sequentially in the tube using
 // the \code{AddPoint()} function.
-// Let's add two points - one point at position (0,1,2) with a radius of 10 mm,
-// and the second point at (1,2,3) with a radius of 20 mm:
+// Let's add two points - one point at position (0,1,2) with a radius of 10$mm$,
+// and the second point at (1,2,3) with a radius of 20$mm$:
 //
 // Software Guide : EndLatex 
 
@@ -95,8 +95,8 @@ int main( int , char *[] )
   std::cout << std::endl;
 // Software Guide : BeginLatex
 //
-// Instead, the second \code{GetPoints()} function should be 
-// used. It is safer because it returns the internal list of points, as follows:
+// However, the second \code{GetPoints()} function is highly recommended. 
+// It is safer because it returns the internal list of points as a copy:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
@@ -114,7 +114,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // The \code{Clear()} function can be used to remove all 
-// points from the tube:
+// the points from the tube:
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet

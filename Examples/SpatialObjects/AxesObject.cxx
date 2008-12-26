@@ -23,9 +23,13 @@
 //
 // \index{igstk::AxesObject}
 // This example describes how to use the \doxygen{AxesObject}.
-// This class defines a 3D coordinate system in space. 
+// This class defines a 3-dimensional coordinate system in space. 
 // It is intended to provide a visual reference of the orientation 
 // of space in the context of the scene.
+//
+// The \doxygen{AxesObject} is useful when creating complex objects
+// to make sure that the orientation within the scene is consistent.
+// It is also very informative for debugging purposes.
 //
 // First, we include the appropriate header file:
 // Software Guide : EndLatex 
@@ -61,7 +65,8 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // In case we need to retrieve the length of the axes
-// we can use the \code{GetSize()} functions, as follows:
+// we can use the \code{GetSizeX()},\code{GetSizeY()} and \code{GetSizeZ()} 
+// functions.
 //
 // Software Guide : EndLatex 
 

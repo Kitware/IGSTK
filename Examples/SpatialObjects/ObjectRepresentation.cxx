@@ -25,8 +25,8 @@
 // This example describes how to use the \doxygen{BoxObjectRepresentation}
 // to display a \doxygen{BoxObject} in a \doxygen{View3D}.
 // 
-// This example also uses FLTK to create a window, therefore we include the 
-// appropriate header files.
+// This example also uses the Fast Light GUI Toolkit (FLTK) to create a window, 
+// therefore we include the appropriate header files.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -40,7 +40,8 @@ int main( int , char *[] )
 {
 // Software Guide : BeginLatex
 //
-// Like any applications in IGSTK we first initialize the RealTimeClock.
+// Like any applications in IGSTK we first initialize the RealTimeClock to ensure
+// proper synchronyzation between the different components.
 //
 // Software Guide : EndLatex 
 
@@ -61,7 +62,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// The appropriate object representation for the BoxObject is created
+// The appropriate object representation for the \doxygen{BoxObject} is created
 // using standard typedef and smart pointers.
 //
 // Software Guide : EndLatex 
@@ -72,7 +73,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Every ObjectRepresentation has a RGB color and an opacity as rendering
+// Every ObjectRepresentation has a color and an opacity as rendering
 // parameters. These two parameters can be tuned using 
 // the \code{SetColor(R,G,B)} and \code{SetOpacity()} functions respectively.
 //
@@ -84,9 +85,9 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then we tell the ObjectRepresentation to get the geometry
-// from the BoxSpatialObject. Internally the ObjectRepresentation
-// creates VTK actors from the actual geometry of the SpatialObject.
+// Then set the BoxSpatialObject geometry to the ObjectRepresentation.
+// Internally the ObjectRepresentation creates VTK actors 
+// from the actual geometry of the \doxygen{SpatialObject}.
 //
 // Software Guide : EndLatex 
 
@@ -129,20 +130,16 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We set the refresh rate of the view
+// We set the refresh rate of the view. The refresh rate defines
+// when the view should be renderer. Note that faster refresh rate
+// might be request but might not be achieved, depending on the different
+// component of the system.
 //
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
   view3D->SetRefreshRate( 0.1 );
 // Software Guide : EndCodeSnippet
-// Software Guide : BeginLatex
-//
-// Finally we request the view to start rendering the scene.
-//
-// Software Guide : EndLatex 
-
-
 // Software Guide : BeginLatex
 //
 // A spatial relationship must be established between the View and the Object
@@ -156,7 +153,11 @@ int main( int , char *[] )
 
   cube->RequestSetTransformAndParent( transform, view3D );
 // Software Guide : EndCodeSnippet
-
+// Software Guide : BeginLatex
+//
+// Finally we request the view to start rendering the scene.
+//
+// Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
   view3D->RequestStart();
 // Software Guide : EndCodeSnippet
@@ -165,6 +166,9 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We then refresh the display until the window is closed.
+// Note that we use the internal timer from FLTK to make sure the view as
+// time to be renderer. The \code{PulseGenerator::CheckTimeouts()}
+// function is the heart of the system which tells the views to refresh itself.
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet

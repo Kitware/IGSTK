@@ -22,7 +22,7 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::ReadVascularNetworkObject}
-// This example describes how to use the \doxygen{VascularNetwork} to read a
+// This example describes how to use the \doxygen{VascularNetworkReader} to read a
 // SpatialObject vascular tree from a file.
 // Let's start by including the appropriate header files:
 // Software Guide : EndLatex 
@@ -35,7 +35,8 @@
 //
 // The SpatialObject readers return the output object via events; 
 // therefore, we declare an observer using the igstkObserverObjectMacro.
-// This macro expects three arguments: 1) the name of the observer (to
+// As we have seen previously, this macro expects three arguments: 
+// 1) the name of the observer (to
 // be determined by the user), 2) the type of event to observe, and 3) the type
 // of the object to be returned. The command is as follows:
 //
@@ -56,7 +57,7 @@ int main( int argc, char *argv[] )
 
 // Software Guide : BeginLatex
 //
-// First, we declare the VascularNetwork using standard type
+// First, we declare the \doxygen{VascularNetwork} using standard type
 // definitions and smart pointers.
 //
 // Software Guide : EndLatex 
@@ -68,14 +69,14 @@ int main( int argc, char *argv[] )
 //
 // We then plug a logger into the reader to get information
 // about the reading process (see Chapter \ref{Chapter:Logging} for more
-// information):
+// information).
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
   typedef igstk::Object::LoggerType     LoggerType;
   typedef itk::StdStreamLogOutput       LogOutputType;
 
-  LoggerType::Pointer   logger = LoggerType::New();
+  LoggerType::Pointer    logger =    LoggerType::New();
   LogOutputType::Pointer logOutput = LogOutputType::New();
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
@@ -85,8 +86,8 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then, we set the filename using the \code{RequestSetFileName()}
-// function:
+// Then, we set the name of the file using the \code{RequestSetFileName()}
+// function.
 //
 // Software Guide : EndLatex 
 
@@ -96,7 +97,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Finally, we ask the reader to read the object:
+// Finally, we ask the reader to read the object.
 //
 // Software Guide : EndLatex 
 
@@ -105,8 +106,8 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// In order to get the output object, we first plug the observer into 
-// the reader:
+// In order to get the output object, we plug the observer into 
+// the reader.
 //
 // Software Guide : EndLatex 
 
@@ -118,7 +119,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then, we request the output vascular network:
+// Then, we request the output vascular network.
 //
 // Software Guide : EndLatex 
 
@@ -127,9 +128,9 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// If everything goes well, then the observer should 
-// receive the vascular network. We can confirm
-// using the \code{GotVascularNetwork()} function of the observer:
+// If everything goes well, the observer should 
+// receive the vascular network as a pointer. We can confirm this by
+// using the \code{GotVascularNetwork()} function of the observer.
 //
 // Software Guide : EndLatex 
 
@@ -142,7 +143,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Finally, we get the output using the \code{GetVascularNetwork()} function:
+// Finally, we get the vascular networ using the \code{GetVascularNetwork()} function.
 //
 // Software Guide : EndLatex 
 
@@ -155,7 +156,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Then, we display the information to make sure everything is right:
+// Then, we display the object information to make sure everything is correct.
 //
 // Software Guide : EndLatex 
 

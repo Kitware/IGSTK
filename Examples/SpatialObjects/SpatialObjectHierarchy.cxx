@@ -44,7 +44,7 @@ int main( int , char *[] )
 {
 
 // Software Guide : BeginLatex
-// First, we create two spheres using the \doxygen{EllipsoidObject} class.
+// First, we create two spheres, sphere1 and sphere2 using the \doxygen{EllipsoidObject} class.
 // They are created using smart pointers, as follows:
 // Software Guide : EndLatex 
 
@@ -57,12 +57,11 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// We then set the second sphere to have a coordinate system
-// relative to sphere1.
-//
-// We first create a transformation and set the translation vector to be $10mm$
-// in each direction, with an error value of $0.001mm$ and a validity time of
-// $10ms$. Second, we assign the transform to the object via the
+// We create a transformation between sphere1 and sphere2 and set the 
+// translation vector to be $10mm$ in each direction, with an error value of 
+// $0.001mm$ and a validity time of $10ms$. 
+// Then we attach sphere2 as a child of sphere1 and we set the relative 
+// transform between the two objects via the
 // \code{RequestSetTransformAndParent()} function. The commands appear as
 // follows:
 //
@@ -76,23 +75,44 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 // Software Guide : BeginLatex
-//
-// Then, in order to retrieve the transformation, we create an observer:
+// In order to retrieve a transformation between an object and its parent, an 
+// observer should be created using the igstkObserverMacro. The first parameter
+// of the macro is the name of the observer, the second is the type of event
+// to observe and the third parameter is the expected result type. 
+// Then we instantiate the observer using smart pointers.
 //
 // \begin{verbatim}
 // igstkObserverMacro(TransformToParent,
 //                   ::igstk::CoordinateSystemTransformToEvent,
 //                   ::igstk::CoordinateSystemTransformToResult)
 // \end{verbatim}
-// We then add the observer to the object using the 
-// \code{AddObserver()} command:
+//
+// Note that the declaration of the observer should be done outside 
+// of the class. This macro will create two functions 
+// depending on the name of the first argument:
+// \begin{enumerate}
+// \item \code{GotTransformToParent()} which returns true if the transform exists.
+// \item \code{GetTransformToParent()} which returns the actual pointer to the transform.
+// \end{enumerate}
+
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
 
   TransformToParentObserver::Pointer transformToParentObserver 
                            = TransformToParentObserver::New();
-        
+                           
+// Software Guide : EndCodeSnippet
+
+// Software Guide : BeginLatex
+//
+// We add the observer to the object using the \code{AddObserver()} command.
+// The first argument specifies the type of event to observe and the second
+// argument is the observer instantiated previously.
+// Software Guide : EndLatex 
+
+// Software Guide : BeginCodeSnippet
+
   sphere2->AddObserver( ::igstk::CoordinateSystemTransformToEvent(), 
                         transformToParentObserver );
 
@@ -100,8 +120,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// Then, we request the transform using the 
-// \code{RequestGetTransformToParent()}
+// Then, we request the transform using the \code{RequestGetTransformToParent()}
 // command:
 // 
 // Software Guide : EndLatex 
@@ -123,7 +142,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// Next, we introduce the \doxygen{GroupObject}. The GroupObject class
+// Next, we introduce the \doxygen{GroupObject}. The \doxygen{GroupObject} class
 // derives from \doxygen{SpatialObject} and acts as an empty container
 // used for grouping objects together.
 //
@@ -138,9 +157,10 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // 
 // Since the \code{igstk::GroupObject} derives from \code{igstk::SpatialObject},
-// we can use the \code{RequestAddObject()} function to add object into the
-// group. For instance, we group \code{sphere1} and the newly created 
-// \code{sphere3} together, as follows:
+// we can use the \code{RequestAddChild()} function to add object into the
+// group. This function expects the relative transform between the two objects as
+// the first argument. For instance, we group the previously created \code{sphere1} 
+// and the newly created \code{sphere3} together, as follows:
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
@@ -159,9 +179,9 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 // 
 // We can request the number of objects in the group using the
-// \code{GetNumberOfChildren()} function.
-// Since \code{sphere1} has a child, \code{sphere2}, there are actually
-// three objects in the group.
+// \code{GetNumberOfChildren()} function. This function returns
+// only the number of first level children. In this case we have two
+// children in the group, even if sphere2 is a child of shpere1.
 //
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet

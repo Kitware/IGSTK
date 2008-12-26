@@ -22,9 +22,11 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::BoxObject}
-// The \doxygen{BoxObject} represents an hexahedron in space.
-// 
-// We include the appropriate header:
+// The \doxygen{BoxObject} represents an hexahedron in space. It is a useful
+// building bloc unit to create more complex object (see the 3D ultrasound
+// probe for reference).
+//
+// Let's include the appropriate header:
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -34,7 +36,7 @@
 int main( int , char *[] )
 {
 // Software Guide : BeginLatex
-// First, we declare the box using standard smart pointers, as follows:
+// First, we declare the box using standard smart pointers:
 //
 // Software Guide : EndLatex 
 
