@@ -85,19 +85,31 @@ public:
     m_StateMachine.AddTransition( m_TwoQuarterCredit,m_QuarterInserted, 
                                             m_ThreeQuarterCredit,  NoAction );
 
-    m_StateMachine.SelectInitialState( m_IdleState );
-
-    // Finish the programming and get ready to run
-    m_StateMachine.SetReadyToRun();
+    // Purposely postponing the rest of the StateMachine programming to the
+    // triggerError1() method.
     }
 
   virtual ~Tester1() {}
 
   void triggerError1()
     {
-    // NOTE that on purpose the m_ThisStateDoesntExist was not added 
+    // NOTE that on purpose the m_ThisStateDoesntExist was NOT added 
     // as a state with AddState()
     m_StateMachine.SelectInitialState( m_ThisStateDoesntExist );
+
+    // Then do the right thing: call SelectInitialState() with a state
+    // that has been registered
+    m_StateMachine.SelectInitialState( m_IdleState );
+
+    // Finish the programming and get ready to run
+    m_StateMachine.SetReadyToRun();
+    }
+
+  void triggerError2()
+    {
+    // Purposely calling SelectInitialState() after SetReadyToRun() has been
+    // called. This should trigger an error message.
+    m_StateMachine.SelectInitialState( m_OneQuarterCredit );
     }
 
 private:
@@ -481,12 +493,16 @@ int igstkStateMachineErrorsTest( int, char * [] )
   std::cout << std::endl << std::endl;
   std::cout << "Trigger error conditions on purpose" << std::endl;
 
-  // The following call are designed for testing the error conditions of the
+  // The following calls are designed for testing the error conditions of the
   // state machine. 
 
   std::cout << "Invoking as Initial state a state that doesn't exist." 
             << std::endl;
   tester1.triggerError1();
+
+  std::cout << "Invoking as SetInitialState() after SetReadyToRun() has been called." 
+            << std::endl;
+  tester1.triggerError2();
 
   std::cout << "Invoking SetReadyToRun() (in constructor) without \
                parent class connected." << std::endl;
