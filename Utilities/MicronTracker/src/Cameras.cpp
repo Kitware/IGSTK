@@ -100,7 +100,7 @@ bool Cameras::getHistogramEqualizeImages()
 
   bool R;
 
-  int s = Cameras_HistogramEqualizeImagesGet( &R);
+  Cameras_HistogramEqualizeImagesGet( &R);
 
   return R;
 
