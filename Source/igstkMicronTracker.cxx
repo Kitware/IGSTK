@@ -200,6 +200,7 @@ MicronTracker::LoadMarkerTemplates( void )
     return FAILURE;
     }
 
+  // MTC library has poor const-correctness
   char * markerTemplateDirectory =
             const_cast< char *> ( this->m_MarkerTemplatesDirectory.c_str() );
 
@@ -256,7 +257,10 @@ bool MicronTracker::Initialize( void )
   char * initializationFilename =
             const_cast< char *> ( this->m_InitializationFile.c_str() );
   this->m_Persistence->setPath( initializationFilename );
-  this->m_Persistence->setSection ("General");
+  std::string sectionName = "General";
+
+  // MTC library has poor const-correctness
+  this->m_Persistence->setSection ( const_cast< char *>( sectionName.c_str() ) );
 
   // The LightCoolness property provides an indication to the camera of how the
   // illumination spectrum is distributed, allowing it to correct for the
@@ -266,9 +270,11 @@ bool MicronTracker::Initialize( void )
   const double defaultLightCoolness = 0.1;
 
   // light coolness value will be set on the camera after it is attached.
+  std::string doubleName = "LightCoolness";
+  // MTC library has poor const-correctness
   this->m_CameraLightCoolness =
       this->m_Persistence->retrieveDouble(
-         "LightCoolness", defaultLightCoolness);
+         const_cast< char *>( doubleName.c_str() ), defaultLightCoolness);
 
   // PredictiveFramesInterleave controls the number of predictive-only matching
   // frames inserted between each subsequent full-matching frames. A valued of 0
@@ -278,8 +284,10 @@ bool MicronTracker::Initialize( void )
   //
 
   const int defaultFrameInterleave = 0;
+  std::string intName = "PredictiveFramesInterleave";
+  // MTC library has poor const-correctness
   this->m_Markers->setPredictiveFramesInterleave(
-    this->m_Persistence->retrieveInt("PredictiveFramesInterleave",
+    this->m_Persistence->retrieveInt( const_cast< char * >( intName.c_str() ),
       defaultFrameInterleave) );
 
   // Sets the template match tolerance (in millimeters).  This tolerance
@@ -293,9 +301,12 @@ bool MicronTracker::Initialize( void )
   //
 
   const double defaultTempMatchToleranceMM = 1.0;
+  doubleName = "TemplateMatchToleranceMM";
+  // MTC library has poor const-correctness
   this->m_Markers->setTemplateMatchToleranceMM(
       this->m_Persistence->retrieveDouble(
-         "TemplateMatchToleranceMM", defaultTempMatchToleranceMM) );
+         const_cast< char * >( doubleName.c_str() ),
+         defaultTempMatchToleranceMM) );
 
   // Selects which image footprint size to use for the XPoint detection
   // algorithm.  Smaller XPoint footprint is 9 pixels in diameter, while the
@@ -303,9 +314,12 @@ bool MicronTracker::Initialize( void )
   // markers at larger distances from the camera, at the expense of reduced
   // accuracy near the far end of the FOM.
   const bool defaultSmallerXPFootprint = true;
+  intName = "DetectSmallMarkers";
+  // MTC library has poor const-correctness
   const bool SmallerXPFootprint =
             (bool)(this->m_Persistence->retrieveInt(
-                       "DetectSmallMarkers", defaultSmallerXPFootprint));
+               const_cast< char * >( intName.c_str() ),
+               defaultSmallerXPFootprint));
   this->m_Markers->setSmallerXPFootprint(SmallerXPFootprint);
 
   // ExtrapolatedFrames controls the number of future frames for which the
@@ -314,8 +328,10 @@ bool MicronTracker::Initialize( void )
   // not found in the future frames. Setting this property to 0 disables
   // extrapolation.
   const int defaultExtrapolatedFrames = 5;
+  intName = "ExtrapolatedFrames";
+  // MTC library has poor const-correctness
   const int ExtrapolatedFrames = this->m_Persistence->retrieveInt(
-                        "ExtrapolatedFrames", defaultExtrapolatedFrames);
+    const_cast< char * >( intName.c_str() ), defaultExtrapolatedFrames);
   this->m_Markers->setExtrapolatedFrames(ExtrapolatedFrames);
 
   return result;
@@ -595,8 +611,11 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     return FAILURE;
     }
 
+  const unsigned int markersCollectionCount = 
+      static_cast<unsigned int>( markersCollection->count() );
+
   for(unsigned int markerNum = 1;
-      markerNum <= markersCollection->count(); markerNum++)
+      markerNum <= markersCollectionCount; markerNum++)
     {
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
