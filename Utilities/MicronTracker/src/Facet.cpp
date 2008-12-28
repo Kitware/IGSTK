@@ -154,7 +154,7 @@ bool Facet::setVectorsFromSample(vector<Collection*> &sampledVectorSets, string 
 
   Collection* handlesCollection = new Collection();
 
-  for (int i=0; i<sampledVectorSets.size(); i++)
+  for (unsigned int i=0; i<sampledVectorSets.size(); i++)
 
   {
 
@@ -218,7 +218,7 @@ bool Facet::identify(MCamera* cam, vector<Vector*> vectorSet, double positionTol
 
 
 
-  for(int i=0; i<vectorSet.size(); i++)
+  for(unsigned int i=0; i<vectorSet.size(); i++)
 
     vectorHandles[i] = vectorSet[i]->Handle();
 
