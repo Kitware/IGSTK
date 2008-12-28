@@ -23,7 +23,7 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 // BeginLatex
 // 
 // This example illustrates how to use IGSTK's Tracker component to communicate 
-// with Micron Tracker and gather toolis transform information. MicronTracker is a
+// with Micron Tracker and gather tool transform information. MicronTracker is a
 // portable optical tracker that uses video image analysis techniques for
 // localization and tracking of surgical tools.
 //
@@ -43,7 +43,7 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 // BeginLatex
 // 
 // To communicate with MicronTracker tracking device, include the MicronTracker
-// header files \doxygen{MicronTracker} is added:
+// header files \doxygen{MicronTracker} and \doxygen{MicronTrackerTool}
 //
 // EndLatex
 
@@ -56,6 +56,11 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
 #include "igstkTransformObserver.h"
 
+// BeginLatex
+// Define a callback class to listen to events invoked by the tracker class. 
+// EndLatex 
+//
+// BeginCodeSnippet
 class MicronTrackerTrackerCommand : public itk::Command 
 {
 public:
@@ -83,6 +88,7 @@ if (!igstk::CompletedEvent().CheckEvent(&event) &&
     }
 };
 
+//EndCodeSnippet
 
 int main( int argc, char * argv[] )
 {
@@ -92,8 +98,15 @@ int main( int argc, char * argv[] )
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
 
+//BeginLatex
+//Instantiate tracker command callback object.
+//EndLatex
+//
+//
+//BeginCodeSnippet
   MicronTrackerTrackerCommand::Pointer 
                      my_command = MicronTrackerTrackerCommand::New();
+//EndCodeSnippet
 
   if( argc < 5 )
     {
@@ -127,6 +140,14 @@ int main( int argc, char * argv[] )
   tracker->SetLogger( logger );
 
   // Set necessary parameters of the tracker
+ 
+  //BeginLatex
+  //Next, set the necessary paramters for the tracker. The required parameters are directory
+  //that contains camera calibration files, micron tracker initialization file (.ini) and
+  //marker template directory.
+  //EndLatex 
+  //
+  //BeginCodeSnippet
   std::string calibrationFilesDirectory = argv[1];
   tracker->SetCameraCalibrationFilesDirectory( 
                             calibrationFilesDirectory );
@@ -136,12 +157,21 @@ int main( int argc, char * argv[] )
 
   std::string markerTemplateDirectory = argv[3];
   tracker->SetMarkerTemplatesDirectory( markerTemplateDirectory );
+  //EndCodeSnippet
 
 
-  // Start communication
+  //BeginLatex
+  //Next, request tracker communication be opened
+  //EndLatex
+  //BeginCodeSnippet
   tracker->RequestOpen();
+  //EndCodeSnippet
 
-  // Add tracker tools
+  //BeginLatex
+  //Next, add tracker tools to the tracker
+  //EndLatex
+  //
+  //BeginCodeSnippet
   typedef igstk::MicronTrackerTool  TrackerToolType;
 
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
@@ -165,9 +195,14 @@ int main( int argc, char * argv[] )
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
   ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
   coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
+  //EndCodeSnippet
 
 
-  //start tracking 
+  //BeginLatex
+  // Start tracking and gather the tracker tool transforms.
+  //EndLatex
+
+  //BeginCodeSnippet
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
@@ -214,49 +249,20 @@ int main( int argc, char * argv[] )
       }
  
     }
-  
-  std::cout << "RequestStopTracking()" << std::endl;
-  tracker->RequestStopTracking();
-
-  //Remove one of the tracker tools and restart tracking
-  std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool->RequestDetachFromTracker( );
-
-  // restart tracking
-
-  tracker->RequestStartTracking();
-
-  for(unsigned int i=0; i<100; i++)
-    {
-    igstk::PulseGenerator::CheckTimeouts(); 
-
-    TransformType             transform;
-    VectorType                position;
-
-    coordSystemAObserver2->Clear();
-    trackerTool2->RequestGetTransformToParent();
-    if (coordSystemAObserver2->GotTransform())
-      {
-      transform = coordSystemAObserver2->GetTransform();
-      if ( transform.IsValidNow() )
-        {
-        position = transform.GetTranslation();
-        std::cout << "Trackertool2 :" 
-                << trackerTool2->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
-      }
-    }
-
+  //EndCodeSnippet
+  //
+  //BeginLatex
+  //Stop tracking and close the communication with the tracker
+  //EndLatex
+  //
+  //
+  //BeginCodeSnippet
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
   std::cout << "RequestClose()" << std::endl;
   tracker->RequestClose();
-
-  std::cout << "[PASSED]" << std::endl;
+  //EndCodeSnippet
 
   return EXIT_SUCCESS;
 }

@@ -34,14 +34,16 @@
 
 // BeginLatex
 // 
-// This example illustrates IGSTK's interface to Polaris optical tracker.
+// This example illustrates IGSTK's interface to Polaris NDI tracker. Polaris
+// trackers are optical measurement system that measure the 3D positions of
+// either active or passive markers.
 //
 // EndLatex
 
- // BeginLatex
+// BeginLatex
 // 
 // To communicate with Polaris tracking device, include the Polaris Tracker
-// header files ( \doxygen{MicronTracker} ) and (\doxygen{MicronTrackerTool}).
+// header files ( \doxygen{PolarisTracker} ) and (\doxygen{PolarisTrackerTool}).
 //
 // EndLatex
 
@@ -50,7 +52,6 @@
 #include "igstkPolarisTrackerTool.h"
 // EndCodeSnippet
 
-#include "igstkAuroraTrackerTool.h"
 #include "igstkTransform.h"
 #include "igstkTransformObserver.h"
 
@@ -125,6 +126,13 @@ int main( int argc, char * argv[] )
 
   serialComm->SetLogger( logger );
 
+  //BeginLatex
+  //Instantiate serial communication object and set the communication parameters.
+  //
+  //EndLatex
+  //
+  //
+  //BeginCodeSnippet
   typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
   unsigned int portNumberIntegerValue = atoi(argv[3]);
   PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
@@ -137,6 +145,7 @@ int main( int argc, char * argv[] )
 
   serialComm->SetCaptureFileName( "RecordedStreamByPolarisTracker.txt" );
   serialComm->SetCapture( true );
+  //EndCodeSnippet
 
   serialComm->OpenCommunication();
 
@@ -157,13 +166,21 @@ int main( int argc, char * argv[] )
   typedef igstk::PolarisTrackerTool         TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 
+  //BeginLatex
+  //Wired and wireless tools can be handled by the Polaris Tracker class.
+  //EndLatex
   // instantiate and attach wired tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
   //Select wired tracker tool
+  //BeginLatex
+  //For wired tracker tool type, invoke RequestSelectWirelessTrackerTool method.
+  //EndLatex
+  //BeginCodeSnippet
   trackerTool->RequestSelectWiredTrackerTool();
+  //EndCodeSnippet
   //Set the port number to zero
   trackerTool->RequestSetPortNumber( 0 );
   //Configure
@@ -181,41 +198,43 @@ int main( int argc, char * argv[] )
   //Add observer to listen to events throw by the tracker tool
   trackerTool2->AddObserver( itk::AnyEvent(), my_command);
   //Select wireless tracker tool
+  //BeginLatex
+  //For wireless tracker tool type, invoke RequestSelectWirelessTrackerTool()
+  //method and set SROM file.
+  //EndLatex
+  //BeginCodeSnippet
   trackerTool2->RequestSelectWirelessTrackerTool();
   //Set the SROM file 
   std::string romFile = argv[2];
   std::cout << "SROM file: " << romFile << std::endl;
   trackerTool2->RequestSetSROMFileName( romFile );
+  //EndCodeSnippet
   //Configure
   trackerTool2->RequestConfigure();
   //Attach to the tracker
+  //BeginLatex
+  //After configuring the tracker tool, make a request to attach the tracker tool to the 
+  // tracker.
+  //EndLatex
+  //BeginCodeSnippet
   trackerTool2->RequestAttachToTracker( tracker );
- ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
+  //EndCodeSnippet
+  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
   coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
 
-  // instantiate and attempt to attach aurora tracker tool. This attempt
-  // will fail since one is not allowed to attach aurora tracker tool to a 
-  // polaris tracker
-  std::cout << "Instantiate aurora tracker tool: " << std::endl;
-  typedef igstk::AuroraTrackerTool         AuroraTrackerToolType;
-  AuroraTrackerToolType::Pointer trackerTool3 = AuroraTrackerToolType::New();
-  trackerTool3->SetLogger( logger );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool3->AddObserver( itk::AnyEvent(), my_command);
-  //Select wireless tracker tool
-  trackerTool3->RequestSelect6DOFTrackerTool();
-  //Configure
-  trackerTool3->RequestConfigure();
-  //Attach to the tracker
-  trackerTool3->RequestAttachToTracker( tracker );
-
   //start tracking 
+  //BeginLatex
+  //Start tracking and observer tracker tool pose information
+  //EndLatex
+  //
+  //BeginCodeSnippet
   tracker->RequestStartTracking();
 
   typedef igstk::Transform            TransformType;
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
+  
 
   for(unsigned int i=0; i<100; i++)
     {
@@ -256,42 +275,13 @@ int main( int argc, char * argv[] )
         }
       }
     }
-  
-  std::cout << "RequestStopTracking()" << std::endl;
-  tracker->RequestStopTracking();
-
-  //Remove one of the tracker tools and restart tracking
-  std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool2->RequestDetachFromTracker( );
-
-  // restart tracking
-
-  tracker->RequestStartTracking();
-
-  for(unsigned int i=0; i<100; i++)
-    {
-    igstk::PulseGenerator::CheckTimeouts();
-
-    TransformType             transform;
-    VectorType                position;
-
-    coordSystemAObserver->Clear();
-    trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotTransform())
-      {
-      transform = coordSystemAObserver->GetTransform();
-      if ( transform.IsValidNow() ) 
-        {
-        position = transform.GetTranslation();
-        std::cout << "Trackertool :" 
-                << trackerTool->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
-      }
-    }
-  
+  //EndCodeSnippet
+ 
+  //BeginLatex
+  //To end the tracking process, stop and close the tracker and close the
+  //serial communication channel
+  //EndLatex 
+  //BeginCodeSnippet
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
@@ -300,6 +290,7 @@ int main( int argc, char * argv[] )
 
   std::cout << "CloseCommunication()" << std::endl;
   serialComm->CloseCommunication();
+  //EndCodeSnippet
 
   return EXIT_SUCCESS;
 }
