@@ -72,13 +72,13 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
   
   if (!server->RequestOpenCommunication())
     {
-    printf("Open communication error!\n");
+    printf("%s","Open communication error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!server->RequestOpenPort( 1234))
     {
-    printf("Open port error!\n");
+    printf("%s","Open port error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
@@ -97,10 +97,10 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
         switch (result)
           {
           case SocketCommunicationType::SUCCESS:
-            printf( "\n");
+            printf("%s", "\n");
             buffer[num] = '\0';
-            printf( buffer, "%s" );
-            printf( "\n");
+            printf("%s", buffer);
+            printf("%s", "\n");
 
             if (strcmp(buffer, "STOPSERVER") == 0)
               {
@@ -114,7 +114,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
               }
             else
               {
-              printf("Data transfer error!\n");
+              printf("%s","Data transfer error!\n");
               *flag = false;
               return ITK_THREAD_RETURN_VALUE;
               }
@@ -122,7 +122,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
           case SocketCommunicationType::TIMEOUT:
             break;
           case SocketCommunicationType::FAILURE:
-            printf("Read error!\n");
+            printf("%s","Read error!\n");
             *flag = false;
             return ITK_THREAD_RETURN_VALUE;
             break;
@@ -184,13 +184,13 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
   
   if (!server->RequestOpenCommunication())
     {
-    printf("Open communication error!\n");
+    printf("%s","Open communication error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!server->RequestOpenPort( 1234))
     {
-    printf("Open port error!\n");
+    printf("%s","Open port error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
@@ -206,10 +206,10 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
     switch (result)
       {
       case SocketCommunicationType::SUCCESS:
-        printf( "\n");
+        printf("%s", "\n");
         buffer[num] = '\0';
-        printf( buffer);
-        printf( "\n");
+        printf("%s", buffer);
+        printf("%s", "\n");
 
         if (strncmp(buffer, "STOPSERVER", strlen("STOPSERVER")) == 0)
           {
@@ -223,7 +223,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
           }
         else
           {
-          printf("Data transfer error!\n");
+          printf("%s","Data transfer error!\n");
           *flag = false;
           return ITK_THREAD_RETURN_VALUE;
           }
@@ -231,7 +231,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction2( void* data)
       case SocketCommunicationType::TIMEOUT:
         break;
       case SocketCommunicationType::FAILURE:
-        printf("Read error!\n");
+        printf("%s","Read error!\n");
         *flag = false;
         return ITK_THREAD_RETURN_VALUE;
         break;
@@ -284,13 +284,13 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction1( void* data)
 
   if (!client->RequestOpenCommunication())
     {
-    printf("Open communication error!\n");
+    printf("%s","Open communication error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!client->RequestConnect( "127.0.0.1", 1234))
     {
-    printf("Connection error!\n");
+    printf("%s","Connection error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
@@ -300,7 +300,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction1( void* data)
     sprintf(message, "%s[%d]\n", clientmessage, i);
     if (!client->RequestWrite( message ))
       { 
-      printf("Write error!\n");
+      printf("%s","Write error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }
@@ -313,13 +313,13 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction1( void* data)
 
     if (strncmp( buffer, servermessage, strlen(servermessage)) == 0)
       {
-      printf("\n");
+      printf("%s","\n");
       buffer[num] = '\0';
-      printf( buffer);
+      printf("%s", buffer);
       }
     else
       {
-      printf("Data transfer error!\n");
+      printf("%s","Data transfer error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }
@@ -371,13 +371,13 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
 
   if (!client->RequestOpenCommunication())
     {
-    printf("Open communication error!\n");
+    printf("%s","Open communication error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
   if (!client->RequestConnect( "localhost", 1234))
     {
-    printf("Connection error!\n");
+    printf("%s","Connection error!\n");
     *flag = false;
     return ITK_THREAD_RETURN_VALUE;
     }
@@ -387,7 +387,7 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
     sprintf(message, "%s[%d]\n", clientmessage, i);
     if (!client->RequestWrite( message, 100))
       { 
-      printf("Write error!\n");
+      printf("%s","Write error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }
@@ -396,13 +396,13 @@ ITK_THREAD_RETURN_TYPE ClientThreadFunction2( void* data)
 
     if (strncmp( buffer, servermessage, strlen(servermessage)) == 0)
       {
-      printf("\n");
+      printf("%s","\n");
       buffer[num] = '\0';
-      printf( buffer);
+      printf("%s", buffer);
       }
     else
       {
-      printf("Data transfer error!\n");
+      printf("%s","Data transfer error!\n");
       *flag = false;
       return ITK_THREAD_RETURN_VALUE;
       }
@@ -440,7 +440,7 @@ int igstkSocketCommunicationTest( int, char * [] )
 
   if (!(serverOK && clientOK))
     {
-    printf("Test failed!\n");
+    printf("%s","Test failed!\n");
     return EXIT_FAILURE;
     }
 
@@ -453,12 +453,12 @@ int igstkSocketCommunicationTest( int, char * [] )
 
   if (serverOK && clientOK)
     {
-    printf("Test succeed!\n");
+    printf("%s","Test succeed!\n");
     return EXIT_SUCCESS;
     }
   else
     {
-    printf("Test failed!\n");
+    printf("%s","Test failed!\n");
     return EXIT_FAILURE;
     }
 

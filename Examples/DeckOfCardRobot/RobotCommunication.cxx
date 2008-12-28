@@ -119,14 +119,14 @@ bool RobotCommunication::Init()
   // initializes socket communications
   if (!m_Client->RequestOpenCommunication()) 
     { 
-    printf("Open communication error!\n");
+    printf("%s","Open communication error!\n");
     return false;
     }
 
   // attempts to connect to HWServer @ localhost
   if (!m_Client->RequestConnect( IPADDRESS, PORT)) 
     {
-    printf("Connection error!\n");
+    printf("%s","Connection error!\n");
     return false;
     }
 
