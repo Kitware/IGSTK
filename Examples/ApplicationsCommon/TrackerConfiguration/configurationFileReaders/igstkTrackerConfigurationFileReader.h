@@ -209,11 +209,12 @@ public:
     typedef  ::itk::SmartPointer<Self>  Pointer;
     itkNewMacro( Self );
   protected:
-    ReadFailSuccessObserver() : 
-      m_GotFailure( false ), 
-      m_GotSuccess( false ),
-      m_GotUnexpectedTrackerType( false ) 
-      { }
+    ReadFailSuccessObserver() 
+      { 
+      m_GotFailure = false, 
+      m_GotSuccess = false,
+      m_GotUnexpectedTrackerType = false; 
+      }
     ~ReadFailSuccessObserver() {}
   public:
     void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -224,19 +225,19 @@ public:
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
       if( dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
-      {
+        {
         m_GotSuccess = true;
-      }
+        }
       else if( const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
         dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
-      {
+        {
         m_GotFailure = true;
         m_FailureMessage = rfe->Get();
-      }
+        }
       else if( dynamic_cast<const igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent *>( &event) )
-      {
+        {
         m_GotUnexpectedTrackerType = true;
-      }
+        }
     }
     bool GotSuccess() {return this->m_GotSuccess;}
     bool GotFailure() {return this->m_GotFailure;}
