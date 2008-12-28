@@ -99,7 +99,7 @@ ITK_THREAD_RETURN_TYPE ServerThreadFunction1( void* data)
           case SocketCommunicationType::SUCCESS:
             printf( "\n");
             buffer[num] = '\0';
-            printf( buffer);
+            printf( buffer, "%s" );
             printf( "\n");
 
             if (strcmp(buffer, "STOPSERVER") == 0)
