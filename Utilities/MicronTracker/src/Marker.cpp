@@ -138,7 +138,7 @@ bool Marker::wasIdentified(MCamera *cam)
 
   }
 
-  short stat = Marker_WasIdentifiedGet(this->m_handle, camHandle, &result);
+  Marker_WasIdentifiedGet(this->m_handle, camHandle, &result);
 
   return result;
 
@@ -216,7 +216,7 @@ char* Marker::getName()
 
 
 
-  mtCompletionCode st = Marker_NameGet(this->m_handle, m_MarkerName, sizeof(m_MarkerName), &size);
+  Marker_NameGet(this->m_handle, m_MarkerName, sizeof(m_MarkerName), &size);
 
   m_MarkerName[size] = '\0';
 

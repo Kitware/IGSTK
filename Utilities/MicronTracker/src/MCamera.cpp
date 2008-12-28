@@ -47,8 +47,11 @@ MCamera::MCamera(int handle)
     this->m_handle = handle;
 
   else
-
-    this->m_handle = Camera_New( "",1965 ); 
+    {
+    char name[20];
+    name[0] = '\0';
+    this->m_handle = Camera_New( name,1965 ); 
+    }
 
   this->ownedByMe = TRUE;
 
@@ -500,7 +503,7 @@ int MCamera::getAutoExposure()
 
   int autoExposure = 0;
 
-  int result = Camera_AutoExposureGet(this->m_handle, &autoExposure);
+  Camera_AutoExposureGet(this->m_handle, &autoExposure);
 
   return autoExposure;
 
