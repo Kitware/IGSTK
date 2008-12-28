@@ -1603,22 +1603,28 @@ TrackerController::InitializeAuroraTool(
   bool is5DOF = toolConfiguration->GetIs5DOF();
 
   if( is5DOF )
+    {
     trackerTool->RequestSelect5DOFTrackerTool();
+    }
   else
+    {
     trackerTool->RequestSelect6DOFTrackerTool();
+    }
 
   // aurora internally handles [0-3] , so here we substract
 
   trackerTool->RequestSetPortNumber( toolConfiguration->GetPortNumber() - 1 );
 
   if( is5DOF )
+    {
     trackerTool->RequestSetChannelNumber( toolConfiguration->GetChannelNumber() );
+    }
 
   std::string sromFileName = toolConfiguration->GetSROMFile();
   if( !sromFileName.empty() )
-  {
+    {
     trackerTool->RequestSetSROMFileName( sromFileName );
-  }
+    }
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
 
@@ -1645,11 +1651,11 @@ void
 TrackerController::AscensionInitializeProcessing()
 {
   if( !InitializeSerialCommunication() )
-  {
+    {
     igstkPushInputMacro( Failed );
-  }
+    }
   else
-  {
+    {
     //create tracker
     igstk::AscensionTracker::Pointer tracker = igstk::AscensionTracker::New();
     this->m_Tracker = tracker; 
@@ -1665,14 +1671,14 @@ TrackerController::AscensionInitializeProcessing()
     tracker->RemoveObserver(observerID);
 
     if( this->m_ErrorObserver->ErrorOccured() )
-    {
+      {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
       this->m_ErrorObserver->ClearError();
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
-    }
+      }
     else   //attach the tools 
-    {
+      {
       ToolAttachErrorObserver::Pointer attachErrorObserver = 
         ToolAttachErrorObserver::New();
 
@@ -1686,7 +1692,7 @@ TrackerController::AscensionInitializeProcessing()
       AscensionToolConfiguration * currentToolConfig;
 
       for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
-      {
+        {
         currentToolConfig = 
           static_cast<AscensionToolConfiguration *>( it->second );
           currentTool = InitializeAscensionTool( currentToolConfig );
@@ -1703,12 +1709,12 @@ TrackerController::AscensionInitializeProcessing()
           this->m_StateMachine.ProcessInputs();
           return;
           }
-      }
+        }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
         this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
-      {
+        {
         currentToolConfig = 
           static_cast<AscensionToolConfiguration *>( referenceToolConfiguration );
         currentTool = InitializeAscensionTool( currentToolConfig );
@@ -1725,10 +1731,10 @@ TrackerController::AscensionInitializeProcessing()
           return;
           }
         tracker->RequestSetReferenceTool( currentTool );
-      }
+        }
       igstkPushInputMacro( Succeeded );
-    }
-  }  
+      }
+    }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1736,11 +1742,11 @@ void
 TrackerController::AuroraInitializeProcessing()
 {
   if( !InitializeSerialCommunication() )
-  {
+    {
     igstkPushInputMacro( Failed );
-  }
+    }
   else
-  {
+    {
     //create tracker
     igstk::AuroraTracker::Pointer tracker = igstk::AuroraTracker::New();
     this->m_Tracker = tracker; 
@@ -1758,14 +1764,14 @@ TrackerController::AuroraInitializeProcessing()
     tracker->RemoveObserver( observerID );
 
     if( this->m_ErrorObserver->ErrorOccured() )
-    {
+      {
       this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
       this->m_ErrorObserver->ClearError();
       this->m_SerialCommunication->CloseCommunication();
       igstkPushInputMacro( Failed );
-    }
+      }
     else   //attach the tools 
-    {
+      {
       ToolAttachErrorObserver::Pointer attachErrorObserver = 
         ToolAttachErrorObserver::New();
 
@@ -1779,7 +1785,7 @@ TrackerController::AuroraInitializeProcessing()
       AuroraToolConfiguration * currentToolConfig;
 
       for( it = toolConfigurations.begin(); it != toolConfigEnd; it++ )
-      {
+        {
         currentToolConfig = 
           static_cast<AuroraToolConfiguration *>( it->second );
         currentTool = InitializeAuroraTool( currentToolConfig );
@@ -1797,19 +1803,19 @@ TrackerController::AuroraInitializeProcessing()
           this->m_StateMachine.ProcessInputs();
           return;
           }
-      }
+        }
                       //add the reference if we have one
       TrackerToolConfiguration* referenceToolConfiguration = 
         this->m_TrackerConfiguration->m_ReferenceTool;
       if( referenceToolConfiguration )
-      {
+        {
         currentToolConfig = 
           static_cast<AuroraToolConfiguration *>( referenceToolConfiguration );
 
         currentTool = InitializeAuroraTool( currentToolConfig );
         this->m_ReferenceTool = currentTool;
 
-        unsigned long observerID = currentTool->AddObserver( 
+        currentTool->AddObserver( 
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
@@ -1820,10 +1826,10 @@ TrackerController::AuroraInitializeProcessing()
           return;
           }
         tracker->RequestSetReferenceTool( currentTool );
-      }
+        }
       igstkPushInputMacro( Succeeded );
-    }
-  }  
+      }
+    }  
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -1874,13 +1880,13 @@ void TrackerController::MicronInitializeProcessing()
   tracker->RemoveObserver(observerID);
   
   if( this->m_ErrorObserver->ErrorOccured() )
-  {
+    {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     igstkPushInputMacro( Failed );
-  }
+    }
   else   //attach the tools and start communication 
-  {
+    {
     ToolAttachErrorObserver::Pointer attachErrorObserver = 
       ToolAttachErrorObserver::New();
     std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
@@ -1893,7 +1899,7 @@ void TrackerController::MicronInitializeProcessing()
     MicronToolConfiguration * currentToolConfig;
 
     for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
-    {
+      {
       currentToolConfig = static_cast<MicronToolConfiguration *>(it->second);
 
       trackerTool = InitializeMicronTool( currentToolConfig );
@@ -1906,37 +1912,37 @@ void TrackerController::MicronInitializeProcessing()
       trackerTool->RequestAttachToTracker( tracker );
       trackerTool->RemoveObserver( observerID ); 
       if( attachErrorObserver->GotToolAttachError() )
-      {
+        {
         igstkPushInputMacro( Failed );
         this->m_StateMachine.ProcessInputs();
         return;
+        }
       }
-    }
                       //add the reference if we have one
     TrackerToolConfiguration* referenceToolConfiguration = 
       this->m_TrackerConfiguration->m_ReferenceTool;
     if( referenceToolConfiguration )
-    {
+      {
       currentToolConfig = 
         static_cast<MicronToolConfiguration *>( referenceToolConfiguration );
 
       trackerTool = InitializeMicronTool( currentToolConfig );   
       this->m_ReferenceTool = trackerTool;
 
-      unsigned long observerID = trackerTool->AddObserver( 
+      trackerTool->AddObserver( 
         TrackerToolAttachmentToTrackerErrorEvent(),
         attachErrorObserver );      
       trackerTool->RequestAttachToTracker( tracker );
       if( attachErrorObserver->GotToolAttachError() )
-      {
+        {
         igstkPushInputMacro( Failed );
         this->m_StateMachine.ProcessInputs();
         return;
-      }
+        }
       tracker->RequestSetReferenceTool( trackerTool );
-    }
+      }
     igstkPushInputMacro( Succeeded );
-  }
+    }
   this->m_StateMachine.ProcessInputs();
 #else
   igstkPushInputMacro( Failed );
