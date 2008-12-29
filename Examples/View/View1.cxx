@@ -23,8 +23,8 @@
 
 // BeginLatex
 // 
-// This example illustrates how to use the \doxygen{View3D} class to display
-// spatial objects.
+// This example illustrates how to use the \doxygen{View3D} class to render 
+// spatial object representations in FLTK window.
 //
 // EndLatex
 
@@ -46,7 +46,7 @@ int main( int, char * [] )
 
   // BeginLatex
   // 
-  // First, a 3D view and other useful data types are defined: 
+  // First, igstk 3D view, FLTK widget and other useful data types are defined: 
   //
   // EndLatex
 
@@ -112,7 +112,7 @@ int main( int, char * [] )
 
     // BeginLatex
     // 
-    // Next, the FLTK main window and an OpenGL FLTK Widget object are
+    // Next, the FLTK main window and IGSTK FLTK Widget objects are
     // instantiated, and the FLTK form is completed by calling its \code{end()}
     // method.
     //

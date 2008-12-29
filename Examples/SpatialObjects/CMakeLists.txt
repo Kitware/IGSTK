@@ -37,7 +37,7 @@ ADD_EXECUTABLE(CoordinateSystemObject CoordinateSystemObject.cxx)
 TARGET_LINK_LIBRARIES(CoordinateSystemObject IGSTKSandbox)
 
 
-IF (IGSTK_USE_FLTK)
+IF (IGSTKSandbox_USE_FLTK)
 
   ADD_EXECUTABLE(ObjectRepresentation ObjectRepresentation.cxx)
   TARGET_LINK_LIBRARIES(ObjectRepresentation IGSTKSandbox)
@@ -45,5 +45,5 @@ IF (IGSTK_USE_FLTK)
   ADD_EXECUTABLE(SharedObjectRepresentation SharedObjectRepresentation.cxx)
   TARGET_LINK_LIBRARIES(SharedObjectRepresentation IGSTKSandbox)
 
-ENDIF (IGSTK_USE_FLTK)
+ENDIF (IGSTKSandbox_USE_FLTK)
 
