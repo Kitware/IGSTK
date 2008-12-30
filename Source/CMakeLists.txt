@@ -301,17 +301,20 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 # The header files
 SET(IGSTKSandbox_HEADS
 
+# Ascension tracker support
   igstkAscensionCommandInterpreter.h
   igstkAscensionTracker.h
   igstkAscensionTrackerTool.h
 
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.h
-  igstkToolProjectionObject.h
-  igstkToolProjectionRepresentation.h
-  igstkMeshResliceSpatialObjectRepresentation.h
-  igstkCrossHairObject.h
-  igstkCrossHairRepresentation.h
+  igstkToolProjectionSpatialObject.h
+  igstkToolProjectionObjectRepresentation.h
+  igstkMeshResliceObjectRepresentation.h
+  igstkImageResliceObjectRepresentation.h
+
+  igstkCrossHairSpatialObject.h
+  igstkCrossHairObjectRepresentation.h
 
 # Video grabber support
   igstkVideoFrameSpatialObject.h
@@ -335,16 +338,15 @@ SET(IGSTKSandbox_HEADS
   igstkDICOMGenericImageReader.h
   igstkGenericImageSpatialObject.h
   igstkLandmarkUltrasoundCalibration.h
-  igstkObliqueContourMeshObjectRepresentation.h
-  igstkObliqueImageSpatialObjectRepresentation.h
+#  igstkObliqueContourMeshObjectRepresentation.h
+#  igstkObliqueImageSpatialObjectRepresentation.h
   igstkPivotCalibrationNew.h
   igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkQuickTimeGrabber.h
   igstkSocketCommunication.h
   igstkVideoGrabber.h
-  igstkImageSliceRepresentation.h
-  igstkImageResliceSpatialObjectRepresentation.h
+#  igstkImageSliceRepresentation.h
 
   igstkTubeGroupObject.h
 
@@ -425,6 +427,7 @@ ENDIF(IGSTKSandbox_USE_vtkKWImage)
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
+# Ascension tracker support
   igstkAscensionCommandInterpreter.cxx
   igstkAscensionTracker.cxx
   igstkAscensionTrackerTool.cxx
@@ -432,11 +435,12 @@ SET(IGSTKSandbox_SRCS
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.cxx
 
-  igstkToolProjectionObject.cxx
-  igstkToolProjectionRepresentation.cxx
-  igstkMeshResliceSpatialObjectRepresentation.cxx
-  igstkCrossHairObject.cxx
-  igstkCrossHairRepresentation.cxx
+  igstkToolProjectionSpatialObject.cxx
+  igstkToolProjectionObjectRepresentation.cxx
+  igstkMeshResliceObjectRepresentation.cxx
+  igstkImageResliceObjectRepresentation.txx
+  igstkCrossHairSpatialObject.cxx
+  igstkCrossHairObjectRepresentation.cxx
 
 # Video grabber support
   igstkVideoFrameSpatialObject.cxx
@@ -455,22 +459,21 @@ SET(IGSTKSandbox_SRCS
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
  
-  igstkContourMeshObjectRepresentation.cxx
-  igstkContourObjectRepresentation.cxx
+#  igstkContourMeshObjectRepresentation.cxx
+#  igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
   igstkLandmarkUltrasoundCalibration.cxx
-  igstkObliqueContourMeshObjectRepresentation.cxx
-  igstkObliqueImageSpatialObjectRepresentation.txx
+ # igstkObliqueContourMeshObjectRepresentation.cxx
+ # igstkObliqueImageSpatialObjectRepresentation.txx
   igstkPivotCalibrationNew.cxx
   igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
   igstkVideoGrabber.cxx
-  igstkImageSliceRepresentation.txx
-  igstkImageResliceSpatialObjectRepresentation.txx
+#  igstkImageSliceRepresentation.txx
 
   igstkTubeGroupObject.cxx
 
