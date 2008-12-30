@@ -73,7 +73,6 @@ void RegisterTests()
 #endif
 
 #ifdef IGSTKSandbox_USE_FLTK
-  REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
