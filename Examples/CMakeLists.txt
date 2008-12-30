@@ -14,6 +14,7 @@ SUBDIRS(
   PivotCalibrationReader
   SpatialObjects
   ApplicationsCommon
+  AscensionTracker  
   PolarisTracker
   )
 
