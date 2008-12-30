@@ -60,15 +60,15 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 // EndLatex 
 //
 // BeginCodeSnippet
-class AscensionTrackerTrackerCommand : public itk::Command 
+class AscensionTrackerCommand : public itk::Command 
 {
 public:
-  typedef  AscensionTrackerTrackerCommand   Self;
+  typedef  AscensionTrackerCommand   Self;
   typedef  itk::Command                     Superclass;
   typedef  itk::SmartPointer<Self>          Pointer;
   itkNewMacro( Self );
 protected:
-  AscensionTrackerTrackerCommand() {};
+  AscensionTrackerCommand() {};
 
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -86,7 +86,82 @@ if (!igstk::CompletedEvent().CheckEvent(&event) &&
       }
     }
 };
+//EndCodeSnippet
 
+// BeginLatex
+// 
+// \doxygen{TrackerToolUpdateTransformObserver} is used for listening to updated
+// transformations from \doxygen{AscensionTrackerTool} 
+//
+// EndLatex
+
+// BeginCodeSnippet
+class TrackerToolUpdateTransformObserver : public itk::Command 
+{
+public:
+  typedef TrackerToolUpdateTransformObserver   Self;
+  typedef itk::Command                 Superclass;
+  typedef itk::SmartPointer<Self>       Pointer;
+  itkNewMacro( Self );
+
+protected:
+  TrackerToolUpdateTransformObserver() {};
+
+  typedef igstk::Transform::PointType                   PointType;
+
+public:
+  void SetTrackerTool(igstk::TrackerTool *tool)
+  {
+    this->m_TrackerTool = tool;
+  }
+
+  void SetWorldReference(igstk::AxesObject *reference)
+  {
+    this->m_WorldReference = reference;
+  }
+
+  void Execute(itk::Object *caller, const itk::EventObject & event)
+    {
+    Execute( (const itk::Object *)caller, event);
+    }
+
+  void Execute(const itk::Object * object, const itk::EventObject & event)
+    {
+      if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( & event ) )
+      {
+        typedef igstk::TransformObserver ObserverType;
+        ObserverType::Pointer transformObserver = ObserverType::New();
+        transformObserver->ObserveTransformEventsFrom( m_TrackerTool );
+        transformObserver->Clear();
+        
+        m_TrackerTool->RequestComputeTransformTo( m_WorldReference );
+        
+        if ( transformObserver->GotTransform() )
+        {   
+            igstk::Transform transform = transformObserver->GetTransform();
+            PointType point = TransformToPoint( transform );
+            std::cout << "position: " << point[0] << " " << point[1] << " " << point[2] << std::endl;
+        }
+      }
+    }
+
+  protected:
+
+  PointType TransformToPoint( igstk::Transform transform)
+  {
+    PointType point;
+    for (int i=0; i<3; i++)
+      {
+      point[i] = transform.GetTranslation()[i];
+      }
+    return point;
+  }
+
+  /** tracker tool */
+  igstk::TrackerTool::Pointer                           m_TrackerTool;
+  /** world reference */
+  igstk::AxesObject::Pointer                            m_WorldReference;
+};
 //EndCodeSnippet
 
 int main( int argc, char * argv[] )
@@ -97,24 +172,44 @@ int main( int argc, char * argv[] )
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
 
+  if( argc < 3 )
+    {
+    std::cerr << " Usage: " << argv[0] << "\t" 
+                            << "Logger_Output_filename "
+                            << "Serial_communication_port"
+                            << std::endl;
+    return EXIT_FAILURE;
+    }
+
+//BeginLatex
+//Instantiate a serial communication object.
+//EndLatex
+//
+//
+//BeginCodeSnippet
+  igstk::SerialCommunication::Pointer 
+                     serialComm = igstk::SerialCommunication::New();
+//EndCodeSnippet
+
 //BeginLatex
 //Instantiate tracker command callback object.
 //EndLatex
 //
 //
 //BeginCodeSnippet
-  AscensionTrackerTrackerCommand::Pointer 
-                     my_command = AscensionTrackerTrackerCommand::New();
+  AscensionTrackerCommand::Pointer 
+                                my_command = AscensionTrackerCommand::New();
 //EndCodeSnippet
 
-  if( argc < 5 )
-    {
-    std::cerr << " Usage: " << argv[0] << "\t"
-                            << "Logger_Output_filename" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  std::string filename = argv[4];
+//  typedef igstk::TransformObserver   ObserverType;
+ 
+//BeginLatex
+//Setup a logger and add it to the serial communication object
+//EndLatex
+//
+//
+//BeginCodeSnippet
+  std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
 
@@ -126,138 +221,113 @@ int main( int argc, char * argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 
-  typedef igstk::TransformObserver   ObserverType;
- 
+  serialComm->AddObserver( itk::AnyEvent(), my_command);
+  serialComm->SetLogger( logger );
+//EndCodeSnippet
+//
+//BeginLatex
+//Setup the serial communication parameters
+//EndLatex
+//
+//
+//BeginCodeSnippet
+  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
+  unsigned int birdNumberIntegerValue = atoi(argv[2]);
+  PortNumberType  portNumber = PortNumberType(birdNumberIntegerValue); 
+  serialComm->SetPortNumber( portNumber );
+  serialComm->SetParity( igstk::SerialCommunication::NoParity );
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
+  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
+  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
+  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
+  serialComm->SetCaptureFileName( "RecordedStreamByAscensionTrackerTest.txt" );
+  serialComm->SetCapture( true );
+
+  if( !serialComm->OpenCommunication())
+  {
+      std::cout << "Serial port open failure\n";
+      return EXIT_FAILURE;
+  }
+//EndCodeSnippet
+
   igstk::AscensionTracker::Pointer  tracker;
 
   tracker = igstk::AscensionTracker::New();
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
+
   tracker->SetLogger( logger );
 
-  // Set necessary parameters of the tracker
- 
-  //BeginLatex
-  //Next, set the necessary paramters for the tracker. The required parameters are serial port
-  //communication settings.
-  //EndLatex 
-  //
-  //BeginCodeSnippet
-  std::string calibrationFilesDirectory = argv[1];
-  tracker->SetCameraCalibrationFilesDirectory( 
-                            calibrationFilesDirectory );
+  std::cout << "SetCommunication()" << std::endl;
+  tracker->SetCommunication( serialComm );
 
-  std::string initializationFile = argv[2];
-  tracker->SetInitializationFile( initializationFile );
-
-  std::string markerTemplateDirectory = argv[3];
-  tracker->SetMarkerTemplatesDirectory( markerTemplateDirectory );
-  //EndCodeSnippet
-
-
-  //BeginLatex
-  //Next, request tracker communication be opened
-  //EndLatex
-  //BeginCodeSnippet
+  std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
-  //EndCodeSnippet
 
-  //BeginLatex
-  //Next, add tracker tools to the tracker
-  //EndLatex
-  //
-  //BeginCodeSnippet
-  typedef igstk::AscensionTrackerTool  TrackerToolType;
+  typedef igstk::AscensionTrackerTool       TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
 
+  // instantiate and attach tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
-  std::string markerNameTT = "TTblock";
-  trackerTool->RequestSetMarkerName( markerNameTT );  
+
+  //Configure
+  trackerTool->RequestSetPortNumber(1);
   trackerTool->RequestConfigure();
+  //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to events thrown by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
-  //Add observer to listen to transform events 
-  ObserverType::Pointer coordSystemAObserver = ObserverType::New();
-  coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
+
+  TrackerToolUpdateTransformObserver::Pointer trackerToolUpdateTransformObserver = 
+                                          TrackerToolUpdateTransformObserver::New();
+
+  trackerToolUpdateTransformObserver->SetTrackerTool( trackerTool );  
 
 
-  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
-  trackerTool2->SetLogger( logger );
-  std::string markerNamesPointer = "sPointer";
-  trackerTool2->RequestSetMarkerName( markerNamesPointer );  
-  trackerTool2->RequestConfigure();
-  trackerTool2->RequestAttachToTracker( tracker );
-  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
-  ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
-  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
-  //EndCodeSnippet
+ //BeginLatex
+ //Instantiate a world reference and set the UpdateTransformObserver to calculate transforms
+ //with respect to it
+ //EndLatex
+ //
+ //
+ //BeginCodeSnippet
+  igstk::AxesObject::Pointer worldReference        = igstk::AxesObject::New();
+  trackerToolUpdateTransformObserver->SetWorldReference( worldReference );
+  tracker->AddObserver( igstk::TrackerToolTransformUpdateEvent(), trackerToolUpdateTransformObserver );
+ //EndCodeSnippet
 
-
-  //BeginLatex
-  // Start tracking and gather the tracker tool transforms.
-  //EndLatex
-
-  //BeginCodeSnippet
+ //
+ //BeginLatex
+ //Start tracking
+ //EndLatex
+ //
+ //
+ //BeginCodeSnippet
+  std::cout << "Start tracking..." << std::endl;
   tracker->RequestStartTracking();
+ //EndCodeSnippet
 
-  typedef igstk::Transform            TransformType;
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
-
-  for(unsigned int i=0; i<100; i++)
-    {
-    igstk::PulseGenerator::CheckTimeouts(); 
-
-    TransformType             transform;
-    VectorType                position;
-
-    coordSystemAObserver->Clear();
-    trackerTool->RequestGetTransformToParent();
-    if (coordSystemAObserver->GotTransform())
-      {
-      transform = coordSystemAObserver->GetTransform();
-      if ( transform.IsValidNow() )
-        {
-        position = transform.GetTranslation();
-        std::cout << "Trackertool :" 
-                << trackerTool->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
-      }
-
-    coordSystemAObserver2->Clear();
-    trackerTool2->RequestGetTransformToParent();
-    if (coordSystemAObserver2->GotTransform())
-      {
-      transform = coordSystemAObserver2->GetTransform();
-      if ( transform.IsValidNow() )
-        {
-        position = transform.GetTranslation();
-        std::cout << "Trackertool2 :" 
-                << trackerTool2->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
-      }
- 
-    }
-  //EndCodeSnippet
-  //
-  //BeginLatex
-  //Stop tracking and close the communication with the tracker
-  //EndLatex
-  //
-  //
-  //BeginCodeSnippet
+ //EndCodeSnippet
+ //
+ //BeginLatex
+ //Stop tracking and close the communication with the tracker
+ //EndLatex
+ //
+ //
+ //BeginCodeSnippet
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
   std::cout << "RequestClose()" << std::endl;
   tracker->RequestClose();
-  //EndCodeSnippet
+ 
+  std::cout << "CloseCommunication()" << std::endl;
+  serialComm->CloseCommunication();
+ //EndCodeSnippet
+
+  std::cout << "[PASSED]" << std::endl;
 
   return EXIT_SUCCESS;
+
 }
