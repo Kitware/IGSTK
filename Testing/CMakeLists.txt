@@ -390,12 +390,12 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 IF(IGSTKSandbox_DATA_ROOT)
   SET(IGSTKSandbox_BASELINE_DIR   "${IGSTKSandbox_DATA_ROOT}/Baseline")
   IF (IGSTKSandbox_USE_FLTK)
-    ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
-              ${IGSTKSandbox_TESTS}
-              igstkObliqueImageSpatialObjectRepresentationTest
-              ${IGSTKSandbox_DATA_ROOT}/E000192)
-    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkObliqueImageSpatialObjectRepresentationTest.cxx)
+#    ADD_TEST( igstkObliqueImageSpatialObjectRepresentationTest
+#              ${IGSTKSandbox_TESTS}
+#              igstkObliqueImageSpatialObjectRepresentationTest
+#              ${IGSTKSandbox_DATA_ROOT}/E000192)
+#    SET(SandboxTests_SRCS ${SandboxTests_SRCS}
+#        igstkObliqueImageSpatialObjectRepresentationTest.cxx)
 
     ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS} 
           --compare ${BASELINE}/igstkVascularNetworkReaderTest.png 
