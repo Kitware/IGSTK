@@ -251,40 +251,63 @@ int main( int argc, char * argv[] )
   }
 //EndCodeSnippet
 
+//BeginLatex
+//Instantiate tracker object
+//EndLatex
+//
+//
+//BeginCodeSnippet
   igstk::AscensionTracker::Pointer  tracker;
-
   tracker = igstk::AscensionTracker::New();
+//EndCodeSnippet
 
+//BeginLatex
+//Setup tracker object: add logger, generic observer, 
+//communication object and transform update
+//observer
+//EndLatex
+//
+//
+//BeginCodeSnippet
   tracker->AddObserver( itk::AnyEvent(), my_command);
-
   tracker->SetLogger( logger );
 
   std::cout << "SetCommunication()" << std::endl;
   tracker->SetCommunication( serialComm );
-
+//EndCodeSnippet
+//
+//BeginLatex
+//Open tracker
+//EndLatex
+//
+//
+//BeginCodeSnippet
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
+//EndCodeSnippet
 
+//
+//BeginLatex
+//Instantiate, configure and attach a tracker tool to the tracker. Add observer 
+//to listen to events thrown by the tracker tool
+//EndLatex
+//
+//
+//BeginCodeSnippet
   typedef igstk::AscensionTrackerTool       TrackerToolType;
-  typedef TrackerToolType::TransformType    TransformType;
-
-  // instantiate and attach tracker tool  
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
 
-  //Configure
   trackerTool->RequestSetPortNumber(1);
   trackerTool->RequestConfigure();
-  //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
-  //Add observer to listen to events thrown by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
 
   TrackerToolUpdateTransformObserver::Pointer trackerToolUpdateTransformObserver = 
                                           TrackerToolUpdateTransformObserver::New();
 
   trackerToolUpdateTransformObserver->SetTrackerTool( trackerTool );  
-
+//EndCodeSnippet
 
  //BeginLatex
  //Instantiate a world reference and set the UpdateTransformObserver to calculate transforms
