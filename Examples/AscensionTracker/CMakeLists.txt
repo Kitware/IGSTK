@@ -1,0 +1,5 @@
+PROJECT(AscensionTracker)
+
+ADD_EXECUTABLE(AscensionTrackerExample AscensionTracker.cxx)
+TARGET_LINK_LIBRARIES(AscensionTrackerExample IGSTKSandbox)
+
