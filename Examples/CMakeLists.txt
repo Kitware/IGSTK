@@ -31,7 +31,9 @@ IF (IGSTKSandbox_USE_FLTK)
     TwoViews
     FourViewsTrackingWithCT
     FourViews
-    DeckOfCardRobot
+   # Comment out DeckOfCardRobot until it is updated to use the latest reslicing
+   # classes
+   #DeckOfCardRobot
     View
     Logging
     Navigator
