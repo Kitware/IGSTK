@@ -38,8 +38,8 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
-  REGISTER_TEST(igstkCrossHairObjectTest);
-  REGISTER_TEST(igstkToolProjectionObjectTest);
+  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
   REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
@@ -50,9 +50,9 @@ void RegisterTests()
   REGISTER_TEST(igstkAscensionTrackerTest);
 
 #ifdef IGSTKSandbox_USE_Qt
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest2);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationQtTest3);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest3);
 #endif
 
   REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
@@ -75,9 +75,9 @@ void RegisterTests()
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkObliqueImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkVascularNetworkReaderTest);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest2);
-  REGISTER_TEST(igstkImageResliceSpatialObjectRepresentationFltkTest3);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 }
