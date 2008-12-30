@@ -105,8 +105,6 @@ public:
   igstk::TrackerTool::Pointer                           m_TrackerTool;
   /** world reference */
   igstk::AxesObject::Pointer                            m_WorldReference;
-
-
 };
 
 class AscensionTrackerTestCommand : public itk::Command 
@@ -155,16 +153,11 @@ int igstkAscensionTrackerTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-
-  igstk::AscensionTrackerTool::Pointer tool = igstk::AscensionTrackerTool::New();
-
   igstk::SerialCommunication::Pointer 
                      serialComm = igstk::SerialCommunication::New();
 
   AscensionTrackerTestCommand::Pointer 
                                 my_command = AscensionTrackerTestCommand::New();
-
-  typedef igstk::TransformObserver   ObserverType;
  
   std::string filename = argv[1];
   std::cout << "Logger output saved here:\n";
