@@ -329,7 +329,7 @@ void ObjectRepresentation::RequestUpdateRepresentation(
 /** Process the request for updating the transform from the SpatialObject. */
 void ObjectRepresentation::RequestGetTransformProcessing()
 {
-  igstkLogMacro( DEBUG, "RequestUpdatePositionProcessing called ....");
+  igstkLogMacro( DEBUG, "RequestGetTransformProcessing called ....");
 
   // The response to this request is part of the internal dialog between the
   // ObjectRepresentation and the SpatialObject. There is no need to report the
