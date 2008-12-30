@@ -30,8 +30,8 @@
 #include "igstkCTImageSpatialObjectRepresentation.h"
 
 #include "igstkReslicerPlaneSpatialObject.h"
-#include "igstkImageResliceSpatialObjectRepresentation.h"
-#include "igstkMeshResliceSpatialObjectRepresentation.h"
+#include "igstkImageResliceObjectRepresentation.h"
+#include "igstkMeshResliceObjectRepresentation.h"
 
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
@@ -49,11 +49,11 @@
 
 #include "igstkAxesObject.h"
 
-#include "igstkToolProjectionObject.h"
-#include "igstkToolProjectionRepresentation.h"
+#include "igstkToolProjectionSpatialObject.h"
+#include "igstkToolProjectionObjectRepresentation.h"
 
-#include "igstkCrossHairObject.h"
-#include "igstkCrossHairRepresentation.h"
+#include "igstkCrossHairSpatialObject.h"
+#include "igstkCrossHairObjectRepresentation.h"
 
 #include "igstkAnnotation2D.h"
 
@@ -119,24 +119,24 @@ public:
   typedef ImageSpatialObjectType::PointType           PointType;
 
   /** Cross hair spatial object and representation */
-  typedef igstk::CrossHairObject                   CrossHairType;
-  typedef igstk::CrossHairRepresentation           CrossHairRepresentationType;
+  typedef igstk::CrossHairSpatialObject               CrossHairType;
+  typedef igstk::CrossHairObjectRepresentation        CrossHairRepresentationType;
 
   /** tool projection spatial object and representation */
-  typedef igstk::ToolProjectionObject              ToolProjectionType;
-  typedef igstk::ToolProjectionRepresentation      ToolProjectionRepresentationType;
+  typedef igstk::ToolProjectionSpatialObject          ToolProjectionType;
+  typedef igstk::ToolProjectionObjectRepresentation   ToolProjectionRepresentationType;
 
   /** reslicer plane spatial object */
-  typedef igstk::ReslicerPlaneSpatialObject              ReslicerPlaneType;
+  typedef igstk::ReslicerPlaneSpatialObject           ReslicerPlaneType;
 
   /** tool spatial object and representation */
-  typedef igstk::MeshObjectRepresentation                MeshRepresentationType;
+  typedef igstk::MeshObjectRepresentation             MeshRepresentationType;
 
   /** mesh reslice representation */
-  typedef igstk::MeshResliceSpatialObjectRepresentation  MeshResliceRepresentationType;
+  typedef igstk::MeshResliceObjectRepresentation  MeshResliceRepresentationType;
 
   /** image reslice representation */
-  typedef igstk::ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
+  typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
                                                           ImageRepresentationType;
 
   /** typedef for landmark registration types */

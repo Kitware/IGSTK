@@ -2394,7 +2394,7 @@ UltrasoundNavigator::ReportSuccessAcceptingRegistrationProcessing()
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
   // setup a tool projection spatial object
-  m_ToolProjection = igstk::ToolProjectionObject::New();
+  m_ToolProjection = ToolProjectionType::New();
   // todo: get the length from the tracker tool spatial object
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
