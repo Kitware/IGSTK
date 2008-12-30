@@ -38,6 +38,7 @@ See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 #include "itkStdStreamLogOutput.h"
 #include "itkVector.h"
 #include "itkVersor.h"
+#include "igstkAxesObject.h"
 
 // BeginLatex
 // 
