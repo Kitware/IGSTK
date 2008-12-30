@@ -1744,7 +1744,7 @@ BronchoscopyNavigator::ReportSuccessAcceptingRegistrationProcessing()
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  m_ToolProjection = igstk::ToolProjectionObject::New();
+  m_ToolProjection = ToolProjectionType::New();
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
 
