@@ -31,8 +31,7 @@
 #include "itkExceptionObject.h"
 
 #include "igstkLandmarkUltrasoundCalibration.h"
-#include "igstkObliqueImageSpatialObjectRepresentation.h"
-#include "igstkImageResliceSpatialObjectRepresentation.h"
+#include "igstkImageResliceObjectRepresentation.h"
 #include "igstkSpatialObject.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkSandboxConfigure.h"
@@ -64,8 +63,8 @@ namespace igstk
 
 typedef ImageSpatialObject<float,3>                 ImageSpatialObjectType;
 
-typedef ImageResliceSpatialObjectRepresentation< ImageSpatialObjectType >
-                                        ImageResliceSpatialObjectRepresentationType;
+typedef ImageResliceObjectRepresentation< ImageSpatialObjectType >
+                                        ImageResliceRepresentationType;
 template<class ClassType>
 void ExportStateMachineDescription( 
               const ClassType * instance, 
@@ -142,8 +141,6 @@ public:      \
 namespace igstk
 {
 typedef ImageSpatialObject<float,3>                    ImageSpatialObjectType;
-typedef ObliqueImageSpatialObjectRepresentation< ImageSpatialObjectType >  
-                                  ObliqueImageSpatialObjectRepresentationType;
 
 class ObjectRepresentationSurrogate : public ObjectRepresentation
 {
@@ -199,10 +196,6 @@ int main( int argc, char * argv [] )
                                 outputDirectory, skipLoops );
 #endif
 
-  igstkTestExportStateMachine1( 
-                          igstk::ObliqueImageSpatialObjectRepresentationType, 
-                          outputDirectory, skipLoops );
-
   // Exporting Abstract classes by creating derived surrogates for them.
   igstkTestExportStateMachine1( igstk::SpatialObjectSurrogate, outputDirectory, 
                                                                     skipLoops );
@@ -211,7 +204,7 @@ int main( int argc, char * argv [] )
 
   igstkTestExportStateMachine1( igstk::CoordinateSystem, outputDirectory, skipLoops );
 
-  igstkTestExportStateMachine1( igstk::ImageResliceSpatialObjectRepresentationType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ImageResliceRepresentationType, outputDirectory, skipLoops );
 
 #ifdef IGSTKSandbox_USE_FLTK
   igstk::FLTKWidget fltkWidget(0,0, 100, 100, "Dummy FLTKWidget for testing");
