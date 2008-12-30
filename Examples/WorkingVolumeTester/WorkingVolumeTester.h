@@ -44,7 +44,7 @@
 #include "igstkTrackerConfiguration.h"
 
 #include "igstkReslicerPlaneSpatialObject.h"
-#include "igstkMeshResliceSpatialObjectRepresentation.h"
+#include "igstkMeshResliceObjectRepresentation.h"
 
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
@@ -95,10 +95,10 @@ public:
   typedef std::vector < EllipsoidRepresentationType::Pointer >    
                                                       EllipsoidRepresentationVectorType;
   /** reslicer plane spatial object */
-  typedef igstk::ReslicerPlaneSpatialObject        ReslicerPlaneType;
+  typedef igstk::ReslicerPlaneSpatialObject           ReslicerPlaneType;
 
   /** mesh reslice representation */
-  typedef igstk::MeshResliceSpatialObjectRepresentation  MeshResliceRepresentationType;
+  typedef igstk::MeshResliceObjectRepresentation      MeshResliceRepresentationType;
 
   /** typedef for axes spatial objects */
   typedef igstk::AxesObject                           AxesObjectType;
