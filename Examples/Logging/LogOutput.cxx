@@ -58,8 +58,8 @@
 #include "itkLoggerOutput.h"
 #include "igstkVTKLoggerOutput.h"
 #include "itkLoggerManager.h"
-#include <FL/Fl.h>
-#include <FL/Fl_Window.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
 

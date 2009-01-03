@@ -31,7 +31,7 @@
 
 // Software Guide : BeginCodeSnippet
 #include "igstkBoxObjectRepresentation.h"
-#include <FL/Fl_Window.h>
+#include <FL/Fl_Window.H>
 #include <igstkView3D.h>
 #include <igstkFLTKWidget.h>
 // Software Guide : EndCodeSnippet
