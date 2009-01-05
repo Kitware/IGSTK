@@ -253,11 +253,18 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 
-ADD_TEST( igstkCrossHairSpatialObjectTest
+ ADD_TEST( igstkCrossHairSpatialObjectTest
               ${IGSTKSandbox_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkCrossHairSpatialObjectTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
+ 
 ADD_TEST( igstkToolProjectionSpatialObjectTest
               ${IGSTKSandbox_TESTS}
               igstkToolProjectionSpatialObjectTest
