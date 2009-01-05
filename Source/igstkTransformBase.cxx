@@ -1,7 +1,6 @@
 #include "igstkTransformBase.h"
 
 
-
 namespace igstk
 {
 
