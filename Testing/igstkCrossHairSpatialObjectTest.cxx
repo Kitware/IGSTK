@@ -187,6 +187,8 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
 
   RepresentationType::Pointer crossHairObjectRepresentation = RepresentationType::New();
   crossHairObjectRepresentation->SetLogger( logger );
+  crossHairObjectRepresentation->SetColor(0,1,0);
+  crossHairObjectRepresentation->SetLineWidth(3);
 
   crossHairObjectRepresentation->RequestSetCrossHairObject( crossHairObject );
 
