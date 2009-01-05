@@ -8,7 +8,7 @@
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+     PURPOSE.  See the above copyright notices for more information. 
 
 =========================================================================*/
 
@@ -91,7 +91,7 @@ public:
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkKWImage );
-vtkCxxRevisionMacro(vtkKWImage, "1.1");
+vtkCxxRevisionMacro(vtkKWImage, "1.2");
 
 //----------------------------------------------------------------------------
 vtkKWImage::vtkKWImage()
