@@ -21,8 +21,15 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#include "igstkFLTKWidget.h"
+#include "igstkView2D.h"
+
 #include "igstkToolProjectionSpatialObject.h"
 #include "igstkToolProjectionObjectRepresentation.h"
+
+#include "igstkImageResliceObjectRepresentation.h"
+#include "igstkReslicerPlaneSpatialObject.h"
+
 #include "igstkImageSpatialObject.h"
 #include "igstkCTImageReader.h"
 #include "igstkLogger.h"
@@ -115,6 +122,61 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   //Connect the image spatial object to the reference coordinate system
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );  
  
+  //Determine the image parameters
+  //first access the VTK image data
+  typedef ToolProjectionSpatialObjectTest::VTKImageObserver 
+                                                        VTKImageObserverType;
+  
+  VTKImageObserverType::Pointer vtkImageObserver = VTKImageObserverType::New();
+
+  imageSpatialObject->AddObserver( ::igstk::VTKImageModifiedEvent(), 
+                                     vtkImageObserver );
+  vtkImageObserver->Reset();
+  imageSpatialObject->RequestGetVTKImage();
+
+  if( !vtkImageObserver->GotVTKImage() ) 
+    {
+    std::cout << "No VTKImage!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkImageData * imageData = vtkImageObserver->GetVTKImage();
+
+  int imageExtent[6];
+  imageData->GetWholeExtent( imageExtent );
+  std::cout << "Image extent: " << "(" << imageExtent[0] << "," 
+                                << imageExtent[1] << ","
+                                << imageExtent[2] << ","
+                                << imageExtent[3] << ","
+                                << imageExtent[4] << ","
+                                << imageExtent[5] << ")" << std::endl;
+
+  //Connect the image spatial object to the reference coordinate system
+  imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );  
+ 
+  // Set a 2D View
+  typedef igstk::View2D  View2DType;
+  View2DType::Pointer view2D = View2DType::New();
+    
+  view2D->RequestResetCamera();
+
+  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
+
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+   // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType(0,0,512,512,"2D View");
+
+  fltkWidget2D->RequestSetView( view2D );
+
+  view2D->RequestSetTransformAndParent( identity, worldReference );
+  view2D->SetRefreshRate( 40 );
+
+  form->end();
+  form->show();
+
   typedef igstk::ToolProjectionSpatialObject                ObjectType;
   typedef igstk::ToolProjectionObjectRepresentation  RepresentationType;
 
@@ -123,6 +185,17 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
 
  toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
+
+ toolProjectionObjectRepresentation->SetVisibility( true );
+ toolProjectionObjectRepresentation->SetLineWidth( 2.0 );
+
+ // Set image representation 
+ typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
+                                        ImageRepresentationType;
+
+  ImageRepresentationType::Pointer  imageRepresentation =  ImageRepresentationType::New(); 
+  imageRepresentation->SetWindowLevel( 1559, -244 );
+  imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
  //Set the reslicing plane
  
@@ -141,45 +214,52 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
 
   toolProjectionObjectRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
-  bool TestPassed = true;
+  // add the image representation to the view
+  view2D->RequestAddObject( imageRepresentation );
 
-  // Test Property
-  std::cout << "Testing Property : ";
-  toolProjectionObjectRepresentation->SetColor(0.1,0.2,0.3);
-  toolProjectionObjectRepresentation->SetOpacity(0.4);
-  if(fabs(toolProjectionObjectRepresentation->GetRed()-0.1)>0.00001)
-    {
-    std::cerr << "GetRed() [FAILED]" << std::endl;
-    TestPassed= false;
-    }
-  if(fabs(toolProjectionObjectRepresentation->GetGreen()-0.2)>0.00001)
-    {
-    std::cerr << "GetGreen()[FAILED]" << std::endl;
-    TestPassed = false;
-    }
-  if(fabs(toolProjectionObjectRepresentation->GetBlue()-0.3)>0.00001)
-    {
-    std::cerr << "GetBlue() [FAILED]" << std::endl;
-    TestPassed = false;
-    }
-  if(fabs(toolProjectionObjectRepresentation->GetOpacity()-0.4)>0.00001)
-    {
-    std::cerr << "GetOpacity() [FAILED]" << std::endl;
-    TestPassed = false;
-    }
+  // add the tool projection representation to the view
+  view2D->RequestAddObject( toolProjectionObjectRepresentation );
+
+  // a variable to hold image index
+  typedef ImageSpatialObjectType::IndexType IndexType;
+  typedef IndexType::IndexValueType   IndexValueType;  
+  IndexType index;
+
+  // a variable to hold world point coords
+  ImageSpatialObjectType::PointType point;
+
+  // auxiliar
+  const double *data = NULL;
+
+  // Select axial orientation in the reslicer plane and view
+  view2D->RequestSetOrientation( View2DType::Axial );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+  
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+
+  data = point.GetVnlVector().data_block();
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
+  
+  toolProjectionObject->SetSize( 100 );
+  toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+  form->show();
+
+  view2D->RequestStop();
+
+  view2D->RequestSaveScreenShot( argv[2] );
 
   toolProjectionObjectRepresentation->Print( std::cout );
   toolProjectionObject->Print( std::cout );
 
   toolProjectionObjectRepresentation->GetNameOfClass();
   toolProjectionObject->GetNameOfClass();
- 
-  if( TestPassed )
-    {
-    return EXIT_SUCCESS;
-    } 
-  else
-    {
-    return EXIT_FAILURE;
-    }
+
+  return EXIT_SUCCESS; 
 }

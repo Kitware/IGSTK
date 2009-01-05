@@ -253,7 +253,7 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 
- ADD_TEST( igstkCrossHairSpatialObjectTest
+ADD_TEST( igstkCrossHairSpatialObjectTest
               ${IGSTKSandbox_TESTS}
               --compare
               ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
@@ -267,9 +267,17 @@ ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
  
 ADD_TEST( igstkToolProjectionSpatialObjectTest
               ${IGSTKSandbox_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkToolProjectionSpatialObjectTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
+ 
+
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
 IF(IGSTKSandbox_USE_Qt)
