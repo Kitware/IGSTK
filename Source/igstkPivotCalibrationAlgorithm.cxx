@@ -1,5 +1,3 @@
-//test Michel
-
 #include "igstkPivotCalibrationAlgorithm.h"
 
 #include "vnl/algo/vnl_svd.h"
