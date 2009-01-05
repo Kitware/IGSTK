@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPivotCalibrationAlgorithm.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkPivotCalibrationAlgorithm_h
 #define __igstkPivotCalibrationAlgorithm_h
 
@@ -132,7 +149,7 @@ public:
 protected:
 
   PivotCalibrationAlgorithm  ( void );
-  ~PivotCalibrationAlgorithm ( void );
+  virtual ~PivotCalibrationAlgorithm ( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;

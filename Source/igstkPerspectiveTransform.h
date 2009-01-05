@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPerspectiveTransform.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkPerspectiveTransform_h
 #define __igstkPerspectiveTransform_h
 
