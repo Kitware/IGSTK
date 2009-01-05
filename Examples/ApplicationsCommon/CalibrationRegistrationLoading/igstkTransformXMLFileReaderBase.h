@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTransformXMLFileReaderBase.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkTransformXMLFileReaderBase_h
 #define __igstkTransformXMLFileReaderBase_h
 
@@ -129,7 +145,7 @@ protected:
     m_ReadingTagData = false;
     m_Transform = NULL;
     }
-  ~TransformXMLFileReaderBase() { delete m_Transform; }
+  virtual ~TransformXMLFileReaderBase() { delete m_Transform; }
 
   void ProcessDescription() 
   throw ( FileFormatException );
