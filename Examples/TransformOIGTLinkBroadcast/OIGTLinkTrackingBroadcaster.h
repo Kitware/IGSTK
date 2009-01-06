@@ -1,6 +1,28 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    OIGTLinkTrackingBroadcaster.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __OIGTLinkTrackingBroadcaster_h
 #define __OIGTLinkTrackingBroadcaster_h
 
+// BeginLatex
+// 
+// This example illustrates how to export tracking data through OpenIGTLink
+// connection. The example program supports multi-cast data transfer.
+//
+// EndLatex
 #include "igstkTrackerConfiguration.h"
 #include "igstkTrackerController.h"
 #include "igstkPolarisVicraConfigurationXMLFileReader.h"
@@ -12,9 +34,18 @@
 #include "igstkTransformObserver.h"
 
 // For sending tracking data to OpenIGTLink compatible server 
+// BeginLatex
+// 
+// To use the OpenIGTLink POSITION message, doxygen{igtlOSUtil.h},
+// doxygen{igtlPositionMessage}, and doxygen{igtlClientSocket}
+// should be added, as follows:
+//
+// EndLatex
+// BeginCodeSnippet
 #include "igtlOSUtil.h"
 #include "igtlPositionMessage.h"
 #include "igtlClientSocket.h"
+// EndCodeSnippet
 
 /**
  * \class This class performs broadcasting of tracking data using the OpenIGTLink
@@ -112,6 +143,12 @@ private:
  * transform w.r.t. the "world" coordinate system. The transform is then 
  * broadcasted to all destinations.
  */
+// BeginLatex
+// doxygen{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
+// for a specific tool. It checks that the event is for the relevant tool and then
+// gets the tool's transform to its parent and prints it out.
+// EndLatex
+
   class ToolUpdatedObserver : public ::itk::Command
   {
   public:
@@ -120,9 +157,16 @@ private:
     typedef  ::itk::SmartPointer<Self>  Pointer;
     itkNewMacro( Self );
   protected:
+// BeginLatex
+// In doxygen{ToolUpdatedObserver} class,  we create doxigen{igtl::PositionMessage} class
+// in the constructor function.
+// EndLatex
+
     ToolUpdatedObserver() {
       this->m_TransformObserver = igstk::TransformObserver::New();
+// BeginCodeSnippet
       this->m_PositionMessage = igtl::PositionMessage::New();
+// EndCodeSnippet
     }
 
     ~ToolUpdatedObserver() {
@@ -148,8 +192,13 @@ private:
       this->m_Tool = trackerTool;
       this->m_World = world;
       this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
+// BeginLatex
+// In doxygen{ToolUpdatedObserver::Initialize()}, we set device name of the message
+// by calling doxygen{SetDeviceName()} method.
+// EndLatex
+// BeginCodeSnippet
       this->m_PositionMessage->SetDeviceName( toolName.c_str() );
-
+// EndCodeSnippet
 
       std::vector< igtl::ClientSocket::Pointer >::iterator it; 
       for (it = this->m_Sockets.begin(); it != this->m_Sockets.end(); ++it)
@@ -159,11 +208,19 @@ private:
       }
       this->m_Sockets.clear();
 
+// BeginLatex
+// We create a list of destination to support multicast data transfer.
+// EndLatex
+// BeginCodeSnippet
       this->m_Destinations.clear();
-
       this->m_Destinations.insert( this->m_Destinations.begin(),
         destinations.begin(), destinations.end() );
+// EndCodeSnippet
 
+// BeginLatex
+// Then we establish connections for each destation on the list we have created.
+// EndLatex
+// BeginCodeSnippet
       std::vector< std::pair<std::string, unsigned int> >::iterator destinationIt; 
       for ( destinationIt = destinations.begin(); destinationIt != destinations.end(); ++destinationIt)
       {
@@ -184,7 +241,7 @@ private:
         }
         this->m_Sockets.push_back(socket);
       }
-
+// EndCodeSnippet
     }
 
     void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -192,6 +249,11 @@ private:
       const itk::Object * constCaller = caller;
       this->Execute( constCaller, event );
     }
+
+// BeginLatex
+// In doxygen{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
+// a transform, create OpenIGTLink message, and send it out.
+// EndLatex
 
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
@@ -209,9 +271,11 @@ private:
           //check that we got it
           if ( this->m_TransformObserver->GotTransform() )
           {
+// BeginCodeSnippet
             igstk::Transform transform = this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
+// EndCodeSnippet
             std::cout<<"Destinations:\n";
             for(unsigned int i=0; i<this->m_Destinations.size(); i++)
               std::cout<<"\t"<<this->m_Destinations[i].first<<":"<<this->m_Destinations[i].second<<"\n";
@@ -219,6 +283,7 @@ private:
             std::cout<<"r:"<<r.GetX()<<"\t"<<r.GetY()<<"\t"<<r.GetZ()<<"\t"<<r.GetW()<<"\n";
 
 
+// BeginCodeSnippet
             this->m_PositionMessage->SetPosition(t[0], t[1], t[2]);
             this->m_PositionMessage->SetQuaternion(r.GetX(), r.GetY(), r.GetZ(), r.GetW());
             this->m_PositionMessage->Pack();
@@ -228,7 +293,7 @@ private:
             {
               (*it)->Send(this->m_PositionMessage->GetPackPointer(), this->m_PositionMessage->GetPackSize());
             }
-
+// EndCodeSnippet
           }
         }
       }
