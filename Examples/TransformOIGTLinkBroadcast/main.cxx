@@ -17,8 +17,8 @@
 
 // BeginLatex
 // 
-// To use the OpenIGTLink POSITION message, doxygen{igtlOSUtil.h},
-// doxygen{igtlPositionMessage}, and doxygen{igtlClientSocket}
+// To use the OpenIGTLink POSITION message, \code{igtlOSUtil.h},
+// \code{igtlPositionMessage}, and \code{igtlClientSocket}
 // should be added, as follows:
 //
 // EndLatex
@@ -83,7 +83,7 @@ igstkObserverMacro( Tool,
                    igstk::TrackerController::ToolEntryType )
 
 // BeginLatex
-// doxygen{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
+// \code{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
 // for a specific tool. It checks that the event is for the relevant tool and then
 // gets the tool's transform to its parent and prints it out.
 // EndLatex
@@ -97,7 +97,7 @@ public:
 protected:
 
 // BeginLatex
-// In doxygen{ToolUpdatedObserver} class,  we create doxigen{igtl::PositionMessage} class
+// In \code{ToolUpdatedObserver} class,  we create doxigen{igtl::PositionMessage} class
 // in the constructor function.
 // EndLatex
   ToolUpdatedObserver() {
@@ -127,8 +127,8 @@ public:
     this->m_Tool = trackerTool;
     this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
 // BeginLatex
-// In doxygen{ToolUpdatedObserver::Initialize()}, we set device name of the message
-// by calling doxygen{SetDeviceName()} method.
+// In \code{ToolUpdatedObserver::Initialize()}, we set device name of the message
+// by calling \code{SetDeviceName()} method.
 // EndLatex
 // BeginCodeSnippet
     this->m_PositionMessage->SetDeviceName( toolName.c_str() );
@@ -143,7 +143,7 @@ public:
     this->m_Sockets.clear();
 
 // BeginLatex
-// We create a list of destination to support multicast data transfer.
+// We create a list of destinations to support multicast data transfer.
 // EndLatex
 // BeginCodeSnippet
     this->m_Destinations.clear();
@@ -182,7 +182,7 @@ public:
   }
 
 // BeginLatex
-// In doxygen{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
+// In \code{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
 // a transform, create OpenIGTLink message, and send it out.
 // EndLatex
   void Execute(const itk::Object *caller, const itk::EventObject & event)
