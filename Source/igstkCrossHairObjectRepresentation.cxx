@@ -141,7 +141,10 @@ CrossHairObjectRepresentation
     }
   m_LineWidth = width;
 
-  m_LineProperty->SetLineWidth(m_LineWidth);
+  if ( m_LineProperty != NULL )
+    {
+    m_LineProperty->SetLineWidth(m_LineWidth);
+    }
 }
 
 /** Verify time stamp of the attached tool*/
