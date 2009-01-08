@@ -182,6 +182,7 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
 
   ObjectType::Pointer toolProjectionObject = ObjectType::New();
 
+  toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
   RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
 
  toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
@@ -244,16 +245,13 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   data = point.GetVnlVector().data_block();
   reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
   
-  toolProjectionObject->SetSize( 100 );
-  toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
-
   view2D->RequestStart();
   view2D->RequestResetCamera();
   form->show();
 
+  view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
-  view2D->RequestSaveScreenShot( argv[2] );
 
   toolProjectionObjectRepresentation->Print( std::cout );
   toolProjectionObject->Print( std::cout );

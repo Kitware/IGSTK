@@ -320,7 +320,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
   ADD_TEST( igstkCrossHairSpatialObjectTest
               ${IGSTKSandbox_TESTS}
               --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
+              ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
               --toleranceIntensity 10
               --toleranceRadius    5
