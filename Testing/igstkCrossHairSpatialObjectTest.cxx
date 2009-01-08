@@ -181,15 +181,14 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   typedef igstk::CrossHairObjectRepresentation  RepresentationType;
 
   ObjectType::Pointer crossHairObject = ObjectType::New();
-
+  //Connect the cross hair spatial object to the reference coordinate system
+  crossHairObject->RequestSetTransformAndParent( identity, worldReference );  
+ 
   // Set bounding box provider spatial object to the cross hair object
   crossHairObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
   RepresentationType::Pointer crossHairObjectRepresentation = RepresentationType::New();
   crossHairObjectRepresentation->SetLogger( logger );
-  crossHairObjectRepresentation->SetColor(0,1,0);
-  crossHairObjectRepresentation->SetLineWidth(3);
-
   crossHairObjectRepresentation->RequestSetCrossHairObject( crossHairObject );
 
   crossHairObjectRepresentation->Print( std::cout );
@@ -228,6 +227,9 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
 
   // add the cross hair representation to the view
   view2D->RequestAddObject( crossHairObjectRepresentation );
+  crossHairObjectRepresentation->SetColor(0,1,0);
+  crossHairObjectRepresentation->SetLineWidth(1);
+
 
   // a variable to hold image index
   typedef ImageSpatialObjectType::IndexType IndexType;
@@ -258,9 +260,9 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   view2D->RequestResetCamera();
   form->show();
 
+  view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
-  view2D->RequestSaveScreenShot( argv[2] );
 
   return EXIT_SUCCESS;
 }
