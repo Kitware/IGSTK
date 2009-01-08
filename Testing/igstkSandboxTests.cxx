@@ -38,9 +38,7 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
-  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
-  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
-  REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
+ REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
 
@@ -77,6 +75,8 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
+  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 }

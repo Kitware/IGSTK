@@ -118,9 +118,7 @@ SET(SandboxTests_SRCS
   igstkAffineTransformTest.cxx
   igstkPerspectiveTransformTest.cxx
 
-  igstkCrossHairSpatialObjectTest.cxx
-  igstkToolProjectionSpatialObjectTest.cxx
- )
+)
 
 IF(IGSTKSandbox_USE_Qt)
   SET(SandboxTests_SRCS
@@ -253,31 +251,6 @@ ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTes
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 
-ADD_TEST( igstkCrossHairSpatialObjectTest
-              ${IGSTKSandbox_TESTS}
-              --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkCrossHairSpatialObjectTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
- 
-ADD_TEST( igstkToolProjectionSpatialObjectTest
-              ${IGSTKSandbox_TESTS}
-              --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkToolProjectionSpatialObjectTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
- 
-
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
 IF(IGSTKSandbox_USE_Qt)
@@ -312,8 +285,7 @@ ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
  
 ENDIF(IGSTKSandbox_USE_Qt)
 
-IF(IGSTKSandbox_USE_FLTK)
-
+IF(IGSTKSandbox_USE_FLTK) 
 ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
            ${IGSTKSandbox_TESTS}
            --compare
@@ -345,6 +317,30 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
          )
 
+  ADD_TEST( igstkCrossHairSpatialObjectTest
+              ${IGSTKSandbox_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCrossHairSpatialObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
+ 
+  ADD_TEST( igstkToolProjectionSpatialObjectTest
+              ${IGSTKSandbox_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkToolProjectionSpatialObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
+ 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
@@ -398,6 +394,12 @@ IF(IGSTKSandbox_USE_FLTK)
               ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
   ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
+
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+                igstkCrossHairSpatialObjectTest.cxx)
+
+  SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
+                igstkToolProjectionSpatialObjectTest.cxx )
  
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -425,6 +427,7 @@ IF(IGSTKSandbox_DATA_ROOT)
           )        
     SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkVascularNetworkReaderTest.cxx)
+
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
