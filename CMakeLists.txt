@@ -129,7 +129,7 @@ build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
 ENDIF(IGSTKSandbox_USE_Qt)
 
 # Use vtkKWImage, this will enable igstkGenericImageReader/Writer classes
-OPTION(IGSTKSandbox_USE_vtkKWImage "Use vtkKWImage for generic image reading and writing" ON)
+OPTION(IGSTKSandbox_USE_vtkKWImage "Use vtkKWImage for generic image reading and writing" OFF)
 
 IF(IGSTKSandbox_USE_vtkKWImage)
   INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/vtkKWImage )
