@@ -460,7 +460,7 @@ SET(IGSTKSandbox_SRCS
   igstkPrincipalAxisCalibration.cxx
  
 #  igstkContourMeshObjectRepresentation.cxx
-#  igstkContourObjectRepresentation.cxx
+  igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
   igstkDICOMGenericImageReader.cxx
   igstkGenericImageSpatialObject.cxx
