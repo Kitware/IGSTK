@@ -218,7 +218,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// \emph{ This next lines are key differences from CoordinateSystems1.cxx
+// \emph{ These next lines are key differences from CoordinateSystems1.cxx
 // (View From Tracker Coordinates Example) and CoordinateSystems2.cxx
 // (View Follows Tracker Tool Example).
 // In this example, we place the view and the 

@@ -31,7 +31,7 @@
 // will display the scene from the perspective of 
 // the Tracker.
 //
-// First, we include the appropriate header files:
+// First, we include the appropriate header files.
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet
@@ -54,7 +54,7 @@ int main( int , char *[] )
 {
 
 // Software Guide : BeginLatex
-// First, we initialize the RealTimeClock. This is necessary to manage
+// Then we initialize the RealTimeClock. This is necessary to manage
 // the timed events in IGSTK.
 // Software Guide : EndLatex
 
@@ -107,6 +107,8 @@ int main( int , char *[] )
 
   fltkWidget->RequestSetView( view3D );
 
+  // form->begin() is automatically called in the Fl_Window constructor.
+  // form->end() : Add widgets after this point to the parent of the group.
   form->end();
 
   form->show();
@@ -201,8 +203,9 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// \emph{ This next line differentiates the two examples, CoordinateSystems1.cxx and 
-// CoordinateSystems2.cxx. Here, we view the scene from the tracker's 
+// \emph{ This next line differentiates the two examples, CoordinateSystems1.cxx
+// (View From Tracker Coordinates Example) and CoordinateSystems2.cxx
+// (View Follows Tracker Tool Example). Here, we view the scene from the tracker's 
 // perspective. }
 // 
 // Software Guide : EndLatex
