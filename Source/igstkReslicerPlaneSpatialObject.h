@@ -147,6 +147,8 @@ public:
   /** Inquiry if a tool spatial object is set for reslicing */
   bool  IsToolSpatialObjectSet();
 
+  /** Declarations needed for the Logger */
+  igstkLoggerMacro();
 
 protected:
 
