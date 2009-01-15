@@ -68,7 +68,9 @@ mesh->AddPoint(3,10,0,10);
 // Software Guide : BeginLatex
 // 
 // The list of points can be retrieve using the \code{GetPoints()}
-// function:
+// function. The list of points returned consist of a list of std::pair
+// with the first argument of the pair being the id of the point and
+// the second argument storing the geometrical representation.
 //
 // Software Guide : EndLatex
 

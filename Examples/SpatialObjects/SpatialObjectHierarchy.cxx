@@ -94,7 +94,9 @@ int main( int , char *[] )
 // \item \code{GotTransformToParent()} which returns true if the transform exists.
 // \item \code{GetTransformToParent()} which returns the actual pointer to the transform.
 // \end{enumerate}
-
+//
+// We create the observer of the transformation using smart pointers.
+//
 // Software Guide : EndLatex 
 
 // Software Guide : BeginCodeSnippet

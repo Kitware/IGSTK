@@ -41,7 +41,7 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // Like any applications in IGSTK we first initialize the RealTimeClock to ensure
-// proper synchronyzation between the different components.
+// proper synchronization between the different components.
 //
 // Software Guide : EndLatex 
 
