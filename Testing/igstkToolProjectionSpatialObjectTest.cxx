@@ -185,6 +185,8 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
   RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
 
+ toolProjectionObjectRepresentation->SetLogger ( logger );
+
  toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
 
  toolProjectionObjectRepresentation->SetVisibility( true );
