@@ -47,8 +47,10 @@ PolarisWirelessTrackerConfiguration::InternalAddTool(
     }
   if( !isReference )
     {
-    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
-      (wirelessTool->GetToolName(), new PolarisWirelessToolConfiguration( *wirelessTool )) );
+    this->m_TrackerToolList.insert(std::pair<std::string, 
+                                   TrackerToolConfiguration *>
+      (wirelessTool->GetToolName(), 
+       new PolarisWirelessToolConfiguration( *wirelessTool )) );
     }
   else
     {
@@ -180,7 +182,8 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   
   if( !isReference )
     {
-    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+    this->m_TrackerToolList.insert(std::pair<std::string, 
+                                   TrackerToolConfiguration *>
      (newTool->GetToolName(), newTool) );
     }
   else

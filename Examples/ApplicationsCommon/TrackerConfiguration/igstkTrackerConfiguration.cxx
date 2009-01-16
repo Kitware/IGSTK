@@ -91,7 +91,8 @@ TrackerConfiguration::RequestAddReference( const TrackerToolConfiguration *tool 
 }
 
 
-SerialCommunicatingTrackerConfiguration::SerialCommunicatingTrackerConfiguration()
+SerialCommunicatingTrackerConfiguration::
+SerialCommunicatingTrackerConfiguration()
 {
   igstk::SerialCommunication::PortNumberType DEFAULT_COM_PORT = 
     igstk::SerialCommunication::PortNumber0;
@@ -115,7 +116,8 @@ SerialCommunicatingTrackerConfiguration::SerialCommunicatingTrackerConfiguration
 }
 
 
-SerialCommunicatingTrackerConfiguration::~SerialCommunicatingTrackerConfiguration()
+SerialCommunicatingTrackerConfiguration::
+~SerialCommunicatingTrackerConfiguration()
 {
 }
 

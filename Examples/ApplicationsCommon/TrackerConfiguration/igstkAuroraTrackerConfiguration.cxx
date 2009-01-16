@@ -92,7 +92,8 @@ AuroraTrackerConfiguration::InternalAddTool(
   
   if( !isReference )
     {
-    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+    this->m_TrackerToolList.insert(std::pair<std::string, 
+                                   TrackerToolConfiguration *>
       (newTool->GetToolName(), newTool) );
     }
   else

@@ -66,9 +66,11 @@ class TrackerController : public Object
 {
 public:
   /**This is the container type in which the tools are found.*/   
-  typedef std::map < std::string, igstk::TrackerTool::Pointer > ToolContainerType;
+  typedef std::map < std::string, igstk::TrackerTool::Pointer > 
+    ToolContainerType;
 
-  typedef std::pair < std::string, igstk::TrackerTool::Pointer > ToolEntryType;
+  typedef std::pair < std::string, igstk::TrackerTool::Pointer > 
+    ToolEntryType;
 
   typedef igstk::Transform                                        TransformType;
 
@@ -183,7 +185,7 @@ public:
 protected:
 
   TrackerController( void );
-  ~TrackerController( void );
+  virtual ~TrackerController( void );
 
 
 private:   
@@ -289,7 +291,8 @@ private:
 
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-      if( dynamic_cast<const TrackerToolAttachmentToTrackerErrorEvent *> ( &event ) )
+      if( dynamic_cast<const TrackerToolAttachmentToTrackerErrorEvent *> ( 
+          &event ) )
       {                
         m_GotObject = true;
       }

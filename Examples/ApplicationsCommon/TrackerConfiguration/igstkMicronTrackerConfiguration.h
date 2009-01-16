@@ -25,8 +25,11 @@ namespace igstk
 
 
 /**
- * \class MicronToolConfiguration This class represents the configuration data
- *        required by an Micron tool. 
+ * \class MicronToolConfiguration 
+ * \brief This class represents the configuration data required by a Micron 
+ * tool. 
+ *
+ * This class represents the configuration data required by a Micron tool.
  * NOTE: The tool and marker names are two distinct entities. The tool name 
  *       is the name the user decides to assign the specific tool (US, bayonet
  *       probe, etc.). The marker name is the name of the tracked marker which

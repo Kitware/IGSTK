@@ -24,9 +24,12 @@ namespace igstk
 {
 
 
-/**
- * \class AuroraToolConfiguration This class represents the configuration data
- *        required by an Aurora tool. 
+ /**
+ * \class AuroraToolConfiguration 
+ * \brief This class represents the configuration data required by an Aurora 
+ * tool. 
+ *
+ * This class represents the configuration data required by an Aurora tool.
  * By default the tool is assumed to be a 6DOF tool connected to
  * the control box on physical port 1. To indicate that the tool is a 5DOF tool
  * the user sets the tool's channel which has the side effect of indicating that
@@ -97,7 +100,7 @@ public:
    */
   virtual double GetMaximalRefreshRate();
 
-protected:
+ protected:
 
   AuroraTrackerConfiguration();
   virtual ~AuroraTrackerConfiguration();

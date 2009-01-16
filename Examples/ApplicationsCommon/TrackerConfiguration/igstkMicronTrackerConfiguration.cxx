@@ -59,8 +59,10 @@ MicronTrackerConfiguration::InternalAddTool(
     }
   if( !isReference )
     {
-    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
-      (wirelessTool->GetToolName(), new MicronToolConfiguration( *wirelessTool )) );
+    this->m_TrackerToolList.insert(std::pair<std::string, 
+                                   TrackerToolConfiguration *>
+      (wirelessTool->GetToolName(), 
+       new MicronToolConfiguration( *wirelessTool )) );
     }
   else
     {

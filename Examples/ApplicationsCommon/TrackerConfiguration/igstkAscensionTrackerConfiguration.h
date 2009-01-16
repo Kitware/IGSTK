@@ -13,7 +13,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
-=========================================================================*/
+     =========================================================================*/
 
 #ifndef __igstkAscensionTrackerConfiguration_h
 #define __igstkAscensionTrackerConfiguration_h
@@ -25,9 +25,12 @@ namespace igstk
 
 
 /**
- * \class AscensionToolConfiguration This class represents the configuration data
- *        required by an Ascension FOB tool. 
- * By default the tool is assumed to be connected on bird port 1.
+ * \class AscensionToolConfiguration 
+ * \brief This class represents the configuration data required by an Ascension 
+ * FOB tool. 
+ *
+ * This class represents the configuration data required by an Ascension 
+ * FOB tool. By default the tool is assumed to be connected on bird port 1.
  */
 class AscensionToolConfiguration : public TrackerToolConfiguration
 {

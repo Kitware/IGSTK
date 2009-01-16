@@ -75,7 +75,8 @@ AscensionTrackerConfiguration::InternalAddTool( const
   
   if( !isReference )
   {
-    this->m_TrackerToolList.insert(std::pair<std::string, TrackerToolConfiguration *>
+    this->m_TrackerToolList.insert(std::pair<std::string, 
+                                   TrackerToolConfiguration *>
       (newTool->GetToolName(), newTool) );
   }
   else
@@ -89,14 +90,14 @@ AscensionTrackerConfiguration::InternalAddTool( const
 
 AscensionToolConfiguration::AscensionToolConfiguration() : m_PortNumber( 1 )
 {
-}                                                                
+}
 
 
 AscensionToolConfiguration::AscensionToolConfiguration( const 
   AscensionToolConfiguration &other ) : TrackerToolConfiguration( other ) 
 {
   this->m_PortNumber = other.m_PortNumber;
-}                                                                
+}
 
 
 AscensionToolConfiguration::~AscensionToolConfiguration()

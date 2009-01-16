@@ -24,6 +24,11 @@ namespace igstk
 {
 
 /*
+* \class PolarisTrackerConfiguration
+*
+* \brief Define container classes with minimal functionality for each supported 
+* tracker. 
+*
 * In this header file, define classes for each supported tracker. These
 * are container classes with minimal functionality
 * Each tracker configuration contains information for setting up the tracker.

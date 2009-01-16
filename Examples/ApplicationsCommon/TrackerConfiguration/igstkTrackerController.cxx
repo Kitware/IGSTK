@@ -1114,7 +1114,7 @@ void
 TrackerController::RequestGetNonReferenceToolList()
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestGetNonReferenceToolList called...\n" );
+    "igstkTrackerController::RequestGetNonReferenceToolList called...\n" );
   igstkPushInputMacro( GetTools );
   this->m_StateMachine.ProcessInputs();
 }
@@ -1135,7 +1135,7 @@ void
 TrackerController::RequestGetReferenceTool()
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestGetReferenceTool called...\n" );
+    "igstkTrackerController::RequestGetReferenceTool called...\n" );
   igstkPushInputMacro( GetReferenceTool );
   this->m_StateMachine.ProcessInputs();
 }
@@ -1146,7 +1146,7 @@ TrackerController::RequestSetParentSpatialObject( igstk::Transform transform,
                                 igstk::SpatialObject * spatialObject)
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestSetParentSpatialObject called...\n" );
+    "igstkTrackerController::RequestSetParentSpatialObject called...\n" );
 
   m_TmpTransform = transform;
   m_TmpSpatialObject = spatialObject;
@@ -1161,7 +1161,7 @@ TrackerController::RequestAddChildSpatialObject( igstk::Transform transform,
                                 igstk::SpatialObject * spatialObject)
 {
   igstkLogMacro( DEBUG, 
-                 "igstkTrackerController::RequestAddChildSpatialObject called...\n" );
+    "igstkTrackerController::RequestAddChildSpatialObject called...\n" );
 
   m_TmpTransform = transform;
   m_TmpSpatialObject = spatialObject;
@@ -1215,7 +1215,8 @@ TrackerController::TrackerInitializeProcessing()
    #endif
     else
       {
-      this->m_ErrorMessage = "Could not initialize the tracker. See the debug log.";
+      this->m_ErrorMessage = 
+        "Could not initialize the tracker. See the debug log.";
       igstkPushInputMacro( Failed );
       }
     }
@@ -1294,8 +1295,9 @@ TrackerController::CloseCommunicationProcessing()
     //if serial communication, close COM port
     if( this->m_SerialCommunication.IsNotNull() )
       {
-      observerID = this->m_SerialCommunication->AddObserver( ClosePortErrorEvent(),
-                                                             this->m_ErrorObserver );
+      observerID = 
+        this->m_SerialCommunication->AddObserver( ClosePortErrorEvent(),
+                                                  this->m_ErrorObserver );
       this->m_SerialCommunication->CloseCommunication();
       this->m_SerialCommunication->RemoveObserver(observerID);
       if( this->m_ErrorObserver->ErrorOccured() )
@@ -1322,7 +1324,8 @@ bool
 TrackerController::InitializeSerialCommunication()
 {
   SerialCommunicatingTrackerConfiguration *serialTrackerConfiguration =
-    dynamic_cast<SerialCommunicatingTrackerConfiguration *>( this->m_TrackerConfiguration );
+    dynamic_cast<SerialCommunicatingTrackerConfiguration *>
+    ( this->m_TrackerConfiguration );
   
                  //create serial communication
   this->m_SerialCommunication = igstk::SerialCommunication::New();
@@ -1332,16 +1335,22 @@ TrackerController::InitializeSerialCommunication()
     this->m_SerialCommunication->AddObserver( OpenPortErrorEvent(),
                                               this->m_ErrorObserver );
 
-  this->m_SerialCommunication->SetPortNumber( serialTrackerConfiguration->GetCOMPort() );
-  this->m_SerialCommunication->SetParity( serialTrackerConfiguration->GetParity() );
-  this->m_SerialCommunication->SetBaudRate( serialTrackerConfiguration->GetBaudRate() );
-  this->m_SerialCommunication->SetDataBits( serialTrackerConfiguration->GetDataBits() );
-  this->m_SerialCommunication->SetStopBits( serialTrackerConfiguration->GetStopBits() );
-  this->m_SerialCommunication->SetHardwareHandshake( serialTrackerConfiguration->GetHandshake() );
+  this->m_SerialCommunication->SetPortNumber
+    (serialTrackerConfiguration->GetCOMPort() );
+  this->m_SerialCommunication->SetParity
+    ( serialTrackerConfiguration->GetParity() );
+  this->m_SerialCommunication->SetBaudRate
+    ( serialTrackerConfiguration->GetBaudRate() );
+  this->m_SerialCommunication->SetDataBits
+    ( serialTrackerConfiguration->GetDataBits() );
+  this->m_SerialCommunication->SetStopBits
+    ( serialTrackerConfiguration->GetStopBits() );
+  this->m_SerialCommunication->SetHardwareHandshake
+    ( serialTrackerConfiguration->GetHandshake() );
 
   this->m_SerialCommunication->OpenCommunication();
-                     //remove the observer, if an error occured we have already
-                     //been notified
+  //remove the observer, if an error occured we have already
+  //been notified
   this->m_SerialCommunication->RemoveObserver(observerID);
 
   if( this->m_ErrorObserver->ErrorOccured() )
@@ -1429,8 +1438,8 @@ TrackerController::PolarisVicraInitializeProcessing()
         this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+        toolConfigEnd = toolConfigurations.end();
       TrackerTool::Pointer currentTool;
       PolarisWirelessToolConfiguration * currentToolConfig;
 
@@ -1440,7 +1449,8 @@ TrackerController::PolarisVicraInitializeProcessing()
           static_cast<PolarisWirelessToolConfiguration *>( it->second );
         currentTool = InitializePolarisWirelessTool( currentToolConfig );
         this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        currentTool ) );
         unsigned long observerID = currentTool->AddObserver( 
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
@@ -1459,7 +1469,8 @@ TrackerController::PolarisVicraInitializeProcessing()
       if( referenceToolConfiguration )
         {
         currentToolConfig = 
-          static_cast<PolarisWirelessToolConfiguration *>( referenceToolConfiguration );
+          static_cast<PolarisWirelessToolConfiguration *>
+            ( referenceToolConfiguration );
 
         currentTool = InitializePolarisWirelessTool( currentToolConfig );
         this->m_ReferenceTool = currentTool;
@@ -1524,8 +1535,8 @@ TrackerController::PolarisHybridInitializeProcessing()
         this->m_TrackerConfiguration->m_TrackerToolList;
       //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+        toolConfigEnd = toolConfigurations.end();
       TrackerTool::Pointer trackerTool;
       PolarisWirelessToolConfiguration * wirelessToolConfig;
       PolarisWiredToolConfiguration * wiredToolConfig;
@@ -1544,7 +1555,8 @@ TrackerController::PolarisHybridInitializeProcessing()
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
           }
         this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        trackerTool ) );
 
         unsigned long observerID = trackerTool->AddObserver( 
           TrackerToolAttachmentToTrackerErrorEvent(),
@@ -1564,14 +1576,16 @@ TrackerController::PolarisHybridInitializeProcessing()
       if( referenceToolConfiguration )
         {
         if ( ( wirelessToolConfig = 
-          dynamic_cast<PolarisWirelessToolConfiguration *>( referenceToolConfiguration ) ) )
+          dynamic_cast<PolarisWirelessToolConfiguration *>( 
+            referenceToolConfiguration ) ) )
           {
           trackerTool = InitializePolarisWirelessTool( wirelessToolConfig );
           }
         else
           {
           wiredToolConfig = 
-              dynamic_cast<PolarisWiredToolConfiguration *>( referenceToolConfiguration );
+              dynamic_cast<PolarisWiredToolConfiguration *>( 
+                referenceToolConfiguration );
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
           }
         this->m_ReferenceTool = trackerTool;
@@ -1617,7 +1631,8 @@ TrackerController::InitializeAuroraTool(
 
   if( is5DOF )
     {
-    trackerTool->RequestSetChannelNumber( toolConfiguration->GetChannelNumber() );
+    trackerTool->RequestSetChannelNumber( 
+      toolConfiguration->GetChannelNumber() );
     }
 
   std::string sromFileName = toolConfiguration->GetSROMFile();
@@ -1686,8 +1701,8 @@ TrackerController::AscensionInitializeProcessing()
         this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+        toolConfigEnd = toolConfigurations.end();
       TrackerTool::Pointer currentTool;
       AscensionToolConfiguration * currentToolConfig;
 
@@ -1697,7 +1712,8 @@ TrackerController::AscensionInitializeProcessing()
           static_cast<AscensionToolConfiguration *>( it->second );
           currentTool = InitializeAscensionTool( currentToolConfig );
         this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
+          std::pair<std::string, TrackerTool::Pointer>( 
+            it->first, currentTool ) );
         unsigned long observerID = currentTool->AddObserver( 
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
@@ -1716,7 +1732,8 @@ TrackerController::AscensionInitializeProcessing()
       if( referenceToolConfiguration )
         {
         currentToolConfig = 
-          static_cast<AscensionToolConfiguration *>( referenceToolConfiguration );
+          static_cast<AscensionToolConfiguration *>( 
+            referenceToolConfiguration );
         currentTool = InitializeAscensionTool( currentToolConfig );
         this->m_ReferenceTool = currentTool;
         unsigned long observerID = currentTool->AddObserver( 
@@ -1779,8 +1796,8 @@ TrackerController::AuroraInitializeProcessing()
         this->m_TrackerConfiguration->m_TrackerToolList;
                    //attach tools
       std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-      std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-        toolConfigurations.end();
+      std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+        toolConfigEnd = toolConfigurations.end();
       TrackerTool::Pointer currentTool;
       AuroraToolConfiguration * currentToolConfig;
 
@@ -1790,7 +1807,8 @@ TrackerController::AuroraInitializeProcessing()
           static_cast<AuroraToolConfiguration *>( it->second );
         currentTool = InitializeAuroraTool( currentToolConfig );
         this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, currentTool ) );
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        currentTool ) );
         
         unsigned long observerID = currentTool->AddObserver( 
           TrackerToolAttachmentToTrackerErrorEvent(),
@@ -1893,8 +1911,8 @@ void TrackerController::MicronInitializeProcessing()
         this->m_TrackerConfiguration->m_TrackerToolList;
                           //attach tools
     std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
-    std::map<std::string, TrackerToolConfiguration *>::const_iterator toolConfigEnd =
-      toolConfigurations.end();
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+      toolConfigEnd = toolConfigurations.end();
     TrackerTool::Pointer trackerTool;
     MicronToolConfiguration * currentToolConfig;
 
@@ -1904,7 +1922,8 @@ void TrackerController::MicronInitializeProcessing()
 
       trackerTool = InitializeMicronTool( currentToolConfig );
       this->m_Tools.insert(
-          std::pair<std::string, TrackerTool::Pointer>( it->first, trackerTool ) );
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        trackerTool ) );
 
       unsigned long observerID = trackerTool->AddObserver( 
         TrackerToolAttachmentToTrackerErrorEvent(),
@@ -2018,7 +2037,8 @@ TrackerController::SetParentSpatialObjectProcessing()
                   "SetParentSpatialObjectProcessing called...\n");
  
   this->m_Tracker->RequestDetachFromParent();
-  this->m_Tracker->RequestSetTransformAndParent(m_TmpTransform, m_TmpSpatialObject);
+  this->m_Tracker->RequestSetTransformAndParent(m_TmpTransform, 
+                                                m_TmpSpatialObject);
 }
 
 void 
@@ -2028,7 +2048,8 @@ TrackerController::SetChildSpatialObjectProcessing()
                   "igstk::TrackerController::"
                   "SetParentSpatialObjectProcessing called...\n");
  
-  m_TmpSpatialObject->RequestSetTransformAndParent(m_TmpTransform, this->m_Tracker);
+  m_TmpSpatialObject->RequestSetTransformAndParent(m_TmpTransform, 
+                                                   this->m_Tracker);
 }
 
 void 
@@ -2143,19 +2164,23 @@ TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured( false )
   //tracker errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( TrackerOpenErrorEvent().GetEventName(),
-                                        "Error opening tracker communication." ) );
+      "Error opening tracker communication." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
-    std::pair<std::string,std::string>( TrackerInitializeErrorEvent().GetEventName(),
-                                        "Error initializing tracker." ) );
+    std::pair<std::string,std::string>( 
+      TrackerInitializeErrorEvent().GetEventName(),
+      "Error initializing tracker." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
-    std::pair<std::string,std::string>( TrackerStartTrackingErrorEvent().GetEventName(),
-                                        "Error starting tracking." ) );
+    std::pair<std::string,std::string>( 
+      TrackerStartTrackingErrorEvent().GetEventName(),
+      "Error starting tracking." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
-    std::pair<std::string,std::string>( TrackerStopTrackingErrorEvent().GetEventName(),
-                                        "Error stopping tracking." ) );
+    std::pair<std::string,std::string>( 
+      TrackerStopTrackingErrorEvent().GetEventName(),
+      "Error stopping tracking." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
-    std::pair<std::string,std::string>( TrackerCloseErrorEvent().GetEventName(),
-                                        "Error closing tracker communication." ) );
+    std::pair<std::string,std::string>( 
+      TrackerCloseErrorEvent().GetEventName(),
+      "Error closing tracker communication." ) );
 }
 
 void 
