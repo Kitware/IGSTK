@@ -215,6 +215,10 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   // Set bounding box provider spatial object
   reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
+  // Set the reslicer plane spatial object to the image representation
+  imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+
+  // Set the reslicer plane spatial object to the tool projection
   toolProjectionObjectRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
   // add the image representation to the view
