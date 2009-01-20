@@ -276,9 +276,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  // Select Axial orientation type
-  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  // Set bounding box provider spatial object to the reslicer plane object
+ // Set bounding box provider spatial object to the reslicer plane object
   reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
   // set transform and parent to the reslicer plane
@@ -291,26 +289,28 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   view2D->RequestDetachFromParent();
-  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetCameraParallelProjection(true);
   view2D->SetRefreshRate( 20 );
 
   // add the image representation to the view
   view2D->RequestAddObject( imageResliceRepresentation );
 
-  view2D->RequestResetCamera();
+  // Select Axial orientation type
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  view2D->RequestSetOrientation( View2DType::Axial ); 
 
   view2D->RequestStart();
+  view2D->RequestResetCamera();
 
   std::cout << "Axial view: " << std::endl;
-  // Iteratively change the tool transform to reslice from one side to the
+  // Iteratively change the tool transform to reslice from the beignning side to the
   // middle of the image in the axial direction
-  for(unsigned int i=(unsigned int)(imageExtent[5]/3); i<(unsigned int)(imageExtent[5]/2); i++)
+  for(unsigned int i= imageExtent[4]; i<=imageExtent[5]; i++)
       {
       index[2] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
       std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
 
       translation[0] = data[0];
@@ -326,10 +326,16 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
       }
+  view2D->RequestStop();
 
   /* Change slice orientation to sagittal */
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
 
   // position the tool on one side of the image in the sagittal direction
   index[0] = imageExtent[0];
@@ -355,12 +361,11 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   /* Iteratively change the tool transform to reslice from one side to the
   *  middle of the image in the sagittal direction
   */
-  for(unsigned int i=(unsigned int)(imageExtent[1]/3); i<(unsigned int)(imageExtent[1]/2); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
       {
       index[0] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       const double *data = point.GetVnlVector().data_block();
-      reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
       std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
 
       translation[0] = data[0];
@@ -377,6 +382,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
       igstk::PulseGenerator::CheckTimeouts();
       }
 
+#if 0
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
@@ -428,6 +434,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
       igstk::PulseGenerator::CheckTimeouts();
       }
 
+#endif
   //Request refreshing stop to take a screenshot
   view2D->RequestStop();
   std::string filename;
