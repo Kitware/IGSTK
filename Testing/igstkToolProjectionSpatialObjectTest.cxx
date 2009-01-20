@@ -182,6 +182,8 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
 
   ObjectType::Pointer toolProjectionObject = ObjectType::New();
 
+  toolProjectionObject->SetSize(150);
+
   toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
   RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
 
@@ -191,6 +193,7 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
 
  toolProjectionObjectRepresentation->SetVisibility( true );
  toolProjectionObjectRepresentation->SetLineWidth( 2.0 );
+ toolProjectionObjectRepresentation->SetColor( 1, 1, 0 );
 
  // Set image representation 
  typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
