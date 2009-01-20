@@ -52,9 +52,10 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
 {
   igstk::RealTimeClock::Initialize();
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
-    std::cerr << " Missing arguments: " << argv[0] << "CTImage " \
+    std::cerr << " Missing arguments: " << argv[0] << "CTImage \t"  \
+              << "ScreenShot file"
               << std::endl; 
     return EXIT_FAILURE;
     }
@@ -211,7 +212,11 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   view2D->RequestAddObject( representation );
 
   // a variable to hold image index
-  ImageSpatialObjectType::IndexType index;
+  typedef ImageSpatialObjectType::IndexType IndexType;
+
+  typedef ImageSpatialObjectType::IndexType::IndexValueType IndexValueType;
+
+  IndexType  index;
 
   // a variable to hold world point coords
   ImageSpatialObjectType::PointType point;
@@ -223,9 +228,9 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = imageExtent[4];
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(imageExtent[4]);
   
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
@@ -253,9 +258,9 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
-  index[0] = imageExtent[0];
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  index[0] = static_cast<IndexValueType>(imageExtent[0]);
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   data = point.GetVnlVector().data_block();
@@ -284,9 +289,9 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = imageExtent[2];
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(imageExtent[2]);
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   data = point.GetVnlVector().data_block();
@@ -307,6 +312,28 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
     Fl::wait( 0.01 );
     igstk::PulseGenerator::CheckTimeouts();
     }
+  view2D->RequestStop();
+
+
+  //Reslice the center axial slice and take a screenshot.
+  //
+  view2D->RequestSetOrientation( View2DType::Axial );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+  form->end();
+  form->show();
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+
+  view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
   delete fltkWidget2D;

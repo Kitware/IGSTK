@@ -298,13 +298,20 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
 
- ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
-              ${IGSTKSandbox_TESTS}
+ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
+           ${IGSTKSandbox_TESTS}
+           --compare
+           ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkImageResliceScreenShot2.png
+                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
+              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png)
 
- ADD_TEST( igstkImageResliceObjectRepresentationFltkTest3
+
+  ADD_TEST( igstkImageResliceObjectRepresentationFltkTest3
       ${IGSTKSandbox_TESTS}
            --compare
            ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
