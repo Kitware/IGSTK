@@ -34,17 +34,18 @@ namespace igstk
  * The computed plane is used by spatial object representation classes such as 
  * igstkImageResliceSpatialObjectRepresentation and igstkMeshResliceSpatialObjectRepresentation.
  *
- * The class provides three modes of reslicing i.e Orthogonal, OffOrthogonal and Oblique. 
+ * The class provides three modes of reslicing: Orthogonal, OffOrthogonal and Oblique. 
  *
  * In orthogonal mode, three types of orientation are defined: Axial, Coronal and Sagittal. 
  * For this mode, the tool tip spatial object provides the reslicing plane postion and orientation
- * information is extraced from the input reference spatial object.
+ * information is extraced from the bounding box provider spatial object.
  *
- * For OffOrthogonal mode, the three types of orientation are Perpendicular, OffSagittal and OffSagittal.
- * The orientation of the reslicing plane is computed using the tracker tool spatial object and
- * the input reference spatial object.  The postion is determined from the tracker tool tip postion.
+ * For OffOrthogonal mode, the three types of orientation are OffAxial, OffSagittal and OffCoronal.
+ * The orientation of the reslicing plane is computed from both, the tracker tool spatial object and
+ * the bounding box provider spatial object. The position of the reslicer plane is determined from 
+ * the tracker tool tip postion.
  *
- * For oblique mode, all the orientation and postion information of the reslicing plane are obtained
+ * For the oblique mode, both orientation and postion information of the reslicing plane are obtained
  * from the tracker tool.
  *
  *
@@ -103,9 +104,6 @@ public:
 
   /** Request the state machine to attempt to set orientation type */
   void RequestSetOrientationType( OrientationType orientationType ); 
-
-  /** Attempts to set bounding box provider spatial object*/ 
-  void AttemptSetBoundingBoxProviderSpatialObjectProcessing();
 
   /** Actually sets boundingbox provider spatial object*/ 
   void RequestSetBoundingBoxProviderSpatialObject( 
@@ -201,6 +199,9 @@ private:
 
   /** Set the reslcing mode */
   void SetReslicingModeProcessing( void );
+
+ /** Attempts to set bounding box provider spatial object*/ 
+  void AttemptSetBoundingBoxProviderSpatialObjectProcessing();
 
   /** Set Cursor position */
   void AttemptSetCursorPositionProcessing( void );

@@ -85,6 +85,7 @@ ReslicerPlaneSpatialObject
   igstkAddInputMacro( ToolTransformWRTImageCoordinateSystem );
   igstkAddInputMacro( ComputeReslicePlane );
 
+
   // List of state machine transitions
 
   //From Initial
@@ -94,16 +95,49 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( Initial, InValidReslicingMode, 
                            Initial, ReportInvalidReslicingMode );
 
+  igstkAddTransitionMacro( Initial, SetBoundingBoxProviderSpatialObject, 
+                           Initial, ReportInvalidRequest);
+
   igstkAddTransitionMacro( Initial, ValidOrientationType, 
                            Initial, ReportInvalidRequest);
 
   igstkAddTransitionMacro( Initial, InValidOrientationType, 
                            Initial, ReportInvalidRequest);  
 
+  igstkAddTransitionMacro( Initial, ValidBoundingBoxProviderSpatialObject, 
+                           Initial, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( Initial, InValidBoundingBoxProviderSpatialObject, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, ValidToolSpatialObject, 
+                           Initial, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( Initial, InValidToolSpatialObject, 
+                           Initial, ReportInvalidRequest);  
+
   igstkAddTransitionMacro( Initial, SetCursorPosition, 
                            Initial, ReportInvalidRequest);
 
-  igstkAddTransitionMacro( Initial, SetBoundingBoxProviderSpatialObject, 
+  igstkAddTransitionMacro( Initial, ValidCursorPosition, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, InValidCursorPosition, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, GetToolPosition, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, GetReslicingPlaneParameters, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, GetToolTransformWRTImageCoordinateSystem, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, ToolTransformWRTImageCoordinateSystem, 
+                           Initial, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( Initial, ComputeReslicePlane, 
                            Initial, ReportInvalidRequest);
 
   //From ReslicingModeSet
@@ -116,12 +150,87 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( ReslicingModeSet, SetCursorPosition, 
                            ReslicingModeSet, ReportInvalidRequest );  
 
+  igstkAddTransitionMacro( ReslicingModeSet, SetBoundingBoxProviderSpatialObject, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, ValidBoundingBoxProviderSpatialObject, 
+                           ReslicingModeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( ReslicingModeSet, InValidBoundingBoxProviderSpatialObject, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, ValidToolSpatialObject, 
+                           ReslicingModeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( ReslicingModeSet, InValidToolSpatialObject, 
+                           ReslicingModeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( ReslicingModeSet, ValidCursorPosition, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, InValidCursorPosition, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, GetToolPosition, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, GetReslicingPlaneParameters, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, GetToolTransformWRTImageCoordinateSystem, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, ToolTransformWRTImageCoordinateSystem, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( ReslicingModeSet, ComputeReslicePlane, 
+                           ReslicingModeSet, ReportInvalidRequest);
+
   //From OrientationTypeSet
   igstkAddTransitionMacro( OrientationTypeSet, SetBoundingBoxProviderSpatialObject,
                            AttemptingToSetBoundingBoxProviderSpatialObject, AttemptSetBoundingBoxProviderSpatialObject );
 
   igstkAddTransitionMacro( OrientationTypeSet, SetCursorPosition, 
                            OrientationTypeSet, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( OrientationTypeSet, ValidOrientationType, 
+                           OrientationTypeSet, SetOrientationType );
+
+  igstkAddTransitionMacro( OrientationTypeSet, InValidOrientationType, 
+                           OrientationTypeSet, ReportInvalidOrientationType);
+
+  igstkAddTransitionMacro( OrientationTypeSet, ValidBoundingBoxProviderSpatialObject, 
+                           OrientationTypeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( OrientationTypeSet, InValidBoundingBoxProviderSpatialObject, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, ValidToolSpatialObject, 
+                           OrientationTypeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( OrientationTypeSet, InValidToolSpatialObject, 
+                           OrientationTypeSet, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( OrientationTypeSet, ValidCursorPosition, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, InValidCursorPosition, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, GetToolPosition, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, GetReslicingPlaneParameters, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, GetToolTransformWRTImageCoordinateSystem, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, ToolTransformWRTImageCoordinateSystem, 
+                           OrientationTypeSet, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( OrientationTypeSet, ComputeReslicePlane, 
+                           OrientationTypeSet, ReportInvalidRequest);
 
 
   // From AttemptingToSetBoundingBoxProviderSpatialObject
@@ -131,6 +240,50 @@ ReslicerPlaneSpatialObject
   igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidBoundingBoxProviderSpatialObject,
                            OrientationTypeSet,  ReportInvalidBoundingBoxProviderSpatialObject );
 
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, SetBoundingBoxProviderSpatialObject,
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, SetCursorPosition, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidOrientationType, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidOrientationType, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidToolSpatialObject, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidToolSpatialObject, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidCursorPosition, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidCursorPosition, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, GetToolPosition, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, GetReslicingPlaneParameters, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, GetToolTransformWRTImageCoordinateSystem, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ToolTransformWRTImageCoordinateSystem, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ComputeReslicePlane, 
+                           AttemptingToSetBoundingBoxProviderSpatialObject, ReportInvalidRequest);
 
   //From BoundingBoxProviderSpatialObjectSet
   igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidOrientationType,
@@ -144,6 +297,12 @@ ReslicerPlaneSpatialObject
 
   igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidReslicingMode, 
                            BoundingBoxProviderSpatialObjectSet, ReportInvalidReslicingMode );
+
+//  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidCursorPosition,
+//                           BoundingBoxProviderSpatialObjectSet,  SetCursorPosition ); 
+
+//  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidCursorPosition,
+//                           BoundingBoxProviderSpatialObjectSet,  ReportInvalidCursorPosition );
 
   igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidToolSpatialObject,
                            BoundingBoxProviderSpatialObjectSet, SetToolSpatialObject );
@@ -169,14 +328,108 @@ ReslicerPlaneSpatialObject
 
   // From AttemptingToSetCursorPosition
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidCursorPosition,
-                           BoundingBoxProviderSpatialObjectSet,  SetCursorPosition ); 
+                           BoundingBoxProviderSpatialObjectSet, SetCursorPosition ); 
 
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidCursorPosition,
-                           BoundingBoxProviderSpatialObjectSet,  ReportInvalidCursorPosition );
+                           BoundingBoxProviderSpatialObjectSet, ReportInvalidCursorPosition );
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidBoundingBoxProviderSpatialObject,
+                           AttemptingToSetCursorPosition, ReportInvalidRequest ); 
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidBoundingBoxProviderSpatialObject,
+                           AttemptingToSetCursorPosition, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, SetBoundingBoxProviderSpatialObject,
+                           AttemptingToSetCursorPosition, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, SetCursorPosition, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidOrientationType, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidOrientationType, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidToolSpatialObject, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidToolSpatialObject, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, GetToolPosition, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, GetReslicingPlaneParameters, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, GetToolTransformWRTImageCoordinateSystem, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ToolTransformWRTImageCoordinateSystem, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToSetCursorPosition, ComputeReslicePlane, 
+                           AttemptingToSetCursorPosition, ReportInvalidRequest);
+
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ToolTransformWRTImageCoordinateSystem,
                            BoundingBoxProviderSpatialObjectSet, ReceiveToolTransformWRTImageCoordinateSystem );
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ValidReslicingMode, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, SetReslicingMode );
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, InValidReslicingMode, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidReslicingMode );
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, SetBoundingBoxProviderSpatialObject, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ValidOrientationType, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, InValidOrientationType, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, InValidBoundingBoxProviderSpatialObject, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ValidToolSpatialObject, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, InValidToolSpatialObject, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);  
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, SetCursorPosition, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ValidCursorPosition, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, InValidCursorPosition, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, GetToolPosition, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, GetReslicingPlaneParameters, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, GetToolTransformWRTImageCoordinateSystem, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem, ComputeReslicePlane, 
+                           AttemptingToGetToolTransformWRTImageCoordinateSystem, ReportInvalidRequest);
 
   igstkSetInitialStateMacro( Initial );
   this->m_StateMachine.SetReadyToRun();
