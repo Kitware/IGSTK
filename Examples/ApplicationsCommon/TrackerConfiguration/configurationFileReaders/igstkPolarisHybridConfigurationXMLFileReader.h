@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPolarisHybridConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkPolarisHybridConfigurationXMLFileReader_h
 #define __igstkPolarisHybridConfigurationXMLFileReader_h
 
@@ -8,7 +25,12 @@
 namespace igstk
 {
 /**
- * \class PolarisHybridConfigurationXMLFileReader This class is used to read the 
+ * \class PolarisHybridConfigurationXMLFileReader 
+ *
+ * \brief This class is used to read the 
+ *        xml configuration file for NDI's old hybrid Polaris tracker.
+ *
+ *        This class is used to read the 
  *        xml configuration file for NDI's old hybrid Polaris tracker.
  */  
 class PolarisHybridConfigurationXMLFileReader : 

@@ -31,6 +31,9 @@ namespace igstk
  * 
  *  \brief This class is an IGSTK wrapper for all readers of xml files 
  *         containing a tracker configuration. 
+ *
+ *         This class is an IGSTK wrapper for all readers of xml files 
+ *         containing a tracker configuration.
  *         The specific type of tracker configuration is defined by the 
  *         actual reader specified with the RequestSetReader() method.
  *
@@ -122,7 +125,8 @@ public:
     typedef  ::itk::SmartPointer<Self>  Pointer;
     itkNewMacro( Self );
   protected:
-    ReadTrackerConfigurationFailSuccessObserver() : m_GotFailure( false ), m_GotSuccess( false ) {}
+    ReadTrackerConfigurationFailSuccessObserver() : 
+      m_GotFailure( false ), m_GotSuccess( false ) {}
     ~ReadTrackerConfigurationFailSuccessObserver() {}
   public:
     void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -133,7 +137,8 @@ public:
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
     const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *rse = 
-      dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event);
+      dynamic_cast<const 
+        igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event);
 
     if( rse )
       {
@@ -142,7 +147,8 @@ public:
     else
       {
       const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
-        dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event);
+        dynamic_cast<const 
+          igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event);
 
       if( rfe )
         {
@@ -224,17 +230,20 @@ public:
     }
     void Execute(const itk::Object *caller, const itk::EventObject & event)
     {
-      if( dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
+      if( dynamic_cast<const 
+          igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
         {
         m_GotSuccess = true;
         }
       else if( const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
-        dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
+        dynamic_cast<const 
+          igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
         {
         m_GotFailure = true;
         m_FailureMessage = rfe->Get();
         }
-      else if( dynamic_cast<const igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent *>( &event) )
+      else if( dynamic_cast<const igstk::TrackerConfigurationFileReader::
+                 UnexpectedTrackerTypeEvent *>( &event) )
         {
         m_GotUnexpectedTrackerType = true;
         }
@@ -263,7 +272,7 @@ public:
 protected:
 
   TrackerConfigurationFileReader( void );
-  ~TrackerConfigurationFileReader( void );
+  virtual ~TrackerConfigurationFileReader( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;

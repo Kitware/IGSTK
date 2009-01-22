@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkPolarisWirelessConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkPolarisWirelessConfigurationXMLFileReader_h
 #define __igstkPolarisWirelessConfigurationXMLFileReader_h
 
@@ -9,8 +26,13 @@ namespace igstk
 {
   
 /**
- * \class PolarisWirelessConfigurationXMLFileReader This class is a super class
+ * \class PolarisWirelessConfigurationXMLFileReader 
+ *
+ * \brief This class is a super class
  *        for all of the wireless polaris (NDI) trackers. 
+ *
+ *        This class is a super class
+ *        for all of the wireless polaris (NDI) trackers.
  *        NOTE: Only its decendants are actually used.
  */
 class PolarisWirelessConfigurationXMLFileReader : 

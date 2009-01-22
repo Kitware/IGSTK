@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkOIGTLinkTrackerConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkOIGTLinkTrackerConfigurationXMLFileReader_h
 #define __igstkOIGTLinkTrackerConfigurationXMLFileReader_h
 
@@ -8,8 +25,10 @@ namespace igstk
 /** \class OIGTLinkTrackerConfigurationXMLFileReader
  * 
  *  \brief This class is a reader for xml files containing a 
- *         tracker configuration with open IGT link settings. That is for
-
+ *         tracker configuration with open IGT link settings. 
+ *
+ *         This class is a reader for xml files containing a 
+ *         tracker configuration with open IGT link settings.
  */
 class OIGTLinkTrackerConfigurationXMLFileReader : public itk::XMLReaderBase 
 {

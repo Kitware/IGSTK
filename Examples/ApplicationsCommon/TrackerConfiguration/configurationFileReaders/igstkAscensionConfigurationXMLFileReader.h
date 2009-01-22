@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkAscensionConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkAscensionConfigurationXMLFileReader_h
 #define __igstkAscensionConfigurationXMLFileReader_h
 
@@ -8,7 +25,12 @@
 namespace igstk
 {
 /**
- * \class AscensionConfigurationXMLFileReader This class is used to read the xml
+ * \class AscensionConfigurationXMLFileReader 
+ *
+ * \brief This class is used to read the xml
+ *        configuration file for Ascension's FOB tracker.
+ *
+ *        This class is used to read the xml
  *        configuration file for Ascension's FOB tracker.
  */
 class AscensionConfigurationXMLFileReader : 
@@ -18,8 +40,8 @@ public:
 
   //standard typedefs
   typedef AscensionConfigurationXMLFileReader                        Self;
-  typedef SerialCommunicatingTrackerConfigurationXMLFileReader    Superclass;
-  typedef itk::SmartPointer<Self>                                 Pointer;
+  typedef SerialCommunicatingTrackerConfigurationXMLFileReader       Superclass;
+  typedef itk::SmartPointer<Self>                                    Pointer;
 
            //run-time type information (and related methods)
   itkTypeMacro( AscensionConfigurationXMLFileReader, 

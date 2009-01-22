@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkOIGTLinkTrackerConfigurationFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkOIGTLinkTrackerConfigurationFileReader_h
 #define __igstkOIGTLinkTrackerConfigurationFileReader_h
 
@@ -17,6 +34,10 @@ namespace igstk
  *         data (each tool should send data to the specified host on the
  *         specified port).
  *
+ *         This class is an IGSTK wrapper for all readers of xml files 
+ *         containing a tracker configuration with additional OpenIGTLink
+ *         data (each tool should send data to the specified host on the
+ *         specified port).
  *         The specific type of tracker (Micron, Aurora...) configuration is 
  *         defined by the actual reader given in the RequestSetReader() method.
  *
@@ -179,7 +200,7 @@ public:
 protected:
 
   OIGTLinkTrackerConfigurationFileReader( void );
-  ~OIGTLinkTrackerConfigurationFileReader( void );
+  virtual ~OIGTLinkTrackerConfigurationFileReader( void );
 
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, itk::Indent indent ) const;

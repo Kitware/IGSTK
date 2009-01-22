@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkSerialCommunicatingTrackerConfigurationXMLFileReader_h
 #define __igstkSerialCommunicatingTrackerConfigurationXMLFileReader_h
 
@@ -10,8 +27,11 @@ namespace igstk
 /** \class SerialCommunicatingTrackerConfigurationXMLFileReader
  * 
  *  \brief This class is an abstract reader for xml files containing a 
- *         tracker configuration that uses serial communication. The specific 
- *         type of tracker is defined by the subclass.
+ *         tracker configuration that uses serial communication. 
+ * 
+ *         This class is an abstract reader for xml files containing a 
+ *         tracker configuration that uses serial communication. 
+ *         The specific type of tracker is defined by the subclass.
  */
 class SerialCommunicatingTrackerConfigurationXMLFileReader : 
    public TrackerConfigurationXMLFileReaderBase 

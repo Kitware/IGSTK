@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTrackerConfigurationXMLFileReaderBase.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkTrackerConfigurationXMLFileReaderBase_h
 #define __igstkTrackerConfigurationXMLFileReaderBase_h
 
@@ -10,6 +27,9 @@ namespace igstk
 /** \class TrackerConfigurationXMLFileReaderBase
  * 
  *  \brief This class is an abstract reader for xml files containing a 
+ *         tracker configuration. 
+ *
+ *         This class is an abstract reader for xml files containing a 
  *         tracker configuration. The specific type of tracker is
  *         defined by the subclass.
  */

@@ -1,3 +1,20 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkMicronConfigurationXMLFileReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #ifndef __igstkMicronConfigurationXMLFileReader_h
 #define __igstkMicronConfigurationXMLFileReader_h
 
@@ -7,7 +24,12 @@
 namespace igstk
 {
 /**
- * \class MicronConfigurationXMLFileReader This class is used to read the xml
+ * \class MicronConfigurationXMLFileReader 
+ *
+ * \brief This class is used to read the xml
+ *        configuration file for Claron Technology Inc. Micron tracker.
+ *
+ *        This class is used to read the xml
  *        configuration file for Claron Technology Inc. Micron tracker.
  */  
 class MicronConfigurationXMLFileReader : 
