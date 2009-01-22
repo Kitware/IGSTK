@@ -451,7 +451,7 @@ TrackerConfigurationFileReader::ReadProcessing()
     std::ostringstream msg;
     msg<<"File ("<<this->m_FileName<<") does not exist or is a directory";
     this->m_ReadFailureErrorMessage = msg.str();
-    igstkPushInputMacro( Failure );    
+    igstkPushInputMacro( Failure );
   }
   else
   {
@@ -468,27 +468,28 @@ TrackerConfigurationFileReader::ReadProcessing()
           this->m_XMLFileReader->GetTrackerConfigurationData();
 
         igstkPushInputMacro( Success );
-      }    
+      }
       else
       {
         this->m_ReadFailureErrorMessage = 
           "XML file does not contain tracker configuration data"; 
-        igstkPushInputMacro( Failure );    
+        igstkPushInputMacro( Failure );
       }
     }
     //an itk exception is thrown if the xml is malformed, and a 
     //FileFormatException is thrown if the data format is incorrect.
     //both are decendants of std::exception 
-    catch( igstk::TrackerConfigurationXMLFileReaderBase::UnexpectedTrackerTypeException & )
+    catch( igstk::TrackerConfigurationXMLFileReaderBase::
+       UnexpectedTrackerTypeException & )
     {
       this->InvokeEvent( UnexpectedTrackerTypeEvent() );
       this->m_ReadFailureErrorMessage = "Unexpected tracker type";
-      igstkPushInputMacro( Failure );    
+      igstkPushInputMacro( Failure );
     }
     catch( std::exception &e ) 
     { 
       this->m_ReadFailureErrorMessage = e.what();
-      igstkPushInputMacro( Failure );    
+      igstkPushInputMacro( Failure );
     }
   }
   this->m_StateMachine.ProcessInputs();

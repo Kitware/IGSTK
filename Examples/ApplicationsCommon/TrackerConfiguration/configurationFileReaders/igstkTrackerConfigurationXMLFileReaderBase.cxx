@@ -1,5 +1,20 @@
-#include <iostream>
-#include <sstream>
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTrackerConfigurationXMLFileReaderBase.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #include <itksys/SystemTools.hxx>
 #include <algorithm>
 
@@ -37,7 +52,9 @@ TrackerConfigurationXMLFileReaderBase::StartElement( const char * name,
     if( HaveConfigurationData() )
       {
       throw FileFormatException(
-        std::string( "The tag \"tracking_system\" appears multiple times, should only appear once." ) );
+        std::string( 
+          "The tag \"tracking_system\" appears multiple times, should only appear once." 
+          ) );
       }
     this->m_ReadingTrackerConfiguration = true;
     ProcessTrackingSystemAttributes( atts );
@@ -46,7 +63,8 @@ TrackerConfigurationXMLFileReaderBase::StartElement( const char * name,
     {
     if( !m_ReadingTrackerConfiguration )
       {
-      throw FileFormatException( "\"refresh_rate\" tag not nested in \"tracking_system\" tag." );
+      throw FileFormatException( 
+        "\"refresh_rate\" tag not nested in \"tracking_system\" tag." );
       }
     }
   else if( itksys::SystemTools::Strucmp( name, "tool" ) == 0 )
@@ -151,7 +169,8 @@ const char *inData, int inLength )
 
 void 
 TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes( 
-  const char **atts ) throw ( FileFormatException, UnexpectedTrackerTypeException )
+  const char **atts ) throw ( 
+    FileFormatException, UnexpectedTrackerTypeException )
 {
   bool systemTypeFound = false;
 
@@ -160,7 +179,8 @@ TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes(
     {
     if( itksys::SystemTools::Strucmp( atts[i], "type" ) == 0 )
       {
-      if( itksys::SystemTools::Strucmp( atts[i+1], GetSystemType().c_str() ) != 0 )
+      if( itksys::SystemTools::Strucmp( atts[i+1], 
+            GetSystemType().c_str() ) != 0 )
         {
         throw UnexpectedTrackerTypeException();
         }
@@ -172,7 +192,8 @@ TrackerConfigurationXMLFileReaderBase::ProcessTrackingSystemAttributes(
     }
   if( !systemTypeFound )
     {
-    throw FileFormatException( "\"type\" attribute missing in tracking_system tag." );
+    throw FileFormatException( 
+      "\"type\" attribute missing in tracking_system tag." );
     }
 }
 
@@ -271,7 +292,8 @@ throw ( FileFormatException )
 
   RequestTransformObserver::Pointer transformObserver = 
     RequestTransformObserver::New();
-  calibrationData->AddObserver( igstk::PrecomputedTransformData::TransformTypeEvent(), 
+  calibrationData->AddObserver( 
+    igstk::PrecomputedTransformData::TransformTypeEvent(), 
                                 transformObserver );
   calibrationData->RequestTransform();
   igstk::Transform *transform = 

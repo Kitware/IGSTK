@@ -1,5 +1,20 @@
-#include <iostream>
-#include <sstream>
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkMicronConfigurationXMLFileReader.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #include <itksys/SystemTools.hxx>
 
 #include "igstkMicronConfigurationXMLFileReader.h"
@@ -16,7 +31,8 @@ MicronConfigurationXMLFileReader::StartElement(
 {
   //let the super class try to analyze the current tag
   Superclass::StartElement( name, atts );
-  if( itksys::SystemTools::Strucmp( name, "camera_calibration_directory" ) == 0 ||
+  if( itksys::SystemTools::Strucmp( name, 
+        "camera_calibration_directory" ) == 0 ||
       itksys::SystemTools::Strucmp( name, "initialization_file" ) == 0 ||
       itksys::SystemTools::Strucmp( name, "templates_directory" ) == 0 ||
       itksys::SystemTools::Strucmp( name, "tool" ) == 0 ) 
@@ -82,7 +98,8 @@ throw ( FileFormatException )
   if( !itksys::SystemTools::FileExists( this->m_CurrentTagData.c_str() ) ||
     !itksys::SystemTools::FileIsDirectory( this->m_CurrentTagData.c_str()  ) )
     {
-    throw FileFormatException( "Invalid string given as camera_calibration_directory tag" );
+    throw FileFormatException( 
+      "Invalid string given as camera_calibration_directory tag" );
     }
   this->m_MicronCalibrationDirectory = this->m_CurrentTagData;
 }
@@ -95,7 +112,8 @@ throw ( FileFormatException )
   if( !itksys::SystemTools::FileExists( this->m_CurrentTagData.c_str() ) ||
       itksys::SystemTools::FileIsDirectory( this->m_CurrentTagData.c_str()  ) )
     {
-    throw FileFormatException( "Invalid string given as initialization_file tag" );
+    throw FileFormatException( 
+      "Invalid string given as initialization_file tag" );
     }
   this->m_MicronInitializationFile = this->m_CurrentTagData;
 }
@@ -108,7 +126,8 @@ throw ( FileFormatException )
   if( !itksys::SystemTools::FileExists( this->m_CurrentTagData.c_str() ) ||
       !itksys::SystemTools::FileIsDirectory( this->m_CurrentTagData.c_str()  ) )
     {
-    throw FileFormatException( "Invalid string given as templates_directory tag" );
+    throw FileFormatException( 
+      "Invalid string given as templates_directory tag" );
     }
   this->m_MicronTemplatesDirectory = this->m_CurrentTagData;
 }
@@ -183,7 +202,8 @@ throw ( FileFormatException )
   //is validated in the TrackerConfigurationXMLReaderBase
   trackerConfig->RequestSetFrequency( this->m_RefreshRate );
   
-  trackerConfig->SetCameraCalibrationFileDirectory( this->m_MicronCalibrationDirectory );
+  trackerConfig->SetCameraCalibrationFileDirectory( 
+    this->m_MicronCalibrationDirectory );
   trackerConfig->SetInitializationFile( this->m_MicronInitializationFile );
   trackerConfig->SetTemplatesDirectory( this->m_MicronTemplatesDirectory );
 

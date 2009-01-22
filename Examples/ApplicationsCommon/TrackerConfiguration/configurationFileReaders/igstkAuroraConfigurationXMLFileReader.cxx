@@ -1,5 +1,20 @@
-#include <iostream>
-#include <sstream>
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkAuroraConfigurationXMLFileReader.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
 #include <itksys/SystemTools.hxx>
 
 #include "igstkAuroraConfigurationXMLFileReader.h"
@@ -115,7 +130,8 @@ AuroraConfigurationXMLFileReader::ProcessToolData()
   if( this->m_CurrentToolName.empty() )
     throw FileFormatException( "\"name\" missing for one of the tools." );
   if( !this->m_HaveCurrentControlBoxPort )
-    throw FileFormatException( "\"control_box_port\" missing for one of the tools." );
+    throw FileFormatException( 
+      "\"control_box_port\" missing for one of the tools." );
 
   //if the tool section does not have a "calibration_file" tag 
   //we assume the calibration is identity

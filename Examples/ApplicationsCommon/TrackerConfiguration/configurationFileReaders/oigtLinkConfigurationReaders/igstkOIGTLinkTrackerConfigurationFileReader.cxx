@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkOIGTLinkTrackerConfigurationFileReader.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include <itksys/SystemTools.hxx>
 #include "igstkOIGTLinkTrackerConfigurationFileReader.h"
 #include "igstkOIGTLinkTrackerConfigurationXMLFileReader.h"
@@ -5,7 +21,8 @@
 namespace igstk
 { 
 
-OIGTLinkTrackerConfigurationFileReader::OIGTLinkTrackerConfigurationFileReader() : 
+OIGTLinkTrackerConfigurationFileReader::
+  OIGTLinkTrackerConfigurationFileReader() : 
   m_StateMachine( this )
 {
         //define the state machine's states 
@@ -306,7 +323,8 @@ OIGTLinkTrackerConfigurationFileReader::RequestSetReader(
 
 
 void 
-OIGTLinkTrackerConfigurationFileReader::RequestSetFileName( const std::string &fileName )
+OIGTLinkTrackerConfigurationFileReader::RequestSetFileName( 
+  const std::string &fileName )
 {
   igstkLogMacro( DEBUG, "igstk::TrackerConfigurationFileReader::"
                         "RequestSetFileName called...\n" );
@@ -477,8 +495,8 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
         igstkPushInputMacro( Failure );    
       }
     }
-    catch( igstk::TrackerConfigurationXMLFileReaderBase::UnexpectedTrackerTypeException
-            & )
+    catch( igstk::TrackerConfigurationXMLFileReaderBase::
+             UnexpectedTrackerTypeException & )
     {
       this->InvokeEvent( UnexpectedTrackerTypeEvent() );
       this->m_ReadFailureErrorMessage = "Unexpected tracker type";
