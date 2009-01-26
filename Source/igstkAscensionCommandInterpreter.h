@@ -52,7 +52,6 @@ POSSIBILITY OF SUCH DAMAGES.
 
 #include "igstkObject.h"
 #include "igstkSerialCommunication.h"
-#include "igstkNDIErrorEvent.h"
 
 #include <string>
 
