@@ -32,8 +32,7 @@ namespace igstk
 {
  
 /** \class Transform 
- *  \brief Transform representing relative positions and orientations in 
- *  3D space.
+ *  \brief A class representing a 3D Rigid transform
  * 
  * This class represents relative positions and orientations in 3D space. It is
  * intended to be used for positioning objects in the scene and as a
