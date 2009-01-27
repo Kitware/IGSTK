@@ -416,7 +416,7 @@ CrossHairSpatialObject
   return this->m_InsideBounds;
 }
 
-/** Compute reslicing plane */
+/** Get cross hair position */
 void
 CrossHairSpatialObject
 ::GetCrossHairPositionProcessing()
