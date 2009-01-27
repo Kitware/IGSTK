@@ -233,7 +233,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   toolSpatialObject->SetRadius( 0.1 );
   toolSpatialObject->SetHeight( 2.0 );
 
-  // place the tool on one side of the image in the axial direction
+  // give a valid initial position to the tool
   igstk::Transform toolTransform;
   igstk::Transform::VectorType    translation;
   igstk::Transform::VersorType    rotation;
@@ -308,27 +308,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   view2D->RequestSetOrientation( View2DType::Axial ); 
   view2D->RequestResetCamera();
-
-  // position the tool on one side of the image in the sagittal direction
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = imageExtent[4];
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-
-  data = point.GetVnlVector().data_block();
-
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
-
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
-  toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
-
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-
+  // yes, twice! fixme
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -358,27 +338,6 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
   view2D->RequestSetOrientation( View2DType::Sagittal ); 
-
-  // position the tool on one side of the image in the sagittal direction
-  index[0] = imageExtent[0];
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-
-  data = point.GetVnlVector().data_block();
-
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
-
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
-  toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
-
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -407,29 +366,6 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
   view2D->RequestSetOrientation( View2DType::Coronal ); 
-
-  // position the tool on one side of the image in the coronal direction
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = imageExtent[2];
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
-
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-
-  data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
-
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
-  toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetZeroValue() );
-
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
-
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
