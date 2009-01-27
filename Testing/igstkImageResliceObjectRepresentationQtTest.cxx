@@ -53,8 +53,9 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
  * spatial object ( automatic reslicing ) */
 int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 {
-  igstk::RealTimeClock::Initialize();
+  std::cout << " igstkImageResliceObjectRepresentationFltkTest: application started " << std::endl;
 
+  igstk::RealTimeClock::Initialize();
 
   if( argc < 3 )
     {
@@ -62,6 +63,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
               << "Output image file for a screenshot" << std::endl; 
     return EXIT_FAILURE;
     }
+
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
@@ -81,7 +83,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
                                             igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
+  //vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
   // Create Axes object to act as a reference coordinate system
@@ -95,14 +97,13 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
-  reader->SetLogger( logger );
+  //reader->SetLogger( logger );
 
   //set up CT image observer
   typedef ImageResliceObjectRepresentationQtTest::CTImageObserver 
                                                         CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
-  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
-                            ctImageObserver);
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(), ctImageObserver);
 
   /* Read in a DICOM series */
   std::cout << "Reading CT image : " << argv[1] << std::endl;
@@ -197,7 +198,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   typedef igstk::QTWidget        QTWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
-  view2D->SetLogger( logger );
+  //view2D->SetLogger( logger );
        
   // Create a QT minimal GUI
   QApplication app(argc, argv);
@@ -207,11 +208,11 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   // instantiate QT widget 
   QTWidgetType * qtWidget2D = new QTWidgetType();
   qtWidget2D->RequestSetView( view2D );
-  qtWidget2D->SetLogger( logger );
+  //qtWidget2D->SetLogger( logger );
   qtMainWindow->setCentralWidget( qtWidget2D );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 40 );
+  view2D->SetRefreshRate( 20 );
 
   qtMainWindow->show();
   
@@ -242,27 +243,27 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   // a variable to hold world point coords
   ImageSpatialObjectType::PointType point;
 
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = imageExtent[4];
+  //index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
+  //index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
+  //index[2] = imageExtent[4];
   
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+//  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   // auxiliar
   const double *data = NULL;
 
-  data = point.GetVnlVector().data_block();
+  //data = point.GetVnlVector().data_block();
 
-  translation[0] =  data[0];
-  translation[1] =  data[1];
-  translation[2] =  data[2];
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
+  //translation[0] =  data[0];
+  //translation[1] =  data[1];
+  //translation[2] =  data[2];
+  //rotation.Set(0.0, 0.0, 0.0, 1.0);
 
   const double transformUncertainty = 1.0;
-  toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetLongestPossibleTime() );
+  //toolTransform.SetTranslation(
+  //                        translation,
+  //                        transformUncertainty,
+  //                        igstk::TimeStamp::GetLongestPossibleTime() );
 
   // set transform and parent to the tool spatial object
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
@@ -275,8 +276,10 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+
   // Select Axial orientation type
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
   // Set bounding box provider spatial object to the reslicer plane object
   reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
@@ -292,14 +295,18 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   view2D->RequestDetachFromParent();
   view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
   view2D->SetCameraParallelProjection(true);
-  view2D->SetRefreshRate( 20 );
+//  view2D->SetRefreshRate( 20 );
 
   // add the image representation to the view
   view2D->RequestAddObject( imageResliceRepresentation );
 
-  view2D->RequestResetCamera();
+  // Select Axial orientation type
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  view2D->RequestSetOrientation( View2DType::Axial ); 
 
+  view2D->RequestResetCamera();
   view2D->RequestStart();
+  view2D->RequestResetCamera();
 
   std::cout << "Axial view: " << std::endl;
   // Iteratively change the tool transform to reslice from one side to the
@@ -320,6 +327,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
                         translation,
                         transformUncertainty,
                         igstk::TimeStamp::GetLongestPossibleTime() );
+
     toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
     QTest::qWait(10);
@@ -331,7 +339,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
   // position the tool on one side of the image in the sagittal direction
-  index[0] = imageExtent[0];
+  /*index[0] = imageExtent[0];
   index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
   index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -347,7 +355,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );*/
 
   view2D->RequestResetCamera();
 
@@ -380,26 +388,26 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
-  // position the tool on one side of the image in the coronal direction
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = imageExtent[2];
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  //// position the tool on one side of the image in the coronal direction
+  //index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
+  //index[1] = imageExtent[2];
+  //index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  //imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
-  data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+  //data = point.GetVnlVector().data_block();
+  //reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
 
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
+  //translation[0] = data[0];
+  //translation[1] = data[1];
+  //translation[2] = data[2];
 
-  rotation.Set(0.0, 0.0, 0.0, 1.0);
-  toolTransform.SetTranslation(
-                          translation,
-                          transformUncertainty,
-                          igstk::TimeStamp::GetZeroValue() );
+  //rotation.Set(0.0, 0.0, 0.0, 1.0);
+  //toolTransform.SetTranslation(
+  //                        translation,
+  //                        transformUncertainty,
+  //                        igstk::TimeStamp::GetZeroValue() );
 
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+  //toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestResetCamera();
 
