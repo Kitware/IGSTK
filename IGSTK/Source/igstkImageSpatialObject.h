@@ -107,8 +107,8 @@ public:
   void RequestGetVTKImage();
   void RequestGetVTKImage() const;
 
-  /** Request to get the VTK image extent as a const pointer payload into an event.
-   *  Both the const and non-const versions are needed. */
+  /** Request to get the VTK image extent as a const pointer payload into 
+    * an event. Both the const and non-const versions are needed. */
   void RequestGetImageExtent();
   void RequestGetImageExtent() const;
 
