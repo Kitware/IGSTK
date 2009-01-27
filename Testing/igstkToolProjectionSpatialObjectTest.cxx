@@ -29,7 +29,8 @@
 
 #include "igstkImageResliceObjectRepresentation.h"
 #include "igstkReslicerPlaneSpatialObject.h"
-
+#include "igstkCylinderObject.h"
+#include "igstkCylinderObjectRepresentation.h"
 #include "igstkImageSpatialObject.h"
 #include "igstkCTImageReader.h"
 #include "igstkLogger.h"
@@ -56,6 +57,7 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
     std::cerr << " Missing arguments: " << argv[0] << "CTImage " << std::endl; 
     return EXIT_FAILURE;
     }
+
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
@@ -75,7 +77,7 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
                                             igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
+  //vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
   // Create Axes object to act as a reference coordinate system
@@ -87,10 +89,9 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
-  reader->SetLogger( logger );
+  //reader->SetLogger( logger );
 
   //set up CT image observer
   typedef ToolProjectionSpatialObjectTest::CTImageObserver 
@@ -158,8 +159,6 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   // Set a 2D View
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
-    
-  view2D->RequestResetCamera();
 
   Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
 
@@ -172,28 +171,13 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   fltkWidget2D->RequestSetView( view2D );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 40 );
+  view2D->SetRefreshRate( 10 );
 
   form->end();
   form->show();
 
   typedef igstk::ToolProjectionSpatialObject                ObjectType;
   typedef igstk::ToolProjectionObjectRepresentation  RepresentationType;
-
-  ObjectType::Pointer toolProjectionObject = ObjectType::New();
-
-  toolProjectionObject->SetSize(150);
-
-  toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
-  RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
-
- toolProjectionObjectRepresentation->SetLogger ( logger );
-
- toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
-
- toolProjectionObjectRepresentation->SetVisibility( true );
- toolProjectionObjectRepresentation->SetLineWidth( 2.0 );
- toolProjectionObjectRepresentation->SetColor( 1, 1, 0 );
 
  // Set image representation 
  typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
@@ -203,11 +187,57 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   imageRepresentation->SetWindowLevel( 1559, -244 );
   imageRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
+ // build a tool spatial object using a cylinder object
+  typedef igstk::CylinderObject                           ToolSpatialObjectType;
+  ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  
+  toolSpatialObject->SetRadius( 2.0 );
+  toolSpatialObject->SetHeight( 150 );
+
+  // place the tool on one side of the image in the axial direction
+  igstk::Transform toolTransform;
+  igstk::Transform::VectorType    translation;
+  igstk::Transform::VersorType    rotation;
+  
+ // a variable to hold image index
+  typedef ImageSpatialObjectType::IndexType IndexType;
+  typedef ImageSpatialObjectType::PointType PointType;
+  typedef ImageSpatialObjectType::IndexType::IndexValueType   IndexValueType;  
+
+  // a variable to hold world point coords and indexes
+  PointType point;
+  IndexType index;
+
+  // auxiliar
+  const double *data = NULL;
+
+  // initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+  
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+
+  data = point.GetVnlVector().data_block();
+
+  translation[0] =  data[0];
+  translation[1] =  data[1];
+  translation[2] =  data[2];
+
+  const double transformUncertainty = 1.0;
+
+  toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+
+  // set transform and parent to the tool spatial object
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
  //Set the reslicing plane
- 
  typedef ::igstk::ReslicerPlaneSpatialObject               ReslicerPlaneType;
  ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
-  reslicerPlaneSpatialObject->SetLogger( logger );
+//  reslicerPlaneSpatialObject->SetLogger( logger );
 
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
@@ -218,11 +248,25 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   // Set bounding box provider spatial object
   reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
+  // set the tool spatial object to the reslicer plane
+  reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
+
   // Set the reslicer plane spatial object to the image representation
   imageRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
+  // Set the tool projection object
+  ObjectType::Pointer toolProjectionObject = ObjectType::New();
+  toolProjectionObject->SetSize( toolSpatialObject->GetHeight() );
+  toolProjectionObject->RequestSetTransformAndParent( identity, worldReference );
+
+  RepresentationType::Pointer toolProjectionObjectRepresentation = RepresentationType::New();
+  toolProjectionObjectRepresentation->SetLogger ( logger );
   // Set the reslicer plane spatial object to the tool projection
-  toolProjectionObjectRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+  toolProjectionObjectRepresentation->RequestSetToolProjectionObject( toolProjectionObject );
+  toolProjectionObjectRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject);
+  toolProjectionObjectRepresentation->SetVisibility(true);
+  toolProjectionObjectRepresentation->SetLineWidth( 2.0 );
+  toolProjectionObjectRepresentation->SetColor( 1, 1, 0 );
 
   // add the image representation to the view
   view2D->RequestAddObject( imageRepresentation );
@@ -230,43 +274,111 @@ int igstkToolProjectionSpatialObjectTest( int argc, char * argv[] )
   // add the tool projection representation to the view
   view2D->RequestAddObject( toolProjectionObjectRepresentation );
 
-  // a variable to hold image index
-  typedef ImageSpatialObjectType::IndexType IndexType;
-  typedef IndexType::IndexValueType   IndexValueType;  
-  IndexType index;
+  form->show();
 
-  // a variable to hold world point coords
-  ImageSpatialObjectType::PointType point;
-
-  // auxiliar
-  const double *data = NULL;
-
-  // Select axial orientation in the reslicer plane and view
-  view2D->RequestSetOrientation( View2DType::Axial );
+   /* Change slice orientation to sagittal */
+  std::cout << "Axial view: " << std::endl;
+//  view2D->RequestStop();
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  
-  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
-  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
-  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
-  
-  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  view2D->RequestSetOrientation( View2DType::Axial ); 
 
-  data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
-  
   view2D->RequestStart();
   view2D->RequestResetCamera();
-  form->show();
+
+  /* Iteratively change the tool transform to reslice through the image */
+  for(unsigned int i=(unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]); i++)
+  {
+      index[2] = i;
+      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+      const double *data = point.GetVnlVector().data_block();
+      std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
+
+      translation[0] = data[0];
+      translation[1] = data[1];
+      translation[2] = data[2];
+
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      Fl::wait( 0.01 );
+      igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  /* Change slice orientation to sagittal */
+  std::cout << "Sagittal view: " << std::endl;
+  view2D->RequestStop();
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  /* Iteratively change the tool transform to reslice through the image */
+  for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
+  {
+      index[0] = i;
+      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+      const double *data = point.GetVnlVector().data_block();
+      std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
+
+      translation[0] = data[0];
+      translation[1] = data[1];
+      translation[2] = data[2];
+
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      Fl::wait( 0.01 );
+      igstk::PulseGenerator::CheckTimeouts();
+  }
+
+   /* Change slice orientation to sagittal */
+  std::cout << "Coronal view: " << std::endl;
+  view2D->RequestStop();
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+  view2D->RequestSetOrientation( View2DType::Coronal ); 
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  /* Iteratively change the tool transform to reslice through the image */
+  for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
+  {
+      index[1] = i;
+      imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+      const double *data = point.GetVnlVector().data_block();
+      std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+
+      translation[0] = data[0];
+      translation[1] = data[1];
+      translation[2] = data[2];
+
+      toolTransform.SetTranslation(
+                          translation,
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      Fl::wait( 0.01 );
+      igstk::PulseGenerator::CheckTimeouts();
+  }
 
   view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
-
-  toolProjectionObjectRepresentation->Print( std::cout );
-  toolProjectionObject->Print( std::cout );
+  //toolProjectionObjectRepresentation->Print( std::cout );
+  //toolProjectionObject->Print( std::cout );
 
   toolProjectionObjectRepresentation->GetNameOfClass();
   toolProjectionObject->GetNameOfClass();
+
+  std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS; 
 }

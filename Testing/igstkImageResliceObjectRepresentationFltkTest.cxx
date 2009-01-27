@@ -50,8 +50,9 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
  * spatial object ( automatic reslicing ) */
 int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 {
-  igstk::RealTimeClock::Initialize();
+  std::cout << " igstkImageResliceObjectRepresentationFltkTest: application started " << std::endl;
 
+  igstk::RealTimeClock::Initialize();
 
   if( argc < 3 )
     {
@@ -59,6 +60,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
               << "Output image file for a screenshot" << std::endl; 
     return EXIT_FAILURE;
     }
+
   typedef short    PixelType;
   const unsigned int Dimension = 3;
 
@@ -78,7 +80,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
                                             igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
+//  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
   // Create Axes object to act as a reference coordinate system
@@ -92,14 +94,13 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
-  reader->SetLogger( logger );
+  //reader->SetLogger( logger );
 
   //set up CT image observer
   typedef ImageResliceObjectRepresentationFltkTest::CTImageObserver 
                                                         CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
-  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
-                            ctImageObserver);
+  reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(), ctImageObserver);
 
   /* Read in a DICOM series */
   std::cout << "Reading CT image : " << argv[1] << std::endl;
@@ -194,7 +195,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
-  view2D->SetLogger( logger );
+//  view2D->SetLogger( logger );
        
   // Create an FLTK minimal GUI
   Fl_Window * form = new Fl_Window(512,512,"ImageResliceObjectRepresentationFltkTest");
@@ -204,7 +205,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
        new FLTKWidgetType(0,0,512,512,"2D View");
 
   fltkWidget2D->RequestSetView( view2D );
-  fltkWidget2D->SetLogger( logger );
+//  fltkWidget2D->SetLogger( logger );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
   //view2D->SetRefreshRate( 20 );
@@ -222,7 +223,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   ImageResliceRepresentationType::Pointer  imageResliceRepresentation = 
     ImageResliceRepresentationType::New(); 
 
-  imageResliceRepresentation->SetLogger( logger );
+//  imageResliceRepresentation->SetLogger( logger );
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
@@ -243,9 +244,10 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   // a variable to hold world point coords
   ImageSpatialObjectType::PointType point;
 
+  // initialize the tool transform in the middle of the image
   index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
   index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = imageExtent[4];
+  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
   
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
@@ -272,11 +274,15 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   typedef igstk::ReslicerPlaneSpatialObject            ReslicerPlaneType;
 
   ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
-  reslicerPlaneSpatialObject->SetLogger( logger );
+//  reslicerPlaneSpatialObject->SetLogger( logger );
 
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
- // Set bounding box provider spatial object to the reslicer plane object
+
+  // Set Axial orientation type
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  // Set bounding box provider spatial object to the reslicer plane object
   reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
   // set transform and parent to the reslicer plane
@@ -300,14 +306,15 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   view2D->RequestSetOrientation( View2DType::Axial ); 
 
+  view2D->RequestResetCamera();
   view2D->RequestStart();
   view2D->RequestResetCamera();
 
   std::cout << "Axial view: " << std::endl;
-  // Iteratively change the tool transform to reslice from the beignning side to the
+  // Iteratively change the tool transform to reslice from the beginning side to the
   // middle of the image in the axial direction
-  for(unsigned int i= imageExtent[4]; i<=imageExtent[5]; i++)
-      {
+  for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
+  {
       index[2] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       data = point.GetVnlVector().data_block();
@@ -325,7 +332,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
-      }
+  }
   view2D->RequestStop();
 
   /* Change slice orientation to sagittal */
@@ -335,7 +342,6 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   view2D->RequestStart();
   view2D->RequestResetCamera();
-
 
   // position the tool on one side of the image in the sagittal direction
   index[0] = imageExtent[0];
@@ -354,6 +360,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
+
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
   view2D->RequestResetCamera();
@@ -361,8 +368,8 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   /* Iteratively change the tool transform to reslice from one side to the
   *  middle of the image in the sagittal direction
   */
-  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
-      {
+  for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
+  {
       index[0] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       const double *data = point.GetVnlVector().data_block();
@@ -380,12 +387,15 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
-      }
+  }
 
-#if 0
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+  view2D->RequestSetOrientation( View2DType::Coronal ); 
+  view2D->RequestResetCamera();
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
 
   // position the tool on one side of the image in the coronal direction
   index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
@@ -410,10 +420,13 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   view2D->RequestResetCamera();
 
+  std::string filename;
+  filename = argv[2]; 
+
   // Iteratively change the tool transform to reslice from one side to the
   // middle of the image in the coronal direction
-  for(unsigned int i=(unsigned int)(imageExtent[3]/3); i<(unsigned int)(imageExtent[3]/2); i++)
-      {
+  for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
+  {
       index[1] = i;
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       const double *data = point.GetVnlVector().data_block();
@@ -424,24 +437,50 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
       translation[0] = data[0];
       translation[1] = data[1];
       translation[2] = data[2];
+
       toolTransform.SetTranslation(
                           translation,
                           transformUncertainty,
                           igstk::TimeStamp::GetZeroValue() );
+
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
       Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  // finally, get a snapshot
+/*
+ // initialize the tool transform in the middle of the image
+  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
+  index[1] = imageExtent[2];
+  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+
+  translation[0] = data[0];
+  translation[1] = data[1];
+  translation[2] = data[2];
+
+  toolTransform.SetTranslation(
+                      translation,
+                      transformUncertainty,
+                      igstk::TimeStamp::GetZeroValue() );
+
+      if ( i == imageExtent[3]/2 + 20)
+      {
+          std::cout << "saving a screen shot in file:" << argv[2] << std::endl;
+          view2D->RequestSaveScreenShot( filename );
       }
 
-#endif
-  //Request refreshing stop to take a screenshot
-  view2D->RequestStop();
-  std::string filename;
-  filename = argv[2]; 
-  std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
-  view2D->RequestSaveScreenShot( filename );
 
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference ); 
+
+  view2D->RequestResetCamera();
+
+*/
 
   form->hide();
 
@@ -449,11 +488,11 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   delete form;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
-    {
+  {
     std::cout << "Got VTK Logger errors!" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
  
   std::cout << "[SUCCESS]" << std::endl;
  

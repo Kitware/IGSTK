@@ -263,6 +263,7 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
+  std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS;
 }
