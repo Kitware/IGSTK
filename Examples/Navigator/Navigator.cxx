@@ -1630,11 +1630,11 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
   m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
 
   m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
-    
-  // Set up tool projection for each view
+       
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  // setup a tool projection spatial object
   m_ToolProjection = ToolProjectionType::New();
   m_ToolProjection->SetSize(150);
   m_ToolProjection->RequestSetTransformAndParent( identity, m_WorldReference );
