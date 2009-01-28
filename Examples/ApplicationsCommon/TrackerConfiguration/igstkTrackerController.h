@@ -25,14 +25,12 @@
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkAscensionTrackerConfiguration.h"
 
-#include "igstkStateMachine.h"
 #include "igstkMacros.h"
 #include "igstkEvents.h"
 #include "igstkObject.h"
 #include "igstkSerialCommunication.h"
 #include "igstkTransform.h"
 
-#include "igstkSpatialObject.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkPolarisTrackerTool.h"
