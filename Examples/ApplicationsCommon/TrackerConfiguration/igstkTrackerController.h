@@ -37,6 +37,8 @@
 #include "igstkAuroraTrackerTool.h"
 #include "igstkAscensionTrackerTool.h"
 
+#include "igstkSpatialObject.h"
+
 #ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkMicronTrackerTool.h"
@@ -70,9 +72,9 @@ public:
   typedef std::pair < std::string, igstk::TrackerTool::Pointer > 
     ToolEntryType;
 
-  typedef igstk::Transform                                        TransformType;
+  typedef Transform                                        TransformType;
 
-  typedef igstk::SpatialObject                                    SpatialObjectType;
+  typedef SpatialObject                                    SpatialObjectType;
 
   /** Macro with standard traits declarations (Self, SuperClass, State 
    *  Machine etc.). */
