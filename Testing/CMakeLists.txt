@@ -474,6 +474,28 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igstkSystemInformation.h.in"
              #ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
              #TARGET_LINK_LIBRARIES(igstkStateMachineExportTest IGSTKSandbox)
 
+
+
+# Configure testing data to used in the example applications
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/TrackerConfiguration/micronConfiguration.xml.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/Data/TrackerConfiguration/micronConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/TrackerConfiguration/ascensionConfiguration.xml.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/Data/TrackerConfiguration/ascensionConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/TrackerConfiguration/polarisHybridConfiguration.xml.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/Data/TrackerConfiguration/polarisHybridConfiguration.xml"
+              @ONLY IMMEDIATE)
+
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/TrackerConfiguration/auroraConfiguration.xml.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/Data/TrackerConfiguration/auroraConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/Data/TrackerConfiguration/vicraConfiguration.xml.in"
+              "${CMAKE_CURRENT_BINARY_DIR}/Data/TrackerConfiguration/vicraConfiguration.xml"
+              @ONLY IMMEDIATE)
+
+
 #######-----------------------------------------------------------------------
 # Now running IGSTK tests with the latest main library
 INCLUDE(${IGSTK_SOURCE_DIR}/Testing/IGSTKTestingMacros.cmake)
