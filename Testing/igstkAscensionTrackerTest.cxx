@@ -308,10 +308,6 @@ int igstkAscensionTrackerTest( int argc, char * argv[] )
 
   //////////////////////////////////////////////////////////////////////////
 
-  
-  int stop;  
-  std::cin >> stop;
- 
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
@@ -374,8 +370,6 @@ int igstkAscensionTrackerTest( int argc, char * argv[] )
 
 
   //////////////////////////////////////////////////////////////////////////
-
-  std::cin >> stop;
 
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
@@ -440,7 +434,6 @@ int igstkAscensionTrackerTest( int argc, char * argv[] )
 
 
   //////////////////////////////////////////////////////////////////////////
-  std::cin >> stop;
 
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
