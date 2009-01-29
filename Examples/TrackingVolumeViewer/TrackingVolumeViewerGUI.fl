@@ -10,7 +10,7 @@ class TrackingVolumeViewerGUI {: {public igstk::Object}
 } {
   Function {TrackingVolumeViewerGUI()} {} {
     Fl_Window mainWindow {
-      label {IGSTK - Working Volume Tester}
+      label {IGSTK - Tracking Volume Viewer}
       callback {Quit();} open
       xywh {92 111 1280 800} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
