@@ -319,7 +319,11 @@ public:
   /** Open communication with the flock. */
   void Open();
 
-  /** Close comminucation with the flock. */
+  /** Stop and restart the system */
+  void Stop();
+  void Run();
+
+  /** Close communication with the flock. */
   void Close();
 
   /** Do a hardware reset of the flock. */ 

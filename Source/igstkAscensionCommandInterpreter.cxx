@@ -99,7 +99,7 @@ AscensionCommandInterpreter::AscensionCommandInterpreter()
   m_GroupMode = false;
   m_CurrentBird = 1;
   m_NumberOfBirds = 1;
-  m_DataFormat[1] = FB_POSITION_ANGLES;
+  m_DataFormat[1] = FB_POSITION_QUATERNION;
   m_ButtonMode[1] = false;
   m_PositionScale[1] = FB_STANDARD; 
   m_FBBAddress = 1;
@@ -205,9 +205,23 @@ void AscensionCommandInterpreter::Close()
   this->EndStreamIfStreaming();
 
   /* Insert code to turn off the Flock by setting the RTS line */
+  this->Stop();
 
   /* Insert code to close the Serial Communiction */
 }
+
+void AscensionCommandInterpreter::Stop()
+{
+  /* Put system into sleep, stop transmitter */
+  this->SendRaw("G",1);
+}
+
+void AscensionCommandInterpreter::Run()
+{
+  /* restart system */
+  this->SendRaw("F",1);
+}
+
 
 /** Reset the bird that is connected to the serial port by toggling 
  *  the RTS line.
@@ -239,7 +253,7 @@ void AscensionCommandInterpreter::Reset()
   m_ErrorText = "";
   m_GroupMode = false;
   m_NumberOfBirds = 1;
-  m_DataFormat[1] = FB_POSITION_ANGLES;
+  m_DataFormat[1] = FB_POSITION_QUATERNION;
   m_ButtonMode[1] = false;
   m_PositionScale[1] = FB_STANDARD; 
  
@@ -279,7 +293,7 @@ void AscensionCommandInterpreter::FBBAutoConfig(unsigned int num)
   m_NumberOfBirds = num;
   for (unsigned int i = 1; i <= num; i++)
     {
-    m_DataFormat[i] = FB_POSITION_ANGLES;
+    m_DataFormat[i] = FB_POSITION_QUATERNION;
     m_ButtonMode[i] = false;
     m_PositionScale[i] = FB_STANDARD; 
     }
@@ -530,6 +544,7 @@ void AscensionCommandInterpreter::Update()
     m_CurrentBird = 1;
     m_PointData = 0;    /* finished point data */
     }
+
 }
 
 /** Get the position returned in the last Update() data record.

@@ -61,7 +61,7 @@ AscensionTracker::ResultType AscensionTracker::InternalOpen( void )
   m_CommandInterpreter->Open();
   m_CommandInterpreter->SetFormat(FB_POSITION_QUATERNION);
   m_CommandInterpreter->SetHemisphere(FB_FORWARD);
-//  m_CommandInterpreter->ChangeValue(FB_GROUP_MODE,1);
+  m_CommandInterpreter->ChangeValue(FB_GROUP_MODE,0);
 
   return SUCCESS;
 }
@@ -71,7 +71,7 @@ AscensionTracker::ResultType AscensionTracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "AscensionTracker::InternalClose called ...\n");
 
-  m_CommandInterpreter->Close();
+  m_CommandInterpreter->Close();  
 
   return SUCCESS;
 }
@@ -106,7 +106,7 @@ AscensionTracker::InternalStartTracking( void )
     m_CommandInterpreter->FBBAutoConfig(m_NumberOfTools);
   }
 
-//  m_CommandInterpreter->Stream();
+  m_CommandInterpreter->Run();
 
   return SUCCESS;
 }
@@ -118,7 +118,7 @@ AscensionTracker::InternalStopTracking( void )
   igstkLogMacro( DEBUG,
                 "AscensionTracker::InternalStopTracking called ...\n");
 
-//  m_CommandInterpreter->EndStream();
+  m_CommandInterpreter->Stop();
 
   return SUCCESS;
 }
@@ -338,15 +338,6 @@ AscensionTracker
 
    const std::string trackerToolIdentifier =
        trackerTool->GetTrackerToolIdentifier();
-
-  std::vector< double > transform;
-  transform.push_back( 1.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
-  transform.push_back( 0.0 );
 
   // remove the tool from the Transform buffer container
   this->m_ToolTransformBuffer.erase( trackerToolIdentifier );
