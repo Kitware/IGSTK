@@ -1,0 +1,254 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+decl {\#include "itksys/SystemTools.hxx"} {} 
+
+decl {\#include "itksys/Directory.hxx"} {} 
+
+decl {\#include "igstkMicronTrackerConfiguration.h"} {public
+} 
+
+class MicronTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {MicronTrackerConfigurationGUI():m_Configuration(NULL)} {open
+  } {
+    Fl_Window m_TrackerConfigurationWindow {
+      label {Micron Tracker Configuration} open
+      xywh {445 492 420 420} type Double hide
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"}
+    } {
+      Fl_Output m_CalibrationFileDir {
+        label {Calibration File Dir:}
+        xywh {145 50 215 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileDir = fl_dir_chooser("Calibration file directory","c:/Program Files/Claron Technology/MicronTracker/CalibrationFiles");
+
+if (fileDir)
+{
+  this->m_CalibrationFileDir->value(fileDir);
+}}
+        xywh {365 49 25 25}
+      }
+      Fl_Output m_InitializationFile {
+        label {Initialization File Dir:}
+        xywh {145 90 215 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser("Initialization file","*.ini","c:/Program Files/Claron Technology/MicronTracker/MTDemoCPP.ini");
+if (fileName)
+{
+  this->m_InitializationFile->value(fileName);
+}}
+        xywh {365 89 25 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {bool bToolsAvailable = false;
+char * fileDir = fl_dir_chooser( "Marker file template directory","c:/Program Files/Claron Technology/MicronTracker/Markers" );
+if( fileDir )
+{
+  this->m_TemplateFileDir->value( fileDir );
+  this->m_TrackerToolMarker->clear();
+  itksys::Directory * dir = new itksys::Directory;
+  if( dir->Load(fileDir) )
+    {
+    int n = dir->GetNumberOfFiles();
+    for( int i=0; i<n; i++ )
+      {
+      std::string s = dir->GetPath();
+      s += dir->GetFile( i );
+      if( itksys::SystemTools::FileIsDirectory( s.c_str() ) || itksys::SystemTools::StringEndsWith(s.c_str(),".igstk"))
+        {
+        continue;
+        }
+      this->m_TrackerToolMarker->add( dir->GetFile( i ) );
+      bToolsAvailable = true;
+      }
+    this->m_TrackerToolMarker->value(0);
+    }
+}
+
+if (bToolsAvailable)
+{
+  m_MultipleToolSelectionGroup->activate();
+}}
+        xywh {365 128 25 25} labelsize 8
+      }
+      Fl_Output m_TemplateFileDir {
+        label {Template File Dir:}
+        xywh {145 130 215 25}
+      }
+      Fl_Choice m_TrackerToolMarker {
+        label {Tracker Tool Marker:}
+        xywh {145 165 215 25} down_box BORDER_BOX
+      } {}
+      Fl_Value_Slider m_RefreshRateSlider {
+        label {Refresh rate [Hz]:}
+        xywh {132 22 105 15} type Horizontal align 4 minimum 1 maximum 48 step 1 value 15
+      }
+      Fl_Group m_MultipleToolSelectionGroup {open
+        xywh {9 252 401 103} box BORDER_BOX
+      } {
+        Fl_Button m_AddToolBtn {
+          label {Add Tool}
+          callback {m_Configuration->SetCameraCalibrationFileDirectory( this->m_CalibrationFileDir->value() );
+m_Configuration->SetInitializationFile( this->m_InitializationFile->value() );
+m_Configuration->SetTemplatesDirectory( this->m_TemplateFileDir->value() );
+
+this->m_InitializationFile->value(this->m_CalibrationFileDir->value());
+this->m_CalibrationFileDir->value(this->m_InitializationFile->value());  
+
+//set the tool parameters
+igstk::MicronToolConfiguration tool;
+  
+tool.SetMarkerName( this->m_TrackerToolMarker->text() );
+
+//const std::string toolCalibrationFileName = 
+//  m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
+
+//tool.SetCalibrationFileName( this->m_CalibrationFileName->value() );
+
+m_Configuration->RequestAddTool( &tool );
+if( this->m_ConfigurationErrorOccured )
+{
+  m_Configuration->Delete();
+  m_Configuration = NULL;
+  this->m_ConfigurationErrorOccured = false;
+  return;
+}
+
+m_AddedToolsList->add(tool.GetMarkerName().c_str());
+m_AddedToolsList->value(0);}
+          xywh {25 271 105 25}
+        }
+        Fl_Button m_SetReferenceToolBtn {
+          label {Add Reference}
+          callback {if (!m_Configuration)
+{
+  this->m_ConfigurationErrorOccured = false;
+  return;
+}
+
+//set the tool parameters
+igstk::MicronToolConfiguration tool;
+  
+tool.SetMarkerName( this->m_TrackerToolMarker->text() );
+
+const std::string toolCalibrationFileName = 
+  m_Configuration->GetTemplatesDirectory() + "/" + tool.GetMarkerName() + "_Calibration.igstk";
+
+//tool.SetCalibrationFileName( toolCalibrationFileName );
+
+m_Configuration->RequestAddReference( &tool );
+if( this->m_ConfigurationErrorOccured )
+{
+  m_Configuration->Delete();
+  this->m_ConfigurationErrorOccured = false;
+  return;
+}
+
+m_ReferenceToolLabel->value(tool.GetMarkerName().c_str());} selected
+          xywh {25 306 105 25}
+        }
+        Fl_Choice m_AddedToolsList {
+          xywh {156 271 105 25} down_box BORDER_BOX align 0
+        } {}
+        Fl_Output m_ReferenceToolLabel {
+          xywh {154 305 108 27}
+        }
+        Fl_Button m_ResetBtn {
+          label Reset
+          callback {m_ReferenceToolLabel->value(" ");
+m_AddedToolsList->clear();
+m_AddedToolsList->redraw();
+m_AddedToolsList->value(0);
+
+if (m_Configuration != NULL)
+{
+  m_Configuration->Delete();
+  m_Configuration = NULL;
+}
+
+InitializeConfiguration();}
+          xywh {285 306 115 25} deactivate
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {//get the desired tracker referesh rate
+m_Configuration->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+if( this->m_ConfigurationErrorOccured )
+{
+  m_Configuration->Delete();
+  m_Configuration = NULL;
+  this->m_ConfigurationErrorOccured = false;
+}
+
+UpdateParentConfiguration();}
+        xywh {305 378 98 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser( "Select calibration file","*.igstk","C:/data/TESTISIS" );
+if( fileName )
+{
+  this->m_CalibrationFileName->value( fileName );
+}}
+        xywh {365 206 25 25} labelsize 8
+      }
+      Fl_Output m_CalibrationFileName {
+        label {Template File Dir:}
+        xywh {143 204 217 30}
+      }
+    }
+    code {InitializeConfiguration();
+m_MultipleToolSelectionGroup->deactivate();} {}
+  }
+  Function {~MicronTrackerConfigurationGUI()} {open return_type virtual
+  } {
+    code {if (m_Configuration != NULL)
+{
+  m_Configuration->Delete();
+}
+m_Configuration = NULL;} {}
+  }
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
+  } {
+    code {if (!m_Configuration)
+{
+  this->m_ConfigurationErrorOccured = false;
+  return NULL;
+}
+
+//m_Configuration->SetCameraCalibrationFileDirectory( this->m_CalibrationFileDir->value() );
+//m_Configuration->SetInitializationFile( this->m_InitializationFile->value() ); 
+//m_Configuration->SetTemplatesDirectory( this->m_TemplateFileDir->value() );
+
+
+return m_Configuration;} {}
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->hide();} {}
+  }
+  decl {igstk::MicronTrackerConfiguration * m_Configuration;} {}
+  Function {InitializeConfiguration()} {open private return_type void
+  } {
+    code {if (m_Configuration == NULL)
+{
+ m_Configuration = new igstk::MicronTrackerConfiguration();
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+ m_Configuration->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this );
+}} {}
+  }
+} 

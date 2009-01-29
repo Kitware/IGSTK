@@ -1,0 +1,282 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {PolarisTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window TrackerConfigurationWindow {
+      label {Polaris Tracker Configuration} open
+      xywh {792 122 418 475} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Choice SerialPort {
+        label {Serial Port Number: } open
+        xywh {213 13 75 25} down_box BORDER_BOX
+      } {}
+      Fl_Group ReferenceToolGroup {open
+        xywh {30 326 355 100} box ENGRAVED_BOX deactivate
+      } {
+        Fl_Output ReferenceToolSROMFile {
+          label {SROM File:}
+          xywh {110 391 230 25}
+        }
+        Fl_Button {} {
+          label {...}
+          callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
+if( fileName )
+{
+  ReferenceToolSROMFile->value(fileName);
+}}
+          xywh {345 391 25 25}
+        }
+        Fl_Choice ReferenceToolPort {
+          label {Port:}
+          xywh {322 351 45 25} down_box BORDER_BOX deactivate
+        } {}
+        Fl_Group {} {open
+          xywh {50 342 170 35}
+        } {
+          Fl_Round_Button WiredReferenceTool {
+            label Wired
+            callback {ReferenceToolPort->activate();}
+            xywh {65 357 64 15} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button {} {
+            label Wireless
+            callback {ReferenceToolPort->deactivate();}
+            xywh {135 357 85 15} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+        }
+      }
+      Fl_Round_Button UseReferenceTool {
+        label {Use Reference Tool ?}
+        callback {if( UseReferenceTool->value() )
+{
+  ReferenceToolGroup->activate();
+}
+else
+{
+  ReferenceToolGroup->deactivate();
+}}
+        xywh {30 291 25 25} down_box ROUND_DOWN_BOX
+      }
+      Fl_Group TrackerToolGroup {
+        label {Tracker Tool} open
+        xywh {30 65 355 213} box ENGRAVED_BOX
+      } {
+        Fl_Output TrackerToolSROMFile {
+          label {SROM File:}
+          xywh {115 119 230 25}
+        }
+        Fl_Button {} {
+          label {...}
+          callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
+if( fileName )
+{
+  TrackerToolSROMFile->value(fileName);
+}}
+          xywh {350 119 25 25}
+        }
+        Fl_Choice TrackerToolPort {
+          label {Port:}
+          xywh {330 84 45 25} down_box BORDER_BOX deactivate
+        } {}
+        Fl_Group {} {
+          label {Tool Tip Offset}
+          xywh {30 168 355 70} box ENGRAVED_BOX
+        } {
+          Fl_Value_Input OffsetX {
+            label {X:}
+            xywh {70 198 55 25}
+          }
+          Fl_Value_Input OffsetY {
+            label {Y:}
+            xywh {190 198 55 25}
+          }
+          Fl_Value_Input OffsetZ {
+            label {Z:}
+            xywh {315 198 55 25}
+          }
+        }
+        Fl_Round_Button SwitchZAxes {
+          label {Fip Z axis?}
+          xywh {55 244 25 25} down_box ROUND_DOWN_BOX
+        }
+        Fl_Group {} {open
+          xywh {40 74 170 35}
+        } {
+          Fl_Round_Button WiredTrackerTool {
+            label Wired
+            callback {TrackerToolPort->activate();}
+            xywh {55 89 64 15} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button {} {
+            label Wireless
+            callback {TrackerToolPort->deactivate();}
+            xywh {125 89 85 15} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {RequestGetConfiguration();
+TrackerConfigurationWindow->hide();}
+        xywh {315 439 70 25}
+      }
+    }
+    code {TrackerConfigurationWindow->show();} {}
+  }
+  Function {~PolarisTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {InitializeGUI()} {open return_type {virtual void}
+  } {
+    code {//Initialize tracker configuration window
+
+SerialPort->clear();
+TrackerToolPort->clear();
+ReferenceToolPort->clear();
+
+char buf[8];
+for( int i = 0; i < 8; i++ )
+{
+  sprintf( buf, "COM %d", i+1 );
+  SerialPort->add( buf );
+}
+
+for( int i = 0; i < 4; i++ )
+{
+  sprintf( buf, "%d", i+1 );
+  TrackerToolPort->add( buf );
+  ReferenceToolPort->add( buf );
+}
+
+
+SerialPort->value(0);
+TrackerToolPort->value(0);
+ReferenceToolPort->value(1);
+
+OffsetX->value( 0.0 );
+OffsetY->value( 0.0 );
+OffsetZ->value( 0.0 );} {selected
+    }
+  }
+  Function {GetGUISetting()} {open return_type {virtual void}
+  } {
+    code {igstk::NDITrackerConfiguration * conf = new igstk::NDITrackerConfiguration;
+
+//Serial Port
+switch( SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+    break;
+  case 1 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber1;
+    break;
+  case 2 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber2;      
+    break;
+  case 3 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber3;
+    break;
+  case 4 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber4;
+    break;
+  case 5 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber5;
+    break;
+  case 6 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber6;
+    break;
+  case 7 : 
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber7;
+    break;
+  default:
+    conf->m_COMPort = igstk::SerialCommunication::PortNumber0;
+  }
+  
+  conf->m_Frequency = 30;
+    
+ conf->m_TrackerToolList.clear();
+ 
+ // Wired or Wireless tool, port & SROMs
+ igstk::NDITrackerToolConfiguration * tool = new igstk::NDITrackerToolConfiguration;
+ 
+ if( WiredTrackerTool->value() )
+   {
+   tool->m_WiredTool   = 1;
+   tool->m_PortNumber = TrackerToolPort->value();
+   }
+ else
+   {
+   tool->m_WiredTool = 0;
+   }
+   
+if(itksys::SystemTools::FileExists(TrackerToolSROMFile->value()))
+  {
+  tool->m_HasSROM = 1;
+  tool->m_SROMFile = TrackerToolSROMFile->value();
+  }
+
+tool->m_IsReference = 0;
+  
+// Calibration  
+igstk::Transform toolCalibrationTransform;
+
+igstk::Transform::VectorType translation;
+translation[0] = OffsetX->value();   // Tip offset
+translation[1] = OffsetY->value();
+translation[2] = OffsetZ->value();
+
+igstk::Transform::VersorType rotation;
+rotation.SetIdentity();
+if (SwitchZAxes->value())
+  {
+  rotation.Set(1.0, 0.0, 0.0, 0.0);
+  }
+ 
+toolCalibrationTransform.SetTranslationAndRotation( translation, rotation, 0.1, igstk::TimeStamp::GetLongestPossibleTime());
+
+tool->m_CalibrationTransform = toolCalibrationTransform;
+
+conf->m_TrackerToolList.push_back( tool );
+
+// Reference tool
+if(UseReferenceTool->value())
+{
+
+  igstk::NDITrackerToolConfiguration * refTool = new igstk::NDITrackerToolConfiguration;
+   
+   if( WiredReferenceTool->value() )
+     {
+     refTool->m_WiredTool   = 1;
+     refTool->m_PortNumber = ReferenceToolPort->value();
+     }
+   else
+     {
+     refTool->m_WiredTool = 0;
+     }
+   
+  if(itksys::SystemTools::FileExists(ReferenceToolSROMFile->value()))
+    {
+    refTool->m_HasSROM = 1;
+    refTool->m_SROMFile = ReferenceToolSROMFile->value();
+    }
+  
+  igstk::Transform toolCalibrationTransform;
+  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform;
+  
+  refTool->m_IsReference = 1;
+  conf->m_TrackerToolList.push_back( refTool );
+
+}
+
+m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfigurationNew::Polaris );
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+  }
+} 

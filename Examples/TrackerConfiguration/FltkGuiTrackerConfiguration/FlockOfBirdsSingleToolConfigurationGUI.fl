@@ -1,0 +1,165 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+decl {\#include "igstkAscensionTrackerConfiguration.h"} {public
+} 
+
+class FlockOfBirdsTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {FlockOfBirdsTrackerConfigurationGUI():m_Configuration(NULL)} {open
+  } {
+    Fl_Window m_TrackerConfigurationWindow {
+      label {FlockOfBirds Tracker Configuration} open
+      xywh {371 726 476 183} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Choice m_SerialPort {
+        label {Serial Port Number: }
+        xywh {325 13 140 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label COM1
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label COM2
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label COM3
+          xywh {20 20 100 20}
+        }
+        MenuItem {} {
+          label COM4
+          xywh {30 30 100 20}
+        }
+        MenuItem {} {
+          label COM5
+          xywh {40 40 100 20}
+        }
+        MenuItem {} {
+          label COM6
+          xywh {50 50 100 20}
+        }
+        MenuItem {} {
+          label COM7
+          xywh {60 60 100 20}
+        }
+        MenuItem {} {
+          label COM8
+          xywh {70 70 100 20}
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {UpdateParentConfiguration();}
+        xywh {395 134 70 25}
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char * fileName = fl_file_chooser( "Select calibration file","*.igstk","" );
+if( fileName )
+{
+  this->m_CalibrationFileName->value( fileName );
+}}
+        xywh {440 85 25 25} labelsize 8
+      }
+      Fl_Output m_CalibrationFileName {
+        label {Template File Dir:}
+        xywh {145 83 290 30}
+      }
+      Fl_Value_Slider m_RefreshRateSlider {
+        label {Refresh rate [Hz]:}
+        xywh {325 44 140 23} type Horizontal align 4 minimum 1 maximum 100 step 1 value 30
+      }
+    }
+    code {this->m_SerialPort->value(2);} {}
+  }
+  Function {~FlockOfBirdsTrackerConfigurationGUI()} {return_type virtual
+  } {}
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
+  } {
+    code {igstk::AscensionTrackerConfiguration * conf = new igstk::AscensionTrackerConfiguration;
+
+conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
+
+
+//Serial Port
+switch( this->m_SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    break;
+  case 1 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    break;
+  case 2 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    break;
+  case 3 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    break;
+  case 4 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    break;
+  case 5 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    break;
+  case 6 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    break;
+  case 7 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    break;
+  }
+  
+  if( this->m_ConfigurationErrorOccured )
+  {
+     conf->Delete();
+     this->m_ConfigurationErrorOccured = false;
+     return NULL;
+  }
+    
+        //get the desired tracker referesh rate
+  conf->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+  
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+
+           //get the tracker tool information
+  igstk::AscensionToolConfiguration toolConfig;
+
+  toolConfig.SetBirdName("bird0");
+  //toolConfig.SetCalibrationFileName(m_CalibrationFileName->value());
+
+  conf->RequestAddTool( &toolConfig );   
+
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    conf = NULL;
+    this->m_ConfigurationErrorOccured = false;
+  }
+  return conf;} {selected
+    }
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->hide();} {}
+  }
+  decl {igstk::AscensionTrackerConfiguration * m_Configuration;} {}
+} 
