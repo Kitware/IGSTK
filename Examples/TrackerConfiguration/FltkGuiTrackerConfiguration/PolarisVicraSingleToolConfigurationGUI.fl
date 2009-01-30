@@ -1,0 +1,162 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+decl {\#include "igstkPolarisTrackerConfiguration.h"} {} 
+
+class PolarisVicraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {PolarisVicraTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window m_TrackerConfigurationWindow {
+      label {Polaris Vicra Tracker Configuration} open
+      xywh {781 429 418 194} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Choice m_SerialPort {
+        label {Serial Port Number: } open
+        xywh {161 11 80 19} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label COM1
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label COM2
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label COM3
+          xywh {20 20 100 20}
+        }
+        MenuItem {} {
+          label COM4
+          xywh {30 30 100 20}
+        }
+        MenuItem {} {
+          label COM5
+          xywh {40 40 100 20}
+        }
+        MenuItem {} {
+          label COM6
+          xywh {50 50 100 20}
+        }
+        MenuItem {} {
+          label COM7
+          xywh {60 60 100 20}
+        }
+        MenuItem {} {
+          label COM8
+          xywh {70 70 100 20}
+        }
+      }
+      Fl_Group m_TrackerToolGroup {
+        label {Tracker Tool} open
+        xywh {30 85 355 64} box ENGRAVED_BOX align 5
+      } {
+        Fl_Output m_TrackerToolSROMFile {
+          label {SROM File:}
+          xywh {115 105 230 25}
+        }
+        Fl_Button {} {
+          label {...}
+          callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
+if( fileName )
+{
+  this->m_TrackerToolSROMFile->value(fileName);
+}}
+          xywh {350 105 25 25}
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {UpdateParentConfiguration();}
+        xywh {315 157 70 25}
+      }
+      Fl_Value_Slider m_RefreshRateSlider {
+        label {Refresh rate [Hz]:}
+        xywh {145 42 115 18} type Horizontal align 4 minimum 1 maximum 20 step 1 value 10
+      }
+    }
+  }
+  Function {~PolarisVicraTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
+  } {
+    code {igstk::PolarisVicraTrackerConfiguration *conf = new igstk::PolarisVicraTrackerConfiguration();
+
+conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
+
+          //get the COM port
+switch( this->m_SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    break;
+  case 1 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    break;
+  case 2 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    break;
+  case 3 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    break;
+  case 4 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    break;
+  case 5 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    break;
+  case 6 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    break;
+  case 7 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    break;
+  }
+  
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+          //get the desired tracker referesh rate
+  conf->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+     
+           //get the tracker tool information
+  igstk::PolarisWirelessToolConfiguration wirelessToolConfig;
+
+  wirelessToolConfig.SetSROMFile( this->m_TrackerToolSROMFile->value() );
+ 
+  conf->RequestAddTool( &wirelessToolConfig );   
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+  return conf;} {selected
+    }
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->hide();} {}
+  }
+} 

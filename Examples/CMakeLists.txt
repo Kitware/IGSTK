@@ -2,6 +2,10 @@
 # Examples that do not require GUI
 #
 
+SUBDIRS(
+ TransformReaders
+ TrackerConfiguration
+)
 
 
 
@@ -13,6 +17,8 @@ IF(IGSTK_USE_FLTK)
     HelloWorld
     OneViewAndTracking
     FourViewsAndTracking
+#    TrackingVolumeViewer 
+    NeedleBiopsy
     )
 ENDIF(IGSTK_USE_FLTK)
 

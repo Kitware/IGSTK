@@ -1,0 +1,218 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+decl {\#include "igstkAuroraTrackerConfiguration.h"} {} 
+
+class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationGUIBase}
+} {
+  Function {AuroraTrackerConfigurationGUI()} {open
+  } {
+    Fl_Window m_TrackerConfigurationWindow {
+      label {Aurora Tracker Configuration} open
+      xywh {851 139 418 234} type Double
+      code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
+    } {
+      Fl_Choice m_SerialPort {
+        label {Serial Port Number: }
+        xywh {158 9 75 22} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label COM1
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label COM2
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label COM3
+          xywh {20 20 100 20}
+        }
+        MenuItem {} {
+          label COM4
+          xywh {30 30 100 20}
+        }
+        MenuItem {} {
+          label COM5
+          xywh {40 40 100 20}
+        }
+        MenuItem {} {
+          label COM6
+          xywh {50 50 100 20}
+        }
+        MenuItem {} {
+          label COM7
+          xywh {60 60 100 20}
+        }
+        MenuItem {} {
+          label COM8
+          xywh {70 70 100 20}
+        }
+      }
+      Fl_Group m_TrackerToolGroup {
+        label {Tracker Tool} open
+        xywh {29 79 356 98} box ENGRAVED_BOX align 5
+      } {
+        Fl_Output m_TrackerToolSROMFile {
+          label {SROM File:}
+          xywh {115 133 230 25}
+        }
+        Fl_Button {} {
+          label {...}
+          callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
+if( fileName )
+{
+  this->m_TrackerToolSROMFile->value(fileName);
+}}
+          xywh {350 133 25 25}
+        }
+        Fl_Choice m_TrackerToolPort {
+          label {Port:} open
+          xywh {225 99 45 25} down_box BORDER_BOX
+        } {
+          MenuItem {} {
+            label 1
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label 2
+            xywh {10 10 100 20}
+          }
+          MenuItem {} {
+            label 3
+            xywh {20 20 100 20}
+          }
+          MenuItem {} {
+            label 4
+            xywh {30 30 100 20}
+          }
+        }
+        Fl_Group {} {open
+          xywh {31 88 170 35}
+        } {
+          Fl_Round_Button m_Is6DOFTrackerTool {
+            label 6DOF
+            callback {this->m_TrackerToolChannel->deactivate();}
+            xywh {37 103 64 15} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button {} {
+            label 5DOF
+            callback {this->m_TrackerToolChannel->activate();}
+            xywh {103 103 85 15} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+        }
+        Fl_Choice m_TrackerToolChannel {
+          label {Channel:} open
+          xywh {335 99 45 25} down_box BORDER_BOX
+        } {
+          MenuItem {} {
+            label 0
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label 1
+            xywh {10 10 100 20}
+          }
+        }
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {UpdateParentConfiguration();}
+        xywh {315 204 70 25}
+      }
+      Fl_Value_Slider m_RefreshRateSlider {
+        label {Refresh rate [Hz]:}
+        xywh {142 37 100 20} type Horizontal align 4 minimum 1 maximum 40 step 1 value 30
+      }
+    }
+  }
+  Function {~AuroraTrackerConfigurationGUI()} {open return_type virtual
+  } {}
+  Function {GetConfiguration()} {open return_type {virtual igstk::TrackerConfiguration *}
+  } {
+    code {igstk::AuroraTrackerConfiguration * conf = new igstk::AuroraTrackerConfiguration;
+
+conf->AddObserver( igstk::TrackerConfiguration::AddToolFailureEvent(), this );
+conf->AddObserver( igstk::TrackerConfiguration::FrequencySetErrorEvent(), this ); 
+
+
+//Serial Port
+switch( this->m_SerialPort->value() ) 
+  {
+  case 0 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber0 );
+    break;
+  case 1 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber1 );
+    break;
+  case 2 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber2 );
+    break;
+  case 3 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber3 );
+    break;
+  case 4 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber4 );
+    break;
+  case 5 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber5 );
+    break;
+  case 6 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber6 );
+    break;
+  case 7 : 
+    conf->RequestSetCOMPort( igstk::SerialCommunication::PortNumber7 );
+    break;
+  }
+  
+  if( this->m_ConfigurationErrorOccured )
+  {
+     conf->Delete();
+     this->m_ConfigurationErrorOccured = false;
+     return NULL;
+  }
+    
+          //get the desired tracker referesh rate
+  conf->RequestSetFrequency( this->m_RefreshRateSlider->value() );
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+
+           //get the tracker tool information
+  igstk::AuroraToolConfiguration auroraToolConfig;
+
+  if( !this->m_Is6DOFTrackerTool->value() )
+  {
+    auroraToolConfig.SetChannelNumber( this->m_TrackerToolChannel->value() );     
+  }
+  auroraToolConfig.SetPortNumber( this->m_TrackerToolPort->value() );
+  auroraToolConfig.SetSROMFile( this->m_TrackerToolSROMFile->value() );
+
+  conf->RequestAddTool( &auroraToolConfig );   
+
+
+  if( this->m_ConfigurationErrorOccured )
+  {
+    conf->Delete();
+    this->m_ConfigurationErrorOccured = false;
+    return NULL;
+  }
+  return conf;} {selected
+    }
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->show();} {}
+  }
+  Function {Hide()} {return_type {virtual void}
+  } {
+    code {this->m_TrackerConfigurationWindow->hide();} {}
+  }
+} 
