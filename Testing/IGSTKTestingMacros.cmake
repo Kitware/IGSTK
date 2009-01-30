@@ -17,6 +17,9 @@
 # IGSTK_TEST_AURORA_PORT_NUMBER(int) : port number used by the aurora tracker
 # IGSTK_TEST_LOOPBACK_ATTACHED(boolean) : Option to turn on/off loopback attachment
 # IGSTK_TEST_LOOPBACK_PORT_NUMBER(int) : port number used by the loopback
+# IGSTK_TEST_FLOCKOFBIRD_ATTACHED(boolean) : Option for ascension tracker 
+# IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER(int) : port number used for ascension tracker
+ 
 
 
 MACRO(IGSTKTesting 
@@ -35,6 +38,8 @@ MACRO(IGSTKTesting
       IGSTK_USE_Qt
       IGSTK_USE_MicronTracker
       IGSTK_USE_KWSTYLE
+      IGSTK_TEST_FLOCKOFBIRD_ATTACHED
+      IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -108,10 +113,10 @@ ADD_TEST(igstkSpatialObjectCoordinateSystemTest3 ${IGSTK_TESTS}
 igstkSpatialObjectCoordinateSystemTest3)
 ADD_TEST(igstkSimulatedTrackerTest ${IGSTK_TESTS} igstkSimulatedTrackerTest)
 
-
-
-
 ADD_TEST(igstkTransformTest ${IGSTK_TESTS} igstkTransformTest)
+ADD_TEST(igstkAffineTransformTest ${IGSTK_TESTS} igstkAffineTransformTest)
+ADD_TEST(igstkPerspectiveTransformTest ${IGSTK_TESTS}
+igstkPerspectiveTransformTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
 #-----------------------------------------------------------------------------
@@ -240,6 +245,16 @@ IF(${IGSTK_TEST_POLARIS_ATTACHED})
               )
   ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS} igstkPolarisTrackerToolTest 0)
 ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
+
+IF(IGSTK_TEST_FLOCKOFBIRD_ATTACHED)
+    ADD_TEST( igstkFlockOfBirdsTrackerTest2
+              ${IGSTKSandbox_TESTS}
+              igstkAscensionTrackerTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkAscensionTestLoggerOutput.txt
+              ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
+              )
+ENDIF(IGSTK_TEST_FLOCKOFBIRD_ATTACHED)
+
 
 #-----------------------------------------------------------------------------
 # Tests that depend on FLTK
@@ -536,6 +551,9 @@ SET(BasicTests_SRCS
   igstkSimulatedTrackerTest.cxx
   
   igstkDefaultWidget.cxx
+
+  igstkAffineTransformTest.cxx
+  igstkPerspectiveTransformTest.cxx
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
@@ -567,6 +585,12 @@ IF(${IGSTK_TEST_POLARIS_ATTACHED})
     igstkPolarisTrackerToolTest.cxx
   )
 ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
+
+IF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAscensionTrackerTest.cxx
+  )
+ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
 
 #-----------------------------------------------------------------------------
 # Testing source file need data input

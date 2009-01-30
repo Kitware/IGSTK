@@ -82,9 +82,18 @@ SET(IGSTK_HEADS
   igstkSimulatedTracker.h
   igstkNDITracker.h
 
+  igstkAffineTransform.h
+  igstkPerspectiveTransform.h
+
   igstkView.h
   igstkView2D.h
   igstkView3D.h
+
+# Ascension tracker support
+  igstkAscensionCommandInterpreter.h
+  igstkAscensionTracker.h
+  igstkAscensionTrackerTool.h
+
 )
 
 IF(IGSTK_USE_FLTK)
@@ -192,10 +201,18 @@ SET(IGSTK_SRCS
   igstkSimulatedTracker.cxx
   igstkNDITracker.cxx
 
+  igstkAffineTransform.cxx
+  igstkPerspectiveTransform.cxx
+
   igstkView.cxx
   igstkView2D.cxx
   igstkView3D.cxx
   igstkViewProxyBase.cxx
+
+# Ascension tracker support
+  igstkAscensionCommandInterpreter.cxx
+  igstkAscensionTracker.cxx
+  igstkAscensionTrackerTool.cxx
 )
 
 IF(IGSTK_USE_FLTK)

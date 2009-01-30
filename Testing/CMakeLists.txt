@@ -9,6 +9,10 @@ OPTION(IGSTK_TEST_LOOPBACK_ATTACHED "Serial Loopback is attached" OFF)
 SET( IGSTK_TEST_LOOPBACK_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 
+OPTION(IGSTK_TEST_FLOCKOFBIRD_ATTACHED "Flock of birds is attached to computer" OFF)
+SET( IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER 0 CACHE STRING
+     "Serial port number (0, 1, 2, 3)" )
+
 INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}
   ${IGSTK_BINARY_DIR}
@@ -39,5 +43,7 @@ IGSTKTesting(igstkTests
              IGSTK_USE_Qt
              IGSTK_USE_MicronTracker
              IGSTK_USE_KWSTYLE
+             IGSTK_TEST_FLOCKOFBIRD_ATTACHED
+             ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
              )
 

@@ -72,6 +72,9 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkSimulatedTrackerTest);
 
+  REGISTER_TEST(igstkAffineTransformTest);
+  REGISTER_TEST(igstkPerspectiveTransformTest);
+
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -93,6 +96,10 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerToolTest);
 #endif
 
+#ifdef IGSTK_TEST_FLOCKOFBIRD_ATTACHED
+  REGISTER_TEST(igstkAscensionTrackerTest);
+#endif
+ 
 #ifdef IGSTK_USE_MicronTracker
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
