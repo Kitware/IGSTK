@@ -53,7 +53,7 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
  * spatial object ( automatic reslicing ) */
 int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 {
-  std::cout << " igstkImageResliceObjectRepresentationFltkTest: application started " << std::endl;
+  std::cout << " igstkImageResliceObjectRepresentationQtTest: application started " << std::endl;
 
   igstk::RealTimeClock::Initialize();
 
@@ -68,6 +68,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   const unsigned int Dimension = 3;
 
   typedef igstk::ImageSpatialObject<PixelType,Dimension> ImageSpatialObjectType;
+  typedef ImageSpatialObjectType::IndexType::IndexValueType IndexValueType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -83,7 +84,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   igstk::VTKLoggerOutput::Pointer vtkLoggerOutput = 
                                             igstk::VTKLoggerOutput::New();
   vtkLoggerOutput->OverrideVTKWindow();
-  //vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
+  vtkLoggerOutput->SetLogger(logger);// redirect messages from VTK 
                                      // OutputWindow -> logger
 
   // Create Axes object to act as a reference coordinate system
@@ -244,9 +245,9 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   ImageSpatialObjectType::PointType point;
 
 //  initialize the tool transform in the middle of the image
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
@@ -313,7 +314,8 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   // Iteratively change the tool transform to reslice through the image
   for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
   {
-  index[2] = i;
+  index[2] = static_cast<IndexValueType>(i);
+
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   data = point.GetVnlVector().data_block();
   std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
@@ -342,7 +344,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   // Iteratively change the tool transform to reslice through the image
   for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
   {
-  index[0] = i;
+  index[0] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   const double *data = point.GetVnlVector().data_block();
   std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
@@ -370,11 +372,9 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   // Iteratively change the tool transform to reslice through the image
   for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
   {
-  index[1] = i;
+  index[1] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   const double *data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-
   std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
 
   translation[0] = data[0];
@@ -392,12 +392,38 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   igstk::PulseGenerator::CheckTimeouts();
   }
 
-  //Request refreshing stop to take a screenshot
+
+  //Reslice to the center axial slice and take a screenshot.
+  //
   view2D->RequestStop();
-  std::string filename;
-  filename = argv[2]; 
-  std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
-  view2D->RequestSaveScreenShot( filename );
+
+  view2D->RequestSetOrientation( View2DType::Axial );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+
+  translation[0] = data[0];
+  translation[1] = data[1];
+  translation[2] = data[2];
+
+  toolTransform.SetTranslation(
+                      translation,
+                      transformUncertainty,
+                      igstk::TimeStamp::GetZeroValue() );
+
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
+
+  std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  view2D->RequestSaveScreenShot( argv[2] );
+  view2D->RequestStop();
 
   delete qtWidget2D;
   qtMainWindow->hide();

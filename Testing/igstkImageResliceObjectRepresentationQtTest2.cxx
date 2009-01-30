@@ -51,6 +51,8 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
 /** This test demonstrates how to perform orthogonal reslicing using slice number (manual reslicing) */
 int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
 {
+  std::cout << " igstkImageResliceObjectRepresentationQtTest2: application started " << std::endl;
+
   igstk::RealTimeClock::Initialize();
 
   if( argc < 2 )
@@ -69,6 +71,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   // we will use an ImageSpatialObject as the reference spatial object for the ReslicerPlane
   typedef igstk::ImageSpatialObject< PixelType, Dimension > 
                                                        ImageSpatialObjectType;
+  typedef ImageSpatialObjectType::IndexType::IndexValueType IndexValueType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -98,7 +101,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
 
   typedef igstk::CTImageReader         ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
-  reader->SetLogger( logger );
+//  reader->SetLogger( logger );
 
   //set up CT image observer
   typedef ImageResliceObjectRepresentationQtTest2::CTImageObserver 
@@ -177,7 +180,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   QTWidgetType * qtWidget2D = 
                       new QTWidgetType();
   qtWidget2D->RequestSetView( view2D );
-  qtWidget2D->SetLogger( logger );
+//  qtWidget2D->SetLogger( logger );
   qtMainWindow->setCentralWidget( qtWidget2D );
   view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetRefreshRate( 40 );
@@ -192,7 +195,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   representation->SetWindowLevel( 1559, -244 );
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
-  //Instantiate and use a reslicer plane spatial object
+  // Instantiate and use a reslicer plane spatial object
   ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
 //  reslicerPlaneSpatialObject->SetLogger( logger );
 
@@ -224,9 +227,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
   
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = imageExtent[4];
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(imageExtent[4]);
   
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
@@ -237,9 +240,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   view2D->RequestResetCamera();
   qtMainWindow->show();
 
-  for(unsigned int i=(unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
     {
-    index[2] = i;
+    index[2] = static_cast<IndexValueType>(i);
     imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
     data = point.GetVnlVector().data_block();
     reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
@@ -254,9 +257,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
-  index[0] = imageExtent[0];
-  index[1] = 0.5*(imageExtent[2]+imageExtent[3]);
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  index[0] = static_cast<IndexValueType>(imageExtent[0]);
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   data = point.GetVnlVector().data_block();
@@ -267,9 +270,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
 
   qtMainWindow->show();
 
-  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
     {
-    index[0] = i;
+    index[0] = static_cast<IndexValueType>(i);
     imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
     const double *data = point.GetVnlVector().data_block();
     reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
@@ -284,9 +287,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
-  index[0] = 0.5*(imageExtent[0]+imageExtent[1]);
-  index[1] = imageExtent[2];
-  index[2] = 0.5*(imageExtent[4]+imageExtent[5]);
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(imageExtent[2]);
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   data = point.GetVnlVector().data_block();
@@ -297,9 +300,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
 
   qtMainWindow->show();
 
-  for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
     {
-    index[1] = i;
+    index[1] = static_cast<IndexValueType>(i);
     imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
     const double *data = point.GetVnlVector().data_block();
     reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
@@ -309,10 +312,30 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
     }
   view2D->RequestStop();
 
+  //Reslice to the center axial slice and take a screenshot.
+  //
+  view2D->RequestStop();
+
+  view2D->RequestSetOrientation( View2DType::Axial );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+
+  std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  view2D->RequestSaveScreenShot( argv[2] );
+  view2D->RequestStop();
+
   delete qtWidget2D;
-
   qtMainWindow->hide();
-
   delete qtMainWindow;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
@@ -323,7 +346,6 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
     }
  
   std::cout << "[SUCCESS]" << std::endl;
- 
   return EXIT_SUCCESS;
 
 }
