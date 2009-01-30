@@ -69,6 +69,14 @@ public: // this "public: is necessary because the
   /** Typedefs */
   typedef itk::SpatialObject<3>          SpatialObjectType;
 
+  typedef SpatialObjectType::BoundingBoxType BoundingBoxType;
+
+  igstkLoadedObjectEventMacro( BoundingBoxEvent, IGSTKEvent,
+                                        BoundingBoxType );
+
+  void RequestGetBounds();
+  void RequestGetBounds() const;
+
 protected:
 
   /** The constructor of this class is declared protected to enforce the use of
@@ -98,10 +106,13 @@ private:
   SpatialObjectType::Pointer   m_SpatialObject;
   SpatialObjectType::Pointer   m_SpatialObjectToBeSet;
 
+  void ReportBoundsProcessing();
+  void ReportBoundsNotAvailableProcessing();
 
   /** Inputs to the State Machine */
   igstkDeclareInputMacro( InternalSpatialObjectNull );
   igstkDeclareInputMacro( InternalSpatialObjectValid );
+  igstkDeclareInputMacro( RequestBounds );
 
   /** States for the State Machine */
   igstkDeclareStateMacro( Initial );

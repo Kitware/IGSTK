@@ -57,11 +57,16 @@ CoordinateSystemDelegator
     CoordinateSystemTransformToEvent()
     , m_CoordinateSystemObserver );
 
+  m_CoordinateSystem->AddObserver( 
+    CoordinateSystemSetTransformEvent()
+    , m_CoordinateSystemObserver );
+  
   std::stringstream tempStream;
   tempStream << this->GetNameOfClass() << " 0x";
   tempStream << static_cast<void*>(this);
   std::string name = tempStream.str();
   m_CoordinateSystem->SetName( name.c_str() );
+  m_CoordinateSystem->SetType( name.c_str() );
 
   igstkAddStateMacro( Idle );
 
@@ -150,6 +155,27 @@ CoordinateSystemDelegator
 ::GetName () const
 {
   return this->m_CoordinateSystem->GetName();
+}
+
+void 
+CoordinateSystemDelegator
+::SetType (const char* _arg)
+{ 
+  this->m_CoordinateSystem->SetType( _arg );
+} 
+  
+void
+CoordinateSystemDelegator
+::SetType (const std::string & _arg) 
+{
+  this->SetType( _arg.c_str() );
+}
+
+const char* 
+CoordinateSystemDelegator
+::GetType () const
+{
+  return this->m_CoordinateSystem->GetType();
 }
 
 bool

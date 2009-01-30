@@ -72,6 +72,10 @@ public:
   /** Test whether a point is inside or outside the object. */
   virtual bool IsInside( const PointType & point ) const;
 
+  /** Transform index to physical point. */
+  virtual void TransformIndexToPhysicalPoint ( const IndexType & index, 
+                                              PointType & point ) const;
+
   /** Transform physical point to index. */
   virtual bool TransformPhysicalPointToIndex ( const PointType & point, 
                                              IndexType & index ) const;
@@ -102,6 +106,11 @@ public:
    *  Both the const and non-const versions are needed. */
   void RequestGetVTKImage();
   void RequestGetVTKImage() const;
+
+  /** Request to get the VTK image extent as a const pointer payload into 
+    * an event. Both the const and non-const versions are needed. */
+  void RequestGetImageExtent();
+  void RequestGetImageExtent() const;
 
   /** Request to get the image transform. This transform involves the
    *  Translation to the origin, and the rotation given by the direction
@@ -160,6 +169,7 @@ private:
   igstkDeclareInputMacro( InvalidImage );
   igstkDeclareInputMacro( RequestITKImage );
   igstkDeclareInputMacro( RequestVTKImage );
+  igstkDeclareInputMacro( RequestImageExtent );
   igstkDeclareInputMacro( RequestImageTransform );
   
   /** State Machine States */
@@ -173,6 +183,7 @@ private:
   /** This function reports the image */
   void ReportITKImageProcessing();
   void ReportVTKImageProcessing();
+  void ReportImageExtentProcessing();
   void ReportImageNotAvailableProcessing();
 
   /** This function reports the image transform. This transform

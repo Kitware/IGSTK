@@ -30,14 +30,20 @@ SpatialObject::SpatialObject():m_StateMachine(this)
 
   igstkAddInputMacro( InternalSpatialObjectNull );
   igstkAddInputMacro( InternalSpatialObjectValid );
+  igstkAddInputMacro( RequestBounds );
 
   igstkAddStateMacro( Initial  );
   igstkAddStateMacro( Ready  );
 
   igstkAddTransitionMacro( Initial, InternalSpatialObjectNull, 
-                           Initial,  ReportSpatialObjectNull );
+                           Initial, ReportSpatialObjectNull );
   igstkAddTransitionMacro( Initial, InternalSpatialObjectValid, 
-                           Ready,  SetInternalSpatialObject );
+                           Ready,   SetInternalSpatialObject );
+  igstkAddTransitionMacro( Initial, RequestBounds, 
+                           Initial, ReportBoundsNotAvailable );
+
+  igstkAddTransitionMacro( Ready, RequestBounds, 
+                           Ready, ReportBounds );
 
   igstkSetInitialStateMacro( Initial );
   this->m_StateMachine.SetReadyToRun();
@@ -95,6 +101,45 @@ SpatialObject::SpatialObjectType *
 SpatialObject::GetInternalSpatialObject() const
 {
   return this->m_SpatialObject;
+}
+
+void
+SpatialObject
+::RequestGetBounds() const
+{
+  igstkLogMacro( DEBUG, "SpatialObject::RequestGetBounds() called ....\n");
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetBounds();
+}
+
+void
+SpatialObject
+::RequestGetBounds() 
+{
+  igstkLogMacro( DEBUG, "SpatialObject::RequestGetBounds() called ....\n");
+
+  igstkPushInputMacro( RequestBounds );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void
+SpatialObject
+::ReportBoundsProcessing() 
+{
+  igstkLogMacro( DEBUG, "SpatialObject::ReportBoundsProcessing() called ....\n");
+
+  BoundingBoxEvent  event;
+  event.Set( this->GetInternalSpatialObject()->GetBoundingBox() );
+  this->InvokeEvent( event );
+}
+
+void
+SpatialObject
+::ReportBoundsNotAvailableProcessing()
+{
+  igstkLogMacro( WARNING, 
+    "Spatial Object bounds are not available." );
+  this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
 void

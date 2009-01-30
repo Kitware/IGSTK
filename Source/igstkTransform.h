@@ -18,6 +18,8 @@
 #ifndef __igstkTransform_h
 #define __igstkTransform_h
 
+#include "igstkTransformBase.h"
+
 #include "itkVector.h"
 #include "itkVersor.h"
 
@@ -30,8 +32,7 @@ namespace igstk
 {
  
 /** \class Transform 
- *  \brief Transform representing relative positions and orientations in 
- *  3D space.
+ *  \brief A class representing a 3D Rigid transform
  * 
  * This class represents relative positions and orientations in 3D space. It is
  * intended to be used for positioning objects in the scene and as a
@@ -53,15 +54,13 @@ namespace igstk
  * \sa TimeStamp
  *
  * */
-class Transform
+  class Transform : public TransformBase
 {
 public:
 
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Point<double, 3>     PointType;
   typedef ::itk::Versor<double>       VersorType;
-  typedef double                      ErrorType;
-  typedef TimeStamp::TimePeriodType   TimePeriodType;
   
 public:
 
@@ -84,8 +83,8 @@ public:
   void SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
-                 ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration);
+          TransformBase::ErrorType errorValue,
+          TimeStamp::TimePeriodType millisecondsToExpiration );
 
 
   /** Set only Rotation. This method should be used when the transform
@@ -97,7 +96,7 @@ public:
   void SetRotation( 
           const  VersorType & rotation,
                  ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration);
+          TimePeriodType millisecondsToExpiration );
 
   /** Set only Translation. This method should be used when the transform
    * represents only a translation. Internally the rotational part of the
@@ -108,7 +107,7 @@ public:
   void SetTranslation( 
           const  VectorType & translation,
                  ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration);
+          TimePeriodType millisecondsToExpiration );
 
   /** Returns the translational component. Users MUST check the validity time
    * of the transform before attempting to use this returned value. The content
@@ -120,51 +119,7 @@ public:
    * of the transform before attempting to use this returned value. The content
    * of the transform may have expired. */
   igstkGetMacro( Rotation, VersorType ); 
-       
-
-  /** Returns the translational error of this transform. The correct
-   * interpretation of this error my be tracker dependent and therefore must be
-   * analyzed carefully. */
-  igstkGetMacro( Error, ErrorType );
  
-
-  /** Returns the time at which the validity of this information starts. The
-   * data in this transform should not be used for scenes to be rendered
-   * before that validity time. The time is returned in milliseconds. 
-   *
-   * \sa TimeStamp 
-   *
-   * */
-  TimePeriodType GetStartTime() const;
-
-
-  /** Returns the time at which the validity of this information expires. The
-   * data in this transform should not be used for scenes to be rendered
-   * after that validity time. The time is returned in milliseconds. 
-   *
-   * \sa TimeStamp 
-   *
-   * */
-  TimePeriodType GetExpirationTime() const;
-
-
-  /** Returns the validity status of the transform at the time passed as
-   * argument. The transform values should not be used in a scene if the time
-   * when the scene is to be rendered returned 'false' when passed to this
-   * IsValid() function. The time is passed in milliseconds. 
-   *
-   * \sa TimeStamp 
-   *
-   * */
-  bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
-
-  /** Returns the validity status of the transform when it is called 
-   *
-   * \sa TimeStamp 
-   *
-   * */
-  bool IsValidNow() const;
-
 
   /** Export the content of the transformation in the format of a vtkMatrix4x4.
    * Users must allocate the matrix first and then pass it by reference to this
@@ -173,6 +128,9 @@ public:
    */
   void ExportTransform( vtkMatrix4x4 & matrix ) const;
 
+  /** Set the content of the transformation from a vtkMatrix4x4.
+   */
+  void ImportTransform( vtkMatrix4x4 & matrix );
 
   /** Compare two transforms for equivalence, in the 
    *  sense that these are the same objects in memory.
@@ -191,7 +149,7 @@ public:
   void SetToIdentity( TimePeriodType validityPeriodInMilliseconds );
 
   /** Method for printing the member variables of this class to an ostream */
-  void Print(std::ostream& os, itk::Indent indent) const;
+  void Print( std::ostream& os, itk::Indent indent ) const;
 
   /** Returns the Inverse Transform of the current one */
   Transform GetInverse() const;
@@ -199,24 +157,22 @@ public:
 
 protected:
 
-  void PrintHeader(std::ostream& os, itk::Indent indent) const;
+  void PrintHeader( std::ostream& os, itk::Indent indent ) const;
 
-  void PrintTrailer(std::ostream& itkNotUsed(os), 
-                    itk::Indent itkNotUsed(indent)) const;
+  void PrintTrailer( std::ostream& itkNotUsed(os), 
+                     itk::Indent itkNotUsed(indent) ) const;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
 private:
 
-  TimeStamp       m_TimeStamp;
   VectorType      m_Translation;
   VersorType      m_Rotation;
-  ErrorType       m_Error;
 
 };
 
-std::ostream& operator<<(std::ostream& os, const igstk::Transform& o);
+std::ostream& operator<<( std::ostream& os, const igstk::Transform& o );
 }
 
 #endif

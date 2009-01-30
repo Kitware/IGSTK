@@ -18,6 +18,7 @@
 #include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
+#include "igstkCoordinateSystemSetTransformResult.h"
 
 namespace igstk
 { 
@@ -435,7 +436,7 @@ void CoordinateSystem
 
   // Create event
   CoordinateSystemTransformToResult payload;
-  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo);
+  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo, m_LowestCommonAncestor);
 
   CoordinateSystemTransformToEvent event;
   event.Set( payload );
@@ -500,6 +501,7 @@ void CoordinateSystem
     }
   else
     {
+    this->RequestDetachFromParent();
     this->m_TransformFromRequestSetTransformAndParent = transform;
     this->m_ParentFromRequestSetTransformAndParent = parent;
 
@@ -517,6 +519,18 @@ void CoordinateSystem
 {
   this->m_Parent = this->m_ParentFromRequestSetTransformAndParent;
   this->m_TransformToParent = this->m_TransformFromRequestSetTransformAndParent;
+  
+  CoordinateSystemSetTransformResult payload;
+  
+  const CoordinateSystem * parentCoordinateSystem =
+      Friends::CoordinateSystemHelper::GetCoordinateSystem( m_Parent );
+
+  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem , this, true);
+
+  CoordinateSystemSetTransformEvent event;
+  event.Set( payload );
+
+  this->InvokeEvent( event );
 }
 
 void CoordinateSystem
@@ -715,12 +729,23 @@ CoordinateSystem
   // must match the constructor settings.
   //
 
+  //Preparing the event to be sent.
+  const CoordinateSystem * parentCoordinateSystem =
+      Friends::CoordinateSystemHelper::GetCoordinateSystem( m_Parent );
+  CoordinateSystemSetTransformResult payload;
+
+  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem , this, false);
+
+  CoordinateSystemSetTransformEvent event;
+  event.Set( payload );
+  
   // We set the parent to be NULL.
   this->m_Parent = NULL; 
 
   // Default transform is identity.
   this->m_TransformToParent.SetToIdentity( 
                                     TimeStamp::GetLongestPossibleTime() );
+  this->InvokeEvent( event );
 }
 
 } // end namespace igstk

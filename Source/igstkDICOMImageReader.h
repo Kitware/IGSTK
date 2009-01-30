@@ -100,6 +100,16 @@ public:
   /** Method to pass the directory name containing the DICOM image data */
   void RequestSetDirectory( const DirectoryNameType & directory );
 
+  void RequestSetProgressCallback(itk::Command *progressCallback)
+  {
+    m_ImageSeriesReader->AddObserver(itk::ProgressEvent(),progressCallback);
+  }
+
+  void RequestSetAbortCallback(itk::Command *abortCallback)
+  {
+    m_ImageSeriesReader->AddObserver(itk::AbortEvent(),abortCallback);    
+  }
+
   /** This method request image read */
   void RequestReadImage();
 
@@ -122,7 +132,7 @@ public:
    * considered unsafe because it is not subject to the control of the internal
    * state machine.  The method GetPatientName() should only be invoked if the
    * precondition method FileSuccessfullyRead() has already been called and it
-   * has returned true. Calling GetPatientID() in any other situation will lead
+   * has returned true. Calling GetPatientName() in any other situation will lead
    * to unpredictable behavior. */
   igstkUnsafeGetMacro( PatientName, DICOMInformationType );
 

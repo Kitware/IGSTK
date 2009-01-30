@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkCoordinateSystemTransformToResult.h
+  Module:    igstkCoordinateSystemSetTransformResult.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkCoordinateSystemTransformToResult_h
-#define __igstkCoordinateSystemTransformToResult_h
+#ifndef __igstkCoordinateSystemSetTransformResult_h
+#define __igstkCoordinateSystemSetTransformResult_h
 
 #include "igstkCoordinateSystem.h"
 
@@ -24,31 +24,31 @@ namespace igstk
 {
 
 /**
- *  \class CoordinateSystemTransformToResult
+ *  \class CoordinateSystemSetTransformResult
  *
- * \brief This class encapsulates the results of asking the coordinate
- * reference system for a transform to another coordinate reference system. 
+ * \brief This class encapsulates the details of setting parent and
+ * child relationships between coordinate systems.
  *
  * It is meant to be used as payload in an event that is created after a
- * successful call to RequestTransformTo(). 
+ * successful call to RequestSetParentAndTransform(). 
  *
  *  \ingroup CoordinateSystem
  *
  */
-class CoordinateSystemTransformToResult
+class CoordinateSystemSetTransformResult
 {
 public:
 
   /** Constructor */
-  CoordinateSystemTransformToResult();
+  CoordinateSystemSetTransformResult();
 
   /** Copy constructor */
-  CoordinateSystemTransformToResult(
-      const CoordinateSystemTransformToResult& in);
+  CoordinateSystemSetTransformResult(
+      const CoordinateSystemSetTransformResult& in);
 
   /** Assignment operator */
-  const CoordinateSystemTransformToResult &operator = ( 
-      const CoordinateSystemTransformToResult& in);
+  const CoordinateSystemSetTransformResult &operator = ( 
+      const CoordinateSystemSetTransformResult& in);
 
   /** Clears the pointers that the event is holding. This 
    *  should be called after the event is received to
@@ -61,19 +61,15 @@ public:
   void Initialize(const Transform& transform, 
                   const CoordinateSystem* source,
                   const CoordinateSystem* destination,
-          const CoordinateSystem* commonAncestor);
+          bool isAttaching);
 
-  /** Sets the transform, source, and destination coordinate systems. Overloaded Method.*/
-  void Initialize(const Transform& transform, 
-                  const CoordinateSystem* source,
-                  const CoordinateSystem* destination);
-          
   /** Sets the transform, source, and destination coordinate systems from two
    * given objects that respectively own coordinate systems. */
   template <class TSource, class TDestination>
   void Initialize(const Transform& transform, 
                   const TSource * sourceObject,
-                  const TDestination * destinationObject )
+                  const TDestination * destinationObject ,
+          bool isAttaching)
     {
     const CoordinateSystem * source =
       Friends::CoordinateSystemHelper::GetCoordinateSystem( sourceObject );
@@ -81,7 +77,7 @@ public:
     const CoordinateSystem * destination =
       Friends::CoordinateSystemHelper::GetCoordinateSystem( destinationObject );
 
-    this->Initialize( transform, source, destination );
+    this->Initialize( transform, source, destination , isAttaching);
     }
 
   /** Returns the computed transform. */
@@ -93,23 +89,23 @@ public:
   /** Returns the destination coordinate system. */
   const CoordinateSystem * GetDestination() const;
 
-  /** Returns the common ancestor coordinate system for Scene Graph. */
-  const CoordinateSystem * GetCommonAncestor() const;
-  
+  /**Returns whether this result is being used for attach or detach**/
+  const bool IsAttach() const;
+
 private:
 
   Transform                        m_Transform;
   const CoordinateSystem       *   m_Source;
   const CoordinateSystem       *   m_Destination;
-  const CoordinateSystem     *   m_CommonAncestor;
+  bool isAttach;
 
 };
 
 /** This event is invoked when RequestComputeTransformTo is called
  *  successfully.
  */
-igstkLoadedEventMacro( CoordinateSystemTransformToEvent, 
-                  IGSTKEvent, CoordinateSystemTransformToResult );
+igstkLoadedEventMacro( CoordinateSystemSetTransformEvent, 
+                  IGSTKEvent, CoordinateSystemSetTransformResult );
 
 } // end namespace igstk
 

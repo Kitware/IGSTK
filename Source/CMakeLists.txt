@@ -56,6 +56,7 @@ SET(IGSTK_HEADS
   igstkStateMachineState.h
   igstkTimeStamp.h
   igstkTransform.h
+  igstkTransformBase.h
   igstkToken.h
   igstkTracker.h
   igstkTrackerTool.h
@@ -73,6 +74,8 @@ SET(IGSTK_HEADS
   igstkCoordinateSystemDelegator.h
   igstkCoordinateSystemTransformToResult.h
   igstkCoordinateSystemTransformToErrorResult.h
+  igstkCoordinateSystemInterfaceMacros.h
+  igstkCoordinateSystemSetTransformResult.h
 
   igstkCircularSimulatedTracker.h
   igstkSimulatedTrackerTool.h
@@ -168,6 +171,7 @@ SET(IGSTK_SRCS
   igstkTracker.cxx
   igstkTrackerTool.cxx
   igstkTransform.cxx
+  igstkTransformBase.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
   igstkUltrasoundProbeObject.cxx
@@ -181,6 +185,7 @@ SET(IGSTK_SRCS
   igstkCoordinateSystemDelegator.cxx
   igstkCoordinateSystemTransformToResult.cxx
   igstkCoordinateSystemTransformToErrorResult.cxx
+  igstkCoordinateSystemSetTransformResult.cxx
 
   igstkCircularSimulatedTracker.cxx
   igstkSimulatedTrackerTool.cxx

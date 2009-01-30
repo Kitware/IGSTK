@@ -419,7 +419,17 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
 
   // Create the DICOM GDCM file reader
   m_FileNames = itk::GDCMSeriesFileNames::New();
+  m_FileNames->SetRecursive(false);
+  m_FileNames->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
+
+  // add more criteria to distinguish between different series
+  m_FileNames->SetUseSeriesDetails( true );
+
+  // add acquisition number
+  m_FileNames->AddSeriesRestriction( "0020|0012" );
+
   m_ImageIO = itk::GDCMImageIO::New();
+  m_ImageIO->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
   m_ImageSeriesReader = ImageSeriesReaderType::New();
   m_ImageSeriesReader->SetImageIO( m_ImageIO );
 
@@ -541,8 +551,17 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
   
   m_FileNames->SetInputDirectory( m_ImageDirectoryName );
  
-  const std::vector< std:: string > & seriesUID = 
+  const std::vector< std::string > & seriesUID = 
                                                m_FileNames -> GetSeriesUIDs();
+   
+  std::vector< std::string >::const_iterator iter = seriesUID.begin();
+  
+  for (; iter != seriesUID.end(); iter++)
+  {
+     igstkLogMacro( DEBUG, 
+              "igstk::DICOMImageReader::seriesUID " << (*iter) << "\n");
+  }
+              
   if ( seriesUID.empty() ) 
     {
     this->m_ImageReadingErrorInformation = 
@@ -553,7 +572,13 @@ void DICOMImageReader<TPixelType>::ReadDirectoryFileNamesProcessing()
     return;
     } 
  
-  m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
+ // m_ImageSeriesReader->SetFileNames( m_FileNames->GetInputFileNames() );
+ 
+  igstkLogMacro( DEBUG, 
+              "igstk::DICOMImageReader will open seriesUID: " << seriesUID.front().c_str() << "\n");
+                            
+  m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( seriesUID.front().c_str() )  );
+  
   this->m_StateMachine.PushInput( 
                    this->m_ImageSeriesFileNamesGeneratingSuccessInput );
   this->m_StateMachine.ProcessInputs();

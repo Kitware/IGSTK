@@ -22,6 +22,8 @@
 
 #include "igstkTransform.h"
 #include "vtkImageData.h"
+//#include "vtkPlaneSource.h"
+#include "vtkCamera.h"
 
 namespace igstk 
 {
@@ -57,6 +59,8 @@ namespace EventHelperType
 typedef itk::Point< double, 3 >    PointType;
 typedef std::string                StringType;
 typedef vtkImageData *             VTKImagePointerType;
+//typedef vtkPlaneSource *           VTKPlaneSourcePointerType;
+typedef vtkCamera *                VTKCameraPointerType;
 typedef unsigned int               UnsignedIntType;
 typedef signed int                 SignedIntType;
 typedef float                      FloatType;
@@ -65,6 +69,22 @@ typedef struct {
   unsigned int minimum;
   unsigned int maximum;
 }                                  IntegerBoundsType;
+typedef struct {
+  double xmin;
+  double xmax;
+  double ymin;
+  double ymax;
+  double zmin;
+  double zmax;
+}                                  ImageBoundsType;
+typedef struct {
+  unsigned int xmin;
+  unsigned int xmax;
+  unsigned int ymin;
+  unsigned int ymax;
+  unsigned int zmin;
+  unsigned int zmax;
+}                                  ImageExtentType;
 }
 
 #define igstkLoadedObjectEventMacro( name, superclass, payloadtype ) \
@@ -185,10 +205,25 @@ igstkLoadedEventMacro( LandmarkRegistrationErrorEvent, IGSTKErrorEvent,
 igstkLoadedEventMacro( StringEvent, IGSTKEvent, EventHelperType::StringType );
 igstkLoadedEventMacro( UnsignedIntEvent, IGSTKEvent, 
                        EventHelperType::UnsignedIntType );
+
 igstkLoadedEventMacro( IntegerBoundsEvent, IGSTKEvent, 
                        EventHelperType::IntegerBoundsType );
+
+igstkLoadedEventMacro( ImageBoundsEvent, IGSTKEvent, 
+                       EventHelperType::ImageBoundsType );
+
+igstkLoadedEventMacro( ImageExtentEvent, IGSTKEvent, 
+                       EventHelperType::ImageExtentType );
+
 igstkLoadedEventMacro( VTKImageModifiedEvent, IGSTKEvent,
                        EventHelperType::VTKImagePointerType );
+
+//igstkLoadedEventMacro( VTKPlaneModifiedEvent, IGSTKEvent,
+//                       EventHelperType::VTKPlaneSourcePointerType );
+
+igstkLoadedEventMacro( VTKCameraModifiedEvent, IGSTKEvent,
+                       EventHelperType::VTKCameraPointerType );
+
 igstkLoadedEventMacro( DoubleTypeEvent, IGSTKEvent,
                        EventHelperType::DoubleType );
 

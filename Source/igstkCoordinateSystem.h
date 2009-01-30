@@ -21,7 +21,6 @@
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
 #include "igstkTransform.h"
-#include "itkTimeProbe.h"
 
 namespace igstk
 {
@@ -127,6 +126,10 @@ public:
   igstkSetStringMacro( Name );
   igstkGetStringMacro( Name );
 
+  /**  Set/Get the type as a string */
+  igstkSetStringMacro( Type );
+  igstkGetStringMacro( Type ); 
+
 protected:
 
   /** Constructor */
@@ -156,6 +159,9 @@ private:
 
   /** Coordinate system name for diagram export. */
   std::string         m_Name;
+
+  /** Coordinate system type for diagram export. */
+  std::string      m_Type;
 
   /** 
    * State machine declarations

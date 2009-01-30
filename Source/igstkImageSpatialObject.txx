@@ -66,6 +66,7 @@ ImageSpatialObject< TPixelType, VDimension >
   igstkAddInputMacro( InvalidImage );
   igstkAddInputMacro( RequestITKImage );
   igstkAddInputMacro( RequestVTKImage );
+  igstkAddInputMacro( RequestImageExtent );
   igstkAddInputMacro( RequestImageTransform );
 
   igstkAddStateMacro( Initial );
@@ -81,6 +82,8 @@ ImageSpatialObject< TPixelType, VDimension >
                            Initial, ReportImageNotAvailable );
   igstkAddTransitionMacro( Initial, RequestImageTransform, 
                            Initial, ReportImageNotAvailable );
+  igstkAddTransitionMacro( Initial, RequestImageExtent, 
+                           Initial, ReportImageNotAvailable );
 
   igstkAddTransitionMacro( ImageSet, ValidImage, 
                            ImageSet, SetImage );
@@ -92,6 +95,8 @@ ImageSpatialObject< TPixelType, VDimension >
                            ImageSet, ReportVTKImage );
   igstkAddTransitionMacro( ImageSet, RequestImageTransform, 
                            ImageSet, ReportImageTransform );
+  igstkAddTransitionMacro( ImageSet, RequestImageExtent, 
+                           ImageSet, ReportImageExtent );
 
   igstkSetInitialStateMacro( Initial );
 
@@ -219,6 +224,27 @@ ImageSpatialObject< TPixelType, VDimension >
   this->m_StateMachine.ProcessInputs();
 }
 
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetImageExtent() const
+{
+  igstkLogMacro( DEBUG, "RequestGetImageExtent() called ....\n");
+  Self * self = const_cast< Self * >( this );
+  self->RequestGetImageExtent();
+}
+
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::RequestGetImageExtent() 
+{
+  igstkLogMacro( DEBUG, "RequestGetImageExtent() called ....\n");
+
+  igstkPushInputMacro( RequestImageExtent );
+  this->m_StateMachine.ProcessInputs();
+}
 
 template< class TPixelType, unsigned int VDimension >
 void
@@ -263,6 +289,28 @@ ImageSpatialObject< TPixelType, VDimension >
   this->InvokeEvent( event );
 }
 
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::ReportImageExtentProcessing() 
+{
+  igstkLogMacro( DEBUG, "ReportImageExtentProcessing() called ....\n");
+
+  int extent[6];
+  m_VtkImporter->GetWholeExtent(extent);
+
+  EventHelperType::ImageExtentType imageExtent;
+  imageExtent.xmin = extent[0];
+  imageExtent.xmax = extent[1];
+  imageExtent.ymin = extent[2];
+  imageExtent.ymax = extent[3];
+  imageExtent.zmin = extent[4];
+  imageExtent.zmax = extent[5];
+ 
+  ImageExtentEvent event;
+  event.Set( imageExtent );
+  this->InvokeEvent( event );
+}
 
 template< class TPixelType, unsigned int VDimension >
 void
@@ -343,6 +391,15 @@ ImageSpatialObject< TPixelType, VDimension >
   const unsigned int numberOfPixels = region.GetNumberOfPixels();
   const bool isEmpty = ( numberOfPixels == 0 );
   return isEmpty;
+}
+
+template< class TPixelType, unsigned int VDimension >
+void
+ImageSpatialObject< TPixelType, VDimension >
+::TransformIndexToPhysicalPoint ( const IndexType & index, 
+                                        PointType & point ) const 
+{ 
+  m_Image->TransformIndexToPhysicalPoint( index, point);
 }
 
 

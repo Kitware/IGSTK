@@ -22,22 +22,18 @@ namespace igstk
 {
 
 Transform
-::Transform()
+::Transform() : TransformBase()
 {
-  // Error is NEVER zero. In the best situation is on the range of the smaller
-  // non-zero epsilon that can be represented with the ErrorType. 
-  m_Error = itk::NumericTraits< ErrorType >::min();
   m_Translation.Fill(0.0);
   m_Rotation.SetIdentity();
 }
 
 Transform
-::Transform( const Transform & inputTransform  )
+::Transform( const Transform & inputTransform  ) : 
+TransformBase( inputTransform )
 {
-  m_Error        = inputTransform.m_Error;
   m_Translation  = inputTransform.m_Translation;
   m_Rotation     = inputTransform.m_Rotation;
-  m_TimeStamp    = inputTransform.m_TimeStamp;
 }
 
 
@@ -48,7 +44,7 @@ Transform
 
 Transform 
 Transform
-::TransformCompose( Transform leftTransform, Transform rightTransform)
+::TransformCompose( Transform leftTransform, Transform rightTransform )
 {
   VersorType rotation;
   VectorType translation;
@@ -63,7 +59,8 @@ Transform
   translation += leftTransform.GetTranslation();
 
   // Add the error value together
-  ErrorType  error = leftTransform.GetError() + rightTransform.GetError();
+  TransformBase::ErrorType  error = leftTransform.GetError() + 
+                                    rightTransform.GetError();
 
   Transform transform;
   transform.SetTranslationAndRotation( translation, rotation, error, 0);
@@ -92,8 +89,8 @@ Transform
 ::SetTranslationAndRotation(
           const  VectorType & translation,
           const  VersorType & rotation,
-                 ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration)
+          TransformBase::ErrorType errorValue,
+          TimeStamp::TimePeriodType millisecondsToExpiration)
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
@@ -107,7 +104,7 @@ Transform
 ::SetTranslation(
           const  VectorType & translation,
                  ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration)
+          TimePeriodType millisecondsToExpiration )
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Translation = translation;
@@ -121,7 +118,7 @@ Transform
 ::SetRotation(
           const  VersorType & rotation,
                  ErrorType errorValue,
-          TimePeriodType millisecondsToExpiration)
+          TimePeriodType millisecondsToExpiration )
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
   m_Rotation = rotation;
@@ -129,36 +126,6 @@ Transform
   m_Translation.Fill( 0.0 );
 }
 
-
-Transform::TimePeriodType 
-Transform
-::GetStartTime() const
-{
-  return m_TimeStamp.GetStartTime();
-}
-
-
-Transform::TimePeriodType 
-Transform
-::GetExpirationTime() const
-{
-  return m_TimeStamp.GetExpirationTime();
-}
-
-
-bool
-Transform
-::IsValidAtTime( TimePeriodType timeToCheckInMilliseconds ) const
-{
-  return m_TimeStamp.IsValidAtTime( timeToCheckInMilliseconds );
-}
-
-bool
-Transform
-::IsValidNow() const
-{
-  return m_TimeStamp.IsValidNow();
-}
 
 void 
 Transform
@@ -182,6 +149,28 @@ Transform
     }
 }
 
+void 
+Transform
+::ImportTransform( ::vtkMatrix4x4 & inmatrix )
+{
+  igstk::Transform::VersorType::MatrixType matrix = m_Rotation.GetMatrix();
+ 
+  for(unsigned int i=0; i<3; i++ )
+    {
+    for(unsigned int j=0; j<3; j++ )
+      {
+      matrix.GetVnlMatrix().put(i,j,inmatrix.GetElement(i,j));   
+      }
+    }
+
+  m_Rotation.Set( matrix );
+
+  m_Translation[0] = inmatrix.GetElement(0,3);
+  m_Translation[1] = inmatrix.GetElement(1,3);
+  m_Translation[2] = inmatrix.GetElement(2,3);
+}
+
+
 bool 
 Transform
 ::IsNumericallyEquivalent( const Transform& inputTransform, double tol ) const
@@ -190,6 +179,7 @@ Transform
   bool isEquivalent = shouldBeIdentity.IsIdentity( tol );
   return isEquivalent;
 }
+
 
 bool 
 Transform
@@ -265,7 +255,7 @@ Transform
 
 void 
 Transform
-::Print(std::ostream& os, itk::Indent indent) const
+::Print( std::ostream& os, itk::Indent indent ) const
 {
   this->PrintHeader( os, indent ); 
   this->PrintSelf( os, indent.GetNextIndent() );
@@ -278,7 +268,7 @@ Transform
  */
 void 
 Transform
-::PrintHeader(std::ostream& os, itk::Indent indent) const
+::PrintHeader( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "Transform" << " (" << this << ")\n";
 }
@@ -289,8 +279,8 @@ Transform
  */
 void 
 Transform
-::PrintTrailer(std::ostream& itkNotUsed(os), 
-               itk::Indent itkNotUsed(indent)) const
+::PrintTrailer( std::ostream& itkNotUsed(os), 
+                itk::Indent itkNotUsed(indent) ) const
 {
 }
 
@@ -301,7 +291,7 @@ Transform
  * PrintSelf method that all objects should define, if they have anything
  * interesting to print out.
  */
-std::ostream& operator<<(std::ostream& os, const Transform& o)
+std::ostream& operator<<( std::ostream& os, const Transform& o )
 {
   o.Print(os, 0);
   return os;

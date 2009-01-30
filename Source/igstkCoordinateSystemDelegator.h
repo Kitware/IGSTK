@@ -21,6 +21,7 @@
 #include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
+#include "igstkCoordinateSystemSetTransformResult.h"
 
 namespace igstk
 {
@@ -145,6 +146,11 @@ public:
   void SetName( const std::string& name );
   const char* GetName() const;
 
+  /** Set/Get the type of the coordinate system. */
+  void SetType( const char* type );
+  void SetType( const std::string& type );
+  const char* GetType() const;
+  
 protected:
   CoordinateSystemDelegator();
   ~CoordinateSystemDelegator();
