@@ -1,0 +1,164 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class NeedleBiopsyGUI {open : {public igstk::Object}
+} {
+  Function {NeedleBiopsyGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK: Needle Biopsy Demo Application}
+      callback {Quit();}
+      xywh {466 94 930 690} type Double box PLASTIC_UP_BOX resizable
+      code0 {\#include "igstkFLTKWidget.h"} visible
+    } {
+      Fl_Group ControlGroup {open
+        xywh {0 0 165 690} box DOWN_BOX
+      } {
+        Fl_Group {} {open
+          xywh {20 35 125 135} box BORDER_BOX labeltype NO_LABEL align 16
+        } {
+          Fl_Button {} {
+            label Load
+            callback {RequestLoadImage();}
+            xywh {45 56 64 20} align 16
+          }
+          Fl_Choice TPlanPointList {
+            callback {ChangeSelectedTPlanPoint();} open
+            xywh {34 108 100 20} down_box BORDER_BOX align 2
+          } {}
+        }
+        Fl_Group {} {
+          label {@2->} open selected
+          xywh {20 218 130 180} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+        } {
+          Fl_Menu_Button ConnectToTrackerBtn {
+            label Connect
+            callback {RequestConnectToTracker();} open
+            xywh {45 240 80 20} align 20
+          } {
+            MenuItem {} {
+              label Polaris
+              xywh {0 0 30 20} divider
+            }
+            MenuItem {} {
+              label Aurora
+              xywh {5 5 30 20} divider
+            }
+            MenuItem {} {
+              label Micron
+              xywh {5 5 30 20}
+            }
+          }
+          Fl_Choice TrackerList {open
+            xywh {45 283 80 20} down_box BORDER_BOX labeltype NO_LABEL
+          } {}
+          Fl_Button {} {
+            label Disconnect
+            callback {RequestDisconnetTracker();}
+            xywh {47 355 75 20} align 16
+          }
+        }
+        Fl_Group {} {
+          label {@2->} open
+          xywh {20 454 130 135} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+        } {
+          Fl_Choice TrackerToolList {
+            label Tool
+            callback {ChangeActiveTrackerTool();} open
+            xywh {48 546 75 20} down_box BORDER_BOX align 1
+          } {}
+          Fl_Light_Button TrackingBtn {
+            label Tracking
+            callback {if(o->value())
+{
+  RequestStartTracking();
+}
+else
+{
+  RequestStopTracking();
+}}
+            xywh {45 475 76 20}
+          }
+        }
+        Fl_Box {} {
+          image {IGSTK.jpg} xywh {0 614 165 76} align 18
+        }
+      }
+      Fl_Group ViewerGroup {
+        xywh {165 0 766 690} box DOWN_BOX
+        code0 {\#include "igstkQuadrantViews.h"}
+        class {igstk::QuadrantViews}
+      } {}
+    }
+    code {mainWindow->show();
+hasQuitted = false;} {}
+    Fl_Window RegistrationWindow {
+      label Registration open
+      xywh {547 306 225 138} type Double visible
+    } {
+      Fl_Button {} {
+        label {Touch fiducial and click here}
+        callback {SetTrackerFiducialPoint();}
+        xywh {17 53 199 40} align 16
+      }
+      Fl_Button {} {
+        label Registration
+        callback {RequestRegistration();
+RegistrationWindow->hide();}
+        xywh {120 110 95 25} align 16
+      }
+      Fl_Choice FiducialNumber {
+        label {Fiducial::}
+        callback {int n = FiducialNumber->value();
+TPlanPointList->value(n+3);
+ChangeSelectedTPlanPoint();} open
+        xywh {98 10 65 25} down_box BORDER_BOX
+      } {}
+    }
+  }
+  Function {~NeedleBiopsyGUI()} {open return_type virtual
+  } {}
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {int i = fl_choice("Are you sure you want to quit?", NULL,"Yes","No"); 
+if ( i == 1 )
+  {
+  mainWindow->hide();
+  this->hasQuitted = true;
+  }
+else
+  {
+  return;
+  }} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {RequestLoadImage()} {return_type {virtual int}
+  } {
+    code {return 0;} {}
+  }
+  Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
+  } {}
+  Function {RequestConnectToTracker()} {open return_type {virtual void}
+  } {}
+  Function {RequestDisconnetTracker()} {open return_type {virtual void}
+  } {}
+  Function {ChangeActiveTrackerTool()} {open return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {open return_type {virtual void}
+  } {}
+  Function {RequestStopTracking()} {open return_type {virtual void}
+  } {}
+  Function {SetTrackerFiducialPoint()} {open return_type {virtual void}
+  } {}
+  Function {RequestRegistration()} {open return_type {virtual void}
+  } {}
+} 
