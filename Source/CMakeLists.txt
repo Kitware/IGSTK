@@ -95,7 +95,16 @@ SET(IGSTK_HEADS
   igstkSimulatedTracker.h
   igstkNDITracker.h
 
+  igstkAffineTransform.h
+  igstkPerspectiveTransform.h  
+
   igstkTransformObserver.h
+
+
+# Ascension tracker support
+  igstkAscensionCommandInterpreter.h
+  igstkAscensionTracker.h
+  igstkAscensionTrackerTool.h
 
 )
 
@@ -209,7 +218,13 @@ SET(IGSTK_SRCS
   igstkSimulatedTracker.cxx
   igstkNDITracker.cxx
 
+  igstkAffineTransform.cxx
+  igstkPerspectiveTransform.cxx
 
+# Ascension tracker support
+  igstkAscensionCommandInterpreter.cxx
+  igstkAscensionTracker.cxx
+  igstkAscensionTrackerTool.cxx
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -305,11 +320,6 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 # The header files
 SET(IGSTKSandbox_HEADS
 
-# Ascension tracker support
-  igstkAscensionCommandInterpreter.h
-  igstkAscensionTracker.h
-  igstkAscensionTrackerTool.h
-
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.h
   igstkToolProjectionSpatialObject.h
@@ -327,9 +337,6 @@ SET(IGSTKSandbox_HEADS
   igstkImager.h
   igstkImagerTool.h
   
-  igstkAffineTransform.h
-  igstkPerspectiveTransform.h
-
   igstkToolCalibrationReader.h
   igstkToolCalibration.h
   igstkPivotCalibrationReader.h
@@ -429,11 +436,7 @@ ENDIF(IGSTKSandbox_USE_vtkKWImage)
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
-# Ascension tracker support
-  igstkAscensionCommandInterpreter.cxx
-  igstkAscensionTracker.cxx
-  igstkAscensionTrackerTool.cxx
- 
+
 # Reslicing component support
   igstkReslicerPlaneSpatialObject.cxx
 
@@ -451,9 +454,6 @@ SET(IGSTKSandbox_SRCS
   igstkImager.cxx
   igstkImagerTool.cxx
   
-  igstkAffineTransform.cxx
-  igstkPerspectiveTransform.cxx
-
   igstkToolCalibration.cxx
   igstkToolCalibrationReader.txx
   igstkPivotCalibrationReader.cxx

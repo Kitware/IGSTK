@@ -38,14 +38,9 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
- REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
+  REGISTER_TEST(igstkPrincipalAxisCalibrationTest);
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
-
-  REGISTER_TEST(igstkAffineTransformTest);
-  REGISTER_TEST(igstkPerspectiveTransformTest);
-
-  REGISTER_TEST(igstkAscensionTrackerTest);
 
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);

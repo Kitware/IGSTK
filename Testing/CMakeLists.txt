@@ -24,7 +24,7 @@ SET( IGSTKSandbox_TEST_POLARIS_PORT_NUMBER 0 CACHE STRING
 OPTION(IGSTKSandbox_TEST_LOOPBACK_ATTACHED "Serial Loopback is attached" OFF)
 SET( IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
-OPTION(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED "Serial Loopback is attached" OFF)
+OPTION(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED "FlockOfBird is attached" OFF)
 SET( IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 SET(IGSTK_DATA_ROOT ${IGSTK_SOURCE_DIR}/Testing/Data)
@@ -94,8 +94,6 @@ SET(SandboxTests_SRCS
 #  igstkFlockOfBirdsCommandInterpreterTest.cxx
 #  igstkFlockOfBirdsCommandInterpreterFBBTest.cxx
 
-  igstkAscensionTrackerTest.cxx
-
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
   igstkPivotCalibrationAlgorithmTest.cxx
@@ -115,8 +113,6 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.cxx
 
   igstkReslicerPlaneSpatialObjectTest.cxx
-  igstkAffineTransformTest.cxx
-  igstkPerspectiveTransformTest.cxx
 
 )
 
@@ -159,9 +155,6 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-
-ADD_TEST( igstkAffineTransformTest  ${IGSTKSandbox_TESTS} igstkAffineTransformTest )
-ADD_TEST( igstkPerspectiveTransformTest  ${IGSTKSandbox_TESTS} igstkPerspectiveTransformTest )
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
@@ -393,15 +386,6 @@ IF(IGSTKSandbox_USE_FLTK)
 #    ${SandboxTests_SRCS}
 #  igstkAscensionTrackerTest.cxx)
 
- IF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
-    ADD_TEST( igstkFlockOfBirdsTrackerTest2
-              ${IGSTKSandbox_TESTS}
-              igstkAscensionTrackerTest
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscensionTestLoggerOutput.txt
-              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
-              )
-  ENDIF(IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED)
-
   SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
                 igstkCrossHairSpatialObjectTest.cxx)
 
@@ -514,5 +498,7 @@ IGSTKTesting(igstkLatestTests
              IGSTKSandbox_USE_Qt
              IGSTKSandbox_USE_MicronTracker
              IGSTKSandbox_USE_KWSTYLE
+             IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED
+             ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
              )
 
