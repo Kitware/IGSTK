@@ -63,6 +63,7 @@ SET(IGSTK_HEADS
   igstkStateMachineState.h
   igstkTimeStamp.h
   igstkTransform.h
+  igstkTransformBase.h
   igstkToken.h
   igstkTracker.h
   igstkTrackerTool.h
@@ -87,6 +88,7 @@ SET(IGSTK_HEADS
   igstkCoordinateSystemTransformToResult.h
   igstkCoordinateSystemTransformToErrorResult.h
   igstkCoordinateSystemInterfaceMacros.h
+  igstkCoordinateSystemSetTransformResult.h
 
   igstkCircularSimulatedTracker.h
   igstkSimulatedTrackerTool.h
@@ -181,6 +183,7 @@ SET(IGSTK_SRCS
   igstkTracker.cxx
   igstkTrackerTool.cxx
   igstkTransform.cxx
+  igstkTransformBase.cxx
   igstkTubeObject.cxx
   igstkTubeObjectRepresentation.cxx
   igstkUltrasoundProbeObject.cxx
@@ -199,6 +202,7 @@ SET(IGSTK_SRCS
   igstkCoordinateSystemDelegator.cxx
   igstkCoordinateSystemTransformToResult.cxx
   igstkCoordinateSystemTransformToErrorResult.cxx
+  igstkCoordinateSystemSetTransformResult.cxx
 
   igstkCircularSimulatedTracker.cxx
   igstkSimulatedTrackerTool.cxx
@@ -323,7 +327,6 @@ SET(IGSTKSandbox_HEADS
   igstkImager.h
   igstkImagerTool.h
   
-  igstkTransformBase.h
   igstkAffineTransform.h
   igstkPerspectiveTransform.h
 
@@ -356,7 +359,6 @@ SET(IGSTKSandbox_HEADS
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
   
-  igstkCoordinateSystemSetTransformResult.h
 )
 
 IF(IGSTK_USE_SceneGraphVisualization)
@@ -449,7 +451,6 @@ SET(IGSTKSandbox_SRCS
   igstkImager.cxx
   igstkImagerTool.cxx
   
-  igstkTransformBase.cxx
   igstkAffineTransform.cxx
   igstkPerspectiveTransform.cxx
 
@@ -483,7 +484,6 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
   
-  igstkCoordinateSystemSetTransformResult.cxx
 )
 
 IF(IGSTK_USE_SceneGraphVisualization)
