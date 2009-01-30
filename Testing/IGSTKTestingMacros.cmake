@@ -186,6 +186,10 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
        ${IGSTK_DATA_ROOT}/Input/E000192)          
   ADD_TEST( igstkDICOMImageReaderErrorsTest ${IGSTK_TESTS} igstkDICOMImageReaderErrorsTest 
        ${IGSTK_DATA_ROOT}/Input/E000192Mod ${IGSTK_DICOM_TEST_OUTPUT_DIR})          
+  ADD_TEST( igstkReslicerPlaneSpatialObjectTest ${IGSTK_TESTS} 
+          igstkReslicerPlaneSpatialObjectTest
+          ${IGSTK_DATA_ROOT}/Input/E000192
+        )
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
@@ -248,7 +252,7 @@ ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
 
 IF(IGSTK_TEST_FLOCKOFBIRD_ATTACHED)
     ADD_TEST( igstkFlockOfBirdsTrackerTest2
-              ${IGSTKSandbox_TESTS}
+              ${IGSTK_TESTS}
               igstkAscensionTrackerTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkAscensionTestLoggerOutput.txt
               ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
@@ -462,9 +466,73 @@ IF(${IGSTK_USE_FLTK})
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot1.png
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkFLTKWidgetTest2Screenshot2.png
               )
-
-            
     ADD_TEST( igstkMouseTrackerToolTest ${IGSTK_TESTS} igstkMouseTrackerToolTest)
+
+
+ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
+           ${IGSTK_TESTS}
+           --compare
+           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceObjectRepresentationFltkTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+
+ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
+           ${IGSTK_TESTS}
+           --compare
+           ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceScreenShot2.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceObjectRepresentationFltkTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png)
+
+
+  ADD_TEST( igstkImageResliceObjectRepresentationFltkTest3
+      ${IGSTK_TESTS}
+           --compare
+           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceObjectRepresentationFltkTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+         )
+
+  ADD_TEST( igstkCrossHairSpatialObjectTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkCrossHairSpatialObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
+ 
+  ADD_TEST( igstkToolProjectionSpatialObjectTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkToolProjectionSpatialObjectTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
+ 
+
+    
 ENDIF(${IGSTK_USE_FLTK})
 
 IF(${IGSTK_USE_MicronTracker})
@@ -503,6 +571,37 @@ IF(${IGSTK_USE_Qt})
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot.png
               ${IGSTK_DATA_ROOT}/Input/E000192Excerpt )
+
+    ADD_TEST( igstkImageResliceObjectRepresentationQtTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceObjectRepresentationQtTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+
+    ADD_TEST( igstkImageResliceObjectRepresentationQtTest2
+              ${IGSTK_TESTS}
+              igstkImageResliceObjectRepresentationQtTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+         )
+
+    ADD_TEST( igstkImageResliceObjectRepresentationQtTest3
+              ${IGSTK_TESTS}
+              --compare
+            ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkImageResliceObjectRepresentationQtTest3
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
+ 
 ENDIF(${IGSTK_USE_Qt})
 
 
@@ -554,6 +653,8 @@ SET(BasicTests_SRCS
 
   igstkAffineTransformTest.cxx
   igstkPerspectiveTransformTest.cxx
+
+  igstkReslicerPlaneSpatialObjectTest.cxx
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
@@ -654,6 +755,13 @@ IF(${IGSTK_USE_FLTK})
       igstkCTImageSpatialObjectReadingAndRepresentationTest2.cxx
       igstkCTImageSpatialObjectRepresentationWindowLevelTest.cxx
       igstkImageSpatialObjectRepresentationTest.cxx
+
+      igstkImageResliceObjectRepresentationFltkTest.cxx
+      igstkImageResliceObjectRepresentationFltkTest2.cxx
+      igstkImageResliceObjectRepresentationFltkTest3.cxx
+
+      igstkCrossHairSpatialObjectTest.cxx
+      igstkToolProjectionSpatialObjectTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(${IGSTK_USE_FLTK})
@@ -670,7 +778,11 @@ IF(${IGSTK_USE_Qt})
     ${BasicTests_SRCS}
      igstkQTWidgetTest.cxx
      igstkQTWidgetTest2.cxx
-     igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx)
+     igstkCTImageSpatialObjectReadingAndRepresentationTest3.cxx
+     igstkImageResliceObjectRepresentationQtTest.cxx
+     igstkImageResliceObjectRepresentationQtTest2.cxx
+     igstkImageResliceObjectRepresentationQtTest3.cxx
+      )
 ENDIF(${IGSTK_USE_Qt})
  
 

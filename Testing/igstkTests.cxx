@@ -75,6 +75,8 @@ void RegisterTests()
   REGISTER_TEST(igstkAffineTransformTest);
   REGISTER_TEST(igstkPerspectiveTransformTest);
 
+  REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
+
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -146,6 +148,7 @@ void RegisterTests()
   REGISTER_TEST(igstkCircularSimulatedTrackerTest);
   REGISTER_TEST(igstkCoordinateSystemObjectWithViewTest);
 
+
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAnnotation2DTest);
   REGISTER_TEST(igstkAnnotation2DTest2);
@@ -156,14 +159,26 @@ void RegisterTests()
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
+
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
+  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif 
 #endif
+
   // Tests depend on Qt
 #ifdef IGSTK_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);
   REGISTER_TEST(igstkQTWidgetTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
+
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest3);
 #endif
+
  
   
 }
