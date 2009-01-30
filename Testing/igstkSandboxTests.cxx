@@ -42,14 +42,6 @@ void RegisterTests()
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
 
-#ifdef IGSTKSandbox_USE_Qt
-  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);
-  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest2);
-  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest3);
-#endif
-
-  REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
-
 #ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
   REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
   REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
@@ -67,11 +59,6 @@ void RegisterTests()
 
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkVascularNetworkReaderTest);
-  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
-  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
-  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
-  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
-  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
 }

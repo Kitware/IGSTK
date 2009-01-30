@@ -112,24 +112,9 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
 
-  igstkReslicerPlaneSpatialObjectTest.cxx
 
 )
 
-IF(IGSTKSandbox_USE_Qt)
-  SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationQtTest.cxx)
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationQtTest2.cxx)
-
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationQtTest3.cxx)
-
-ENDIF(IGSTKSandbox_USE_Qt)
- 
 IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
   SET(SandboxTests_SRCS
     ${SandboxTests_SRCS}
@@ -246,101 +231,7 @@ ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 
 ADD_TEST( igstkVascularNetworkObjectTest ${IGSTKSandbox_TESTS} igstkVascularNetworkObjectTest)
 
-IF(IGSTKSandbox_USE_Qt)
- ADD_TEST( igstkImageResliceObjectRepresentationQtTest
-              ${IGSTKSandbox_TESTS}
-              --compare
-${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
-${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkImageResliceObjectRepresentationQtTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
- ADD_TEST( igstkImageResliceObjectRepresentationQtTest2
-              ${IGSTKSandbox_TESTS}
-              igstkImageResliceObjectRepresentationQtTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
-
- ADD_TEST( igstkImageResliceObjectRepresentationQtTest3
-              ${IGSTKSandbox_TESTS}
-              --compare
-${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
-${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkImageResliceObjectRepresentationQtTest3
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
- 
-ENDIF(IGSTKSandbox_USE_Qt)
-
 IF(IGSTKSandbox_USE_FLTK) 
-ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
-           ${IGSTKSandbox_TESTS}
-           --compare
-           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkImageResliceObjectRepresentationFltkTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
-
-ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
-           ${IGSTKSandbox_TESTS}
-           --compare
-           ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkImageResliceScreenShot2.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkImageResliceObjectRepresentationFltkTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png)
-
-
-  ADD_TEST( igstkImageResliceObjectRepresentationFltkTest3
-      ${IGSTKSandbox_TESTS}
-           --compare
-           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkImageResliceObjectRepresentationFltkTest3
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
-         )
-
-  ADD_TEST( igstkCrossHairSpatialObjectTest
-              ${IGSTKSandbox_TESTS}
-              --compare
-              ${IGSTKSandbox_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkCrossHairSpatialObjectTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
- 
-  ADD_TEST( igstkToolProjectionSpatialObjectTest
-              ${IGSTKSandbox_TESTS}
-              --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkToolProjectionSpatialObjectTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
- 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
@@ -371,27 +262,6 @@ IF(IGSTKSandbox_USE_FLTK)
 #  ${IGSTK_DATA_ROOT}/Input/E000192 )
 # END OF FIXME
 
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationFltkTest.cxx)
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationFltkTest2.cxx)
-
- SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-  igstkImageResliceObjectRepresentationFltkTest3.cxx)
-
-# SET(SandboxTests_SRCS
-#    ${SandboxTests_SRCS}
-#  igstkAscensionTrackerTest.cxx)
-
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
-                igstkCrossHairSpatialObjectTest.cxx)
-
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS} 
-                igstkToolProjectionSpatialObjectTest.cxx )
- 
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 

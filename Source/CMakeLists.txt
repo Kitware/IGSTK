@@ -106,6 +106,15 @@ SET(IGSTK_HEADS
   igstkAscensionTracker.h
   igstkAscensionTrackerTool.h
 
+# Reslicing component support
+  igstkReslicerPlaneSpatialObject.h
+
+  igstkToolProjectionSpatialObject.h
+  igstkToolProjectionObjectRepresentation.h
+  igstkMeshResliceObjectRepresentation.h
+  igstkImageResliceObjectRepresentation.h
+  igstkCrossHairSpatialObject.h
+  igstkCrossHairObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -225,6 +234,18 @@ SET(IGSTK_SRCS
   igstkAscensionCommandInterpreter.cxx
   igstkAscensionTracker.cxx
   igstkAscensionTrackerTool.cxx
+
+# Reslicing component support
+  igstkReslicerPlaneSpatialObject.cxx
+
+  igstkToolProjectionSpatialObject.cxx
+  igstkToolProjectionObjectRepresentation.cxx
+  igstkMeshResliceObjectRepresentation.cxx
+  igstkImageResliceObjectRepresentation.txx
+  igstkCrossHairSpatialObject.cxx
+  igstkCrossHairObjectRepresentation.cxx
+
+
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -319,16 +340,6 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
-
-# Reslicing component support
-  igstkReslicerPlaneSpatialObject.h
-  igstkToolProjectionSpatialObject.h
-  igstkToolProjectionObjectRepresentation.h
-  igstkMeshResliceObjectRepresentation.h
-  igstkImageResliceObjectRepresentation.h
-
-  igstkCrossHairSpatialObject.h
-  igstkCrossHairObjectRepresentation.h
 
 # Video grabber support
   igstkVideoFrameSpatialObject.h
@@ -436,16 +447,6 @@ ENDIF(IGSTKSandbox_USE_vtkKWImage)
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
-
-# Reslicing component support
-  igstkReslicerPlaneSpatialObject.cxx
-
-  igstkToolProjectionSpatialObject.cxx
-  igstkToolProjectionObjectRepresentation.cxx
-  igstkMeshResliceObjectRepresentation.cxx
-  igstkImageResliceObjectRepresentation.txx
-  igstkCrossHairSpatialObject.cxx
-  igstkCrossHairObjectRepresentation.cxx
 
 # Video grabber support
   igstkVideoFrameSpatialObject.cxx
