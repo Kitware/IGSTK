@@ -1,7 +1,7 @@
 PROJECT(TrackerConfiguration)
 
 SET(PRECOMPUTED_TRANSFORM_READER_DIR
-   ${IGSTKSandbox_SOURCE_DIR}/Examples/TransformReaders
+   ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
 )
 
 #
@@ -63,5 +63,3 @@ LINK_LIBRARIES (
 
 #ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx ${SRCS} ${HDRS})
 #TARGET_LINK_LIBRARIES(TrackerConfigurationExample ${LINK_LIBRARIES})
-
-
