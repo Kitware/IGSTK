@@ -5,12 +5,11 @@
 # in the CMake list file in the Testing subdirectory.
 # 
 # Optional arguments:
-# TESTING_OUTPUT_DIRECTORY(string): the test result output directory
 # EXECUTABLE_NAME(string): test executable name
 # LIBRARY_NAME(string): library name ( IGSTK or IGSTKSandbox )
 # SANDBOX_BUILD(boolean): differentiate between main CVS or Sandbox build
 # IGSTK_DATA_ROOT(string): IGSTK testing data path
-# TESTING_OUTPUT_DIRECTORY(STRING) : Testing result output directory
+# BINARY_BUILD_DIRECTORY(STRING) : binary build directory
 # IGSTK_TEST_POLARIS_ATTACHED(boolean) : Option for polaris tracker 
 # IGSTK_TEST_POLARIS_PORT_NUMBER(int) : port number used by the polaris tracker
 # IGSTK_TEST_AURORA_ATTACHED(boolean) : Option for polaris tracker 
@@ -27,7 +26,7 @@ MACRO(IGSTKTesting
       LIBRARY_NAME
       SANDBOX_BUILD
       IGSTK_DATA_ROOT 
-      TESTING_OUTPUT_DIRECTORY
+      BINARY_BUILD_DIRECTORY
       IGSTK_TEST_AURORA_ATTACHED
       IGSTK_TEST_AURORA_PORT_NUMBER
       IGSTK_TEST_POLARIS_ATTACHED
@@ -48,7 +47,7 @@ IF(IGSTK_DATA_ROOT)
   SET(BASELINE ${IGSTK_DATA_ROOT}/Baseline)
 ENDIF(IGSTK_DATA_ROOT)
 
-SET(IGSTK_TEST_OUTPUT_DIR "${TESTING_OUTPUT_DIRECTORY}/Testing/Temporary")
+SET(IGSTK_TEST_OUTPUT_DIR "${BINARY_BUILD_DIRECTORY}/Testing/Temporary")
 MAKE_DIRECTORY(${IGSTK_TEST_OUTPUT_DIR})
 
 SET(IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR "${IGSTK_TEST_OUTPUT_DIR}/StateMachineDiagrams")
@@ -68,6 +67,26 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}/Testing
   ${IGSTK_BINARY_DIR}/Testing
   )
+# Configure testing data to used in the example applications
+
+CONFIGURE_FILE("${IGSTK_DATA_ROOT}/Input/TrackerConfiguration/micronConfiguration.xml.in"
+              "${BINARY_BUILD_DIRECTORY}/Data/TrackerConfiguration/micronConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${IGSTK_DATA_ROOT}/Input/TrackerConfiguration/ascensionConfiguration.xml.in"
+              "${BINARY_BUILD_DIRECTORY}/Data/TrackerConfiguration/ascensionConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${IGSTK_DATA_ROOT}/Input/TrackerConfiguration/polarisHybridConfiguration.xml.in"
+              "${BINARY_BUILD_DIRECTORY}/Data/TrackerConfiguration/polarisHybridConfiguration.xml"
+              @ONLY IMMEDIATE)
+
+CONFIGURE_FILE("${IGSTK_DATA_ROOT}/Input/TrackerConfiguration/auroraConfiguration.xml.in"
+              "${BINARY_BUILD_DIRECTORY}/Data/TrackerConfiguration/auroraConfiguration.xml"
+              @ONLY IMMEDIATE)
+CONFIGURE_FILE("${IGSTK_DATA_ROOT}/Input/TrackerConfiguration/vicraConfiguration.xml.in"
+              "${BINARY_BUILD_DIRECTORY}/Data/TrackerConfiguration/vicraConfiguration.xml"
+              @ONLY IMMEDIATE)
+
+
 
 #-----------------------------------------------------------------------------
 # Add testing command
