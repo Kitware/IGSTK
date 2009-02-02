@@ -72,7 +72,12 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectCoordinateSystemTest3);
   REGISTER_TEST(igstkSimulatedTrackerTest);
 
- 
+  REGISTER_TEST(igstkAffineTransformTest);
+  REGISTER_TEST(igstkPerspectiveTransformTest);
+
+  REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
+
+
   // Tests depend on device 
 #ifdef IGSTKSandbox_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -94,6 +99,10 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerToolTest);
 #endif
 
+#ifdef IGSTK_TEST_FLOCKOFBIRD_ATTACHED
+  REGISTER_TEST(igstkAscensionTrackerTest);
+#endif
+ 
 #ifdef IGSTKSandbox_USE_MicronTracker
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
@@ -126,6 +135,7 @@ void RegisterTests()
   REGISTER_TEST(igstkFLTKTextBufferLogOutputTest);
   REGISTER_TEST(igstkFLTKTextLogOutputTest);
   REGISTER_TEST(igstkMeshObjectTest);
+  REGISTER_TEST(igstkMeshObjectTest2);
   REGISTER_TEST(igstkPulseGeneratorTest);
   REGISTER_TEST(igstkTubeObjectTest);
   REGISTER_TEST(igstkMouseTrackerTest);
@@ -149,13 +159,23 @@ void RegisterTests()
   REGISTER_TEST(igstkCTImageSpatialObjectRepresentationWindowLevelTest);
   REGISTER_TEST(igstkImageSpatialObjectRepresentationTest);
   REGISTER_TEST(igstkUltrasoundImageSimulatorTest);
-  REGISTER_TEST(igstkMeshObjectTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
+  REGISTER_TEST(igstkCrossHairSpatialObjectTest);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif 
+
 #endif
   // Tests depend on Qt
 #ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);
   REGISTER_TEST(igstkQTWidgetTest2);
+  REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
+
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);
+  REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest2);
+ 
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
 #endif
  
