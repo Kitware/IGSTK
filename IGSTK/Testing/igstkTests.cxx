@@ -77,6 +77,9 @@ void RegisterTests()
 
   REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
 
+  REGISTER_TEST(igstkReslicerPlaneSpatialObjectTest);
+
+  REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
 
   // Tests depend on device 
 #ifdef IGSTKSandbox_TEST_AURORA_ATTACHED 

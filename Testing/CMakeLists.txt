@@ -96,7 +96,6 @@ SET(SandboxTests_SRCS
 
   igstkGroupObjectTest.cxx
   igstkVesselObjectTest.cxx
-  igstkPivotCalibrationAlgorithmTest.cxx
   igstkDICOMGenericImageReaderTest.cxx
   igstkGenericImageSpatialObjectTest.cxx
   igstkLandmarkUltrasoundCalibrationTest.cxx
@@ -219,7 +218,6 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
 ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
 
-ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTKSandbox_TESTS} igstkPivotCalibrationAlgorithmTest)
 ADD_TEST( igstkPivotCalibrationTest ${IGSTKSandbox_TESTS}
 igstkPivotCalibrationTest ${IGSTK_DATA_ROOT})
 ADD_TEST( igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS}

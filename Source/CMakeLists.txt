@@ -115,6 +115,8 @@ SET(IGSTK_HEADS
   igstkImageResliceObjectRepresentation.h
   igstkCrossHairSpatialObject.h
   igstkCrossHairObjectRepresentation.h
+
+  igstkPivotCalibrationAlgorithm.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -245,7 +247,7 @@ SET(IGSTK_SRCS
   igstkCrossHairSpatialObject.cxx
   igstkCrossHairObjectRepresentation.cxx
 
-
+  igstkPivotCalibrationAlgorithm.cxx
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -362,7 +364,6 @@ SET(IGSTKSandbox_HEADS
 #  igstkObliqueContourMeshObjectRepresentation.h
 #  igstkObliqueImageSpatialObjectRepresentation.h
   igstkPivotCalibrationNew.h
-  igstkPivotCalibrationAlgorithm.h
   igstkPoint3D.h
   igstkQuickTimeGrabber.h
   igstkSocketCommunication.h
@@ -470,7 +471,6 @@ SET(IGSTKSandbox_SRCS
  # igstkObliqueContourMeshObjectRepresentation.cxx
  # igstkObliqueImageSpatialObjectRepresentation.txx
   igstkPivotCalibrationNew.cxx
-  igstkPivotCalibrationAlgorithm.cxx
   igstkPoint3D.cxx
   igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
