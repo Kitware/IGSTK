@@ -17,7 +17,7 @@ IF(IGSTK_USE_FLTK)
     HelloWorld
     OneViewAndTracking
     FourViewsAndTracking
-#    TrackingVolumeViewer 
+    TrackingVolumeViewer 
     NeedleBiopsy
     )
 ENDIF(IGSTK_USE_FLTK)
