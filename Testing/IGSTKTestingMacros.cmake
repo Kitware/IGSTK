@@ -138,6 +138,8 @@ ADD_TEST(igstkPerspectiveTransformTest ${IGSTK_TESTS}
 igstkPerspectiveTransformTest)
 ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
+ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTK_TESTS} igstkPivotCalibrationAlgorithmTest)
+
 #-----------------------------------------------------------------------------
 # Simulation test
 
@@ -674,6 +676,8 @@ SET(BasicTests_SRCS
   igstkPerspectiveTransformTest.cxx
 
   igstkReslicerPlaneSpatialObjectTest.cxx
+
+  igstkPivotCalibrationAlgorithmTest.cxx
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device

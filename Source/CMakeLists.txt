@@ -104,7 +104,7 @@ SET(IGSTK_HEADS
   igstkCrossHairSpatialObject.h
   igstkCrossHairObjectRepresentation.h
 
-
+  igstkPivotCalibrationAlgorithm.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -235,6 +235,7 @@ SET(IGSTK_SRCS
   igstkCrossHairSpatialObject.cxx
   igstkCrossHairObjectRepresentation.cxx
 
+  igstkPivotCalibrationAlgorithm.cxx
 )
 
 IF(IGSTK_USE_FLTK)
