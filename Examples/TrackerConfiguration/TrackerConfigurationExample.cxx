@@ -1,3 +1,25 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    TrackerConfigurationExample.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+#if defined(_MSC_VER)
+//  Warning about: identifier was truncated to '255' characters 
+//  in the debug information (MVC6.0 Debug)
+#pragma warning( disable : 4284 )
+#endif
+
 #include "igstkTrackerConfiguration.h"
 #include "igstkTrackerController.h"
 #include "igstkTrackerConfigurationFileReader.h"
@@ -8,7 +30,7 @@
 #include "igstkMicronConfigurationXMLFileReader.h"
 
 /**
- * Class that observers both read success, 
+ * \class that observers both read success, 
  * igstk::TrackerConfigurationFileReader::ReadSuccessEventand 
  * and read failure,
  * igstk::TrackerConfigurationFileReader::ReadFailureEvent
@@ -29,37 +51,42 @@ protected:
   ~ReadFailSuccessObserver() {}
 public:
   void Execute(itk::Object *caller, const itk::EventObject & event)
-  {
+    {
     const itk::Object * constCaller = caller;
     this->Execute( constCaller, event );
-  }
+    }
   void Execute(const itk::Object *caller, const itk::EventObject & event)
-  {
-  if( dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )
-      m_GotSuccess = true;
-  else if( const igstk::TrackerConfigurationFileReader::ReadFailureEvent *rfe = 
-           dynamic_cast<const igstk::TrackerConfigurationFileReader::ReadFailureEvent *>( &event) )
     {
+    typedef igstk::TrackerConfigurationFileReader::ReadSuccessEvent
+                                                 ReadSuccessEventType;
+
+    typedef igstk::TrackerConfigurationFileReader::ReadFailureEvent
+                                                 ReadFailureEventType;
+    if( dynamic_cast<const ReadSuccessEventType*>( &event) )
+      m_GotSuccess = true;
+    else if( const ReadFailureEventType *rfe = 
+           dynamic_cast<const ReadFailureEventType*>( &event) )
+      {
       m_GotFailure = true;
       m_FailureMessage = rfe->Get();
+      }
     }
-  }
   bool GotSuccess() {return this->m_GotSuccess;}
   bool GotFailure() {return this->m_GotFailure;}
   void Reset() 
-  { 
+    { 
     this->m_GotSuccess = false; 
     this->m_GotFailure = false;
     this->m_FailureMessage.clear();
-  }
+    }
   std::string GetFailureMessage() const
-  {
+    {
     return m_FailureMessage;
-  }
+    }
 private:
   std::string m_FailureMessage;
-  bool m_GotSuccess;
-  bool m_GotFailure;
+  bool        m_GotSuccess;
+  bool        m_GotFailure;
 };
 
 /**
@@ -67,8 +94,8 @@ private:
  * TrackerConfigurationFileReader->RequestGetData() method.
  */
 igstkObserverMacro( TrackerConfiguration, 
-                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent, 
-                   igstk::TrackerConfigurationFileReader::TrackerConfigurationDataType )
+      igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent, 
+      igstk::TrackerConfigurationFileReader::TrackerConfigurationDataType )
 
 /**
  * Observer for the TrackerController->RequestInitialize() failure.
@@ -108,7 +135,7 @@ int main( int argc, char *argv[] )
 
              //I'm assuming I get an integer here, skipping the validation
   switch( atoi( argv[1] ) )
-  {
+    {
     case PolarisVicra:
       trackerCofigurationXMLReader = 
         igstk::PolarisVicraConfigurationXMLFileReader::New();
@@ -134,7 +161,7 @@ int main( int argc, char *argv[] )
       for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
         std::cerr<<"\t"<<i<<" == "<<trackerTypes[i]<<"\n";
       return EXIT_FAILURE;
-  }
+    }
 
              //setting the file name and reader always succeeds so I don't
              //observe the trackerConfigReader for their success events
@@ -145,35 +172,37 @@ int main( int argc, char *argv[] )
                 //there is a third option that the read is invalid, if the
                 //file name or xml reader weren't set
   ReadFailSuccessObserver::Pointer rfso = ReadFailSuccessObserver::New();
-  trackerConfigReader->AddObserver( igstk::TrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    rfso );
-  trackerConfigReader->AddObserver( igstk::TrackerConfigurationFileReader::ReadFailureEvent(),
-                                    rfso );
+  trackerConfigReader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::ReadSuccessEvent(), rfso );
+  trackerConfigReader->AddObserver( 
+    igstk::TrackerConfigurationFileReader::ReadFailureEvent(), rfso );
   trackerConfigReader->RequestRead();
 
   if( rfso->GotFailure() )
-  {
+    {
     std::cerr<<rfso->GetFailureMessage()<<"\n";
     return EXIT_FAILURE;
-  }
+    }
   if( !rfso->GotSuccess() )
-  {
+    {
     std::cerr<<"Reading xml file did not succeed or fail, ";
-    std::cerr<<"invoked in an inappropriate manner (prior to setting file name or xml reader).\n";
+    std::cerr<<"invoked in an inappropriate manner " 
+             <<"(prior to setting file name or xml reader).\n";
     return EXIT_FAILURE;
-  }
-                 //get the configuration data from the reader
-  TrackerConfigurationObserver::Pointer tco = TrackerConfigurationObserver::New();
+    }
+  //get the configuration data from the reader
+  TrackerConfigurationObserver::Pointer tco 
+                            = TrackerConfigurationObserver::New();
   trackerConfigReader->AddObserver( 
     igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(),
     tco );
   trackerConfigReader->RequestGetData();
   
   if( !tco->GotTrackerConfiguration() )
-  {
+    {
     std::cerr<< "Did not get tracker configuration...\n";
     return EXIT_FAILURE;
-  }
+    }
 
   const igstk::TrackerConfiguration *trackerConfiguration = 
     tco->GetTrackerConfiguration();
@@ -184,14 +213,14 @@ int main( int argc, char *argv[] )
   
   InitializeErrorObserver::Pointer ieo = 
     InitializeErrorObserver::New();
-  trackerController->AddObserver( igstk::TrackerController::InitializeErrorEvent(),
-                                  ieo );
+  trackerController->AddObserver( 
+     igstk::TrackerController::InitializeErrorEvent(), ieo );
   trackerController->RequestInitialize( trackerConfiguration );
   if( ieo->GotInitializeError() )
-  {
+    {
     std::cout<<ieo->GetInitializeError()<<"\n";
     return EXIT_FAILURE;
-  }
+    }
 
   trackerController->RequestStartTracking();
 
