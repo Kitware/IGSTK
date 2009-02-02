@@ -139,8 +139,8 @@ private:
   /** A mutex for multithreaded access to the transform buffer */
   itk::MutexLock::Pointer  m_BufferLock;  
 
-//   /** The buffers for holding tool transforms */
-//   TransformType m_TransformBuffer[NumberOfPorts];
+  /** The buffers for holding tool transforms */
+  //TransformType m_TransformBuffer[NumberOfPorts];
 
   /** A buffer to hold tool transforms */
   typedef std::map< std::string, std::vector < double > >

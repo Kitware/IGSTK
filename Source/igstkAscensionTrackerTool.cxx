@@ -29,46 +29,46 @@ namespace igstk
 /** Constructor (initializes Ascension-specific tool values) */
 AscensionTrackerTool::AscensionTrackerTool():m_StateMachine(this)
 {
-    m_TrackerToolConfigured = false;
-    m_PortNumber    = 1;
+  m_TrackerToolConfigured = false;
+  m_PortNumber    = 1;
 
-    // States
-    igstkAddStateMacro( Idle );
-    igstkAddStateMacro( PortNumberSpecified );
+  // States
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( PortNumberSpecified );
 
-    // Set the input descriptors
-    igstkAddInputMacro( ValidPortNumber );
-    igstkAddInputMacro( InValidPortNumber );
+  // Set the input descriptors
+  igstkAddInputMacro( ValidPortNumber );
+  igstkAddInputMacro( InValidPortNumber );
 
 
-    // Add transitions
-    //
-    // Transitions from idle state
-    igstkAddTransitionMacro( Idle,
-        ValidPortNumber,
-        PortNumberSpecified,
-        SetPortNumber );
+  // Add transitions
+  //
+  // Transitions from idle state
+  igstkAddTransitionMacro( Idle,
+      ValidPortNumber,
+      PortNumberSpecified,
+      SetPortNumber );
 
-    igstkAddTransitionMacro( Idle,
-        InValidPortNumber,
-        Idle,
-        ReportInvalidPortNumberSpecified );
+  igstkAddTransitionMacro( Idle,
+      InValidPortNumber,
+      Idle,
+      ReportInvalidPortNumberSpecified );
 
-    // Transitions from MarkerName specified
-    igstkAddTransitionMacro( PortNumberSpecified,
-        ValidPortNumber,
-        PortNumberSpecified,
-        ReportInvalidRequest );
+  // Transitions from MarkerName specified
+  igstkAddTransitionMacro( PortNumberSpecified,
+      ValidPortNumber,
+      PortNumberSpecified,
+      ReportInvalidRequest );
 
-    igstkAddTransitionMacro( PortNumberSpecified,
-        InValidPortNumber,
-        PortNumberSpecified,
-        ReportInvalidRequest );
+  igstkAddTransitionMacro( PortNumberSpecified,
+      InValidPortNumber,
+      PortNumberSpecified,
+      ReportInvalidRequest );
 
-    // Inputs to the state machine
-    igstkSetInitialStateMacro( Idle );
+  // Inputs to the state machine
+  igstkSetInitialStateMacro( Idle );
 
-    m_StateMachine.SetReadyToRun();
+  m_StateMachine.SetReadyToRun();
 }
 
 /** Destructor */
@@ -79,13 +79,13 @@ AscensionTrackerTool::~AscensionTrackerTool()
 /** Request set marker name */
 void AscensionTrackerTool::RequestSetPortNumber( unsigned int portNumber )
 {
-    igstkLogMacro( DEBUG, 
-         "igstk::AscensionTrackerTool::RequestSetPortNumber called ...\n");
-    const unsigned int MAXIMUM_PORT_NUMBER = 4;
-    const unsigned int MINIMUM_PORT_NUMBER = 1;
+  igstkLogMacro( DEBUG, 
+       "igstk::AscensionTrackerTool::RequestSetPortNumber called ...\n");
+  const unsigned int MAXIMUM_PORT_NUMBER = 4;
+  const unsigned int MINIMUM_PORT_NUMBER = 1;
 
   if ( (portNumber > MAXIMUM_PORT_NUMBER) ||
-       (portNumber < MINIMUM_PORT_NUMBER) )
+     (portNumber < MINIMUM_PORT_NUMBER) )
     {
     m_StateMachine.PushInput( m_InValidPortNumberInput );
     m_StateMachine.ProcessInputs();
@@ -101,34 +101,34 @@ void AscensionTrackerTool::RequestSetPortNumber( unsigned int portNumber )
 /** Set valid marker name */ 
 void AscensionTrackerTool::SetPortNumberProcessing( )
 {
-    igstkLogMacro( DEBUG, 
-         "igstk::AscensionTrackerTool::SetPortNumberProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+       "igstk::AscensionTrackerTool::SetPortNumberProcessing called ...\n");
 
-    this->m_PortNumber = m_PortNumberToBeSet;
+  this->m_PortNumber = m_PortNumberToBeSet;
 
-    m_TrackerToolConfigured = true;
+  m_TrackerToolConfigured = true;
 
-    //Set the tracker tool unique identifier to the port number. If a
-    //channel number is specified a unique identifier will be regenerated
-    //using port and channel number information
-    std::stringstream identifierStream;
-    identifierStream << m_PortNumber;
-    this->SetTrackerToolIdentifier( identifierStream.str() );
+  //Set the tracker tool unique identifier to the port number. If a
+  //channel number is specified a unique identifier will be regenerated
+  //using port and channel number information
+  std::stringstream identifierStream;
+  identifierStream << m_PortNumber;
+  this->SetTrackerToolIdentifier( identifierStream.str() );
 }
 
 /** Report Invalid bird name*/ 
 void AscensionTrackerTool::ReportInvalidPortNumberSpecifiedProcessing( )
 {
-    igstkLogMacro( DEBUG, 
-    "igstk::AscensionTrackerTool::ReportInvalidPortNumberSpecifiedProcessing "
-         "called ...\n");
+  igstkLogMacro( DEBUG, 
+  "igstk::AscensionTrackerTool::ReportInvalidPortNumberSpecifiedProcessing "
+       "called ...\n");
 
-    igstkLogMacro( CRITICAL, "Invalid bird name specified ");
+  igstkLogMacro( CRITICAL, "Invalid bird name specified ");
 }
 
 void AscensionTrackerTool::ReportInvalidRequestProcessing()
 {
-   igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
+  igstkLogMacro( WARNING, "ReportInvalidRequestProcessing() called ...\n");
 }
 
 /** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker
@@ -136,19 +136,20 @@ void AscensionTrackerTool::ReportInvalidRequestProcessing()
 bool
 AscensionTrackerTool::CheckIfTrackerToolIsConfigured( ) const
 {
-   igstkLogMacro( DEBUG, 
-          "igstk::AscensionTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
-   return m_TrackerToolConfigured;
+  igstkLogMacro( DEBUG, 
+    "igstk::AscensionTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  return m_TrackerToolConfigured;
 }
 
 /** Print Self function */
-void AscensionTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void AscensionTrackerTool::PrintSelf( 
+  std::ostream& os, itk::Indent indent ) const
 {
-    Superclass::PrintSelf(os, indent);
+  Superclass::PrintSelf(os, indent);
 
-    os << indent << "Port number : "      << m_PortNumber << std::endl;
-    os << indent << "TrackerToolConfigured:"
-       << m_TrackerToolConfigured << std::endl;
+  os << indent << "Port number : "      << m_PortNumber << std::endl;
+  os << indent << "TrackerToolConfigured:"
+     << m_TrackerToolConfigured << std::endl;
 }
 
 }

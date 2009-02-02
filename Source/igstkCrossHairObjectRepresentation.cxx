@@ -87,29 +87,28 @@ CrossHairObjectRepresentation
   this->DeleteActors();
   
   if (m_LineProperty != NULL)
-  {
+    {
     m_LineProperty->Delete();
     m_LineProperty=NULL;
-  }
+    }
 
   if (m_LineSourceZ != NULL)
-  {
+    {
     m_LineSourceZ->Delete();
     m_LineSourceZ=NULL;
-  }
+    }
 
   if (m_LineSourceY != NULL)
-  {
+    {
     m_LineSourceY->Delete();
     m_LineSourceY=NULL;
-  }
+    }
 
   if (m_LineSourceX != NULL)
-  {
+    {
     m_LineSourceX->Delete();
     m_LineSourceX=NULL;
-  }
-
+    }
 }
 
 /** Set the actor´s visibility */
@@ -156,41 +155,39 @@ CrossHairObjectRepresentation
     "igstk::CrossHairObjectRepresentation::VerifyTimeStamp called...\n");
 
   if ( !m_CrossHairSpatialObject->IsToolSpatialObjectSet() )
-  {
+    {
     return true;
-  }
+    }
 
   if ( !m_CrossHairSpatialObject->IsInsideBounds() )
-  {
+    {
     return false;
-  }
+    }
 
   // if a tool spatial object is driving the reslicing, compare the 
   //   tool spatial object transform with the view render time
 
   if( this->GetRenderTimeStamp().GetStartTime() >
       this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime() )
-  {
+    {
+ // fixme
+    double diff = 
+    this->GetRenderTimeStamp().GetStartTime() - 
+    this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
 
-   // fixme
-      double diff = 
-      this->GetRenderTimeStamp().GetStartTime() - 
-      this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
-
-      if (diff > 150 )
+    if (diff > 150 )
       {
-        return false;
+      return false;
       }
-      else
+    else
       {
-        return true;
+      return true;
       }
-  }
-  else
-  {
-  return true;
-  }
-
+    }
+    else
+      {
+      return true;
+      }
 }
 
 /** Request to Set the CrossHairSpatial Object */
@@ -226,7 +223,8 @@ CrossHairObjectRepresentation
 {
   m_CrossHairSpatialObject = m_CrossHairSpatialObjectToAdd;
 
-  m_CrossHairSpatialObject->AddObserver( PointEvent(), m_CrossHairPositionObserver );
+  m_CrossHairSpatialObject->AddObserver( PointEvent(),
+                                         m_CrossHairPositionObserver );
 
   this->RequestSetSpatialObject( m_CrossHairSpatialObject );
 
@@ -254,7 +252,8 @@ void
 CrossHairObjectRepresentation
 ::UpdateRepresentationProcessing()
 {
-  igstkLogMacro( DEBUG, "CrossHairObjectRepresentation::UpdateRepresentationProcessing called ....\n");
+  igstkLogMacro( DEBUG, 
+    "CrossHairObjectRepresentation::UpdateRepresentationProcessing called ....\n");
 
   m_CrossHairPositionObserver->Reset();
 
@@ -263,7 +262,8 @@ CrossHairObjectRepresentation
   if( !m_CrossHairPositionObserver->GotCrossHairPosition() )
     return;
 
-  const PointType& position = m_CrossHairPositionObserver->GetCrossHairPosition();
+  const PointType& position = 
+    m_CrossHairPositionObserver->GetCrossHairPosition();
 
   m_LineSourceY->SetPoint1( position[0], m_ImageBounds[2], position[2] );
   m_LineSourceY->SetPoint2( position[0], m_ImageBounds[3], position[2] );

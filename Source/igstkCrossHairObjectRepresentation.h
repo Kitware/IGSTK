@@ -130,7 +130,7 @@ private:
   CrossHairPointerType    m_CrossHairSpatialObjectToAdd;
   CrossHairPointerType    m_CrossHairSpatialObject;
 
-  bool                    m_visibility;
+  bool                    m_Visibility;
 
 };
 

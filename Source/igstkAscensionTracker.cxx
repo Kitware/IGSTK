@@ -101,10 +101,10 @@ AscensionTracker::InternalStartTracking( void )
                 "AscensionTracker::InternalStartTracking called ...\n");
 
   if ( m_NumberOfTools > 1 )
-  {
+    {
     m_CommandInterpreter->FBBReset();
     m_CommandInterpreter->FBBAutoConfig(m_NumberOfTools);
-  }
+    }
 
   m_CommandInterpreter->Run();
 
@@ -159,20 +159,23 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
       // only report tools that are in view
       // this is actually not working because the ascension system is always
       // reporting some data.
-      // todo: decide "tool visibility" in terms of signal fidelity. There should be
-      // some parameter that gives that value. I saw it in the pciCubes application
+      // TODO:
+      // decide "tool visibility" in terms of signal fidelity. There should be
+      // some parameter that gives that value. I saw it in the pciCubes 
+      // application
       if (! this->m_ToolStatusContainer[inputItr->first])
-      {
-          igstkLogMacro( INFO, "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
+        {
+        igstkLogMacro( INFO, 
+              "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " is not in view\n");
 
-          // report to the tracker tool that the tracker is not available
-          this->ReportTrackingToolNotAvailable(
+         // report to the tracker tool that the tracker is not available
+         this->ReportTrackingToolNotAvailable(
               trackerToolContainer[inputItr->first]);
 
-          ++inputItr;
-          continue;
-      }
+         ++inputItr;
+         continue;
+        }
 
       // report to the tracker tool that the tracker is Visible
       this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
@@ -200,7 +203,8 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
       if (normsquared < 1e-6)
       {
           rotation.Set(0.0, 0.0, 0.0, 1.0);
-          igstkLogMacro( WARNING, "igstk::AscensionTracker::InternUpdateStatus: bad "
+          igstkLogMacro( WARNING, 
+              "igstk::AscensionTracker::InternUpdateStatus: bad "
               "quaternion, norm = " << sqrt(normsquared) << "\n");
       }
       else
@@ -241,68 +245,68 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
 AscensionTracker::ResultType 
 AscensionTracker::InternalThreadedUpdateStatus( void )
 {
+  igstkLogMacro( DEBUG, "AscensionTracker::InternalThreadedUpdateStatus "
+          "called ...\n");
 
-    igstkLogMacro( DEBUG, "AscensionTracker::InternalThreadedUpdateStatus "
-          "called ...\n");    
+  // sebastian ordas comments:
+  // cannot fix a 1-2 sec delay present when using more than one bird
+  // I tried everything: point/stream, group mode, different positions
+  // of RS232ToFBB, etc. It's only a delay. It seems we are actually 
+  // not loosing samples (after the delay, the sensor movement is 
+  // reproduced without jumps). It's like the serial port buffer is not flushed
 
-    // sebastian ordas comments:
-    // cannot fix a 1-2 sec delay present when using more than one bird
-    // I tried everything: point/stream, group mode, different positions of RS232ToFBB, etc
-    // It's only a delay. It seems we are actually not loosing samples (after the delay, the sensor
-    // movement is reproduced without jumps). It's like the serial port buffer is not flushed
+  m_BufferLock->Lock();
 
-    m_BufferLock->Lock();
+  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
 
-    typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
-    InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
-    InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
+  while( inputItr != inputEnd )
+  {
+    this->m_ToolStatusContainer[inputItr->first] = 0;
 
-    while( inputItr != inputEnd )
-    {     
-      this->m_ToolStatusContainer[inputItr->first] = 0;
+    if ( inputItr->first == "1" )
+       m_CommandInterpreter->RS232ToFBB(1);
+    if ( inputItr->first == "2" )
+       m_CommandInterpreter->RS232ToFBB(2);
+    if ( inputItr->first == "3" )
+       m_CommandInterpreter->RS232ToFBB(3);
+    if ( inputItr->first == "4" )
+       m_CommandInterpreter->RS232ToFBB(4);
 
-      if ( inputItr->first == "1" )
-         m_CommandInterpreter->RS232ToFBB(1);
-      if ( inputItr->first == "2" )
-         m_CommandInterpreter->RS232ToFBB(2);
-      if ( inputItr->first == "3" )
-         m_CommandInterpreter->RS232ToFBB(3);
-      if ( inputItr->first == "4" )
-         m_CommandInterpreter->RS232ToFBB(4);
+    m_CommandInterpreter->Point();
+    m_CommandInterpreter->Update();
 
-      m_CommandInterpreter->Point();
-      m_CommandInterpreter->Update();
+    float offset[3];
+    m_CommandInterpreter->GetPosition(offset);
 
-      float offset[3];              
-      m_CommandInterpreter->GetPosition(offset);
+    float quaternion[4];
+    m_CommandInterpreter->GetQuaternion(quaternion);
 
-      float quaternion[4];
-      m_CommandInterpreter->GetQuaternion(quaternion);
+    std::vector< double > transform;
 
-      std::vector< double > transform;
+    transform.push_back( offset[0] ); 
+    transform.push_back( offset[1] );
+    transform.push_back( offset[2] );
 
-      transform.push_back( offset[0] ); 
-      transform.push_back( offset[1] );
-      transform.push_back( offset[2] );
+    // fob quaternion q0, q1, q2, and q3 where q0
+    // is the scaler component
+    // itk versor: void Set( T x, T y, T z, T w );
+    transform.push_back( quaternion[0] );
+    transform.push_back( quaternion[3] );
+    transform.push_back( quaternion[2] );
+    transform.push_back( quaternion[1] );
 
-      // fob quaternion q0, q1, q2, and q3 where q0
-      // is the scaler component
-      // itk versor: void Set( T x, T y, T z, T w );
-      transform.push_back( quaternion[0] );
-      transform.push_back( quaternion[3] );
-      transform.push_back( quaternion[2] );
-      transform.push_back( quaternion[1] );
+    
+    this->m_ToolTransformBuffer[ inputItr->first ] = transform;
+    this->m_ToolStatusContainer[ inputItr->first ] = 1;
 
-      
-      this->m_ToolTransformBuffer[ inputItr->first ] = transform;
-      this->m_ToolStatusContainer[ inputItr->first ] = 1;      
+    inputItr++;
+  } 
 
-      inputItr++;
-    } 
+  m_BufferLock->Unlock();
 
-    m_BufferLock->Unlock();
-
-    return SUCCESS;
+  return SUCCESS;
 }
 
 /** Enable all tool ports that are occupied. */
@@ -330,7 +334,8 @@ AscensionTracker
 /** Remove tracker tool from internal containers */
 AscensionTracker::ResultType
 AscensionTracker
-::RemoveTrackerToolFromInternalDataContainers( const TrackerToolType * trackerTool )
+::RemoveTrackerToolFromInternalDataContainers( 
+  const TrackerToolType * trackerTool )
 {
   igstkLogMacro( DEBUG, 
     "AscensionTracker::RemoveTrackerToolFromInternalDataContainers"
@@ -350,33 +355,33 @@ AscensionTracker::ResultType
 AscensionTracker::
 AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
 {
-    igstkLogMacro( DEBUG,
-        "igstk::AscensionTracker::AddTrackerToolToInternalDataContainers "
-        "called ...\n");
+  igstkLogMacro( DEBUG,
+      "igstk::AscensionTracker::AddTrackerToolToInternalDataContainers "
+      "called ...\n");
 
-    if ( trackerTool == NULL )
+  if ( trackerTool == NULL )
     {
-        return FAILURE;
+    return FAILURE;
     }
 
-    const std::string trackerToolIdentifier =
-        trackerTool->GetTrackerToolIdentifier();
+  const std::string trackerToolIdentifier =
+      trackerTool->GetTrackerToolIdentifier();
 
-    std::vector< double > transform;
-    transform.push_back( 1.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
-    transform.push_back( 0.0 );
+  std::vector< double > transform;
+  transform.push_back( 1.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
+  transform.push_back( 0.0 );
 
-    this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
-    this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
+  this->m_ToolTransformBuffer[ trackerToolIdentifier ] = transform;
+  this->m_ToolStatusContainer[ trackerToolIdentifier ] = 0;
 
-    m_NumberOfTools ++;
+  m_NumberOfTools ++;
 
-    return SUCCESS;
+  return SUCCESS;
 }
 
 /** Print Self function */

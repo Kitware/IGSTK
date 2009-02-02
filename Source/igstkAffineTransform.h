@@ -40,8 +40,9 @@ namespace igstk
  * \sa TransformBase
  *
  * */
-  class AffineTransform : public TransformBase
+class AffineTransform : public TransformBase
 {
+
 public:
 
   typedef ::itk::AffineTransform<double, 3>::MatrixType          MatrixType;

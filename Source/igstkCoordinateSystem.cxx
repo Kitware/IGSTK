@@ -436,7 +436,10 @@ void CoordinateSystem
 
   // Create event
   CoordinateSystemTransformToResult payload;
-  payload.Initialize(result, this, m_TargetFromRequestComputeTransformTo, m_LowestCommonAncestor);
+  payload.Initialize(result, 
+                     this,
+                     m_TargetFromRequestComputeTransformTo,
+                     m_LowestCommonAncestor);
 
   CoordinateSystemTransformToEvent event;
   event.Set( payload );
@@ -525,7 +528,9 @@ void CoordinateSystem
   const CoordinateSystem * parentCoordinateSystem =
       Friends::CoordinateSystemHelper::GetCoordinateSystem( m_Parent );
 
-  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem , this, true);
+  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem ,
+                     this,
+                     true);
 
   CoordinateSystemSetTransformEvent event;
   event.Set( payload );
@@ -734,7 +739,9 @@ CoordinateSystem
       Friends::CoordinateSystemHelper::GetCoordinateSystem( m_Parent );
   CoordinateSystemSetTransformResult payload;
 
-  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem , this, false);
+  payload.Initialize(this->m_TransformToParent,parentCoordinateSystem , 
+                     this, 
+                     false);
 
   CoordinateSystemSetTransformEvent event;
   event.Set( payload );

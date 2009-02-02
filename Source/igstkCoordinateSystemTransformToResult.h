@@ -63,7 +63,8 @@ public:
                   const CoordinateSystem* destination,
           const CoordinateSystem* commonAncestor);
 
-  /** Sets the transform, source, and destination coordinate systems. Overloaded Method.*/
+  /** Sets the transform, source, and destination coordinate systems.
+    * Overloaded Method.*/
   void Initialize(const Transform& transform, 
                   const CoordinateSystem* source,
                   const CoordinateSystem* destination);

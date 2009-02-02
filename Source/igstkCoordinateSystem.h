@@ -202,8 +202,7 @@ private:
    */
   igstkDeclareInputMacro( DetachFromParent               );
   
-  /** Input for updating just transform.
-  */
+  /** Input for updating just transform  */
   igstkDeclareInputMacro( UpdateTransformToParent        );
 
   /** These variables hold the inputs from RequestSetTransformAndParent
