@@ -24,7 +24,7 @@ SET(HDRS
 #All of the header files are one directory up
 #
 INCLUDE_DIRECTORIES(
-..
+.
 )
 
 #
