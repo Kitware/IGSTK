@@ -146,7 +146,7 @@ CrossHairObjectRepresentation
     }
 }
 
-/** Verify time stamp of the attached tool*/
+/** Verify time stamp of the attached tool */
 bool
 CrossHairObjectRepresentation
 ::VerifyTimeStamp( ) const
@@ -165,12 +165,12 @@ CrossHairObjectRepresentation
     }
 
   // if a tool spatial object is driving the reslicing, compare the 
-  //   tool spatial object transform with the view render time
+  // tool spatial object transform with the view render time
 
   if( this->GetRenderTimeStamp().GetStartTime() >
       this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime() )
     {
- // fixme
+    // fixme
     double diff = 
     this->GetRenderTimeStamp().GetStartTime() - 
     this->m_CrossHairSpatialObject->GetToolTransform().GetExpirationTime();
@@ -184,10 +184,10 @@ CrossHairObjectRepresentation
       return true;
       }
     }
-    else
-      {
-      return true;
-      }
+  else
+    {
+    return true;
+    }
 }
 
 /** Request to Set the CrossHairSpatial Object */
@@ -253,7 +253,7 @@ CrossHairObjectRepresentation
 ::UpdateRepresentationProcessing()
 {
   igstkLogMacro( DEBUG, 
-    "CrossHairObjectRepresentation::UpdateRepresentationProcessing called ....\n");
+   "CrossHairObjectRepresentation::UpdateRepresentationProcessing called ..\n");
 
   m_CrossHairPositionObserver->Reset();
 

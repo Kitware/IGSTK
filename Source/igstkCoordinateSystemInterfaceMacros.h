@@ -60,7 +60,7 @@ public: \
     m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
   template < class TParentPointer > \
-  void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent, \
+  void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent,\
                                      TParentPointer parent ) \
     { \
       std::stringstream tempStream; \
@@ -84,11 +84,11 @@ public: \
                           transformToParentWithInternalTransform, parent); \
       }\
     } \
-  void RequestUpdateTransformToParent( const ::igstk::Transform & transformToParent ) \
+  void RequestUpdateTransformToParent( const ::igstk::Transform & transformToParent )\
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \
-      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( transformToParent ); \
+      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( transformToParent );\
       } \
     else \
       { \
@@ -154,7 +154,7 @@ public: \
     m_CoordinateSystemDelegator->RequestDetachFromParent();\
     } \
     template < class TParentPointer > \
-    void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent, \
+    void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent,\
     TParentPointer parent ) \
     { \
     std::stringstream tempStream; \
@@ -178,11 +178,11 @@ public: \
       transformToParentWithInternalTransform, parent); \
       }\
     } \
-    void RequestUpdateTransformToParent( const ::igstk::Transform & transformToParent ) \
+    void RequestUpdateTransformToParent( const ::igstk::Transform & transformToParent )\
     { \
     if ( this->IsInternalTransformRequired() == false ) \
       { \
-      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( transformToParent ); \
+      m_CoordinateSystemDelegator->RequestUpdateTransformToParent( transformToParent );\
       } \
     else \
       { \

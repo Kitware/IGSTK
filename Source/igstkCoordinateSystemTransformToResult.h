@@ -102,7 +102,7 @@ private:
   Transform                        m_Transform;
   const CoordinateSystem       *   m_Source;
   const CoordinateSystem       *   m_Destination;
-  const CoordinateSystem     *   m_CommonAncestor;
+  const CoordinateSystem       *   m_CommonAncestor;
 
 };
 

@@ -50,8 +50,8 @@ public:
   
 public:
 
-  /**Default constructor, results in identity transform with a time stamp that
-     is never valid (start==end==0).*/
+  /** Default constructor, results in identity transform with a time stamp that
+   * is never valid (start==end==0).*/
   AffineTransform();
   AffineTransform( const AffineTransform & t );
   virtual ~AffineTransform();

@@ -31,10 +31,11 @@ namespace igstk
 
 /** \class CrossHairObjectRepresentation
  * 
- * \brief This class provides a visual representation of a CrossHairSpatialObject. 
+ * \brief 
+ *  This class provides a visual representation of a CrossHairSpatialObject. 
  *
- * RequestSetReslicePlaneSpatialObject sets the driving plane onto which the tool´s long axis
- * is projected.
+ * RequestSetReslicePlaneSpatialObject sets the driving plane onto which the 
+ * tool´s long axis is projected.
  *
  * \sa CrossHairSpatialObject
  *

@@ -56,42 +56,62 @@ CrossHairSpatialObject::CrossHairSpatialObject():m_StateMachine(this)
   // From Initial
 
   igstkAddTransitionMacro( Initial, SetBoundingBoxProviderSpatialObject, 
-                           AttemptingToSetBoundingBoxProviderSpatialObject, AttemptSetBoundingBoxProviderSpatialObject);
+                           AttemptingToSetBoundingBoxProviderSpatialObject,
+                           AttemptSetBoundingBoxProviderSpatialObject);
 
   // From AttemptingToSetBoundingBoxProviderSpatialObject
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, ValidBoundingBoxProviderSpatialObject,
-                           BoundingBoxProviderSpatialObjectSet,  SetBoundingBoxProviderSpatialObject ); 
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, 
+                           ValidBoundingBoxProviderSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet,  
+                           SetBoundingBoxProviderSpatialObject ); 
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, InValidBoundingBoxProviderSpatialObject,
-                           Initial,  ReportInvalidBoundingBoxProviderSpatialObject );
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, 
+                           InValidBoundingBoxProviderSpatialObject,
+                           Initial,  
+                           ReportInvalidBoundingBoxProviderSpatialObject );
 
-  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject, SetCursorPosition, 
-                           AttemptingToSetCursorPosition, AttemptSetCursorPosition);
+  igstkAddTransitionMacro( AttemptingToSetBoundingBoxProviderSpatialObject,
+                           SetCursorPosition, 
+                           AttemptingToSetCursorPosition, 
+                           AttemptSetCursorPosition);
 
   // From ValidBoundingBoxProviderSpatialObjectSet
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, SetCursorPosition,
-                           AttemptingToSetCursorPosition, AttemptSetCursorPosition );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           SetCursorPosition,
+                           AttemptingToSetCursorPosition, 
+                           AttemptSetCursorPosition );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ValidToolSpatialObject,
-                           BoundingBoxProviderSpatialObjectSet, SetToolSpatialObject );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           ValidToolSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet, 
+                           SetToolSpatialObject );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidToolSpatialObject,
-                           BoundingBoxProviderSpatialObjectSet, ReportInvalidToolSpatialObject );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           InValidToolSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet, 
+                           ReportInvalidToolSpatialObject );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, InValidToolSpatialObject,
-                           BoundingBoxProviderSpatialObjectSet, ReportInvalidToolSpatialObject );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           InValidToolSpatialObject,
+                           BoundingBoxProviderSpatialObjectSet,
+                           ReportInvalidToolSpatialObject );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetCrossHairPosition,
-                           BoundingBoxProviderSpatialObjectSet, GetCrossHairPosition );
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           GetCrossHairPosition,
+                           BoundingBoxProviderSpatialObjectSet, 
+                           GetCrossHairPosition );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, GetToolTransformWRTImageCoordinateSystem,
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           GetToolTransformWRTImageCoordinateSystem,
                            AttemptingToGetToolTransformWRTImageCoordinateSystem,
-                                         RequestGetToolTransformWRTImageCoordinateSystem );
+                           RequestGetToolTransformWRTImageCoordinateSystem );
 
-  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, ToolTransformWRTImageCoordinateSystem,
-                           BoundingBoxProviderSpatialObjectSet, ReportInvalidRequest );  
+  igstkAddTransitionMacro( BoundingBoxProviderSpatialObjectSet, 
+                           ToolTransformWRTImageCoordinateSystem,
+                           BoundingBoxProviderSpatialObjectSet, 
+                           ReportInvalidRequest );  
 
   // From AttemptingToSetCursorPosition
 
@@ -99,14 +119,15 @@ CrossHairSpatialObject::CrossHairSpatialObject():m_StateMachine(this)
                            BoundingBoxProviderSpatialObjectSet,  SetCursorPosition ); 
 
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidCursorPosition,
-                           BoundingBoxProviderSpatialObjectSet,  ReportInvalidCursorPosition );
+                           BoundingBoxProviderSpatialObjectSet,  
+                           ReportInvalidCursorPosition );
 
   // From AttemptingToGetToolTransformWRTImageCoordinateSystem
 
   igstkAddTransitionMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem,
-                                            ToolTransformWRTImageCoordinateSystem,
+                           ToolTransformWRTImageCoordinateSystem,
                            BoundingBoxProviderSpatialObjectSet,
-                                            ReceiveToolTransformWRTImageCoordinateSystem );
+                           ReceiveToolTransformWRTImageCoordinateSystem );
 
   igstkSetInitialStateMacro( Initial );
   this->m_StateMachine.SetReadyToRun();
@@ -181,7 +202,7 @@ CrossHairSpatialObject
 ::ReportInvalidToolSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::ReportInvalidToolSpatialObjectProcessing called...\n");
+       ::ReportInvalidToolSpatialObjectProcessing called...\n");
 }
 
 void 
@@ -189,7 +210,7 @@ CrossHairSpatialObject
 ::ReportInvalidBoundingBoxProviderSpatialObjectProcessing( )
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::ReportInvalidBoundingBoxProviderSpatialObjectProcessing called...\n");
+       ::ReportInvalidBoundingBoxProviderSpatialObjectProcessing called...\n");
 }
 
 void 
@@ -197,7 +218,7 @@ CrossHairSpatialObject
 ::ReportInvalidCursorPositionProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::ReportInvalidCursorPositionProcessing called...\n");
+       ::ReportInvalidCursorPositionProcessing called...\n");
 }
 
 void 
@@ -261,7 +282,8 @@ CrossHairSpatialObject
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
                        ::RequestSetBoundingBoxProviderSpatialObject called...\n");
 
-  m_BoundingBoxProviderSpatialObjectToBeSet = const_cast< SpatialObjectType* >(spatialObject);
+  m_BoundingBoxProviderSpatialObjectToBeSet = 
+           const_cast< SpatialObjectType* >(spatialObject);
 
   m_StateMachine.PushInput( m_SetBoundingBoxProviderSpatialObjectInput );
 
@@ -351,7 +373,9 @@ CrossHairSpatialObject
   // get the bounding box from the reference spatial object
   BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
   boundingBoxObserver->Reset();
-  m_BoundingBoxProviderSpatialObject->AddObserver( SpatialObjectType::BoundingBoxEvent(), boundingBoxObserver );
+  m_BoundingBoxProviderSpatialObject->AddObserver( 
+              SpatialObjectType::BoundingBoxEvent(), 
+              boundingBoxObserver );
   m_BoundingBoxProviderSpatialObject->RequestGetBounds();
 
   if( boundingBoxObserver->GotBoundingBox() ) 
@@ -374,7 +398,7 @@ CrossHairSpatialObject
 ::RequestUpdateToolTransformWRTImageCoordinateSystem()
 {
   igstkLogMacro( DEBUG,
-     "igstk::CrossHairSpatialObject::RequestUpdateToolTransformWRTImageCoordinateSystem called ...\n");
+  "igstk::CrossHairSpatialObject::RequestUpdateToolTransformWRTImageCoordinateSystem called ...\n");
   
   igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
   this->m_StateMachine.ProcessInputs();
