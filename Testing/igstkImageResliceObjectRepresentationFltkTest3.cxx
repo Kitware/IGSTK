@@ -245,10 +245,10 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   typedef igstk::MeshObjectRepresentation                MeshRepresentationType;
 
    // setup a mesh representation
-   MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
-   meshRepresentation->RequestSetMeshObject( toolSpatialObject );
-   meshRepresentation->SetOpacity(1);
-   meshRepresentation->SetColor(1, 0, 0);
+   MeshRepresentationType::Pointer toolRepresentation = MeshRepresentationType::New();     
+   toolRepresentation->RequestSetMeshObject( toolSpatialObject );
+   toolRepresentation->SetOpacity(1);
+   toolRepresentation->SetColor(1, 0, 0);
   
   typedef igstk::View2D          View2DType;
   typedef igstk::FLTKWidget      FLTKWidgetType;
@@ -267,7 +267,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
 //  fltkWidget2D->SetLogger( logger );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 20 );
+  view2D->SetRefreshRate( 10 );
 
   form->end();
   // End of the GUI creation
@@ -278,7 +278,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
                                         ImageResliceRepresentationType; 
 
   ImageResliceRepresentationType::Pointer  imageResliceRepresentation = 
-    ImageResliceRepresentationType::New(); 
+  ImageResliceRepresentationType::New(); 
 
   //imageResliceRepresentation->SetLogger( logger );
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
@@ -351,7 +351,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   view2D->RequestAddObject( imageResliceRepresentation );
 
   // add the tool representation to the view
-  view2D->RequestAddObject( meshRepresentation );
+  view2D->RequestAddObject( toolRepresentation );
 
   // add axes representation to the view
   view2D->RequestAddObject( axesRepresentation );
@@ -362,10 +362,15 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   // Start the view
   view2D->RequestStart();
   
-
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
-  //view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
+
+//  initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
 
   // Iteratively change the tool transform to reslice through the image in X direction
   for(unsigned int i=(unsigned int)(imageExtent[0]); i<=(unsigned int)(imageExtent[1]); i++)
@@ -387,14 +392,20 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait(0.5);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
   // Change slice orientation to PlaneOrientationWithXAxesNormal
   std::cout << "PlaneOrientationWithXAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
-  //view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
+
+//  initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
 
   // Iteratively change the tool transform to reslice through the image in Y direction
   for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]); i++)
@@ -415,14 +426,19 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
      
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait(0.5);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
   // Change slice orientation to PlaneOrientationWithYAxesNormal
   std::cout << "PlaneOrientationWithYAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
-//  view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
+
+//  initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
 
   // Iteratively change the tool transform to reslice through the image in Z direction
   for(unsigned int i=(unsigned int)(imageExtent[4]); i<(unsigned int)(imageExtent[5]); i++)
@@ -443,7 +459,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
-      Fl::wait(0.5);
+      Fl::wait(0.01);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
