@@ -315,10 +315,22 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   translation[2] =  data[2];
 
   const double transformUncertainty = 1.0;
-  toolTransform.SetTranslation(
-                          translation,
+
+  rotation.SetIdentity();
+//  rotation.SetRotationAroundZ(0.78);
+//  rotation.SetRotationAroundY(0.78);
+
+  toolTransform.SetTranslationAndRotation(
+                          translation, 
+                          rotation, 
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
+
+  
+  //toolTransform.SetTranslation(
+  //                        translation,
+  //                        transformUncertainty,
+  //                        igstk::TimeStamp::GetLongestPossibleTime() );
 
   // set transform and parent to the tool spatial object
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
@@ -347,9 +359,10 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // set the tool spatial object to the reslicer plane
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  view2D->RequestDetachFromParent();
-  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
-  view2D->SetCameraParallelProjection(true);
+  // important: set the view as child of the reslicer plane here! 
+  //view2D->RequestDetachFromParent();
+  //view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  //view2D->SetCameraParallelProjection(true);
 
   // add the image representation to the view
   view2D->RequestAddObject( imageResliceRepresentation );
@@ -366,6 +379,43 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // Start the view
   view2D->RequestStart();
   
+
+  // do a loop
+
+  std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  view2D->RequestResetCamera();
+
+//  initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  
+  translation[0] = data[0];
+  translation[1] = data[1];
+  translation[2] = data[2];
+
+  // Iteratively change the tool transform to reslice through the image in X direction
+  for(unsigned int i=0; i<=360; i++)
+  {
+      double angle = -3.1416 + 2*3.1416*i/360;
+      
+      rotation.SetRotationAroundY(angle);
+
+      toolTransform.SetTranslationAndRotation(
+                          translation, 
+                          rotation, 
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      QTest::qWait(1);
+      igstk::PulseGenerator::CheckTimeouts();
+  }
 
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
@@ -396,7 +446,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(10);
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -429,7 +479,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
      
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(10);
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -462,7 +512,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
-      QTest::qWait(10);
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
