@@ -14,6 +14,7 @@ SET(SRCS
     igstkTrackerConfiguration.cxx
     igstkAuroraTrackerConfiguration.cxx
     igstkMicronTrackerConfiguration.cxx
+    igstkAscensionTrackerConfiguration.cxx
     igstkPolarisTrackerConfiguration.cxx
     igstkTrackerController.cxx
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
@@ -24,6 +25,7 @@ SET(SRCS
     configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
+    configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
 )
 SET(HDRS
@@ -33,6 +35,7 @@ SET(HDRS
     igstkTrackerConfiguration.h
     igstkAuroraTrackerConfiguration.h
     igstkMicronTrackerConfiguration.h
+    igstkAscensionTrackerConfiguration.h
     igstkPolarisTrackerConfiguration.h
     igstkTrackerController.h
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
@@ -43,6 +46,7 @@ SET(HDRS
     configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.h
     configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
     configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
+    configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
     configurationFileReaders/igstkTrackerConfigurationFileReader.h
 )
 #
@@ -58,8 +62,8 @@ INCLUDE_DIRECTORIES(
 # Link to the following libraries
 #
 LINK_LIBRARIES (
-  IGSTKSandbox
+  IGSTK
 )
 
-#ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx ${SRCS} ${HDRS})
-#TARGET_LINK_LIBRARIES(TrackerConfigurationExample ${LINK_LIBRARIES})
+ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx ${SRCS} ${HDRS})
+TARGET_LINK_LIBRARIES(TrackerConfigurationExample ${LINK_LIBRARIES})
