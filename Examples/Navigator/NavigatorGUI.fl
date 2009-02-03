@@ -1,0 +1,277 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class NavigatorGUI {open : {public igstk::Object}
+} {
+  Function {NavigatorGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK - Navigator Application}
+      callback {Quit();}
+      xywh {4 28 1276 800} type Double box PLASTIC_UP_BOX resizable
+      code0 {\#include "igstkFLTKWidget.h"}
+      code1 {\#include <time.h>} visible
+    } {
+      Fl_Group m_ControlGroup {
+        xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
+      } {
+        Fl_Button m_QuitButton {
+          label Quit
+          callback {Quit();}
+          tooltip {Quit application} xywh {8 756 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Box m_InstitutionBox {
+          image {IGSTK.jpg} xywh {21 18 110 51} color 7 labelsize 23 labelcolor 15
+        }
+        Fl_Box m_TrackingSemaphore {
+          label OFF
+          xywh {8 675 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box m_ReferenceSemaphore {
+          label OFF
+          xywh {8 595 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Reference Status:}
+          xywh {8 558 130 37} labelsize 17
+        }
+        Fl_Box {} {
+          label {Tool Status:}
+          xywh {8 637 130 37} labelsize 17
+        }
+        Fl_Choice m_ViewModeList {
+          label {Viewing Mode}
+          callback {RequestChangeSelectedViewMode();}
+          xywh {8 493 134 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 align 1
+        } {
+          MenuItem {} {
+            label Orthogonal
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Off-Orthogonal}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label Oblique
+            xywh {0 0 30 20}
+          }
+        }
+        Fl_Button m_LoadImageButton {
+          label {Load Image}
+          callback {RequestLoadImage();}
+          tooltip {Load CT data set} xywh {8 87 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Button m_LoadMeshButton {
+          label {Load Mesh}
+          callback {RequestLoadMesh();}
+          tooltip {Load segmentation (.msh)} xywh {8 126 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Choice m_FiducialsPointList {
+          label Fiducials
+          callback {RequestChangeSelectedFiducial();}
+          xywh {8 186 130 24} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 labelsize 13 align 1
+        } {}
+        Fl_Button m_ModifyFiducialsButton {
+          label {Modify Fiducials}
+          callback {RequestToggleSetImageFiducials();}
+          tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {8 239 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Button m_ConfigureTrackerButton {
+          label {Configure Tracker}
+          callback {RequestLoadToolSpatialObject();}
+          tooltip {Configue tracker system} xywh {8 310 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+        Fl_Button m_RegisterButton {
+          label Register
+          callback {RequestStartSetTrackerFiducials();}
+          tooltip {Register tracker system to image} xywh {8 369 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12
+        }
+      }
+      Fl_Group m_ViewerGroup {
+        xywh {151 0 1127 800} box PLASTIC_DOWN_BOX resizable
+        code0 {\#include "NavigatorQuadrantViews.h"}
+        class {igstk::NavigatorQuadrantViews}
+      } {}
+    }
+    code {mainWindow->show();
+
+//mainWindow->fullscreen();
+hasQuitted = false;
+
+// force the control panel to 150
+int x = m_ControlGroup->x();
+int y = m_ControlGroup->y();
+int height = m_ControlGroup->h();
+
+m_ControlGroup->resize(x,y,150,height);} {selected
+    }
+    Fl_Window m_WinProgress {
+      label {SNAP Progress Meter}
+      xywh {464 491 485 70} type Double box BORDER_BOX color 53 modal noborder visible
+    } {
+      Fl_Group {} {
+        label {Working ...} open
+        xywh {0 0 480 25} labelfont 1 labelsize 16 align 16
+      } {}
+      Fl_Group {} {open
+        xywh {10 25 470 40} box PLASTIC_DOWN_BOX
+      } {
+        Fl_Slider m_OutProgressMeter {
+          xywh {20 35 395 20} type {Horz Fill} box PLASTIC_DOWN_BOX selection_color 62 align 16 maximum 100 step 0.1 value 50
+        }
+        Fl_Value_Output m_OutProgressCounter {
+          label {%}
+          xywh {420 35 40 20} color 7 labelsize 12 align 8 maximum 100 step 0.1 value 50 textsize 12
+        }
+      }
+    }
+    Fl_Window m_ConfirmToQuitWindow {
+      label {Shut down system}
+      xywh {170 608 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Are you sure you want to quit?}
+        xywh {40 24 335 51} labelsize 22
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_ConfirmToQuitWindow->hide();
+this->RequestPrepareToQuit();
+this->hasQuitted = true;}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_ConfirmToQuitWindow->hide();
+this->hasQuitted = false;}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+    }
+    Fl_Window m_PatientNameWindow {
+      label {Patient confirmation}
+      xywh {180 248 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Please confirm patient's name}
+        xywh {37 24 335 30} labelsize 22
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {m_PatientNameWindow->hide();
+this->RequestAcceptImageLoad();}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_PatientNameWindow->hide();
+this->RequestCancelImageLoad();}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Output m_PatientNameLabel {
+        label {output:}
+        xywh {38 67 335 23} align 0
+      }
+    }
+    Fl_Window m_AcceptRegistrationWindow {
+      label {Confirm To Proceed}
+      xywh {741 273 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {The RMS registration error is:}
+        xywh {17 19 205 32} labelsize 15
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_AcceptRegistrationWindow->hide();
+this->RequestAcceptRegistration();}
+        xywh {208 111 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label No
+        callback {m_AcceptRegistrationWindow->hide();
+this->RequestRejectRegistration();}
+        xywh {313 111 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Box {} {
+        label {Do you wish to accept this error?}
+        xywh {11 67 405 27} labelsize 22
+      }
+      Fl_Output m_RegistrationErrorLabel {
+        xywh {222 23 173 23} align 0
+      }
+    }
+  }
+  Function {~NavigatorGUI()} {open return_type virtual
+  } {
+    code {delete m_ViewerGroup;} {}
+  }
+  decl {clock_t  m_SplashScreenStartTime;} {}
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {open return_type void
+  } {
+    code {m_ConfirmToQuitWindow->show();
+CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {RequestLoadImage()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadMesh()} {return_type {virtual void}
+  } {}
+  Function {RequestChangeSelectedFiducial()} {return_type {virtual void}
+  } {}
+  Function {RequestInitializeTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestDisconnectTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestTrackerRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestToggleSetImageFiducials()} {return_type {virtual void}
+  } {}
+  Function {RequestResetCameraToImageBounds()} {return_type {virtual void}
+  } {}
+  Function {RequestCancelImageLoad()} {return_type {virtual void}
+  } {}
+  Function {RequestAcceptImageLoad()} {return_type {virtual void}
+  } {}
+  Function {RequestPrepareToQuit()} {return_type {virtual void}
+  } {}
+  Function {RequestConfirmToProceed()} {return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {return_type {virtual void}
+  } {}
+  Function {RequestAcceptRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestRejectRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestChangeSelectedViewMode()} {return_type {virtual void}
+  } {}
+  Function {RequestStartSetTrackerFiducials()} {return_type {virtual void}
+  } {}
+  Function {DisableAll()} {return_type void
+  } {
+    code {m_LoadImageButton->deactivate();
+m_LoadMeshButton->deactivate();
+m_FiducialsPointList->deactivate();
+m_ModifyFiducialsButton->deactivate();
+m_ConfigureTrackerButton->deactivate();
+m_RegisterButton->deactivate();
+m_ViewModeList->deactivate();} {}
+  }
+  Function {RequestLoadToolSpatialObject()} {return_type {virtual void}
+  } {}
+  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {open return_type void
+  } {
+    code {int px = mainWindow->x() + (mainWindow->w() - childWindow->w()) / 2;
+int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
+childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
+  }
+} 

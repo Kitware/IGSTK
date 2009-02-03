@@ -19,6 +19,7 @@ IF(IGSTK_USE_FLTK)
     FourViewsAndTracking
 #    TrackingVolumeViewer 
     NeedleBiopsy
+    Navigator
     )
 ENDIF(IGSTK_USE_FLTK)
 
