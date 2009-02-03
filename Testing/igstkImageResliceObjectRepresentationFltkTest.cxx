@@ -296,7 +296,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
   view2D->RequestDetachFromParent();
-  view2D->RequestSetTransformAndParent( identity, worldReference );
+  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
   view2D->SetCameraParallelProjection(true);
 
   // add the image representation to the view
@@ -307,9 +307,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   std::cout << "Axial view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  view2D->RequestSetOrientation( View2DType::Axial ); 
-  view2D->RequestResetCamera();
-  // yes, twice! fixme
+ // view2D->RequestSetOrientation( View2DType::Axial ); 
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -340,7 +338,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   // Change slice orientation to sagittal
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+//  view2D->RequestSetOrientation( View2DType::Sagittal ); 
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -370,7 +368,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-  view2D->RequestSetOrientation( View2DType::Coronal ); 
+//  view2D->RequestSetOrientation( View2DType::Coronal ); 
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -398,7 +396,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   //Reslice to the center axial slice and take a screenshot.
   //
-  view2D->RequestSetOrientation( View2DType::Axial );
+//  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
 
   index[0] = static_cast<IndexValueType>( 0.5*(imageExtent[0]+imageExtent[1]) );

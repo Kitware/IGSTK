@@ -32,8 +32,6 @@
 #include "igstkEvents.h"
 #include "igstkView2D.h"
 
-#include <vtkMath.h>
-
 namespace ImageResliceObjectRepresentationFltkTest2
 {
 igstkObserverObjectMacro(CTImage,
@@ -50,13 +48,14 @@ igstkObserverMacro( VTKImage, ::igstk::VTKImageModifiedEvent,
 */
 int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
 {
+  std::cout << " igstkImageResliceObjectRepresentationQtTest2: application started " << std::endl;
+
   igstk::RealTimeClock::Initialize();
 
   if( argc < 3 )
     {
-    std::cerr << " Missing arguments: " << argv[0] << "CTImage \t"  \
-              << "ScreenShot file"
-              << std::endl; 
+    std::cerr << " Missing arguments: " << argv[0] << "CTImage " \
+              << "Output image file for a screenshot" << std::endl; 
     return EXIT_FAILURE;
     }
 
@@ -66,9 +65,11 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   // the reslicer plane we want to test.
   typedef igstk::ReslicerPlaneSpatialObject            ReslicerPlaneType;
 
-  // we will use an ImageSpatialObject as the reference spatial object for the ReslicerPlane
+  // we will use an ImageSpatialObject as the bounding box provider for the ReslicerPlane
   typedef igstk::ImageSpatialObject< PixelType, Dimension > 
                                                        ImageSpatialObjectType;
+
+  typedef ImageSpatialObjectType::IndexType::IndexValueType IndexValueType;
 
   typedef igstk::Object::LoggerType   LoggerType;
   typedef itk::StdStreamLogOutput     LogOutputType;
@@ -184,6 +185,166 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   form->end();
   form->show();
 
+typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
+                                        ImageResliceRepresentationType; 
+
+  ImageResliceRepresentationType::Pointer  imageResliceRepresentation = 
+    ImageResliceRepresentationType::New(); 
+
+  //imageResliceRepresentation->SetLogger( logger );
+  imageResliceRepresentation->SetWindowLevel( 1559, -244 );
+  imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
+  
+  // a variable to hold image index
+  ImageSpatialObjectType::IndexType index;
+
+  // a variable to hold world point coords
+  ImageSpatialObjectType::PointType point;
+
+//  initialize the tool transform in the middle of the image
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+  
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+
+  // auxiliar
+  const double *data = NULL;
+
+  data = point.GetVnlVector().data_block();
+
+  const double transformUncertainty = 1.0;
+
+  // Instantiate and use a reslicer plane spatial object
+  typedef igstk::ReslicerPlaneSpatialObject            ReslicerPlaneType;
+
+  ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
+//  reslicerPlaneSpatialObject->SetLogger( logger );
+
+  // select Orthogonal reslicing mode
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+
+  // set Axial orientation type
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  // set bounding box provider spatial object to the reslicer plane object
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
+
+  // set transform and parent to the reslicer plane
+  reslicerPlaneSpatialObject->RequestSetTransformAndParent( identity, worldReference );
+
+  // set the reslicer plane spatial object to the image representation
+  imageResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+
+  view2D->RequestDetachFromParent();
+  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  view2D->SetCameraParallelProjection(true);
+
+  // add the image representation to the view
+  view2D->RequestAddObject( imageResliceRepresentation );
+
+  // Start the view
+  view2D->RequestStart();
+
+  std::cout << "Axial view: " << std::endl;
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+//  view2D->RequestSetOrientation( View2DType::Axial ); 
+  view2D->RequestResetCamera();
+
+  // Iteratively change the tool transform to reslice through the image
+  for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
+  {
+  index[2] = static_cast<IndexValueType>(i);
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  std::cout << data[0] << " " << data[1] << " " << data[2] << " axial slice # " << i << std::endl;
+
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
+
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  // Change slice orientation to sagittal
+  std::cout << "Sagittal view: " << std::endl;
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+//  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+  view2D->RequestResetCamera();
+
+  // Iteratively change the tool transform to reslice through the image
+  for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
+  {
+  index[0] = static_cast<IndexValueType>(i);
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  const double *data = point.GetVnlVector().data_block();
+  std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
+
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
+
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  /* Change slice orientation to coronal */
+  std::cout << "Coronal view: " << std::endl;
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+//  view2D->RequestSetOrientation( View2DType::Coronal ); 
+  view2D->RequestResetCamera();
+
+  // Iteratively change the tool transform to reslice through the image
+  for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
+  {
+  index[1] = static_cast<IndexValueType>(i);
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  const double *data = point.GetVnlVector().data_block();
+  std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
+
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  //Reslice to the center axial slice and take a screenshot.
+  //
+  view2D->RequestStop();
+
+//  view2D->RequestSetOrientation( View2DType::Axial );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+
+  index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
+  index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
+  index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
+
+  view2D->RequestStart();
+  view2D->RequestResetCamera();
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+
+  std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  view2D->RequestSaveScreenShot( argv[2] );
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
+  view2D->RequestStop();
+
+  delete fltkWidget2D;
+  form->hide();
+  delete form;
+
+  if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
+    {
+    std::cout << "Got VTK Logger errors!" << std::endl;
+    std::cout << "[FAILED]" << std::endl;
+    return EXIT_FAILURE;
+    }
+ 
+  std::cout << "[SUCCESS]" << std::endl;
+  return EXIT_SUCCESS;
+
+}
+/*
   typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
                                         ImageRepresentationType;
 
@@ -253,7 +414,6 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to sagittal */
   std::cout << "Sagittal view: " << std::endl;
   view2D->RequestSetOrientation( View2DType::Sagittal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
@@ -284,7 +444,6 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
       }
   view2D->RequestStop();
 
-  /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   view2D->RequestSetOrientation( View2DType::Coronal );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
@@ -354,3 +513,4 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   return EXIT_SUCCESS;
 }
 
+*/
