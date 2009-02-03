@@ -5,12 +5,12 @@ INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration
   ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/configurationFileReaders
-) 
- 
+)
+
 SET(TrackingVolumeViewer_GUI_SRCS
     TrackingVolumeViewerGUI.fl
   )
-  
+
 SET(TrackingVolumeViewer_SRCS
   main.cxx
   TrackingVolumeViewer.h
@@ -74,12 +74,12 @@ ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/configurationFileReaders/igstk
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/igstkMicronTrackerConfiguration.h
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/igstkAscensionTrackerConfiguration.h
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/igstkTrackerController.h
-  ${IGSTK_SOURCE_DIR}/Examples/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
-  ${IGSTK_SOURCE_DIR}/Examples/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
-  ${IGSTK_SOURCE_DIR}/Examples/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h
-  ${IGSTK_SOURCE_DIR}/Examples/CalibrationRegistrationLoading/igstkTransformFileReader.h
+  ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkPrecomputedTransformData.h
+  ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkTransformXMLFileReaderBase.h
+  ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkRigidTransformXMLFileReader.h
+  ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkTransformFileReader.h
   )
-  
+
 IF(TrackingVolumeViewer_USE_MicronTracker)
   SET(TrackingVolumeViewer_SRCS ${TrackingVolumeViewer_SRCS}
   # MicronTracker related classes
