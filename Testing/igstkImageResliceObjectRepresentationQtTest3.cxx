@@ -317,20 +317,12 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   const double transformUncertainty = 1.0;
 
   rotation.SetIdentity();
-//  rotation.SetRotationAroundZ(0.78);
-//  rotation.SetRotationAroundY(0.78);
 
   toolTransform.SetTranslationAndRotation(
                           translation, 
                           rotation, 
                           transformUncertainty,
                           igstk::TimeStamp::GetLongestPossibleTime() );
-
-  
-  //toolTransform.SetTranslation(
-  //                        translation,
-  //                        transformUncertainty,
-  //                        igstk::TimeStamp::GetLongestPossibleTime() );
 
   // set transform and parent to the tool spatial object
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
@@ -359,10 +351,10 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // set the tool spatial object to the reslicer plane
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
-  // important: set the view as child of the reslicer plane here! 
-  //view2D->RequestDetachFromParent();
-  //view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
-  //view2D->SetCameraParallelProjection(true);
+  // important: we do not set the view as child of the reslicer plane yet 
+  view2D->RequestDetachFromParent();
+  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  view2D->SetCameraParallelProjection(true);
 
   // add the image representation to the view
   view2D->RequestAddObject( imageResliceRepresentation );
@@ -381,7 +373,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   
 
   // do a loop
-
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
   view2D->RequestResetCamera();
@@ -398,12 +389,49 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   translation[1] = data[1];
   translation[2] = data[2];
 
-  // Iteratively change the tool transform to reslice through the image in X direction
   for(unsigned int i=0; i<=360; i++)
   {
       double angle = -3.1416 + 2*3.1416*i/360;
       
       rotation.SetRotationAroundY(angle);
+
+      toolTransform.SetTranslationAndRotation(
+                          translation, 
+                          rotation, 
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      QTest::qWait(1);
+      igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  // this loop will not make any change in the reslicing because is along the tool's
+  // long axis
+  for(unsigned int i=0; i<=360; i++)
+  {
+      double angle = -3.1416 + 2*3.1416*i/360;
+      
+      rotation.SetRotationAroundX(angle);
+
+      toolTransform.SetTranslationAndRotation(
+                          translation, 
+                          rotation, 
+                          transformUncertainty,
+                          igstk::TimeStamp::GetLongestPossibleTime() );
+
+      toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+      QTest::qWait(1);
+      igstk::PulseGenerator::CheckTimeouts();
+  }
+
+  for(unsigned int i=0; i<=360; i++)
+  {
+      double angle = -3.1416 + 2*3.1416*i/360;
+      
+      rotation.SetRotationAroundZ(angle);
 
       toolTransform.SetTranslationAndRotation(
                           translation, 
