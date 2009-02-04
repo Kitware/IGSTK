@@ -540,19 +540,6 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
  
-  ADD_TEST( igstkToolProjectionSpatialObjectTest
-              ${IGSTK_TESTS}
-              --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectTest.png                       
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png
-              --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
-              igstkToolProjectionSpatialObjectTest
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectTest.png)
- 
-
     
 ENDIF(${IGSTK_USE_FLTK})
 
@@ -608,8 +595,7 @@ IF(${IGSTK_USE_Qt})
     ADD_TEST( igstkImageResliceObjectRepresentationQtTest2
               ${IGSTK_TESTS}
               igstkImageResliceObjectRepresentationQtTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192 
-         )
+              ${IGSTK_DATA_ROOT}/Input/E000192 )
 
     ADD_TEST( igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_TESTS}
@@ -622,6 +608,18 @@ IF(${IGSTK_USE_Qt})
               igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
+
+  ADD_TEST( igstkToolProjectionSpatialObjectQtTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectQtTest.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkToolProjectionSpatialObjectQtTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest.png)
  
 ENDIF(${IGSTK_USE_Qt})
 
