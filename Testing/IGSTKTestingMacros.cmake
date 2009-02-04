@@ -794,7 +794,6 @@ IF(${IGSTK_USE_FLTK})
       igstkImageResliceObjectRepresentationFltkTest3.cxx
 
       igstkCrossHairSpatialObjectTest.cxx
-      igstkToolProjectionSpatialObjectTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(${IGSTK_USE_FLTK})
@@ -815,7 +814,16 @@ IF(${IGSTK_USE_Qt})
      igstkImageResliceObjectRepresentationQtTest.cxx
      igstkImageResliceObjectRepresentationQtTest2.cxx
      igstkImageResliceObjectRepresentationQtTest3.cxx
-      )
+     )
+
+  IF(IGSTK_DATA_ROOT)
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+     igstkToolProjectionSpatialObjectQtTest.cxx
+     igstkToolProjectionSpatialObjectQtTest2.cxx
+    ) 
+  ENDIF(IGSTK_DATA_ROOT)  
+
 ENDIF(${IGSTK_USE_Qt})
  
 

@@ -166,7 +166,6 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
   REGISTER_TEST(igstkCrossHairSpatialObjectTest);
-  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif 
 #endif
 
@@ -176,9 +175,13 @@ void RegisterTests()
   REGISTER_TEST(igstkQTWidgetTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
 
+#ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest);
   REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest2);
   REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest3);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectQtTest);
+  REGISTER_TEST(igstkToolProjectionSpatialObjectQtTest2);
+#endif 
 #endif
 
  
