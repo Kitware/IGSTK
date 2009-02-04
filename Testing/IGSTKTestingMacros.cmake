@@ -620,6 +620,18 @@ IF(${IGSTK_USE_Qt})
               igstkToolProjectionSpatialObjectQtTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest.png)
+
+  ADD_TEST( igstkToolProjectionSpatialObjectQtTest2
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkToolProjectionSpatialObjectQtTest2.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkToolProjectionSpatialObjectQtTest2
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest2.png)
  
 ENDIF(${IGSTK_USE_Qt})
 
