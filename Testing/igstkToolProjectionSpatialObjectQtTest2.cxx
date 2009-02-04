@@ -47,7 +47,7 @@
 #include "igstkToolProjectionObjectRepresentation.h"
 
 
-namespace ToolProjectionSpatialObjectQtTest
+namespace ToolProjectionSpatialObjectQtTest2
 {
 igstkObserverObjectMacro(CTImage, ::igstk::CTImageReader::ImageModifiedEvent,
                                                 ::igstk::CTImageSpatialObject);
@@ -62,9 +62,9 @@ igstkObserverObjectMacro( MeshObject, ::igstk::MeshReader::MeshModifiedEvent,
 
 /** This test demonstrates how to perform orthogonal reslicing using a tool
  * spatial object ( automatic reslicing ) */
-int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
+int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
 {
-  std::cout << " igstkToolProjectionSpatialObjectQtTest: application started " << std::endl;
+  std::cout << " igstkToolProjectionSpatialObjectQtTest2: application started " << std::endl;
 
   igstk::RealTimeClock::Initialize();
 
@@ -116,7 +116,7 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
   //reader->SetLogger( logger );
 
   //set up CT image observer
-  typedef ToolProjectionSpatialObjectQtTest::CTImageObserver 
+  typedef ToolProjectionSpatialObjectQtTest2::CTImageObserver 
                                                         CTImageObserverType;
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New(); 
   reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(), ctImageObserver);
@@ -143,7 +143,7 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
 
   //Determine the image parameters
   //first access the VTK image data
-  typedef ToolProjectionSpatialObjectQtTest::VTKImageObserver 
+  typedef ToolProjectionSpatialObjectQtTest2::VTKImageObserver 
                                                         VTKImageObserverType;
   
   VTKImageObserverType::Pointer vtkImageObserver = VTKImageObserverType::New();
@@ -218,7 +218,7 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
 
    meshReader->RequestReadObject();
  
-   typedef ToolProjectionSpatialObjectQtTest::MeshObjectObserver 
+   typedef ToolProjectionSpatialObjectQtTest2::MeshObjectObserver 
                                                         MeshObjectObserverType;
 
    MeshObjectObserverType::Pointer meshObserver = MeshObjectObserverType::New();
