@@ -380,7 +380,7 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   view3D->RequestAddObject( toolRepresentation );
 
   // add axes representation to the view
-  view3D->RequestAddObject( axesRepresentation );
+ // view3D->RequestAddObject( axesRepresentation );
 
   // add the tool projection to the view
   view3D->RequestAddObject( toolProjectionRepresentation );
@@ -400,12 +400,25 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   translation[1] = data[1];
   translation[2] = data[2];
 
+  double focalPoint[3];
+  double position[3];
+  const double distanceToFocalPoint = 1000;
+
   // set the camera from a convenient view point
-  view3D->SetCameraViewUp (  0,  0,  1 );
-  view3D->SetCameraParallelProjection( false );
-  //view3D->SetCameraZoomFactor( 0.25 );
-  view3D->SetCameraPosition( translation[0], 0, 0 );
-  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
+
+  for ( unsigned int cc = 0; cc < 3; cc++)
+    {
+    focalPoint[cc] = 0.0;
+    position[cc]   = focalPoint[cc];
+    }
+
+  position[2] -= distanceToFocalPoint;
+  view3D->SetCameraViewUp (     0,  -1,  0 );
+  view3D->SetCameraPosition (   position[0], position[1], position[2] );
+  view3D->SetCameraFocalPoint ( focalPoint[0], focalPoint[1], focalPoint[2] );
+  view3D->SetCameraClippingRange( 0.1, 100000 );
+  view3D->SetCameraParallelProjection( true );
+  view3D->RequestResetCamera();
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -429,11 +442,20 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
 // set the camera from a convenient view point
-  view3D->SetCameraViewUp (  0,  0,  1 );
-  view3D->SetCameraParallelProjection( false );
-  //view3D->SetCameraZoomFactor( 0.25 );
-  view3D->SetCameraPosition( 0, 0, translation[2] );
-  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
+
+  for ( unsigned int cc = 0; cc < 3; cc++)
+    {
+    focalPoint[cc] = 0.0;
+    position[cc]   = focalPoint[cc];
+    }
+
+  position[0] += distanceToFocalPoint;
+  view3D->SetCameraViewUp ( 0,  0,  1 );
+  view3D->SetCameraPosition (   position[0], position[1], position[2] );
+  view3D->SetCameraFocalPoint ( focalPoint[0], focalPoint[1], focalPoint[2] );
+  view3D->SetCameraClippingRange( 0.1, 100000 );
+  view3D->SetCameraParallelProjection( true );
+  view3D->RequestResetCamera();
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -457,11 +479,20 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
   // set the camera from a convenient view point
+
+  for ( unsigned int cc = 0; cc < 3; cc++)
+    {
+    focalPoint[cc] = 0.0;
+    position[cc]   = focalPoint[cc];
+    }
+
+  position[1] -= distanceToFocalPoint;
   view3D->SetCameraViewUp (  0,  0,  1 );
-  view3D->SetCameraParallelProjection( false );
-//  view3D->SetCameraZoomFactor( 0.25 );
-  view3D->SetCameraPosition( 0, 0, translation[2] );
-  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
+  view3D->SetCameraPosition (   position[0], position[1], position[2] );
+  view3D->SetCameraFocalPoint ( focalPoint[0], focalPoint[1], focalPoint[2] );
+  view3D->SetCameraClippingRange( 0.1, 100000 );
+  view3D->SetCameraParallelProjection( true );
+  view3D->RequestResetCamera();
 
   for(unsigned int i=0; i<=360; i++)
   {
