@@ -38,7 +38,7 @@
 #include "igstkEvents.h"
 #include "igstkCylinderObject.h"
 #include "igstkTransform.h"
-#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
@@ -257,11 +257,11 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
    toolRepresentation->SetOpacity(1);
    toolRepresentation->SetColor(1, 0, 0);
   
-  typedef igstk::View2D          View2DType;
+  typedef igstk::View3D          View3DType;
   typedef igstk::QTWidget        QTWidgetType;
 
-  View2DType::Pointer view2D = View2DType::New();
-  //view2D->SetLogger( logger );
+  View3DType::Pointer view3D = View3DType::New();
+  //view3D->SetLogger( logger );
        
   // Create a QT minimal GUI
   QApplication app(argc, argv);
@@ -269,13 +269,13 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   qtMainWindow->setFixedSize(512,512);  
 
   // instantiate QT widget 
-  QTWidgetType * qtWidget2D = new QTWidgetType();
-  qtWidget2D->RequestSetView( view2D );
-  //qtWidget2D->SetLogger( logger );
-  qtMainWindow->setCentralWidget( qtWidget2D );
+  QTWidgetType * qtWidget = new QTWidgetType();
+  qtWidget->RequestSetView( view3D );
+  //qtWidget->SetLogger( logger );
+  qtMainWindow->setCentralWidget( qtWidget );
 
-  view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 20 );
+  view3D->RequestSetTransformAndParent( identity, worldReference );
+  view3D->SetRefreshRate( 20 );
 
   qtMainWindow->show();
 
@@ -320,7 +320,7 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   const double transformUncertainty = 1.0;
 
   rotation.SetIdentity();
-
+      
   toolTransform.SetTranslationAndRotation(
                           translation, 
                           rotation, 
@@ -369,27 +369,24 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   toolProjectionRepresentation->SetColor( 1,1,0 );
 
   // important: we do not set the view as child of the reslicer plane yet 
-  view2D->RequestDetachFromParent();
-  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
-  view2D->SetCameraParallelProjection(true);
+  //view3D->RequestDetachFromParent();
+  //view3D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  //view3D->SetCameraParallelProjection(true);
 
   // add the image representation to the view
-  view2D->RequestAddObject( imageResliceRepresentation );
+  view3D->RequestAddObject( imageResliceRepresentation );
 
   // add the tool representation to the view
- // view2D->RequestAddObject( toolRepresentation );
+  view3D->RequestAddObject( toolRepresentation );
 
   // add axes representation to the view
-  view2D->RequestAddObject( axesRepresentation );
+  view3D->RequestAddObject( axesRepresentation );
 
   // add the tool projection to the view
-  view2D->RequestAddObject( toolProjectionRepresentation );
-
-  // reset camera
-  view2D->RequestResetCamera();
+  view3D->RequestAddObject( toolProjectionRepresentation );
 
   // Start the view
-  view2D->RequestStart();  
+  view3D->RequestStart();  
 
 //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -402,6 +399,13 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   translation[0] = data[0];
   translation[1] = data[1];
   translation[2] = data[2];
+
+  // set the camera from a convenient view point
+  view3D->SetCameraViewUp (  0,  0,  1 );
+  view3D->SetCameraParallelProjection( false );
+  //view3D->SetCameraZoomFactor( 0.25 );
+  view3D->SetCameraPosition( translation[0], 0, 0 );
+  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -424,8 +428,12 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   // select Sagittal reslicing mode
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 
-  // reset camera
-  view2D->RequestResetCamera();
+// set the camera from a convenient view point
+  view3D->SetCameraViewUp (  0,  0,  1 );
+  view3D->SetCameraParallelProjection( false );
+  //view3D->SetCameraZoomFactor( 0.25 );
+  view3D->SetCameraPosition( 0, 0, translation[2] );
+  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -448,8 +456,12 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   // select Coronal reslicing mode
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 
-  // reset camera
-  view2D->RequestResetCamera();
+  // set the camera from a convenient view point
+  view3D->SetCameraViewUp (  0,  0,  1 );
+  view3D->SetCameraParallelProjection( false );
+//  view3D->SetCameraZoomFactor( 0.25 );
+  view3D->SetCameraPosition( 0, 0, translation[2] );
+  view3D->SetCameraFocalPoint( translation[0], translation[1], translation[2] );
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -468,9 +480,6 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
       QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
-
-  // finally, take a screenshot.
-  view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -491,12 +500,12 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );    
 
   std::cout << "Saving snapshot to: " << argv[3] << std::endl;
-  view2D->RequestStop();
-  view2D->RequestSaveScreenShot( argv[3] );
+  view3D->RequestStop();
+  view3D->RequestSaveScreenShot( argv[3] );
 
   // stop the view
-  view2D->RequestStop();
-  delete qtWidget2D;
+  view3D->RequestStop();
+  delete qtWidget;
   qtMainWindow->hide();
   delete qtMainWindow;
 
