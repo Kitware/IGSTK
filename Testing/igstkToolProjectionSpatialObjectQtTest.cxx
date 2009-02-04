@@ -369,24 +369,21 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
   toolProjectionRepresentation->SetColor( 1,1,0 );
 
   // important: we do not set the view as child of the reslicer plane yet 
-  view2D->RequestDetachFromParent();
-  view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
-  view2D->SetCameraParallelProjection(true);
+  //view2D->RequestDetachFromParent();
+  //view2D->RequestSetTransformAndParent( identity, reslicerPlaneSpatialObject );
+  //view2D->SetCameraParallelProjection(true);
 
   // add the image representation to the view
   view2D->RequestAddObject( imageResliceRepresentation );
 
   // add the tool representation to the view
- // view2D->RequestAddObject( toolRepresentation );
+  view2D->RequestAddObject( toolRepresentation );
 
   // add axes representation to the view
-  view2D->RequestAddObject( axesRepresentation );
+  //view2D->RequestAddObject( axesRepresentation );
 
   // add the tool projection to the view
   view2D->RequestAddObject( toolProjectionRepresentation );
-
-  // reset camera
-  view2D->RequestResetCamera();
 
   // Start the view
   view2D->RequestStart();  
@@ -402,6 +399,12 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
   translation[0] = data[0];
   translation[1] = data[1];
   translation[2] = data[2];
+
+  // set orientation type to Axial
+  view2D->RequestSetOrientation( View2DType::Axial );
+
+  // reset camera
+  view2D->RequestResetCamera();
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -423,6 +426,9 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
 
   // select Sagittal reslicing mode
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
+
+  // set orientation type to Sagittal
+  view2D->RequestSetOrientation( View2DType::Sagittal );
 
   // reset camera
   view2D->RequestResetCamera();
@@ -447,6 +453,9 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
 
   // select Coronal reslicing mode
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
+
+  // set orientation type to Sagittal
+  view2D->RequestSetOrientation( View2DType::Coronal );
 
   // reset camera
   view2D->RequestResetCamera();
