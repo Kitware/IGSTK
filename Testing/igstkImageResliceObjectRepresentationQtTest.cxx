@@ -214,7 +214,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   qtMainWindow->setCentralWidget( qtWidget2D );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
-  view2D->SetRefreshRate( 20 );
+  view2D->SetRefreshRate( 40 );
 
   qtMainWindow->show();
   
