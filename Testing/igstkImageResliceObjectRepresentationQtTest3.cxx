@@ -363,10 +363,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   view2D->RequestAddObject( toolRepresentation );
 
   // add axes representation to the view
-  view2D->RequestAddObject( axesRepresentation );
-
-  // reset camera
-  view2D->RequestResetCamera();
+  //view2D->RequestAddObject( axesRepresentation );
 
   // Start the view
   view2D->RequestStart();
@@ -375,6 +372,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // do a loop
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image
@@ -407,6 +405,9 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
       igstk::PulseGenerator::CheckTimeouts();
   }
 
+  view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
+
   // this loop will not make any change in the reslicing because is along the tool's
   // long axis
   for(unsigned int i=0; i<=360; i++)
@@ -426,6 +427,9 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
       QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
+
+  view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   for(unsigned int i=0; i<=360; i++)
   {
@@ -448,6 +452,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -461,7 +466,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       data = point.GetVnlVector().data_block();
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " PlaneOrientationWithZAxesNormal slice # " << i << std::endl;
 
       translation[0] = data[0];
       translation[1] = data[1];
@@ -482,6 +486,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   std::cout << "PlaneOrientationWithXAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -494,7 +499,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
       index[1] = static_cast<IndexValueType>(i);
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       const double *data = point.GetVnlVector().data_block();
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " PlaneOrientationWithXAxesNormal slice # " << i << std::endl;
 
       translation[0] = data[0];
       translation[1] = data[1];
@@ -515,6 +519,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   std::cout << "PlaneOrientationWithYAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -527,7 +532,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
       index[2] = static_cast<IndexValueType>(i);
       imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
       const double *data = point.GetVnlVector().data_block();
-      std::cout << data[0] << " " << data[1] << " " << data[2] << " PlaneOrientationWithYAxesNormal slice # " << i << std::endl;
 
       translation[0] = data[0];
       translation[1] = data[1];
@@ -548,6 +552,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // finally, take a screenshot.
   //
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
 //  initialize the tool transform in the middle of the image

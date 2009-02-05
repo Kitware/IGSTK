@@ -291,9 +291,10 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
 //  view2D->RequestSetOrientation( View2DType::Axial ); 
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
-  for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[4]); i<=(unsigned int)(imageExtent[5]); i++)
   {
   index[2] = static_cast<IndexValueType>(i);
 
@@ -312,9 +313,10 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 //  view2D->RequestSetOrientation( View2DType::Sagittal ); 
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
-  for(unsigned int i=(unsigned int)(imageExtent[1]/2); i<(unsigned int)(3*imageExtent[1]/4); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[0]); i<(unsigned int)(imageExtent[1]); i++)
   {
   index[0] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -332,9 +334,10 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 //  view2D->RequestSetOrientation( View2DType::Coronal ); 
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
-  for(unsigned int i=(unsigned int)(imageExtent[3]/2); i<(unsigned int)(3*imageExtent[3]/4); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[2]); i<(unsigned int)(imageExtent[3]); i++)
   {
   index[1] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
@@ -359,6 +362,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
 
   view2D->RequestStart();
+  view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );

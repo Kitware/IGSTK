@@ -153,6 +153,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   std::cout << "Image spacing: " << "(" << imageSpacing[0] << "," 
                                  << imageSpacing[1] << ","
                                  << imageSpacing[2] << ")" << std::endl;
+
   double imageOrigin[3];
   imageData->GetOrigin( imageOrigin );
   std::cout << "Image origin: " << "(" << imageOrigin[0] << "," 
@@ -308,9 +309,10 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
 //  view2D->RequestSetOrientation( View2DType::Axial ); 
   view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
-  for(unsigned int i=(unsigned int)(imageExtent[5]/2); i<=(unsigned int)(3*imageExtent[5]/4); i++)
+  for(unsigned int i=(unsigned int)(imageExtent[4]); i<=(unsigned int)(imageExtent[5]); i++)
   {
   index[2] = static_cast<IndexValueType>(i);
 
@@ -337,6 +339,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
 //  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+  view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
@@ -365,6 +368,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
 //  view2D->RequestSetOrientation( View2DType::Coronal ); 
+  view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
   // Iteratively change the tool transform to reslice through the image
