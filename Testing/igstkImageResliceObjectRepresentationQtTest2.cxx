@@ -208,7 +208,7 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   typedef igstk::QTWidget        QTWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
-  view2D->SetLogger( logger );
+  //view2D->SetLogger( logger );
        
   // Create a QT minimal GUI
   QApplication app(argc, argv);
