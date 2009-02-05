@@ -583,32 +583,40 @@ IF(${IGSTK_USE_Qt})
     ADD_TEST( igstkImageResliceObjectRepresentationQtTest
               ${IGSTK_TESTS}
               --compare
-              ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+              ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationQtTest.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationQtTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest.png)
 
     ADD_TEST( igstkImageResliceObjectRepresentationQtTest2
               ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationQtTest2.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest2.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationQtTest2
-              ${IGSTK_DATA_ROOT}/Input/E000192 )
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest2.png)
+
 
     ADD_TEST( igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_TESTS}
               --compare
-            ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png                       
-            ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+            ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationQtTest3.png
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest3.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest3.png)
 
   ADD_TEST( igstkToolProjectionSpatialObjectQtTest
               ${IGSTK_TESTS}
