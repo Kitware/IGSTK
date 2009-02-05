@@ -166,7 +166,6 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest2);
   REGISTER_TEST(igstkImageResliceObjectRepresentationFltkTest3);
   REGISTER_TEST(igstkCrossHairSpatialObjectTest);
-  REGISTER_TEST(igstkToolProjectionSpatialObjectTest);
 #endif 
 
 #endif
