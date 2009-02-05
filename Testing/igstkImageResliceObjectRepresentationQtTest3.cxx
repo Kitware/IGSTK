@@ -19,12 +19,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-// QT header files
-#include <QApplication>
-#include <QMainWindow>
-#include <QtTest/QTest>
-
-#include "igstkQTWidget.h"
+#include "igstkFLTKWidget.h"
 
 #include "igstkConfigure.h"
 #include "igstkImageResliceObjectRepresentation.h"
@@ -254,29 +249,31 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
    toolRepresentation->SetOpacity(1);
    toolRepresentation->SetColor(1, 0, 0);
   
-  typedef igstk::View2D          View2DType;
-  typedef igstk::QTWidget        QTWidgetType;
-
+  // Set a 2D View
+  typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
-  //view2D->SetLogger( logger );
-       
-  // Create a QT minimal GUI
-  QApplication app(argc, argv);
-  QMainWindow  * qtMainWindow = new QMainWindow();
-  qtMainWindow->setFixedSize(512,512);  
+//  view2D->SetLogger( logger );
+    
+  view2D->RequestResetCamera();
 
-  // instantiate QT widget 
-  QTWidgetType * qtWidget2D = new QTWidgetType();
-  qtWidget2D->RequestSetView( view2D );
-  //qtWidget2D->SetLogger( logger );
-  qtMainWindow->setCentralWidget( qtWidget2D );
+  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
+
+  typedef igstk::FLTKWidget      FLTKWidgetType;
+
+   // instantiate FLTK widget 
+  FLTKWidgetType * fltkWidget2D = 
+                      new FLTKWidgetType(0,0,512,512,"2D View");
+
+  fltkWidget2D->RequestSetView( view2D );
+//  fltkWidget2D->SetLogger( logger );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetRefreshRate( 20 );
 
-  qtMainWindow->show();
+  form->end();
+  form->show();
 
-  QTest::qWait(10);
+  Fl::wait( 0.01 );
   
   typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
                                         ImageResliceRepresentationType; 
@@ -401,7 +398,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -424,7 +421,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -445,7 +442,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -478,7 +475,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -511,7 +508,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
      
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -544,7 +541,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
-      QTest::qWait(1);
+      Fl::wait( 0.01 );
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -579,9 +576,10 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
   // stop the view
   view2D->RequestStop();
-  delete qtWidget2D;
-  qtMainWindow->hide();
-  delete qtMainWindow;
+  delete fltkWidget2D;
+  form->hide();
+  delete form;
+
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
