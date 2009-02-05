@@ -493,39 +493,39 @@ IF(${IGSTK_USE_FLTK})
 ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
            ${IGSTK_TESTS}
            --compare
-           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png
+           ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationFltkTest.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/Baseline/igstkImageResliceObjectRepresentationFltkTest.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationFltkTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot.png)
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest.png)
 
 ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
            ${IGSTK_TESTS}
            --compare
-           ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceScreenShot2.png
-                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png
+           ${IGSTK_DATA_ROOT}/Baseline//igstkImageResliceObjectRepresentationFltkTest2.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest2.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot2.png)
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest2.png)
 
 
   ADD_TEST( igstkImageResliceObjectRepresentationFltkTest3
       ${IGSTK_TESTS}
            --compare
-           ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot.png
-                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+           ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationFltkTest3.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest3.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationFltkTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
-              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest3.png
          )
 
   ADD_TEST( igstkCrossHairSpatialObjectTest
