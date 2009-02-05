@@ -181,6 +181,7 @@ void RegisterTests()
   REGISTER_TEST(igstkImageResliceObjectRepresentationQtTest3);
   REGISTER_TEST(igstkToolProjectionSpatialObjectQtTest);
   REGISTER_TEST(igstkToolProjectionSpatialObjectQtTest2);
+  REGISTER_TEST(igstkMeshResliceObjectRepresentationQtTest);
 #endif 
 #endif
 

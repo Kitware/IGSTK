@@ -607,6 +607,7 @@ IF(${IGSTK_USE_Qt})
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceScreenShot3.png)
 
   ADD_TEST( igstkToolProjectionSpatialObjectQtTest
@@ -619,6 +620,7 @@ IF(${IGSTK_USE_Qt})
               --toleranceNumberOfPixels 5
               igstkToolProjectionSpatialObjectQtTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
               ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest.png)
 
   ADD_TEST( igstkToolProjectionSpatialObjectQtTest2
@@ -631,8 +633,23 @@ IF(${IGSTK_USE_Qt})
               --toleranceNumberOfPixels 5
               igstkToolProjectionSpatialObjectQtTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
               ${IGSTK_TEST_OUTPUT_DIR}/igstkToolProjectionSpatialObjectQtTest2.png)
  
+  ADD_TEST( igstkMeshResliceObjectRepresentationQtTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkMeshResliceObjectRepresentationQtTest.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshResliceObjectRepresentationQtTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    5
+              --toleranceNumberOfPixels 5
+              igstkMeshResliceObjectRepresentationQtTest
+              ${IGSTK_DATA_ROOT}/Input/TrackerWorkingVolumeMeshes/ascension_mrt_volume.msh 
+              ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshResliceObjectRepresentationQtTest.png)
+
+
 ENDIF(${IGSTK_USE_Qt})
 
 
@@ -821,6 +838,7 @@ IF(${IGSTK_USE_Qt})
       ${BasicTests_SRCS}
      igstkToolProjectionSpatialObjectQtTest.cxx
      igstkToolProjectionSpatialObjectQtTest2.cxx
+     igstkMeshResliceObjectRepresentationQtTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 
