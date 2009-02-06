@@ -19,7 +19,12 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include "igstkFLTKWidget.h"
+// QT header files
+#include <QApplication>
+#include <QMainWindow>
+#include <QtTest/QTest>
+
+#include "igstkQTWidget.h"
 
 #include "igstkConfigure.h"
 #include "igstkImageResliceObjectRepresentation.h"
@@ -249,31 +254,29 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
    toolRepresentation->SetOpacity(1);
    toolRepresentation->SetColor(1, 0, 0);
   
-  // Set a 2D View
-  typedef igstk::View2D  View2DType;
+  typedef igstk::View2D          View2DType;
+  typedef igstk::QTWidget        QTWidgetType;
+
   View2DType::Pointer view2D = View2DType::New();
-//  view2D->SetLogger( logger );
-    
-  view2D->RequestResetCamera();
+  //view2D->SetLogger( logger );
+       
+  // Create a QT minimal GUI
+  QApplication app(argc, argv);
+  QMainWindow  * qtMainWindow = new QMainWindow();
+  qtMainWindow->setFixedSize(512,512);  
 
-  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
-
-  typedef igstk::FLTKWidget      FLTKWidgetType;
-
-   // instantiate FLTK widget 
-  FLTKWidgetType * fltkWidget2D = 
-                      new FLTKWidgetType(0,0,512,512,"2D View");
-
-  fltkWidget2D->RequestSetView( view2D );
-//  fltkWidget2D->SetLogger( logger );
+  // instantiate QT widget 
+  QTWidgetType * qtWidget2D = new QTWidgetType();
+  qtWidget2D->RequestSetView( view2D );
+  //qtWidget2D->SetLogger( logger );
+  qtMainWindow->setCentralWidget( qtWidget2D );
 
   view2D->RequestSetTransformAndParent( identity, worldReference );
   view2D->SetRefreshRate( 20 );
 
-  form->end();
-  form->show();
+  qtMainWindow->show();
 
-  Fl::wait( 0.01 );
+  QTest::qWait(10);
   
   typedef igstk::ImageResliceObjectRepresentation< ImageSpatialObjectType >
                                         ImageResliceRepresentationType; 
@@ -398,7 +401,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -421,7 +424,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -442,7 +445,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -475,7 +478,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -508,7 +511,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
      
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -541,7 +544,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
       toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
-      Fl::wait( 0.01 );
+      QTest::qWait(1);
       igstk::PulseGenerator::CheckTimeouts();
   }
 
@@ -576,10 +579,9 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
   // stop the view
   view2D->RequestStop();
-  delete fltkWidget2D;
-  form->hide();
-  delete form;
-
+  delete qtWidget2D;
+  qtMainWindow->hide();
+  delete qtMainWindow;
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
@@ -592,5 +594,3 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   return EXIT_SUCCESS;
 
 }
-
-
