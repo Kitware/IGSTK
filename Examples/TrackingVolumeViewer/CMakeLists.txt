@@ -2,6 +2,7 @@ PROJECT(TrackingVolumeViewer)
 
 INCLUDE_DIRECTORIES (
   ${IGSTK_BINARY_DIR}
+  ${IGSTK_BINARY_DIR}/Testing
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration
   ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/configurationFileReaders
@@ -80,11 +81,11 @@ ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/configurationFileReaders/igstk
   ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkTransformFileReader.h
   )
 
-IF(TrackingVolumeViewer_USE_MicronTracker)
+IF(IGSTK_USE_MicronTracker)
   SET(TrackingVolumeViewer_SRCS ${TrackingVolumeViewer_SRCS}
   # MicronTracker related classes
   )
-ENDIF(TrackingVolumeViewer_USE_MicronTracker)
+ENDIF(IGSTK_USE_MicronTracker)
 
 INCLUDE_DIRECTORIES(
   ${TrackingVolumeViewer_SOURCE_DIR}
