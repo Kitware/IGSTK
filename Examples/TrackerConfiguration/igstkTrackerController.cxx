@@ -26,7 +26,7 @@
 #include "igstkAuroraTracker.h"
 #include "igstkAscensionTracker.h"
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #endif
 
@@ -1205,7 +1205,7 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AscensionInitialize );
       }
-   #ifdef IGSTKSandbox_USE_MicronTracker
+   #ifdef IGSTK_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
       {
@@ -1852,7 +1852,7 @@ TrackerController::AuroraInitializeProcessing()
 }
 
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 
 MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration )
@@ -1872,7 +1872,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
 
 void TrackerController::MicronInitializeProcessing()
 {
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
                   //create tracker
   igstk::MicronTracker::Pointer tracker = igstk::MicronTracker::New();
   this->m_Tracker = tracker; 

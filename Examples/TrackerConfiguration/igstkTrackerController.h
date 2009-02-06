@@ -18,7 +18,7 @@
 #ifndef __igstkTrackerController_h
 #define __igstkTrackerController_h
 
-#include "igstkConfigure.h"
+#include "igstkSystemInformation.h"
 
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
@@ -39,7 +39,7 @@
 
 #include "igstkSpatialObject.h"
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 #include "igstkMicronTrackerConfiguration.h"
 #include "igstkMicronTrackerTool.h"
 #endif
@@ -261,7 +261,7 @@ private:
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 
   MicronTrackerTool::Pointer InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration );
