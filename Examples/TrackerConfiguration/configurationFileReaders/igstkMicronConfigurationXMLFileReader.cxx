@@ -159,7 +159,7 @@ throw ( FileFormatException )
       new igstk::MicronToolConfiguration();
   
   toolConfig->SetToolName( this->m_CurrentToolName );
-  toolConfig->SetMarkerName( this->m_CurrentToolName );
+  toolConfig->SetMarkerName( this->m_CurrentMarkerName );
   toolConfig->SetCalibrationTransform( this->m_CurrentToolCalibration );  
   if( this->m_CurrentToolIsReference )
     {
