@@ -70,11 +70,11 @@ ${IGSTK_SOURCE_DIR}/Examples/TransformReaders/igstkTransformFileReader.h
 
 )
   
-IF(Navigator_USE_MicronTracker)
+IF(IGSTK_USE_MicronTracker)
   SET(Navigator_SRCS ${Navigator_SRCS}
   # MicronTracker related classes
   )
-ENDIF(Navigator_USE_MicronTracker)
+ENDIF(IGSTK_USE_MicronTracker)
 
 INCLUDE_DIRECTORIES(
   ${Navigator_SOURCE_DIR}
