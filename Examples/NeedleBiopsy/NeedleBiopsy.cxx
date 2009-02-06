@@ -178,6 +178,9 @@ NeedleBiopsy::NeedleBiopsy() : m_LogFile()
 */
 NeedleBiopsy::~NeedleBiopsy()
 {
+  m_TrackerInitializerList.clear();
+  m_TrackerToolList.clear();
+
 }
 
 

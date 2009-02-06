@@ -63,13 +63,13 @@ int TrackerInitializer::RequestInitializeTracker()
     }
   else if (m_TrackerType == TrackerConfiguration::Micron)
     {
-    #ifdef IGSTKSandbox_USE_MicronTracker
+    #ifdef IGSTK_USE_MicronTracker
     return InitializeMicronTracker();
     #else
     m_ErrorMessage = 
-      "Please configure IGSTKSandbox to use MicronTrakcer first\n";
+      "Please configure IGSTK to use MicronTrakcer first\n";
     return 0;
-    #endif /* IGSTKSandbox_USE_MicronTracker */
+    #endif /* IGSTK_USE_MicronTracker */
     
     }
   else
@@ -229,7 +229,7 @@ int TrackerInitializer::InitializeAuroraTracker()
   return 1;
 }
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 // FIXME: Add error events listener
 int TrackerInitializer::InitializeMicronTracker()
 {
@@ -283,7 +283,7 @@ int TrackerInitializer::InitializeMicronTracker()
 
 }
 
-#endif /* IGSTKSandbox_USE_MicronTracker */
+#endif /* IGSTK_USE_MicronTracker */
 
 /** Destructor */
 TrackerInitializer::~TrackerInitializer()

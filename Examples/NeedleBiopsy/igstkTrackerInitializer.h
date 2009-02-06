@@ -17,7 +17,7 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef __igstkTrackerInitializer_h
 #define __igstkTrackerInitializer_h
 
-#include "igstkConfigure.h"
+#include "igstkSystemInformation.h"
 
 #include "igstkTrackerConfiguration.h"
 
@@ -26,10 +26,10 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkAuroraTracker.h"
 #include "igstkAuroraTrackerTool.h"
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
-#endif /* IGSTKSandbox_USE_MicronTracker */
+#endif /* IGSTK_USE_MicronTracker */
 
 namespace igstk
 {
@@ -123,10 +123,10 @@ private:
   int InitializePolarisTracker();
   int InitializeAuroraTracker();
 
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTK_USE_MicronTracker
   MicronTracker::Pointer                m_MicronTracker;
   int InitializeMicronTracker();
-#endif /* IGSTKSandbox_USE_MicronTracker */
+#endif /* IGSTK_USE_MicronTracker */
   
 
   TrackerConfiguration * m_TrackerConfiguration;

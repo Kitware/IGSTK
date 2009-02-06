@@ -23,13 +23,15 @@ SET(NeedleBiopsy_SRCS
   igstkTreatmentPlan.cxx
   igstkTreatmentPlanIO.h
   igstkTreatmentPlanIO.cxx
+  igstkMicronTrackerConfigurationIO.h
+  igstkMicronTrackerConfigurationIO.cxx
   )
   
-IF(IGSTKSandbox_USE_MicronTracker)
+IF(IGSTK_USE_MicronTracker)
   SET(NeedleBiopsy_SRCS ${NeedleBiopsy_SRCS}
   # MicronTracker related classes
   )
-ENDIF(IGSTKSandbox_USE_MicronTracker)
+ENDIF(IGSTK_USE_MicronTracker)
 
 INCLUDE_DIRECTORIES(
   ${NeedleBiopsy_SOURCE_DIR}
