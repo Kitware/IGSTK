@@ -114,31 +114,21 @@ SET(SandboxTests_SRCS
 
 )
 
-IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  SET(SandboxTests_SRCS
-    ${SandboxTests_SRCS}
-    igstkTrackerToolObserverToSocketRelayTest.cxx
-    igstkPolarisTrackerToolObserverToSocketRelayTest.cxx
-    igstkAuroraTrackerToolObserverToSocketRelayTest.cxx
-    igstkVicraTrackerToolObserverToSocketRelayTest.cxx
-    igstkTransformSocketListenerTest.cxx
-    )
-  IF(IGSTKSandbox_USE_OpenIGTLink)
+IF(IGSTKSandbox_USE_OpenIGTLink)
+
     SET(SandboxTests_SRCS
       ${SandboxTests_SRCS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
-  ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
 
   IF(IGSTKSandbox_USE_MicronTracker)
      SET(SandboxTests_SRCS
       ${SandboxTests_SRCS}
-      igstkMicronTrackerToolObserverToSocketRelayTest.cxx
       igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
 
-ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
@@ -152,60 +142,13 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 
-IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  ADD_TEST( igstkTransformSocketListenerTest
-    ${IGSTKSandbox_TESTS}
-    igstkTransformSocketListenerTest
-    16666 1000
-    )
-
-  ADD_TEST( igstkTrackerToolObserverToSocketRelayTest
-    ${IGSTKSandbox_TESTS}
-    igstkTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000 30 10
-    )
-
-  SET(TRACKER_FREQUENCY 30)
-
-  ADD_TEST( igstkPolarisTrackerToolObserverToSocketRelayTest
-    ${IGSTKSandbox_TESTS}
-    igstkPolarisTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
-    ${TRACKER_FREQUENCY}
-    )
-
-  ADD_TEST( igstkAuroraTrackerToolObserverToSocketRelayTest
-    ${IGSTKSandbox_TESTS}
-    igstkAuroraTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
-    ${TRACKER_FREQUENCY}
-    )
-
-  ADD_TEST( igstkVicraTrackerToolObserverToSocketRelayTest
-    ${IGSTKSandbox_TESTS}
-    igstkPolarisTrackerToolObserverToSocketRelayTest
-    localhost 16666 1000
-    )
-
-  IF(IGSTKSandbox_USE_OpenIGTLink)
+IF(IGSTKSandbox_USE_OpenIGTLink)
     ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTKSandbox_TESTS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
       ${TRACKER_FREQUENCY}
       )
-  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
-  IF(IGSTKSandbox_USE_MicronTracker)
-    ADD_TEST( igstkMicronTrackerToolObserverToSocketRelayTest
-      ${IGSTKSandbox_TESTS}
-      igstkMicronTrackerToolObserverToSocketRelayTest
-      localhost 16666 1000 
-      ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
-      ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
-      ${IGSTK_DATA_ROOT}/Input/Markers )
-  ENDIF(IGSTKSandbox_USE_MicronTracker)
-
   IF(IGSTKSandbox_USE_MicronTracker)
     ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTKSandbox_TESTS}
@@ -216,7 +159,7 @@ IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
       ${IGSTK_DATA_ROOT}/Input/Markers )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
 
-ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 ADD_TEST( igstkPivotCalibrationTest ${IGSTKSandbox_TESTS}
 igstkPivotCalibrationTest ${IGSTK_DATA_ROOT})

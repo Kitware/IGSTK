@@ -390,18 +390,12 @@ IF(IGSTK_USE_SceneGraphVisualization)
     )
 ENDIF(IGSTK_USE_SceneGraphVisualization)
   
-IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  SET(IGSTKSandbox_HEADS
-    ${IGSTKSandbox_HEADS}
-    igstkTrackerToolObserverToSocketRelay.h
-    )
-  IF(IGSTKSandbox_USE_OpenIGTLink)
+IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkTrackerToolObserverToOpenIGTLinkRelay.h
       )
-  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_HEADS
@@ -496,19 +490,12 @@ IF(IGSTK_USE_SceneGraphVisualization)
     )
 ENDIF(IGSTK_USE_SceneGraphVisualization)
   
-IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  SET(IGSTKSandbox_SRCS
-    ${IGSTKSandbox_SRCS}
-    igstkTrackerToolObserverToSocketRelay.cxx
-    )
-
-  IF(IGSTKSandbox_USE_OpenIGTLink)
+IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_SRCS
       ${IGSTKSandbox_SRCS}
       igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
       )
-  ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 IF(IGSTKSandbox_USE_FLTK)
   SET(IGSTKSandbox_SRCS
@@ -547,11 +534,6 @@ SET(EXTRA_LIBS)
 IF(IGSTKSandbox_USE_FLTK)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${FLTK_LIBRARIES})
 ENDIF(IGSTKSandbox_USE_FLTK)
-
-IF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} vtkParallel)
-ENDIF(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS)
-
 
 IF(IGSTKSandbox_USE_Qt)
   IF(APPLE)

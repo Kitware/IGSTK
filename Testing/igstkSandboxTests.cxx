@@ -41,17 +41,9 @@ void RegisterTests()
   REGISTER_TEST(igstkToolCalibrationReaderTest);
   REGISTER_TEST(igstkToolCalibrationTest);
 
-#ifdef IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS
-  REGISTER_TEST(igstkTrackerToolObserverToSocketRelayTest);
-  REGISTER_TEST(igstkPolarisTrackerToolObserverToSocketRelayTest );
-  REGISTER_TEST(igstkAuroraTrackerToolObserverToSocketRelayTest );
-  REGISTER_TEST(igstkVicraTrackerToolObserverToSocketRelayTest );
-  REGISTER_TEST(igstkTransformSocketListenerTest );
 #ifdef IGSTKSandbox_USE_OpenIGTLink
   REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
-#endif  
 #ifdef IGSTKSandbox_USE_MicronTracker
-  REGISTER_TEST( igstkMicronTrackerToolObserverToSocketRelayTest );
   REGISTER_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest );
 #endif  
 #endif
