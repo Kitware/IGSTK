@@ -44,7 +44,7 @@
 
 /** ---------------------------------------------------------------
 *     Constructor
-* -----------------------------------------------------------------
+* ----------------------------------------------------------------
 */
 BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 {
@@ -59,7 +59,7 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
   m_AxialViewInitialized = false;
   m_SagittalViewInitialized = false;
   m_CoronalViewInitialized = false;
-  
+
   m_ModifyImageFiducialsEnabled = false;
 
   /** Create the controller for the tracker and assign observers to him*/
@@ -89,9 +89,9 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
     m_TrackerControllerObserver );
- 
+
   m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
-    m_TrackerControllerObserver );  
+    m_TrackerControllerObserver );
 
   /** Setup logger, for all igstk components. */
   m_Logger   = LoggerType::New();
@@ -130,7 +130,7 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
   // set logger to the controller
   m_TrackerController->SetLogger(this->GetLogger());
 
-  /** Initialize all member variables  */  
+  /** Initialize all member variables  */
   m_ImageReader         = ImageReaderType::New();
   m_ImageReader->SetGlobalWarningDisplay(false);
 
@@ -172,7 +172,7 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
     m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
     m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
     m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
-  }  
+  }
 
   /** Creating observers and their callback functions */
 
@@ -199,7 +199,7 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   m_TrackerToolAvailableObserver = LoadedObserverType::New();
   m_TrackerToolAvailableObserver->SetCallbackFunction( this,
-                                                 &BronchoscopyNavigator::ToolAvailableCallback ); 
+                                                 &BronchoscopyNavigator::ToolAvailableCallback );
 
   m_ReferenceNotAvailableObserver = LoadedObserverType::New();
   m_ReferenceNotAvailableObserver->SetCallbackFunction( this,
@@ -207,7 +207,7 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   m_ReferenceAvailableObserver = LoadedObserverType::New();
   m_ReferenceAvailableObserver->SetCallbackFunction( this,
-                                                 &BronchoscopyNavigator::ReferenceAvailableCallback );  
+                                                 &BronchoscopyNavigator::ReferenceAvailableCallback );
 
   /** Machine States*/
 
@@ -215,8 +215,8 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
   igstkAddStateMacro( LoadingImage );
   igstkAddStateMacro( ConfirmingImagePatientName );
   igstkAddStateMacro( ImageReady );
-  igstkAddStateMacro( LoadingToolSpatialObject ); 
-  igstkAddStateMacro( LoadingMesh ); 
+  igstkAddStateMacro( LoadingToolSpatialObject );
+  igstkAddStateMacro( LoadingMesh );
   igstkAddStateMacro( SettingImageFiducials );
   igstkAddStateMacro( ConfiguringTracker );
   igstkAddStateMacro( TrackerConfigurationReady );
@@ -225,16 +225,16 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
   igstkAddStateMacro( SettingTrackerFiducials );
   igstkAddStateMacro( EndingSetTrackerFiducials );
   igstkAddStateMacro( TrackerFiducialsReady );
-  igstkAddStateMacro( RegisteringTracker );  
+  igstkAddStateMacro( RegisteringTracker );
   igstkAddStateMacro( AcceptingRegistration );
   igstkAddStateMacro( RegistrationReady );
-  igstkAddStateMacro( StartingTracker ); 
-  igstkAddStateMacro( StoppingTracker ); 
-  igstkAddStateMacro( DisconnectingTracker ); 
+  igstkAddStateMacro( StartingTracker );
+  igstkAddStateMacro( StoppingTracker );
+  igstkAddStateMacro( DisconnectingTracker );
   igstkAddStateMacro( Tracking );
 
   /** Machine Inputs*/
-  
+
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
   igstkAddInputMacro( LoadImage );
@@ -243,12 +243,12 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
   igstkAddInputMacro( LoadToolSpatialObject );
   igstkAddInputMacro( StartSetImageFiducials );
   igstkAddInputMacro( SetPickingPosition );
-  igstkAddInputMacro( EndSetImageFiducials );  
+  igstkAddInputMacro( EndSetImageFiducials );
   igstkAddInputMacro( ConfigureTracker );
   igstkAddInputMacro( InitializeTracker );
   igstkAddInputMacro( StartSetTrackerFiducials );
   igstkAddInputMacro( AcceptTrackerFiducial );
-  igstkAddInputMacro( EndSetTrackerFiducials );  
+  igstkAddInputMacro( EndSetTrackerFiducials );
   igstkAddInputMacro( RegisterTracker );
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
@@ -261,100 +261,100 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   //complete table for state: Initial State
 
-  igstkAddTransitionMacro( Initial, Success, 
+  igstkAddTransitionMacro( Initial, Success,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, Failure, 
+  igstkAddTransitionMacro( Initial, Failure,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( Initial, ConfirmImagePatientName,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadMesh, 
+  igstkAddTransitionMacro( Initial, LoadMesh,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadToolSpatialObject, 
-                           Initial, ReportInvalidRequest );  
-  igstkAddTransitionMacro( Initial, StartSetImageFiducials, 
+  igstkAddTransitionMacro( Initial, LoadToolSpatialObject,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, SetPickingPosition, 
+  igstkAddTransitionMacro( Initial, StartSetImageFiducials,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, EndSetImageFiducials, 
+  igstkAddTransitionMacro( Initial, SetPickingPosition,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, RegisterTracker, 
+  igstkAddTransitionMacro( Initial, EndSetImageFiducials,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, InitializeTracker, 
+  igstkAddTransitionMacro( Initial, RegisterTracker,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, ConfigureTracker, 
+  igstkAddTransitionMacro( Initial, InitializeTracker,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( Initial, ConfigureTracker,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( Initial, StartSetTrackerFiducials,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, EndSetTrackerFiducials, 
-                           Initial, ReportInvalidRequest );  
-  igstkAddTransitionMacro( Initial, StartTracking, 
+  igstkAddTransitionMacro( Initial, AcceptTrackerFiducial,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, StopTracking, 
+  igstkAddTransitionMacro( Initial, EndSetTrackerFiducials,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, DisconnectTracker, 
-                           Initial, ReportInvalidRequest ); 
+  igstkAddTransitionMacro( Initial, StartTracking,
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, StopTracking,
+                           Initial, ReportInvalidRequest );
+  igstkAddTransitionMacro( Initial, DisconnectTracker,
+                           Initial, ReportInvalidRequest );
 
   /** LoadingImage State */
 
   igstkAddTransitionMacro( LoadingImage, Success,
                            ConfirmingImagePatientName, ConfirmPatientName );
-  igstkAddTransitionMacro( LoadingImage, Failure, 
+  igstkAddTransitionMacro( LoadingImage, Failure,
                            Initial, ReportFailuredImageLoaded );
 
  //complete table for state: LoadingImage State
 
-  igstkAddTransitionMacro( LoadingImage, LoadImage, 
+  igstkAddTransitionMacro( LoadingImage, LoadImage,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( LoadingImage, ConfirmImagePatientName,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, LoadMesh, 
+  igstkAddTransitionMacro( LoadingImage, LoadMesh,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( LoadingImage, LoadToolSpatialObject,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, StartSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingImage, StartSetImageFiducials,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, SetPickingPosition, 
+  igstkAddTransitionMacro( LoadingImage, SetPickingPosition,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, EndSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingImage, EndSetImageFiducials,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, RegisterTracker, 
+  igstkAddTransitionMacro( LoadingImage, RegisterTracker,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, ConfigureTracker, 
+  igstkAddTransitionMacro( LoadingImage, ConfigureTracker,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, InitializeTracker, 
+  igstkAddTransitionMacro( LoadingImage, InitializeTracker,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingImage, StartSetTrackerFiducials,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingImage, AcceptTrackerFiducial,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingImage, EndSetTrackerFiducials,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, StartTracking, 
+  igstkAddTransitionMacro( LoadingImage, StartTracking,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, StopTracking, 
+  igstkAddTransitionMacro( LoadingImage, StopTracking,
                            LoadingImage, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImage, DisconnectTracker, 
+  igstkAddTransitionMacro( LoadingImage, DisconnectTracker,
                            LoadingImage, ReportInvalidRequest );
-  
+
    /** ConfirmingImagePatientName State */
 
   igstkAddTransitionMacro( ConfirmingImagePatientName, Success,
                            ImageReady, ReportSuccessImageLoaded );
 
-  igstkAddTransitionMacro( ConfirmingImagePatientName, Failure, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, Failure,
                            Initial, ReportFailuredImageLoaded );
 
   //complete table for state: ConfirmingImagePatientName
 
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadImage, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadImage,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, ConfirmImagePatientName,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadMesh, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadMesh,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, LoadToolSpatialObject,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetImageFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
@@ -368,61 +368,61 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, InitializeTracker,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetTrackerFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, AcceptTrackerFiducial,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, EndSetTrackerFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StartTracking,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, StopTracking,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, DisconnectTracker, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, DisconnectTracker,
                            ConfirmingImagePatientName, ReportInvalidRequest );
 
   /** ImageReady State */
-  
+
   igstkAddTransitionMacro( ImageReady, LoadMesh,
                            LoadingMesh, LoadMesh );
   igstkAddTransitionMacro( ImageReady, LoadToolSpatialObject,
                            LoadingToolSpatialObject, LoadToolSpatialObject );
-  igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
+  igstkAddTransitionMacro( ImageReady, SetPickingPosition,
                            ImageReady, SetImagePicking );
   igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
                            SettingImageFiducials, ReportSuccessStartSetImageFiducials );
-  igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
-                           ConfiguringTracker, ConfigureTracker );  
+  igstkAddTransitionMacro( ImageReady, ConfigureTracker,
+                           ConfiguringTracker, ConfigureTracker );
 
   //complete table for state: ImageReady
-  igstkAddTransitionMacro( ImageReady, Success, 
+  igstkAddTransitionMacro( ImageReady, Success,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, Failure, 
+  igstkAddTransitionMacro( ImageReady, Failure,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, LoadImage, 
+  igstkAddTransitionMacro( ImageReady, LoadImage,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( ImageReady, ConfirmImagePatientName,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, EndSetImageFiducials,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, InitializeTracker, 
+  igstkAddTransitionMacro( ImageReady, InitializeTracker,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, RegisterTracker,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( ImageReady, StartSetTrackerFiducials,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, AcceptTrackerFiducial,
                            ImageReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( ImageReady, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( ImageReady, EndSetTrackerFiducials,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, StartTracking,
                            ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, StopTracking,
-                           ImageReady, ReportInvalidRequest );  
+                           ImageReady, ReportInvalidRequest );
   igstkAddTransitionMacro( ImageReady, DisconnectTracker,
                            ImageReady, ReportInvalidRequest );
-  
-   
+
+
   /** LoadingToolSpatialObject State */
 
   igstkAddTransitionMacro( LoadingToolSpatialObject, Success,
@@ -433,39 +433,39 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   //complete table for state: LoadingMesh
 
-  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadImage, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, LoadImage,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfirmImagePatientName,
                            LoadingToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingToolSpatialObject, LoadMesh,
                            LoadingToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingToolSpatialObject, LoadToolSpatialObject,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetImageFiducials,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, SetPickingPosition, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, SetPickingPosition,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetImageFiducials,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, RegisterTracker, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, RegisterTracker,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartSetTrackerFiducials,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, AcceptTrackerFiducial,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, EndSetTrackerFiducials,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfigureTracker, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, ConfigureTracker,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, InitializeTracker, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, InitializeTracker,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StartTracking, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StartTracking,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, StopTracking, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, StopTracking,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingToolSpatialObject, DisconnectTracker, 
+  igstkAddTransitionMacro( LoadingToolSpatialObject, DisconnectTracker,
                            LoadingToolSpatialObject, ReportInvalidRequest );
-  
+
   /** LoadingMesh State */
 
   igstkAddTransitionMacro( LoadingMesh, Success,
@@ -476,256 +476,256 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   //complete table for state: LoadingMesh
 
-  igstkAddTransitionMacro( LoadingMesh, LoadImage, 
+  igstkAddTransitionMacro( LoadingMesh, LoadImage,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( LoadingMesh, ConfirmImagePatientName,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, LoadMesh, 
+  igstkAddTransitionMacro( LoadingMesh, LoadMesh,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( LoadingMesh, LoadToolSpatialObject,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, StartSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingMesh, StartSetImageFiducials,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, SetPickingPosition, 
+  igstkAddTransitionMacro( LoadingMesh, SetPickingPosition,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, EndSetImageFiducials, 
+  igstkAddTransitionMacro( LoadingMesh, EndSetImageFiducials,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, RegisterTracker, 
+  igstkAddTransitionMacro( LoadingMesh, RegisterTracker,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingMesh, StartSetTrackerFiducials,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( LoadingMesh, AcceptTrackerFiducial,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( LoadingMesh, EndSetTrackerFiducials,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, ConfigureTracker, 
+  igstkAddTransitionMacro( LoadingMesh, ConfigureTracker,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, InitializeTracker, 
+  igstkAddTransitionMacro( LoadingMesh, InitializeTracker,
                            LoadingMesh, ReportInvalidRequest );
 
-  igstkAddTransitionMacro( LoadingMesh, StartTracking, 
+  igstkAddTransitionMacro( LoadingMesh, StartTracking,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, StopTracking, 
+  igstkAddTransitionMacro( LoadingMesh, StopTracking,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, DisconnectTracker, 
+  igstkAddTransitionMacro( LoadingMesh, DisconnectTracker,
                            LoadingMesh, ReportInvalidRequest );
-  
 
-  /** SettingImageFiducials State */  
 
-  igstkAddTransitionMacro( SettingImageFiducials, SetPickingPosition, 
+  /** SettingImageFiducials State */
+
+  igstkAddTransitionMacro( SettingImageFiducials, SetPickingPosition,
                            SettingImageFiducials, SetImageFiducial );
 
-  igstkAddTransitionMacro( SettingImageFiducials, EndSetImageFiducials, 
+  igstkAddTransitionMacro( SettingImageFiducials, EndSetImageFiducials,
                            ImageReady, ReportSuccessEndSetImageFiducials );
 
-  //complete table for state: SettingImageFiducials        
+  //complete table for state: SettingImageFiducials
 
   igstkAddTransitionMacro( SettingImageFiducials, Success,
                            SettingImageFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( SettingImageFiducials, Failure,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadImage, 
+  igstkAddTransitionMacro( SettingImageFiducials, LoadImage,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( SettingImageFiducials, ConfirmImagePatientName,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadMesh, 
+  igstkAddTransitionMacro( SettingImageFiducials, LoadMesh,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( SettingImageFiducials, LoadToolSpatialObject,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials, 
+  igstkAddTransitionMacro( SettingImageFiducials, StartSetImageFiducials,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, ConfigureTracker, 
+  igstkAddTransitionMacro( SettingImageFiducials, ConfigureTracker,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, InitializeTracker, 
+  igstkAddTransitionMacro( SettingImageFiducials, InitializeTracker,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, RegisterTracker, 
+  igstkAddTransitionMacro( SettingImageFiducials, RegisterTracker,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( SettingImageFiducials, StartSetTrackerFiducials,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( SettingImageFiducials, AcceptTrackerFiducial,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( SettingImageFiducials, EndSetTrackerFiducials,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, StartTracking, 
+  igstkAddTransitionMacro( SettingImageFiducials, StartTracking,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, StopTracking, 
+  igstkAddTransitionMacro( SettingImageFiducials, StopTracking,
                            SettingImageFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingImageFiducials, DisconnectTracker, 
+  igstkAddTransitionMacro( SettingImageFiducials, DisconnectTracker,
                            SettingImageFiducials, ReportInvalidRequest );
-  
+
   /** ConfiguringTracker State */
 
-  igstkAddTransitionMacro( ConfiguringTracker, Success, 
+  igstkAddTransitionMacro( ConfiguringTracker, Success,
                            TrackerConfigurationReady, ReportSuccessTrackerConfiguration );
 
-  igstkAddTransitionMacro( ConfiguringTracker, Failure, 
+  igstkAddTransitionMacro( ConfiguringTracker, Failure,
                            ImageReady, ReportFailureTrackerConfiguration );
 
   //complete table for state: ConfiguringTracker
 
-  igstkAddTransitionMacro( ConfiguringTracker, LoadImage, 
+  igstkAddTransitionMacro( ConfiguringTracker, LoadImage,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( ConfiguringTracker, ConfirmImagePatientName,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadMesh, 
+  igstkAddTransitionMacro( ConfiguringTracker, LoadMesh,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( ConfiguringTracker, LoadToolSpatialObject,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, StartSetImageFiducials, 
-                           ConfiguringTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( ConfiguringTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( ConfiguringTracker, StartSetImageFiducials,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( ConfiguringTracker, SetPickingPosition,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( ConfiguringTracker, EndSetImageFiducials,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, InitializeTracker, 
-                           ConfiguringTracker, ReportInvalidRequest );  
-  igstkAddTransitionMacro( ConfiguringTracker, RegisterTracker, 
+  igstkAddTransitionMacro( ConfiguringTracker, ConfigureTracker,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( ConfiguringTracker, InitializeTracker,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( ConfiguringTracker, RegisterTracker,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( ConfiguringTracker, StartSetTrackerFiducials,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, StartTracking, 
+  igstkAddTransitionMacro( ConfiguringTracker, AcceptTrackerFiducial,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, StopTracking, 
+  igstkAddTransitionMacro( ConfiguringTracker, EndSetTrackerFiducials,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( ConfiguringTracker, StartTracking,
                            ConfiguringTracker, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( ConfiguringTracker, StopTracking,
+                           ConfiguringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker,
+                           ConfiguringTracker, ReportInvalidRequest );
+
 
   /** TrackerConfigurationReady State */
 
-  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeTracker, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeTracker,
                            InitializingTracker, InitializeTracker );
 
   //complete table for state: TrackerConfigurationReady
-  igstkAddTransitionMacro( TrackerConfigurationReady, Success, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, Success,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, Failure, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, Failure,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadImage, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadImage,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, ConfirmImagePatientName,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadMesh, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadMesh,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadToolSpatialObject,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, StartSetImageFiducials, 
-                           TrackerConfigurationReady, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( TrackerConfigurationReady, SetPickingPosition, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, StartSetImageFiducials,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, EndSetImageFiducials, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, SetPickingPosition,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, ConfigureTracker, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, EndSetImageFiducials,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, ConfigureTracker,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, RegisterTracker, 
-                           TrackerConfigurationReady, ReportInvalidRequest );  
-  igstkAddTransitionMacro( TrackerConfigurationReady, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, StartSetTrackerFiducials,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, RegisterTracker,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, StartTracking, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, AcceptTrackerFiducial,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, StopTracking, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, EndSetTrackerFiducials,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker, 
+  igstkAddTransitionMacro( TrackerConfigurationReady, StartTracking,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( TrackerConfigurationReady, StopTracking,
+                           TrackerConfigurationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker,
+                           TrackerConfigurationReady, ReportInvalidRequest );
+
 
   /** InitializingTracker State */
 
-  igstkAddTransitionMacro( InitializingTracker, Success, 
+  igstkAddTransitionMacro( InitializingTracker, Success,
                            TrackerInitializationReady, ReportSuccessTrackerInitialization );
 
-  igstkAddTransitionMacro( InitializingTracker, Failure, 
+  igstkAddTransitionMacro( InitializingTracker, Failure,
                            ImageReady, ReportFailureTrackerInitialization );
 
   //complete table for state: InitializingTracker
 
-  igstkAddTransitionMacro( InitializingTracker, LoadImage, 
+  igstkAddTransitionMacro( InitializingTracker, LoadImage,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( InitializingTracker, ConfirmImagePatientName,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadMesh, 
+  igstkAddTransitionMacro( InitializingTracker, LoadMesh,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( InitializingTracker, LoadToolSpatialObject,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, StartSetImageFiducials, 
-                           InitializingTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( InitializingTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( InitializingTracker, StartSetImageFiducials,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( InitializingTracker, SetPickingPosition,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( InitializingTracker, EndSetImageFiducials,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, InitializeTracker, 
+  igstkAddTransitionMacro( InitializingTracker, ConfigureTracker,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, RegisterTracker, 
+  igstkAddTransitionMacro( InitializingTracker, InitializeTracker,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( InitializingTracker, RegisterTracker,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( InitializingTracker, StartSetTrackerFiducials,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( InitializingTracker, AcceptTrackerFiducial,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, StartTracking, 
+  igstkAddTransitionMacro( InitializingTracker, EndSetTrackerFiducials,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, StopTracking, 
+  igstkAddTransitionMacro( InitializingTracker, StartTracking,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( InitializingTracker, StopTracking,
                            InitializingTracker, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( InitializingTracker, DisconnectTracker,
+                           InitializingTracker, ReportInvalidRequest );
+
 
   /** TrackerInitializationReady State */
 
-  igstkAddTransitionMacro( TrackerInitializationReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerInitializationReady, StartSetTrackerFiducials,
                            SettingTrackerFiducials, StartSetTrackerFiducials );
 
-  igstkAddTransitionMacro( TrackerInitializationReady, SetPickingPosition, 
+  igstkAddTransitionMacro( TrackerInitializationReady, SetPickingPosition,
                            TrackerInitializationReady, SetImagePicking );
 
   //complete table for state: TrackerInitializationReady
-  igstkAddTransitionMacro( TrackerInitializationReady, Success, 
+  igstkAddTransitionMacro( TrackerInitializationReady, Success,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, Failure, 
+  igstkAddTransitionMacro( TrackerInitializationReady, Failure,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadImage, 
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadImage,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( TrackerInitializationReady, ConfirmImagePatientName,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadMesh, 
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadMesh,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadToolSpatialObject,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, StartSetImageFiducials, 
-                           TrackerInitializationReady, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( TrackerInitializationReady, EndSetImageFiducials, 
+  igstkAddTransitionMacro( TrackerInitializationReady, StartSetImageFiducials,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, ConfigureTracker, 
+  igstkAddTransitionMacro( TrackerInitializationReady, EndSetImageFiducials,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, InitializeTracker, 
+  igstkAddTransitionMacro( TrackerInitializationReady, ConfigureTracker,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, RegisterTracker, 
-                           TrackerInitializationReady, ReportInvalidRequest );  
-  igstkAddTransitionMacro( TrackerInitializationReady, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerInitializationReady, InitializeTracker,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerInitializationReady, RegisterTracker,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, StartTracking, 
+  igstkAddTransitionMacro( TrackerInitializationReady, AcceptTrackerFiducial,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectTracker, 
+  igstkAddTransitionMacro( TrackerInitializationReady, EndSetTrackerFiducials,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, StopTracking, 
+  igstkAddTransitionMacro( TrackerInitializationReady, StartTracking,
                            TrackerInitializationReady, ReportInvalidRequest );
-  
+  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectTracker,
+                           TrackerInitializationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerInitializationReady, StopTracking,
+                           TrackerInitializationReady, ReportInvalidRequest );
+
 
   /** SettingTrackerFiducials State*/
 
@@ -736,342 +736,342 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
                            EndingSetTrackerFiducials, EndSetTrackerFiducials );
 
   //complete table for state: SettingTrackerFiducials
-  igstkAddTransitionMacro( SettingTrackerFiducials, Success, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, Success,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, Failure, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, Failure,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadImage, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadImage,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, ConfirmImagePatientName,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadMesh, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadMesh,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, LoadToolSpatialObject,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, StartSetImageFiducials, 
-                           SettingTrackerFiducials, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( SettingTrackerFiducials, SetPickingPosition, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, StartSetImageFiducials,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, EndSetImageFiducials, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, SetPickingPosition,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, ConfigureTracker, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, EndSetImageFiducials,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, InitializeTracker, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, ConfigureTracker,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, RegisterTracker, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, InitializeTracker,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, RegisterTracker,
+                           SettingTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( SettingTrackerFiducials, StartSetTrackerFiducials,
                            SettingTrackerFiducials, ReportInvalidRequest );
 
-  igstkAddTransitionMacro( SettingTrackerFiducials, StartTracking, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, StartTracking,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, StopTracking, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, StopTracking,
                            SettingTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( SettingTrackerFiducials, DisconnectTracker, 
+  igstkAddTransitionMacro( SettingTrackerFiducials, DisconnectTracker,
                            SettingTrackerFiducials, ReportInvalidRequest );
 
   /** EndingSetTrackerFiducials State*/
 
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, Success, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, Success,
                            TrackerFiducialsReady, ReportSuccessEndSetTrackerFiducials );
 
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, Failure, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, Failure,
                            SettingTrackerFiducials, ReportFailureEndSetTrackerFiducials );
 
   //complete table for state: EndingSetTrackerFiducials
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadImage, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadImage,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfirmImagePatientName,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadMesh, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadMesh,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadToolSpatialObject,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetImageFiducials, 
-                           EndingSetTrackerFiducials, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, SetPickingPosition, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetImageFiducials,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, EndSetImageFiducials, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, SetPickingPosition,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfigureTracker, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, EndSetImageFiducials,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, InitializeTracker, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, ConfigureTracker,
+                           EndingSetTrackerFiducials, ReportInvalidRequest );
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, InitializeTracker,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, AcceptTrackerFiducial,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
   igstkAddTransitionMacro( EndingSetTrackerFiducials, EndSetTrackerFiducials,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, RegisterTracker, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, RegisterTracker,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartSetTrackerFiducials,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartTracking, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StartTracking,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, StopTracking, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, StopTracking,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
-  igstkAddTransitionMacro( EndingSetTrackerFiducials, DisconnectTracker, 
+  igstkAddTransitionMacro( EndingSetTrackerFiducials, DisconnectTracker,
                            EndingSetTrackerFiducials, ReportInvalidRequest );
 
   /** TrackerFiducialsReady State*/
 
-  igstkAddTransitionMacro( TrackerFiducialsReady, RegisterTracker, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, RegisterTracker,
                            RegisteringTracker, TrackerRegistration );
 
   //complete table for state: TrackerFiducialsReady
 
-  igstkAddTransitionMacro( TrackerFiducialsReady, Success, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, Success,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, Failure, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, Failure,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadImage, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadImage,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, ConfirmImagePatientName,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadMesh, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadMesh,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, LoadToolSpatialObject,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, StartSetImageFiducials, 
-                           TrackerFiducialsReady, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( TrackerFiducialsReady, SetPickingPosition, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, StartSetImageFiducials,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, EndSetImageFiducials, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, SetPickingPosition,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, InitializeTracker, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, EndSetImageFiducials,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, ConfigureTracker, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, InitializeTracker,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, ConfigureTracker,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, StartSetTrackerFiducials,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, AcceptTrackerFiducial,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, StartTracking, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, EndSetTrackerFiducials,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, StopTracking, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, StartTracking,
                            TrackerFiducialsReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerFiducialsReady, DisconnectTracker, 
+  igstkAddTransitionMacro( TrackerFiducialsReady, StopTracking,
+                           TrackerFiducialsReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( TrackerFiducialsReady, DisconnectTracker,
                            TrackerFiducialsReady, ReportInvalidRequest );
 
   /** RegisteringTracker State*/
 
-  igstkAddTransitionMacro( RegisteringTracker, Success, 
+  igstkAddTransitionMacro( RegisteringTracker, Success,
                            AcceptingRegistration, ReportSuccessTrackerRegistration );
-  igstkAddTransitionMacro( RegisteringTracker, Failure, 
+  igstkAddTransitionMacro( RegisteringTracker, Failure,
                            TrackerInitializationReady, ReportFailureTrackerRegistration );
 
   //complete table for state: RegisteringTracker
 
-  igstkAddTransitionMacro( RegisteringTracker, LoadImage, 
+  igstkAddTransitionMacro( RegisteringTracker, LoadImage,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( RegisteringTracker, ConfirmImagePatientName,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, LoadMesh, 
+  igstkAddTransitionMacro( RegisteringTracker, LoadMesh,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( RegisteringTracker, LoadToolSpatialObject,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, StartSetImageFiducials, 
-                           RegisteringTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( RegisteringTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( RegisteringTracker, StartSetImageFiducials,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( RegisteringTracker, SetPickingPosition,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( RegisteringTracker, EndSetImageFiducials,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, InitializeTracker, 
+  igstkAddTransitionMacro( RegisteringTracker, ConfigureTracker,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( RegisteringTracker, InitializeTracker,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( RegisteringTracker, StartSetTrackerFiducials,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( RegisteringTracker, AcceptTrackerFiducial,
+                           RegisteringTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegisteringTracker, EndSetTrackerFiducials,
                            RegisteringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( RegisteringTracker, RegisterTracker,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, StartTracking, 
+  igstkAddTransitionMacro( RegisteringTracker, StartTracking,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, StopTracking, 
+  igstkAddTransitionMacro( RegisteringTracker, StopTracking,
                            RegisteringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegisteringTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( RegisteringTracker, DisconnectTracker,
                            RegisteringTracker, ReportInvalidRequest );
 
 
   /** AcceptingRegistration State*/
 
-  igstkAddTransitionMacro( AcceptingRegistration, Success, 
+  igstkAddTransitionMacro( AcceptingRegistration, Success,
                            RegistrationReady, ReportSuccessAcceptingRegistration );
-  igstkAddTransitionMacro( AcceptingRegistration, Failure, 
+  igstkAddTransitionMacro( AcceptingRegistration, Failure,
                            TrackerInitializationReady, ReportFailureAcceptingRegistration );
 
   //complete table for state: RegisteringTracker
 
-  igstkAddTransitionMacro( AcceptingRegistration, LoadImage, 
+  igstkAddTransitionMacro( AcceptingRegistration, LoadImage,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( AcceptingRegistration, ConfirmImagePatientName,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, LoadMesh, 
+  igstkAddTransitionMacro( AcceptingRegistration, LoadMesh,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( AcceptingRegistration, LoadToolSpatialObject,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, StartSetImageFiducials, 
-                           AcceptingRegistration, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( AcceptingRegistration, SetPickingPosition, 
+  igstkAddTransitionMacro( AcceptingRegistration, StartSetImageFiducials,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, EndSetImageFiducials, 
+  igstkAddTransitionMacro( AcceptingRegistration, SetPickingPosition,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, ConfigureTracker, 
+  igstkAddTransitionMacro( AcceptingRegistration, EndSetImageFiducials,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, InitializeTracker, 
+  igstkAddTransitionMacro( AcceptingRegistration, ConfigureTracker,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( AcceptingRegistration, InitializeTracker,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( AcceptingRegistration, StartSetTrackerFiducials,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( AcceptingRegistration, AcceptTrackerFiducial,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, RegisterTracker, 
+  igstkAddTransitionMacro( AcceptingRegistration, EndSetTrackerFiducials,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, StartTracking, 
+  igstkAddTransitionMacro( AcceptingRegistration, RegisterTracker,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, StopTracking, 
+  igstkAddTransitionMacro( AcceptingRegistration, StartTracking,
                            AcceptingRegistration, ReportInvalidRequest );
-  igstkAddTransitionMacro( AcceptingRegistration, DisconnectTracker, 
+  igstkAddTransitionMacro( AcceptingRegistration, StopTracking,
+                           AcceptingRegistration, ReportInvalidRequest );
+  igstkAddTransitionMacro( AcceptingRegistration, DisconnectTracker,
                            AcceptingRegistration, ReportInvalidRequest );
 
   /** ReagistrationReady State*/
 
-  igstkAddTransitionMacro( RegistrationReady, StartTracking, 
+  igstkAddTransitionMacro( RegistrationReady, StartTracking,
                            StartingTracker, StartTracking);
 
-  igstkAddTransitionMacro( RegistrationReady, DisconnectTracker, 
+  igstkAddTransitionMacro( RegistrationReady, DisconnectTracker,
                            DisconnectingTracker, DisconnectTracker );
 
   //complete table for state: StartingTracker
 
-  igstkAddTransitionMacro( RegistrationReady, Success, 
+  igstkAddTransitionMacro( RegistrationReady, Success,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, Failure, 
+  igstkAddTransitionMacro( RegistrationReady, Failure,
                            RegistrationReady, ReportInvalidRequest );
 
-  igstkAddTransitionMacro( RegistrationReady, LoadImage, 
+  igstkAddTransitionMacro( RegistrationReady, LoadImage,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( RegistrationReady, ConfirmImagePatientName,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, LoadMesh, 
+  igstkAddTransitionMacro( RegistrationReady, LoadMesh,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( RegistrationReady, LoadToolSpatialObject,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, StartSetImageFiducials, 
-                           RegistrationReady, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( RegistrationReady, SetPickingPosition, 
+  igstkAddTransitionMacro( RegistrationReady, StartSetImageFiducials,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( RegistrationReady, SetPickingPosition,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, EndSetImageFiducials, 
+  igstkAddTransitionMacro( RegistrationReady, StartSetTrackerFiducials,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, ConfigureTracker, 
+  igstkAddTransitionMacro( RegistrationReady, EndSetImageFiducials,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, InitializeTracker, 
+  igstkAddTransitionMacro( RegistrationReady, ConfigureTracker,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, RegisterTracker, 
+  igstkAddTransitionMacro( RegistrationReady, InitializeTracker,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( RegistrationReady, RegisterTracker,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( RegistrationReady, AcceptTrackerFiducial,
                            RegistrationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( RegistrationReady, StopTracking, 
+  igstkAddTransitionMacro( RegistrationReady, EndSetTrackerFiducials,
+                           RegistrationReady, ReportInvalidRequest );
+  igstkAddTransitionMacro( RegistrationReady, StopTracking,
                            RegistrationReady, ReportInvalidRequest );
 
   /** StartingTracker State*/
 
-  igstkAddTransitionMacro( StartingTracker, Success, 
+  igstkAddTransitionMacro( StartingTracker, Success,
                            Tracking, ReportSuccessStartTracking);
 
-  igstkAddTransitionMacro( StartingTracker, Failure, 
+  igstkAddTransitionMacro( StartingTracker, Failure,
                            ImageReady, ReportFailureStartTracking );
 
   //complete table for state: StartingTracker
 
-  igstkAddTransitionMacro( StartingTracker, LoadImage, 
+  igstkAddTransitionMacro( StartingTracker, LoadImage,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( StartingTracker, ConfirmImagePatientName,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadMesh, 
+  igstkAddTransitionMacro( StartingTracker, LoadMesh,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( StartingTracker, LoadToolSpatialObject,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, StartSetImageFiducials, 
-                           StartingTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( StartingTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( StartingTracker, StartSetImageFiducials,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( StartingTracker, SetPickingPosition,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( StartingTracker, StartSetTrackerFiducials,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( StartingTracker, EndSetImageFiducials,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, InitializeTracker, 
+  igstkAddTransitionMacro( StartingTracker, ConfigureTracker,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, RegisterTracker, 
+  igstkAddTransitionMacro( StartingTracker, InitializeTracker,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( StartingTracker, RegisterTracker,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( StartingTracker, AcceptTrackerFiducial,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, StartTracking, 
+  igstkAddTransitionMacro( StartingTracker, EndSetTrackerFiducials,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, StopTracking, 
+  igstkAddTransitionMacro( StartingTracker, StartTracking,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( StartingTracker, StopTracking,
+                           StartingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingTracker, DisconnectTracker,
                            StartingTracker, ReportInvalidRequest );
 
   /** Tracking State */
 
-  igstkAddTransitionMacro( Tracking, StopTracking, 
+  igstkAddTransitionMacro( Tracking, StopTracking,
                            StoppingTracker, StopTracking );
 
-  igstkAddTransitionMacro( Tracking, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( Tracking, StartSetTrackerFiducials,
                            SettingTrackerFiducials, StartSetTrackerFiducials );
 
   //complete table for state: Tracking
 
-  igstkAddTransitionMacro( Tracking, Success, 
+  igstkAddTransitionMacro( Tracking, Success,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, Failure, 
+  igstkAddTransitionMacro( Tracking, Failure,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadImage, 
+  igstkAddTransitionMacro( Tracking, LoadImage,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( Tracking, ConfirmImagePatientName,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadMesh, 
+  igstkAddTransitionMacro( Tracking, LoadMesh,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( Tracking, LoadToolSpatialObject,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, StartSetImageFiducials, 
-                           Tracking, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( Tracking, EndSetImageFiducials, 
+  igstkAddTransitionMacro( Tracking, StartSetImageFiducials,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, InitializeTracker, 
+  igstkAddTransitionMacro( Tracking, EndSetImageFiducials,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, ConfigureTracker, 
+  igstkAddTransitionMacro( Tracking, InitializeTracker,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, RegisterTracker, 
+  igstkAddTransitionMacro( Tracking, ConfigureTracker,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( Tracking, RegisterTracker,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( Tracking, AcceptTrackerFiducial,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, SetPickingPosition, 
+  igstkAddTransitionMacro( Tracking, EndSetTrackerFiducials,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, StartTracking, 
+  igstkAddTransitionMacro( Tracking, SetPickingPosition,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, DisconnectTracker, 
+  igstkAddTransitionMacro( Tracking, StartTracking,
+                           Tracking, ReportInvalidRequest );
+  igstkAddTransitionMacro( Tracking, DisconnectTracker,
                            Tracking, ReportInvalidRequest );
 
    /** StoppingTracker State */
 
-  igstkAddTransitionMacro( StoppingTracker, Success, 
+  igstkAddTransitionMacro( StoppingTracker, Success,
                            RegistrationReady, ReportSuccessStopTracking);
 
   igstkAddTransitionMacro( StoppingTracker, Failure,
@@ -1079,42 +1079,42 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   //complete table for state: StoppingTracker
 
-  igstkAddTransitionMacro( StoppingTracker, LoadImage, 
+  igstkAddTransitionMacro( StoppingTracker, LoadImage,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( StoppingTracker, ConfirmImagePatientName,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadMesh, 
+  igstkAddTransitionMacro( StoppingTracker, LoadMesh,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( StoppingTracker, LoadToolSpatialObject,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, StartSetImageFiducials, 
-                           StoppingTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( StoppingTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( StoppingTracker, StartSetImageFiducials,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( StoppingTracker, SetPickingPosition,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, InitializeTracker, 
+  igstkAddTransitionMacro( StoppingTracker, EndSetImageFiducials,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( StoppingTracker, InitializeTracker,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, RegisterTracker, 
+  igstkAddTransitionMacro( StoppingTracker, ConfigureTracker,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( StoppingTracker, RegisterTracker,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( StoppingTracker, StartSetTrackerFiducials,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( StoppingTracker, AcceptTrackerFiducial,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, StartTracking, 
+  igstkAddTransitionMacro( StoppingTracker, EndSetTrackerFiducials,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, StopTracking, 
+  igstkAddTransitionMacro( StoppingTracker, StartTracking,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( StoppingTracker, StopTracking,
+                           StoppingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingTracker, DisconnectTracker,
                            StoppingTracker, ReportInvalidRequest );
 
    /** DisconnectingTracker Tracker */
 
-  igstkAddTransitionMacro( DisconnectingTracker, Success, 
+  igstkAddTransitionMacro( DisconnectingTracker, Success,
                            ImageReady, ReportSuccessTrackerDisconnection);
 
   igstkAddTransitionMacro( DisconnectingTracker, Failure,
@@ -1122,37 +1122,37 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 
   //complete table for state: DisconnectingTracker
 
-  igstkAddTransitionMacro( DisconnectingTracker, LoadImage, 
+  igstkAddTransitionMacro( DisconnectingTracker, LoadImage,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, ConfirmImagePatientName, 
+  igstkAddTransitionMacro( DisconnectingTracker, ConfirmImagePatientName,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadMesh, 
+  igstkAddTransitionMacro( DisconnectingTracker, LoadMesh,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadToolSpatialObject, 
+  igstkAddTransitionMacro( DisconnectingTracker, LoadToolSpatialObject,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, StartSetImageFiducials, 
-                           DisconnectingTracker, ReportInvalidRequest ); 
-  igstkAddTransitionMacro( DisconnectingTracker, SetPickingPosition, 
+  igstkAddTransitionMacro( DisconnectingTracker, StartSetImageFiducials,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, EndSetImageFiducials, 
+  igstkAddTransitionMacro( DisconnectingTracker, SetPickingPosition,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, InitializeTracker, 
+  igstkAddTransitionMacro( DisconnectingTracker, EndSetImageFiducials,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, ConfigureTracker, 
+  igstkAddTransitionMacro( DisconnectingTracker, InitializeTracker,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, RegisterTracker, 
+  igstkAddTransitionMacro( DisconnectingTracker, ConfigureTracker,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( DisconnectingTracker, RegisterTracker,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, AcceptTrackerFiducial, 
+  igstkAddTransitionMacro( DisconnectingTracker, StartSetTrackerFiducials,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, EndSetTrackerFiducials, 
+  igstkAddTransitionMacro( DisconnectingTracker, AcceptTrackerFiducial,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, StartTracking, 
+  igstkAddTransitionMacro( DisconnectingTracker, EndSetTrackerFiducials,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, StopTracking, 
+  igstkAddTransitionMacro( DisconnectingTracker, StartTracking,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker, 
+  igstkAddTransitionMacro( DisconnectingTracker, StopTracking,
+                           DisconnectingTracker, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker,
                            DisconnectingTracker, ReportInvalidRequest );
 
   /** Set Initial State */
@@ -1179,21 +1179,21 @@ BronchoscopyNavigator::BronchoscopyNavigator() : m_StateMachine(this)
 *  -----------------------------------------------------------------
 */
 BronchoscopyNavigator::~BronchoscopyNavigator()
-{  
+{
 
 }
 
 void BronchoscopyNavigator::ConfigureTrackerProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::ConfigureTrackerProcessing called...\n" )
- 
-  const char*  fileName = 
+
+  const char*  fileName =
     fl_file_chooser("Select a tracker configuration file","*.xml", "auroraConfiguration.xml");
 
   if ( fileName == NULL )
   {
-      igstkLogMacro2( m_Logger, DEBUG, 
+      igstkLogMacro2( m_Logger, DEBUG,
              "WorkingVolumeTester::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
       m_StateMachine.PushInput( m_FailureInput );
       m_StateMachine.ProcessInputs();
@@ -1225,13 +1225,13 @@ void BronchoscopyNavigator::ConfigureTrackerProcessing()
   igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::Pointer
         rfso = igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::New();
 
-  trackerConfigReader->AddObserver( 
+  trackerConfigReader->AddObserver(
            igstk::TrackerConfigurationFileReader::ReadSuccessEvent(), rfso );
 
-  trackerConfigReader->AddObserver( 
+  trackerConfigReader->AddObserver(
            igstk::TrackerConfigurationFileReader::ReadFailureEvent(), rfso );
 
-  trackerConfigReader->AddObserver( 
+  trackerConfigReader->AddObserver(
            igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(), rfso );
 
   //setting the file name and reader always succeeds so I don't
@@ -1262,7 +1262,7 @@ void BronchoscopyNavigator::ConfigureTrackerProcessing()
 
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
-     return; 
+     return;
    }
    else if( rfso->GotSuccess() )
    {
@@ -1283,7 +1283,7 @@ void BronchoscopyNavigator::ConfigureTrackerProcessing()
      }
 
      m_StateMachine.ProcessInputs();
-     return; 
+     return;
    }
    else
    {
@@ -1298,7 +1298,7 @@ void BronchoscopyNavigator::ConfigureTrackerProcessing()
 
 void BronchoscopyNavigator::RequestLoadImage()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestLoadImage called...\n" )
   m_StateMachine.PushInput( m_LoadImageInput );
   m_StateMachine.ProcessInputs();
@@ -1306,7 +1306,7 @@ void BronchoscopyNavigator::RequestLoadImage()
 
 void BronchoscopyNavigator::RequestLoadMesh()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestLoadMesh called...\n" )
   m_StateMachine.PushInput( m_LoadMeshInput );
   m_StateMachine.ProcessInputs();
@@ -1314,7 +1314,7 @@ void BronchoscopyNavigator::RequestLoadMesh()
 
 void BronchoscopyNavigator::RequestLoadToolSpatialObject()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestLoadToolSpatialObject called...\n" )
   m_StateMachine.PushInput( m_LoadToolSpatialObjectInput );
   m_StateMachine.ProcessInputs();
@@ -1322,7 +1322,7 @@ void BronchoscopyNavigator::RequestLoadToolSpatialObject()
 
 void BronchoscopyNavigator::RequestToggleSetImageFiducials()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestToggleSetImageFiducials called...\n" )
 
   if ( !m_ModifyImageFiducialsEnabled )
@@ -1335,7 +1335,7 @@ void BronchoscopyNavigator::RequestToggleSetImageFiducials()
 
 void BronchoscopyNavigator::RequestAcceptRegistration()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestAcceptRegistration called...\n" )
 
   m_StateMachine.PushInput( m_SuccessInput);
@@ -1344,7 +1344,7 @@ void BronchoscopyNavigator::RequestAcceptRegistration()
 
 void BronchoscopyNavigator::RequestRejectRegistration()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestRejectRegistration called...\n" )
 
   m_StateMachine.PushInput( m_FailureInput);
@@ -1353,7 +1353,7 @@ void BronchoscopyNavigator::RequestRejectRegistration()
 
 void BronchoscopyNavigator::RequestConfigureTracker()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestConfigureTracker called...\n" )
 
   m_StateMachine.PushInput( m_ConfigureTrackerInput );
@@ -1362,7 +1362,7 @@ void BronchoscopyNavigator::RequestConfigureTracker()
 
 void BronchoscopyNavigator::RequestInitializeTracker()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestInitializeTracker called...\n" )
 
   m_StateMachine.PushInput( m_InitializeTrackerInput );
@@ -1371,7 +1371,7 @@ void BronchoscopyNavigator::RequestInitializeTracker()
 
 void BronchoscopyNavigator::RequestStartSetTrackerFiducials()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestStartSetTrackerFiducials called...\n" )
 
   m_StateMachine.PushInput( m_StartSetTrackerFiducialsInput );
@@ -1380,8 +1380,8 @@ void BronchoscopyNavigator::RequestStartSetTrackerFiducials()
 
 void BronchoscopyNavigator::RequestAcceptTrackerFiducial()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
-             "BronchoscopyNavigator::RequestAcceptTrackerFiducial called...\n" ) 
+  igstkLogMacro2( m_Logger, DEBUG,
+             "BronchoscopyNavigator::RequestAcceptTrackerFiducial called...\n" )
 
   m_StateMachine.PushInput( m_AcceptTrackerFiducialInput );
   m_StateMachine.ProcessInputs();
@@ -1389,7 +1389,7 @@ void BronchoscopyNavigator::RequestAcceptTrackerFiducial()
 
 void BronchoscopyNavigator::RequestEndSetTrackerFiducials()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestEndSetTrackerFiducials called...\n" )
 
   m_StateMachine.PushInput( m_EndSetTrackerFiducialsInput );
@@ -1398,7 +1398,7 @@ void BronchoscopyNavigator::RequestEndSetTrackerFiducials()
 
 void BronchoscopyNavigator::RequestTrackerRegistration()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
              "BronchoscopyNavigator::RequestTrackerRegistration called...\n" )
 
   m_StateMachine.PushInput( m_RegisterTrackerInput );
@@ -1407,28 +1407,28 @@ void BronchoscopyNavigator::RequestTrackerRegistration()
 
 void BronchoscopyNavigator::RequestStartTracking()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestStartTracking called...\n" )
 
   m_StateMachine.PushInput( m_StartTrackingInput );
-  m_StateMachine.ProcessInputs();  
+  m_StateMachine.ProcessInputs();
 }
 
 void BronchoscopyNavigator::RequestStopTracking()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestStopTracking called...\n" )
 
   m_StateMachine.PushInput( m_StopTrackingInput );
-  m_StateMachine.ProcessInputs();  
+  m_StateMachine.ProcessInputs();
 }
 
 
 void BronchoscopyNavigator::RequestToggleOrthogonalPlanes()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestToggleOrthogonalPlanes called...\n" )
-  
+
   m_ImagePlanesIn3DViewEnabled = !m_ImagePlanesIn3DViewEnabled;
   if (m_ImagePlanesIn3DViewEnabled)
   {
@@ -1442,11 +1442,11 @@ void BronchoscopyNavigator::RequestToggleOrthogonalPlanes()
 
 void BronchoscopyNavigator::RequestDisconnectTracker()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestDisconnectTracker called...\n" )
 
   m_StateMachine.PushInput( m_DisconnectTrackerInput );
-  m_StateMachine.ProcessInputs();  
+  m_StateMachine.ProcessInputs();
 }
 
 /** Method to be invoked when no operation is required */
@@ -1456,7 +1456,7 @@ void BronchoscopyNavigator::NoProcessing()
 }
 
 /** Method to be invoked when an invalid operation was requested */
-void 
+void
 BronchoscopyNavigator::ReportInvalidRequestProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1465,7 +1465,7 @@ BronchoscopyNavigator::ReportInvalidRequestProcessing()
 }
 
 
-void 
+void
 BronchoscopyNavigator::ReportSuccessImageLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1497,7 +1497,7 @@ BronchoscopyNavigator::ReportSuccessImageLoadedProcessing()
 }
 
 /** Method to be invoked on failured image loading */
-void 
+void
 BronchoscopyNavigator::ReportFailuredImageLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1505,17 +1505,17 @@ BronchoscopyNavigator::ReportFailuredImageLoadedProcessing()
 }
 
 /** Method to be invoked on successful spatial object loading */
-void 
+void
 BronchoscopyNavigator::ReportSuccessToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
-                 "ReportSuccessToolSpatialObjectLoadedProcessing called...\n");    
+                 "ReportSuccessToolSpatialObjectLoadedProcessing called...\n");
 
   this->RequestConfigureTracker();
 }
 
 /** Method to be invoked on failured spatial object loading */
-void 
+void
 BronchoscopyNavigator::ReportFailuredToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1524,7 +1524,7 @@ BronchoscopyNavigator::ReportFailuredToolSpatialObjectLoadedProcessing()
 }
 
 /** Method to be invoked on successful target mesh loading */
-void 
+void
 BronchoscopyNavigator::ReportSuccessMeshLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1532,7 +1532,7 @@ BronchoscopyNavigator::ReportSuccessMeshLoadedProcessing()
 }
 
 /** Method to be invoked on failured target mesh loading */
-void 
+void
 BronchoscopyNavigator::ReportFailuredMeshLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1540,7 +1540,7 @@ BronchoscopyNavigator::ReportFailuredMeshLoadedProcessing()
 }
 
 /** Method to be invoked on successful start set image fiducials */
-void 
+void
 BronchoscopyNavigator::ReportSuccessStartSetImageFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1551,7 +1551,7 @@ BronchoscopyNavigator::ReportSuccessStartSetImageFiducialsProcessing()
 }
 
 /** Method to be invoked on successful end set image fiducials */
-void 
+void
 BronchoscopyNavigator::ReportSuccessEndSetImageFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1569,7 +1569,7 @@ BronchoscopyNavigator::ReportSuccessEndSetImageFiducialsProcessing()
 }
 
 /** Method to be invoked on successful start set tracker fiducials */
-void 
+void
 BronchoscopyNavigator::ReportSuccessStartSetTrackerFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1579,7 +1579,7 @@ BronchoscopyNavigator::ReportSuccessStartSetTrackerFiducialsProcessing()
 
 
 /** Method to be invoked on successful pinpointing */
-void 
+void
 BronchoscopyNavigator::ReportSuccessPinpointingTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1587,7 +1587,7 @@ BronchoscopyNavigator::ReportSuccessPinpointingTrackerFiducialProcessing()
 }
 
 /** Method to be invoked on failure pinpointing */
-void 
+void
 BronchoscopyNavigator::ReportFailurePinpointingTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1595,7 +1595,7 @@ BronchoscopyNavigator::ReportFailurePinpointingTrackerFiducialProcessing()
 }
 
 /** Method to be invoked on successful end set tracker fiducials */
-void 
+void
 BronchoscopyNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1612,7 +1612,7 @@ BronchoscopyNavigator::ReportSuccessEndSetTrackerFiducialsProcessing()
   this->RequestTrackerRegistration();
 }
 
-void 
+void
 BronchoscopyNavigator::AcceptTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1629,7 +1629,7 @@ BronchoscopyNavigator::AcceptTrackerFiducialProcessing()
 
   int n = m_FiducialsPointList->value();
   int m = m_FiducialsPointList->size();
-  m_LandmarksContainer[n] = 
+  m_LandmarksContainer[n] =
         TransformToPoint( transformObserver->GetTransform() );
   m_AcceptedLandmarksContainer[n] = true;
 
@@ -1662,13 +1662,13 @@ BronchoscopyNavigator::AcceptTrackerFiducialProcessing()
 
   if ( numberOfAcceptedLandmarks >= 3 )
   {
-    m_RegisterButton->label("Ready");     
+    m_RegisterButton->label("Ready");
     m_RegisterButton->color(FL_GREEN);
   }
 }
 
 /** Method to be invoked on failure end set tracker fiducials */
-void 
+void
 BronchoscopyNavigator::ReportFailureEndSetTrackerFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1676,7 +1676,7 @@ BronchoscopyNavigator::ReportFailureEndSetTrackerFiducialsProcessing()
 }
 
 /** Method to be invoked on successful tracker configuration */
-void 
+void
 BronchoscopyNavigator::ReportSuccessTrackerConfigurationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1686,7 +1686,7 @@ BronchoscopyNavigator::ReportSuccessTrackerConfigurationProcessing()
 }
 
 /** Method to be invoked on failured tracker configuration */
-void 
+void
 BronchoscopyNavigator::ReportFailureTrackerConfigurationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1699,7 +1699,7 @@ BronchoscopyNavigator::ReportFailureTrackerConfigurationProcessing()
 }
 
 /** Method to be invoked on failured tracker initialization */
-void 
+void
 BronchoscopyNavigator::ReportFailureTrackerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1713,7 +1713,7 @@ BronchoscopyNavigator::ReportFailureTrackerInitializationProcessing()
 
 
 /** Method to be invoked on successful tracker initialization */
-void 
+void
 BronchoscopyNavigator::ReportSuccessTrackerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1727,19 +1727,19 @@ BronchoscopyNavigator::ReportSuccessTrackerInitializationProcessing()
 }
 
 /** Method to be invoked on successful registration acceptance */
-void 
+void
 BronchoscopyNavigator::ReportSuccessAcceptingRegistrationProcessing()
 {
     igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
-                 "ReportSuccessAcceptingRegistration called...\n");  
+                 "ReportSuccessAcceptingRegistration called...\n");
 
   // add the tool object to the image planes
-  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );   
+  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
   m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
+  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
 
-  m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
-    
+  m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject );
+
   // Set up tool projection for each view
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
@@ -1786,7 +1786,7 @@ BronchoscopyNavigator::ReportSuccessAcceptingRegistrationProcessing()
 }
 
 /** Method to be invoked on failure registration acceptance */
-void 
+void
 BronchoscopyNavigator::ReportFailureAcceptingRegistrationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1804,7 +1804,7 @@ BronchoscopyNavigator::ReportFailureAcceptingRegistrationProcessing()
 }
 
 /** Method to be invoked on successful tracker registration */
-void 
+void
 BronchoscopyNavigator::ReportSuccessTrackerRegistrationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1812,19 +1812,19 @@ BronchoscopyNavigator::ReportSuccessTrackerRegistrationProcessing()
 
    // ask the user to accept registration RMS error
    char buf[10];
-   sprintf( buf, "%.2f", m_TrackerRMS);      
+   sprintf( buf, "%.2f", m_TrackerRMS);
 
    m_RegistrationErrorLabel->value( buf );
 
    m_AcceptRegistrationWindow->show();
    this->CenterChildWindowInParentWindow( m_AcceptRegistrationWindow );
 
-   Fl::check();       
+   Fl::check();
 
 }
 
 /** Method to be invoked on failure tracker registration */
-void 
+void
 BronchoscopyNavigator::ReportFailureTrackerRegistrationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1832,7 +1832,7 @@ BronchoscopyNavigator::ReportFailureTrackerRegistrationProcessing()
 }
 
 /** Method to be invoked on failure tracker disconnection */
-void 
+void
 BronchoscopyNavigator::ReportFailureTrackerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1840,12 +1840,12 @@ BronchoscopyNavigator::ReportFailureTrackerDisconnectionProcessing()
 }
 
 /** Method to be invoked on successful tracker disconnection */
-void 
+void
 BronchoscopyNavigator::ReportSuccessTrackerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
                  "ReportSuccessTrackerDisconnectionProcessing called...\n");
-  
+
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
@@ -1860,7 +1860,7 @@ BronchoscopyNavigator::ReportSuccessTrackerDisconnectionProcessing()
 }
 
 /** Method to be invoked on successful tracker start */
-void 
+void
 BronchoscopyNavigator::ReportSuccessStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1879,7 +1879,7 @@ BronchoscopyNavigator::ReportSuccessStartTrackingProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
 //  m_ViewerGroup->RequestUpdateOverlays();
-  
+
   for (unsigned int i=0; i<4; i++)
   {
     m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0 );
@@ -1892,7 +1892,7 @@ BronchoscopyNavigator::ReportSuccessStartTrackingProcessing()
 
 
 /** Method to be invoked on failured tracker start */
-void 
+void
 BronchoscopyNavigator::ReportFailureStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1900,7 +1900,7 @@ BronchoscopyNavigator::ReportFailureStartTrackingProcessing()
 }
 
 /** Method to be invoked on failured tracker stop */
-void 
+void
 BronchoscopyNavigator::ReportFailureStopTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
@@ -1908,12 +1908,12 @@ BronchoscopyNavigator::ReportFailureStopTrackingProcessing()
 }
 
 /** Method to be invoked on successful tracker stop */
-void 
+void
 BronchoscopyNavigator::ReportSuccessStopTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::BronchoscopyNavigator::"
                  "ReportSuccessStopTrackingProcessing called...\n")
- 
+
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
@@ -1921,10 +1921,10 @@ BronchoscopyNavigator::ReportSuccessStopTrackingProcessing()
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
 //  m_ViewerGroup->RequestUpdateOverlays();
-  
+
 //  m_RunStopButton->label("Run");
 
   Fl::check();
@@ -1933,19 +1933,19 @@ BronchoscopyNavigator::ReportSuccessStopTrackingProcessing()
 
 void BronchoscopyNavigator::LoadImageProcessing()
 {
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::LoadImageProcessing called...\n" )
 
-    const char*  directoryName = 
+    const char*  directoryName =
         fl_dir_chooser("Set DICOM directory ", m_ImageDir.c_str());
 
    if ( !directoryName )
-   {    
+   {
       igstkLogMacro2( m_Logger, DEBUG, "No directory was selected\n" )
       m_StateMachine.PushInput( m_FailureInput );
       m_StateMachine.ProcessInputs();
       return;
-   }   
+   }
 
    m_ImageDir = directoryName;
 
@@ -1955,13 +1955,13 @@ void BronchoscopyNavigator::LoadImageProcessing()
      m_ImageDir = m_ImageDir.substr (0,m_ImageDir.length()-1);
    }
 
-   igstkLogMacro2( m_Logger, DEBUG, 
+   igstkLogMacro2( m_Logger, DEBUG,
                       "Set ImageReader directory: " << directoryName << "\n" )
 
    m_ImageReader->RequestSetDirectory( directoryName );
 
 
-   // Provide a progress observer to the image reader      
+   // Provide a progress observer to the image reader
    m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
 
    m_ImageReader->RequestReadImage();
@@ -1973,7 +1973,7 @@ void BronchoscopyNavigator::LoadImageProcessing()
    m_ImageReader->RequestGetImage();
 
    if(!m_ImageObserver->GotImage())
-   { 
+   {
      std::string errorMessage;
      errorMessage = "Could not open image";
      fl_alert( errorMessage.c_str() );
@@ -1990,7 +1990,7 @@ void BronchoscopyNavigator::LoadImageProcessing()
    }
 
    m_StateMachine.PushInput( m_SuccessInput);
-   m_StateMachine.ProcessInputs(); 
+   m_StateMachine.ProcessInputs();
 }
 
 /** -----------------------------------------------------------------
@@ -2000,7 +2000,7 @@ void BronchoscopyNavigator::LoadImageProcessing()
 */
 void BronchoscopyNavigator::ConfirmPatientNameProcessing()
 {
-   igstkLogMacro2( m_Logger, DEBUG, 
+   igstkLogMacro2( m_Logger, DEBUG,
                   "BronchoscopyNavigator::ConfirmImagePatientNameProcessing called...\n" )
 
    // ask the user to confirm patient's name
@@ -2009,11 +2009,11 @@ void BronchoscopyNavigator::ConfirmPatientNameProcessing()
    {
        m_PatientNameLabel->value( m_ImageReader->GetPatientName().c_str() );
    }
-   
+
    m_PatientNameWindow->show();
    this->CenterChildWindowInParentWindow( m_PatientNameWindow );
 
-   Fl::check();       
+   Fl::check();
 }
 
 /** -----------------------------------------------------------------
@@ -2022,7 +2022,7 @@ void BronchoscopyNavigator::ConfirmPatientNameProcessing()
 */
 void BronchoscopyNavigator::RequestCancelImageLoad()
 {
-   igstkLogMacro2( m_Logger, DEBUG, 
+   igstkLogMacro2( m_Logger, DEBUG,
                   "BronchoscopyNavigator::RequestCancelImageLoad called...\n" )
 
    m_ImageReader->RemoveAllObservers();
@@ -2040,7 +2040,7 @@ void BronchoscopyNavigator::RequestCancelImageLoad()
 */
 void BronchoscopyNavigator::RequestAcceptImageLoad()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
               "BronchoscopyNavigator::RequestAcceptImageLoad called...\n" )
 
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, "AXIAL VIEW");
@@ -2059,28 +2059,28 @@ void BronchoscopyNavigator::RequestAcceptImageLoad()
 
   if ( m_ImageObserver.IsNotNull() )
   {
-    m_ImageSpatialObject = m_ImageObserver->GetImage();    
+    m_ImageSpatialObject = m_ImageObserver->GetImage();
     this->ConnectImageRepresentation();
-    this->ReadFiducials();    
+    this->ReadFiducials();
     this->RequestChangeSelectedFiducial();
-    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(), 
+    m_StateMachine.PushInputBoolean( m_ImageReader->FileSuccessfullyRead(),
                                      m_SuccessInput, m_FailureInput);
-  }  
+  }
   m_StateMachine.ProcessInputs();
 }
 
 
 /** -----------------------------------------------------------------
-* Load tool spatial object mesh. This method asks for a file with the 
+* Load tool spatial object mesh. This method asks for a file with the
 * spatial object mesh in the .msh format (see mesh SpatialObject in ITK)
 *  -----------------------------------------------------------------
 */
 void BronchoscopyNavigator::LoadToolSpatialObjectProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::LoadToolSpatialObjectProcessing called...\n" )
 
-   const char*  fileName = 
+   const char*  fileName =
     fl_file_chooser("Chose a tool spatial object mesh", "*.msh", "");
 
    if ( !fileName )
@@ -2095,7 +2095,7 @@ void BronchoscopyNavigator::LoadToolSpatialObjectProcessing()
    reader->RequestSetFileName( fileName );
 
    reader->RequestReadObject();
- 
+
    MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
 
    reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
@@ -2114,7 +2114,7 @@ void BronchoscopyNavigator::LoadToolSpatialObjectProcessing()
 
    /*
     // build a tool spatial object using a cylinder spatial object
-    m_ToolSpatialObject = CylinderType::New();  
+    m_ToolSpatialObject = CylinderType::New();
     m_ToolSpatialObject->SetRadius( 1.0 );
     m_ToolSpatialObject->SetHeight( 150 );
   */
@@ -2129,18 +2129,18 @@ void BronchoscopyNavigator::LoadToolSpatialObjectProcessing()
 }
 
 /** -----------------------------------------------------------------
-* Load mesh. This method asks for a file with the a mesh (e.g representing a 
+* Load mesh. This method asks for a file with the a mesh (e.g representing a
 * segmentation). The file must be in the .msh format (see mesh SpatialObject in ITK)
-* Any number of meshes can be loaded. Both, spatial object and representation 
+* Any number of meshes can be loaded. Both, spatial object and representation
 * will be kept in a vector.
 * -----------------------------------------------------------------
 */
 void BronchoscopyNavigator::LoadMeshProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::LoadMeshProcessing called...\n" )
 
-   const char*  fileName = 
+   const char*  fileName =
     fl_file_chooser("Select the target mesh file","*.msh", m_ImageDir.c_str());
 
    if ( !fileName )
@@ -2156,7 +2156,7 @@ void BronchoscopyNavigator::LoadMeshProcessing()
    reader->RequestSetFileName( fileName );
 
    reader->RequestReadObject();
- 
+
    MeshObjectObserver::Pointer observer = MeshObjectObserver::New();
 
    reader->AddObserver( igstk::MeshReader::MeshModifiedEvent(), observer);
@@ -2173,7 +2173,7 @@ void BronchoscopyNavigator::LoadMeshProcessing()
 
    // get the mesh spatial object
    MeshType::Pointer meshSpatialObject = observer->GetMeshObject();
-    
+
    if (meshSpatialObject.IsNull())
    {
      igstkLogMacro2( m_Logger, DEBUG, "BronchoscopyNavigator::LoadMeshProcessing Could not retrieve the mesh\n" )
@@ -2186,14 +2186,14 @@ void BronchoscopyNavigator::LoadMeshProcessing()
    igstk::Transform identity;
    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
    meshSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-   
+
    // set a random color
    double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double g = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
    double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
    // setup a mesh representation
-   MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
+   MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();
    meshRepresentation->RequestSetMeshObject( meshSpatialObject );
    meshRepresentation->SetOpacity(0.7);
    meshRepresentation->SetColor(r, g, b);
@@ -2201,20 +2201,20 @@ void BronchoscopyNavigator::LoadMeshProcessing()
 
    // build axial mesh reslice representation
    MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
-   axialContour->SetOpacity(1); 
+   axialContour->SetOpacity(1);
    axialContour->SetLineWidth(3);
-   axialContour->SetColor(r, g, b);     
+   axialContour->SetColor(r, g, b);
    axialContour->RequestSetMeshObject( meshSpatialObject );
-   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );   
+   axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
 
    // build sagittal mesh reslice representation
-   MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
+   MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New();
    sagittalContour->SetOpacity(1);
    sagittalContour->SetLineWidth(3);
    sagittalContour->SetColor(r, g, b);
    sagittalContour->RequestSetMeshObject( meshSpatialObject );
    sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
-   
+
    // build coronal mesh reslice representation
    MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
    coronalContour->SetOpacity(1);
@@ -2222,11 +2222,11 @@ void BronchoscopyNavigator::LoadMeshProcessing()
    coronalContour->SetColor(r, g, b);
    coronalContour->RequestSetMeshObject( meshSpatialObject );
    coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
-      
+
    // add repressentations to the views
    m_ViewerGroup->m_AxialView->RequestAddObject( axialContour );
    m_ViewerGroup->m_SagittalView->RequestAddObject( sagittalContour );
-   m_ViewerGroup->m_CoronalView->RequestAddObject( coronalContour );     
+   m_ViewerGroup->m_CoronalView->RequestAddObject( coronalContour );
    m_ViewerGroup->m_3DView->RequestAddObject( meshRepresentation );
    m_ViewerGroup->m_3DView->RequestResetCamera();
 
@@ -2234,10 +2234,10 @@ void BronchoscopyNavigator::LoadMeshProcessing()
    m_MeshVector.push_back( meshSpatialObject );
    m_AxialMeshResliceRepresentationVector.push_back( axialContour );
    m_SagittalMeshResliceRepresentationVector.push_back( sagittalContour );
-   m_CoronalMeshResliceRepresentationVector.push_back( coronalContour );  
+   m_CoronalMeshResliceRepresentationVector.push_back( coronalContour );
 
    m_StateMachine.PushInput( m_SuccessInput );
-   m_StateMachine.ProcessInputs();     
+   m_StateMachine.ProcessInputs();
 }
 
 /** -----------------------------------------------------------------
@@ -2246,7 +2246,7 @@ void BronchoscopyNavigator::LoadMeshProcessing()
 */
 void BronchoscopyNavigator::SetImagePickingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                   "BronchoscopyNavigator::SetImagePickingProcessing called...\n" )
 
   ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
@@ -2276,11 +2276,11 @@ void BronchoscopyNavigator::SetImagePickingProcessing()
 */
 void BronchoscopyNavigator::SetImageFiducialProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::SetImageFiducialProcessing called...\n" )
 
     ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
-  
+
     if( m_ImageSpatialObject->IsInside( point ) )
     {
       int choice = m_FiducialsPointList->value();
@@ -2298,7 +2298,7 @@ void BronchoscopyNavigator::SetImageFiducialProcessing()
       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
+      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
 //      m_ViewerGroup->RequestUpdateOverlays();
 
@@ -2325,7 +2325,7 @@ void BronchoscopyNavigator::SetImageFiducialProcessing()
 
 void BronchoscopyNavigator::InitializeTrackerProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::InitializeTrackerProcessing called...\n" )
 
 /*
@@ -2346,12 +2346,12 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   }
 
   m_TrackerController->RequestInitialize( m_TrackerConfiguration );
-               
+
   //check that initialization was successful
   if( m_TrackerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
@@ -2362,7 +2362,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   }
 
   m_TrackerController->RequestGetNonReferenceToolList();
-  m_TrackerController->RequestGetReferenceTool();       
+  m_TrackerController->RequestGetReferenceTool();
 
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
@@ -2376,7 +2376,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   }
 
   m_ToolSpatialObject->RequestDetachFromParent();
-  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );  
+  m_ToolSpatialObject->RequestSetTransformAndParent( identity, m_TrackerTool );
 /*
   m_AxialPlaneSpatialObject->RequestDetachFromParent();
   m_SagittalPlaneSpatialObject->RequestDetachFromParent();
@@ -2388,7 +2388,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
 */
   /** Connect the scene graph with an identity transform first */
   if ( m_ReferenceTool.IsNotNull() )
-  { 
+  {
     m_ReferenceTool->RequestSetTransformAndParent(identity, m_WorldReference);
   }
 
@@ -2405,16 +2405,16 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   //}
 
   m_TrackerController->RequestStartTracking();
-  
+
   //check that start was successful
   if( m_TrackerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
       "Tracker start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
@@ -2423,7 +2423,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
 
   // notify the GUI that the system is tracking
   m_TrackingSemaphore->color(FL_YELLOW);
-  
+
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
 
@@ -2431,14 +2431,14 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
 
 void BronchoscopyNavigator::StartSetTrackerFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::StartSetTrackerFiducialsProcessing called...\n" )
 
   this->DisableAll();
 
   m_FiducialsPointList->activate();
 
-  m_RegisterButton->color(FL_RED); 
+  m_RegisterButton->color(FL_RED);
   m_RegisterButton->label("Registering...");
 
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
@@ -2450,12 +2450,12 @@ void BronchoscopyNavigator::StartSetTrackerFiducialsProcessing()
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-//  m_ViewerGroup->RequestUpdateOverlays(); 
+//  m_ViewerGroup->RequestUpdateOverlays();
 
   // first reset the reference tool
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
- 
+
   if ( m_ReferenceTool.IsNotNull() )
   {
     m_ReferenceTool->RequestDetachFromParent();
@@ -2485,7 +2485,7 @@ void BronchoscopyNavigator::StartSetTrackerFiducialsProcessing()
 
 void BronchoscopyNavigator::EndSetTrackerFiducialsProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::EndSetTrackerFiducialsProcessing called...\n" )
 
   AcceptedLandmarkPointContainerType::const_iterator iter;
@@ -2498,7 +2498,7 @@ void BronchoscopyNavigator::EndSetTrackerFiducialsProcessing()
       numberOfAcceptedLandmarks++;
   }
 
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "numberOfAcceptedLandmarks " << numberOfAcceptedLandmarks << "\n" )
 
   if (numberOfAcceptedLandmarks >= 3)
@@ -2511,8 +2511,8 @@ void BronchoscopyNavigator::EndSetTrackerFiducialsProcessing()
   else
   {
     m_StateMachine.PushInput( m_FailureInput );
-  }  
-  
+  }
+
   m_StateMachine.ProcessInputs();
 }
 
@@ -2522,20 +2522,20 @@ void BronchoscopyNavigator::EndSetTrackerFiducialsProcessing()
 */
 void BronchoscopyNavigator::TrackerRegistrationProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::TrackerRegistrationProcessing called...\n" )
-  
+
   RegistrationType::Pointer registration  = RegistrationType::New();
   registration->RequestResetRegistration();
 
   for( unsigned int i=0; i< m_LandmarksContainer.size(); i++)
   {
     // use only those fiducial points that were accepted by the user
-    if ( m_AcceptedLandmarksContainer[i] ) 
+    if ( m_AcceptedLandmarksContainer[i] )
     {
-       registration->RequestAddImageLandmarkPoint( 
+       registration->RequestAddImageLandmarkPoint(
                         m_Plan->m_FiducialPoints[i] );
-       registration->RequestAddTrackerLandmarkPoint( 
+       registration->RequestAddTrackerLandmarkPoint(
                         m_LandmarksContainer[i] );
     }
   }
@@ -2550,14 +2550,14 @@ void BronchoscopyNavigator::TrackerRegistrationProcessing()
 
   if( lrtcb->GotTransform() )
   {
-    RegistrationErrorObserver::Pointer lRmscb =  
+    RegistrationErrorObserver::Pointer lRmscb =
                                             RegistrationErrorObserver::New();
 
     registration->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
     registration->RequestGetRMSError();
     if( lRmscb->GotRegistrationError() )
     {
-       igstkLogMacro2( m_Logger, DEBUG,  
+       igstkLogMacro2( m_Logger, DEBUG,
          "Tracker to Image Registration Error " << lRmscb->GetRegistrationError() << "\n" )
        m_TrackerRMS = lRmscb->GetRegistrationError();
 
@@ -2572,13 +2572,13 @@ void BronchoscopyNavigator::TrackerRegistrationProcessing()
        m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
 
        m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
+       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
 
-//       m_ViewerGroup->RequestUpdateOverlays();    
+//       m_ViewerGroup->RequestUpdateOverlays();
     }
     else
     {
-     igstkLogMacro2( m_Logger, DEBUG, 
+     igstkLogMacro2( m_Logger, DEBUG,
        "Tracker Registration Error: could not retrieve RMS error \n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
@@ -2587,7 +2587,7 @@ void BronchoscopyNavigator::TrackerRegistrationProcessing()
 
     // set new transformation
     m_RegistrationTransform = lrtcb->GetTransform();
-    
+
     if ( m_ReferenceTool.IsNotNull() )
     {
       m_ReferenceTool->RequestDetachFromParent();
@@ -2609,13 +2609,13 @@ void BronchoscopyNavigator::TrackerRegistrationProcessing()
   }
 }
 /** -----------------------------------------------------------------
-* Starts tracking provided it is initialized and connected to the 
+* Starts tracking provided it is initialized and connected to the
 * communication port
 *---------------------------------------------------------------------
 */
 void BronchoscopyNavigator::StartTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::StartTrackingProcessing called...\n" )
 
   // if (m_Tracking)
@@ -2643,11 +2643,11 @@ void BronchoscopyNavigator::StartTrackingProcessing()
   //if( m_TrackerControllerObserver->Error() )
   //{
   //  std::string errorMessage;
-  //  m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
+  //  m_TrackerControllerObserver->GetErrorMessage( errorMessage );
   //  m_TrackerControllerObserver->ClearError();
   //  fl_alert( errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
-  //  igstkLogMacro2( m_Logger, DEBUG, 
+  //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker start error\n" )
   //  m_StateMachine.PushInput( m_FailureInput );
   //  m_StateMachine.ProcessInputs();
@@ -2659,13 +2659,13 @@ void BronchoscopyNavigator::StartTrackingProcessing()
   return;
 }
 /** -----------------------------------------------------------------
-* Stops tracking but keeps the tracker connected to the 
+* Stops tracking but keeps the tracker connected to the
 * communication port
 *---------------------------------------------------------------------
 */
 void BronchoscopyNavigator::StopTrackingProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::StopTrackingProcessing called...\n" )
 
 /*
@@ -2675,11 +2675,11 @@ void BronchoscopyNavigator::StopTrackingProcessing()
   if( m_TrackerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
       "Tracker stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
@@ -2697,7 +2697,7 @@ void BronchoscopyNavigator::StopTrackingProcessing()
 */
 void BronchoscopyNavigator::DisconnectTrackerProcessing()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::DisconnectTrackerProcessing called...\n" )
   // try to disconnect
   m_TrackerController->RequestShutdown( );
@@ -2705,11 +2705,11 @@ void BronchoscopyNavigator::DisconnectTrackerProcessing()
   if( m_TrackerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
+    m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
       "Tracker disconnect error\n" )
 
     m_StateMachine.PushInput( m_FailureInput );
@@ -2723,8 +2723,8 @@ void BronchoscopyNavigator::DisconnectTrackerProcessing()
 }
 
 /** -----------------------------------------------------------------
-* Set ImageSpatialObjects to 
-* ImageRepresentations, sets image orientations, adds ImageSpatialObjects 
+* Set ImageSpatialObjects to
+* ImageRepresentations, sets image orientations, adds ImageSpatialObjects
 * to Views and connects the scene graph
 *---------------------------------------------------------------------
 */
@@ -2768,16 +2768,16 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
   m_CoronalPlaneRepresentation = ImageRepresentationType::New();
   m_CoronalPlaneRepresentation->SetFrameColor(0,0,1);
   m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );  
+  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
 
-   /** 
+   /**
    *  Request information about the slice bounds. The answer will be
    *  received in the form of an event. This will be used to initialize
    *  the reslicing sliders and set initial slice position
    */
 
   ImageExtentObserver::Pointer extentObserver = ImageExtentObserver::New();
-  
+
   unsigned int extentObserverID;
 
   extentObserverID = m_ImageSpatialObject->AddObserver( igstk::ImageExtentEvent(), extentObserver );
@@ -2822,7 +2822,7 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
   // buid the cross hair representation and add the cross hair object
   m_CrossHairRepresentation = CrossHairRepresentationType::New();
   m_CrossHairRepresentation->SetColor(0,1,0);
-  m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );  
+  m_CrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
 
   // add the cross hair representation to the different views
 //  m_ViewerGroup->m_AxialView->RequestAddObject( m_CrossHairRepresentation->Copy() );
@@ -2835,13 +2835,13 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
   m_ViewerGroup->m_SagittalView->SetRendererBackgroundColor(0,0,0);
   m_ViewerGroup->m_CoronalView->SetRendererBackgroundColor(0,0,0);
   m_ViewerGroup->m_3DView->SetRendererBackgroundColor(1,1,1);
- 
+
   /**
   *  Connect the scene graph
   *  Here we create a virtual world reference system (as the root) and
   *  attached all the objects as its children.
   *  This is for the convenience in the following implementation. You can
-  *  use any spatial object, view, tracker, or tracker tool as a 
+  *  use any spatial object, view, tracker, or tracker tool as a
   *  reference system in IGSTK. And you can create your own class to
   *  use the coordinate system API by using this macro:
   *     igstkCoordinateSystemClassInterfaceMacro()
@@ -2881,7 +2881,7 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
   m_FiducialPointVector[0]->RequestSetTransformAndParent( identity, m_WorldReference );
   m_FiducialPointVector[1]->RequestSetTransformAndParent( identity, m_WorldReference );
   m_FiducialPointVector[2]->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );  
+  m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );
 
   // add reslice plane representations to the orthogonal views
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
@@ -2902,7 +2902,7 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
 
   m_ViewerGroup->m_AxialView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_AxialView->RequestStart();
-  m_ViewerGroup->m_AxialWidget->RequestEnableInteractions();  
+  m_ViewerGroup->m_AxialWidget->RequestEnableInteractions();
 
   m_ViewerGroup->m_SagittalView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_SagittalView->RequestStart();
@@ -2949,7 +2949,7 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
 
   /** Adding observer for mouse pressed event */
   m_ViewerGroup->AddObserver( igstk::BronchoscopyNavigatorQuadrantViews::MousePressedEvent(),
-    m_MousePressedObserver );  
+    m_MousePressedObserver );
 
 }
 
@@ -2959,14 +2959,14 @@ void BronchoscopyNavigator::ConnectImageRepresentation()
 */
 void BronchoscopyNavigator::ReadFiducials()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::ReadFiducials called...\n" )
 
   igstk::FiducialsPlanIO * reader = new igstk::FiducialsPlanIO;
 
   m_PlanFilename = m_ImageDir + "/Fiducials.igstk";
 
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "Reading fiducials from " << m_PlanFilename << "\n")
 
   m_Plan = new igstk::FiducialsPlan;
@@ -2985,7 +2985,7 @@ void BronchoscopyNavigator::ReadFiducials()
 
   m_LandmarksContainer.clear();
   m_AcceptedLandmarksContainer.clear();
-  
+
   char buf[50];
   for( unsigned int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
   {
@@ -3006,7 +3006,7 @@ void BronchoscopyNavigator::ReadFiducials()
 */
 void BronchoscopyNavigator::WriteFiducials()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::WriteFiducials called...\n" )
 
   igstk::FiducialsPlanIO * writer = new igstk::FiducialsPlanIO;
@@ -3021,18 +3021,18 @@ void BronchoscopyNavigator::WriteFiducials()
 */
 void BronchoscopyNavigator::RequestChangeSelectedViewMode()
 {
-  
-  igstkLogMacro2( m_Logger, DEBUG, 
+
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestChangeSelectedViewMode called...\n" )
 
   if ( m_ViewModeList->size() == 0)
   {
     return;
   }
-    
-  // check which view mode is selected  
+
+  // check which view mode is selected
   int choice = m_ViewModeList->value();
-  
+
   switch (choice)
   {
     case 0:
@@ -3063,7 +3063,7 @@ void BronchoscopyNavigator::RequestChangeSelectedViewMode()
       break;
 
   default:
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestChangeSelectedViewMode invalid choice \n" )
     return;
   }
@@ -3083,16 +3083,16 @@ void BronchoscopyNavigator::RequestChangeSelectedViewMode()
 */
 void BronchoscopyNavigator::RequestChangeSelectedFiducial()
 {
-  
-  igstkLogMacro2( m_Logger, DEBUG, 
+
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::RequestChangeSelectedFiducial called...\n" )
 
   if ( m_FiducialsPointList->size() == 0)
   {
     return;
   }
-    
-  // check which point is selected  
+
+  // check which point is selected
   int choice = m_FiducialsPointList->value();
 
   // get fiducial coordinates
@@ -3118,8 +3118,8 @@ void BronchoscopyNavigator::RequestChangeSelectedFiducial()
   char buf[50];
 
   sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
- 
-  /** Display point position as annotation */    
+
+  /** Display point position as annotation */
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
@@ -3127,7 +3127,7 @@ void BronchoscopyNavigator::RequestChangeSelectedFiducial()
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
 //  m_ViewerGroup->RequestUpdateOverlays();
 
@@ -3147,7 +3147,7 @@ void BronchoscopyNavigator::RequestChangeSelectedFiducial()
   }
   else
   {
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
       "This point is not defined in the image...\n" )
   }
 
@@ -3213,8 +3213,8 @@ void BronchoscopyNavigator::HandleMousePressedCallback( const itk::EventObject &
 
 /** -----------------------------------------------------------------
 *  Callback function for picking event.
-*  Upon receiving a valid picking event, this method will reslice the 
-*  image to that location and update the annotation with the new point 
+*  Upon receiving a valid picking event, this method will reslice the
+*  image to that location and update the annotation with the new point
 *  position.
 *---------------------------------------------------------------------
 */
@@ -3236,9 +3236,9 @@ void BronchoscopyNavigator::ImagePickingCallback( const itk::EventObject & event
 
 
 
-void BronchoscopyNavigator::HandleMousePressed ( 
+void BronchoscopyNavigator::HandleMousePressed (
   igstk::BronchoscopyNavigatorQuadrantViews::MouseCommandType mouseCommand )
-{ 
+{
 
     m_WindowWidth += mouseCommand.dx * 2;
     if (m_WindowWidth < 1)
@@ -3255,20 +3255,20 @@ void BronchoscopyNavigator::HandleMousePressed (
     m_CoronalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
 }
 
-void BronchoscopyNavigator::HandleKeyPressed ( 
+void BronchoscopyNavigator::HandleKeyPressed (
   igstk::BronchoscopyNavigatorQuadrantViews::KeyboardCommandType keyCommand )
 {
-  switch ( keyCommand.key ) 
-  { 
+  switch ( keyCommand.key )
+  {
     case 'p': // toggle orthogonal planes visualization
-        this->RequestToggleOrthogonalPlanes();       
+        this->RequestToggleOrthogonalPlanes();
         break;
 
     case 'r': // reset 3D view
         m_ViewerGroup->m_3DView->RequestResetCamera();
         break;
 
-    case 'h': // accepts a fiducial pointed out by the tracker while doing the registration        
+    case 'h': // accepts a fiducial pointed out by the tracker while doing the registration
           this->RequestAcceptTrackerFiducial();
         break;
 
@@ -3276,17 +3276,17 @@ void BronchoscopyNavigator::HandleKeyPressed (
         this->RequestEndSetTrackerFiducials();
         break;
 
-    default:  
+    default:
          return;
   }
 }
 
 /** -----------------------------------------------------------------
-*  Method for reslicing the image given an index number  
+*  Method for reslicing the image given an index number
 *---------------------------------------------------------------------
 */
 void BronchoscopyNavigator::ResliceImage ( IndexType index )
-{   
+{
   m_ViewerGroup->m_SuperiorLeftSlider->value( index[2] );
   m_ViewerGroup->m_SuperiorRightSlider->value( index[0] );
   m_ViewerGroup->m_InferiorLeftSlider->value( index[1] );
@@ -3296,7 +3296,7 @@ void BronchoscopyNavigator::ResliceImage ( IndexType index )
 
 void BronchoscopyNavigator::EnableOrthogonalPlanes()
 {
-    igstkLogMacro2( m_Logger, DEBUG, 
+    igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::EnableOrthogonalPlanes called...\n" )
 
   m_ViewerGroup->m_3DView->RequestAddObject( m_AxialPlaneRepresentation );
@@ -3307,7 +3307,7 @@ void BronchoscopyNavigator::EnableOrthogonalPlanes()
 
 void BronchoscopyNavigator::DisableOrthogonalPlanes()
 {
-  igstkLogMacro2( m_Logger, DEBUG, 
+  igstkLogMacro2( m_Logger, DEBUG,
                     "BronchoscopyNavigator::DisableOrthogonalPlanes called...\n" )
 
   m_ViewerGroup->m_3DView->RequestRemoveObject( m_AxialPlaneRepresentation );
@@ -3320,7 +3320,7 @@ void BronchoscopyNavigator::ToolAvailableCallback(const itk::EventObject & event
 {
   m_TrackingSemaphore->color(FL_GREEN);
   m_TrackingSemaphore->label("tracking");
-  m_ControlGroup->redraw();  
+  m_ControlGroup->redraw();
   Fl::check();
 }
 
@@ -3328,7 +3328,7 @@ void BronchoscopyNavigator::ToolNotAvailableCallback(const itk::EventObject & ev
 {
   m_TrackingSemaphore->color(FL_RED);
   m_TrackingSemaphore->label("not visible");
-  m_ControlGroup->redraw();  
+  m_ControlGroup->redraw();
   Fl::check();
 }
 
@@ -3336,7 +3336,7 @@ void BronchoscopyNavigator::ReferenceAvailableCallback(const itk::EventObject & 
 {
   m_ReferenceSemaphore->color(FL_GREEN);
   m_ReferenceSemaphore->label("tracking");
-  m_ControlGroup->redraw();  
+  m_ControlGroup->redraw();
   Fl::check();
 }
 
@@ -3344,24 +3344,24 @@ void BronchoscopyNavigator::ReferenceNotAvailableCallback(const itk::EventObject
 {
   m_ReferenceSemaphore->color(FL_RED);
   m_ReferenceSemaphore->label("not visible");
-  m_ControlGroup->redraw();  
+  m_ControlGroup->redraw();
   Fl::check();
 }
 
-void BronchoscopyNavigator::TrackerControllerObserver::SetParent( BronchoscopyNavigator *p ) 
+void BronchoscopyNavigator::TrackerControllerObserver::SetParent( BronchoscopyNavigator *p )
 {
   m_Parent = p;
 }
 
-void BronchoscopyNavigator::TrackerControllerObserver::Execute( const itk::Object *caller, 
+void BronchoscopyNavigator::TrackerControllerObserver::Execute( const itk::Object *caller,
                                                     const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);
 }
-  
-void 
-BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller, 
+
+void
+BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
                                                              const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =
@@ -3376,14 +3376,14 @@ BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
  /* const igstk::TrackerController::RequestTrackerEvent *evt2 =
     dynamic_cast< const igstk::TrackerController::RequestTrackerEvent * > (&event);*/
 
-   const igstk::TrackerController::RequestToolsEvent *evt3 = 
+   const igstk::TrackerController::RequestToolsEvent *evt3 =
     dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
 
-   const igstk::TrackerController::RequestToolEvent *evt4 = 
+   const igstk::TrackerController::RequestToolEvent *evt4 =
     dynamic_cast< const igstk::TrackerController::RequestToolEvent * > (&event);
 
-  if( evt1a ) 
-  {            
+  if( evt1a )
+  {
     m_ErrorOccured = true;
     m_ErrorMessage = evt1a->Get();
   }
@@ -3407,12 +3407,12 @@ BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find(DRIVING_TOOL_NAME);
 
     if ( iter!=toolContainer.end() )
-    {      
+    {
         m_Parent->m_TrackerTool = (*iter).second;
 
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
-   
+
         m_Parent->m_TrackerTool->AddObserver(
          igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
     }
@@ -3438,7 +3438,7 @@ BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
     igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find("sPtr");
 
     if ( iter!=toolContainer.end() )
-    {      
+    {
         m_Parent->m_TrackerTool = (*iter).second;
     }
   }
@@ -3451,7 +3451,7 @@ BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
   */
 }
 
-void 
+void
 BronchoscopyNavigator
 ::OnITKProgressEvent(itk::Object *source, const itk::EventObject &)
 {
