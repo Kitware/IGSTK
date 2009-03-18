@@ -22,44 +22,66 @@
 #include "itksys/SystemTools.hxx"
 #include "itksys/Directory.hxx"
 
+//Terason Ultrasound specific header
 #include "igstkTerasonImager.h"
-//#include "igstkImagingSourceImager.h"
 
+//ImagingSource framegrabber specific header
+#include "igstkImagingSourceImager.h"
+
+//CompressedDV specific header
+#include "igstkCompressedDVImager.h"
 //#include "igstkCalibrationIO.h"
 
 namespace igstk
-{ 
-
-
+{
 
 ImagerController::ImagerController() : m_StateMachine( this )
 {
-            //create error observer
+  //create error observer
   this->m_ErrorObserver = ErrorObserver::New();
 
   m_ProgressCallback = NULL;
 
-  //define the state machine's states 
+  //define the state machine's states
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToInitialize );
+
+  //Terason Ultrasound specific :begin
   igstkAddStateMacro( AttemptingToInitializeTerason );
+  //Terason Ultrasound specific :end
+
+  //ImagingSource framegrabber specific :begin
   igstkAddStateMacro( AttemptingToInitializeImagingSource );
+  //ImagingSource framegrabber specific :end
+
+  //CompressedDV framegrabber specific :begin
+    igstkAddStateMacro( AttemptingToInitializeCompressedDV );
+    //CompressedDV framegrabber specific :end
 
   igstkAddStateMacro( AttemptingToShutdown );
   igstkAddStateMacro( Initialized );
-
   igstkAddStateMacro( AttemptingToStart );
   igstkAddStateMacro( AttemptingToStop );
-
-  igstkAddStateMacro( Started );  
+  igstkAddStateMacro( Started );
 
   //define the state machine's inputs
   igstkAddInputMacro( ImagerInitialize );
   igstkAddInputMacro( ImagerStart );
   igstkAddInputMacro( ImagerStop );
   igstkAddInputMacro( ImagerShutdown );
+
+  //Terason Ultrasound specific :begin
   igstkAddInputMacro( TerasonInitialize );
+  //Terason Ultrasound specific :end
+
+  //ImagingSource framegrabber specific :begin
   igstkAddInputMacro( ImagingSourceInitialize );
+  //ImagingSource framegrabber specific :end
+
+  //CompressedDV framegrabber specific :begin
+    igstkAddInputMacro( CompressedDVInitialize );
+    //CompressedDV framegrabber specific :end
+
   igstkAddInputMacro( Failed  );
   igstkAddInputMacro( Succeeded  );
   igstkAddInputMacro( GetImager  );
@@ -77,7 +99,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerShutdown,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(Idle,
                           TerasonInitialize,
                           Idle,
@@ -87,7 +109,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagingSourceInitialize,
                           Idle,
                           ReportInvalidRequest);
-    
+  igstkAddTransitionMacro(Idle,
+                      CompressedDVInitialize,
+                          Idle,
+                          ReportInvalidRequest);
+
   igstkAddTransitionMacro(Idle,
                           Failed,
                           Idle,
@@ -97,12 +123,12 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Succeeded,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(Idle,
                           GetImager,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(Idle,
                           GetTools,
                           Idle,
@@ -112,7 +138,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddTransitionMacro(AttemptingToInitialize,
                           Failed,
                           Idle,
-                          ReportInitializationFailure);                          
+                          ReportInitializationFailure);
 
   igstkAddTransitionMacro(AttemptingToInitialize,
                           TerasonInitialize,
@@ -123,6 +149,10 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagingSourceInitialize,
                           AttemptingToInitializeImagingSource,
                           ImagingSourceInitialize);
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          CompressedDVInitialize,
+                            AttemptingToInitializeTerason,
+                            CompressedDVInitialize);
 
   igstkAddTransitionMacro(AttemptingToInitialize,
                           ImagerInitialize,
@@ -143,18 +173,18 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           GetImager,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitialize,
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
-  
+
   //transitions from AttemptingToInitializeTerason state
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           Failed,
                           Idle,
                           ReportInitializationFailure);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           Succeeded,
                           Initialized,
@@ -169,28 +199,28 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerShutdown,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           TerasonInitialize,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           GetImager,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
 
-    //transitions from AttemptingToInitializeImagingSource state
+  //transitions from AttemptingToInitializeImagingSource state
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           Failed,
                           Idle,
                           ReportInitializationFailure);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           Succeeded,
                           Initialized,
@@ -205,23 +235,58 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerShutdown,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           TerasonInitialize,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           GetImager,
                           Idle,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
-          
-          //transitions from Initialized state
+  //transitions from AttemptingToInitializeCompressedDV state
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            Failed,
+                            Idle,
+                            ReportInitializationFailure);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            Succeeded,
+                            Initialized,
+                            ReportInitializationSuccess);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            ImagerInitialize,
+                            Idle,
+                            ReportInvalidRequest);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            ImagerShutdown,
+                            Idle,
+                            ReportInvalidRequest);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            TerasonInitialize,
+                            Idle,
+                            ReportInvalidRequest);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            GetImager,
+                            Idle,
+                            ReportInvalidRequest);
+
+    igstkAddTransitionMacro(AttemptingToInitializeCompressedDV,
+                            GetTools,
+                            Idle,
+                            ReportInvalidRequest);
+
+  //transitions from Initialized state
   igstkAddTransitionMacro(Initialized,
                           GetImager,
                           Initialized,
@@ -246,7 +311,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStart,
                           ImagerStart);
-  
+
   igstkAddTransitionMacro(Initialized,
                           TerasonInitialize,
                           Initialized,
@@ -256,7 +321,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagingSourceInitialize,
                           Initialized,
                           ReportInvalidRequest);
-  
+  igstkAddTransitionMacro(Initialized,
+                            CompressedDVInitialize,
+                            Initialized,
+                            ReportInvalidRequest);
+
   igstkAddTransitionMacro(Initialized,
                           ImagerStop,
                           Initialized,
@@ -273,7 +342,6 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ReportInvalidRequest);
 
   //transitions from AttemtingToStart state
-
   igstkAddTransitionMacro(AttemptingToStart,
                           Succeeded,
                           Started,
@@ -308,7 +376,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStart,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToStart,
                           TerasonInitialize,
                           AttemptingToStart,
@@ -320,17 +388,21 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ReportInvalidRequest);
 
   igstkAddTransitionMacro(AttemptingToStart,
+                            CompressedDVInitialize,
+                            AttemptingToStart,
+                            ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToStart,
                           ImagerStop,
                           AttemptingToStart,
                           ReportInvalidRequest);
 
-        //transitions from Started state
-
+  //transitions from Started state
   igstkAddTransitionMacro(Started,
                           ImagerStop,
                           AttemptingToStop,
                           ImagerStop);
-  
+
   igstkAddTransitionMacro(Started,
                           TerasonInitialize,
                           Started,
@@ -341,6 +413,10 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Started,
                           ReportInvalidRequest);
 
+  igstkAddTransitionMacro(Started,
+                            CompressedDVInitialize,
+                            Started,
+                            ReportInvalidRequest);
   igstkAddTransitionMacro(Started,
                           ImagerInitialize,
                           Started,
@@ -361,8 +437,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Started,
                           ReportInvalidRequest);
 
-   //transitions from AttemtingtoStop state
-
+  //transitions from AttemtingtoStop state
   igstkAddTransitionMacro(AttemptingToStop,
                           Succeeded,
                           Initialized,
@@ -397,7 +472,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStop,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToStop,
                           TerasonInitialize,
                           AttemptingToStop,
@@ -407,14 +482,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagingSourceInitialize,
                           AttemptingToStop,
                           ReportInvalidRequest);
-
+  igstkAddTransitionMacro(AttemptingToStop,
+                            CompressedDVInitialize,
+                            AttemptingToStop,
+                            ReportInvalidRequest);
   igstkAddTransitionMacro(AttemptingToStop,
                           ImagerStop,
                           AttemptingToStop,
                           ReportInvalidRequest);
 
   //transitions from AttemptingToShutdown state
-
   igstkAddTransitionMacro(AttemptingToShutdown,
                           Succeeded,
                           Idle,
@@ -423,7 +500,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddTransitionMacro(AttemptingToShutdown,
                           Failed,
                           Initialized,
-                          ReportShutdownFailure);                          
+                          ReportShutdownFailure);
 
   igstkAddTransitionMacro(AttemptingToShutdown,
                           ImagerInitialize,
@@ -439,7 +516,10 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagingSourceInitialize,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
-
+  igstkAddTransitionMacro(AttemptingToShutdown,
+                           CompressedDVInitialize,
+                           AttemptingToShutdown,
+                           ReportInvalidRequest);
   igstkAddTransitionMacro(AttemptingToShutdown,
                           ImagerShutdown,
                           AttemptingToShutdown,
@@ -449,26 +529,26 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           GetImager,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
-  
+
   igstkAddTransitionMacro(AttemptingToShutdown,
                           GetTools,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
-  
-              //set the initial state of the state machine
+
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();
-} 
-
-
-ImagerController::~ImagerController()  
-{
-     
 }
 
-void 
+
+ImagerController::~ImagerController()
+{
+
+}
+
+void
 ImagerController::RequestSetProgressCallback(itk::Command *progressCallback)
 {
   m_ProgressCallback = progressCallback;
@@ -478,9 +558,10 @@ void
 ImagerController::RequestInitialize(
   const ImagerConfiguration *configuration)
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestInitialize called...\n" );
-  this->m_TmpImagerConfiguration = 
+
+  this->m_TmpImagerConfiguration =
     const_cast<ImagerConfiguration *>(configuration);
   igstkPushInputMacro( ImagerInitialize );
   this->m_StateMachine.ProcessInputs();
@@ -489,7 +570,7 @@ ImagerController::RequestInitialize(
 void
 ImagerController::RequestStart()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestStart called...\n" );
   igstkPushInputMacro( ImagerStart );
   this->m_StateMachine.ProcessInputs();
@@ -498,7 +579,7 @@ ImagerController::RequestStart()
 void
 ImagerController::RequestStop()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestStop called...\n" );
   igstkPushInputMacro( ImagerStop );
   this->m_StateMachine.ProcessInputs();
@@ -507,31 +588,31 @@ ImagerController::RequestStop()
 void
 ImagerController::RequestShutdown()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestShutdown called...\n" );
   igstkPushInputMacro( ImagerShutdown );
   this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::RequestGetImager()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestGetImager called...\n" );
   igstkPushInputMacro( GetImager );
   this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::RequestGetToolList()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstkImagerController::RequestGetToolList called...\n" );
   igstkPushInputMacro( GetTools );
   this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::ImagerInitializeProcessing()
 {
   if( this->m_TmpImagerConfiguration == NULL )
@@ -539,21 +620,34 @@ ImagerController::ImagerInitializeProcessing()
     this->m_ErrorMessage = "Null imager configuration received.";
     igstkPushInputMacro( Failed );
   }
-  else 
+  else
   {
-   
+
+  //Terason Ultrasound specific :begin
     if( dynamic_cast<TerasonImagerConfiguration *>
       ( this->m_TmpImagerConfiguration ) )
     {
       this->m_ImagerConfiguration = m_TmpImagerConfiguration;
       igstkPushInputMacro( TerasonInitialize );
     }
-    /*if( dynamic_cast<ImagingSourceImagerConfiguration *>
+    //Terason Ultrasound specific :end
+
+    //ImagingSource framegrabber specific :begin
+    else if( dynamic_cast<ImagingSourceImagerConfiguration *>
       ( this->m_TmpImagerConfiguration ) )
     {
       this->m_ImagerConfiguration = m_TmpImagerConfiguration;
       igstkPushInputMacro( ImagingSourceInitialize );
-    }*/
+    }
+    //ImagingSource framegrabber specific :end
+    //CompressedDV framegrabber specific :begin
+        else if( dynamic_cast<CompressedDVImagerConfiguration *>
+          ( this->m_TmpImagerConfiguration ) )
+        {
+          this->m_ImagerConfiguration = m_TmpImagerConfiguration;
+          igstkPushInputMacro( CompressedDVInitialize );
+        }
+        //CompressedDV framegrabber specific :end
     else
     {
       this->m_ErrorMessage = "Unknown imager configuration type.";
@@ -563,12 +657,12 @@ ImagerController::ImagerInitializeProcessing()
  this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::ImagerStartProcessing()
-{  
+{
     StartFailureEvent evt;
     unsigned long observerID;
-    observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(), 
+    observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
 
     m_Imager->RequestStartImaging();
@@ -592,15 +686,15 @@ ImagerController::ImagerStartProcessing()
     this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::ImagerStopProcessing()
 {
   StopFailureEvent evt;
   unsigned long observerID;
 
-  observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(), 
+  observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
-                //stop tracking
+  //stop imaging
   this->m_Imager->RequestStopImaging();
   if( this->m_ErrorObserver->ErrorOccured() )
   {
@@ -620,16 +714,16 @@ ImagerController::ImagerStopProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 
-void 
+void
 ImagerController::ImagerShutdownProcessing()
 {
   ShutdownFailureEvent evt;
   unsigned long observerID;
 
-  observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(), 
+  observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
 
-                   //close communication with imager
+  //close communication with imager
   this->m_Imager->RequestClose();
   if( this->m_ErrorObserver->ErrorOccured() )
   {
@@ -644,7 +738,7 @@ ImagerController::ImagerShutdownProcessing()
   {
    this->m_Imager->RemoveObserver( observerID );
 
-                   //if serial communication, close COM port
+   //if serial communication, close COM port
    if( this->m_SocketCommunication.IsNotNull() )
    {
       try
@@ -652,14 +746,14 @@ ImagerController::ImagerShutdownProcessing()
         this->m_SocketCommunication->CloseSocket();
       }
       catch (...)
-      {      
+      {
            this->m_ErrorMessage = "Could not close socket";
            evt.Set( this->m_ErrorMessage );
            this->InvokeEvent( evt );
            igstkPushInputMacro( Failed );
       }
    }
-   this->m_Imager = NULL;   
+   this->m_Imager = NULL;
    this->m_Tools.clear();
    this->m_SocketCommunication = NULL;
    igstkPushInputMacro( Succeeded );
@@ -668,17 +762,17 @@ ImagerController::ImagerShutdownProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 
-bool 
+bool
 ImagerController::InitializeSerialCommunication()
 {
   SerialCommunicatingImagerConfiguration *serialImagerConfiguration =
     dynamic_cast<SerialCommunicatingImagerConfiguration *>( this->m_ImagerConfiguration );
-  
-                 //create serial communication
+
+  //create serial communication
   this->m_SerialCommunication = igstk::SerialCommunication::New();
 
-              //observe errors generated by the serial communication
-  unsigned long observerID = 
+  //observe errors generated by the serial communication
+  unsigned long observerID =
     this->m_SerialCommunication->AddObserver( OpenPortErrorEvent(),
                                               this->m_ErrorObserver );
 
@@ -690,8 +784,8 @@ ImagerController::InitializeSerialCommunication()
   this->m_SerialCommunication->SetHardwareHandshake( serialImagerConfiguration->GetHandshake() );
 
   this->m_SerialCommunication->OpenCommunication();
-                     //remove the observer, if an error occured we have already
-                     //been notified
+  //remove the observer, if an error occured we have already
+  //been notified
   this->m_SerialCommunication->RemoveObserver(observerID);
 
   if( this->m_ErrorObserver->ErrorOccured() )
@@ -703,78 +797,103 @@ ImagerController::InitializeSerialCommunication()
   return true;
 }
 
-bool 
+//Terason Ultrasound specific :begin
+bool
 ImagerController::InitializeSocketCommunication()
 {
   SocketCommunicatingImagerConfiguration *socketImagerConfiguration =
     dynamic_cast<SocketCommunicatingImagerConfiguration *>( this->m_ImagerConfiguration );
-  
-                 //create client socket communication
+
+  //create client socket communication
   this->m_SocketCommunication = igtl::ServerSocket::New();
   //this->m_SocketCommunication = igtl::ClientSocket::New();
 
- // std::cout << "socketImagerConfiguration->GetSocketPort() " << socketImagerConfiguration->GetSocketPort() << std::endl;
-//  std::cout << "socketImagerConfiguration->GetHostName() " << socketImagerConfiguration->GetHostName() << std::endl;
+  // std::cout << "socketImagerConfiguration->GetSocketPort() " << socketImagerConfiguration->GetSocketPort() << std::endl;
+  // std::cout << "socketImagerConfiguration->GetHostName() " << socketImagerConfiguration->GetHostName() << std::endl;
 
   int err = this->m_SocketCommunication->CreateServer( socketImagerConfiguration->GetSocketPort() );
 
-//  int err = this->m_SocketCommunication->ConnectToServer( 
-//  socketImagerConfiguration->GetHostName().c_str(), socketImagerConfiguration->GetSocketPort() );
+  //  int err = this->m_SocketCommunication->ConnectToServer(
+  //  socketImagerConfiguration->GetHostName().c_str(), socketImagerConfiguration->GetSocketPort() );
 
   if (err != 0)
   {
     OpenCommunicationFailureEvent evt;
     this->m_ErrorMessage = "Could not create server";
     evt.Set( this->m_ErrorMessage );
-    this->InvokeEvent( evt );           
+    this->InvokeEvent( evt );
     return false;
   }
 
   return true;
 }
 
+
 TerasonImagerTool::Pointer ImagerController::InitializeTerasonTool(
     const TerasonToolConfiguration *toolConfiguration )
 {
   TerasonImagerTool::Pointer imagerTool = TerasonImagerTool::New();
- 
+
   unsigned int dims[3];
   toolConfiguration->GetFrameDimensions(dims);
   imagerTool->SetFrameDimensions(dims);
 
   imagerTool->SetPixelDepth(toolConfiguration->GetPixelDepth());
   imagerTool->RequestSetImagerToolName( toolConfiguration->GetToolUniqueIdentifier() );
+  std::cout << toolConfiguration->GetToolUniqueIdentifier() << std::endl;
   imagerTool->RequestConfigure();
 
- // imagerTool->SetCalibrationTransform( identity );
+  // imagerTool->SetCalibrationTransform( identity );
 
   imagerTool->RequestConfigure();
 
   return imagerTool;
 }
+//Terason Ultrasound specific :end
 
-/*
-ImagerTool::Pointer ImagerController::InitializeImagingSourceTool(
+//ImagingSource framegrabber specific :begin
+ImagingSourceImagerTool::Pointer ImagerController::InitializeImagingSourceTool(
     const ImagingSourceToolConfiguration *toolConfiguration )
 {
   ImagingSourceImagerTool::Pointer imagerTool = ImagingSourceImagerTool::New();
- 
+
   unsigned int dims[3];
   toolConfiguration->GetFrameDimensions(dims);
   imagerTool->SetFrameDimensions(dims);
 
   imagerTool->SetPixelDepth(toolConfiguration->GetPixelDepth());
-  imagerTool->RequestSetImagerToolName( toolConfiguration->GetToolUniqueIdentifier() );
+  imagerTool->RequestSetImagerToolName(
+                            toolConfiguration->GetToolUniqueIdentifier() );
   imagerTool->RequestConfigure();
 
- // imagerTool->SetCalibrationTransform( identity );
-
-  imagerTool->RequestConfigure();
+  // imagerTool->SetCalibrationTransform( identity );
 
   return imagerTool;
 }
-*/
+//ImagingSource framegrabber specific :end
 
+//CompressedDV framegrabber specific :begin
+CompressedDVImagerTool::Pointer ImagerController::InitializeCompressedDVTool(
+    const CompressedDVToolConfiguration *toolConfiguration )
+{
+  CompressedDVImagerTool::Pointer imagerTool = CompressedDVImagerTool::New();
+
+  unsigned int dims[3];
+  toolConfiguration->GetFrameDimensions(dims);
+  imagerTool->SetFrameDimensions(dims);
+
+  imagerTool->SetPixelDepth(toolConfiguration->GetPixelDepth());
+  imagerTool->RequestSetImagerToolName(
+                            toolConfiguration->GetToolUniqueIdentifier() );
+  imagerTool->RequestConfigure();
+
+  // imagerTool->SetCalibrationTransform( identity );
+
+  return imagerTool;
+}
+//CompressedDV framegrabber specific :end
+
+//Terason Ultrasound specific :begin
 void ImagerController::TerasonInitializeProcessing()
 {
   if( !InitializeSocketCommunication() )
@@ -783,38 +902,38 @@ void ImagerController::TerasonInitializeProcessing()
   }
   else
   {
-                      //create imager
+      //create imager
       igstk::TerasonImager::Pointer imager = igstk::TerasonImager::New();
-      this->m_Imager = imager; 
+      this->m_Imager = imager;
 
       if (this->m_ProgressCallback != NULL)
         imager->AddObserver(igstk::DoubleTypeEvent(), this->m_ProgressCallback);
 
-                     //don't need to observe this for errors because the 
-                     //configuration class ensures that the frequency is valid
+      //don't need to observe this for errors because the
+      //configuration class ensures that the frequency is valid
       imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
 
       imager->SetCommunication( this->m_SocketCommunication );
 
       TerasonImagerConfiguration *imagerConfiguration =
-        dynamic_cast<TerasonImagerConfiguration *>( this->m_ImagerConfiguration );     
-        
+        dynamic_cast<TerasonImagerConfiguration *>( this->m_ImagerConfiguration );
+
       unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
                                                        this->m_ErrorObserver );
       imager->RequestOpen();
-      
+
       if( this->m_ErrorObserver->ErrorOccured() )
       {
         this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
         this->m_ErrorObserver->ClearError();
-        imager->RemoveObserver(observerID);    
+        imager->RemoveObserver(observerID);
         igstkPushInputMacro( Failed );
       }
-      else   //attach the tools and start communication 
+      else   //attach the tools and start communication
       {
-        std::vector< ImagerToolConfiguration * > toolConfigurations = 
+        std::vector< ImagerToolConfiguration * > toolConfigurations =
             this->m_ImagerConfiguration->GetImagerToolList();
-                              //attach tools
+        //attach tools
         std::vector< ImagerToolConfiguration * >::const_iterator it;
         std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
           toolConfigurations.end();
@@ -828,79 +947,119 @@ void ImagerController::TerasonInitializeProcessing()
           imagerTool = this->InitializeTerasonTool( currentToolConfig );
           this->m_Tools.push_back( imagerTool );
           imagerTool->RequestAttachToImager( imager );
-        }   
+        }
 
         m_Imager->RemoveObserver(observerID);
         igstkPushInputMacro( Succeeded );
       }
   }
   this->m_StateMachine.ProcessInputs();
-
 }
+//Terason Ultrasound specific :end
 
-
+//ImagingSource framegrabber specific :begin
 void ImagerController::ImagingSourceInitializeProcessing()
 {
-  if( !InitializeSerialCommunication() )
+  //create imager
+  igstk::ImagingSourceImager::Pointer imager = igstk::ImagingSourceImager::New();
+  this->m_Imager = imager;
+  //don't need to observe this for errors because the
+  //configuration class ensures that the frequency is valid
+  imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
+
+  ImagingSourceImagerConfiguration *imagerConfiguration =
+  dynamic_cast<ImagingSourceImagerConfiguration *>( this->m_ImagerConfiguration );
+
+  unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+  imager->RequestOpen();
+
+  if( this->m_ErrorObserver->ErrorOccured() )
   {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    imager->RemoveObserver(observerID);
     igstkPushInputMacro( Failed );
   }
-  else
+  else   //attach the tools and start communication
   {
-    /*
-      //create imager
-      igstk::ImagingSourceImager::Pointer imager = igstk::ImagingSourceImager::New();
-      this->m_Imager = imager; 
-      //don't need to observe this for errors because the 
-      //configuration class ensures that the frequency is valid
-      imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
-
-      imager->SetCommunication( this->m_SerialCommunication );
-
-      ImagingSourceImagerConfiguration *imagerConfiguration =
-        dynamic_cast<ImagingSourceImagerConfiguration *>( this->m_ImagerConfiguration );     
-        
-      unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
-                                                       this->m_ErrorObserver );
-      imager->RequestOpen();
-      
-      if( this->m_ErrorObserver->ErrorOccured() )
-      {
-        this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-        this->m_ErrorObserver->ClearError();
-        imager->RemoveObserver(observerID);    
-        igstkPushInputMacro( Failed );
-      }
-      else   //attach the tools and start communication 
-      {
-        std::vector< ImagerToolConfiguration * > toolConfigurations = 
-            this->m_ImagerConfiguration->GetImagerToolList();
-                              //attach tools
-        std::vector< ImagerToolConfiguration * >::const_iterator it;
-        std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
+    std::vector< ImagerToolConfiguration * > toolConfigurations =
+        this->m_ImagerConfiguration->GetImagerToolList();
+    //attach tools
+    std::vector< ImagerToolConfiguration * >::const_iterator it;
+    std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
           toolConfigurations.end();
-        ImagerTool::Pointer imagerTool;
-        TerasonToolConfiguration * currentToolConfig;
+    ImagerTool::Pointer imagerTool;
+    TerasonToolConfiguration * currentToolConfig;
 
-        for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
-        {
-          currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
+    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    {
+      currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
 
-          imagerTool = this->InitializeTerasonTool( currentToolConfig );
-          this->m_Tools.push_back( imagerTool );
-          imagerTool->RequestAttachToImager( imager );
-        }   
+      imagerTool = this->InitializeTerasonTool( currentToolConfig );
+      this->m_Tools.push_back( imagerTool );
+      imagerTool->RequestAttachToImager( imager );
+    }
 
-        m_Imager->RemoveObserver(observerID);
-        igstkPushInputMacro( Succeeded );
-      }
-      */
+    m_Imager->RemoveObserver(observerID);
+    igstkPushInputMacro( Succeeded );
   }
   this->m_StateMachine.ProcessInputs();
-
 }
+//ImagingSource framegrabber specific :end
 
-void 
+//CompressedDV framegrabber specific :begin
+void ImagerController::CompressedDVInitializeProcessing()
+{
+  //create imager
+  igstk::CompressedDVImager::Pointer imager = igstk::CompressedDVImager::New();
+  this->m_Imager = imager;
+  //don't need to observe this for errors because the
+  //configuration class ensures that the frequency is valid
+  imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
+
+  CompressedDVImagerConfiguration *imagerConfiguration =
+  dynamic_cast<CompressedDVImagerConfiguration *>( this->m_ImagerConfiguration );
+
+  unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+  imager->RequestOpen();
+//TODO modify
+  if( this->m_ErrorObserver->ErrorOccured() )
+  {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    imager->RemoveObserver(observerID);
+    igstkPushInputMacro( Failed );
+  }
+  else   //attach the tools and start communication
+  {
+    std::vector< ImagerToolConfiguration * > toolConfigurations =
+        this->m_ImagerConfiguration->GetImagerToolList();
+    //attach tools
+    std::vector< ImagerToolConfiguration * >::const_iterator it;
+    std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
+          toolConfigurations.end();
+    ImagerTool::Pointer imagerTool;
+    TerasonToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    {
+      currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
+
+      imagerTool = this->InitializeTerasonTool( currentToolConfig );
+      this->m_Tools.push_back( imagerTool );
+      imagerTool->RequestAttachToImager( imager );
+    }
+
+    m_Imager->RemoveObserver(observerID);
+    igstkPushInputMacro( Succeeded );
+  }
+  this->m_StateMachine.ProcessInputs();
+}
+//CompressedDV framegrabber specific :end
+
+void
 ImagerController::GetImagerProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -912,7 +1071,7 @@ ImagerController::GetImagerProcessing()
 }
 
 
-void 
+void
 ImagerController::GetToolsProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -924,7 +1083,7 @@ ImagerController::GetToolsProcessing()
 }
 
 
-void 
+void
 ImagerController::ReportInitializationSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -938,12 +1097,12 @@ ImagerController::ReportInitializationFailureProcessing()
   igstkLogMacro( DEBUG,
                   "igstk::ImagerController::"
                   "ReportInitializationFailureProcessing called...\n");
-  InitializeFailureEvent evt; 
+  InitializeFailureEvent evt;
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 
 }
-void 
+void
 ImagerController::ReportShutdownSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -951,17 +1110,17 @@ ImagerController::ReportShutdownSuccessProcessing()
                   "ReportShutdownSuccess called...\n");
   this->InvokeEvent( ShutdownSuccessEvent() );
 }
-void 
+void
 ImagerController::ReportShutdownFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::ImagerController::"
                   "ReportShutdownFailure called...\n");
-  ShutdownFailureEvent evt; 
+  ShutdownFailureEvent evt;
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
-void 
+void
 ImagerController::ReportStartSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -969,17 +1128,17 @@ ImagerController::ReportStartSuccessProcessing()
                   "ReportStartSuccess called...\n");
   this->InvokeEvent( StartSuccessEvent() );
 }
-void 
+void
 ImagerController::ReportStartFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::ImagerController::"
                   "ReportStartFailure called...\n");
-  StartFailureEvent evt; 
+  StartFailureEvent evt;
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
-void 
+void
 ImagerController::ReportStopSuccessProcessing()
 {
   igstkLogMacro( DEBUG,
@@ -987,17 +1146,17 @@ ImagerController::ReportStopSuccessProcessing()
                   "ReportStopSuccess called...\n");
   this->InvokeEvent( StopSuccessEvent() );
 }
-void 
+void
 ImagerController::ReportStopFailureProcessing()
 {
   igstkLogMacro( DEBUG,
                   "igstk::ImagerController::"
                   "ReportStopFailure called...\n");
-  StopFailureEvent evt; 
+  StopFailureEvent evt;
   evt.Set( this->m_ErrorMessage );
   this->InvokeEvent( evt );
 }
-void 
+void
 ImagerController::ReportInvalidRequestProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::ImagerController::"
@@ -1007,7 +1166,7 @@ ImagerController::ReportInvalidRequestProcessing()
 
 
 ImagerController::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
-{ 
+{
   //imager errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ImagerOpenErrorEvent().GetEventName(),
@@ -1026,8 +1185,8 @@ ImagerController::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
                                         "Error closing imager communication." ) );
 }
 
-void 
-ImagerController::ErrorObserver::Execute(itk::Object *caller, 
+void
+ImagerController::ErrorObserver::Execute(itk::Object *caller,
                                             const itk::EventObject & event) throw (std::exception)
 {
   std::map<std::string,std::string>::iterator it;
@@ -1044,8 +1203,8 @@ ImagerController::ErrorObserver::Execute(itk::Object *caller,
   //silently ignore it
 }
 
-void 
-ImagerController::ErrorObserver::Execute(const itk::Object *caller, 
+void
+ImagerController::ErrorObserver::Execute(const itk::Object *caller,
                                             const itk::EventObject & event) throw (std::exception)
 {
   const itk::Object * constCaller = caller;
