@@ -24,42 +24,40 @@
 #include "igstkObjectRepresentation.h"
 
 class vtkImageData;
-class vtkActor;
-class vtkPlaneSource;
-class vtkPolyDataMapper;
-class vtkTexture;
-class vtkLookupTable;
+class vtkImageActor;
 class vtkImageMapToColors;
+class vtkLookupTable;
 
 namespace igstk
 {
+
+template < class TVideoFrameSpatialObject >
 class VideoFrameRepresentation : public ObjectRepresentation
 {
-  
+
 public:
-  igstkStandardClassTraitsMacro( VideoFrameRepresentation, 
-                                 ObjectRepresentation );
-  
-   /** Observer type for loaded event, 
+  igstkStandardTemplatedClassTraitsMacro( VideoFrameRepresentation,
+                      ObjectRepresentation )
+
+  /** Observer type for loaded event,
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
 
-  typedef VideoFrameSpatialObject                      VideoFrameSpatialObjectType;
-
-  typedef VideoFrameSpatialObjectType::ConstPointer 
+  typedef TVideoFrameSpatialObject                 VideoFrameSpatialObjectType;
+  typedef typename VideoFrameSpatialObjectType::ConstPointer
                                            VideoFrameSpatialObjectConstPointer;
 
-
   /** Connect this representation class to the spatial object */
-  void RequestSetVideoFrameSpatialObject(const VideoFrameSpatialObjectType * spatialObject);
+  void RequestSetVideoFrameSpatialObject(const VideoFrameSpatialObjectType*
+                       spatialObject);
 
-   /** Observer macro that will received a event with an image as payload and
+  /** Observer macro that will received a event with an image as payload and
    * will store it internally. This will be the receptor of the event sent by
    * the ImageSpatialObject when an image is requested. */
-  igstkObserverMacro( VTKImage, VTKImageModifiedEvent, 
+  igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
                       EventHelperType::VTKImagePointerType );
 
-    /** Set the Window Level for the representation */
+  /** Set the Window Level for the representation */
   void SetWindowLevel( double window, double level );
 
   void SaveScreenShot( const std::string & filename );
@@ -67,39 +65,37 @@ public:
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
-
 protected:
   VideoFrameRepresentation(void);
-  
+
   ~VideoFrameRepresentation(void);
 
   /** Overloaded function to delete actors */
   void DeleteActors();
 
+  bool VerifyTimeStamp( ) const;
+
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
-    
+
 private:
-  
+
   /** Internal itkSpatialObject */
   VideoFrameSpatialObjectConstPointer         m_VideoFrameSpatialObject;
   VideoFrameSpatialObjectConstPointer         m_VideoFrameSpatialObjectToAdd;
 
   /** VTK classes that support display of an image */
   vtkImageData              *m_ImageData;
-  vtkActor                  *m_ImageActor;
-  vtkPlaneSource            *m_PlaneSource;
-  vtkPolyDataMapper         *m_VideoMapper; 
-  vtkTexture                *m_VideoTexture;
+  vtkImageActor             *m_ImageActor;
   vtkLookupTable            *m_LookupTable;
-  vtkImageMapToColors       *m_ColorMap;
+  vtkImageMapToColors   *m_MapColors;
 
-  double                                 m_Level;
-  double                                 m_Window;
-  double                                 m_Shift;
-  double                                 m_Scale;
+  double                    m_Level;
+  double                    m_Window;
+  double                    m_Shift;
+  double                    m_Scale;
 
-  std::string                m_ScreenShotFileName;
+  std::string               m_ScreenShotFileName;
 
   /** Update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();
@@ -114,19 +110,19 @@ private:
   /** Sets the vtkImageData from the spatial object. This method MUST be
    * private in order to prevent unsafe access from the VTK image layer. */
   void SetImage( const vtkImageData * image );
-  
+
   /** Connect VTK pipeline */
   void ConnectVTKPipelineProcessing();
 
   /** Observer to the VTK image events */
-  VTKImageObserver::Pointer   m_VTKImageObserver;
+  typename VTKImageObserver::Pointer   m_VTKImageObserver;
 
    /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidImageSpatialObject );
   igstkDeclareInputMacro( NullImageSpatialObject );
   igstkDeclareInputMacro( EmptyImageSpatialObject );
   igstkDeclareInputMacro( ConnectVTKPipeline );
-  
+
   /** States for the State Machine */
   igstkDeclareStateMacro( NullImageSpatialObject );
   igstkDeclareStateMacro( ValidImageSpatialObject );
@@ -134,5 +130,9 @@ private:
 };
 
 } // end namespace igstk
+
+#ifndef IGSTK_MANUAL_INSTANTIATION
+#include "igstkVideoFrameRepresentation.txx"
+#endif
 
 #endif // __igstkVideoFrameRepresentation_h
