@@ -100,6 +100,7 @@ SET(IGSTK_HEADS
 
   igstkTransformObserver.h
 
+
 # Ascension tracker support
   igstkAscensionCommandInterpreter.h
   igstkAscensionTracker.h
@@ -466,8 +467,8 @@ SET(IGSTKSandbox_SRCS
 
 
 # Video grabber support
-  igstkVideoFrameSpatialObject.cxx
-  igstkVideoFrameRepresentation.cxx
+  igstkVideoFrameSpatialObject.txx
+  igstkVideoFrameRepresentation.txx
   igstkFrame.cxx
   igstkImager.cxx
   igstkImagerTool.cxx
