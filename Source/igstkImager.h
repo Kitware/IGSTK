@@ -64,31 +64,22 @@ igstkEventMacro( ImagerToolFrameUpdateEvent,              ImagerEvent);
 /** \class Imager
  *  \brief Abstract superclass for concrete IGSTK Imager classes.
  *
- *  This class presents a generic interface for imaging the
- *  positions of objects in IGSTK.  The various derived
- *  subclasses of this class provide back-ends that communicate
- *  with several of the imaging systems that are available on
- *  the market.
+ *  This class presents a generic interface for grabbing videostream
+ *  from video-devices such Ultrasound, Endoscope, Bronchoscope, etc.
+ *  The various derived subclasses of this class provide back-ends that
+ *  communicate with several standard imaging systems.
  *
  *  The state machine of this class implements the basic
- *  state transitions of an imager.  Inputs to the state
+ *  state transitions of an imager. Inputs to the state
  *  machine are translated into method calls that can be
  *  overridden by device-specific derive classes that do
  *  the appropriate processing for a particular device.
  *
- *  Most (but not all) of the derived classes utilize a
- *  communication object to mediate all communication between
- *  the computer and the device.  When a communication object
- *  is used, all communication can be logged, and furthermore,
- *  the communication log can be used to drive an offline
- *  simulation of a particular device 
- *  (See SerialCommunicationSimulator).
- *
- *  The following diagram illustrates the state machine of 
+ *  The following diagram illustrates the state machine of
  *  the imager class
  *
  *  \image html  igstkImager.png  "Imager State Machine Diagram"
- *  \image latex igstkImager.eps  "Imager State Machine Diagram" 
+ *  \image latex igstkImager.eps  "Imager State Machine Diagram"
  *
  *  \ingroup Imager
  */
@@ -98,7 +89,7 @@ class Imager : public Object
 
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardAbstractClassTraitsMacro( Imager, Object ) 
+  igstkStandardAbstractClassTraitsMacro( Imager, Object )
 
 public:
 
@@ -107,12 +98,12 @@ public:
   /** typedefs from ImagerTool class */
   typedef ImagerTool       ImagerToolType;
 
-  /** The "RequestOpen" method attempts to open communication with the 
+  /** The "RequestOpen" method attempts to open communication with the
    *  imaging device. It generates a ImagerOpenEvent if successful,
    *  or a ImagerOpenErrorEvent if not successful.  */
   void RequestOpen( void );
 
-  /** The "RequestClose" method closes communication with the device. 
+  /** The "RequestClose" method closes communication with the device.
    *  It generates a ImagerCloseEvent if successful,
    *  or a ImagerCloseErrorEvent if not successful. */
   void RequestClose( void );
@@ -127,7 +118,7 @@ public:
 
   /** The "RequestStopImaging" stops imager from imaging the tools. */
   void RequestStopImaging( void );
-  
+
 
   /** The "RequestSetFrequency" method defines the frequency at which the
    * Transform information will be queried from the Imager device. Note that
@@ -157,9 +148,9 @@ protected:
   /** Get the validity time. */
   igstkGetMacro( ValidityTime, TimePeriodType );
 
-  typedef enum 
-    { 
-    FAILURE=0, 
+  typedef enum
+    {
+    FAILURE=0,
     SUCCESS
     } ResultType;
 
@@ -170,33 +161,33 @@ protected:
   typedef Frame                          FrameType;
 
   /** The "InternalOpen" method opens communication with a imaging device.
-      This method is to be implemented by a descendant class 
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalOpen( void ) = 0;
 
   /** The "InternalClose" method closes communication with a imaging device.
-      This method is to be implemented by a descendant class 
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalClose( void ) = 0;
 
-  /** The "InternalReset" method resets imager to a known configuration. 
-      This method is to be implemented by a descendant class 
+  /** The "InternalReset" method resets imager to a known configuration.
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void ) = 0;
 
   /** The "InternalStartImaging" method starts imaging.
-      This method is to be implemented by a descendant class 
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalStartImaging( void ) = 0;
 
   /** The "InternalStopImaging" method stops imaging.
-      This method is to be implemented by a descendant class 
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalStopImaging( void ) = 0;
 
 
   /** The "InternalUpdateStatus" method updates imager status.
-      This method is to be implemented by a descendant class 
+      This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void ) = 0;
 
@@ -207,7 +198,7 @@ protected:
   virtual ResultType InternalThreadedUpdateStatus( void ) = 0;
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Verify if a imager tool information is correct before attaching
    *  it to the imager. This method is used to verify the information supplied
@@ -221,12 +212,12 @@ protected:
    *  tool configuration step does not match with the part number read from the
    *  SROM file.
    */
-  virtual ResultType 
-        VerifyImagerToolInformation( const ImagerToolType * ) = 0; 
+  virtual ResultType
+        VerifyImagerToolInformation( const ImagerToolType * ) = 0;
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is 
-   * valid for the imaging device that is being used. This method is to be 
-   * overridden in the derived imaging-device specific classes to take 
+  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
+   * valid for the imaging device that is being used. This method is to be
+   * overridden in the derived imaging-device specific classes to take
    * into account the maximum frequency possible in the imaging device
   */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
@@ -234,17 +225,17 @@ protected:
   /** This method will remove entries of the tracker tool from internal
     * data containers */
   virtual ResultType RemoveImagerToolFromInternalDataContainers(
-                                     const ImagerToolType * imagerTool ) = 0; 
+                                     const ImagerToolType * imagerTool ) = 0;
 
   /** Add imager tool entry to internal containers */
-  virtual ResultType AddImagerToolToInternalDataContainers( 
+  virtual ResultType AddImagerToolToInternalDataContainers(
                                     const ImagerToolType * imagerTool ) = 0;
 
   /** typedefs from ImagerTool class */
   typedef std::map< std::string, ImagerToolType *>  ImagerToolsContainerType;
 
-  /** Access method for the imager tool container. This method 
-    * is useful in the derived classes to access the unique identifiers 
+  /** Access method for the imager tool container. This method
+    * is useful in the derived classes to access the unique identifiers
     * of the imager tools */
   const ImagerToolsContainerType & GetImagerToolContainer() const;
 
@@ -255,33 +246,33 @@ protected:
   void ReportImagingToolVisible( ImagerToolType * imagerTool ) const;
 
   /** Set imager tool raw transform */
-//  void SetImagerToolRawTransform( ImagerToolType * imagerTool, 
+//  void SetImagerToolRawTransform( ImagerToolType * imagerTool,
 //                                   const TransformType transform );
 
     /** Set imager tool raw transform */
-  //void SetImagerToolRawFrame( ImagerToolType * imagerTool, 
+  //void SetImagerToolRawFrame( ImagerToolType * imagerTool,
   //                                 const FrameType & frame );
 
-  void SetImagerToolFrame( ImagerToolType * imagerTool, 
+  void SetImagerToolFrame( ImagerToolType * imagerTool,
                                    const FrameType & frame );
 
-  void GetImagerToolFrame( ImagerToolType * imagerTool, 
+  void GetImagerToolFrame( ImagerToolType * imagerTool,
                                    FrameType & frame );
 
    /** Set imager tool image pointer */
-//  void SetImagerToolImageData( ImagerToolType * imagerTool, 
+//  void SetImagerToolImageData( ImagerToolType * imagerTool,
 //                                   const vtkImageData * image );
 
   /** Turn on/off update flag of the imager tool */
   void SetImagerToolUpdate( ImagerToolType * imagerTool,
                                       bool flag ) const;
 
-  /** Depending on the imager type, the imaging thread should be 
+  /** Depending on the imager type, the imaging thread should be
     * terminated or left untouched when we stop imaging. For example,
     * in the case of MicronImager, it is better to not terminate the
-    * imaging thread. Otherwise, everytime we restart imaging, then 
+    * imaging thread. Otherwise, everytime we restart imaging, then
     * the camera has to be reattached. For NDI imagers, the imaging
-    * thread has to be terminated first to send TSTOP command */  
+    * thread has to be terminated first to send TSTOP command */
 
   /** Always called when exiting imaging state. This methold will be
     * overriden in derived classes. */
@@ -300,15 +291,15 @@ private:
 
   /** Pulse generator for driving the rate of imager updates. */
   PulseGenerator::Pointer   m_PulseGenerator;
-  
+
   /** Pulse observer for receiving the events from the pulse generator. */
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
 
-  // An associative container of ImagerTool Pointer with 
+  // An associative container of ImagerTool Pointer with
   // ImagerTool identifier used as a Key
   ImagerToolsContainerType           m_ImagerTools;
-  
+
   /** typedefs from ImagerTool class */
   typedef ImagerToolType::Pointer                   ImagerToolPointer;
 
@@ -323,7 +314,7 @@ private:
       multi-threading, if this flag is set as true */
   bool                                m_ThreadingEnabled;
 
-  /** Boolean value to indicate that the imaging thread 
+  /** Boolean value to indicate that the imaging thread
     * has started */
   bool                                m_ImagingThreadStarted;
 
@@ -336,7 +327,7 @@ private:
   /** itk::ConditionVariable object pointer to signal for the next
    *  transform */
   itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
-  
+
   /** itk::SimpleMutexLock object to be used for
       m_ConditionNextTransformReceived */
   itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
@@ -376,7 +367,7 @@ private:
   /** Thread function for imaging */
   static ITK_THREAD_RETURN_TYPE ImagingThreadFunction(void* pInfoStruct);
 
-  /** The "UpdateStatus" method is used for updating the status of 
+  /** The "UpdateStatus" method is used for updating the status of
       tools when the imager is in imaging state. It is a callback
       method that gets invoked when a pulse event is observed */
   void UpdateStatus( void );
@@ -384,15 +375,15 @@ private:
   /** The "AttemptToOpenProcessing" method attempts to open communication with a
       imaging device. */
   void AttemptToOpenProcessing( void );
-  
-  /** The "AttemptToStartImagingProcessing" method attempts 
+
+  /** The "AttemptToStartImagingProcessing" method attempts
    *  to start imaging. */
   void AttemptToStartImagingProcessing( void );
 
   /** The "AttemptToStopImagingProcessing" method attempts to stop imaging. */
   void AttemptToStopImagingProcessing( void );
 
-  /** The "AttemptToAttachImagerToolProcessing" method attempts 
+  /** The "AttemptToAttachImagerToolProcessing" method attempts
    *  to attach a imager tool to the imager . */
   void AttemptToAttachImagerToolProcessing( void );
 
@@ -428,42 +419,42 @@ private:
       imager in use, when the imager is in communicating state. */
   void ResetFromCommunicatingStateProcessing( void );
 
-  /** Post-processing after communication setup has been successful. */ 
+  /** Post-processing after communication setup has been successful. */
   void CommunicationEstablishmentSuccessProcessing( void );
 
-  /** Post-processing after communication setup has failed. */ 
+  /** Post-processing after communication setup has failed. */
   void CommunicationEstablishmentFailureProcessing( void );
 
-  /** Post-processing after ports and tools setup has been successful. */ 
+  /** Post-processing after ports and tools setup has been successful. */
   void ToolsActivationSuccessProcessing( void );
 
-  /** Post-processing after ports and tools setup has failed. */ 
+  /** Post-processing after ports and tools setup has failed. */
   void ToolsActivationFailureProcessing( void );
 
-  /** Post-processing after start imaging has been successful. */ 
+  /** Post-processing after start imaging has been successful. */
   void StartImagingSuccessProcessing( void );
 
-  /** Post-processing after start imaging has failed. */ 
+  /** Post-processing after start imaging has failed. */
   void StartImagingFailureProcessing( void );
 
   /** Post-processing after attaching a imager tool
-     has been successful. */ 
+     has been successful. */
   void AttachingImagerToolSuccessProcessing( void );
 
   /** Post-processing after an attempt to attach a imager tool
-   *  has failed. */ 
+   *  has failed. */
   void AttachingImagerToolFailureProcessing( void );
 
-  /** Post-processing after stop imaging has been successful. */ 
+  /** Post-processing after stop imaging has been successful. */
   void StopImagingSuccessProcessing( void );
 
-  /** Post-processing after start imaging has failed. */ 
+  /** Post-processing after start imaging has failed. */
   void StopImagingFailureProcessing( void );
 
-  /** Post-processing after close imaging has been successful. */ 
+  /** Post-processing after close imaging has been successful. */
   void CloseCommunicationSuccessProcessing( void );
 
-  /** Post-processing after close imaging has failed. */ 
+  /** Post-processing after close imaging has failed. */
   void CloseCommunicationFailureProcessing( void );
 
   /** Always called when entering imaging state. */
@@ -472,13 +463,13 @@ private:
   /** Detach all imager tools from the imager */
   void DetachAllImagerToolsFromImager();
 
-  /** Report invalid request */ 
+  /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
 
-  /** Actually set the frequency of update */ 
+  /** Actually set the frequency of update */
   void SetFrequencyProcessing( void );
 
-  /** Define the coordinate system interface 
+  /** Define the coordinate system interface
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
