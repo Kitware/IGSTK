@@ -1,0 +1,197 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class VideoTemporalCalibrationWizardGUI {open : {public igstk::Object}
+} {
+  Function {VideoTemporalCalibrationWizardGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK - VideoTemporal Calibration Wizard}
+      callback {Quit();}
+      xywh {-32000 -32000 1280 800} type Double box PLASTIC_UP_BOX hide resizable
+      code0 {\#include "igstkFLTKWidget.h"}
+    } {
+      Fl_Group m_ControlGroup {
+        xywh {0 0 150 800} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
+      } {
+        Fl_Box m_InstitutionBox {
+          image {IGSTK.jpg} xywh {11 27 130 61} color 7 labelsize 23 labelcolor 15
+        }
+        Fl_Button {} {
+          label Quit
+          callback {Quit();}
+          tooltip {Load segmentation (.msh)} xywh {10 750 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        }
+        Fl_Button {} {
+          label Load
+          callback {RequestLoadTrackerMesh();}
+          tooltip {Load tracker mesh  (.msh)} xywh {10 194 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        }
+        Fl_Button {} {
+          label Load
+          callback {RequestLoadWorkingVolumeMesh();}
+          tooltip {Load working volume mesh (.msh)} xywh {10 265 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        }
+        Fl_Button {} {
+          label Load
+          callback {//RequestConfigureTracker();
+RequestLoadTrackerToolSpatialObject();}
+          tooltip {Start application} xywh {10 123 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        }
+        Fl_Box {} {
+          label {Working Volume Rep.}
+          xywh {10 232 130 37} labelsize 13
+        }
+        Fl_Box {} {
+          label {Tracker Rep.}
+          xywh {10 163 130 37} labelsize 13
+        }
+        Fl_Box {} {
+          label {Tracker Configuration}
+          xywh {10 93 130 37} labelsize 13
+        }
+        Fl_Group m_LiveVideoGroup {
+          xywh {10 316 130 113} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
+        } {
+          Fl_Button m_ToggleRunVideoButton {
+            label Run
+            callback {RequestToggleRunVideo();}
+            tooltip {Run/Stop video} xywh {29 393 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
+          }
+          Fl_Button m_ToggleEnableVideoButton {
+            label {Enable Video}
+            callback {RequestToggleEnableVideo();}
+            tooltip {Enable/Disable video} xywh {17 325 115 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
+          }
+        }
+        Fl_Box m_TrackerSemaphore {
+          label OFF
+          xywh {11 609 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Tracker Tool Status:}
+          xywh {11 572 130 37} labelsize 15
+        }
+        Fl_Box m_ImagerSemaphore {
+          label OFF
+          xywh {9 683 130 30} box PLASTIC_UP_BOX
+        }
+        Fl_Box {} {
+          label {Imager Tool Status:}
+          xywh {11 648 130 37} labelsize 15
+        }
+        Fl_Group m_CollectorGroup {
+          xywh {10 443 130 50} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
+        } {
+          Fl_Button m_ToggleEnableCollectorButton {
+            label {Point Collector}
+            callback {RequestToggleEnableCollector();}
+            tooltip {Enable/Disable Point Collector} xywh {22 452 106 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
+          }
+        }
+      }
+      Fl_Group m_ViewerGroup {open
+        xywh {151 0 1127 800} box PLASTIC_DOWN_BOX resizable
+        code0 {\#include "VideoTemporalCalibrationWizardQuadrantViews.h"}
+        class {igstk::VideoTemporalCalibrationWizardQuadrantViews}
+      } {}
+    }
+    code {mainWindow->show();
+//mainWindow->fullscreen();
+hasQuitted = false;
+
+int x = m_ControlGroup->x();
+int y = m_ControlGroup->y();
+int width = m_ControlGroup->w();
+int height = m_ControlGroup->h();
+m_ControlGroup->resize(x,y,150,height);} {}
+    Fl_Window m_ConfirmToQuitWindow {
+      label {Shut down system}
+      xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Are you sure you want to quit?}
+        xywh {40 24 335 51} labelsize 22
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_ConfirmToQuitWindow->hide();
+
+this->RequestPrepareToQuit();
+
+this->hasQuitted = true;}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 255 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_ConfirmToQuitWindow->hide();
+
+this->hasQuitted = false;}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 255 selection_color 95
+      }
+    }
+    Fl_Window m_WinProgress {
+      label {SNAP Progress Meter} selected
+      xywh {469 496 485 70} type Double box BORDER_BOX color 53 modal noborder visible
+    } {
+      Fl_Group {} {
+        label {Working ...} open
+        xywh {0 0 480 25} labelfont 1 labelsize 16 align 16
+      } {}
+      Fl_Group {} {open
+        xywh {10 25 470 40} box PLASTIC_DOWN_BOX
+      } {
+        Fl_Slider m_OutProgressMeter {
+          xywh {20 35 395 20} type {Horz Fill} box PLASTIC_DOWN_BOX selection_color 62 align 16 maximum 100 step 0.1 value 50
+        }
+        Fl_Value_Output m_OutProgressCounter {
+          label {%}
+          xywh {420 35 40 20} color 7 labelsize 12 align 8 maximum 100 step 0.1 value 50 textsize 12
+        }
+      }
+    }
+  }
+  Function {~VideoTemporalCalibrationWizardGUI()} {return_type virtual
+  } {
+    code {delete m_ViewerGroup;} {}
+  }
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {m_ConfirmToQuitWindow->show();
+CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {RequestDisconnectTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestConfigureTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestPrepareToQuit()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadTrackerMesh()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadWorkingVolumeMesh()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadTrackerToolSpatialObject()} {open return_type {virtual void}
+  } {}
+  Function {RequestToggleEnableVideo()} {open return_type {virtual void}
+  } {}
+  Function {RequestToggleRunVideo()} {return_type {virtual void}
+  } {}
+  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
+  } {
+    code {int px = mainWindow->x() + (mainWindow->w() - childWindow->w()) / 2;
+int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
+childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
+  }
+  Function {RequestToggleEnableCollector()} {open return_type {virtual void}
+  } {}
+} 
