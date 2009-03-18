@@ -26,17 +26,17 @@
 
 class vtkImageData;
 
-namespace igstk 
+namespace igstk
 {
- 
-/** \class Frame 
+
+/** \class Frame
  *  \brief Frame from an external input device (ultrasound system).
- * 
+ *
  * It is intended to be used as a
  * communication vehicle between imagers and spatial objects. The class
  * contains a TimeStamp defining the validity period for the information in the
- * frame. 
- *  
+ * frame.
+ *
  * All the set methods require an argument that defines the number of
  * milliseconds for which the stored information is considered to be valid.
  * The validity period will be counted from the moment the Set method was
@@ -50,7 +50,7 @@ class Frame
 public:
 
   typedef TimeStamp::TimePeriodType   TimePeriodType;
-  
+
 public:
 
   /** Constructor and destructor */
@@ -60,15 +60,15 @@ public:
 
   void SetImagePtr(
           void*,
-          TimePeriodType millisecondsToExpiration);      
+          TimePeriodType millisecondsToExpiration);
 
   void * GetImagePtr();
 
   /** Returns the time at which the validity of this information starts. The
-   * data in this transform should not be used for scenes to be rendered
-   * before that validity time. The time is returned in milliseconds. 
+   * data in this frame should not be used for scenes to be rendered
+   * before that validity time. The time is returned in milliseconds.
    *
-   * \sa TimeStamp 
+   * \sa TimeStamp
    *
    * */
   TimePeriodType GetStartTime() const;
@@ -76,9 +76,9 @@ public:
 
   /** Returns the time at which the validity of this information expires. The
    * data in this frame should not be used for scenes to be rendered
-   * after that validity time. The time is returned in milliseconds. 
+   * after that validity time. The time is returned in milliseconds.
    *
-   * \sa TimeStamp 
+   * \sa TimeStamp
    *
    * */
   TimePeriodType GetExpirationTime() const;
@@ -87,19 +87,19 @@ public:
   void SetTimeToExpiration(
           TimePeriodType millisecondsToExpiration);
 
-  /** Returns the validity status of the transform at the time passed as
-   * argument. The transform values should not be used in a scene if the time
+  /** Returns the validity status of the frame at the time passed as
+   * argument. The frame values should not be used in a scene if the time
    * when the scene is to be rendered returned 'false' when passed to this
-   * IsValid() function. The time is passed in milliseconds. 
+   * IsValid() function. The time is passed in milliseconds.
    *
-   * \sa TimeStamp 
+   * \sa TimeStamp
    *
    * */
   bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
 
-  /** Returns the validity status of the transform when it is called 
+  /** Returns the validity status of the frame when it is called
   *
-  * \sa TimeStamp 
+  * \sa TimeStamp
   *
   * */
   bool IsValidNow() const;
@@ -113,17 +113,17 @@ protected:
 
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
-  void PrintTrailer(std::ostream& itkNotUsed(os), 
+  void PrintTrailer(std::ostream& itkNotUsed(os),
                     itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 
   TimeStamp       m_TimeStamp;
 
-  void*   m_ImagePtr;
+  void*         m_ImagePtr;
 
 };
 
