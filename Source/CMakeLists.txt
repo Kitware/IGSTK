@@ -421,6 +421,29 @@ IF (IGSTKSandbox_USE_OpenIGTLink)
       )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
+IF (IGSTKSandbox_USE_unicap)
+  INCLUDE_DIRECTORIES(
+  /usr/local/include/unicap
+  )
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkImagingSourceImager.h
+      igstkImagingSourceImager.cxx
+      igstkImagingSourceImagerTool.h
+      igstkImagingSourceImagerTool.cxx
+      )
+ENDIF (IGSTKSandbox_USE_unicap)
+
+IF (IGSTKSandbox_USE_CompressedDV)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkCompressedDVImager.h
+      igstkCompressedDVImager.cxx
+      igstkCompressedDVImagerTool.h
+      igstkCompressedDVImagerTool.cxx
+      )
+ENDIF (IGSTKSandbox_USE_CompressedDV)
+
 IF( WIN32 )
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
