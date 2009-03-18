@@ -100,7 +100,6 @@ SET(IGSTK_HEADS
 
   igstkTransformObserver.h
 
-
 # Ascension tracker support
   igstkAscensionCommandInterpreter.h
   igstkAscensionTracker.h
