@@ -118,6 +118,11 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
 
     SET(SandboxTests_SRCS
       ${SandboxTests_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+
+    SET(SandboxTests_SRCS
+      ${SandboxTests_SRCS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
 
@@ -143,6 +148,14 @@ ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunic
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
+
+    ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTKSandbox_TESTS}
+      igstkTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 100 10 
+      ${TRACKER_FREQUENCY}
+      )
+ 
     ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTKSandbox_TESTS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
