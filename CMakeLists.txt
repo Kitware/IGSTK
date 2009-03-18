@@ -191,6 +191,13 @@ ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 #
 OPTION(IGSTK_USE_SceneGraphVisualization "Enable scene graph visualization by allowing the observer to listen to relevant events" ON)
 
+
+#
+# Use unicap library 
+#
+OPTION(IGSTKSandbox_USE_unicap "Use the unicap library" OFF)
+
+
 #-----------------------------------------------------------------------------
 # check for header files that we need
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
