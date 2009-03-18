@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<tracking_system type = "polaris hybrid">
+
+    <refresh_rate> 30 </refresh_rate>
+
+    <serial_communication> 
+      <com_port>0</com_port>
+      <baud_rate>9600</baud_rate> 
+      <data_bits>8</data_bits>
+      <parity>N</parity> 
+      <stop_bits>1</stop_bits> 
+      <hand_shake>0</hand_shake> 
+    </serial_communication>
+
+    <tool usage="reference">
+      <name> reference </name> 
+      <control_box_port>1</control_box_port>
+    </tool>
+
+    <tool>
+      <name> probe </name> 
+      <control_box_port>2</control_box_port>      
+     <!-- <calibration_file>E:/users/zivy/USCalibration.xml</calibration_file>-->
+    </tool>
+
+</tracking_system>
+
