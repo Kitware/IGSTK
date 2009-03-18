@@ -51,10 +51,18 @@ IF (IGSTKSandbox_USE_FLTK)
 ENDIF (IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
-    SUBDIRS( UltrasoundNavigator )
-    SUBDIRS( UltrasoundCalibrationWizard )
+    #SUBDIRS( UltrasoundNavigator )
+    #SUBDIRS( UltrasoundCalibrationWizard )
     SUBDIRS( TransformOIGTLinkBroadcast )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
+
+IF (IGSTKSandbox_USE_unicap)
+    INCLUDE_DIRECTORIES(
+    /usr/local/include/unicap
+    )
+    #SUBDIRS( VideoFrameGrabberAndViewer )
+    #SUBDIRS( VideoTemporalCalibrationWizard )
+ENDIF (IGSTKSandbox_USE_unicap)
 
 IF (IGSTKSandbox_USE_Qt)
   SUBDIRS( OneViewAndTrackingUsingQTWidget )
