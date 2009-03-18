@@ -1,8 +1,4 @@
 
-#IF(IGSTKSandbox_USE_OpenIGTLink)
-#  SUBDIRS(TrackerConfiguration)
-#ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
 SUBDIRS(TrackerConfiguration)
 SUBDIRS(ImagerConfiguration)
 
