@@ -198,6 +198,13 @@ OPTION(IGSTK_USE_SceneGraphVisualization "Enable scene graph visualization by al
 OPTION(IGSTKSandbox_USE_unicap "Use the unicap library" OFF)
 
 
+#
+# Use CompressedDV 
+#
+OPTION(IGSTKSandbox_USE_CompressedDV "Use compressed DV" OFF)
+
+
+
 #-----------------------------------------------------------------------------
 # check for header files that we need
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
