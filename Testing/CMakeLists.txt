@@ -118,6 +118,11 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
 
     SET(SandboxTests_SRCS
       ${SandboxTests_SRCS}
+      igstkOpenIGTLinkReceiverTest.cxx
+      )
+
+    SET(SandboxTests_SRCS
+      ${SandboxTests_SRCS}
       igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
 
@@ -154,6 +159,12 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
       igstkTrackerToolObserverToOpenIGTLinkRelayTest
       localhost 16666 1000 100 10 
       ${TRACKER_FREQUENCY}
+      )
+ 
+    ADD_TEST( igstkOpenIGTLinkReceiverTest
+      ${IGSTKSandbox_TESTS}
+      igstkOpenIGTLinkReceiverTest
+      16666 
       )
  
     ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
