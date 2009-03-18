@@ -581,6 +581,14 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
   SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
+IF (IGSTKSandbox_USE_unicap)
+ SET(EXTRA_LIBS ${EXTRA_LIBS} unicap)
+ENDIF (IGSTKSandbox_USE_unicap)
+
+IF (IGSTKSandbox_USE_CompressedDV)
+ SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dv iec61883)
+ENDIF (IGSTKSandbox_USE_CompressedDV)
+
 IF(IGSTKSandbox_USE_vtkKWImage)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkKWImageu)
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
