@@ -38,7 +38,8 @@
 #include "itkStdStreamLogOutput.h"
 
 #include "igstkReslicerPlaneSpatialObject.h"
-#include "igstkMeshResliceSpatialObjectRepresentation.h"
+#include "igstkMeshResliceObjectRepresentation.h"
+#include "igstkFrame.h"
 
 /** \class VideoFrameGrabberAndViewer
 *
@@ -63,7 +64,7 @@ public:
   typedef igstk::ReslicerPlaneSpatialObject           ReslicerPlaneType;
 
   /** mesh reslice representation */
-  typedef igstk::MeshResliceSpatialObjectRepresentation
+  typedef igstk::MeshResliceObjectRepresentation
                                                  MeshResliceRepresentationType;
 
   /** typedef for axes spatial objects */
