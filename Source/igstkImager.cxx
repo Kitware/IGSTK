@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #if defined(_MSC_VER)
-//Warning about: identifier was truncated to '255' characters in the debug 
+//Warning about: identifier was truncated to '255' characters in the debug
 // information (MVC6.0 Debug)
 #pragma warning( disable : 4786 )
 #endif
@@ -26,36 +26,35 @@
 namespace igstk
 {
 
-
 /** Constructor */
-Imager::Imager(void) :  m_StateMachine( this ) 
+Imager::Imager(void) :  m_StateMachine( this )
 {
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
   // Set the state descriptors
-  igstkAddStateMacro( Idle ); 
-  igstkAddStateMacro( AttemptingToEstablishCommunication ); 
-  igstkAddStateMacro( AttemptingToCloseCommunication); 
+  igstkAddStateMacro( Idle );
+  igstkAddStateMacro( AttemptingToEstablishCommunication );
+  igstkAddStateMacro( AttemptingToCloseCommunication);
   igstkAddStateMacro( AttemptingToAttachImagerTool );
   igstkAddStateMacro( ImagerToolAttached );
   igstkAddStateMacro( CommunicationEstablished );
-  igstkAddStateMacro( AttemptingToTrack ); 
-  igstkAddStateMacro( AttemptingToStopImaging); 
-  igstkAddStateMacro( Imaging ); 
-  igstkAddStateMacro( AttemptingToUpdate ); 
-  
+  igstkAddStateMacro( AttemptingToTrack );
+  igstkAddStateMacro( AttemptingToStopImaging);
+  igstkAddStateMacro( Imaging );
+  igstkAddStateMacro( AttemptingToUpdate );
+
   // Set the input descriptors
   igstkAddInputMacro( EstablishCommunication);
   igstkAddInputMacro( AttachImagerTool);
-  igstkAddInputMacro( StartImaging); 
-  igstkAddInputMacro( UpdateStatus); 
-  igstkAddInputMacro( StopImaging); 
-  igstkAddInputMacro( Reset); 
-  igstkAddInputMacro( CloseCommunication); 
-  igstkAddInputMacro( Success); 
-  igstkAddInputMacro( Failure); 
-  igstkAddInputMacro( ValidFrequency); 
+  igstkAddInputMacro( StartImaging);
+  igstkAddInputMacro( UpdateStatus);
+  igstkAddInputMacro( StopImaging);
+  igstkAddInputMacro( Reset);
+  igstkAddInputMacro( CloseCommunication);
+  igstkAddInputMacro( Success);
+  igstkAddInputMacro( Failure);
+  igstkAddInputMacro( ValidFrequency);
 
   // Programming the state machine transitions:
 
@@ -287,7 +286,7 @@ Imager::Imager(void) :  m_StateMachine( this )
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
-  // Create a PulseGenerator object.  
+  // Create a PulseGenerator object.
   m_PulseGenerator = PulseGenerator::New();
 
   m_PulseObserver = ObserverType::New();
@@ -301,11 +300,11 @@ Imager::Imager(void) :  m_StateMachine( this )
 
   // This is the time period for which transformation should be
   // considered valid.  After this time, they expire.  This time
-  // is in milliseconds. The default validity time is computed 
+  // is in milliseconds. The default validity time is computed
   // from the default refresh rate and nonflickering constant
   const double nonFlickeringConstant = 10;
 
-  const TimePeriodType DEFAULT_VALIDITY_TIME = 
+  const TimePeriodType DEFAULT_VALIDITY_TIME =
                     ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant ;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
@@ -313,6 +312,14 @@ Imager::Imager(void) :  m_StateMachine( this )
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
   m_ImagingThreadStarted = false;
+
+//TODO delete this
+    std::ofstream ofile;
+    ofile.open("ImagerStateMachineDiagram.dot");
+    const bool skipLoops = false;
+    this->ExportStateMachineDescription( ofile, skipLoops );
+    ofile.close();
+
 }
 
 /** Destructor */
@@ -368,7 +375,7 @@ void Imager::RequestStopImaging( void )
 }
 
 
-/** The "UpdateStatus" method is used for updating the status of 
+/** The "UpdateStatus" method is used for updating the status of
  *  tools when the imager is in imaging state. */
 void Imager::UpdateStatus( void )
 {
@@ -378,7 +385,7 @@ void Imager::UpdateStatus( void )
 }
 
 
-/** The "RequestSetFrequency" method is used for defining the rate at which 
+/** The "RequestSetFrequency" method is used for defining the rate at which
  * Transforms are queried from the Imager device */
 void Imager::RequestSetFrequency( double frequencyInHz )
 {
@@ -391,9 +398,9 @@ void Imager::RequestSetFrequency( double frequencyInHz )
     }
 }
 
-/** The "ValidateFrequency" method checks if the specified frequency is 
- * valid for the imaging device that is being used. This method is to be 
- * overridden in the derived imaging-device specific classes to take 
+/** The "ValidateFrequency" method checks if the specified frequency is
+ * valid for the imaging device that is being used. This method is to be
+ * overridden in the derived imaging-device specific classes to take
  * into account the maximum frequency possible in the imaging device */
 Imager::ResultType
 Imager::ValidateSpecifiedFrequency( double frequencyInHz )
@@ -401,7 +408,7 @@ Imager::ValidateSpecifiedFrequency( double frequencyInHz )
   if ( frequencyInHz < 0.0 )
     {
     return FAILURE;
-    } 
+    }
   return SUCCESS;
 }
 
@@ -409,28 +416,28 @@ Imager::ValidateSpecifiedFrequency( double frequencyInHz )
  *  imaging device. */
 void Imager::AttemptToOpenProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstk::Imager::AttemptToOpenProcessing called ...\n");
 
   ResultType result = this->InternalOpen();
-  
+
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
 
 
-/** Post-processing after communication setup has been successful. */ 
+/** Post-processing after communication setup has been successful. */
 void Imager::CommunicationEstablishmentSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::CommunicationEstablishmentSuccessProcessing called ...\n");
 
   this->InvokeEvent( ImagerOpenEvent() );
 }
 
 
-/** Post-processing after communication setup has failed. */ 
+/** Post-processing after communication setup has failed. */
 void Imager::CommunicationEstablishmentFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::"
@@ -454,7 +461,7 @@ void Imager::ResetFromImagingStateProcessing( void )
  *  CommunicationEstablished  state */
 void Imager::ResetFromToolsActiveStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
          "igstk::Imager::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
@@ -475,7 +482,7 @@ void Imager::ResetFromCommunicatingStateProcessing( void )
     }
 }
 
-/** Post-processing after ports and tools setup has been successful. */ 
+/** Post-processing after tools setup has been successful. */
 void Imager::ToolsActivationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::ToolsActivationSuccessProcessing "
@@ -484,7 +491,7 @@ void Imager::ToolsActivationSuccessProcessing( void )
   this->InvokeEvent( ImagerInitializeEvent() );
 }
 
-/** Post-processing after ports and tools setup has failed. */ 
+/** Post-processing after tools setup has failed. */
 void Imager::ToolsActivationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::ToolsActivationFailureProcessing "
@@ -500,13 +507,13 @@ void Imager::AttemptToStartImagingProcessing( void )
                  "called ...\n");
 
   ResultType result = this->InternalStartImaging();
-  
+
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
 
-/** Post-processing after start imaging has been successful. */ 
+/** Post-processing after start imaging has been successful. */
 void Imager::StartImagingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::StartImagingSuccessProcessing "
@@ -531,7 +538,7 @@ void Imager::StartImagingSuccessProcessing( void )
   this->InvokeEvent( ImagerStartImagingEvent() );
 }
 
-/** Post-processing after start imaging has failed. */ 
+/** Post-processing after start imaging has failed. */
 void Imager::StartImagingFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::StartImagingFailureProcessing "
@@ -541,16 +548,16 @@ void Imager::StartImagingFailureProcessing( void )
 }
 
 /** Post-processing after attaching a imager tool to the imager
- *  has been successful. */ 
+ *  has been successful. */
 void Imager::AttachingImagerToolSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::AttachingImagerToolSuccessProcessing "
                  "called ...\n");
 
-  m_ImagerTools[ m_ImagerToolToBeAttached->GetImagerToolIdentifier() ] 
-                                   = m_ImagerToolToBeAttached; 
+  m_ImagerTools[ m_ImagerToolToBeAttached->GetImagerToolIdentifier() ]
+                                   = m_ImagerToolToBeAttached;
 
-  // report to the imager tool that the attachment has been 
+  // report to the imager tool that the attachment has been
   // successful
   m_ImagerToolToBeAttached->RequestReportSuccessfulImagerToolAttachment();
 
@@ -558,19 +565,19 @@ void Imager::AttachingImagerToolSuccessProcessing( void )
   this->AddImagerToolToInternalDataContainers( m_ImagerToolToBeAttached );
 
   //connect the imager tool coordinate system to the imager
-  //system. By default, make the imager coordinate system to 
+  //system. By default, make the imager coordinate system to
   //be a parent of the imager tool coordinate system
-  
+
   TransformType identityTransform;
-  identityTransform.SetToIdentity( 
+  identityTransform.SetToIdentity(
                   igstk::TimeStamp::GetZeroValue() );
 
-  m_ImagerToolToBeAttached->RequestSetTransformAndParent( 
+  m_ImagerToolToBeAttached->RequestSetTransformAndParent(
     identityTransform, this );
 }
 
 /** Post-processing after attaching a imager tool to the imager
- *  has failed. */ 
+ *  has failed. */
 void Imager::AttachingImagerToolFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::AttachingImagerToolFailureProcessing "
@@ -579,7 +586,7 @@ void Imager::AttachingImagerToolFailureProcessing( void )
   // report to the imager tool that the attachment has failed
   m_ImagerToolToBeAttached->RequestReportFailedImagerToolAttachment();
 }
- 
+
 /** The "AttemptToStopImaging" method attempts to stop imaging. */
 void Imager::AttemptToStopImagingProcessing( void )
 {
@@ -589,14 +596,14 @@ void Imager::AttemptToStopImagingProcessing( void )
   this->ExitImagingStateProcessing();
 
   ResultType result = this->InternalStopImaging();
-  
+
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
 
 
-/** Post-processing after stop imaging has been successful. */ 
+/** Post-processing after stop imaging has been successful. */
 void Imager::StopImagingSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::StopImagingSuccessProcessing "
@@ -614,10 +621,10 @@ void Imager::StopImagingSuccessProcessing( void )
     ++inputItr;
     }
 
-  this->InvokeEvent( ImagerStopImagingEvent() );  
+  this->InvokeEvent( ImagerStopImagingEvent() );
 }
 
-/** Post-processing after start imaging has failed. */ 
+/** Post-processing after start imaging has failed. */
 void Imager::StopImagingFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::StopImagingFailureProcessing "
@@ -625,10 +632,10 @@ void Imager::StopImagingFailureProcessing( void )
   // going from AttemptingToStopImagingState to ImagingState
   this->EnterImagingStateProcessing();
 
-  this->InvokeEvent( ImagerStopImagingErrorEvent() );  
+  this->InvokeEvent( ImagerStopImagingErrorEvent() );
 }
 
-/** Needs to be called every time when entering imaging state. */ 
+/** Needs to be called every time when entering imaging state. */
 void Imager::EnterImagingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::EnterImagingStateProcessing "
@@ -643,7 +650,7 @@ void Imager::EnterImagingStateProcessing( void )
   m_PulseGenerator->RequestStart();
 }
 
-/** Needs to be called every time when exiting imaging state. */ 
+/** Needs to be called every time when exiting imaging state. */
 void Imager::ExitImagingStateProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::ExitImagingStateProcessing "
@@ -653,17 +660,17 @@ void Imager::ExitImagingStateProcessing( void )
   this->ExitImagingTerminatingImagingThread();
 }
 
-/** Exit imaging by terminating imaging thread */ 
+/** Exit imaging by terminating imaging thread */
 void Imager::ExitImagingWithoutTerminatingImagingThread( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::ExitImagingWithoutTerminatingImagingThread "
     "called ...\n");
 
   m_PulseGenerator->RequestStop();
 }
 
-/** Exit imaging by terminating imaging thread */ 
+/** Exit imaging by terminating imaging thread */
 void Imager::ExitImagingTerminatingImagingThread( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::ExitImagingTerminatingImagingThread "
@@ -698,13 +705,10 @@ void Imager::AttemptToUpdateStatusProcessing( void )
     (inputItr->second)->SetUpdated(false);
     ++inputItr;
     }
- 
-  // wait for a new frame to be available, it would be nice if
-  // "Wait" had a time limit like pthread_cond_timedwait() on Unix or
-  // WaitForSingleObject() on Windows
+
   if ( this->GetThreadingEnabled() )
     {
-    m_ConditionNextTransformReceived->Wait( 
+    m_ConditionNextTransformReceived->Wait(
       & m_LockForConditionNextTransformReceived );
     }
   else
@@ -737,25 +741,22 @@ void Imager::UpdateStatusSuccessProcessing( void )
 
        FrameType frame = (inputItr->second)->GetInternalFrame();
 
-       const double timeToExpiration = frame.GetExpirationTime() - 
+       const double timeToExpiration = frame.GetExpirationTime() -
                                       frame.GetStartTime();
 
-       FrameType updatedFrame;       
+       FrameType updatedFrame;
        updatedFrame.SetImagePtr(frame.GetImagePtr(), timeToExpiration);
 
        (inputItr->second)->SetInternalFrame( updatedFrame );
-       
-       // here we should set the calibration transform
-       // to the current frame
 
-       //throw an image update event
-       (inputItr->second)->InvokeEvent( ImagerToolFrameUpdateEvent() );       
+       //throw an imager update event
+       (inputItr->second)->InvokeEvent( ImagerToolFrameUpdateEvent() );
 
       }
     ++inputItr;
     }
 
-  this->InvokeEvent( ImagerUpdateStatusEvent() );  
+  this->InvokeEvent( ImagerUpdateStatusEvent() );
 }
 
 /** This method is called when a UpdateStatus failed */
@@ -764,7 +765,7 @@ void Imager::UpdateStatusFailureProcessing( void )
   igstkLogMacro( DEBUG, "igstk::Imager::UpdateStatusFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( ImagerUpdateStatusErrorEvent() );  
+  this->InvokeEvent( ImagerUpdateStatusErrorEvent() );
 }
 
 
@@ -807,18 +808,18 @@ void Imager::DetachAllImagerToolsFromImager()
 
   typedef ImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();  
+  InputConstIterator inputItr = m_ImagerTools.begin();
   InputConstIterator inputEnd = m_ImagerTools.end();
 
   while( inputItr != inputEnd )
     {
-    this->RemoveImagerToolFromInternalDataContainers( inputItr->second ); 
+    this->RemoveImagerToolFromInternalDataContainers( inputItr->second );
     ++inputItr;
     }
 
   m_ImagerTools.clear();
 }
- 
+
 /** The "CloseFromCommunicatingStateProcessing" method closes
  *  imager in use, when the imager is in communicating state. */
 void Imager::CloseFromCommunicatingStateProcessing( void )
@@ -836,7 +837,7 @@ void Imager::CloseFromCommunicatingStateProcessing( void )
     m_ImagingThreadStarted = false;
     }
 
-  
+
   ResultType result = this->InternalClose();
 
   m_StateMachine.PushInputBoolean( (bool)result,
@@ -845,7 +846,7 @@ void Imager::CloseFromCommunicatingStateProcessing( void )
 }
 
 
-/** Post-processing after close imaging has been successful. */ 
+/** Post-processing after close imaging has been successful. */
 void Imager::CloseCommunicationSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::"
@@ -854,7 +855,7 @@ void Imager::CloseCommunicationSuccessProcessing( void )
   this->InvokeEvent( ImagerCloseEvent() );
 }
 
-/** Post-processing after close imaging has failed. */ 
+/** Post-processing after close imaging has failed. */
 void Imager::CloseCommunicationFailureProcessing( void )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::"
@@ -888,12 +889,12 @@ void Imager::PrintSelf( std::ostream& os, itk::Indent indent ) const
  * the value and stay at its current frequency. */
 void Imager::SetFrequencyProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "igstk::Imager::SetFrequencyProcessing called ...\n");
 
   this->m_PulseGenerator->RequestSetFrequency( this->m_FrequencyToBeSet );
 
-  //Set the validity time of the transforms based on the imager frequency
+  //Set the validity time of the frames based on the imager frequency
   //Add a constant to avoid any flickering effect
 
   const double nonFlickeringConstant = 10;
@@ -908,9 +909,9 @@ RequestAttachTool( ImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG, "igstk::Imager::"
                  "RequestAttachTool called ...\n");
- 
+
   m_ImagerToolToBeAttached = imagerTool;
-  
+
   igstkPushInputMacro( AttachImagerTool );
   this->m_StateMachine.ProcessInputs();
 }
@@ -919,29 +920,27 @@ RequestAttachTool( ImagerToolType * imagerTool )
  * add a imager tool to the imager */
 void Imager::AttemptToAttachImagerToolProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::AttemptToAttachImagerToolProcessing called ...\n");
 
   // Verify the imager tool information before adding it to the
-  // imager. The conditions that need be verified depend on 
-  // the imager type. For example, for MicronImager, the 
-  // the imager should have access to the template file of the
-  // Marker that is attached to the imager tool. 
-  ResultType result = 
+  // imager. The conditions that need be verified depend on
+  // the imager type.
+  ResultType result =
     this->VerifyImagerToolInformation( m_ImagerToolToBeAttached );
- 
+
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
 
 /** Request remove a tool from the imager  */
-Imager::ResultType 
+Imager::ResultType
 Imager::
 RequestRemoveTool( ImagerToolType * imagerTool )
 {
   this->m_ImagerTools.erase( imagerTool->GetImagerToolIdentifier() );
-  this->RemoveImagerToolFromInternalDataContainers( imagerTool ); 
+  this->RemoveImagerToolFromInternalDataContainers( imagerTool );
   return SUCCESS;
 }
 
@@ -954,7 +953,7 @@ Imager::GetImagerToolContainer() const
 /** Thread function for imaging */
 ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
 {
-  struct itk::MultiThreader::ThreadInfoStruct * pInfo = 
+  struct itk::MultiThreader::ThreadInfoStruct * pInfo =
     (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
 
   if( pInfo == NULL )
@@ -978,19 +977,19 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
     {
     ResultType result = pImager->InternalThreadedUpdateStatus();
     pImager->m_ConditionNextTransformReceived->Signal();
-    
+
     totalCount++;
     if (result != SUCCESS)
       {
       errorCount++;
       }
-      
-    // check to see if we are being told to quit 
+
+    // check to see if we are being told to quit
     pInfo->ActiveFlagLock->Lock();
     activeFlag = *pInfo->ActiveFlag;
     pInfo->ActiveFlagLock->Unlock();
     }
-  
+
   igstkLogMacroStatic(pImager, DEBUG, "ImagingThreadFunction was "
                       "terminated, " << errorCount << " errors "
                       "out of " << totalCount << "updates." << std::endl );
@@ -999,16 +998,16 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
 }
 
 /** Report to the imager tool that the tool is not available */
-void 
+void
 Imager::ReportImagingToolNotAvailable( ImagerToolType * imagerTool ) const
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::ReportImagingToolNotAvailable called...\n");
   imagerTool->RequestReportImagingToolNotAvailable();
 }
 
 /** Report to the imager tool that the tool is Visible */
-void 
+void
 Imager::ReportImagingToolVisible( ImagerToolType * imagerTool ) const
 {
   igstkLogMacro( DEBUG, "igstk::Imager::ReportImagingToolVisible called...\n");
@@ -1016,39 +1015,39 @@ Imager::ReportImagingToolVisible( ImagerToolType * imagerTool ) const
 }
 
 /** Set Imager Tool Frame */
-void 
-Imager::SetImagerToolFrame( 
+void
+Imager::SetImagerToolFrame(
   ImagerToolType * imagerTool, const FrameType& frame )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::SetImagerToolFrame called...\n");
   imagerTool->SetInternalFrame( frame );
 }
 
 /** Get Imager Tool Frame */
-void Imager::GetImagerToolFrame( 
+void Imager::GetImagerToolFrame(
   ImagerToolType * imagerTool, FrameType& frame )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::GetImagerToolFrame called...\n");
   frame = imagerTool->GetInternalFrame( );
 }
 
 
 /** Turn on/off update flag of the imager tool */
-void 
-Imager::SetImagerToolUpdate( 
+void
+Imager::SetImagerToolUpdate(
   ImagerToolType * imagerTool, bool flag ) const
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
      "igstk::Imager::SetImagerToolUpdate called...\n");
-  imagerTool->SetUpdated( flag ); 
+  imagerTool->SetUpdated( flag );
 }
 
 /** Report invalid request */
 void Imager::ReportInvalidRequestProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
     "igstk::Imager::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
