@@ -18,222 +18,242 @@
 #ifndef __igstkPivotCalibration_h
 #define __igstkPivotCalibration_h
 
-#ifdef _MSC_VER
-#pragma warning ( disable : 4018 )
-//Warning about: identifier was truncated to '255' characters in the debug
-//information (MVC6.0 Debug)
-#pragma warning( disable : 4284 )
-#endif
-
-#include "itkCovariantVector.h"
-#include "itkVectorContainer.h"
-
-#include "igstkToolCalibration.h"
 #include "igstkStateMachine.h"
 #include "igstkMacros.h"
+#include "igstkEvents.h"
+#include "igstkObject.h"
+#include "igstkTracker.h"
+#include "igstkTrackerTool.h"
+#include "igstkPivotCalibrationAlgorithm.h"
+#include "igstkTransformObserver.h"
 
 namespace igstk
 {
 
-namespace Friends 
-{
-class PivotCalibrationReaderToPivotCalibration;
-}
-
 /** \class PivotCalibration
- * 
- * \brief Create a calibration transform for tracker tools.
- * 
- * This class calibrates the tracker tools and get the transform from the
- * tracked sensor or marker to the pivot point of the surgical tool. The result
- * will include the transform, the pivot position and also the root mean square
- * error (RMSE) of the calibration, which is used to evaluate the calibration
- * accuracy. Generally, more samples will give more stable result. 
  *
- *  \image html  igstkPivotCalibration.png  
- *               "PivotCalibration State Machine Diagram"
- *  \image latex igstkPivotCalibration.eps  
- *               "PivotCalibration State Machine Diagram" 
+ *  \brief This class encapsulates the pivot calibration algorithm and tracking
+ *         data acquistion for performing tool tip calibration.
  *
- * \ingroup Calibration
+ *  This class enables you to perform pivot calibration (tool tip calibration).
+ *  The class is responsible for acquisition of tracking data and computation of
+ *  the pivot calibration. You set the specific tool and number
+ *  of required transformations using the RequestInitialize() method. The class
+ *  expects the tracker to be in tracking state. Once initialized the 
+ *  RequestComputeCalibration() method will start data acquistion and perform 
+ *  calibration. 
  */
-
-class PivotCalibration : public ToolCalibration
+class PivotCalibration : public Object
 {
+  
 public:
+  
+  /** Macro with standard traits declarations (Self, SuperClass, State 
+   *  Machine etc.). */
+  igstkStandardClassTraitsMacro( PivotCalibration, Object )
 
-  /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( PivotCalibration, ToolCalibration );
 
-public:
+  /** This method sets the number of transformations required for performing 
+   *  the pivot calibration and the tool we want to calibrate. 
+   *  It is assumed that the tracker is already in tracking mode. 
+   *  The method generates two  events: InitializationSuccessEvent and 
+   *  InitializationFailureEvent (if the trackerTool pointer is null). */
+  void RequestInitialize( unsigned int n, 
+                          igstk::TrackerTool::Pointer trackerTool );
 
-  /** Typedefs for the internal computation */
-  typedef Superclass::TransformType       TransformType;
-  typedef TransformType::VersorType       VersorType;
-  typedef TransformType::VectorType       VectorType;
-  typedef TransformType::PointType        PointType;
-  typedef VersorType::MatrixType          MatrixType;
-  typedef double                          ErrorType;
+  /** This method performs the data acquisition and calibration. It generates 
+   *  several events: CalibrationSuccessEvent, CalibrationFailureEvent, 
+   *  DataAcquistionStartEvent, DataAcquisitionEvent, and 
+   *  DataAcquisitionEndEvent. 
+   *  They denote success or failure of the acquisition and computation, the 
+   *  fact that acquisition of tracking data has started, data was acquired 
+   *  (contains the percentage out of the required tracking data), and that the 
+   *  acquisition is done. */
+  void RequestComputeCalibration();
 
-public:
+  /** This method is used to request the calibration transformation.
+   *  The method should only be invoked after a successful calibration. 
+   *  It generates two events: CoordinateSystemTransformToEvent, and 
+   *  TransformNotAvailableEvent, respectively denoting that a calibration 
+   *  transform is and isn't available. */
+  void RequestCalibrationTransform();
 
-  /** Method to check whether a valid calibration is calculated */
-  igstkGetMacro( ValidPivotCalibration, bool );
+  /** This method is used to request the pivot point, given in the coordinate 
+   *  system in which the user supplied transforms were given. It generates two 
+   *  events: PointEvent, and InvalidRequestErrorEvent, respectively denoting 
+   *  that the pivot point is and isn't available. */
+  void RequestPivotPoint();
 
-  /** Method to get the pivot position used to calibrate */
-  igstkGetMacro( PivotPosition, PointType );
+  /** This method is used to request the Root Mean Square Error (RMSE) of the 
+   *  overdetermined equation system used to perform pivot calibration. It 
+   *  generates two events: DoubleTypeEvent, and InvalidRequestErrorEvent, 
+   *  respectively denoting that the RMSE is and isn't available.
+   *  \sa PivotCalibrationAlgorithm */
+  void RequestCalibrationRMSE();
 
-  /** Method to retrieve the RootMeanSquareError (RMS) calibration error */
-  igstkGetMacro( RootMeanSquareError, ErrorType );
+   /** This event is generated if the initialization succeeds. */
+  igstkEventMacro( InitializationSuccessEvent, IGSTKEvent );
 
-  /** Method to get the number of samples used to calibrate */
-  unsigned int GetNumberOfSamples() const;
+   /** This event is generated if the initialization fails (e.g. given tool 
+    *  is null). */
+  igstkEventMacro( InitializationFailureEvent, IGSTKEvent );
 
-  /** Method invoked by the user to reset the calibration process */
-  void RequestReset();
+   /** This event is generated if the pivot calibration computation succeeds. */
+  igstkEventMacro( CalibrationSuccessEvent, IGSTKEvent );
 
-  /** Method invoked by the user to add a new sample */
-  void RequestAddSample( const VersorType & versor, 
-                         const VectorType & translation );
+  /** This event is generated if the pivot calibration fails, either due to data
+   *  acquisition problems or computation failure. The event object contains a 
+   *  message (std::string) describing the exact reason for failure.*/
+  igstkLoadedEventMacro( CalibrationFailureEvent, 
+                         IGSTKEvent, 
+                         EventHelperType::StringType );
 
-  /** Method invoked by the user to calculate the calibration matrix */
-  void RequestCalculateCalibration(); 
+  /** This event is generated when data acquisition starts. */
+  igstkEventMacro( DataAcquisitionStartEvent, IGSTKEvent );
 
-  /** Method invoked by the user to calculate the calibration matrix along 
-   *  z-axis */
-  void RequestCalculateCalibrationZ(); 
+  /** This event is generated when a transformation is acquired from the 
+   *  tracker. It contains the percentage of acquired data. */
+  igstkEventMacro( DataAcquisitionEvent, DoubleTypeEvent );
 
-  /** Method invoked by the user to calculate simulated pivot position of 
-   *  any input */
-  PointType RequestSimulatePivotPosition( const VersorType & versor, 
-                                          const VectorType & translation );
-
-  /** Method invoked by the user to get the rotation and translation in 
-   *  the input container */
-  bool RequestGetInputSample( unsigned int index, 
-                              VersorType & versor, 
-                              VectorType & translation );
-
-  /** Declare the PivotCalibrationReaderToPivotCalibration class 
-   *  to be a friend in order to give it access to the private method 
-   *  SetRootMeanSquareError(). */
-  igstkFriendClassMacro( 
-                   igstk::Friends::PivotCalibrationReaderToPivotCalibration );
+    /** This event is generated when data acquisition ends. */
+  igstkEventMacro( DataAcquisitionEndEvent, IGSTKEvent );
 
 protected:
 
-  /** Constructor */
-  PivotCalibration();
+  PivotCalibration( void );
+  ~PivotCalibration( void );
 
-  /** Destructor */
-  virtual ~PivotCalibration();
-
-  /** Print the object information in a stream */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
-
-  /** Null operation for a transition in the State Machine */
-  void NoProcessing();
-
-  /** Reset the calibration matrix */
-  void ResetProcessing();
-
-  /** Add a new sample, remove parameters to make it work with state machine 
-   *  input */
-  void AddSampleProcessing();
-
-  /** Internal function to add a new sample */
-  void InternalAddSampleProcessing( const VersorType & versor, 
-                                    const VectorType & translation );
-
-  /** Calculate the calibration */
-  void CalculateCalibrationProcessing();
-
-  /** Calculate the calibration along z-axis */
-  void CalculateCalibrationZProcessing();
-
-  /** Internal function to calculate the calibration */
-  void InternalCalculateCalibrationProcessing( unsigned int axis );
-
-  /** Calculate the simulated pivot position */
-  void SimulatePivotPositionProcessing();
-
-  /** Internal function to calculate the simulated pivot position */
-  PointType InternalSimulatePivotPositionProcessing(const VersorType & versor,
-                                             const VectorType & translation );
-
-  /** Get the rotation and translation inputed */
-  void GetInputSampleProcessing();
-
-  /** Internal function to get the rotation and translation inputed */
-  bool InternalGetInputSampleProcessing( unsigned int index, 
-                                         VersorType & versor, 
-                                         VectorType & translation );
+  /** Print the object information in a stream. */
+  void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 
-  PivotCalibration( const Self & ); //purposely not implemented
-  void operator=(const Self&);  //purposely not implemented
- 
-
-  // Typedefs for members variables
-  typedef itk::VectorContainer< int, VersorType > InputVersorContainerType;
-
-  typedef InputVersorContainerType::Pointer InputVersorContainerPointerType;
-
-  typedef itk::VectorContainer< int, VectorType > InputVectorContainerType;
-
-  typedef InputVectorContainerType::Pointer InputVectorContainerPointerType;
-
-  typedef itk::CovariantVector< double >  CovariantVectorType;
-
- 
-  /** List of States */
+   /** List of state machine states */
   igstkDeclareStateMacro( Idle );
-  igstkDeclareStateMacro( SampleAdd );
-  igstkDeclareStateMacro( CalibrationCalculated ); 
-  igstkDeclareStateMacro( CalibrationZCalculated ); 
+  igstkDeclareStateMacro( AttemptingToInitialize );
+  igstkDeclareStateMacro( Initialized );
+  igstkDeclareStateMacro( AttemptingToComputeCalibration );
+  igstkDeclareStateMacro( CalibrationComputed );
 
-  /** List of Inputs */
-  igstkDeclareInputMacro( ResetCalibration );
-  igstkDeclareInputMacro( Sample );
-  igstkDeclareInputMacro( CalculateCalibration );
-  igstkDeclareInputMacro( CalculateCalibrationZ );
-  igstkDeclareInputMacro( SimulatePivotPosition );
-  igstkDeclareInputMacro( GetInputSample );
 
-  /** Temporary input variables for state machine */
-  VersorType                        m_VersorToBeSent;
-  VectorType                        m_TranslationToBeSent;
-  int                               m_InputIndexToBeSent;
-  PointType                         m_SimulatedPivotPositionToBeReceived;
-  VersorType                        m_VersorToBeReceived;
-  VectorType                        m_TranslationToBeReceived;
-  int                               m_NumberOfSamplesToBeReceived;
+  /** List of state machine inputs */
+  igstkDeclareInputMacro( Initialize );
+  igstkDeclareInputMacro( Failed  );
+  igstkDeclareInputMacro( Succeeded  );
+  igstkDeclareInputMacro( ComputeCalibration );
+  igstkDeclareInputMacro( GetTransform  );
+  igstkDeclareInputMacro( GetPivotPoint  );
+  igstkDeclareInputMacro( GetRMSE  );
 
-  /** Container to save the samples */
-  InputVersorContainerPointerType   m_VersorContainer;
-  InputVectorContainerPointerType   m_TranslationContainer;
+  /**List of state machine actions*/
+  void ReportInvalidRequestProcessing();  
+  void InitializeProcessing();
+  void ReportInitializationFailureProcessing();
+  void ReportInitializationSuccessProcessing();
+  void ComputeCalibrationProcessing();
+  void ReportCalibrationComputationSuccessProcessing();
+  void ReportCalibrationComputationFailureProcessing();
+  void GetTransformProcessing();
+  void GetPivotPointProcessing();
+  void GetRMSEProcessing();
 
-  /** Variable to indicate the valid calibration */
-  bool                              m_ValidPivotCalibration;
 
-  /** Variable to indicate the valid input sample */
-  bool                              m_ValidInputSample;
+  /**settings for using member function as callback**/
+  typedef itk::MemberCommand<PivotCalibration> TransformAcquiredCommand;
+  TransformAcquiredCommand::Pointer m_TransformAcquiredObserver;
+  unsigned long m_AcquireTransformObserverID;
 
-  /** Variable to save the pivot position */
-  PointType                         m_PivotPosition;
+  igstkObserverMacro( TransformToTracker, igstk::CoordinateSystemTransformToEvent,
+                      CoordinateSystemTransformToResult )
+  TransformToTrackerObserver::Pointer m_TransformObserver; 
+  unsigned long m_TransformToTrackerObserverID;
 
-  /** Variable to indicate the RootMeanSquareError error */
-  ErrorType                         m_RootMeanSquareError;
+  void AcquireTransformsAndCalibrate(itk::Object *caller, 
+                                     const itk::EventObject & event);
 
-  /** Set the RootMeanSquareError */
-  void SetRootMeanSquareError(ErrorType error);
+  class ErrorObserver : public itk::Command
+  {
+  public:
+    typedef ErrorObserver                    Self;
+    typedef ::itk::Command                   Superclass;
+    typedef ::itk::SmartPointer<Self>        Pointer;
+    typedef ::itk::SmartPointer<const Self>  ConstPointer;
 
+    igstkNewMacro(Self)
+    igstkTypeMacro(ErrorObserver, itk::Command)
+
+    /** When an error occurs in an IGSTK component it will invoke this method 
+     *  with the appropriate error event object as a parameter.*/
+    virtual void Execute(itk::Object *caller, 
+                         const itk::EventObject & event) throw (std::exception);
+
+    /** When an error occurs in an IGSTK component it will invoke this method 
+     *  with the appropriate error event object as a parameter.*/
+    virtual void Execute(const itk::Object *caller, 
+                         const itk::EventObject & event) throw (std::exception);
+
+    /**Clear the current error.*/
+    void ClearError() {this->m_ErrorOccured = false; 
+                       this->m_ErrorMessage.clear();}
+    /**If an error occurs in one of the observed IGSTK components this method 
+     * will return true.*/
+    bool ErrorOccured() {return this->m_ErrorOccured;}
+    /**Get the error message associated with the last IGSTK error.*/
+    void GetErrorMessage(std::string &errorMessage) 
+    {
+      errorMessage = this->m_ErrorMessage;
+    }
+
+  protected:
+
+    /**Construct an error observer for all the possible errors that occur in 
+     * IGSTK components.*/
+    ErrorObserver();
+    virtual ~ErrorObserver(){}
+  private:
+    bool m_ErrorOccured;
+    std::string m_ErrorMessage;
+    std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
+
+             //purposely not implemented
+    ErrorObserver(const Self&);
+    void operator=(const Self&); 
+  };
+
+  //definitions of the observer classes of events generated by the 
+  //PivotCalibrationAlgorithm
+  igstkObserverMacro( CalibrationTransform, 
+                      CoordinateSystemTransformToEvent, 
+                      CoordinateSystemTransformToResult )
+
+  igstkObserverMacro( PivotPoint, PointEvent, EventHelperType::PointType )
+
+  igstkObserverMacro( CalibrationRMSE, 
+                      DoubleTypeEvent, 
+                      EventHelperType::DoubleType )
+  
+  
+  CalibrationTransformObserver::Pointer m_GetCalibrationTransformObserver;
+  PivotPointObserver::Pointer m_GetPivotPointObserver;
+  CalibrationRMSEObserver::Pointer m_GetCalibrationRMSEObserver;
+
+  ErrorObserver::Pointer m_ErrorObserver;
+  std::string m_ReasonForCalibrationFailure;
+  
+             //transformations used for pivot calibration                            
+  std::vector< PivotCalibrationAlgorithm::TransformType > m_Transforms;
+
+             //tool we want to calibrate
+  TrackerTool::Pointer  m_TmpTrackerTool;
+  TrackerTool::Pointer  m_TrackerTool;
+          //number of transformation we want to acquire
+  unsigned int m_TmpRequiredNumberOfTransformations;
+  unsigned int m_RequiredNumberOfTransformations;
+
+           //the object that actually does all the work
+  PivotCalibrationAlgorithm::Pointer m_PivotCalibrationAlgorithm;
 };
 
-/** Event that carries a calibration object */
-igstkLoadedObjectEventMacro( CalibrationModifiedEvent, IGSTKEvent,
-                             PivotCalibration);
-}
+} // end namespace igstk
 
-#endif // _igstkPivotCalibration_h
+#endif //__igstkPivotCalibration_h

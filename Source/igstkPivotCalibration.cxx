@@ -15,482 +15,511 @@
 
 =========================================================================*/
 #include "igstkPivotCalibration.h"
-#include "itkVersorRigid3DTransform.h"
+#include "igstkTransformObserver.h"
 
-#include "vnl/algo/vnl_svd.h"
-#include "vnl/vnl_matrix.h"
-#include "vnl/vnl_vector.h"
+/*
+#ifdef _MSC_VER
+#pragma warning ( disable : 4018 )
+//Warning about: identifier was truncated to '255' characters in the debug
+//information (MVC6.0 Debug)
+#pragma warning( disable : 4284 )
+#pragma warning( disable : 4786 )
+#endif
+*/
 
 namespace igstk
-{
+{ 
 
-/** Constructor */
 PivotCalibration::PivotCalibration() : m_StateMachine( this )
 {
-  // Set the state descriptors
+              //instantiate the class that performs the pivot calibration 
+              //computation
+  this->m_PivotCalibrationAlgorithm = PivotCalibrationAlgorithm::New();
+              //observer for error's which use specific error messages 
+  this->m_ErrorObserver = ErrorObserver::New();
+  this->m_PivotCalibrationAlgorithm->AddObserver( PivotCalibrationAlgorithm::CalibrationFailureEvent(), 
+                                                  this->m_ErrorObserver );
+
+                    //create the observers for all the requests that are 
+                    //forwarded to the PivotCalibrationAlgorithm
+  this->m_GetCalibrationTransformObserver = CalibrationTransformObserver::New();
+  this->m_PivotCalibrationAlgorithm->AddObserver( CoordinateSystemTransformToEvent() , 
+                                                  this->m_GetCalibrationTransformObserver );
+  this->m_GetPivotPointObserver = PivotPointObserver::New(); 
+  this->m_PivotCalibrationAlgorithm->AddObserver( PointEvent() , 
+                                                  this->m_GetPivotPointObserver );
+  this->m_GetCalibrationRMSEObserver = CalibrationRMSEObserver::New(); 
+  this->m_PivotCalibrationAlgorithm->AddObserver( DoubleTypeEvent() , 
+                                                  this->m_GetCalibrationRMSEObserver );
+
+       //setup the transformation acquired observer using class method
+  this->m_TransformAcquiredObserver = TransformAcquiredCommand::New();
+  this->m_TransformAcquiredObserver->SetCallbackFunction( this, 
+                                                          &PivotCalibration::AcquireTransformsAndCalibrate );
+  this->m_TransformObserver = TransformToTrackerObserver::New();
+
+        //define the state machine's states 
   igstkAddStateMacro( Idle );
-  igstkAddStateMacro( SampleAdd );
-  igstkAddStateMacro( CalibrationCalculated );
-  igstkAddStateMacro( CalibrationZCalculated );
+  igstkAddStateMacro( AttemptingToInitialize );
+  igstkAddStateMacro( Initialized );
+  igstkAddStateMacro( AttemptingToComputeCalibration );
+  igstkAddStateMacro( CalibrationComputed );
 
-  // Set the input descriptors 
-  igstkAddInputMacro( ResetCalibration );
-  igstkAddInputMacro( Sample );
-  igstkAddInputMacro( CalculateCalibration );
-  igstkAddInputMacro( CalculateCalibrationZ );
-  igstkAddInputMacro( SimulatePivotPosition );
-  igstkAddInputMacro( GetInputSample );
+                   //define the state machine's inputs
+  igstkAddInputMacro( Initialize );
+  igstkAddInputMacro( Failed  );
+  igstkAddInputMacro( Succeeded  );
+  igstkAddInputMacro( ComputeCalibration );
+  igstkAddInputMacro( GetTransform );
+  igstkAddInputMacro( GetPivotPoint  );
+  igstkAddInputMacro( GetRMSE  );
 
-  // Add transition  for idle state
-  igstkAddTransitionMacro( Idle, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( Idle, Sample, SampleAdd, AddSample );
-  igstkAddTransitionMacro( Idle, CalculateCalibration, Idle, No );
-  igstkAddTransitionMacro( Idle, CalculateCalibrationZ, Idle, No );
-  igstkAddTransitionMacro( Idle, SimulatePivotPosition, Idle, No );
-  igstkAddTransitionMacro( Idle, GetInputSample, Idle, No );
+            //define the state machine's transitions
+                         //transitions from Idle state
+  igstkAddTransitionMacro(Idle,
+                          Initialize,
+                          AttemptingToInitialize,
+                          Initialize);
+
+  igstkAddTransitionMacro(Idle,
+                          Failed,
+                          Idle,
+                          ReportInvalidRequest);
   
-  // Add transition  for SampleAdd state
-  igstkAddTransitionMacro( SampleAdd, ResetCalibration, Idle, Reset );
-  igstkAddTransitionMacro( SampleAdd, Sample, SampleAdd, AddSample );
-  igstkAddTransitionMacro( SampleAdd, CalculateCalibration, 
-                           CalibrationCalculated, CalculateCalibration );
-  igstkAddTransitionMacro( SampleAdd, CalculateCalibrationZ, 
-                           CalibrationZCalculated, CalculateCalibrationZ );
-  igstkAddTransitionMacro( SampleAdd, SimulatePivotPosition, SampleAdd, No );
-  igstkAddTransitionMacro( SampleAdd, GetInputSample, 
-                           SampleAdd, GetInputSample );
+  igstkAddTransitionMacro(Idle,
+                          Succeeded,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Idle,
+                          ComputeCalibration,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Idle,
+                          GetTransform,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Idle,
+                          GetPivotPoint,
+                          Idle,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Idle,
+                          GetRMSE,
+                          Idle,
+                          ReportInvalidRequest);
   
-  // Add transition  for CalibrationCalculated state
-  igstkAddTransitionMacro( CalibrationCalculated, ResetCalibration, 
-                           Idle, Reset );
-  igstkAddTransitionMacro( CalibrationCalculated, Sample, 
-                           SampleAdd, AddSample );
-  igstkAddTransitionMacro( CalibrationCalculated, CalculateCalibration, 
-                           CalibrationCalculated, No );
-  igstkAddTransitionMacro( CalibrationCalculated, CalculateCalibrationZ, 
-                           CalibrationZCalculated, CalculateCalibrationZ );
-  igstkAddTransitionMacro( CalibrationCalculated, SimulatePivotPosition, 
-                           CalibrationCalculated, SimulatePivotPosition );
-  igstkAddTransitionMacro( CalibrationCalculated, GetInputSample, 
-                           CalibrationCalculated, GetInputSample );
+                         //transitions from AttemptingToInitialize state
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          Initialize,
+                          AttemptingToInitialize,
+                          ReportInvalidRequest);
 
-  // Add transition  for CalibrationZCalculated state
-  igstkAddTransitionMacro( CalibrationZCalculated, ResetCalibration, 
-                           Idle, Reset );
-  igstkAddTransitionMacro( CalibrationZCalculated, Sample, SampleAdd, 
-                           AddSample );
-  igstkAddTransitionMacro( CalibrationZCalculated, CalculateCalibration, 
-                           CalibrationCalculated, CalculateCalibration );
-  igstkAddTransitionMacro( CalibrationZCalculated, CalculateCalibrationZ, 
-                           CalibrationZCalculated, No );
-  igstkAddTransitionMacro( CalibrationZCalculated, SimulatePivotPosition, 
-                           CalibrationZCalculated, SimulatePivotPosition );
-  igstkAddTransitionMacro( CalibrationZCalculated, GetInputSample, 
-                           CalibrationZCalculated, GetInputSample );
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          Failed,
+                          Idle,
+                          ReportInitializationFailure);
+  
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          Succeeded,
+                          Initialized,
+                          ReportInitializationSuccess);
 
-  // Select the initial state of the state machine
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          ComputeCalibration,
+                          AttemptingToInitialize,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          GetTransform,
+                          AttemptingToInitialize,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          GetPivotPoint,
+                          AttemptingToInitialize,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToInitialize,
+                          GetRMSE,
+                          AttemptingToInitialize,
+                          ReportInvalidRequest);
+  
+                         //transitions from Initialized state
+  igstkAddTransitionMacro(Initialized,
+                          Initialize,
+                          AttemptingToInitialize,
+                          Initialize);
+
+  igstkAddTransitionMacro(Initialized,
+                          Failed,
+                          Initialized,
+                          ReportInvalidRequest);
+  
+  igstkAddTransitionMacro(Initialized,
+                          Succeeded,
+                          Initialized,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Initialized,
+                          ComputeCalibration,
+                          AttemptingToComputeCalibration,
+                          ComputeCalibration);
+
+  igstkAddTransitionMacro(Initialized,
+                          GetTransform,
+                          Initialized,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Initialized,
+                          GetPivotPoint,
+                          Initialized,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(Initialized,
+                          GetRMSE,
+                          Initialized,
+                          ReportInvalidRequest);
+  
+                     //transitions from AttemptingToComputeCalibration state
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          Initialize,
+                          AttemptingToComputeCalibration,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          Failed,
+                          Initialized,
+                          ReportCalibrationComputationFailure);
+  
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          Succeeded,
+                          CalibrationComputed,
+                          ReportCalibrationComputationSuccess);
+
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          ComputeCalibration,
+                          AttemptingToComputeCalibration,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          GetTransform,
+                          AttemptingToComputeCalibration,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          GetPivotPoint,
+                          AttemptingToComputeCalibration,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(AttemptingToComputeCalibration,
+                          GetRMSE,
+                          AttemptingToComputeCalibration,
+                          ReportInvalidRequest);
+  
+                         //transitions from CalibrationComputed state
+  igstkAddTransitionMacro(CalibrationComputed,
+                          Initialize,
+                          AttemptingToInitialize,
+                          Initialize);
+
+  igstkAddTransitionMacro(CalibrationComputed,
+                          Failed,
+                          CalibrationComputed,
+                          ReportInvalidRequest);
+  
+  igstkAddTransitionMacro(CalibrationComputed,
+                          Succeeded,
+                          CalibrationComputed,
+                          ReportInvalidRequest);
+
+  igstkAddTransitionMacro(CalibrationComputed,
+                          ComputeCalibration,
+                          AttemptingToComputeCalibration,
+                          ComputeCalibration);
+
+  igstkAddTransitionMacro(CalibrationComputed,
+                          GetTransform,
+                          CalibrationComputed,
+                          GetTransform);
+
+  igstkAddTransitionMacro(CalibrationComputed,
+                          GetPivotPoint,
+                          CalibrationComputed,
+                          GetPivotPoint);
+
+  igstkAddTransitionMacro(CalibrationComputed,
+                          GetRMSE,
+                          CalibrationComputed,
+                          GetRMSE);
+  
+             //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-  // Finish the programming and get ready to run
+         // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();
+} 
 
-  // Allocte the container pointer for input samples
-  this->m_VersorContainer = InputVersorContainerType::New();
-  this->m_TranslationContainer = InputVectorContainerType::New();
 
-  // ResetProcessing the initial state and variables
-  this->ResetProcessing();
-}
-
-/** Destructor */
-PivotCalibration::~PivotCalibration()
+PivotCalibration::~PivotCalibration()  
 {
+
 }
 
-/** Set the RootMeanSquareError */
-void PivotCalibration::SetRootMeanSquareError(ErrorType error) 
+void 
+PivotCalibration::RequestInitialize( unsigned int n, 
+                                    igstk::TrackerTool::Pointer trackerTool )
 {
-  m_RootMeanSquareError = error;
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "RequestInitialize called...\n");
+  this->m_TmpRequiredNumberOfTransformations = n;
+  this->m_TmpTrackerTool = trackerTool;
+  igstkPushInputMacro( Initialize );
+  this->m_StateMachine.ProcessInputs();
+}
+  
+void 
+PivotCalibration::RequestComputeCalibration()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "RequestComputeCalibration called...\n");
+  igstkPushInputMacro( ComputeCalibration );
+  this->m_StateMachine.ProcessInputs();
 }
 
-/** Print Self function */
-void PivotCalibration::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void 
+PivotCalibration::RequestCalibrationTransform()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "RequestCalibrationTransform called...\n");
+  igstkPushInputMacro( GetTransform );
+  this->m_StateMachine.ProcessInputs();
+}
+
+void 
+PivotCalibration::RequestPivotPoint()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "RequestPivotPoint called...\n");
+  igstkPushInputMacro( GetPivotPoint );
+  this->m_StateMachine.ProcessInputs();  
+}
+
+void 
+PivotCalibration::RequestCalibrationRMSE()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "RequestCalibrationTransformRMSE called...\n");
+  igstkPushInputMacro( GetRMSE );
+  this->m_StateMachine.ProcessInputs();  
+}
+
+
+void 
+PivotCalibration::ReportInvalidRequestProcessing()
+{
+  igstkLogMacro( DEBUG, "igstk::PivotCalibration::"
+                 "ReportInvalidRequestProcessing called...\n");
+  this->InvokeEvent(InvalidRequestErrorEvent());
+}
+
+void 
+PivotCalibration::InitializeProcessing()
+{
+  if( this->m_TmpTrackerTool.IsNull() )
+    {    
+    igstkPushInputMacro( Failed );
+    }
+  else 
+    {
+    this->m_TrackerTool = this->m_TmpTrackerTool;
+    this->m_RequiredNumberOfTransformations = this->m_TmpRequiredNumberOfTransformations;
+    this->m_Transforms.clear();
+    this->m_PivotCalibrationAlgorithm->RequestResetCalibration();
+    igstkPushInputMacro( Succeeded );
+    }
+}
+
+void 
+PivotCalibration::ReportInitializationFailureProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "ReportInitializationFailureProcessing called...\n");
+  this->InvokeEvent( InitializationFailureEvent() );
+}
+  
+void 
+PivotCalibration::ReportInitializationSuccessProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "ReportInitializationSuccessProcessing called...\n");
+  this->InvokeEvent( InitializationSuccessEvent() );
+}
+
+void 
+PivotCalibration::ComputeCalibrationProcessing()
+{
+  this->m_Transforms.clear();
+  this->m_ReasonForCalibrationFailure.clear();
+  this->InvokeEvent( DataAcquisitionStartEvent() );
+  this->m_AcquireTransformObserverID = 
+    this->m_TrackerTool->AddObserver( igstk::TrackerToolTransformUpdateEvent(),
+                                      this->m_TransformAcquiredObserver );
+  this->m_TransformToTrackerObserverID = 
+      this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent() ,
+                                        this->m_TransformObserver );
+
+}
+
+
+void 
+PivotCalibration::AcquireTransformsAndCalibrate(itk::Object *caller, 
+                                                const itk::EventObject & event)
+{  
+  //got all the transformations we need for calibration      
+  if( this->m_Transforms.size() == this->m_RequiredNumberOfTransformations )
+    {
+    this->m_TrackerTool->RemoveObserver( this->m_AcquireTransformObserverID );
+    this->m_TrackerTool->RemoveObserver( this->m_TransformToTrackerObserverID );
+    this->InvokeEvent( DataAcquisitionEndEvent() );
+               //actually perform the calibration
+    this->m_PivotCalibrationAlgorithm->RequestResetCalibration();
+    this->m_PivotCalibrationAlgorithm->RequestAddTransforms( this->m_Transforms );
+    this->m_PivotCalibrationAlgorithm->RequestComputeCalibration();
+                //check if the calibration computation failed
+    if( this->m_ErrorObserver->ErrorOccured() ) 
+      {        
+      this->m_ErrorObserver->GetErrorMessage( this->m_ReasonForCalibrationFailure );
+      this->m_ErrorObserver->ClearError();
+      igstkPushInputMacro( Failed );
+      }
+    else
+      {
+      igstkPushInputMacro( Succeeded );
+      }
+    this->m_StateMachine.ProcessInputs();
+    }
+  else  //transform was updated, we need to retrieve it
+    {
+      this->m_TrackerTool->RequestGetTransformToParent();
+      if( this->m_TransformObserver->GotTransformToTracker() )
+        {
+         this->m_Transforms.push_back( ( this->m_TransformObserver->GetTransformToTracker() ).GetTransform() );
+         DataAcquisitionEvent evt;
+         evt.Set( (double)this->m_Transforms.size()/(double)(this->m_RequiredNumberOfTransformations) );
+         this->InvokeEvent( evt );
+        }
+    }
+}
+
+void 
+PivotCalibration::ReportCalibrationComputationSuccessProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "ReportCalibrationComputationSuccessProcessing called...\n");
+  this->InvokeEvent( CalibrationSuccessEvent() );
+}
+
+void 
+PivotCalibration::ReportCalibrationComputationFailureProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "ReportCalibrationComputationFailureProcessing called...\n");
+  CalibrationFailureEvent evt; 
+  evt.Set( this->m_ReasonForCalibrationFailure );
+  this->InvokeEvent( evt );
+}
+
+void 
+PivotCalibration::GetTransformProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "GetTransformProcessing called...\n");
+  this->m_PivotCalibrationAlgorithm->RequestCalibrationTransform();
+  if( this->m_GetCalibrationTransformObserver->GotCalibrationTransform() ) 
+  {
+    CoordinateSystemTransformToEvent  event;
+    event.Set(
+      this->m_GetCalibrationTransformObserver->GetCalibrationTransform() );
+    this->InvokeEvent(  event );
+  }  
+}
+
+void 
+PivotCalibration::GetPivotPointProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "GetPivotPointProcessing called...\n");
+               //the events generated by the 
+  this->m_PivotCalibrationAlgorithm->RequestPivotPoint(); 
+  if( this->m_GetPivotPointObserver->GotPivotPoint() ) 
+  {
+    PointEvent evt;
+    evt.Set( this->m_GetPivotPointObserver->GetPivotPoint() );
+    this->InvokeEvent( evt );
+  }
+}
+
+void 
+PivotCalibration::GetRMSEProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PivotCalibration::"
+                  "GetTransformRMSEProcessing called...\n");
+               //the events generated by the 
+  this->m_PivotCalibrationAlgorithm->RequestCalibrationRMSE();
+  if( this->m_GetCalibrationRMSEObserver->GotCalibrationRMSE() ) 
+  {
+    DoubleTypeEvent evt;
+    evt.Set( this->m_GetCalibrationRMSEObserver->GetCalibrationRMSE() );
+    this->InvokeEvent( evt );
+  }
+}
+
+void 
+PivotCalibration::PrintSelf( std::ostream& os,
+                                itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-
-  // Dump the calibration class information
-  os << indent << "Pivot Calibration: " << std::endl;
-  os << indent << "Number Of Samples: " 
-                << this->GetNumberOfSamples() << std::endl;  
-  os << indent << "Pivot Position: " << this->m_PivotPosition << std::endl;
-  os << indent << "Calibration RootMeanSquareError: " 
-               << this->m_RootMeanSquareError << std::endl;
+  os << indent << "Tool : " << std::endl;
+  os << indent << this->m_TrackerTool << std::endl;
+  os << indent << "Required number of transformations: " << std::endl;
+  os << indent << m_RequiredNumberOfTransformations << std::endl;
 }
 
-/** Method to return the number of samples */
-unsigned int PivotCalibration
-::GetNumberOfSamples() const
+PivotCalibration::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::GetNumberOfSamples\
-                        called...\n" );
-
-  return this->m_VersorContainer->Size();
+                           //calibration errors
+  this->m_ErrorEvent2ErrorMessage.insert( std::pair<std::string,std::string>( (igstk::PivotCalibrationAlgorithm::CalibrationFailureEvent()).GetEventName(),
+                                                                               "Pivot Calibration Algorithm: computation failed." ) );
 }
 
-/** Method to NoProcessing */
-void PivotCalibration::NoProcessing()
+void 
+PivotCalibration::ErrorObserver::Execute(const itk::Object *caller, 
+                                         const itk::EventObject & event) throw (std::exception)
 {
+  std::map<std::string,std::string>::iterator it;
+  std::string className = event.GetEventName();
+  it = this->m_ErrorEvent2ErrorMessage.find(className);
+
+  this->m_ErrorOccured = true;
+  this->m_ErrorMessage = (*it).second;
 }
 
-/** Method to reset the calibration */
-void PivotCalibration::ResetProcessing()
+void 
+PivotCalibration::ErrorObserver::Execute(itk::Object *caller, 
+                                         const itk::EventObject & event) throw (std::exception)
 {
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::ResetProcessing\
-                        called...\n" );
-
-  VersorType quaternion;
-  VectorType translation;
-
-  // Clear the input container for quaternion and translation
-  this->m_VersorContainer->Initialize();
-  this->m_TranslationContainer->Initialize();
-
-  // Reset the calibration transform
-  quaternion.SetIdentity();
-  translation.Fill( 0.0);
-  this->m_CalibrationTransform.SetTranslationAndRotation( translation, 
-                                                       quaternion, 0.1, 1000);
-
-  // Reset the pivot position 
-  this->m_PivotPosition.Fill( 0.0);
-
-  // Reset the RootMeanSquareError calibration error
-  this->m_RootMeanSquareError = 0.0;
-
-  // Reset the validation indicator
-  this->m_ValidPivotCalibration = false;
-
-  // Reset the validation indicator
-  this->m_ValidInputSample = false;
+  const itk::Object * constCaller = caller;
+  this->Execute(constCaller, event);
 }
 
-/** Method to add the sample information */
-void PivotCalibration::AddSampleProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::\
-                        AddSampleProcessing called...\n" );
-  
-  this->InternalAddSampleProcessing( 
-                      this->m_VersorToBeSent, 
-                      this->m_TranslationToBeSent );
-}
-
-
-/** Internal method to add the sample information */
-void PivotCalibration
-::InternalAddSampleProcessing( const VersorType & quaternion, 
-                               const VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::\
-                        InternalAddSampleProcessing called...\n" );
-
-  // Push the quaternion sample into the input container
-  this->m_VersorContainer->push_back( quaternion );
-
-  // Push the translation sample into the input container
-  this->m_TranslationContainer->push_back( translation );
-
-  // Unvalid the calibration
-  this->m_ValidPivotCalibration = false;
-}
-
-/** Internal method to calculate the calibration */
-void PivotCalibration::InternalCalculateCalibrationProcessing( 
-                                                           unsigned int axis )
-{
-  /** Use the Moore-Penrose inverse to calculate the calibration matrix
-   *  The algorithm used is from the paper "Freehand Ultrasound Calibration
-   *  using an Electromagnetic Needle" by Hui Zhang, Filip Banovac, 
-   *  Kevin Cleary to be published in SPIE MI 2006. 
-   * 
-   *  [ r00 r01 r02 tx][ Offset0 ]   [ x0 ]
-   *  [ r10 r11 r12 ty][ Offset1 ]   [ y0 ]
-   *  [ r20 r21 r22 tz][ Offset2 ] = [ z0 ]
-   *  [  0   0   0   1][    1    ]   [  1 ]
-   *
-   *  After the transformation, the unknowns of [ Offset0 Offset1 Offset2 
-   *  x0 y0 z0 ]' can be calculated by 
-   *  
-   *  M * [ Offset0 Offset1 Offset2 x0 y0 z0]' = N
-   *  [ Offset0 Offset1 Offset2 x0 y0 z0]' = (M' * M)^-1 * M' * N
-   *  or [ Offset0 Offset1 Offset2 x0 y0 z0]' = SVD( M, N )
-   *  RootMeanSquareError = sqrt( |M * [ Offset0 Offset1 Offset2 x0 y0 z0 ]'
-   *  - N|^2 / num ) */   
-
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::InternalCalculateCalibrationProcessing\
-                        called...\n" );
-
-  unsigned int i;
-  unsigned int j;
-  unsigned int k;
-  unsigned int r;
-  unsigned int c;
-  unsigned int num;
-
-  // Set the number of sample, row and column number of matrix
-  num = this->GetNumberOfSamples();
-  r = num * 3;
-  c = 3 + axis;
-
-  typedef vnl_matrix< double >            VnlMatrixType;
-
-  typedef vnl_vector< double >            VnlVectorType;
-
-  typedef vnl_svd< double >               VnlSVDType;
-
-
-  // Define the Vnl matrix and intermediate variables
-  VnlMatrixType matrix(r, c);
-  VnlVectorType x(c);
-  VnlVectorType b(r);
-  VnlVectorType br(r);  
-  VersorType quat;
-  VectorType translation;
-  MatrixType rotMatrix;
-
-  // Fill the matrix of M
-  for (k = 0; k < num; k++)
-    {
-    quat = this->m_VersorContainer->GetElement(k);
-    rotMatrix = quat.GetMatrix();
-
-    for ( j = 0; j < 3; j++)
-      {
-      for ( i = 0; i < axis; i++)
-        {
-        matrix[3 * k + j][i] = rotMatrix[j][2 - i];
-        }
-      for ( i = 0; i < 3; i++)
-        {
-        matrix[3 * k + j][i + axis] = 0.0;
-        }
-      matrix[3 * k + j][j + axis] = -1.0;
-      }
-
-    for ( j = 0; j < 3; j++)
-      {
-      b[3 * k + j] = -this->m_TranslationContainer->GetElement(k)[j];
-      }
-    }
-
-  // Use SVD to solve the vector M * x = y
-  VnlSVDType svd( matrix);
-  x = svd.solve( b);
-
-  // Extract the offset components
-  translation.Fill( 0.0);
-  for ( i = 0; i < axis; i++)
-    {
-    translation[2 - i] = x[i];
-    }
-  
-  // Extract the pivot position
-  for ( i = 0; i < 3; i++)
-    {
-    this->m_PivotPosition[i] = x[i + axis];
-    }
-
-  // Set the calibration matrix
-  this->m_CalibrationTransform.SetTranslation(translation, 0.1, 1000);
-
-  // Calculate the RootMeanSquareError error
-  br = matrix * x - b;  
-  this->m_RootMeanSquareError = sqrt( br.squared_magnitude() / num );
-
-  // Set valid indicator
-  this->m_ValidPivotCalibration = true;
-}
-
-/** Method to calculate the calibration */
-void PivotCalibration::CalculateCalibrationProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::CalculateCalibrationProcessing called...\n" );
-
-  this->InternalCalculateCalibrationProcessing( 3);
-}
-
-/** Method to calculate the calibration along z-axis */
-void PivotCalibration::CalculateCalibrationZProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::CalculateCalibrationZProcessing called...\n" );
-
-  this->InternalCalculateCalibrationProcessing( 1);
-}
-
-/** Calculate the simulated pivot position */
-void PivotCalibration::SimulatePivotPositionProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::SimulatePivotPositionProcessing called...\n" );
-  
-  this->m_SimulatedPivotPositionToBeReceived =
-       this->InternalSimulatePivotPositionProcessing( this->m_VersorToBeSent, 
-                                                 this->m_TranslationToBeSent);
-}
-
-/** Internal function to calculate the simulated pivot position */
-PivotCalibration::PointType 
-PivotCalibration
-::InternalSimulatePivotPositionProcessing( const VersorType & rotation, 
-                                           const VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                     ::InternalSimulatePivotPositionProcessing called...\n" );
-
-  // Reconstruct the pivot position from any input translation and rotation
-  // Pos = Rotation * Offset + Translation
-  typedef itk::VersorRigid3DTransform<double> RigidTransformType;
-
-  RigidTransformType::Pointer rigidTransform = RigidTransformType::New();
-
-  rigidTransform->SetRotation( rotation );
-  rigidTransform->SetTranslation( translation );
-
-  VectorType offset = this->GetCalibrationTransform().GetTranslation();
-
-  VectorType rotatedOffset = rigidTransform->TransformVector( offset );
-
-  rotatedOffset += translation;
-
-  PointType pivotPosition;
-  pivotPosition.Fill( 0.0 );
-  
-  pivotPosition += rotatedOffset;
-
-  return pivotPosition;
-}
-
-/** Get the rotation and translation inputed */
-void PivotCalibration::GetInputSampleProcessing()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::GetInputSampleProcessing called...\n" );
-
-  this->m_ValidInputSample = this->InternalGetInputSampleProcessing( 
-                                            this->m_InputIndexToBeSent, 
-                                            this->m_VersorToBeReceived, 
-                                            this->m_TranslationToBeReceived);
-}
-
-/** Internal method to get the rotation and translation inputed */
-bool PivotCalibration
-::InternalGetInputSampleProcessing( unsigned int index, 
-                                    VersorType & versor, 
-                                    VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::InternalGetInputSampleProcessing called...\n" );
-
-  if ( index >= 0 && index < this->GetNumberOfSamples() )
-    {
-    versor      = this->m_VersorContainer->GetElement( index);
-    translation = this->m_TranslationContainer->GetElement( index);
-
-    return true;
-    }
-  else
-    {
-    versor.SetIdentity();
-    translation.Fill( 0.0);
-
-    return false;
-    }
-}
-
-/** Method to invoke the ResetProcessing function */
-void PivotCalibration::RequestReset()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestReset called...\n" );
-
-  this->m_StateMachine.PushInput( this->m_ResetCalibrationInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke adding the sample */
-void PivotCalibration
-::RequestAddSample( const VersorType & versor, 
-                    const VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::RequestAddSample called...\n" );
-  
-  this->m_VersorToBeSent = versor;
-  this->m_TranslationToBeSent = translation;
-
-  this->m_StateMachine.PushInput( this->m_SampleInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke the calculation */
-void PivotCalibration::RequestCalculateCalibration()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::RequestCalculateCalibration called...\n" );
-
-  this->m_StateMachine.PushInput( this->m_CalculateCalibrationInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke the calculation only along z-axis */
-void PivotCalibration::RequestCalculateCalibrationZ()
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::RequestCalculateCalibrationZ called...\n" );
-
-  this->m_StateMachine.PushInput( this->m_CalculateCalibrationZInput );
-  this->m_StateMachine.ProcessInputs();
-}
-
-/** Method to invoke to simulate the pivot position */
-PivotCalibration::PointType 
-PivotCalibration::RequestSimulatePivotPosition(const VersorType & versor, 
-                                              const VectorType & translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration\
-                        ::RequestSimulatePivotPosition called...\n" );
-
-  this->m_VersorToBeSent = versor;
-  this->m_TranslationToBeSent = translation;
-
-  this->m_StateMachine.PushInput( this->m_SimulatePivotPositionInput );
-  this->m_StateMachine.ProcessInputs();
-
-  return this->m_SimulatedPivotPositionToBeReceived;
-}
-
-/** Method to invoke to get the rotation and translation in the input
- *  container */
-bool PivotCalibration
-::RequestGetInputSample( unsigned int index, 
-                         VersorType & versor, 
-                         VectorType& translation )
-{
-  igstkLogMacro( DEBUG, "igstk::PivotCalibration::RequestGetInputSample \
-                         called...\n" );
-
-  this->m_InputIndexToBeSent = index;
-  this->m_ValidInputSample = false;
-
-  this->m_StateMachine.PushInput( this->m_GetInputSampleInput );
-  this->m_StateMachine.ProcessInputs();
-
-  versor = this->m_VersorToBeReceived;
-  translation = this->m_TranslationToBeReceived;
-
-  return this->m_ValidInputSample;
-}
-
-} // end namespace igstk
+}//end namespace igstk

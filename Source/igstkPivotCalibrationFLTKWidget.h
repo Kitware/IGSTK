@@ -8,7 +8,7 @@
 #include "igstkMacros.h"
 #include "igstkEvents.h"
 #include "igstkTracker.h"
-#include "igstkPivotCalibrationNew.h"
+#include "igstkPivotCalibration.h"
 
 class Fl_Output;
 class Fl_Progress;
@@ -25,25 +25,22 @@ namespace igstk
  *
  *  This class provides a UI for performing pivot calibration (tool tip 
  *  calibration). The class is responsible for acquisition of tracking data and 
- *  computation of the pivot calibration. You set the tracker, specific tool and 
+ *  computation of the pivot calibration. You set the specific tool and 
  *  number of required transformations using the RequestInitialize() method. 
  *  You can also set a delay before data acquistion starts using the 
  *  RequestSetDelay() method. The class expects the tracker to be in tracking 
- *  state. If this is not the case an error is reported, both on screen and an 
- *  event is generated for interested observers. Once initialized pressing the 
+ *  state. Once initialized pressing the 
  *  "Calibrate" button will start data acquistion (after a user set delay) and 
- *  perform calibration. If data acqusition fails multiple times (e.g. line 
- *  of sight is blocked for optical tracker) the calibration will fail and the 
- *  approapriate message is displayed. Corresponding events are also generated
+ *  perform calibration. Corresponding events are also generated
  *  for interested observers:
- *  PivotCalibrationNew::InitializationSuccessEvent 
- *  PivotCalibrationNew::InitializationFailureEvent 
- *  PivotCalibrationNew::DataAcquisitionStartEvent
- *  PivotCalibrationNew::DataAcquisitionEvent - containes the percentage of 
+ *  PivotCalibration::InitializationSuccessEvent 
+ *  PivotCalibration::InitializationFailureEvent 
+ *  PivotCalibration::DataAcquisitionStartEvent
+ *  PivotCalibration::DataAcquisitionEvent - containes the percentage of 
  *                                              data acquired
- *  PivotCalibrationNew::DataAcquisitionEndEvent
- *  PivotCalibrationNew::CalibrationSuccessEvent
- *  PivotCalibrationNew::CalibrationFailureEvent
+ *  PivotCalibration::DataAcquisitionEndEvent
+ *  PivotCalibration::CalibrationSuccessEvent
+ *  PivotCalibration::CalibrationFailureEvent
  *  igstk::CoordinateSystemTransformToEvent - contains the calibration transform
  *  igstk::PointEvent - contains the pivot point
  *  igstk::DoubleTypeEvent - contains the calibration root mean square error
@@ -78,14 +75,12 @@ public:
   virtual ~PivotCalibrationFLTKWidget( void );
 
   /** This method sets the number of transformations required for performing 
-   *  the pivot calibration, the tracker information, and the tool information. 
-   *  It is assumed that the tracker is already in tracking mode and that the 
-   *  tool is connected to the given port and channel. If the initialization 
-   *  fails a message box will be displayed.
-   *  The method generates two  events: InitializationSuccessEvent and 
+   *  the pivot calibration, and the tool information. 
+   *  It is assumed that the tracker is already in tracking mode. 
+   *  If the initialization fails a message box will be displayed.
+   *  The method generates two events: InitializationSuccessEvent and 
    *  InitializationFailureEvent. */
   void RequestInitialize( unsigned int n, 
-                          igstk::Tracker * tracker, 
                           igstk::TrackerTool * trackerTool ); 
 
   /** This method sets the delay in seconds between the moment the 
@@ -134,7 +129,7 @@ private:
                                           void *v);
   inline void RequestComputeCalibration();
                     //the igstk class that actually does everything
-  PivotCalibrationNew::Pointer m_pivotCalibration;
+  PivotCalibration::Pointer m_pivotCalibration;
                //delay before data acquistion starts [milliseconds]
   unsigned int m_delay;
               //description of the tool we want to calibrate
