@@ -17,6 +17,7 @@
 
 #include "VideoFrameGrabberAndViewer.h"
 
+//TODO delete
 #include "FL/Fl_File_Chooser.H"
 
 #include "itksys/SystemTools.hxx"
@@ -24,7 +25,7 @@
 #include "igstkTransformObserver.h"
 
 #define VIEW_2D_REFRESH_RATE 25
-#define IMAGER_DEFAULT_REFRESH_RATE 15
+#define IMAGER_DEFAULT_REFRESH_RATE 25
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -78,11 +79,12 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
 
   // instatiate observer for key pressed event
   m_KeyPressedObserver = LoadedObserverType::New();
-  m_KeyPressedObserver->SetCallbackFunction( this, &VideoFrameGrabberAndViewer::HandleKeyPressedCallback );
+  m_KeyPressedObserver->SetCallbackFunction( this,
+                       &VideoFrameGrabberAndViewer::HandleKeyPressedCallback );
 
   // add it to the Viewer group in our GUI
-  m_ViewerGroup->AddObserver( igstk::VideoFrameGrabberAndViewerQuadrantViews::KeyPressedEvent(),
-  m_KeyPressedObserver );
+  m_ViewerGroup->AddObserver( igstk::VideoFrameGrabberAndViewerQuadrantViews::
+                              KeyPressedEvent(), m_KeyPressedObserver );
 
   // instantiate observer for mouse pressed event
   m_MousePressedObserver = LoadedObserverType::New();
@@ -216,7 +218,7 @@ VideoFrameGrabberAndViewer::~VideoFrameGrabberAndViewer()
 }
 
 /** -----------------------------------------------------------------
-* Disconnects the imager and closes the socket
+* Disconnects the imager
 *---------------------------------------------------------------------*/
 void
 VideoFrameGrabberAndViewer::DisconnectImagerProcessing()
@@ -252,20 +254,20 @@ VideoFrameGrabberAndViewer::InitializeImagerProcessing()
   igstkLogMacro2( m_Logger, DEBUG,
       "VideoFrameGrabberAndViewer::InitializeImagerProcessing called...\n" )
 
-  //m_ImagerConfiguration = new igstk::ImagingSourceImagerConfiguration();
   m_ImagerConfiguration = new igstk::CompressedDVImagerConfiguration();
 
   //set the tool parameters
-//  igstk::ImagingSourceToolConfiguration toolconfig;
   igstk::CompressedDVToolConfiguration toolconfig;
 
+  //set video input dimensions
   unsigned int dims[3];
   dims[0] = 640;
   dims[1] = 480;
-  dims[2] = 2; //2 Byte 16 bit/8 in ImagingSource converter
+  dims[2] = 3;
 
   toolconfig.SetFrameDimensions(dims);
   toolconfig.SetPixelDepth(8);
+
   std::string deviceName = "Camera";
   //  toolconfig.SetCalibrationFileName( ".igstk" );
   toolconfig.SetToolUniqueIdentifier( deviceName );
@@ -701,7 +703,8 @@ void VideoFrameGrabberAndViewer::RequestScreenshot()
 void
 VideoFrameGrabberAndViewer::RequestPrepareToQuit()
 {
-  //TODO stop and disconnect video
+  void DisableVideo();
+  void StopVideo();
 }
 
 /** -----------------------------------------------------------------

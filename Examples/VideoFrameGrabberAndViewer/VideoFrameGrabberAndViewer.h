@@ -34,12 +34,10 @@
 
 #include "igstkVideoFrameSpatialObject.h"
 #include "igstkVideoFrameRepresentation.h"
+#include "igstkFrame.h"
 
 #include "itkStdStreamLogOutput.h"
 
-#include "igstkReslicerPlaneSpatialObject.h"
-#include "igstkMeshResliceObjectRepresentation.h"
-#include "igstkFrame.h"
 
 /** \class VideoFrameGrabberAndViewer
 *
@@ -53,19 +51,13 @@ class VideoFrameGrabberAndViewer : public VideoFrameGrabberAndViewerGUI
 public:
 
   /** Typedefs */
-  igstkStandardClassBasicTraitsMacro( VideoFrameGrabberAndViewer, VideoFrameGrabberAndViewerGUI );
+  igstkStandardClassBasicTraitsMacro( VideoFrameGrabberAndViewer,
+                                      VideoFrameGrabberAndViewerGUI );
 
   igstkLoggerMacro();
 
   /** Declarations needed for the State Machine */
   igstkStateMachineMacro();
-
-  /** reslicer plane spatial object */
-  typedef igstk::ReslicerPlaneSpatialObject           ReslicerPlaneType;
-
-  /** mesh reslice representation */
-  typedef igstk::MeshResliceObjectRepresentation
-                                                 MeshResliceRepresentationType;
 
   /** typedef for axes spatial objects */
   typedef igstk::AxesObject                           AxesObjectType;
@@ -182,7 +174,8 @@ private:
       this->m_ErrorMessage.clear();
     }
     /**
-     * If an error occurs in one of the observed IGSTK components this method will return true.
+     * If an error occurs in one of the observed IGSTK components this method
+     * will return true.
      */
     bool Error()
     {
@@ -215,7 +208,6 @@ private:
   ImagerControllerObserver::Pointer         m_ImagerControllerObserver;
 
   /** imager controller configuration */
-  //igstk::ImagingSourceImagerConfiguration * m_ImagerConfiguration;
   igstk::CompressedDVImagerConfiguration * m_ImagerConfiguration;
 
   /** Action methods to be invoked only by the state machine */
@@ -235,11 +227,13 @@ private:
   std::ofstream                             m_LogFile;
 
   /** Callback functions for picking and reslicing image events. */
-  void HandleKeyPressed(igstk::VideoFrameGrabberAndViewerQuadrantViews::KeyboardCommandType keyCommand);
+  void HandleKeyPressed(igstk::VideoFrameGrabberAndViewerQuadrantViews::
+                        KeyboardCommandType keyCommand);
   void HandleKeyPressedCallback( const itk::EventObject & event );
   void HandleMousePressedCallback( const itk::EventObject & event );
   void NullActionCallback(const itk::EventObject & event ){};
-  void HandleMousePressed(igstk::VideoFrameGrabberAndViewerQuadrantViews::MouseCommandType mouseCommand);
+  void HandleMousePressed(igstk::VideoFrameGrabberAndViewerQuadrantViews::
+                          MouseCommandType mouseCommand);
 
 };
 
