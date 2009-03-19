@@ -124,16 +124,12 @@ public:
    * Transform information will be queried from the Imager device. Note that
    * Imager devices have their own internal frequency rate, and if you set here
    * a frequency that is higher than what the Imager device is capable to
-   * follow, then you will start receiving transforms with repeated values. */
+   * follow, then you will start receiving similar frames. */
   void RequestSetFrequency( double frequencyInHz );
-
-  /** Set a reference imager tool */
-  //void RequestSetReferenceTool( ImagerToolType * imagerTool );
 
 protected:
 
   Imager(void);
-
   virtual ~Imager(void);
 
   /** SetThreadingEnabled(bool) : set m_ThreadingEnabled value */
@@ -160,12 +156,12 @@ protected:
   /** typedefs from Frame class */
   typedef Frame                          FrameType;
 
-  /** The "InternalOpen" method opens communication with a imaging device.
+  /** The "InternalOpen" method opens communication with an imaging device.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalOpen( void ) = 0;
 
-  /** The "InternalClose" method closes communication with a imaging device.
+  /** The "InternalClose" method closes communication with an imaging device.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalClose( void ) = 0;
@@ -203,14 +199,7 @@ protected:
   /** Verify if a imager tool information is correct before attaching
    *  it to the imager. This method is used to verify the information supplied
    *  by the user about the imager tool. The information depends on the
-   *  imager type. For example, during the configuration step of the
-   *  MicronImager, location of the directory containing marker template files
-   *  is specified. If the user tries to attach a imager tool with a marker
-   *  type whose template file is not stored in this directory, this method
-   *  will return failure. Similarly, for PolarisImager, the method returns
-   *  failure,  if the tool part number specified by the user during the imager
-   *  tool configuration step does not match with the part number read from the
-   *  SROM file.
+   *  imager type.
    */
   virtual ResultType
         VerifyImagerToolInformation( const ImagerToolType * ) = 0;
@@ -245,34 +234,18 @@ protected:
   /** Report to imager tool that it is visible */
   void ReportImagingToolVisible( ImagerToolType * imagerTool ) const;
 
-  /** Set imager tool raw transform */
-//  void SetImagerToolRawTransform( ImagerToolType * imagerTool,
-//                                   const TransformType transform );
-
-    /** Set imager tool raw transform */
-  //void SetImagerToolRawFrame( ImagerToolType * imagerTool,
-  //                                 const FrameType & frame );
-
   void SetImagerToolFrame( ImagerToolType * imagerTool,
                                    const FrameType & frame );
 
   void GetImagerToolFrame( ImagerToolType * imagerTool,
                                    FrameType & frame );
 
-   /** Set imager tool image pointer */
-//  void SetImagerToolImageData( ImagerToolType * imagerTool,
-//                                   const vtkImageData * image );
-
   /** Turn on/off update flag of the imager tool */
   void SetImagerToolUpdate( ImagerToolType * imagerTool,
                                       bool flag ) const;
 
   /** Depending on the imager type, the imaging thread should be
-    * terminated or left untouched when we stop imaging. For example,
-    * in the case of MicronImager, it is better to not terminate the
-    * imaging thread. Otherwise, everytime we restart imaging, then
-    * the camera has to be reattached. For NDI imagers, the imaging
-    * thread has to be terminated first to send TSTOP command */
+    * terminated or left untouched when we stop imaging. */
 
   /** Always called when exiting imaging state. This methold will be
     * overriden in derived classes. */
@@ -296,16 +269,12 @@ private:
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
 
-  // An associative container of ImagerTool Pointer with
-  // ImagerTool identifier used as a Key
+  /** An associative container of ImagerTool Pointer with
+   * ImagerTool identifier used as a Key*/
   ImagerToolsContainerType           m_ImagerTools;
 
   /** typedefs from ImagerTool class */
   typedef ImagerToolType::Pointer                   ImagerToolPointer;
-
-  /** The reference tool */
-  //bool                               m_ApplyingReferenceTool;
-  //ImagerToolPointer                  m_ReferenceTool;
 
   /** Validity time, and its default value [milliseconds] */
   TimePeriodType                      m_ValidityTime;
@@ -324,6 +293,7 @@ private:
   /** Imaging ThreadID */
   int                             m_ThreadID;
 
+  //TODO rename
   /** itk::ConditionVariable object pointer to signal for the next
    *  transform */
   itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
@@ -425,10 +395,10 @@ private:
   /** Post-processing after communication setup has failed. */
   void CommunicationEstablishmentFailureProcessing( void );
 
-  /** Post-processing after ports and tools setup has been successful. */
+  /** Post-processing after tools setup has been successful. */
   void ToolsActivationSuccessProcessing( void );
 
-  /** Post-processing after ports and tools setup has failed. */
+  /** Post-processing after tools setup has failed. */
   void ToolsActivationFailureProcessing( void );
 
   /** Post-processing after start imaging has been successful. */
