@@ -199,7 +199,6 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   igstk::TrackerTool * genericTrackerTool = this->m_tool.GetPointer();
 
   this->m_pivotCalibrationFLTKWidget->RequestInitialize(numberOfFrames,
-                                                        genericTracker,
                                                         genericTrackerTool );
 }
 
