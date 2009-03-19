@@ -60,7 +60,8 @@ IF (IGSTKSandbox_USE_unicap)
     INCLUDE_DIRECTORIES(
     /usr/local/include/unicap
     )
-    #SUBDIRS( VideoFrameGrabberAndViewer )
+    #todo compile this app also when CompressedDV is enabled
+    SUBDIRS( VideoFrameGrabberAndViewer )
     #SUBDIRS( VideoTemporalCalibrationWizard )
 ENDIF (IGSTKSandbox_USE_unicap)
 
