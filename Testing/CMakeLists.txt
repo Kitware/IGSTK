@@ -102,12 +102,6 @@ SET(SandboxTests_SRCS
   igstkSocketCommunicationTest.cxx
   igstkVascularNetworkObjectTest.cxx
 
-  igstkPivotCalibrationTest.cxx
-  igstkPrincipalAxisCalibrationTest.cxx
-  igstkToolCalibrationTest.cxx
-  igstkToolCalibrationReaderTest.cxx
-  igstkPivotCalibrationReaderTest.cxx
-
   igstkDefaultWidget.h
   igstkDefaultWidget.cxx
 
@@ -185,12 +179,6 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
 
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
-ADD_TEST( igstkPivotCalibrationTest ${IGSTKSandbox_TESTS}
-igstkPivotCalibrationTest ${IGSTK_DATA_ROOT})
-ADD_TEST( igstkPrincipalAxisCalibrationTest ${IGSTKSandbox_TESTS}
-igstkPrincipalAxisCalibrationTest)
-ADD_TEST( igstkToolCalibrationTest ${IGSTKSandbox_TESTS} igstkToolCalibrationTest)
-
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
 
@@ -205,18 +193,6 @@ ADD_TEST( igstkReslicerPlaneSpatialObjectTest ${IGSTKSandbox_TESTS}
           igstkReslicerPlaneSpatialObjectTest
           ${IGSTK_DATA_ROOT}/Input/E000192
         )
-
-ADD_TEST( igstkToolCalibrationReaderTest ${IGSTKSandbox_TESTS}
-             igstkToolCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             )
-ADD_TEST( igstkPivotCalibrationReaderTest ${IGSTKSandbox_TESTS}
-             igstkPivotCalibrationReaderTest
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationTool.txt
-             ${IGSTK_DATA_ROOT}/Input/PivotCalibrationToolCorruptedOnPupose.txt
-             )
-
 
 IF(IGSTKSandbox_USE_FLTK)
 # FIXME: When done debugging, register it inside of the test drivers.
