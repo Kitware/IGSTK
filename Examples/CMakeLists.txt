@@ -9,9 +9,6 @@ SUBDIRS(
   LandmarkRegistration
   LandmarkRegistrationErrorEstimation
   DICOMImageReader
-  PivotCalibration
-  PrincipalAxisCalibration
-  PivotCalibrationReader
   SpatialObjects
   ApplicationsCommon
   AscensionTracker  
@@ -41,6 +38,7 @@ IF (IGSTKSandbox_USE_FLTK)
     WorkingVolumeTester
     TrackingVolumeViewer
     ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Examples/HelloWorld
+    PivotCalibrationFLTKWidget
     )
   IF (IGSTKSandbox_USE_MicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
