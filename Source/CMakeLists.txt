@@ -401,8 +401,6 @@ ENDIF(IGSTKSandbox_USE_OpenIGTLink)
         )
   ENDIF(IGSTK_USE_SceneGraphVisualization)
 
-ENDIF(IGSTKSandbox_USE_FLTK)
-
 IF (IGSTKSandbox_USE_OpenIGTLink)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
@@ -514,8 +512,6 @@ ENDIF(IGSTKSandbox_USE_OpenIGTLink)
       igstkSceneGraphUI.cxx
       )
   ENDIF(IGSTK_USE_SceneGraphVisualization)
-
-ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF( WIN32 )
   SET(IGSTKSandbox_SRCS
