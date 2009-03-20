@@ -51,7 +51,7 @@ ENDIF (IGSTKSandbox_USE_FLTK)
 IF (IGSTKSandbox_USE_OpenIGTLink)
     #SUBDIRS( UltrasoundNavigator )
     #SUBDIRS( UltrasoundCalibrationWizard )
-    SUBDIRS( TransformOIGTLinkBroadcast )
+    SUBDIRS(  OIGTLinkTrackerBroadcasting )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
 IF (IGSTKSandbox_USE_unicap)
