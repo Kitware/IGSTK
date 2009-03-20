@@ -350,9 +350,6 @@ SET(IGSTKSandbox_HEADS
   igstkImager.h
   igstkImagerTool.h
 
-#  igstkToolCalibrationReader.h
-#  igstkToolCalibration.h
-#  igstkPivotCalibrationReader.h
   igstkPivotCalibration.h
   igstkPrincipalAxisCalibration.h
   igstkContourMeshObjectRepresentation.h
@@ -363,7 +360,6 @@ SET(IGSTKSandbox_HEADS
   igstkLandmarkUltrasoundCalibration.h
 #  igstkObliqueContourMeshObjectRepresentation.h
 #  igstkObliqueImageSpatialObjectRepresentation.h
-#  igstkPivotCalibrationNew.h
   igstkPoint3D.h
   igstkQuickTimeGrabber.h
   igstkSocketCommunication.h
@@ -397,11 +393,6 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
       )
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
-IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkPivotCalibrationFLTKWidget.h
-      )
   IF(IGSTK_USE_SceneGraphVisualization)
     #SceneGraph visualization classes
     SET(IGSTKSandbox_HEADS
@@ -473,9 +464,6 @@ SET(IGSTKSandbox_SRCS
   igstkImager.cxx
   igstkImagerTool.cxx
 
-#  igstkToolCalibration.cxx
-#  igstkToolCalibrationReader.txx
-#  igstkPivotCalibrationReader.cxx
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
 
@@ -487,7 +475,6 @@ SET(IGSTKSandbox_SRCS
   igstkLandmarkUltrasoundCalibration.cxx
  # igstkObliqueContourMeshObjectRepresentation.cxx
  # igstkObliqueImageSpatialObjectRepresentation.txx
- #igstkPivotCalibrationNew.cxx
   igstkPoint3D.cxx
   igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
@@ -520,11 +507,6 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
       )
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
-IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTKSandbox_SRCS
-    ${IGSTKSandbox_SRCS}
-    igstkPivotCalibrationFLTKWidget.cxx
-    )
   IF(IGSTK_USE_SceneGraphVisualization)
     #SceneGraph visualization classes
     SET(IGSTKSandbox_SRCS
