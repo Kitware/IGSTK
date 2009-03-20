@@ -27,5 +27,13 @@ int main(int argc, char *argv[])
   igstk::RealTimeClock::Initialize();
 
   app.Show();  
-  return Fl::run();
+
+  while( !app.HasQuitted() )
+  {
+    Fl::wait(0.001);
+    igstk::PulseGenerator::CheckTimeouts();
+  }
+
+
+  return EXIT_SUCCESS;
 }
