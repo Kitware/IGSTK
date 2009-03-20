@@ -96,7 +96,7 @@ SET(IGSTK_HEADS
   igstkNDITracker.h
 
   igstkAffineTransform.h
-  igstkPerspectiveTransform.h  
+  igstkPerspectiveTransform.h
 
   igstkTransformObserver.h
 
@@ -217,7 +217,7 @@ SET(IGSTK_SRCS
   igstkView2D.cxx
   igstkView3D.cxx
   igstkViewProxyBase.cxx
-  igstkLogger.cxx 
+  igstkLogger.cxx
   igstkCoordinateSystem.cxx
   igstkCoordinateSystemDelegator.cxx
   igstkCoordinateSystemTransformToResult.cxx
@@ -275,7 +275,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
       ${IGSTK_SRCS}
       igstkMicronTracker.cxx
       igstkMicronTrackerTool.cxx
- 
+
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
@@ -345,14 +345,14 @@ SET(IGSTKSandbox_HEADS
 
 # Video grabber support
   igstkVideoFrameSpatialObject.h
-  igstkVideoFrameRepresentation.h 
+  igstkVideoFrameRepresentation.h
   igstkFrame.h
   igstkImager.h
   igstkImagerTool.h
-  
-  igstkToolCalibrationReader.h
-  igstkToolCalibration.h
-  igstkPivotCalibrationReader.h
+
+#  igstkToolCalibrationReader.h
+#  igstkToolCalibration.h
+#  igstkPivotCalibrationReader.h
   igstkPivotCalibration.h
   igstkPrincipalAxisCalibration.h
   igstkContourMeshObjectRepresentation.h
@@ -363,7 +363,7 @@ SET(IGSTKSandbox_HEADS
   igstkLandmarkUltrasoundCalibration.h
 #  igstkObliqueContourMeshObjectRepresentation.h
 #  igstkObliqueImageSpatialObjectRepresentation.h
-  igstkPivotCalibrationNew.h
+#  igstkPivotCalibrationNew.h
   igstkPoint3D.h
   igstkQuickTimeGrabber.h
   igstkSocketCommunication.h
@@ -377,19 +377,19 @@ SET(IGSTKSandbox_HEADS
   igstkVascularNetworkReader.h
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
-  
+
 )
 
 IF(IGSTK_USE_SceneGraphVisualization)
   # SceneGraph visualization classes
   SET(IGSTKSandbox_HEADS
-    ${IGSTKSandbox_HEADS}    
+    ${IGSTKSandbox_HEADS}
     igstkSceneGraphObserver.h
     igstkSceneGraphNode.h
     igstkSceneGraph.h
     )
 ENDIF(IGSTK_USE_SceneGraphVisualization)
-  
+
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
@@ -405,11 +405,11 @@ IF(IGSTKSandbox_USE_FLTK)
   IF(IGSTK_USE_SceneGraphVisualization)
     #SceneGraph visualization classes
     SET(IGSTKSandbox_HEADS
-        ${IGSTKSandbox_HEADS}    
+        ${IGSTKSandbox_HEADS}
         igstkSceneGraphUI.h
         )
   ENDIF(IGSTK_USE_SceneGraphVisualization)
-    
+
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
@@ -472,13 +472,13 @@ SET(IGSTKSandbox_SRCS
   igstkFrame.cxx
   igstkImager.cxx
   igstkImagerTool.cxx
-  
-  igstkToolCalibration.cxx
-  igstkToolCalibrationReader.txx
-  igstkPivotCalibrationReader.cxx
+
+#  igstkToolCalibration.cxx
+#  igstkToolCalibrationReader.txx
+#  igstkPivotCalibrationReader.cxx
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
- 
+
 #  igstkContourMeshObjectRepresentation.cxx
   igstkContourObjectRepresentation.cxx
   igstkContourVascularNetworkObjectRepresentation.cxx
@@ -487,7 +487,7 @@ SET(IGSTKSandbox_SRCS
   igstkLandmarkUltrasoundCalibration.cxx
  # igstkObliqueContourMeshObjectRepresentation.cxx
  # igstkObliqueImageSpatialObjectRepresentation.txx
-  igstkPivotCalibrationNew.cxx
+ #igstkPivotCalibrationNew.cxx
   igstkPoint3D.cxx
   igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
@@ -501,7 +501,7 @@ SET(IGSTKSandbox_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
-  
+
 )
 
 IF(IGSTK_USE_SceneGraphVisualization)
@@ -512,7 +512,7 @@ IF(IGSTK_USE_SceneGraphVisualization)
     igstkSceneGraph.cxx
     )
 ENDIF(IGSTK_USE_SceneGraphVisualization)
-  
+
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_SRCS
       ${IGSTKSandbox_SRCS}
@@ -532,7 +532,7 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkSceneGraphUI.cxx
       )
   ENDIF(IGSTK_USE_SceneGraphVisualization)
-    
+
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF( WIN32 )
@@ -568,13 +568,13 @@ ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_MicronTracker)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
-   
+
   IF(WIN32)
     SET(EXTRA_LIBS ${EXTRA_LIBS}  comctl32 wsock32 odbc32 odbccp32 )
   ELSE(WIN32)
     SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dc1394_control )
   ENDIF(WIN32)
-  
+
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
@@ -602,4 +602,3 @@ TARGET_LINK_LIBRARIES(IGSTKSandbox
     ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject ITKStatistics
     vtkVolumeRendering vtkRendering vtkGraphics vtkHybrid vtkImaging
     vtkIO vtkFiltering vtkCommon vtkWidgets ${EXTRA_LIBS})
-    
