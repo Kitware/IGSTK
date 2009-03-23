@@ -5,13 +5,10 @@ SET(PivotCalibrationFLTKWidgetExample_GUI_SRCS
   )
 
 SET(PivotCalibrationFLTKWidgetExample_SRCS
+  PivotCalibrationFLTKWidgetExample.h
   PivotCalibrationFLTKWidgetExample.cxx
   main.cxx
   )
-
-SET(PivotCalibrationFLTKWidgetExample_HDRS
-    PivotCalibrationFLTKWidgetExample.h
-)
 
 INCLUDE_DIRECTORIES(
   ${PivotCalibrationFLTKWidgetExample_SOURCE_DIR}
