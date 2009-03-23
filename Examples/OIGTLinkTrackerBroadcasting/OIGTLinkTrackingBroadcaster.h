@@ -210,15 +210,7 @@ private:
 
 // BeginLatex
 // We create a list of destination to support multicast data transfer.
-// EndLatex
-// BeginCodeSnippet
-      this->m_Destinations.clear();
-      this->m_Destinations.insert( this->m_Destinations.begin(),
-        destinations.begin(), destinations.end() );
-// EndCodeSnippet
-
-// BeginLatex
-// Then we establish connections for each destation on the list we have created.
+// Then we establish connections for each destation on the list.
 // EndLatex
 // BeginCodeSnippet
       std::vector< std::pair<std::string, unsigned int> >::iterator destinationIt; 
@@ -275,15 +267,6 @@ private:
             igstk::Transform transform = this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
-// EndCodeSnippet
-            std::cout<<"Destinations:\n";
-            for(unsigned int i=0; i<this->m_Destinations.size(); i++)
-              std::cout<<"\t"<<this->m_Destinations[i].first<<":"<<this->m_Destinations[i].second<<"\n";
-            std::cout<<"t:"<<t[0]<<"\t"<<t[1]<<"\t"<<t[2]<<"\n";
-            std::cout<<"r:"<<r.GetX()<<"\t"<<r.GetY()<<"\t"<<r.GetZ()<<"\t"<<r.GetW()<<"\n";
-
-
-// BeginCodeSnippet
             this->m_PositionMessage->SetPosition(t[0], t[1], t[2]);
             this->m_PositionMessage->SetQuaternion(r.GetX(), r.GetY(), r.GetZ(), r.GetW());
             this->m_PositionMessage->Pack();
@@ -305,12 +288,10 @@ private:
     //we are interested in the tool location relative to the world's 
     //coordinate system
     igstk::SpatialObject::Pointer m_World;
-    //TODO remove destinations vector;
-    std::vector< std::pair<std::string, unsigned int> > m_Destinations;
     igstk::TransformObserver::Pointer m_TransformObserver; 
     igstk::TrackerTool::Pointer  m_Tool;
 
-    // Sending tracking data to Slicer3
+    //send data to these socket connections
     std::vector< igtl::ClientSocket::Pointer > m_Sockets;
     igtl::PositionMessage::Pointer m_PositionMessage;
   };
