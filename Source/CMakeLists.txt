@@ -376,6 +376,13 @@ SET(IGSTKSandbox_HEADS
 
 )
 
+IF(IGSTKSandbox_USE_FLTK)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkPivotCalibrationFLTKWidget.h
+      )
+ENDIF(IGSTKSandbox_USE_FLTK)      
+
 IF(IGSTK_USE_SceneGraphVisualization)
   # SceneGraph visualization classes
   SET(IGSTKSandbox_HEADS
@@ -488,6 +495,13 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObjectRepresentation.cxx
 
 )
+
+IF(IGSTKSandbox_USE_FLTK)
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkPivotCalibrationFLTKWidget.cxx
+      )
+ENDIF(IGSTKSandbox_USE_FLTK)      
 
 IF(IGSTK_USE_SceneGraphVisualization)
   #SceneGraph visualization classes
