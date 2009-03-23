@@ -178,7 +178,6 @@ private:
       }
       this->m_Sockets.clear();
 
-      this->m_PositionMessage->Delete();
     }
 
   public:
