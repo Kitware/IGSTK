@@ -81,7 +81,7 @@ public:
    *  The method generates two events: InitializationSuccessEvent and 
    *  InitializationFailureEvent. */
   void RequestInitialize( unsigned int n, 
-                          igstk::TrackerTool * trackerTool ); 
+    igstk::TrackerTool::Pointer trackerTool ); 
 
   /** This method sets the delay in seconds between the moment the 
    *  "Calibrate" button is pressed and the begining of data acquistion. */

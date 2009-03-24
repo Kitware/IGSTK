@@ -119,7 +119,7 @@ PivotCalibrationFLTKWidget::~PivotCalibrationFLTKWidget()
 
 void 
 PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n, 
-                                               igstk::TrackerTool * trackerTool )
+                                              igstk::TrackerTool::Pointer trackerTool )
 {
               //show the description of the current tool on the UI
     const std::string trackerToolIdentifier =
