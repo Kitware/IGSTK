@@ -54,8 +54,6 @@ PivotCalibration::PivotCalibration() : m_StateMachine( this )
 
        //setup the transformation acquired observer using class method
   this->m_TransformAcquiredObserver = TransformAcquiredCommand::New();
-  this->m_TransformAcquiredObserver->SetCallbackFunction( this, 
-                                                          &PivotCalibration::AcquireTransformsAndCalibrate );
   this->m_TransformObserver = TransformToTrackerObserver::New();
 
         //define the state machine's states 
@@ -366,12 +364,15 @@ PivotCalibration::ComputeCalibrationProcessing()
   this->m_Transforms.clear();
   this->m_ReasonForCalibrationFailure.clear();
   this->InvokeEvent( DataAcquisitionStartEvent() );
-  this->m_AcquireTransformObserverID = 
-    this->m_TrackerTool->AddObserver( igstk::TrackerToolTransformUpdateEvent(),
-                                      this->m_TransformAcquiredObserver );
+  this->m_TrackerTool->AddObserver( igstk::TrackerToolTransformUpdateEvent(),
+                                            this->m_TransformAcquiredObserver );
+
+  this->m_TransformAcquiredObserver->SetCallbackFunction( this, 
+                             &PivotCalibration::AcquireTransformsAndCalibrate );
+
   this->m_TransformToTrackerObserverID = 
       this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent() ,
-                                        this->m_TransformObserver );
+                                                    this->m_TransformObserver );
 
 }
 
@@ -383,8 +384,18 @@ PivotCalibration::AcquireTransformsAndCalibrate(itk::Object *caller,
   //got all the transformations we need for calibration      
   if( this->m_Transforms.size() == this->m_RequiredNumberOfTransformations )
     {
-    this->m_TrackerTool->RemoveObserver( this->m_AcquireTransformObserverID );
+    // Instead of removing the observer, we set the callback function to empty
+    // because that the tracker is running on a seperate thread, when the tracker
+    // update event evoke the observer callback, it will crash the application
+    // if the observer is being removed by another thread.Thus it is safer to 
+    // set the observer callback to an empty function
+    //this->m_TrackerTool->RemoveObserver( this->m_AcquireTransformObserverID );
+    this->m_TransformAcquiredObserver->SetCallbackFunction(this, 
+                                             & PivotCalibration::EmptyCallBack);    
     this->m_TrackerTool->RemoveObserver( this->m_TransformToTrackerObserverID );
+    
+
+
     this->InvokeEvent( DataAcquisitionEndEvent() );
                //actually perform the calibration
     this->m_PivotCalibrationAlgorithm->RequestResetCalibration();

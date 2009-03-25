@@ -156,12 +156,11 @@ private:
   void GetTransformProcessing();
   void GetPivotPointProcessing();
   void GetRMSEProcessing();
-
+  void EmptyCallBack(itk::Object *caller, const itk::EventObject & event){};
 
   /**settings for using member function as callback**/
   typedef itk::MemberCommand<PivotCalibration> TransformAcquiredCommand;
   TransformAcquiredCommand::Pointer m_TransformAcquiredObserver;
-  unsigned long m_AcquireTransformObserverID;
 
   igstkObserverMacro( TransformToTracker, igstk::CoordinateSystemTransformToEvent,
                       CoordinateSystemTransformToResult )
