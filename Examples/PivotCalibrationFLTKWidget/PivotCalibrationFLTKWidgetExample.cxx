@@ -167,6 +167,7 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
     return;
   }
   this->m_tracker->SetCommunication( this->m_serialCommunication );
+  this->m_tracker->RequestSetFrequency( 30 );
 
            //open tracker communication
   this->m_tracker->RequestOpen();
