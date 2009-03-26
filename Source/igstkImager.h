@@ -309,7 +309,7 @@ private:
   igstkDeclareStateMacro( CommunicationEstablished );
   igstkDeclareStateMacro( AttemptingToAttachImagerTool );
   igstkDeclareStateMacro( ImagerToolAttached );
-  igstkDeclareStateMacro( AttemptingToTrack );
+  igstkDeclareStateMacro( AttemptingToImaging );
   igstkDeclareStateMacro( Imaging );
   igstkDeclareStateMacro( AttemptingToUpdate );
   igstkDeclareStateMacro( AttemptingToStopImaging );
