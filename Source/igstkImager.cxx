@@ -39,7 +39,7 @@ Imager::Imager(void) :  m_StateMachine( this )
   igstkAddStateMacro( AttemptingToAttachImagerTool );
   igstkAddStateMacro( ImagerToolAttached );
   igstkAddStateMacro( CommunicationEstablished );
-  igstkAddStateMacro( AttemptingToTrack );
+  igstkAddStateMacro( AttemptingToImaging );
   igstkAddStateMacro( AttemptingToStopImaging);
   igstkAddStateMacro( Imaging );
   igstkAddStateMacro( AttemptingToUpdate );
@@ -116,7 +116,7 @@ Imager::Imager(void) :  m_StateMachine( this )
 
   igstkAddTransitionMacro( CommunicationEstablished,
                            StartImaging,
-                           AttemptingToTrack,
+                           AttemptingToImaging,
                            AttemptToStartImaging );
 
   igstkAddTransitionMacro( CommunicationEstablished,
@@ -168,7 +168,7 @@ Imager::Imager(void) :  m_StateMachine( this )
   // Transitions from ImagerToolAttached
   igstkAddTransitionMacro( ImagerToolAttached,
                            StartImaging,
-                           AttemptingToTrack,
+                           AttemptingToImaging,
                            AttemptToStartImaging );
 
   igstkAddTransitionMacro( ImagerToolAttached,
@@ -191,20 +191,20 @@ Imager::Imager(void) :  m_StateMachine( this )
                            AttemptingToCloseCommunication,
                            CloseFromCommunicatingState );
 
-  // Transitions from AttemptingToTrack
-  igstkAddTransitionMacro( AttemptingToTrack,
+  // Transitions from AttemptingToImaging
+  igstkAddTransitionMacro( AttemptingToImaging,
                            Success,
                            Imaging,
                            StartImagingSuccess );
 
-  igstkAddTransitionMacro( AttemptingToTrack,
+  igstkAddTransitionMacro( AttemptingToImaging,
                            Failure,
                            CommunicationEstablished,
                            StartImagingFailure );
 
-  igstkAddTransitionMacro( AttemptingToTrack,
+  igstkAddTransitionMacro( AttemptingToImaging,
                            ValidFrequency,
-                           AttemptingToTrack,
+                           AttemptingToImaging,
                            ReportInvalidRequest );
 
   // Transitions from Imaging
@@ -532,7 +532,7 @@ void Imager::StartImagingSuccessProcessing( void )
     }
 
 
-  // going from AttemptingToTrackState to ImagingState
+  // going from AttemptingToImagingState to ImagingState
   this->EnterImagingStateProcessing();
 
   this->InvokeEvent( ImagerStartImagingEvent() );
