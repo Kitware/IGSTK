@@ -194,6 +194,13 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   }
   cerr << m_FrameRingBuffer->at(10).GetImagePtr() << "FrameConstructor" << endl;
 
+  //TODO delete this
+      std::ofstream ofile;
+      ofile.open("ImagerToolStateMachineDiagram.dot");
+      const bool skipLoops = false;
+      this->ExportStateMachineDescription( ofile, skipLoops );
+      ofile.close();
+
 }
 
 ImagerTool::~ImagerTool(void)
@@ -548,10 +555,6 @@ igstk::Frame ImagerTool::GetFrameFromBuffer(const unsigned int index)
     cout << endl << "Exception in GetFrameFromBuffer (ImagingSourceImager): "
     << e.what() << endl;
   }
-//  if (m_NumberOfFramesInBuffer < m_MaxBufferSize)
-//  {
-//    m_NumberOfFramesInBuffer += 1;
-//  }
 }
 
 igstk::Frame ImagerTool::GetTemporalCalibratedFrame()
@@ -562,13 +565,9 @@ igstk::Frame ImagerTool::GetTemporalCalibratedFrame()
   }
   catch( std::exception& e )
   {
-    cout << endl << "Exception in GetFrameFromBuffer (ImagingSourceImager): "
+    cout << endl << "Exception in GetTemporalCalibratedFrame: "
     << e.what() << endl;
   }
-//  if (m_NumberOfFramesInBuffer < m_MaxBufferSize)
-//  {
-//    m_NumberOfFramesInBuffer += 1;
-//  }
 }
 
 void ImagerTool::AddFrameToBuffer(const igstk::Frame& frame)
