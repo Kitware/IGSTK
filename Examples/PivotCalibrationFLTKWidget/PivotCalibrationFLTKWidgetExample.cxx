@@ -17,6 +17,11 @@
 
 #include "PivotCalibrationFLTKWidgetExample.h"
 #include <FL/fl_ask.H>
+#include <FL/Fl_File_Chooser.H>
+#include "igstkPrecomputedTransformData.h"
+#include "igstkTransformFileWriter.h"
+#include "igstkRigidTransformXMLFileWriter.h"
+#include "itksys/SystemTools.hxx"
 
 #include "igstkSerialCommunication.h"
 
@@ -46,8 +51,27 @@ PivotCalibrationFLTKWidgetExample::HAND_SHAKE =
 
 PivotCalibrationFLTKWidgetExample::PivotCalibrationFLTKWidgetExample()
 : PivotCalibrationFLTKWidgetExampleUI(), m_initialized(false)
-{
-            //create error observer
+{ 
+               //create transform observer
+  this->m_TransformToObserver = TransformToObserver::New();
+               //create RMSE observer
+  this->m_RMSEObserver = RMSEObserver::New();
+
+               //create calibration success and failure observer
+  this->m_CalibrationSuccessFailureObserver = CalibrationSuccessFailureObserverType::New();  
+  this->m_CalibrationSuccessFailureObserver->SetCallbackFunction( 
+    this, 
+    &PivotCalibrationFLTKWidgetExample::OnCalibrationSuccessFailureEvent );
+
+  this->m_pivotCalibrationFLTKWidget->AddObserver( 
+    igstk::PivotCalibration::CalibrationSuccessEvent(),
+    this->m_CalibrationSuccessFailureObserver );
+
+  this->m_pivotCalibrationFLTKWidget->AddObserver( 
+    igstk::PivotCalibration::CalibrationFailureEvent(),
+    this->m_CalibrationSuccessFailureObserver );
+    
+  //create error observer
   this->m_errorObserver = TrackingErrorObserver::New();
 
   //create serial communication
@@ -202,6 +226,89 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
   this->m_pivotCalibrationFLTKWidget->RequestInitialize(numberOfFrames,
                                                         genericTrackerTool );
 }
+
+void
+PivotCalibrationFLTKWidgetExample::SaveCalibration()
+{
+  char *fileName = fl_file_chooser("Save calibration file",
+                                   "XML Files(*.xml,*.XML)", NULL,0);
+  if(fileName != NULL)
+    {
+      igstk::PrecomputedTransformData::Pointer transformationData = 
+        igstk::PrecomputedTransformData::New();
+
+        //get the transformaion
+    unsigned long observerID = this->m_pivotCalibrationFLTKWidget->AddObserver( igstk::CoordinateSystemTransformToEvent(),
+                                                   this->m_TransformToObserver );
+    this->m_pivotCalibrationFLTKWidget->RequestCalibrationTransform();
+    igstk::Transform transform = this->m_TransformToObserver->GetTransformTo().GetTransform();
+    this->m_pivotCalibrationFLTKWidget->RemoveObserver( observerID );
+        //get the estimation error
+    observerID = this->m_pivotCalibrationFLTKWidget->AddObserver( igstk::DoubleTypeEvent(),
+      this->m_RMSEObserver );
+    this->m_pivotCalibrationFLTKWidget->RequestCalibrationRMSE();
+    this->m_pivotCalibrationFLTKWidget->RemoveObserver( observerID );
+    igstk::EventHelperType::DoubleType rmse = this->m_RMSEObserver->GetRMSE();
+              //get transformation description
+    std::ostringstream descriptionStream;
+    descriptionStream<<"Pivot calibration for tool ";
+    descriptionStream<<this->m_tool->GetTrackerToolIdentifier();
+             //get current date
+    std::string estimationDate = 
+      itksys::SystemTools::GetCurrentDateTime( "%Y %b %d %H:%M:%S" );
+      
+    transformationData->RequestInitialize( &transform, estimationDate,
+                                           descriptionStream.str(), rmse );
+
+          //setup the writer
+    igstk::TransformFileWriter::Pointer transformFileWriter = 
+      igstk::TransformFileWriter::New();
+
+    igstk::TransformXMLFileWriterBase::Pointer xmlFileWriter;
+      xmlFileWriter = igstk::RigidTransformXMLFileWriter::New();
+
+    WriteFailureObserverType::Pointer writeFailureObserver = 
+      WriteFailureObserverType::New();  
+    writeFailureObserver->SetCallbackFunction( 
+    this, 
+    &PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent );
+
+    transformFileWriter->AddObserver( igstk::TransformFileWriter::WriteFailureEvent() , 
+                                      writeFailureObserver );
+
+    transformFileWriter->RequestSetWriter( xmlFileWriter );
+    transformFileWriter->RequestSetData( transformationData,  
+                                         fileName );
+    transformFileWriter->RequestWrite();
+    }
+}
+
+
+void 
+PivotCalibrationFLTKWidgetExample::OnCalibrationSuccessFailureEvent( itk::Object *caller, 
+                              const itk::EventObject & event )
+{
+  if( dynamic_cast< const igstk::PivotCalibration::CalibrationSuccessEvent * > 
+     (&event) ) 
+    { 
+    this->m_saveButton->activate();
+    }
+  else if( dynamic_cast< const igstk::PivotCalibration::CalibrationFailureEvent * > 
+           (&event) )
+    {
+    this->m_saveButton->deactivate();
+    }
+}
+
+
+void 
+PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent( itk::Object *caller, 
+                                                        const itk::EventObject & event )
+{
+  fl_alert( "Failed writing calibration data to file." );
+  fl_beep( FL_BEEP_ERROR );
+}
+
 
 void
 PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
