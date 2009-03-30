@@ -95,12 +95,10 @@ Fl_Group( x, y, w, h, label )
                                          this->m_CalibrationObserver );
   this->m_pivotCalibration->AddObserver( PivotCalibration::CalibrationFailureEvent(),
                                          this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( igstk::CoordinateSystemTransformToEvent(),
-                                         this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( igstk::PointEvent(),
-                                         this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( igstk::DoubleTypeEvent(),
-                                         this->m_CalibrationObserver );
+            
+  this->m_TransformToObserver = TransformToObserver::New();
+  this->m_PivotPointObserver = PivotPointObserver::New();
+  this->m_RMSEObserver = RMSEObserver::New();
 
     //settings for the stream that accumulates the calibration information
   this->m_calibrationInformationStream.precision(3);
@@ -133,13 +131,6 @@ PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n,
 
 
 void 
-PivotCalibrationFLTKWidget::RequestReset()
-{
-  Fl::warning("The method RequestReset() is not implemented");
-}
-
-
-void 
 PivotCalibrationFLTKWidget::RequestComputeCalibration()
 {
   std::ostringstream msg;
@@ -161,6 +152,8 @@ PivotCalibrationFLTKWidget::RequestComputeCalibration()
 }
 
 
+
+
 void 
 PivotCalibrationFLTKWidget::RequestComputeCalibrationCB( Fl_Button *b, 
                                                              void *v )
@@ -173,6 +166,27 @@ void
 PivotCalibrationFLTKWidget::RequestSetDelay( unsigned int delayInSeconds )
 {
   this->m_delay = delayInSeconds*1000;
+}
+
+
+void 
+PivotCalibrationFLTKWidget::RequestCalibrationTransform()
+{
+  this->m_pivotCalibration->RequestCalibrationTransform();
+}
+
+
+void 
+PivotCalibrationFLTKWidget::RequestCalibrationRMSE()
+{
+  this->m_pivotCalibration->RequestCalibrationRMSE();
+}
+
+
+void 
+PivotCalibrationFLTKWidget::RequestPivotPoint()
+{
+  this->m_pivotCalibration->RequestPivotPoint();
 }
 
 
@@ -189,6 +203,12 @@ PivotCalibrationFLTKWidget::AddObserver( const itk::EventObject & event,
                                          itk::Command *command ) const
 {
   return this->m_pivotCalibration->AddObserver( event, command );
+}
+
+void
+PivotCalibrationFLTKWidget::RemoveObserver( unsigned long observerID )
+{
+  this->m_pivotCalibration->RemoveObserver( observerID );
 }
 
 
@@ -233,19 +253,20 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
     msg<<"Calibration failed:\n\t"<<evt->Get();
     fl_alert(msg.str().c_str());
     fl_beep(FL_BEEP_ERROR);;
-  }
+  }               //calibration succeeded, get all the information 
+                  //(Transformation, Pivot Point, RMSE) and display it
   else if( dynamic_cast< const PivotCalibration::CalibrationSuccessEvent * > (&event) ) 
-  {
+    {
     this->m_progress->value(0.0);
     this->m_calibrationInformationStream.str("");
     PivotCalibration* calib = dynamic_cast< PivotCalibration *> (caller);
+
+                 //get the transformation
+    unsigned long observerID = calib->AddObserver( igstk::CoordinateSystemTransformToEvent(),
+                                                   this->m_TransformToObserver );
     calib->RequestCalibrationTransform();
-  }
-  else if( const igstk::CoordinateSystemTransformToEvent *transformEvent =
-           dynamic_cast< const igstk::CoordinateSystemTransformToEvent *> (&event) ) 
-  {
-    igstk::CoordinateSystemTransformToResult result = transformEvent->Get();
-    igstk::Transform transform = result.GetTransform();
+    calib->RemoveObserver( observerID );
+    igstk::Transform transform = this->m_TransformToObserver->GetTransformTo().GetTransform();
     igstk::Transform::VersorType v = transform.GetRotation();
     igstk::Transform::VectorType t = transform.GetTranslation();
 
@@ -255,28 +276,24 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
     this->m_calibrationInformationStream<<"\t"<<v.GetZ()<<"\t"<<v.GetW()<<"\n";
     this->m_calibrationInformationStream<<"\t translation: ";
     this->m_calibrationInformationStream<<t[0]<<"\t"<<t[1]<<"\t"<<t[2]<<"\n";
-    PivotCalibration* calib = dynamic_cast< PivotCalibration *> (caller);
+                //get the pivot point
+    observerID = calib->AddObserver( igstk::PointEvent(),
+      this->m_PivotPointObserver );
     calib->RequestPivotPoint();
-  }
-  else if( const igstk::PointEvent *pntEvt =
-           dynamic_cast< const igstk::PointEvent *> (&event) ) 
-  {
-    igstk::EventHelperType::PointType pnt = pntEvt->Get();
-    
+    calib->RemoveObserver( observerID );
+    igstk::EventHelperType::PointType pnt = 
+      this->m_PivotPointObserver->GetPivotPoint();    
     this->m_calibrationInformationStream<<"Pivot point: ";
     this->m_calibrationInformationStream<<pnt[0]<<"\t"<<pnt[1]<<"\t"<<pnt[2]<<"\n";
-    PivotCalibration* calib = dynamic_cast< PivotCalibration *> (caller);
+                //get the RMS error
+    observerID = calib->AddObserver( igstk::DoubleTypeEvent(),
+      this->m_RMSEObserver );
     calib->RequestCalibrationRMSE();
-  }
-  else if( const igstk::DoubleTypeEvent *rmsEvt =
-           dynamic_cast< const igstk::DoubleTypeEvent *> (&event) ) 
-  {
-    igstk::EventHelperType::DoubleType rmse = rmsEvt->Get();
-    
-    this->m_calibrationInformationStream<<"RMSE: "<<rmse<<"\n";
+    calib->RemoveObserver( observerID );
+    this->m_calibrationInformationStream<<"RMSE: "<<this->m_RMSEObserver->GetRMSE()<<"\n";
     this->m_output->value(this->m_calibrationInformationStream.str().c_str());
     this->m_calibrateButton->activate();
-  }
+    }
 }
 
 } //end namespace igstk

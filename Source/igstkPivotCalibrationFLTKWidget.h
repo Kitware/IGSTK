@@ -87,16 +87,34 @@ public:
    *  "Calibrate" button is pressed and the begining of data acquistion. */
   void RequestSetDelay( unsigned int delayInSeconds );  
 
+  /** This method is used to request the calibration transformation.
+   *  The method should only be invoked after a successful calibration. 
+   *  It generates two events: CoordinateSystemTransformToEvent, and 
+   *  TransformNotAvailableEvent, respectively denoting that a calibration 
+   *  transform is and isn't available. */
+  void RequestCalibrationTransform();
+
+  /** This method is used to request the pivot point, given in the coordinate 
+   *  system in which the user supplied transforms were given. It generates two 
+   *  events: PointEvent, and InvalidRequestErrorEvent, respectively denoting 
+   *  that the pivot point is and isn't available. */
+  void RequestPivotPoint();
+
+  /** This method is used to request the Root Mean Square Error (RMSE) of the 
+   *  overdetermined equation system used to perform pivot calibration. It 
+   *  generates two events: DoubleTypeEvent, and InvalidRequestErrorEvent, 
+   *  respectively denoting that the RMSE is and isn't available.
+   *  \sa PivotCalibrationAlgorithm */
+  void RequestCalibrationRMSE();
+
+
   /** Add an observer so that an outside class is notified of events. */
   unsigned long AddObserver( const itk::EventObject & event, 
                             itk::Command *command );
   unsigned long AddObserver( const itk::EventObject & event, 
                              itk::Command *command ) const;
+  void RemoveObserver( unsigned long observerID );
 
-  /** This method needs to be implemented (check with Ziv) 
-   * In the meantime we display a warning message. */
-  void RequestReset();
- 
 private:
 
   Fl_Output *m_toolDescription;
@@ -146,13 +164,31 @@ private:
                               const itk::EventObject & event );
   InitializationObserverType::Pointer m_InitializationObserver;  
 
-                 //pivot calibration events (start, progress, end, get data) 
+                 //pivot calibration events (start, progress, end) 
                  //observer
   typedef itk::MemberCommand<PivotCalibrationFLTKWidget>   
     CalibrationObserverType;
   void OnCalibrationEvent( itk::Object *caller, 
                            const itk::EventObject & event );
   CalibrationObserverType::Pointer m_CalibrationObserver;  
+
+                 //pivot calibration get transform observer
+  igstkObserverMacro( TransformTo, 
+                      igstk::CoordinateSystemTransformToEvent, 
+                      igstk::CoordinateSystemTransformToResult )
+  TransformToObserver::Pointer m_TransformToObserver;
+
+                 //pivot calibration get pivot point observer
+  igstkObserverMacro( PivotPoint, 
+                      igstk::PointEvent, 
+                      igstk::EventHelperType::PointType )
+  PivotPointObserver::Pointer m_PivotPointObserver;
+
+                 //pivot calibration get RMSE observer
+  igstkObserverMacro( RMSE, 
+                      igstk::DoubleTypeEvent, 
+                      igstk::EventHelperType::DoubleType )
+  RMSEObserver::Pointer m_RMSEObserver;
 
 };
 
