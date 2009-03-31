@@ -6,6 +6,7 @@ SET(SRCS
     ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
     igstkTransformXMLFileWriterBase.cxx
     igstkRigidTransformXMLFileWriter.cxx
+    igstkAffineTransformXMLFileWriter.cxx
     igstkTransformFileWriter.cxx
     TransformWriterExample.cxx
 )
@@ -13,6 +14,7 @@ SET(HDRS
     ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
     igstkTransformXMLFileWriterBase.h
     igstkRigidTransformXMLFileWriter.h
+    igstkAffineTransformXMLFileWriter.h
     igstkTransformFileWriter.h
 )
 
