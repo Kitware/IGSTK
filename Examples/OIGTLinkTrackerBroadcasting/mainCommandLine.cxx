@@ -11,7 +11,8 @@ int main( int argc, char *argv[] )
 
   try 
   {
-    OIGTLinkTrackingBroadcaster *b = new OIGTLinkTrackingBroadcaster( std::string( argv[1] ) );
+    std::string s = argv[1] ;
+    OIGTLinkTrackingBroadcaster *b = new OIGTLinkTrackingBroadcaster( s );
     b->StartTracking();
     while( 1 ) 
     {
