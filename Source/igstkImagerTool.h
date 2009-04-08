@@ -47,9 +47,9 @@ igstkEventMacro( ImagerToolAttachmentToImagerErrorEvent,
 igstkEventMacro( ImagerToolDetachmentFromImagerEvent,ImagerToolEvent);
 igstkEventMacro( ImagerToolDetachmentFromImagerErrorEvent,
                                                        ImagerToolErrorEvent);
-igstkEventMacro( ImagerToolMadeTransitionToTrackedStateEvent,
+igstkEventMacro( ImagerToolMadeTransitionToConnectedStateEvent,
                                                             ImagerToolEvent);
-igstkEventMacro( ImagerToolNotAvailableToBeTrackedEvent,ImagerToolEvent);
+igstkEventMacro( ImagerToolNotAvailableToBeConnectedEvent,ImagerToolEvent);
 igstkEventMacro( ToolImagingStartedEvent,ImagerToolEvent);
 igstkEventMacro( ToolImagingStoppedEvent,ImagerToolEvent);
 
@@ -87,12 +87,6 @@ public:
   typedef Transform         TransformType;
   typedef Frame             FrameType;
 
-  /** Get the calibration transform for this tool. */
-//  igstkGetMacro( CalibrationTransform, TransformType );
-
-  ///**  Set the calibration transform for this tool. */
-  //void SetCalibrationTransform( const TransformType & );
-
   /** Get whether the tool was updated during imager UpdateStatus() */
   igstkGetMacro( Updated, bool );
 
@@ -113,6 +107,7 @@ public:
    * imager. */
   virtual void RequestAttachToImager( ImagerType * );
 
+  //TODO public? depending on that add it to the chapter
   /** Get the frame for this tool. */
   FrameType GetInternalFrame( void );
 
@@ -131,7 +126,6 @@ public:
 protected:
 
   ImagerTool(void);
-
   virtual ~ImagerTool(void);
 
   /** Print the object information in a stream. */
@@ -195,7 +189,7 @@ private:
   igstkDeclareStateMacro( Attached );
   igstkDeclareStateMacro( AttemptingToDetachImagerToolFromImager );
   igstkDeclareStateMacro( NotAvailable );
-  igstkDeclareStateMacro( Tracked );
+  igstkDeclareStateMacro( Connected );
 
   /** Attempt method to configure */
   void AttemptToConfigureProcessing( void );
@@ -252,15 +246,6 @@ private:
 
   /** No operation for state machine transition */
   void NoProcessing( void );
-
-  /** Calibration transform for the tool */
- // TransformType                 m_CalibrationTransform;
-
-  /** Calibrated raw transform for the tool */
-  //TransformType                 m_CalibratedTransform;
-
-  /** raw transform for the tool */
-  //TransformType                 m_RawTransform;
 
   /** Ring buffer for the tool */
   void AddFrameToBuffer(const igstk::Frame& frame);
