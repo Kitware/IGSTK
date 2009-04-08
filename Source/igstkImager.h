@@ -59,6 +59,7 @@ igstkEventMacro( ImagerStopImagingErrorEvent,             ImagerErrorEvent);
 igstkEventMacro( ImagerUpdateStatusEvent,                 ImagerEvent);
 igstkEventMacro( ImagerUpdateStatusErrorEvent,            ImagerErrorEvent);
 
+//TODO delete this
 igstkEventMacro( ImagerToolFrameUpdateEvent,              ImagerEvent);
 
 /** \class Imager
