@@ -46,7 +46,7 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   igstkAddStateMacro( Attached );
   igstkAddStateMacro( AttemptingToDetachImagerToolFromImager );
   igstkAddStateMacro( NotAvailable );
-  igstkAddStateMacro( Tracked );
+  igstkAddStateMacro( Connected );
 
   // Set the input descriptors
   igstkAddInputMacro( ConfigureTool );
@@ -130,7 +130,7 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   // Transition from NotAvailable state
   igstkAddTransitionMacro( NotAvailable,
                            ImagerToolVisible,
-                           Tracked,
+                           Connected,
                            ReportImagerToolVisibleState );
 
   igstkAddTransitionMacro( NotAvailable,
@@ -143,18 +143,18 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
                            NotAvailable,
                            No );
 
-  // Transition from Tracked state
-  igstkAddTransitionMacro( Tracked,
+  // Transition from Connected state
+  igstkAddTransitionMacro( Connected,
                            ImagerToolNotAvailable,
                            NotAvailable,
                            ReportImagerToolNotAvailable );
 
-  igstkAddTransitionMacro( Tracked,
+  igstkAddTransitionMacro( Connected,
                            ImagerToolVisible,
-                           Tracked,
+                           Connected,
                            No );
 
-  igstkAddTransitionMacro( Tracked,
+  igstkAddTransitionMacro( Connected,
                            ImagingStopped,
                            Attached,
                            ReportImagingStopped );
@@ -270,7 +270,7 @@ void ImagerTool::GetFrameProcessing( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::ImagerTool::GetFrameProcessing called ...\n");
-cout << "getframeprocessing called" << endl;
+
   igstk::FrameModifiedEvent  event;
   event.Set( this->GetInternalFrame() );
   this->InvokeEvent( event );
@@ -321,7 +321,7 @@ void ImagerTool::RequestReportFailedImagerToolAttachment()
 }
 
 /** The "AttemptToDetachImagerToolFromImager" method attempts to detach the
- * imager tool to the imager. */
+ * imager tool from the imager. */
 void ImagerTool::AttemptToDetachImagerToolFromImagerProcessing( void )
 {
   igstkLogMacro( DEBUG,
@@ -421,13 +421,13 @@ void ImagerTool::ImagerToolDetachmentFromImagerFailureProcessing( void )
   this->InvokeEvent( ImagerToolDetachmentFromImagerErrorEvent() );
 }
 
-/** Report imager tool is in a tracked state */
+/** Report imager tool is in a Connected state */
 void ImagerTool::ReportImagerToolVisibleStateProcessing( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::ImagerTool::ReportImagerToolVisibleStateProcessing called ...\n");
 
-  this->InvokeEvent( ImagerToolMadeTransitionToTrackedStateEvent() );
+  this->InvokeEvent( ImagerToolMadeTransitionToConnectedStateEvent() );
 }
 
 /** Report imager tool not available state. */
@@ -436,7 +436,7 @@ void ImagerTool::ReportImagerToolNotAvailableProcessing( void )
   igstkLogMacro( DEBUG,
     "igstk::ImagerTool::ReportImagerToolNotAvailableProcessing called ...\n");
 
-  this->InvokeEvent( ImagerToolNotAvailableToBeTrackedEvent() );
+  this->InvokeEvent( ImagerToolNotAvailableToBeConnectedEvent() );
 }
 
 /** Report tracking started */
@@ -589,19 +589,10 @@ void ImagerTool::AddFrameToBuffer(const igstk::Frame& frame)
   }
 }
 
-/** Method to set the calibration transform for the imager tool*/
-//void
-//ImagerTool::SetCalibrationTransform( const TransformType & transform )
-//{
-//  this->m_CalibrationTransform = transform;
-//}
-
 /** Print object information */
 void ImagerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-//TODO
-  //os << indent << "Raw frame: " << GetInternalFrame() << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const ImagerTool& o)
