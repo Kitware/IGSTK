@@ -750,6 +750,7 @@ void Imager::UpdateStatusSuccessProcessing( void )
        (inputItr->second)->SetInternalFrame( updatedFrame );
 
        //throw an imager update event
+       //TODO delete this
        (inputItr->second)->InvokeEvent( ImagerToolFrameUpdateEvent() );
 
       }
