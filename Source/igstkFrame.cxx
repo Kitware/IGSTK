@@ -25,9 +25,6 @@ namespace igstk
 Frame
 ::Frame()
 {
-  //TODO hard coded size
-  //cout << "malloc in frame constructor" << endl;
-  m_ImagePtr = (void*)malloc(720 * 576 * 3);
 }
 
 Frame
@@ -41,6 +38,16 @@ Frame
 ::~Frame()
 {
   //free(m_ImagePtr);
+}
+
+void 
+Frame::SetFrameDimensions(int width, int height, int channels)
+{
+  m_Width = width;
+  m_Height = height;
+  m_NumberOfChannels = channels;
+  
+  m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
 }
 
 Frame::TimePeriodType
