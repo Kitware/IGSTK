@@ -107,8 +107,7 @@ public:
    * imager. */
   virtual void RequestAttachToImager( ImagerType * );
 
-  //TODO public? depending on that add it to the chapter
-  /** Get the frame for this tool. */
+  /** Get the frame with the current index for this tool. */
   FrameType GetInternalFrame( void );
 
   /** Set the frame for this tool. */
@@ -119,6 +118,10 @@ public:
 
   igstkSetMacro( PixelDepth, unsigned int );
   igstkGetMacro( PixelDepth, unsigned int );
+
+  igstkSetMacro( Delay, unsigned int );
+  igstkGetMacro( Delay, unsigned int );
+  
 
   igstk::Frame GetFrameFromBuffer(const unsigned int index);
   igstk::Frame GetTemporalCalibratedFrame();
