@@ -45,6 +45,7 @@ IF (IGSTKSandbox_USE_FLTK)
   ENDIF(IGSTKSandbox_USE_MicronTracker)
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
+    SUBDIRS( VideoFrameGrabberAndViewerWebcam )
   ENDIF ( WIN32 )
 ENDIF (IGSTKSandbox_USE_FLTK)
 
