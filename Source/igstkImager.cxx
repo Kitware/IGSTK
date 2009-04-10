@@ -294,8 +294,8 @@ Imager::Imager(void) :  m_StateMachine( this )
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   // This is update rate for sending imaging information to the
-  // spatial objects, it should be set to at least 30 Hz
-  const double DEFAULT_REFRESH_RATE = 30.0;
+  // spatial objects, it should be set to at least 25 Hz
+  const double DEFAULT_REFRESH_RATE = 25.0;
   m_PulseGenerator->RequestSetFrequency( DEFAULT_REFRESH_RATE );
 
   // This is the time period for which transformation should be
@@ -308,17 +308,16 @@ Imager::Imager(void) :  m_StateMachine( this )
                     ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant ;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
-  m_ConditionNextTransformReceived = itk::ConditionVariable::New();
+  m_ConditionNextFrameReceived = itk::ConditionVariable::New();
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
   m_ImagingThreadStarted = false;
 
-//TODO delete this
-    std::ofstream ofile;
-    ofile.open("ImagerStateMachineDiagram.dot");
-    const bool skipLoops = false;
-    this->ExportStateMachineDescription( ofile, skipLoops );
-    ofile.close();
+  std::ofstream ofile;
+  ofile.open("ImagerStateMachineDiagram.dot");
+  const bool skipLoops = false;
+  this->ExportStateMachineDescription( ofile, skipLoops );
+  ofile.close();
 
 }
 
@@ -660,7 +659,7 @@ void Imager::ExitImagingStateProcessing( void )
   this->ExitImagingTerminatingImagingThread();
 }
 
-/** Exit imaging by terminating imaging thread */
+/** Exit imaging without terminating imaging thread */
 void Imager::ExitImagingWithoutTerminatingImagingThread( void )
 {
   igstkLogMacro( DEBUG,
@@ -708,8 +707,8 @@ void Imager::AttemptToUpdateStatusProcessing( void )
 
   if ( this->GetThreadingEnabled() )
     {
-    m_ConditionNextTransformReceived->Wait(
-      & m_LockForConditionNextTransformReceived );
+    m_ConditionNextFrameReceived->Wait(
+      & m_LockForConditionNextFrameReceived );
     }
   else
     {
@@ -748,11 +747,6 @@ void Imager::UpdateStatusSuccessProcessing( void )
        updatedFrame.SetImagePtr(frame.GetImagePtr(), timeToExpiration);
 
        (inputItr->second)->SetInternalFrame( updatedFrame );
-
-       //throw an imager update event
-       //TODO delete this
-       (inputItr->second)->InvokeEvent( ImagerToolFrameUpdateEvent() );
-
       }
     ++inputItr;
     }
@@ -977,7 +971,7 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
   while ( activeFlag )
     {
     ResultType result = pImager->InternalThreadedUpdateStatus();
-    pImager->m_ConditionNextTransformReceived->Signal();
+    pImager->m_ConditionNextFrameReceived->Signal();
 
     totalCount++;
     if (result != SUCCESS)
