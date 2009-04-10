@@ -36,11 +36,11 @@ namespace igstk
 template < class TVideoFrameSpatialObject >
 VideoFrameRepresentation< TVideoFrameSpatialObject >
 ::VideoFrameRepresentation(void):
-  m_StateMachine(this)//,
-//  m_ImageData(NULL),
-//  m_ImageActor(NULL),
-//  m_MapColors(NULL),
-//  m_LookupTable(NULL)
+  m_StateMachine(this),
+  m_ImageData(NULL),
+  m_ImageActor(NULL),
+  m_MapColors(NULL),
+  m_LookupTable(NULL)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation constructor called ...\n");
 
@@ -216,14 +216,10 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
 
-//    if( m_ImageData )
-//    {
-//      m_ImageData->Update();
-//      cout << m_ImageData->GetNumberOfPoints() << "getnumberofpoints";
-//    }
-    this->m_MapColors->SetInput( this->m_ImageData );
+    //this->m_MapColors->SetInput( this->m_ImageData );
   }
-  this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+  //this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+  this->m_ImageActor->SetInput( this->m_ImageData  );
 }
 
 template< class TVideoFrameSpatialObject >
@@ -265,20 +261,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
                  "::CreateActors called...\n");
 
-//  //  to avoid duplicates we clean the previous actors
-//  this->DeleteActors();
-//
-//  m_ImageActor = vtkImageActor::New();
-//  m_ImageActor->SetPosition(0,0,0);
-//  m_ImageActor->SetOrientation(0,0,0);
-//  m_ImageActor->SetZSlice(0);
-//
-//  //TODO beyond a specific size the OS crashes maybe justify this
-//  //m_ImageActor->SetDisplayExtent(0,640-1,0,480-1,0,1-1);
-//
-//   this->AddActor( m_ImageActor );
-
-    double hue = 0.0;
+/*  double hue = 0.0;
     double saturation = 0.0;
     double value = 1.0;
 
@@ -294,10 +277,9 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     m_LookupTable->SetValueRange (0, value);
     m_LookupTable->SetRampToLinear();
 
-
+*/
     //TODO according to channel amount connect colormapper with lookuptable
-    //m_MapColors->SetLookupTable( m_LookupTable );
-
+    m_MapColors->SetLookupTable( m_LookupTable );
     igstkPushInputMacro( ConnectVTKPipeline );
     m_StateMachine.ProcessInputs();
 }
@@ -320,11 +302,9 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 
     if( m_ImageData )
     {
-      //m_ImageData->Update();
-      //m_ImageActor->SetInput(m_ImageData);
-      m_MapColors->SetInput( m_ImageData );
-      m_MapColors->Update();
-      //cout << "o" << endl;
+      m_ImageActor->SetInput(this->m_ImageData);
+      //m_MapColors->SetInput( m_ImageData );
+      //m_MapColors->Update();
     }
   }
 }
@@ -334,10 +314,10 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::ConnectVTKPipelineProcessing()
 {
-  m_MapColors->SetInput( m_ImageData );
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
-  //TODO faster?
-  //m_ImageActor->InterpolateOn();
+  //m_MapColors->SetInput( m_ImageData );
+  //m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_ImageActor->SetInput( this->m_ImageData );
+  m_ImageActor->InterpolateOn();
 }
 
 /** Create a copy of the current object representation */
