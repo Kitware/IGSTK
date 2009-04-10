@@ -9,9 +9,6 @@
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-  Made by SINTEF Health Research - Medical technology:
-  http://www.sintef.no/medtech
-
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
@@ -35,9 +32,8 @@ VideoFrameSpatialObject< TPixelType, TChannels >
   VideoFrameSpatialObjectType::Pointer dummy = VideoFrameSpatialObjectType::New();
   this->RequestSetInternalSpatialObject(dummy);
 
-  //TODO malloc according to configs
-  m_Width=720;
-  m_Height=576;
+  m_Width=0;
+  m_Height=0;
 
   this->m_ImagerTool=NULL;
   m_PixelSizeX = 0;
@@ -49,14 +45,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     m_ItkRGBExporter = ITKRGBExportFilterType::New();
     m_VtkRGBImporter = VTKImportFilterType::New();
 
-    m_RawBuffer = (TPixelType*)malloc(m_Width * m_Height * 3);
-    for(unsigned int i = 0; i< m_Width * m_Height * 3; i++)
-    {
-    if(i%2==0)
-      m_RawBuffer[i]='h';
-    else
-      m_RawBuffer[i]='a';
-    }
+    
 
     // Connect the given itk::VTKImageExport filter to the given vtkImageImport filter.
     m_VtkRGBImporter->SetUpdateInformationCallback(
@@ -146,6 +135,15 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
+    m_RawBuffer = (TPixelType*)malloc(m_Width * m_Height * 3);
+    for(unsigned int i = 0; i< m_Width * m_Height * 3; i++)
+    {
+    if(i%2==0)
+      m_RawBuffer[i]='h';
+    else
+      m_RawBuffer[i]='a';
+    }
+  
     RGBImportFilter = RGBImportFilterType::New();
 
     RGBImportFilter->SetRegion( m_Region );
@@ -154,32 +152,32 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
     RGBImportFilter->SetSpacing( spacing );
 
-    int j=0;
-    for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
-    {
+  int j=0;
+  RGBPixelType* tmp;
+  tmp = new RGBPixelType[m_Width * m_Height];
+  for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
+  {
     RGBPixelType temp;
     temp[0]=m_RawBuffer[i];
     temp[1]=m_RawBuffer[i+1];
     temp[2]=m_RawBuffer[i+2];
-    rgbPixels[j]=temp;
+    tmp[j]=temp;
     j++;
-    }
+  }
+  RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
+  RGBImportFilter->Update();
 
-    RGBImportFilter->SetImportPointer(rgbPixels,
-                    m_Width * m_Height,
-                                      false);
-      RGBImportFilter->Update();
+  this->m_RGBImage = RGBImportFilter->GetOutput();
 
-      this->m_RGBImage = RGBImportFilter->GetOutput();
+  m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
+  m_VtkRGBImporter->UpdateWholeExtent();
 
-    m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
-    m_VtkRGBImporter->UpdateWholeExtent();
-
-    m_VTKImage = m_VtkRGBImporter->GetOutput();
+  m_VTKImage = m_VtkRGBImporter->GetOutput();
 
   }
   else if (m_NumberOfChannels == 1)
   {
+  
     m_ImportFilter = ImportFilterType::New();
 
     m_ImportFilter->SetRegion( m_Region );
@@ -354,18 +352,20 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
+
   int j=0;
+  RGBPixelType* tmp;
+  tmp = new RGBPixelType[m_Width * m_Height];
   for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
   {
     RGBPixelType temp;
     temp[0]=m_RawBuffer[i];
     temp[1]=m_RawBuffer[i+1];
     temp[2]=m_RawBuffer[i+2];
-    rgbPixels[j]=temp;
+    tmp[j]=temp;
     j++;
   }
-
-  RGBImportFilter->SetImportPointer(rgbPixels, m_Width * m_Height, false );
+  RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
   RGBImportFilter->Update();
 
   this->m_RGBImage = RGBImportFilter->GetOutput();
@@ -375,6 +375,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   m_VtkRGBImporter->Update();
 
   m_VTKImage = m_VtkRGBImporter->GetOutput();
+  
   }
   else if(m_NumberOfChannels == 1)
   {
@@ -398,7 +399,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   }
 }
 
-//TODO do we need this
 template< class TPixelType, unsigned int TChannels >
 TPixelType*
 VideoFrameSpatialObject< TPixelType, TChannels>
