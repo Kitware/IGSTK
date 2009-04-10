@@ -59,9 +59,6 @@ igstkEventMacro( ImagerStopImagingErrorEvent,             ImagerErrorEvent);
 igstkEventMacro( ImagerUpdateStatusEvent,                 ImagerEvent);
 igstkEventMacro( ImagerUpdateStatusErrorEvent,            ImagerErrorEvent);
 
-//TODO delete this
-igstkEventMacro( ImagerToolFrameUpdateEvent,              ImagerEvent);
-
 /** \class Imager
  *  \brief Abstract superclass for concrete IGSTK Imager classes.
  *
@@ -109,7 +106,7 @@ public:
    *  or a ImagerCloseErrorEvent if not successful. */
   void RequestClose( void );
 
-  /** The "RequestReset" imager method should be used to bring the imager
+  /** The "RequestReset" method should be used to bring the imager
   to some defined default state. */
   void RequestReset( void );
 
@@ -121,8 +118,8 @@ public:
   void RequestStopImaging( void );
 
 
-  /** The "RequestSetFrequency" method defines the frequency at which the
-   * Transform information will be queried from the Imager device. Note that
+  /** The "RequestSetFrequency" method defines the frequency at which a frame
+   * will be queried from the Imager device. Note that
    * Imager devices have their own internal frequency rate, and if you set here
    * a frequency that is higher than what the Imager device is capable to
    * follow, then you will start receiving similar frames. */
@@ -245,9 +242,6 @@ protected:
   void SetImagerToolUpdate( ImagerToolType * imagerTool,
                                       bool flag ) const;
 
-  /** Depending on the imager type, the imaging thread should be
-    * terminated or left untouched when we stop imaging. */
-
   /** Always called when exiting imaging state. This methold will be
     * overriden in derived classes. */
   void ExitImagingStateProcessing( void );
@@ -257,7 +251,6 @@ protected:
 
   /** Exit imaging after terminating imaging thread */
   void ExitImagingTerminatingImagingThread();
-
 
 private:
   Imager(const Self&);           //purposely not implemented
@@ -296,12 +289,12 @@ private:
 
   //TODO rename
   /** itk::ConditionVariable object pointer to signal for the next
-   *  transform */
-  itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
+   *  frame */
+  itk::ConditionVariable::Pointer m_ConditionNextFrameReceived;
 
   /** itk::SimpleMutexLock object to be used for
-      m_ConditionNextTransformReceived */
-  itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
+      m_ConditionNextFrameReceived */
+  itk::SimpleMutexLock            m_LockForConditionNextFrameReceived;
 
   /** List of States */
   igstkDeclareStateMacro( Idle );
