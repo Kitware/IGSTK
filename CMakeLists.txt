@@ -25,6 +25,20 @@ IF(NOT IGSTK_SOURCE_DIR)
 required. Please verify configuration")
 ENDIF(NOT IGSTK_SOURCE_DIR)
 
+#
+# Use OpenCV protocol 
+#
+OPTION(IGSTKSandbox_USE_OpenCV "Use the OpenCV library" OFF)
+IF(IGSTKSandbox_USE_OpenCV)
+  #
+  #  FIND OpenCV 
+  #
+  SET ( OpenCV_ROOT_DIR "C:/workspace/opencv/bin" CACHE LOCATION "where was OpenCV built")
+  
+  FIND_PACKAGE( OpenCV REQUIRED )
+  #MESSAGE( STATUS "my sources: ${OpenCV_INCLUDE_DIR}")
+ 
+ENDIF(IGSTKSandbox_USE_OpenCV)
 
 
 # Disable MSVC 8 warnings
@@ -185,6 +199,7 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
     MESSAGE( FATAL_ERROR "This application requires OpenIGTLink. One of these components is missing. Please verify configuration")
   ENDIF (OpenIGTLink_USE_FILE)
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
+
 
 #
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree
