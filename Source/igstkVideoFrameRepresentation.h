@@ -88,7 +88,7 @@ private:
   vtkImageData              *m_ImageData;
   vtkImageActor             *m_ImageActor;
   vtkLookupTable            *m_LookupTable;
-  vtkImageMapToColors   *m_MapColors;
+  vtkImageMapToColors       *m_MapColors;
 
   double                    m_Level;
   double                    m_Window;
