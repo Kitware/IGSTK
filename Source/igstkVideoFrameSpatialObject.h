@@ -9,9 +9,6 @@
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-  Made by SINTEF Health Research - Medical technology:
-  http://www.sintef.no/medtech
-
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
@@ -34,9 +31,6 @@
 #include "igstkTimeStamp.h"
 
 #include "igstkImagerTool.h"
-
-//TODO remove or use for screenshot
-#include "itkImageFileWriter.h"
 
 #define DIMENSION 2
 
@@ -62,8 +56,6 @@ public:
   typedef typename itk::ImportImageFilter< PixelType, DIMENSION >   ImportFilterType;
   typedef typename itk::Image< PixelType , DIMENSION > ImageType;
 
-  typedef typename itk::ImageFileWriter< RGBImageType > WriterType;
-
   typedef Frame             FrameType;
   typedef typename TimeStamp::TimePeriodType   TimePeriodType;
 
@@ -81,7 +73,6 @@ public:
   vtkImageData* GetImageData();
   TimeStamp::TimePeriodType GetFrameExpirationTime() const;
   TimeStamp::TimePeriodType GetFrameStartTime() const;
-
 
   igstkSetMacro(Width, unsigned int);
   igstkGetMacro(Width, unsigned int);
@@ -107,7 +98,6 @@ public:
 
 
   void UpdateImages();
-  //TODO delete this
   TPixelType* GetImagePtr();
 
 protected:
@@ -125,17 +115,11 @@ private:
   typename ImportFilterType::Pointer      m_ImportFilter;
 
   itk::Size<DIMENSION>              m_Size;
-  itk::ImageRegion<DIMENSION>           m_Region;
+  itk::ImageRegion<DIMENSION>       m_Region;
   itk::Index<DIMENSION>             m_Start;
-
-
 
   vtkImageData*       m_VTKImage;
   TPixelType *        m_RawBuffer;
-
-  //TODO hard coded size
-  RGBPixelType        rgbPixels[720 * 576];
-  TPixelType        pixels[720 * 576];
 
   igstk::ImagerTool::Pointer                     m_ImagerTool;
   /** raw frame for the spatial object */
