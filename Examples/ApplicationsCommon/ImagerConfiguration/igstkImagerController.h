@@ -30,20 +30,22 @@
 #include "igstkImager.h"
 #include "igstkImagerTool.h"
 
+#if defined(WIN32) || defined(_WIN32)
+//WebcamWin framegrabber specific headers
+#include "igstkWebcamWinImagerConfiguration.h"
+#include "igstkWebcamWinImagerTool.h"
 //Terason Ultrasound specific headers
 #include "igstkTerasonImagerConfiguration.h"
 #include "igstkTerasonImagerTool.h"
 #include "igtlServerSocket.h"
-
+#else
 //ImagingSource framegrabber specific headers
 #include "igstkImagingSourceImagerConfiguration.h"
 #include "igstkImagingSourceImagerTool.h"
-
 //CompressedDV framegrabber specific headers
 #include "igstkCompressedDVImagerConfiguration.h"
 #include "igstkCompressedDVImagerTool.h"
-
-
+#endif
 
 
 namespace igstk
@@ -170,10 +172,15 @@ private:
   igstkDeclareStateMacro( AttemptingToStop );
   igstkDeclareStateMacro( AttemptingToShutdown );
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   igstkDeclareStateMacro( AttemptingToInitializeTerason );
   //Terason Ultrasound specific :end
 
+ //WebcamWin framegrabber specific :begin
+    igstkDeclareStateMacro( AttemptingToInitializeWebcamWin  );
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   igstkDeclareStateMacro( AttemptingToInitializeImagingSource  );
   //ImagingSource framegrabber specific :end
@@ -181,6 +188,7 @@ private:
   //CompressedDV framegrabber specific :begin
     igstkDeclareStateMacro( AttemptingToInitializeCompressedDV  );
   //CompressedDV framegrabber specific :end
+#endif
 
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( Started );
@@ -191,10 +199,15 @@ private:
   igstkDeclareInputMacro( ImagerStop );
   igstkDeclareInputMacro( ImagerShutdown );
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   igstkDeclareInputMacro( TerasonInitialize );
   //Terason Ultrasound specific :end
 
+ //WebcamWin framegrabber specific :begin
+    igstkDeclareInputMacro( WebcamWinInitialize );
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   igstkDeclareInputMacro( ImagingSourceInitialize );
   //ImagingSource framegrabber specific :end
@@ -202,6 +215,8 @@ private:
   //CompressedDV framegrabber specific :begin
     igstkDeclareInputMacro( CompressedDVInitialize );
   //CompressedDV framegrabber specific :end
+#endif
+
 
   igstkDeclareInputMacro( Failed  );
   igstkDeclareInputMacro( Succeeded  );
@@ -214,10 +229,15 @@ private:
   void ImagerStopProcessing();
   void ImagerShutdownProcessing();
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   void TerasonInitializeProcessing();
   //Terason Ultrasound specific :end
 
+  //WebcamWin framegrabber specific :begin
+    void WebcamWinInitializeProcessing();
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   void ImagingSourceInitializeProcessing();
   //ImagingSource framegrabber specific :end
@@ -225,6 +245,8 @@ private:
   //CompressedDV framegrabber specific :begin
     void CompressedDVInitializeProcessing();
   //CompressedDV framegrabber specific :end
+#endif
+
 
   void GetImagerProcessing();
   void GetToolsProcessing();
@@ -244,13 +266,18 @@ private:
 
   bool InitializeSerialCommunication();
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   bool InitializeSocketCommunication();
-
   TerasonImagerTool::Pointer InitializeTerasonTool(
     const TerasonToolConfiguration *toolConfiguration );
   //Terason Ultrasound specific :end
 
+  //WebcamWin framegrabber specific :begin
+  WebcamWinImagerTool::Pointer InitializeWebcamWinTool(
+    const WebcamWinToolConfiguration *toolConfiguration );
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   ImagingSourceImagerTool::Pointer InitializeImagingSourceTool(
     const ImagingSourceToolConfiguration *toolConfiguration );
@@ -259,7 +286,9 @@ private:
   //CompressedDV framegrabber specific :begin
   CompressedDVImagerTool::Pointer InitializeCompressedDVTool(
     const CompressedDVToolConfiguration *toolConfiguration );
-    //CompressedDV framegrabber specific :end
+  //CompressedDV framegrabber specific :end
+#endif
+
 
 
   class ErrorObserver : public itk::Command
