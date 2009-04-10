@@ -22,15 +22,19 @@
 #include "itksys/SystemTools.hxx"
 #include "itksys/Directory.hxx"
 
+#if defined(WIN32) || defined(_WIN32)
 //Terason Ultrasound specific header
 #include "igstkTerasonImager.h"
-
+//WebcamWin specific header
+#include "igstkWebcamWinImager.h"
+#else
 //ImagingSource framegrabber specific header
 #include "igstkImagingSourceImager.h"
-
 //CompressedDV specific header
 #include "igstkCompressedDVImager.h"
 //#include "igstkCalibrationIO.h"
+#endif
+
 
 namespace igstk
 {
@@ -46,17 +50,23 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToInitialize );
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   igstkAddStateMacro( AttemptingToInitializeTerason );
   //Terason Ultrasound specific :end
-
+  //WebcamWin framegrabber specific :begin
+    igstkAddStateMacro( AttemptingToInitializeWebcamWin );
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   igstkAddStateMacro( AttemptingToInitializeImagingSource );
   //ImagingSource framegrabber specific :end
-
   //CompressedDV framegrabber specific :begin
     igstkAddStateMacro( AttemptingToInitializeCompressedDV );
     //CompressedDV framegrabber specific :end
+#endif
+
+
 
   igstkAddStateMacro( AttemptingToShutdown );
   igstkAddStateMacro( Initialized );
@@ -70,18 +80,22 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddInputMacro( ImagerStop );
   igstkAddInputMacro( ImagerShutdown );
 
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
   igstkAddInputMacro( TerasonInitialize );
   //Terason Ultrasound specific :end
-
+ //WebcamWin framegrabber specific :begin
+    igstkAddInputMacro( WebcamWinInitialize );
+  //WebcamWin framegrabber specific :end
+#else
   //ImagingSource framegrabber specific :begin
   igstkAddInputMacro( ImagingSourceInitialize );
   //ImagingSource framegrabber specific :end
-
   //CompressedDV framegrabber specific :begin
     igstkAddInputMacro( CompressedDVInitialize );
-    //CompressedDV framegrabber specific :end
-
+  //CompressedDV framegrabber specific :end
+#endif
+ 
   igstkAddInputMacro( Failed  );
   igstkAddInputMacro( Succeeded  );
   igstkAddInputMacro( GetImager  );
@@ -99,12 +113,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerShutdown,
                           Idle,
                           ReportInvalidRequest);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(Idle,
                           TerasonInitialize,
                           Idle,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(Idle,
+                        WebcamWinInitialize,
+                            Idle,
+                            ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(Idle,
                           ImagingSourceInitialize,
                           Idle,
@@ -113,6 +131,8 @@ ImagerController::ImagerController() : m_StateMachine( this )
                       CompressedDVInitialize,
                           Idle,
                           ReportInvalidRequest);
+#endif
+  
 
   igstkAddTransitionMacro(Idle,
                           Failed,
@@ -139,12 +159,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Failed,
                           Idle,
                           ReportInitializationFailure);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(AttemptingToInitialize,
                           TerasonInitialize,
                           AttemptingToInitializeTerason,
                           TerasonInitialize);
-
+igstkAddTransitionMacro(AttemptingToInitialize,
+                            WebcamWinInitialize,
+                              AttemptingToInitializeTerason,
+                              WebcamWinInitialize);
+#else
   igstkAddTransitionMacro(AttemptingToInitialize,
                           ImagingSourceInitialize,
                           AttemptingToInitializeImagingSource,
@@ -153,6 +177,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           CompressedDVInitialize,
                             AttemptingToInitializeTerason,
                             CompressedDVInitialize);
+#endif 
 
   igstkAddTransitionMacro(AttemptingToInitialize,
                           ImagerInitialize,
@@ -178,7 +203,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
-
+#if defined(WIN32) || defined(_WIN32)
   //transitions from AttemptingToInitializeTerason state
   igstkAddTransitionMacro(AttemptingToInitializeTerason,
                           Failed,
@@ -214,7 +239,42 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           GetTools,
                           Idle,
                           ReportInvalidRequest);
+   //transitions from AttemptingToInitializeWebcamWin state
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                Failed,
+                                Idle,
+                                ReportInitializationFailure);
 
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                Succeeded,
+                                Initialized,
+                                ReportInitializationSuccess);
+
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                ImagerInitialize,
+                                Idle,
+                                ReportInvalidRequest);
+
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                ImagerShutdown,
+                                Idle,
+                                ReportInvalidRequest);
+
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                TerasonInitialize,
+                                Idle,
+                                ReportInvalidRequest);
+
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                GetImager,
+                                Idle,
+                                ReportInvalidRequest);
+
+        igstkAddTransitionMacro(AttemptingToInitializeWebcamWin,
+                                GetTools,
+                                Idle,
+                                ReportInvalidRequest);
+#else
   //transitions from AttemptingToInitializeImagingSource state
   igstkAddTransitionMacro(AttemptingToInitializeImagingSource,
                           Failed,
@@ -285,6 +345,8 @@ ImagerController::ImagerController() : m_StateMachine( this )
                             GetTools,
                             Idle,
                             ReportInvalidRequest);
+#endif
+ 
 
   //transitions from Initialized state
   igstkAddTransitionMacro(Initialized,
@@ -311,12 +373,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStart,
                           ImagerStart);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(Initialized,
                           TerasonInitialize,
                           Initialized,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(Initialized,
+                              WebcamWinInitialize,
+                              Initialized,
+                              ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(Initialized,
                           ImagingSourceInitialize,
                           Initialized,
@@ -325,6 +391,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                             CompressedDVInitialize,
                             Initialized,
                             ReportInvalidRequest);
+#endif  
 
   igstkAddTransitionMacro(Initialized,
                           ImagerStop,
@@ -376,12 +443,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStart,
                           ReportInvalidRequest);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(AttemptingToStart,
                           TerasonInitialize,
                           AttemptingToStart,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(AttemptingToStart,
+                              WebcamWinInitialize,
+                              AttemptingToStart,
+                              ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(AttemptingToStart,
                           ImagingSourceInitialize,
                           AttemptingToStart,
@@ -391,7 +462,8 @@ ImagerController::ImagerController() : m_StateMachine( this )
                             CompressedDVInitialize,
                             AttemptingToStart,
                             ReportInvalidRequest);
-
+#endif
+  
   igstkAddTransitionMacro(AttemptingToStart,
                           ImagerStop,
                           AttemptingToStart,
@@ -402,12 +474,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStop,
                           AttemptingToStop,
                           ImagerStop);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(Started,
                           TerasonInitialize,
                           Started,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(Started,
+                             WebcamWinInitialize,
+                             Started,
+                             ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(Started,
                           ImagingSourceInitialize,
                           Started,
@@ -417,6 +493,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                             CompressedDVInitialize,
                             Started,
                             ReportInvalidRequest);
+#endif
   igstkAddTransitionMacro(Started,
                           ImagerInitialize,
                           Started,
@@ -472,12 +549,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerStart,
                           AttemptingToStop,
                           ReportInvalidRequest);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(AttemptingToStop,
                           TerasonInitialize,
                           AttemptingToStop,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(AttemptingToStop,
+                              WebcamWinInitialize,
+                              AttemptingToStop,
+                              ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(AttemptingToStop,
                           ImagingSourceInitialize,
                           AttemptingToStop,
@@ -486,6 +567,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
                             CompressedDVInitialize,
                             AttemptingToStop,
                             ReportInvalidRequest);
+#endif
   igstkAddTransitionMacro(AttemptingToStop,
                           ImagerStop,
                           AttemptingToStop,
@@ -506,12 +588,16 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           ImagerInitialize,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
-
+#if defined(WIN32) || defined(_WIN32)
   igstkAddTransitionMacro(AttemptingToShutdown,
                           TerasonInitialize,
                           AttemptingToShutdown,
                           ReportInvalidRequest);
-
+igstkAddTransitionMacro(AttemptingToShutdown,
+                             WebcamWinInitialize,
+                             AttemptingToShutdown,
+                             ReportInvalidRequest);
+#else
   igstkAddTransitionMacro(AttemptingToShutdown,
                           ImagingSourceInitialize,
                           AttemptingToShutdown,
@@ -520,6 +606,8 @@ ImagerController::ImagerController() : m_StateMachine( this )
                            CompressedDVInitialize,
                            AttemptingToShutdown,
                            ReportInvalidRequest);
+#endif
+  
   igstkAddTransitionMacro(AttemptingToShutdown,
                           ImagerShutdown,
                           AttemptingToShutdown,
@@ -622,7 +710,7 @@ ImagerController::ImagerInitializeProcessing()
   }
   else
   {
-
+#if defined(WIN32) || defined(_WIN32)
   //Terason Ultrasound specific :begin
     if( dynamic_cast<TerasonImagerConfiguration *>
       ( this->m_TmpImagerConfiguration ) )
@@ -631,7 +719,15 @@ ImagerController::ImagerInitializeProcessing()
       igstkPushInputMacro( TerasonInitialize );
     }
     //Terason Ultrasound specific :end
-
+   //WebcamWin framegrabber specific :begin
+            else if( dynamic_cast<WebcamWinImagerConfiguration *>
+              ( this->m_TmpImagerConfiguration ) )
+            {
+              this->m_ImagerConfiguration = m_TmpImagerConfiguration;
+              igstkPushInputMacro( WebcamWinInitialize );
+            }
+    //WebcamWin framegrabber specific :end
+#else
     //ImagingSource framegrabber specific :begin
     else if( dynamic_cast<ImagingSourceImagerConfiguration *>
       ( this->m_TmpImagerConfiguration ) )
@@ -648,6 +744,7 @@ ImagerController::ImagerInitializeProcessing()
           igstkPushInputMacro( CompressedDVInitialize );
         }
         //CompressedDV framegrabber specific :end
+#endif
     else
     {
       this->m_ErrorMessage = "Unknown imager configuration type.";
@@ -797,6 +894,8 @@ ImagerController::InitializeSerialCommunication()
   return true;
 }
 
+#if defined(WIN32) || defined(_WIN32)
+
 //Terason Ultrasound specific :begin
 bool
 ImagerController::InitializeSocketCommunication()
@@ -851,6 +950,29 @@ TerasonImagerTool::Pointer ImagerController::InitializeTerasonTool(
 }
 //Terason Ultrasound specific :end
 
+//WebcamWin framegrabber specific :begin
+WebcamWinImagerTool::Pointer ImagerController::InitializeWebcamWinTool(
+    const WebcamWinToolConfiguration *toolConfiguration )
+{
+  WebcamWinImagerTool::Pointer imagerTool = WebcamWinImagerTool::New();
+
+  unsigned int dims[3];
+  toolConfiguration->GetFrameDimensions(dims);
+  imagerTool->SetFrameDimensions(dims);
+
+  imagerTool->SetPixelDepth(toolConfiguration->GetPixelDepth());
+  imagerTool->RequestSetImagerToolName(
+                            toolConfiguration->GetToolUniqueIdentifier() );
+  imagerTool->RequestConfigure();
+
+  // imagerTool->SetCalibrationTransform( identity );
+
+  return imagerTool;
+}
+//WebcamWin framegrabber specific :end
+
+#else
+
 //ImagingSource framegrabber specific :begin
 ImagingSourceImagerTool::Pointer ImagerController::InitializeImagingSourceTool(
     const ImagingSourceToolConfiguration *toolConfiguration )
@@ -892,6 +1014,10 @@ CompressedDVImagerTool::Pointer ImagerController::InitializeCompressedDVTool(
   return imagerTool;
 }
 //CompressedDV framegrabber specific :end
+
+#endif
+
+#if defined(WIN32) || defined(_WIN32)
 
 //Terason Ultrasound specific :begin
 void ImagerController::TerasonInitializeProcessing()
@@ -956,6 +1082,59 @@ void ImagerController::TerasonInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 //Terason Ultrasound specific :end
+
+//WebcamWin framegrabber specific :begin
+void ImagerController::WebcamWinInitializeProcessing()
+{
+  //create imager
+  igstk::WebcamWinImager::Pointer imager = igstk::WebcamWinImager::New();
+  this->m_Imager = imager;
+  //don't need to observe this for errors because the
+  //configuration class ensures that the frequency is valid
+  imager->RequestSetFrequency( this->m_ImagerConfiguration->GetFrequency() );
+
+  WebcamWinImagerConfiguration *imagerConfiguration =
+  dynamic_cast<WebcamWinImagerConfiguration *>( this->m_ImagerConfiguration );
+
+  unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+  imager->RequestOpen();
+//TODO modify
+  if( this->m_ErrorObserver->ErrorOccured() )
+  {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    imager->RemoveObserver(observerID);
+    igstkPushInputMacro( Failed );
+  }
+  else   //attach the tools and start communication
+  {
+    std::vector< ImagerToolConfiguration * > toolConfigurations =
+        this->m_ImagerConfiguration->GetImagerToolList();
+    //attach tools
+    std::vector< ImagerToolConfiguration * >::const_iterator it;
+    std::vector< ImagerToolConfiguration * >::const_iterator toolConfigEnd =
+          toolConfigurations.end();
+    ImagerTool::Pointer imagerTool;
+    TerasonToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    {
+      currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
+
+      imagerTool = this->InitializeTerasonTool( currentToolConfig );
+      this->m_Tools.push_back( imagerTool );
+      imagerTool->RequestAttachToImager( imager );
+    }
+
+    m_Imager->RemoveObserver(observerID);
+    igstkPushInputMacro( Succeeded );
+  }
+  this->m_StateMachine.ProcessInputs();
+}
+//WebcamWin framegrabber specific :end
+
+#else
 
 //ImagingSource framegrabber specific :begin
 void ImagerController::ImagingSourceInitializeProcessing()
@@ -1058,6 +1237,8 @@ void ImagerController::CompressedDVInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 //CompressedDV framegrabber specific :end
+
+#endif
 
 void
 ImagerController::GetImagerProcessing()
