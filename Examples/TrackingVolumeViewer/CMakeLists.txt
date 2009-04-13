@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ConfigurationFileReaders
 ) 
  
 SET(TrackingVolumeViewer_GUI_SRCS
@@ -18,66 +18,6 @@ SET(TrackingVolumeViewer_SRCS
   TrackingVolumeViewerQuadrantViews.h
   TrackingVolumeViewerQuadrantViews.cxx
 
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.h
   )
   
 IF(TrackingVolumeViewer_USE_MicronTracker)
@@ -94,4 +34,4 @@ INCLUDE_DIRECTORIES(
 
 FLTK_WRAP_UI(TrackingVolumeViewer ${TrackingVolumeViewer_GUI_SRCS})
 ADD_EXECUTABLE(TrackingVolumeViewer ${TrackingVolumeViewer_FLTK_UI_SRCS} ${TrackingVolumeViewer_SRCS})
-TARGET_LINK_LIBRARIES(TrackingVolumeViewer IGSTKSandbox )
+TARGET_LINK_LIBRARIES(TrackingVolumeViewer TrackerConfiguration CalibrationRegistrationLoading ConfigurationFileReaders IGSTKSandbox )

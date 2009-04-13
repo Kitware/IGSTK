@@ -4,9 +4,8 @@ INCLUDE_DIRECTORIES (
 ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ConfigurationFileReaders
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools
 
 ) 
  
@@ -20,76 +19,6 @@ SET(BronchoscopyNavigator_SRCS
   BronchoscopyNavigator.cxx
   BronchoscopyNavigatorQuadrantViews.h
   BronchoscopyNavigatorQuadrantViews.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlan.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlan.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlanIO.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkFiducialsPlanIO.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlan.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlan.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlanIO.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools/igstkPathPlanIO.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisWirelessConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisVicraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisSpectraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkPolarisHybridConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders/igstkTrackerConfigurationFileReader.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkPolarisTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAuroraTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkAscensionTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkMicronTrackerConfiguration.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/igstkTrackerController.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.h
 
   )
   
@@ -107,5 +36,5 @@ INCLUDE_DIRECTORIES(
 
 FLTK_WRAP_UI(BronchoscopyNavigator ${BronchoscopyNavigator_GUI_SRCS})
 ADD_EXECUTABLE(BronchoscopyNavigator ${BronchoscopyNavigator_FLTK_UI_SRCS} ${BronchoscopyNavigator_SRCS})
-TARGET_LINK_LIBRARIES(BronchoscopyNavigator IGSTKSandbox )
+TARGET_LINK_LIBRARIES(BronchoscopyNavigator TrackerConfiguration CalibrationRegistrationLoading ConfigurationFileReaders Tools IGSTKSandbox )
 

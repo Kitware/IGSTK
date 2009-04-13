@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_BINARY_DIR}
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration/configurationFileReaders
+  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ConfigurationFileReaders
   ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/Tools
 ) 
  
@@ -34,5 +34,5 @@ INCLUDE_DIRECTORIES(
 
 FLTK_WRAP_UI(Navigator ${Navigator_GUI_SRCS})
 ADD_EXECUTABLE(Navigator ${Navigator_FLTK_UI_SRCS} ${Navigator_SRCS})
-TARGET_LINK_LIBRARIES(Navigator TrackerConfiguration CalibrationRegistrationLoading configurationFileReaders Tools IGSTKSandbox )
+TARGET_LINK_LIBRARIES(Navigator TrackerConfiguration CalibrationRegistrationLoading ConfigurationFileReaders Tools IGSTKSandbox )
 
