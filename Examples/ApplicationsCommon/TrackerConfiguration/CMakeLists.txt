@@ -1,11 +1,8 @@
 PROJECT(TrackerConfiguration)
   
+SUBDIRS( configurationFileReaders )
   
 SET(TrackerConfiguration_SRCS
-  #main.cxx
-  #igstkTrackerConfigurationParser.cxx
-  #igstkTrackerConfigurationComposer.cxx
-  #igstkAuroraTrackerConfigurationComposer.cxx
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
   igstkAscensionTrackerConfiguration.cxx
@@ -19,7 +16,7 @@ INCLUDE_DIRECTORIES(
   ${TrackerConfiguration_BINARY_DIR}
   )
 
-#ADD_EXECUTABLE(TrackerConfiguration ${TrackerConfiguration_SRCS})
-#TARGET_LINK_LIBRARIES(TrackerConfiguration IGSTKSandbox)
+ADD_LIBRARY(TrackerConfiguration ${TrackerConfiguration_SRCS})
+TARGET_LINK_LIBRARIES(TrackerConfiguration IGSTKSandbox)
 
 
