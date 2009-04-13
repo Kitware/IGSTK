@@ -1,7 +1,5 @@
 PROJECT(TrackerConfiguration)
   
-SUBDIRS( configurationFileReaders )
-  
 SET(TrackerConfiguration_SRCS
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
