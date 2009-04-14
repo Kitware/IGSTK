@@ -152,28 +152,27 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
     RGBImportFilter->SetSpacing( spacing );
 
-  int j=0;
-  RGBPixelType* tmp;
-  tmp = new RGBPixelType[m_Width * m_Height];
-  for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
-  {
-    RGBPixelType temp;
-    temp[0]=m_RawBuffer[i];
-    temp[1]=m_RawBuffer[i+1];
-    temp[2]=m_RawBuffer[i+2];
-    tmp[j]=temp;
-    j++;
-  }
-  RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
-  RGBImportFilter->Update();
+    int j=0;
+    RGBPixelType* tmp;
+    tmp = new RGBPixelType[m_Width * m_Height];
+    for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
+    {
+      RGBPixelType temp;
+      temp[0]=m_RawBuffer[i];
+      temp[1]=m_RawBuffer[i+1];
+      temp[2]=m_RawBuffer[i+2];
+      tmp[j]=temp;
+      j++;
+    }
+    RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
+    RGBImportFilter->Update();
 
-  this->m_RGBImage = RGBImportFilter->GetOutput();
+    this->m_RGBImage = RGBImportFilter->GetOutput();
 
-  m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
-  m_VtkRGBImporter->UpdateWholeExtent();
+    m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
+    m_VtkRGBImporter->UpdateWholeExtent();
 
-  m_VTKImage = m_VtkRGBImporter->GetOutput();
-
+    m_VTKImage = m_VtkRGBImporter->GetOutput();
   }
   else if (m_NumberOfChannels == 1)
   {
@@ -229,25 +228,26 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     typename RGBImportFilterType::RegionType    tmpregion;
     tmpregion = m_RGBImage->GetLargestPossibleRegion();
     const unsigned int numberOfPixels = tmpregion.GetNumberOfPixels();
+    cout << "number of pixels " << numberOfPixels  << endl;
     const bool isEmpty = ( numberOfPixels == 0 );
     return isEmpty;
     }
   }
   else if(m_NumberOfChannels == 1)
   {
-  if(m_RGBImage.IsNull())
-  {
-    cout << "mrgbimage is null" <<  endl;
-    return true;
-  }
-  else
-  {
-    typename ImportFilterType::RegionType     tmpregion;
-    tmpregion = m_Image->GetLargestPossibleRegion();
-    const unsigned int numberOfPixels = tmpregion.GetNumberOfPixels();
-    const bool isEmpty = ( numberOfPixels == 0 );
-    return isEmpty;
-  }
+    if(m_RGBImage.IsNull())
+    {
+      cout << "mrgbimage is null" <<  endl;
+      return true;
+    }
+    else
+    {
+      typename ImportFilterType::RegionType     tmpregion;
+      tmpregion = m_Image->GetLargestPossibleRegion();
+      const unsigned int numberOfPixels = tmpregion.GetNumberOfPixels();
+      const bool isEmpty = ( numberOfPixels == 0 );
+      return isEmpty;
+    }
   }
   else
   {
@@ -343,11 +343,11 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 {
   if(this->m_ImagerTool.IsNotNull())
   {
-  //m_RawBuffer=(unsigned char*)(m_ImagerTool->GetInternalFrame()).GetImagePtr();
-  //TODO set this properly
-  //m_RawBuffer=(unsigned char*)(m_ImagerTool->GetFrameFromBuffer(1)).GetImagePtr();
-  m_RawBuffer=(unsigned char*)(m_ImagerTool->GetTemporalCalibratedFrame()).GetImagePtr();
-
+    m_RawBuffer=(unsigned char*)(m_ImagerTool->GetTemporalCalibratedFrame()).GetImagePtr();
+  }
+  else
+  {
+    igstkLogMacro( DEBUG, "VideoFrameSpatialObject::UpdateImages(): ImagerTool is not set properly\n");
   }
 
   if( m_NumberOfChannels == 3 )
