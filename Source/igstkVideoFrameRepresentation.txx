@@ -79,6 +79,8 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
                            NullImageSpatialObject, No );
   igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject,
                            ValidImageSpatialObject,SetVideoFrameSpatialObject );
+  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline,
+                           NullImageSpatialObject, No );
 
   igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject,
                            NullImageSpatialObject,  No );
@@ -86,9 +88,6 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
                            NullImageSpatialObject,  No );
   igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject,
                            ValidImageSpatialObject, No );
-
-  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline,
-                           NullImageSpatialObject, No );
   igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline,
                            ValidImageSpatialObject, ConnectVTKPipeline );
 
@@ -217,6 +216,10 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     m_ImageData = m_VTKImageObserver->GetVTKImage();
 
     //this->m_MapColors->SetInput( this->m_ImageData );
+  }
+  else
+  {
+    igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation::SetVideoFrameSpatialObjectProcessing: No VTKImage Event\n");
   }
   //this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
   this->m_ImageActor->SetInput( this->m_ImageData  );
