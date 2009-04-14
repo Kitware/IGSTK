@@ -24,6 +24,7 @@
 //information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
+#include "igstkSandboxConfigure.h"
 
 #include "igstkImager.h"
 #include "igstkWebcamWinImagerTool.h"
@@ -33,8 +34,10 @@
 #include <map>
 #include <signal.h>
 
+#ifdef IGSTKSandbox_USE_OpenCV
 #include "cv.h"
 #include "highgui.h"
+#endif
 
 namespace igstk {
 
@@ -152,8 +155,10 @@ private:
   /** A mutex for multithreaded access to frameBuffer */
   static itk::MutexLock::Pointer  m_FrameBufferLock;
 
+#ifdef IGSTKSandbox_USE_OpenCV
   CvCapture *capture;
   IplImage  *cvframe;
+#endif
   int       key;
 
 
