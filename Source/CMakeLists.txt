@@ -449,6 +449,14 @@ IF( WIN32 )
       igstkWebCameraTracker.h
       igstkWebCameraTrackerTool.h
      )
+    
+      IF(IGSTKSandbox_USE_OpenCV)
+         SET(IGSTKSandbox_SRCS
+             ${IGSTKSandbox_SRCS}
+             igstkWebcamWinImager.h
+             igstkWebcamWinImagerTool.h
+             )
+      ENDIF(IGSTKSandbox_USE_OpenCV)
 ENDIF( WIN32 )
 
 IF(IGSTKSandbox_USE_vtkKWImage)
@@ -521,6 +529,7 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
       )
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
+
 IF(IGSTKSandbox_USE_FLTK)
   IF(IGSTK_USE_SceneGraphVisualization)
     #SceneGraph visualization classes
@@ -537,6 +546,14 @@ IF( WIN32 )
       igstkWebCameraTracker.cxx
       igstkWebCameraTrackerTool.cxx
      )
+             
+      IF(IGSTKSandbox_USE_OpenCV)
+        SET(IGSTKSandbox_SRCS
+            ${IGSTKSandbox_SRCS}
+            igstkWebcamWinImager.cxx
+            igstkWebcamWinImagerTool.cxx
+            )
+      ENDIF(IGSTKSandbox_USE_OpenCV)        
 ENDIF( WIN32 )
 
 IF(IGSTKSandbox_USE_vtkKWImage)
@@ -584,6 +601,10 @@ ENDIF (IGSTKSandbox_USE_unicap)
 IF (IGSTKSandbox_USE_CompressedDV)
  SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dv iec61883)
 ENDIF (IGSTKSandbox_USE_CompressedDV)
+
+IF(IGSTKSandbox_USE_OpenCV)
+SET(EXTRA_LIBS ${EXTRA_LIBS} cxcore110d cv110d highgui110d)
+ENDIF(IGSTKSandbox_USE_OpenCV)
 
 IF(IGSTKSandbox_USE_vtkKWImage)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkKWImageu)
