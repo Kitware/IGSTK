@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0109 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
@@ -13,8 +13,8 @@ class VideoFrameGrabberAndViewerWebcamWinGUI {open : {public igstk::Object}
     Fl_Window mainWindow {
       label {IGSTK - Videoframe Viewer}
       callback {Quit();} open
-      xywh {473 180 750 400} type Double box PLASTIC_UP_BOX align 18
-      code0 {\#include "igstkFLTKWidget.h"} modal size_range {0 0 750 400} visible
+      xywh {-32000 -32000 762 400} type Double box PLASTIC_UP_BOX align 18 hide
+      code0 {\#include "igstkFLTKWidget.h"} modal size_range {0 0 750 400}
     } {
       Fl_Group m_ControlGroup {open
         xywh {0 0 150 400} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
@@ -27,30 +27,11 @@ class VideoFrameGrabberAndViewerWebcamWinGUI {open : {public igstk::Object}
           callback {Quit();}
           tooltip {Load segmentation (.msh)} xywh {10 348 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
         }
-        Fl_Group m_LiveVideoGroup {
-          xywh {10 99 130 148} box PLASTIC_UP_BOX color 215 labeltype ENGRAVED_LABEL labelcolor 4
-        } {
-          Fl_Button m_ToggleRunVideoButton {
-            label Run
-            callback {RequestToggleRunVideo();}
-            tooltip {Run/Stop video} xywh {29 176 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
-          }
-          Fl_Button m_ToggleEnableVideoButton {
-            label {Enable Video}
-            callback {RequestToggleEnableVideo();}
-            tooltip {Enable/Disable video} xywh {17 108 115 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12
-          }
-          Fl_Button m_Screenshot {
-            label Screenshot
-            callback {RequestScreenshot();} selected
-            tooltip {Run/Stop video} xywh {30 211 95 25} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 255 selection_color 134 labelsize 12 deactivate
-          }
-        }
       }
-      Fl_Group m_ViewerGroup {open
+      Fl_Group m_ViewerGroup {open selected
         xywh {151 0 600 400} box PLASTIC_DOWN_BOX
-        code0 {\#include "VideoFrameGrabberAndViewerWebcamWinQuadrantViews.h"}
-        class {igstk::VideoFrameGrabberAndViewerWebcamWinQuadrantViews}
+        code0 {\#include "VideoFrameGrabberAndViewerWebcamWinView.h"}
+        class {igstk::VideoFrameGrabberAndViewerWebcamWinView}
       } {}
     }
     code {mainWindow->show();
@@ -103,12 +84,6 @@ CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
     code {return this->hasQuitted;} {}
   }
   Function {RequestPrepareToQuit()} {return_type {virtual void}
-  } {}
-  Function {RequestToggleEnableVideo()} {open return_type {virtual void}
-  } {}
-  Function {RequestToggleRunVideo()} {open return_type {virtual void}
-  } {}
-  Function {RequestScreenshot()} {return_type {virtual void}
   } {}
   Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
   } {
