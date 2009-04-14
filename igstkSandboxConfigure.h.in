@@ -32,6 +32,7 @@ Configure file for IGSTKSandbox
 #cmakedefine IGSTKSandbox_USE_vtkKWImage
 #cmakedefine IGSTKSandbox_USE_OpenIGTLink
 #cmakedefine IGSTK_USE_SceneGraphVisualization
+#cmakedefine IGSTKSandbox_USE_OpenCV
 
 #cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
 
