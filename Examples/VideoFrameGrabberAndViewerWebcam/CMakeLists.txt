@@ -1,9 +1,4 @@
 PROJECT(VideoFrameGrabberAndViewerWebcamWin)
-
-INCLUDE_DIRECTORIES (
-  ${IGSTKSandbox_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration
-) 
  
 SET(VideoFrameGrabberAndViewerWebcamWin_GUI_SRCS
     VideoFrameGrabberAndViewerWebcamWinGUI.fl
@@ -13,37 +8,14 @@ SET(VideoFrameGrabberAndViewerWebcamWin_SRCS
   main.cxx
   VideoFrameGrabberAndViewerWebcamWin.h
   VideoFrameGrabberAndViewerWebcamWin.cxx
-  VideoFrameGrabberAndViewerWebcamWinQuadrantViews.h
-  VideoFrameGrabberAndViewerWebcamWinQuadrantViews.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.cxx
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagingSourceImagerConfiguration.cxx
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.cxx
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkCompressedDVImagerConfiguration.cxx
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkWebcamWinImagerConfiguration.cxx
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.cxx
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.cxx
-
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerController.h
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagerConfiguration.h
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkImagingSourceImagerConfiguration.h
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkTerasonImagerConfiguration.h
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkCompressedDVImagerConfiguration.h
-${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/ImagerConfiguration/igstkWebcamWinImagerConfiguration.h
-
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkPrecomputedTransformData.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformXMLFileReaderBase.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkRigidTransformXMLFileReader.h
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/CalibrationRegistrationLoading/igstkTransformFileReader.h
+  VideoFrameGrabberAndViewerWebcamWinView.h
+  VideoFrameGrabberAndViewerWebcamWinView.cxx
   )
   
 INCLUDE_DIRECTORIES(
+  ${IGSTKSandbox_BINARY_DIR}
   ${VideoFrameGrabberAndViewerWebcamWin_SOURCE_DIR}
   ${VideoFrameGrabberAndViewerWebcamWin_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/ApplicationsCommon/TrackerConfiguration
   ${IGSTKSandbox_SOURCE_DIR}/Examples/VideoFrameGrabberAndViewerWebcamWin
   )
 
