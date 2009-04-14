@@ -19,18 +19,21 @@
 
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
+#include "igstkFrame.h"
+#include "igstkTimeStamp.h"
+#include "igstkImagerTool.h"
 
+#include "itkVTKImageExport.h"
 #include "itkImage.h"
 #include "itkSize.h"
 #include "itkImageRegion.h"
 #include "itkIndex.h"
 #include "itkImportImageFilter.h"
 #include "itkRGBPixel.h"
-#include "vtkImageData.h"
-#include "igstkFrame.h"
-#include "igstkTimeStamp.h"
 
-#include "igstkImagerTool.h"
+#include "vtkImageData.h"
+#include "vtkImageImport.h"
+
 
 #define DIMENSION 2
 
