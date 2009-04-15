@@ -34,10 +34,8 @@
 #include <map>
 #include <signal.h>
 
-#ifdef IGSTKSandbox_USE_OpenCV
 #include "cv.h"
 #include "highgui.h"
-#endif
 
 namespace igstk {
 
