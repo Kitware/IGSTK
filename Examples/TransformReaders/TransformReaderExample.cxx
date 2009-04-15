@@ -1,9 +1,24 @@
+// BeginLatex
+// 
+// This example illustrates how to use xml readers to load precomputed 
+// transformations. These are either tool calibrations or results of pre-operative
+// registration (e.g. MR/CT). The program recieves an xml file containing a precomputed
+// transformation, reads it, presents the user with the general information 
+// about the transformation (when computed and estimation error). The user is
+// then asked if to use the transformation or not. If the answer is yes, the
+// program prints the transformation and exits, otherwise it just exits.
+//
+// To use the xml readers and the precomputed transform data type we need to 
+// include the following files:
+//
+// EndLatex
+// BeginCodeSnippet
 #include "igstkPrecomputedTransformData.h"
 #include "igstkTransformFileReader.h"
 #include "igstkPerspectiveTransformXMLFileReader.h"
 #include "igstkAffineTransformXMLFileReader.h"
 #include "igstkRigidTransformXMLFileReader.h"
-
+// EndCodeSnippet
 
 /**
  * This object observes the event generated when a RequestGetData() method of
@@ -61,8 +76,16 @@ int main(int argc, char *argv[])
 
   igstk::PrecomputedTransformData::Pointer transformData;
                                   //our reader
+  // BeginLatex
+  // 
+  // Instantiate the transformation file reader which is parameterized
+  // using the xml reader corresponding to the relevant transformation type.
+  //
+  // EndLatex
+  // BeginCodeSnippet
   igstk::TransformFileReader::Pointer transformFileReader = 
     igstk::TransformFileReader::New();
+  // BeginCodeSnippet
                   //set our reader to read a rigid transformation from the 
                   //given file
   igstk::TransformXMLFileReaderBase::Pointer xmlFileReader;
@@ -70,7 +93,15 @@ int main(int argc, char *argv[])
   switch( atoi( argv[1] ) )
     {
     case RIGID_TRANSFORM:
+    // BeginLatex
+    // 
+    // We are interested in a rigid transformation, so instantiate that xml
+    // reader.
+    //
+    // EndLatex
+    // BeginCodeSnippet    
     xmlFileReader = igstk::RigidTransformXMLFileReader::New();
+    // EndCodeSnippet    
     break;
     case AFFINE_TRANSFORM:
     xmlFileReader = igstk::AffineTransformXMLFileReader::New();
@@ -86,8 +117,15 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
+    // BeginLatex
+    // 
+    // Set the reader and the name of the file we want to read
+    //
+    // EndLatex
+    // BeginCodeSnippet    
   transformFileReader->RequestSetReader( xmlFileReader );
   transformFileReader->RequestSetFileName( argv[2] );
+  // EndCodeSnippet    
 
   //observer for the read success and failure events
   igstk::TransformFileReader::ReadObserver::Pointer readObserver = 
@@ -108,7 +146,16 @@ int main(int argc, char *argv[])
 
   //request read. if it fails the readObserver will print the 
   //error, otherwise it will request to get the transform data
+
+    // BeginLatex
+    // 
+    // Try to read. The success or failure of this attempt are observed using 
+    // the standard IGSTK observer-command approach.
+    //
+    // EndLatex
+    // BeginCodeSnippet    
   transformFileReader->RequestRead();
+  // BeginCodeSnippet    
   if( readObserver->GotReadFailure() )
     {
     std::cerr<<readObserver->GetErrorMessage()<<"\n";
