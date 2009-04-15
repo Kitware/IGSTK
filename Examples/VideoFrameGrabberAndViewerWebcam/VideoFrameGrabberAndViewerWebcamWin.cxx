@@ -67,6 +67,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   /** Instantiate the world reference */
   m_WorldReference        = AxesObjectType::New();
 
+  /** Setup view */
   // set background color to the view
   m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(0,0,1);
   // set parallel projection to the camera
@@ -74,40 +75,46 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // set up view parameters
   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
   m_ViewerGroup->m_VideoView->RequestStart();
-  // Enable user interactions with the window via mouse and keyboard
+  // Enable user interactions with the window 
   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();
 
+  /** video frame spatial object and representation
+  typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >
+                                            VideoFrameSpatialObjectType;
+  VideoFrameSpatialObjectType::Pointer      m_VideoFrame;
+  */
+  /** Setup the videoframes patialobject */
+  m_VideoFrame = VideoFrameSpatialObjectType::New();
+  m_VideoFrame->SetWidth(320);
+  m_VideoFrame->SetHeight(240);
+  m_VideoFrame->SetPixelSizeX(1);
+  m_VideoFrame->SetPixelSizeY(1);
+  m_VideoFrame->SetNumberOfScalarComponents(3);
+  m_VideoFrame->Initialize();
 
+  igstk::Transform identity;
+  identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
+  // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to
+  // calibration for now identity
+  m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_ViewerGroup->m_VideoView->RequestDetachFromParent();
+  m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity, m_VideoFrame );
 
-     // setup the video frame spatial object
-     m_VideoFrame = VideoFrameSpatialObjectType::New();
-     m_VideoFrame->SetWidth(320);
-     m_VideoFrame->SetHeight(240);
-     m_VideoFrame->SetPixelSizeX(1);
-     m_VideoFrame->SetPixelSizeY(1);
-     m_VideoFrame->SetNumberOfScalarComponents(3);
-     m_VideoFrame->Initialize();
+  /*
+   typedef igstk::VideoFrameRepresentation<VideoFrameSpatialObjectType>
+                            VideoFrameRepresentationType;
 
-     igstk::Transform identity;
-     identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  VideoFrameRepresentationType::Pointer m_VideoFrameRepresentationForVideoView;
+  */
+  // create a video frame representation for the video view
+  m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
+  m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
 
-     // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to
-     // calibration for now identity
-     m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
 
-     m_ViewerGroup->m_VideoView->RequestDetachFromParent();
-     m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity, m_VideoFrame );
-
-     // create a video frame representation for the video view
-     m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
-     m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
-
-    m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
- //  this->View->RequestAddObject( m_VideoFrameRepresentationForVideoView );
-
-    this->m_ErrorObserver = ErrorObserver::New();
-   this->RequestInitialize();
+  this->m_ErrorObserver = ErrorObserver::New();
+  this->RequestInitialize();
 }
 
 VideoFrameGrabberAndViewerWebcamWin::~VideoFrameGrabberAndViewerWebcamWin()
@@ -117,90 +124,76 @@ VideoFrameGrabberAndViewerWebcamWin::~VideoFrameGrabberAndViewerWebcamWin()
 void
 VideoFrameGrabberAndViewerWebcamWin::RequestPrepareToQuit()
 {
-m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
-m_ViewerGroup->m_VideoView->RequestResetCamera();
-
- // this->View->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
- // this->View->RequestResetCamera();
-
-
+  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
+  m_ViewerGroup->m_VideoView->RequestResetCamera();
   this->RequestShutdown( );
 }
 
 void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 {
   igstkLogMacro( DEBUG,
-                 "igstkImagerController::RequestInitialize called...\n" );
-    //create imager
+                 "VideoFrameGrabberAndViewerWebcamWin::RequestInitialize called...\n" );
+  //create imager
   igstk::WebcamWinImager::Pointer imager = igstk::WebcamWinImager::New();
   this->m_Imager = imager;
   imager->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
 
-  unsigned long observerID = imager->AddObserver( IGSTKErrorEvent(),
+  unsigned long observerID = m_Imager->AddObserver( IGSTKErrorEvent(),
                                                    this->m_ErrorObserver );
-  imager->RequestOpen();
+  m_Imager->RequestOpen();
 
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
-    imager->RemoveObserver(observerID);
-    igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportInitializationFailureProcessing called...\n");
+    m_Imager->RemoveObserver(observerID);
+    cout << this->m_ErrorMessage << endl;
   }
-  else   //attach the tool
+  else  
   {
     ImagerTool::Pointer imagerTool;
     WebcamWinImagerTool::Pointer imagerToolWebcam = WebcamWinImagerTool::New();
     unsigned int dims[3];
-    dims[0] = 320;  dims[1] = 240;  dims[2] = 3;
+    dims[0] = 320;  
+    dims[1] = 240;  
+    dims[2] = 3;
     imagerToolWebcam->SetFrameDimensions(dims);
     imagerToolWebcam->SetPixelDepth(8);
     imagerToolWebcam->RequestSetImagerToolName("Camera");
     imagerToolWebcam->RequestConfigure();
 
     imagerTool = imagerToolWebcam;
-    // this->m_Tools.push_back( imagerTool );
-    imagerTool->RequestAttachToImager( imager );
+    imagerTool->RequestAttachToImager( m_Imager );
 
     m_VideoFrame->SetImagerTool(imagerTool);
-   m_ViewerGroup->m_VideoView->RequestResetCamera();
-   // this->View->RequestResetCamera();
+    m_ViewerGroup->m_VideoView->RequestResetCamera();
 
     m_Imager->RemoveObserver(observerID);
-
   }
 
-
-    observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
+  observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
 
-    m_Imager->RequestStartImaging();
+  m_Imager->RequestStartImaging();
 
-    if( this->m_ErrorObserver->ErrorOccured() )
-    {
-      this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
-      this->m_ErrorObserver->ClearError();
-      m_Imager->RemoveObserver( observerID );
-       igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportStartFailure called...\n");
-    }
-    else
-    {
-      m_Imager->RemoveObserver(observerID);
-        igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportStartSuccess called...\n");
-    }
+  if( this->m_ErrorObserver->ErrorOccured() )
+  {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    m_Imager->RemoveObserver( observerID );
+    cout << this->m_ErrorMessage << endl;
+  }
+  else
+  {
+    m_Imager->RemoveObserver(observerID);
+  }
 }
 
 void
 VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
 {
   igstkLogMacro( DEBUG,
-                 "igstkImagerController::RequestShutdown called...\n" );
+                 "VideoFrameGrabberAndViewerWebcamWin::RequestShutdown called...\n" );
 
   unsigned long observerID;
 
@@ -213,18 +206,11 @@ VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     this->m_Imager->RemoveObserver(observerID);
-
-      igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportStopFailure called...\n");
-
+    cout << this->m_ErrorMessage << endl;
   }
   else
   {
     this->m_Imager->RemoveObserver(observerID);
-     igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportStopSuccess called...\n");
   }
 
   observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
@@ -237,19 +223,13 @@ VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
     this->m_ErrorObserver->ClearError();
     this->m_Imager->RemoveObserver(observerID);
-
-      igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportShutdownFailure called...\n");
+    cout << this->m_ErrorMessage << endl;
   }
   else
   {
-   this->m_Imager->RemoveObserver( observerID );
-   this->m_Imager = NULL;
-   this->m_Tools.clear();
-    igstkLogMacro( DEBUG,
-                  "igstk::VideoFrameGrabberAndViewerWebcamWin::"
-                  "ReportShutdownSuccess called...\n");
+    this->m_Imager->RemoveObserver( observerID );
+    this->m_Imager = NULL;
+    this->m_Tools.clear();
   }
 }
 
@@ -276,7 +256,7 @@ VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::ErrorObserver() : m_ErrorOcc
 
 void
 VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::Execute(itk::Object *caller,
-                                            const itk::EventObject & event) throw (std::exception)
+                                      const itk::EventObject & event) throw (std::exception)
 {
   std::map<std::string,std::string>::iterator it;
   std::string className = event.GetEventName();
@@ -287,14 +267,11 @@ VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::Execute(itk::Object *caller,
     this->m_ErrorOccured = true;
     this->m_ErrorMessage = (*it).second;
   }
-
-  //if the event we got wasn't in the error events map then we
-  //silently ignore it
 }
 
 void
 VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::Execute(const itk::Object *caller,
-                                            const itk::EventObject & event) throw (std::exception)
+                                      const itk::EventObject & event) throw (std::exception)
 {
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);
