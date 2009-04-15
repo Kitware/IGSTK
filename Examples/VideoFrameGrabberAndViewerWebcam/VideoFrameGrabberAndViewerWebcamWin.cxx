@@ -67,23 +67,66 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   /** Instantiate the world reference */
   m_WorldReference        = AxesObjectType::New();
 
-  /** Setup view */
+  /*
+  // BeginLatex
+  // 
+  // The GUI is impelented using FLTK. For this purpose
+  // an instance of \doxygen{FLTKWidget} and \doxygen{View3D}  
+  // are generated and connected via the method
+  // BeginCodeSnippet
+  m_VideoWidget->RequestSetView( m_VideoView );
+  // EndCodeSnippet
+  // This is done in VideoFrameGrabberAndViewerWebcamWinView.cxx.
+  // 
+  // We then set up and start \doxygen{View3D} here.
+  //
+  // EndLatex
+  */
+
+  // BeginCodeSnippet
+  /** set up view parameters */
   // set background color to the view
   m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(0,0,1);
   // set parallel projection to the camera
   m_ViewerGroup->m_VideoView->SetCameraParallelProjection(true);
-  // set up view parameters
+  // set refresh rate
   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
+  // start the view
   m_ViewerGroup->m_VideoView->RequestStart();
-  // Enable user interactions with the window 
+  // enable user interactions with the window 
   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();
+  // EndCodeSnippet
+
+
+  // BeginLatex
+  // 
+  // The geometrical description of the video-frame in the scene is
+  // managed by SpatialObjects. For this purpose we need 
+  // \doxygen{VideoFrameSpatialObject}. 
+  // Since \doxygen{VideoFrameSpatialObject} is a templated class we 
+  // define in the first parameter the pixeltype and in the second
+  // parameter the channel number. Here "unsigned char" for pixeltype
+  // and 3 channels for RGB. 
+  // We declare and instantiate then a \doxygen{VideoFrameSpatialObject} 
+  // as follows:
+  //
+  // EndLatex
 
   /** video frame spatial object and representation
+  // BeginCodeSnippet
   typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >
                                             VideoFrameSpatialObjectType;
   VideoFrameSpatialObjectType::Pointer      m_VideoFrame;
+  // EndCodeSnippet
   */
-  /** Setup the videoframes patialobject */
+
+  // BeginLatex
+  // 
+  // We set device specific parameters in \doxygen{VideoFrameSpatialObject} 
+  //
+  // EndLatex
+
+  // BeginCodeSnippet
   m_VideoFrame = VideoFrameSpatialObjectType::New();
   m_VideoFrame->SetWidth(320);
   m_VideoFrame->SetHeight(240);
@@ -91,29 +134,83 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   m_VideoFrame->SetPixelSizeY(1);
   m_VideoFrame->SetNumberOfScalarComponents(3);
   m_VideoFrame->Initialize();
+  // EndCodeSnippet
+
 
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-  // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to
-  // calibration for now identity
+  // BeginLatex
+  // 
+  // Following scene graph is implemented here:
+  // \doxygen{View3D} --> \doxygen{VideoFrameSpatialObject} --> \doxygen{AxesObject}
+  // with identity transform for each dependency.
+  //
+  // EndLatex
+
+  // BeginCodeSnippet
   m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
   m_ViewerGroup->m_VideoView->RequestDetachFromParent();
   m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity, m_VideoFrame );
-
+  // EndCodeSnippet
+  
+  // BeginLatex
+  //
+  // The visual representation of SpatialObjects in the visualization window is
+  // created using SpatialObject Representation classes. 
+  // The corresponding Representation class for \doxygen{VideoFrameSpatialObject}
+  // is \doxygen{VideoFrameRepresentation}, which is also templated and needs the 
+  // \doxygen{VideoFrameSpatialObject} as parameter.
+  // We declare and instantiate then a \doxygen{VideoFrameRepresentation} 
+  // as follows:
+  // 
+  // EndLatex
   /*
-   typedef igstk::VideoFrameRepresentation<VideoFrameSpatialObjectType>
-                            VideoFrameRepresentationType;
+  // BeginCodeSnippet
+  typedef igstk::VideoFrameRepresentation<VideoFrameSpatialObjectType>
+                                                      VideoFrameRepresentationType;
 
   VideoFrameRepresentationType::Pointer m_VideoFrameRepresentationForVideoView;
+  // EndCodeSnippet
   */
-  // create a video frame representation for the video view
+
+  // BeginCodeSnippet
   m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
+  // EndCodeSnippet
+  
+  // BeginLatex
+  // 
+  // Add the videoframe spatial object to the videoframe representation.
+  //
+  // EndLatex
+
+  // BeginCodeSnippet
   m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
+  // EndCodeSnippet
+  
 
+  // BeginLatex
+  // 
+  // Next, the representation is added to the view as follows:
+  // 
+  // EndLatex
+
+  // BeginCodeSnippet
   m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
+  // EndCodeSnippet
 
+  // BeginLatex
+  // 
+  // We create here an Observer for the \doxygen{Imager}. This Observer will catch all
+  // failure events generated by \doxygen{Imager}.
+  // The ErrorObserver is implemented in VideoFrameGrabberAndViewerWebcamWin.h.
+  // 
+  // EndLatex
+
+  // BeginCodeSnippet
   this->m_ErrorObserver = ErrorObserver::New();
+  // EndCodeSnippet
+  
   this->RequestInitialize();
 }
 
