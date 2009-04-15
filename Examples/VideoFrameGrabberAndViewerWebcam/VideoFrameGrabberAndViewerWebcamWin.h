@@ -74,6 +74,8 @@ public:
 
   /** Public request methods from the GUI */
   virtual void RequestPrepareToQuit();
+  void RequestInitialize();
+  void RequestShutdown();
  
   VideoFrameGrabberAndViewerWebcamWin();
   virtual ~VideoFrameGrabberAndViewerWebcamWin();
@@ -90,13 +92,6 @@ private:
 
   /** Log file */
   std::ofstream                             m_LogFile;
-
-public:
-
-  void RequestInitialize();
-  void RequestShutdown();
-
-private:
 
   class ErrorObserver : public itk::Command
   {
@@ -142,7 +137,7 @@ private:
     std::string m_ErrorMessage;
     std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
 
-             //purposely not implemented
+    //purposely not implemented
     ErrorObserver(const Self&);
     void operator=(const Self&);
   };
