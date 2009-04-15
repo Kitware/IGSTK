@@ -21,8 +21,16 @@
 
 #include "FL/fl_message.h"
 
+// BeginLatex
+// 
+// Define refresh rates for View and Imager.
+// 
+// EndLatex
+
+// BeginCodeSnippet
 #define VIEW_2D_REFRESH_RATE 25
 #define IMAGER_DEFAULT_REFRESH_RATE 25
+// EndCodeSnippet
 
 namespace igstk{
 
@@ -72,49 +80,47 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // 
   // The GUI is impelented using FLTK. For this purpose
   // an instance of \doxygen{FLTKWidget} and \doxygen{View3D}  
-  // are generated and connected via the method
+  // are created and connected via the method:
   // EndLatex
   // BeginCodeSnippet
   m_VideoWidget->RequestSetView( m_VideoView );
   // EndCodeSnippet
   // BeginLatex
-  // This is done in VideoFrameGrabberAndViewerWebcamWinView.cxx.
-  // 
-  // We then set up and start \doxygen{View3D} here.
+  // This is done in VideoFrameGrabberAndViewerWebcamWinView.cxx. 
+  // Afterwards we set up and start \doxygen{View3D}.
   //
   // EndLatex
   */
 
   // BeginCodeSnippet
-  /** set up view parameters */
-  // set background color to the view
+  // Set background color to the View
   m_ViewerGroup->m_VideoView->SetRendererBackgroundColor(0,0,1);
-  // set parallel projection to the camera
+  // Set parallel projection to the camera
   m_ViewerGroup->m_VideoView->SetCameraParallelProjection(true);
-  // set refresh rate
+  // Set refresh rate
   m_ViewerGroup->m_VideoView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
-  // start the view
+  // Start the View
   m_ViewerGroup->m_VideoView->RequestStart();
-  // enable user interactions with the window 
+  // Enable user interactions with the window 
   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();
   // EndCodeSnippet
 
 
   // BeginLatex
   // 
-  // The geometrical description of the video-frame in the scene is
-  // managed by SpatialObjects. For this purpose we need 
+  // The geometrical description of the videoframe in the scene is
+  // managed by the videoframe Spatialobject. For this purpose we need 
   // \doxygen{VideoFrameSpatialObject}. 
   // Since \doxygen{VideoFrameSpatialObject} is a templated class we 
   // define in the first parameter the pixeltype and in the second
-  // parameter the channel number. Here "unsigned char" for pixeltype
+  // parameter the channel number. Here we set "unsigned char" for pixeltype
   // and 3 channels for RGB. 
   // We declare and instantiate then a \doxygen{VideoFrameSpatialObject} 
   // as follows:
   //
   // EndLatex
 
-  /** video frame spatial object and representation
+  /** videoframe Spatialobject and Representation
   // BeginCodeSnippet
   typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >
                                             VideoFrameSpatialObjectType;
@@ -124,7 +130,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
 
   // BeginLatex
   // 
-  // We set device specific parameters in \doxygen{VideoFrameSpatialObject} 
+  // We set device specific parameters in \doxygen{VideoFrameSpatialObject}. 
   //
   // EndLatex
 
@@ -158,12 +164,12 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   
   // BeginLatex
   //
-  // The visual representation of SpatialObjects in the visualization window is
+  // The visual Representation of SpatialObjects in the visualization window is
   // created using SpatialObject Representation classes. 
   // The corresponding Representation class for \doxygen{VideoFrameSpatialObject}
   // is \doxygen{VideoFrameRepresentation}, which is also templated and needs the 
   // \doxygen{VideoFrameSpatialObject} as parameter.
-  // We declare and instantiate then a \doxygen{VideoFrameRepresentation} 
+  // We declare and instantiate \doxygen{VideoFrameRepresentation} 
   // as follows:
   // 
   // EndLatex
@@ -182,7 +188,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   
   // BeginLatex
   // 
-  // Add the videoframe spatial object to the videoframe representation.
+  // Add the videoframe Spatialobject to the videoframe Representation.
   //
   // EndLatex
 
@@ -193,7 +199,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
 
   // BeginLatex
   // 
-  // Next, the representation is added to the view as follows:
+  // Next, the Representation is added to the View as follows:
   // 
   // EndLatex
 
@@ -227,18 +233,18 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   
   // BeginLatex
   //
-  // The following code instantiates a new imager object for conventional webcams.
+  // The following code instantiates a new Imager object for conventional webcams.
   // The \doxygen{WebcamWinImager} derive from \doxygen{Imager} and implement device
-  // specific communication. See for device specific impelementation \doxygen{WebcamWinImager.h}
+  // specific communication. See for device specific impelementations \doxygen{WebcamWinImager.h}
   // and \doxygen{WebcamWinImager.cxx}
   // 
   // EndLatex
   
   // BeginCodeSnippet
-  igstk::WebcamWinImager::Pointer imager = igstk::WebcamWinImager::New();
+  igstk::WebcamWinImager::Pointer Imager = igstk::WebcamWinImager::New();
   // EndCodeSnippet
 
-  this->m_Imager = imager;
+  this->m_Imager = Imager;
 
   // BeginLatex
   //
@@ -247,13 +253,13 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // EndLatex
   
   // BeginCodeSnippet
-  imager->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+  Imager->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
   // EndCodeSnippet
 
   // BeginLatex
   //
-  // Befor request calls to the imager we add an observer to the
-  // imager class in order to catch possible error events.
+  // Befor request calls to the Imager we add an observer to the
+  // Imager class in order to catch possible error events.
   // 
   // EndLatex
   
@@ -265,7 +271,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // BeginLatex
   //
   // Now, we try to open the communication with the device and retrieve for
-  // occured errors.
+  // possibly occured errors.
   // 
   // EndLatex
   
@@ -287,7 +293,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
     // Next we create an \doxygen{WebcamWinImagerTool} and set frame dimensions,
     // pixel depth and an unique name for identification. Consider these parameters
     // must be the same as the parameters for the \doxygen{VideoFrameSpatialObject}
-    // After set up, the imager tool can be configured.
+    // After setup, the Imager tool can be configured.
     // 
     // EndLatex
     
@@ -306,7 +312,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
     // BeginLatex
     //
-    // Here we connect the imager with the imager tool
+    // Here we connect the Imager with the Imager tool
     // 
     // EndLatex
 
@@ -318,8 +324,8 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
     // BeginLatex
     //
-    // After that the imager tool can set to the videoframe
-    // spatial object as follows:
+    // After that the Imager tool can set to the videoframe
+    // Spatialobject as follows:
     // 
     // EndLatex
 
@@ -336,10 +342,10 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
   // BeginLatex
   //
-  // Here we request to start the imager. In case of success the 
-  // communication thread starts retrieving continouly frames from
+  // Here we request to start the Imager. In case of success the 
+  // communication thread starts retrieving continously frames from
   // the device and the main application thread fills according to 
-  // pulse generator frequency the ringbuffer in the imager tool. 
+  // the pulse-generator-frequency the ringbuffer in the Imager tool. 
   // 
   // EndLatex
 
@@ -365,7 +371,7 @@ VideoFrameGrabberAndViewerWebcamWin::RequestPrepareToQuit()
 {
   // BeginLatex
   // 
-  // Finally, before exiting the application, the imager is properly 
+  // Finally, before exiting the application, the Imager is properly 
   // closed and other clean up procedures are executed, as follows:
   //
   // EndLatex
@@ -429,13 +435,13 @@ VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
 
 VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
 {
-  //imager errors
+  //Imager errors
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ImagerOpenErrorEvent().GetEventName(),
-                                        "Error opening imager communication." ) );
+                                        "Error opening Imager communication." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ImagerInitializeErrorEvent().GetEventName(),
-                                        "Error initializing imager." ) );
+                                        "Error initializing Imager." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ImagerStartImagingErrorEvent().GetEventName(),
                                         "Error starting imaging." ) );
@@ -444,7 +450,7 @@ VideoFrameGrabberAndViewerWebcamWin::ErrorObserver::ErrorObserver() : m_ErrorOcc
                                         "Error stopping imaging." ) );
   this->m_ErrorEvent2ErrorMessage.insert(
     std::pair<std::string,std::string>( ImagerCloseErrorEvent().GetEventName(),
-                                        "Error closing imager communication." ) );
+                                        "Error closing Imager communication." ) );
 }
 
 void
