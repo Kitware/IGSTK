@@ -73,9 +73,11 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // The GUI is impelented using FLTK. For this purpose
   // an instance of \doxygen{FLTKWidget} and \doxygen{View3D}  
   // are generated and connected via the method
+  // EndLatex
   // BeginCodeSnippet
   m_VideoWidget->RequestSetView( m_VideoView );
   // EndCodeSnippet
+  // BeginLatex
   // This is done in VideoFrameGrabberAndViewerWebcamWinView.cxx.
   // 
   // We then set up and start \doxygen{View3D} here.
@@ -143,7 +145,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // BeginLatex
   // 
   // Following scene graph is implemented here:
-  // \doxygen{View3D} --> \doxygen{VideoFrameSpatialObject} --> \doxygen{AxesObject}
+  // \doxygen{View3D} - \doxygen{VideoFrameSpatialObject} - \doxygen{AxesObject}
   // with identity transform for each dependency.
   //
   // EndLatex
@@ -218,25 +220,56 @@ VideoFrameGrabberAndViewerWebcamWin::~VideoFrameGrabberAndViewerWebcamWin()
 {
 }
 
-void
-VideoFrameGrabberAndViewerWebcamWin::RequestPrepareToQuit()
-{
-  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
-  m_ViewerGroup->m_VideoView->RequestResetCamera();
-  this->RequestShutdown( );
-}
-
 void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 {
   igstkLogMacro( DEBUG,
                  "VideoFrameGrabberAndViewerWebcamWin::RequestInitialize called...\n" );
-  //create imager
+  
+  // BeginLatex
+  //
+  // The following code instantiates a new imager object for conventional webcams.
+  // The \doxygen{WebcamWinImager} derive from \doxygen{Imager} and implement device
+  // specific communication. See for device specific impelementation \doxygen{WebcamWinImager.h}
+  // and \doxygen{WebcamWinImager.cxx}
+  // 
+  // EndLatex
+  
+  // BeginCodeSnippet
   igstk::WebcamWinImager::Pointer imager = igstk::WebcamWinImager::New();
-  this->m_Imager = imager;
-  imager->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+  // EndCodeSnippet
 
+  this->m_Imager = imager;
+
+  // BeginLatex
+  //
+  // According to connected device we set here the refresh rate
+  // 
+  // EndLatex
+  
+  // BeginCodeSnippet
+  imager->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+  // EndCodeSnippet
+
+  // BeginLatex
+  //
+  // Befor request calls to the imager we add an observer to the
+  // imager class in order to catch possible error events.
+  // 
+  // EndLatex
+  
+  // BeginCodeSnippet
   unsigned long observerID = m_Imager->AddObserver( IGSTKErrorEvent(),
                                                    this->m_ErrorObserver );
+  // EndCodeSnippet
+
+  // BeginLatex
+  //
+  // Now, we try to open the communication with the device and retrieve for
+  // occured errors.
+  // 
+  // EndLatex
+  
+  // BeginCodeSnippet
   m_Imager->RequestOpen();
 
   if( this->m_ErrorObserver->ErrorOccured() )
@@ -246,8 +279,19 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
     m_Imager->RemoveObserver(observerID);
     cout << this->m_ErrorMessage << endl;
   }
+  // EndCodeSnippet
   else  
   {
+    // BeginLatex
+    //
+    // Next we create an \doxygen{WebcamWinImagerTool} and set frame dimensions,
+    // pixel depth and an unique name for identification. Consider these parameters
+    // must be the same as the parameters for the \doxygen{VideoFrameSpatialObject}
+    // After set up, the imager tool can be configured.
+    // 
+    // EndLatex
+    
+    // BeginCodeSnippet
     ImagerTool::Pointer imagerTool;
     WebcamWinImagerTool::Pointer imagerToolWebcam = WebcamWinImagerTool::New();
     unsigned int dims[3];
@@ -258,20 +302,50 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
     imagerToolWebcam->SetPixelDepth(8);
     imagerToolWebcam->RequestSetImagerToolName("Camera");
     imagerToolWebcam->RequestConfigure();
+    // EndCodeSnippet
+
+    // BeginLatex
+    //
+    // Here we connect the imager with the imager tool
+    // 
+    // EndLatex
 
     imagerTool = imagerToolWebcam;
+
+    // BeginCodeSnippet
     imagerTool->RequestAttachToImager( m_Imager );
+    // EndCodeSnippet
 
+    // BeginLatex
+    //
+    // After that the imager tool can set to the videoframe
+    // spatial object as follows:
+    // 
+    // EndLatex
+
+    // BeginCodeSnippet
     m_VideoFrame->SetImagerTool(imagerTool);
-    m_ViewerGroup->m_VideoView->RequestResetCamera();
+    // EndCodeSnippet
 
+    m_ViewerGroup->m_VideoView->RequestResetCamera();
     m_Imager->RemoveObserver(observerID);
   }
 
   observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
 
+  // BeginLatex
+  //
+  // Here we request to start the imager. In case of success the 
+  // communication thread starts retrieving continouly frames from
+  // the device and the main application thread fills according to 
+  // pulse generator frequency the ringbuffer in the imager tool. 
+  // 
+  // EndLatex
+
+  // BeginCodeSnippet
   m_Imager->RequestStartImaging();
+  // EndCodeSnippet
 
   if( this->m_ErrorObserver->ErrorOccured() )
   {
@@ -287,6 +361,23 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 }
 
 void
+VideoFrameGrabberAndViewerWebcamWin::RequestPrepareToQuit()
+{
+  // BeginLatex
+  // 
+  // Finally, before exiting the application, the imager is properly 
+  // closed and other clean up procedures are executed, as follows:
+  //
+  // EndLatex
+  // BeginCodeSnippet
+  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
+  m_ViewerGroup->m_VideoView->RequestResetCamera();
+  // EndCodeSnippet
+
+  this->RequestShutdown( );
+}
+
+void
 VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
 {
   igstkLogMacro( DEBUG,
@@ -296,8 +387,11 @@ VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
 
   observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
-  //stop imaging
+  
+  // BeginCodeSnippet
   this->m_Imager->RequestStopImaging();
+  // EndCodeSnippet
+
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
@@ -313,8 +407,10 @@ VideoFrameGrabberAndViewerWebcamWin::RequestShutdown()
   observerID = this->m_Imager->AddObserver( IGSTKErrorEvent(),
                                              this->m_ErrorObserver );
 
-  //close communication with imager
+  // BeginCodeSnippet
   this->m_Imager->RequestClose();
+  // EndCodeSnippet
+
   if( this->m_ErrorObserver->ErrorOccured() )
   {
     this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
