@@ -35,7 +35,6 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   typedef double            TimePeriodType;
 
   this->m_Updated = false; // not yet updated
-  //TODO set delay
   m_Delay = 6;
 
   // States
@@ -187,14 +186,8 @@ ImagerTool::ImagerTool(void):m_StateMachine(this)
   m_Index=0;
   m_NumberOfFramesInBuffer=0;
   m_FrameRingBuffer = new std::vector< igstk::Frame >(MAX_FRAMES);
-  for(unsigned int i=0;i<MAX_FRAMES;i++)
-  {
-    igstk::Frame frame;
-    AddFrameToBuffer(frame);
-  }
-  cerr << m_FrameRingBuffer->at(10).GetImagePtr() << "FrameConstructor" << endl;
 
-  //TODO delete this
+
       std::ofstream ofile;
       ofile.open("ImagerToolStateMachineDiagram.dot");
       const bool skipLoops = false;
@@ -534,6 +527,16 @@ ImagerTool::SetFrameDimensions(unsigned int *dims)
   this->m_FrameDimensions[0] = dims[0];
   this->m_FrameDimensions[1] = dims[1];
   this->m_FrameDimensions[2] = dims[2];
+ 
+  for(unsigned int i=0;i<MAX_FRAMES;i++)
+    {
+    igstk::Frame frame;
+    frame.SetFrameDimensions(
+      this->m_FrameDimensions[0],
+      this->m_FrameDimensions[1],
+      this->m_FrameDimensions[2]);
+    AddFrameToBuffer(frame);
+  }
 }
 
 void
