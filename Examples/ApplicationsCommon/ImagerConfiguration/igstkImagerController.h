@@ -34,10 +34,12 @@
 //WebcamWin framegrabber specific headers
 #include "igstkWebcamWinImagerConfiguration.h"
 #include "igstkWebcamWinImagerTool.h"
+#ifdef IGSTKSandbox_USE_OpenIGTLink
 //Terason Ultrasound specific headers
 #include "igstkTerasonImagerConfiguration.h"
 #include "igstkTerasonImagerTool.h"
 #include "igtlServerSocket.h"
+#endif
 #else
 //ImagingSource framegrabber specific headers
 #include "igstkImagingSourceImagerConfiguration.h"
@@ -173,10 +175,11 @@ private:
   igstkDeclareStateMacro( AttemptingToShutdown );
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   igstkDeclareStateMacro( AttemptingToInitializeTerason );
   //Terason Ultrasound specific :end
-
+#endif
  //WebcamWin framegrabber specific :begin
     igstkDeclareStateMacro( AttemptingToInitializeWebcamWin  );
   //WebcamWin framegrabber specific :end
@@ -200,9 +203,11 @@ private:
   igstkDeclareInputMacro( ImagerShutdown );
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   igstkDeclareInputMacro( TerasonInitialize );
   //Terason Ultrasound specific :end
+#endif
 
  //WebcamWin framegrabber specific :begin
     igstkDeclareInputMacro( WebcamWinInitialize );
@@ -230,6 +235,7 @@ private:
   void ImagerShutdownProcessing();
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   void TerasonInitializeProcessing();
   //Terason Ultrasound specific :end
@@ -237,6 +243,7 @@ private:
   //WebcamWin framegrabber specific :begin
     void WebcamWinInitializeProcessing();
   //WebcamWin framegrabber specific :end
+#endif
 #else
   //ImagingSource framegrabber specific :begin
   void ImagingSourceInitializeProcessing();
@@ -267,12 +274,13 @@ private:
   bool InitializeSerialCommunication();
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   bool InitializeSocketCommunication();
   TerasonImagerTool::Pointer InitializeTerasonTool(
     const TerasonToolConfiguration *toolConfiguration );
   //Terason Ultrasound specific :end
-
+#endif
   //WebcamWin framegrabber specific :begin
   WebcamWinImagerTool::Pointer InitializeWebcamWinTool(
     const WebcamWinToolConfiguration *toolConfiguration );
@@ -348,11 +356,13 @@ private:
   Imager::Pointer       m_Imager;
   std::vector<ImagerTool::Pointer> m_Tools;
 
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   igtl::ServerSocket::Pointer m_SocketCommunication;
   SerialCommunication::Pointer m_SerialCommunication;
   //igtl::ClientSocket::Pointer m_SocketCommunication;
   //Terason Ultrasound specific :end
+#endif
 
   itk::Command *m_ProgressCallback;
 };
