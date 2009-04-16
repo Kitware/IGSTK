@@ -326,22 +326,25 @@ int main(int , char** )
   // All applications should include the following code. This is the main event
   // loop of the application. First, it checks if the application is aborted by
   // user. If not, it calls for the \doxygen{PulseGenerator} to check its time
-  // out. The command is as follows:
+  // out, which will allow the separate tracker thread to update itself. It is 
+  // very important to include the igstk::PulseGenerator::CheckTimeouts() in the
+  // main thread. Otherwise,trackers will not update. After checking time out, 
+  // the application request the transform of the tracker tool using event 
+  // through the Coordinate system API 
+  // (see Chapter \ref{Chapter:Coordinate Systems}). 
+  // The command is as follows:
   // EndLatex
   // BeginCodeSnippet
-  //
-  //
-
-  typedef ::itk::Vector<double, 3>    VectorType;
-  typedef ::itk::Versor<double>       VersorType;
-
+  
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
 
-    TransformType             transform;
-    VectorType                position;
+    typedef ::itk::Vector<double, 3>    VectorType;
+    typedef ::itk::Versor<double>       VersorType;
+    TransformType                       transform;
+    VectorType                          position;
 
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
