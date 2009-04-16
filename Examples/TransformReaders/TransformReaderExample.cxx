@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     // EndLatex
     // BeginCodeSnippet    
   transformFileReader->RequestRead();
-  // BeginCodeSnippet    
+  // EndCodeSnippet    
   if( readObserver->GotReadFailure() )
     {
     std::cerr<<readObserver->GetErrorMessage()<<"\n";
