@@ -57,8 +57,6 @@ TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
   this->m_FramesPerSecond = 1.0;
 
   this->m_Socket->CloseSocket();
-  this->m_Socket->Delete();
-  this->m_TransformMessage->Delete();
 }
 
 
