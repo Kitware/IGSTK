@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   // BeginCodeSnippet
   igstk::TransformFileReader::Pointer transformFileReader = 
     igstk::TransformFileReader::New();
-  // BeginCodeSnippet
+  // EndCodeSnippet
                   //set our reader to read a rigid transformation from the 
                   //given file
   igstk::TransformXMLFileReaderBase::Pointer xmlFileReader;
