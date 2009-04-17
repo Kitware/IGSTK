@@ -43,7 +43,7 @@ namespace igstk
  *  The solution is obtained in a least squares manner by acquiring multiple 
  *  transformation while rotating the tool around its tip resulting in the 
  *  following overdetermined equation system:
- *  \f \left[
+ *  \f$$ \left[
  *       \begin{array}{ccc}
  *         R_0 &        & -I \\
  *             & \vdots &    \\
@@ -63,7 +63,7 @@ namespace igstk
  *         \vdots\\
  *         \bf{-t_n}
  *       \end{array}
- *     \right]\f 
+ *     \right]\f$$ 
  * Which is solved using the pseudoinverse (singular value decomposition).
  */
 class PivotCalibrationAlgorithm : public Object
