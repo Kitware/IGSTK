@@ -20,7 +20,8 @@
 // BeginLatex
 // 
 // This example illustrates how to export tracking data through OpenIGTLink
-// connection. The example program supports multi-cast data transfer.
+// connection. The example program supports multi-cast data transfer, and is
+// the client part of the OpenIGTLink client-server approach.
 //
 // EndLatex
 #include "igstkTrackerConfiguration.h"
@@ -33,12 +34,11 @@
 #include "igstkOIGTLinkTrackerConfigurationFileReader.h"
 #include "igstkTransformObserver.h"
 
-// For sending tracking data to OpenIGTLink compatible server 
+// 
 // BeginLatex
 // 
-// To use the OpenIGTLink POSITION message, doxygen{igtlOSUtil.h},
-// doxygen{igtlPositionMessage}, and doxygen{igtlClientSocket}
-// should be added, as follows:
+// To use the OpenIGTLink POSITION message, and client socket we need the
+// following includes:
 //
 // EndLatex
 // BeginCodeSnippet
@@ -144,9 +144,9 @@ private:
  * broadcasted to all destinations.
  */
 // BeginLatex
-// doxygen{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
+// \code{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
 // for a specific tool. It checks that the event is for the relevant tool and then
-// gets the tool's transform to its parent and prints it out.
+// gets the tool's transform to its parent and sends it via socket.
 // EndLatex
 
   class ToolUpdatedObserver : public ::itk::Command
@@ -158,8 +158,8 @@ private:
     itkNewMacro( Self );
   protected:
 // BeginLatex
-// In doxygen{ToolUpdatedObserver} class,  we create doxigen{igtl::PositionMessage} class
-// in the constructor function.
+// In the \code{ToolUpdatedObserver} constructor  we instantiate a 
+// \code{igtl::PositionMessage}, which is updated with the transformtaion data.
 // EndLatex
 
     ToolUpdatedObserver() {
@@ -192,8 +192,8 @@ private:
       this->m_World = world;
       this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
 // BeginLatex
-// In doxygen{ToolUpdatedObserver::Initialize()}, we set device name of the message
-// by calling doxygen{SetDeviceName()} method.
+// In \emph{ToolUpdatedObserver::Initialize()}, we set the device name of the message
+// by invoking the \emph{SetDeviceName()} method.
 // EndLatex
 // BeginCodeSnippet
       this->m_PositionMessage->SetDeviceName( toolName.c_str() );
@@ -242,8 +242,8 @@ private:
     }
 
 // BeginLatex
-// In doxygen{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
-// a transform, create OpenIGTLink message, and send it out.
+// In \emph{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
+// a transform, fill the OpenIGTLink message, and send it out.
 // EndLatex
 
     void Execute(const itk::Object *caller, const itk::EventObject & event)
