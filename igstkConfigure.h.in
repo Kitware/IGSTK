@@ -27,3 +27,7 @@
 
 /* indicate whether to use or not the coordinate reference system infrastructure */
 #cmakedefine IGSTK_USE_COORDINATE_REFERENCE_SYSTEM
+
+#cmakedefine IGSTK_USE_FLTK
+#cmakedefine IGSTK_USE_MicronTracker
+#cmakedefine IGSTK_USE_Qt
