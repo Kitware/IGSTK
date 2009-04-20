@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
 // BeginCodeSnippet
   igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader = 
     igstk::TrackerConfigurationFileReader::New();
-// BeginCodeSnippet
+// EndCodeSnippet
 
                 //need to observe if the request read succeeds or fails
                 //there is a third option that the read is invalid, if the
@@ -149,7 +149,8 @@ int main( int argc, char *argv[] )
 // BeginLatex
 // 
 // Try to read the given file by using each of the xml readers till one of them
-// succeeds
+// succeeds.
+//
 // EndLatex
 // BeginCodeSnippet
   for( unsigned int i=0; 
@@ -202,7 +203,8 @@ int main( int argc, char *argv[] )
 
 // BeginLatex
 // 
-// Instantiate TrackerController
+// Instantiate TrackerController.
+//
 // EndLatex
 // BeginCodeSnippet
   igstk::TrackerController::Pointer trackerController = 
@@ -216,6 +218,7 @@ int main( int argc, char *argv[] )
 // BeginLatex
 // 
 // Initialize TrackerController, initializes the specific tracker.
+//
 // EndLatex
 // BeginCodeSnippet
   trackerController->RequestInitialize( trackerConfiguration );
