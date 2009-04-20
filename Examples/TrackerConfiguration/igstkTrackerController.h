@@ -18,7 +18,7 @@
 #ifndef __igstkTrackerController_h
 #define __igstkTrackerController_h
 
-#include "igstkSystemInformation.h"
+#include "igstkConfigure.h"
 
 #include "igstkTrackerConfiguration.h"
 #include "igstkPolarisTrackerConfiguration.h"
