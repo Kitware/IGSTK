@@ -17,7 +17,7 @@ PURPOSE.  See the above copyright notices for more information.
 #ifndef __igstkTrackerInitializer_h
 #define __igstkTrackerInitializer_h
 
-#include "igstkSystemInformation.h"
+#include "igstkConfigure.h"
 
 #include "igstkTrackerConfiguration.h"
 
