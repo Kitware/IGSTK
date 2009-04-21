@@ -61,8 +61,9 @@ int igstkTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv [] )
   toolObserver->RequestSetTrackerTool( trackerTool );
   toolObserver->RequestSetHostName( argv[1] );
   toolObserver->RequestSetPort( atoi( argv[2] ) );
-  toolObserver->RequestStart();
 
+  toolObserver->RequestStart();
+  
   tracker->RequestStartTracking();
 
   const unsigned int numberOfTransformsToSend = atoi( argv[3] );
@@ -76,6 +77,10 @@ int igstkTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv [] )
   tracker->RequestStopTracking();
   tracker->RequestReset();
   tracker->RequestClose();
-
+  
+  //purely for code coverage. 
+  toolObserver->RequestSetFramesPerSecond( 10.0 );
+  toolObserver->Print( std::cout ); 
+  
   return EXIT_SUCCESS;
 }
