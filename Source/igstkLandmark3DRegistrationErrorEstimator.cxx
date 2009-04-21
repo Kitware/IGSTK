@@ -31,7 +31,7 @@
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace igstk
-{ 
+{
 /** Constructor */
 Landmark3DRegistrationErrorEstimator::
   Landmark3DRegistrationErrorEstimator() :  m_StateMachine( this )
@@ -43,38 +43,38 @@ Landmark3DRegistrationErrorEstimator::
   igstkAddStateMacro ( LandmarkContainerSet );
   igstkAddStateMacro ( LandmarkRegistrationErrorSet );
   igstkAddStateMacro ( TargetPointSet );
-  igstkAddStateMacro ( AttemptingToEstimateTargetRegstirationError );  
+  igstkAddStateMacro ( AttemptingToEstimateTargetRegstirationError );
   igstkAddStateMacro ( TargetRegistrationErrorEstimated );
- 
-  // Set the Input descriptors 
+
+  // Set the Input descriptors
   igstkAddInputMacro( LandmarkContainer );
   igstkAddInputMacro( LandmarkRegistrationError );
-  igstkAddInputMacro( TargetPoint ); 
-  igstkAddInputMacro( EstimateTargetPointRegistrationError ); 
-  igstkAddInputMacro( TargetPointRegistrationErrorEstimationSuccess ); 
-  igstkAddInputMacro( TargetPointRegistrationErrorEstimationFailure ); 
-  igstkAddInputMacro( GetTargetPointRegistrationErrorEstimate ); 
+  igstkAddInputMacro( TargetPoint );
+  igstkAddInputMacro( EstimateTargetPointRegistrationError );
+  igstkAddInputMacro( TargetPointRegistrationErrorEstimationSuccess );
+  igstkAddInputMacro( TargetPointRegistrationErrorEstimationFailure );
+  igstkAddInputMacro( GetTargetPointRegistrationErrorEstimate );
 
   // Add the transitions
 
 
   //Transitions from Idle
-  igstkAddTransitionMacro( Idle, 
+  igstkAddTransitionMacro( Idle,
                           LandmarkContainer,
                           LandmarkContainerSet,
                           SetLandmarkContainer );
 
-  igstkAddTransitionMacro( Idle, 
+  igstkAddTransitionMacro( Idle,
                            LandmarkRegistrationError,
                            Idle,
                            ReportInvalidRequest);
 
-  igstkAddTransitionMacro( Idle, 
+  igstkAddTransitionMacro( Idle,
                            TargetPoint,
                            Idle,
                            ReportInvalidRequest);
 
-  igstkAddTransitionMacro( Idle, 
+  igstkAddTransitionMacro( Idle,
                            EstimateTargetPointRegistrationError,
                            Idle,
                            ReportInvalidRequest);
@@ -83,12 +83,12 @@ Landmark3DRegistrationErrorEstimator::
   //Transitions from LandmarkContainerSet
   igstkAddTransitionMacro( LandmarkContainerSet,
                           LandmarkRegistrationError,
-                          LandmarkRegistrationErrorSet, 
+                          LandmarkRegistrationErrorSet,
                           SetLandmarkRegistrationError );
 
   igstkAddTransitionMacro( LandmarkContainerSet,
                            TargetPoint,
-                           LandmarkContainerSet, 
+                           LandmarkContainerSet,
                            ReportInvalidRequest);
 
   //Transitions from LandmarkRegistrationErrorSet
@@ -108,22 +108,22 @@ Landmark3DRegistrationErrorEstimator::
 
   //Transitions from TargetPointSet
   igstkAddTransitionMacro( TargetPointSet,
-                          EstimateTargetPointRegistrationError, 
+                          EstimateTargetPointRegistrationError,
                           AttemptingToEstimateTargetRegstirationError,
                           EstimateTargetPointRegistrationError );
   igstkAddTransitionMacro( TargetPointSet,
-                           TargetPoint, 
+                           TargetPoint,
                           TargetPointSet,
                           SetTargetPoint );
   igstkAddTransitionMacro( TargetPointSet,
-                           GetTargetPointRegistrationErrorEstimate, 
+                           GetTargetPointRegistrationErrorEstimate,
                            TargetPointSet,
                            ReportInvalidRequest );
   igstkAddTransitionMacro( TargetPointSet,
-                           LandmarkContainer, 
+                           LandmarkContainer,
                            TargetPointSet,
                            ReportInvalidRequest );
-   
+
 
   //Transitions from AttemptingToEstimateTargetRegstirationError
   igstkAddTransitionMacro( AttemptingToEstimateTargetRegstirationError,
@@ -136,13 +136,13 @@ Landmark3DRegistrationErrorEstimator::
                           TargetPointSet,
                         ReportFailureInTargePointRegistrationErrorEstimation );
 
-  //Transitions from TargetRegistrationErrorEstimated 
-  igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
+  //Transitions from TargetRegistrationErrorEstimated
+  igstkAddTransitionMacro( TargetRegistrationErrorEstimated,
                           GetTargetPointRegistrationErrorEstimate,
                           TargetRegistrationErrorEstimated,
                           GetTargetPointRegistrationErrorEstimate );
 
-  igstkAddTransitionMacro( TargetRegistrationErrorEstimated, 
+  igstkAddTransitionMacro( TargetRegistrationErrorEstimated,
                            TargetPoint,
                            TargetPointSet,
                            SetTargetPoint );
@@ -154,17 +154,17 @@ Landmark3DRegistrationErrorEstimator::
   // Finish the programming and get ready to run
   m_StateMachine.SetReadyToRun();
 
-} 
+}
 
 /** Destructor */
-Landmark3DRegistrationErrorEstimator::~Landmark3DRegistrationErrorEstimator()  
+Landmark3DRegistrationErrorEstimator::~Landmark3DRegistrationErrorEstimator()
 {
 
 }
 
 /** RequestSetLandmarkContainer method is used to set the landmark container */
-void 
-Landmark3DRegistrationErrorEstimator::RequestSetLandmarkContainer( 
+void
+Landmark3DRegistrationErrorEstimator::RequestSetLandmarkContainer(
                             const LandmarkContainerType & landmarkContainer )
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
@@ -174,19 +174,19 @@ Landmark3DRegistrationErrorEstimator::RequestSetLandmarkContainer(
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetLandmarkContainer method is used by the state machine to 
+/** SetLandmarkContainer method is used by the state machine to
  *  set the landmark container */
-void 
+void
 Landmark3DRegistrationErrorEstimator::SetLandmarkContainerProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "SetLandmarkContainerProcessing called...\n");
-  this->m_LandmarkContainer= this->m_LandmarkContainerToBeSet; 
+  this->m_LandmarkContainer= this->m_LandmarkContainerToBeSet;
 }
 
-/** RequestSetLandmarkRegistrationError method is used to set 
+/** RequestSetLandmarkRegistrationError method is used to set
  *  the landmark container */
-void 
+void
 Landmark3DRegistrationErrorEstimator
 ::RequestSetLandmarkRegistrationError( const ErrorType & error )
 {
@@ -197,18 +197,18 @@ Landmark3DRegistrationErrorEstimator
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetLandmarkRegistrationErrorProcessing method is used 
+/** SetLandmarkRegistrationErrorProcessing method is used
  *  by the state machine to set the landmark registration error */
-void 
+void
 Landmark3DRegistrationErrorEstimator::SetLandmarkRegistrationErrorProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "SetLandmarkRegistrationErrorProcessing called...\n");
-  this->m_LandmarkRegistrationError = this->m_LandmarkRegistrationErrorToBeSet; 
+  this->m_LandmarkRegistrationError = this->m_LandmarkRegistrationErrorToBeSet;
 }
 
 /** RequestSetTargetPoint is used to set the target point location */
-void 
+void
 Landmark3DRegistrationErrorEstimator
 ::RequestSetTargetPoint( const TargetPointType & targetpoint )
 {
@@ -219,14 +219,14 @@ Landmark3DRegistrationErrorEstimator
   this->m_StateMachine.ProcessInputs();
 }
 
-/** SetTargetPointProcessing method is used by the state machine to 
+/** SetTargetPointProcessing method is used by the state machine to
  *  set the target point */
-void 
+void
 Landmark3DRegistrationErrorEstimator::SetTargetPointProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "SetTargetPointProcessing called...\n");
-  this->m_TargetPoint= this->m_TargetPointToBeSet; 
+  this->m_TargetPoint= this->m_TargetPointToBeSet;
 }
 
 
@@ -242,14 +242,14 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
   typedef itk::Vector<double,4>                   AugmentedVectorType;
 
   MatrixType                                      covarianceMatrix;
-   
+
   PointsContainerConstIterator                    pointItr;
-   
+
   VectorType                                      landmarkVector;
   VectorType                                      landmarkCentered;
-  
+
   landmarkVector.Fill(0.0);
-   
+
   pointItr  = m_LandmarkContainer.begin();
   while( pointItr != m_LandmarkContainer.end() )
     {
@@ -309,38 +309,38 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
 
   for(unsigned int ic=0; ic<3; ic++)
     {
-    this->m_LandmarkCentroid[ic]  = landmarkVector[ic]  / 
+    this->m_LandmarkCentroid[ic]  = landmarkVector[ic]  /
                                     this->m_LandmarkContainer.size();
-    } 
+    }
 }
 
 /** Compute RMS distance of landmarks from the principal axes */
 void Landmark3DRegistrationErrorEstimator::
      ComputeRMSDistanceLandmarksFromPrincipalAxes()
 {
-  
+
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeRMSDistanceLandmarksFromPrincipalAxes called...\n");
 
   typedef itk::Vector< double, 3 >                VectorType;
-  typedef itk::Matrix< double, 3, 3 >             MatrixType; 
-  typedef double                                  DistanceType; 
-  
+  typedef itk::Matrix< double, 3, 3 >             MatrixType;
+  typedef double                                  DistanceType;
+
   PointsContainerConstIterator                    pointItr;
   VectorType                                      landmarkVector;
   MatrixType                                      principalAxesMatrix;
   VectorType                                      principalAxes1;
   VectorType                                      principalAxes2;
   VectorType                                      principalAxes3;
-    
-  for ( unsigned int i=0; i<3; i++ ) 
+
+  for ( unsigned int i=0; i<3; i++ )
     {
-    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0]; 
-    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1]; 
-    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2]; 
+    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0];
+    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1];
+    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2];
     }
-  
-  // Normalize the principal axes 
+
+  // Normalize the principal axes
   VectorType        normalizedPrincipalAxes1;
   VectorType        normalizedPrincipalAxes2;
   VectorType        normalizedPrincipalAxes3;
@@ -354,47 +354,47 @@ void Landmark3DRegistrationErrorEstimator::
   normalizedPrincipalAxes3.Normalize();
 
   landmarkVector.Fill(0.0);
- 
-  // Vector from landmark point to landmark centroid  
+
+  // Vector from landmark point to landmark centroid
   VectorType                                       differenceVector;
- 
+
   //  Distance from the landmark point to the principal axes
   DistanceType    distanceFromLandmarkPointToPrinciaplAxes1 = 0.0;
   DistanceType    distanceFromLandmarkPointToPrinciaplAxes2 = 0.0;
   DistanceType    distanceFromLandmarkPointToPrinciaplAxes3 = 0.0;
-  
+
   pointItr  = m_LandmarkContainer.begin();
   while( pointItr != m_LandmarkContainer.end() )
     {
     differenceVector[0] = (*pointItr)[0] - this->m_LandmarkCentroid[0];
     differenceVector[1] = (*pointItr)[1] - this->m_LandmarkCentroid[1];
     differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
-   
-    distanceFromLandmarkPointToPrinciaplAxes1 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1, 
-                                          differenceVector ).GetNorm() ); 
-    distanceFromLandmarkPointToPrinciaplAxes2 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2, 
-                                          differenceVector ).GetNorm() ); 
-    distanceFromLandmarkPointToPrinciaplAxes3 += 
-        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3, 
-                                          differenceVector ).GetNorm() ); 
+
+    distanceFromLandmarkPointToPrinciaplAxes1 +=
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1,
+                                          differenceVector ).GetNorm() );
+    distanceFromLandmarkPointToPrinciaplAxes2 +=
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2,
+                                          differenceVector ).GetNorm() );
+    distanceFromLandmarkPointToPrinciaplAxes3 +=
+        vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3,
+                                          differenceVector ).GetNorm() );
     ++pointItr;
     }
 
-  this->m_RMSDistanceFromLandmarkToPrincipalAxes[0] = 
-        sqrt( distanceFromLandmarkPointToPrinciaplAxes1 / 
+  this->m_RMSDistanceFromLandmarkToPrincipalAxes[0] =
+        sqrt( distanceFromLandmarkPointToPrinciaplAxes1 /
                                                  m_LandmarkContainer.size() );
-  this->m_RMSDistanceFromLandmarkToPrincipalAxes[1] = 
+  this->m_RMSDistanceFromLandmarkToPrincipalAxes[1] =
         sqrt( distanceFromLandmarkPointToPrinciaplAxes2 /
                                                  m_LandmarkContainer.size() );
-  this->m_RMSDistanceFromLandmarkToPrincipalAxes[2] = 
-        sqrt( distanceFromLandmarkPointToPrinciaplAxes3 / 
+  this->m_RMSDistanceFromLandmarkToPrincipalAxes[2] =
+        sqrt( distanceFromLandmarkPointToPrinciaplAxes3 /
                                                  m_LandmarkContainer.size() );
-  
+
 }
 
-/** RequestEstimateTargetPointRegistrationError is a public method 
+/** RequestEstimateTargetPointRegistrationError is a public method
  *  to request error parameters computation */
 void
 Landmark3DRegistrationErrorEstimator
@@ -403,7 +403,7 @@ Landmark3DRegistrationErrorEstimator
 
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "RequestEstimateTargetPointRegistrationError called...\n");
- 
+
   igstkPushInputMacro( EstimateTargetPointRegistrationError );
   this->m_StateMachine.ProcessInputs();
 }
@@ -411,7 +411,7 @@ Landmark3DRegistrationErrorEstimator
 
 /** The "ComputeErrorParameters" method calculates all the rigid body
  *  registration error parameters */
-void 
+void
 Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
@@ -422,7 +422,7 @@ Landmark3DRegistrationErrorEstimator:: ComputeErrorParameters()
   this->ComputeRMSDistanceLandmarksFromPrincipalAxes();
 }
 
-/** The "EstimateTargetRegistrationError" method estimates 
+/** The "EstimateTargetRegistrationError" method estimates
  *  target signal ( sample point ) registration error */
 void Landmark3DRegistrationErrorEstimator
 ::EstimateTargetPointRegistrationErrorProcessing( )
@@ -430,18 +430,18 @@ void Landmark3DRegistrationErrorEstimator
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "EstimateTargetRegistrationError called...\n");
 
-  //First, Compute the error parameters 
+  //First, Compute the error parameters
   this->ComputeErrorParameters();
-  
+
   typedef itk::Vector< double, 3 >                VectorType;
-  typedef itk::Matrix< double, 3, 3 >             MatrixType; 
-  typedef double                                  DistanceType; 
-  
+  typedef itk::Matrix< double, 3, 3 >             MatrixType;
+  typedef double                                  DistanceType;
+
   MatrixType                                      principalAxesMatrix;
   VectorType                                      principalAxes1;
   VectorType                                      principalAxes2;
   VectorType                                      principalAxes3;
-  
+
   //  Distance vector from target point to the principal axes
   VectorType                           distanceFromTargetPointToPrincipalAxes;
 
@@ -450,21 +450,21 @@ void Landmark3DRegistrationErrorEstimator
 
   differenceVector = this->m_TargetPoint - this->m_LandmarkCentroid;
 
-  for ( unsigned int i=0; i<3; i++ ) 
+  for ( unsigned int i=0; i<3; i++ )
     {
-    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0]; 
-    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1]; 
-    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2]; 
+    principalAxes1[i] = m_LandmarkPrincipalAxes[i][0];
+    principalAxes2[i] = m_LandmarkPrincipalAxes[i][1];
+    principalAxes3[i] = m_LandmarkPrincipalAxes[i][2];
     }
-  
-  // Normalize the principal axes 
+
+  // Normalize the principal axes
   VectorType   normalizedPrincipalAxes1;
   VectorType   normalizedPrincipalAxes2;
   VectorType   normalizedPrincipalAxes3;
 
   normalizedPrincipalAxes1 = principalAxes1;
-  normalizedPrincipalAxes2 = principalAxes1;
-  normalizedPrincipalAxes3 = principalAxes1;
+  normalizedPrincipalAxes2 = principalAxes2;
+  normalizedPrincipalAxes3 = principalAxes3;
 
   normalizedPrincipalAxes1.Normalize();
   normalizedPrincipalAxes2.Normalize();
@@ -472,55 +472,55 @@ void Landmark3DRegistrationErrorEstimator
 
 
   // calculate the distance from the target point to the principal axes
-  distanceFromTargetPointToPrincipalAxes[0] = 
-               itk::CrossProduct ( normalizedPrincipalAxes1, 
-                                   differenceVector ).GetNorm(); 
-  distanceFromTargetPointToPrincipalAxes[1] = 
-               itk::CrossProduct ( normalizedPrincipalAxes2, 
-                                   differenceVector ).GetNorm(); 
-  distanceFromTargetPointToPrincipalAxes[2] = 
-               itk::CrossProduct ( normalizedPrincipalAxes3, 
-                                   differenceVector ).GetNorm(); 
+  distanceFromTargetPointToPrincipalAxes[0] =
+               itk::CrossProduct ( normalizedPrincipalAxes1,
+                                   differenceVector ).GetNorm();
+  distanceFromTargetPointToPrincipalAxes[1] =
+               itk::CrossProduct ( normalizedPrincipalAxes2,
+                                   differenceVector ).GetNorm();
+  distanceFromTargetPointToPrincipalAxes[2] =
+               itk::CrossProduct ( normalizedPrincipalAxes3,
+                                   differenceVector ).GetNorm();
 
-  // target error parameter 
+  // target error parameter
   ErrorType                      targetRegistrationError = 0.0;
- 
-  for( unsigned int i=0; i<3; i++ ) 
+
+  for( unsigned int i=0; i<3; i++ )
     {
-    targetRegistrationError += 
-           vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) / 
-           vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] ); 
+    targetRegistrationError +=
+           vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) /
+           vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] );
     }
 
   targetRegistrationError *= (1.0/3.0);
   targetRegistrationError += 1.0;
-  targetRegistrationError *= ( vnl_math_sqr( 
-                              this->m_LandmarkRegistrationError ) ) / 
+  targetRegistrationError *= ( vnl_math_sqr(
+                              this->m_LandmarkRegistrationError ) ) /
                               ( this->m_LandmarkContainer.size() - 2 );
 
   this->m_TargetPointRegistrationError = targetRegistrationError;
-  
+
   igstkPushInputMacro( TargetPointRegistrationErrorEstimationSuccess );
   this->m_StateMachine.ProcessInputs();
 }
 
-/** GetTargetPointRegistrationErrorEstimate method requests the target point 
+/** GetTargetPointRegistrationErrorEstimate method requests the target point
  *  registration error */
-void 
+void
 Landmark3DRegistrationErrorEstimator
 ::RequestGetTargetPointRegistrationErrorEstimate()
 {
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "GetTargetPointRegistrationErrorEstimate called...\n");
- 
+
   igstkPushInputMacro( GetTargetPointRegistrationErrorEstimate );
   this->m_StateMachine.ProcessInputs();
 }
 
 
-/** GetTargetPointRegistrationError method throws an event loaded with the 
+/** GetTargetPointRegistrationError method throws an event loaded with the
  *  landmark registration error */
-void 
+void
 Landmark3DRegistrationErrorEstimator
 ::GetTargetPointRegistrationErrorEstimateProcessing()
 {
@@ -532,7 +532,7 @@ Landmark3DRegistrationErrorEstimator
   this->InvokeEvent( event );
 }
 
-/** The ReportFailureInTargePointRegistrationErrorEstimationProcessing 
+/** The ReportFailureInTargePointRegistrationErrorEstimationProcessing
  *  reports success in error parameters computation */
 void
 Landmark3DRegistrationErrorEstimator
@@ -542,7 +542,7 @@ Landmark3DRegistrationErrorEstimator
         "ReportFailureInTargePointRegistrationErrorEstimation called ...\n" );
 }
 
-/** The ReportSuccessInTargetPointRegistrationErrorEstimation reports 
+/** The ReportSuccessInTargetPointRegistrationErrorEstimation reports
  *  success in target point registration error compuation */
 void
 Landmark3DRegistrationErrorEstimator
@@ -553,7 +553,7 @@ Landmark3DRegistrationErrorEstimator
                 Processing called ...\n" );
 }
 
-/** Report that an invalid or suspicious operation has been requested. This 
+/** Report that an invalid or suspicious operation has been requested. This
  * may mean that an error condition has arised in one of the components that
  * interact with this class. */
 void Landmark3DRegistrationErrorEstimator::ReportInvalidRequestProcessing()
@@ -562,7 +562,7 @@ void Landmark3DRegistrationErrorEstimator::ReportInvalidRequestProcessing()
 }
 
 /** Print Self function */
-void 
+void
 Landmark3DRegistrationErrorEstimator::PrintSelf( std::ostream& os,
                                              itk::Indent indent ) const
 {
