@@ -52,12 +52,17 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
   serverSocket->CreateServer(port);
 
   igtl::Socket::Pointer socket;
+
+  unsigned int countReception = 0; 
+  unsigned int countPostReceptionNullSocket = 0; 
   
+  socket = serverSocket->WaitForConnection(10000);
+
+  bool wantToBreak = false; 
   while (1)
     {
     //------------------------------------------------------------
     // Waiting for Connection
-    socket = serverSocket->WaitForConnection(1000);
     
     if (socket.IsNotNull()) // if client connected
       {
@@ -87,6 +92,7 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
         if (strcmp(headerMsg->GetDeviceType(), "TRANSFORM") == 0)
           {
           ReceiveTransform(socket, headerMsg);
+          ++countReception;
           }
         else if (strcmp(headerMsg->GetDeviceType(), "POSITION") == 0)
           {
@@ -106,13 +112,27 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
           socket->Skip(headerMsg->GetBodySizeToRead(), 0);
           }
         }
+      
+        if ((countReception >= 99)||((countReception > 0)&& (++countPostReceptionNullSocket >= 10 )))
+        {
+        wantToBreak = true; 
+        break;
+        }
+      }
+    if (wantToBreak)
+      {
+      break;
       }
     }
+
     
   //------------------------------------------------------------
-  // Close connection (The example code never reachs to this section ...)
-  
+  // Close connection (The example code never reachs to this section
+  // ...)
+
   socket->CloseSocket();
+  
+  return 0; 
 
 }
 
