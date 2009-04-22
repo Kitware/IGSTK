@@ -26,7 +26,7 @@
 #include "igstkAuroraTracker.h"
 #include "igstkAscensionTracker.h"
 
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
 #include "igstkMicronTracker.h"
 #endif
 
@@ -1205,7 +1205,7 @@ TrackerController::TrackerInitializeProcessing()
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AscensionInitialize );
       }
-   #ifdef IGSTK_USE_MicronTracker
+   #ifdef IGSTKSandbox_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
       ( this->m_TmpTrackerConfiguration ) )
       {
@@ -1458,6 +1458,8 @@ TrackerController::PolarisVicraInitializeProcessing()
         currentTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1481,6 +1483,8 @@ TrackerController::PolarisVicraInitializeProcessing()
         currentTool->RemoveObserver( observerID );
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1565,6 +1569,8 @@ TrackerController::PolarisHybridInitializeProcessing()
         trackerTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1596,6 +1602,8 @@ TrackerController::PolarisHybridInitializeProcessing()
         trackerTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1721,6 +1729,8 @@ TrackerController::AscensionInitializeProcessing()
         currentTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1743,6 +1753,8 @@ TrackerController::AscensionInitializeProcessing()
         currentTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1817,6 +1829,8 @@ TrackerController::AuroraInitializeProcessing()
         currentTool->RemoveObserver( observerID ); 
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1839,6 +1853,8 @@ TrackerController::AuroraInitializeProcessing()
         currentTool->RequestAttachToTracker( tracker );
         if( attachErrorObserver->GotToolAttachError() )
           {
+          this->m_ErrorMessage = "Failed to connect tool to tracker.";
+          this->m_SerialCommunication->CloseCommunication();
           igstkPushInputMacro( Failed );
           this->m_StateMachine.ProcessInputs();
           return;
@@ -1852,7 +1868,7 @@ TrackerController::AuroraInitializeProcessing()
 }
 
 
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
 
 MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
     const MicronToolConfiguration *toolConfiguration )
@@ -1872,7 +1888,7 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
 
 void TrackerController::MicronInitializeProcessing()
 {
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTKSandbox_USE_MicronTracker
                   //create tracker
   igstk::MicronTracker::Pointer tracker = igstk::MicronTracker::New();
   this->m_Tracker = tracker; 
@@ -1932,6 +1948,7 @@ void TrackerController::MicronInitializeProcessing()
       trackerTool->RemoveObserver( observerID ); 
       if( attachErrorObserver->GotToolAttachError() )
         {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
         igstkPushInputMacro( Failed );
         this->m_StateMachine.ProcessInputs();
         return;
@@ -1954,6 +1971,7 @@ void TrackerController::MicronInitializeProcessing()
       trackerTool->RequestAttachToTracker( tracker );
       if( attachErrorObserver->GotToolAttachError() )
         {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
         igstkPushInputMacro( Failed );
         this->m_StateMachine.ProcessInputs();
         return;
