@@ -26,6 +26,7 @@
 #include "igtlServerSocket.h"
 #include "igtlStatusMessage.h"
 #include "igtlPositionMessage.h"
+#include "igtlTimeStamp.h"
 
 int ReceiveTransform(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
 int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
@@ -53,18 +54,28 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
 
   igtl::Socket::Pointer socket;
 
+  igtl::TimeStamp::Pointer timeStamp;
+  timeStamp = igtl::TimeStamp::New();
+  timeStamp->GetTime(); 
+  unsigned int startSec= timeStamp->GetSecond();
+  
   unsigned int countReception = 0; 
   unsigned int countPostReceptionNullSocket = 0; 
-  
-  socket = serverSocket->WaitForConnection(10000);
+
+  //In this example there is no connection. Normally wait longer. 
+  socket = serverSocket->WaitForConnection(10); 
 
   bool wantToBreak = false; 
   while (1)
     {
     //------------------------------------------------------------
     // Waiting for Connection
-    
-    if (socket.IsNotNull()) // if client connected
+
+      timeStamp->GetTime(); 
+      unsigned int currentSec= timeStamp->GetSecond();
+      unsigned int elapsedSec= currentSec - startSec;
+
+      if (socket.IsNotNull()) // if client connected
       {
       // Create a message buffer to receive header
       igtl::MessageHeader::Pointer headerMsg;
@@ -113,13 +124,15 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
           }
         }
       
-        if ((countReception >= 99)||((countReception > 0)&& (++countPostReceptionNullSocket >= 10 )))
+        if ((countReception >= 99)||
+            ((countReception > 0)&& (++countPostReceptionNullSocket >= 10 )))
         {
         wantToBreak = true; 
         break;
         }
       }
-    if (wantToBreak)
+     
+    if ((wantToBreak)||( elapsedSec >= 10))
       {
       break;
       }
@@ -130,7 +143,10 @@ int igstkOpenIGTLinkReceiverTest(int argc, char* argv[])
   // Close connection (The example code never reachs to this section
   // ...)
 
-  socket->CloseSocket();
+  if (socket.IsNotNull())
+    {
+    socket->CloseSocket();
+    }
   
   return 0; 
 
