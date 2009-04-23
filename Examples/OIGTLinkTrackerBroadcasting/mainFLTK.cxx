@@ -1,8 +1,8 @@
-#include "OIGTLinkTrackingBroadcasterGUI.h"
+#include "OpenIGTLinkTrackingBroadcasterGUI.h"
 
 int main(int argc, char *argv[])
 {
-  OIGTLinkTrackingBroadcasterGUI app;
+  OpenIGTLinkTrackingBroadcasterGUI app;
 
                         //required by IGSTK for the time stamping used by the tracker
   igstk::RealTimeClock::Initialize();

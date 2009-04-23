@@ -1,14 +1,14 @@
-PROJECT(OIGTLinkConfigurationReaders)
+PROJECT(OpenIGTLinkConfigurationReaders)
   
   
-SET(OIGTLinkConfigurationReaders_SRCS
-  igstkOIGTLinkTrackerConfigurationXMLFileReader.cxx
-  igstkOIGTLinkTrackerConfigurationFileReader.cxx
+SET(OpenIGTLinkConfigurationReaders_SRCS
+  igstkOpenIGTLinkTrackerConfigurationXMLFileReader.cxx
+  igstkOpenIGTLinkTrackerConfigurationFileReader.cxx
 )
   
 INCLUDE_DIRECTORIES(
-  ${OIGTLinkConfigurationReaders_SOURCE_DIR}
-  ${OIGTLinkConfigurationReaders_BINARY_DIR}
+  ${OpenIGTLinkConfigurationReaders_SOURCE_DIR}
+  ${OpenIGTLinkConfigurationReaders_BINARY_DIR}
   ${CalibrationRegistrationLoading_SOURCE_DIR}
   ${TrackerConfiguration_SOURCE_DIR}
   ${TrackerConfiguration_BINARY_DIR}
@@ -16,7 +16,7 @@ INCLUDE_DIRECTORIES(
   ${ConfigurationFileReaders_BINARY_DIR}
   )
 
-ADD_LIBRARY(OIGTLinkConfigurationReaders ${OIGTLinkConfigurationReaders_SRCS})
-TARGET_LINK_LIBRARIES(OIGTLinkConfigurationReaders TrackerConfiguration CalibrationRegistrationLoading ConfigurationFileReaders IGSTKSandbox)
+ADD_LIBRARY(OpenIGTLinkConfigurationReaders ${OpenIGTLinkConfigurationReaders_SRCS})
+TARGET_LINK_LIBRARIES(OpenIGTLinkConfigurationReaders TrackerConfiguration CalibrationRegistrationLoading ConfigurationFileReaders IGSTKSandbox)
 
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    OIGTLinkTrackingBroadcaster.cxx
+  Module:    OpenIGTLinkTrackingBroadcaster.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -14,12 +14,13 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#include "OIGTLinkTrackingBroadcaster.h"
+#include "OpenIGTLinkTrackingBroadcaster.h"
 
-OIGTLinkTrackingBroadcaster::OIGTLinkTrackingBroadcaster( 
+OpenIGTLinkTrackingBroadcaster::OpenIGTLinkTrackingBroadcaster( 
 std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
 {
-  igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType 
+  igstk::OpenIGTLinkTrackerConfigurationFileReader::
+    OpenIGTLinkConfigurationDataType
                     //if there is an error reading a recognized tracker's 
                     //configuration an exception is thrown , otherwise the method
                     //returns NULL
@@ -84,7 +85,8 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
       requestNonReferenceToolsObserver->GetToolList();
     igstk::TrackerController::ToolContainerType::iterator toolNamesAndToolsIt;
     //pair the tracker tools with the oigtlink data
-    igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkDataType::iterator 
+    igstk::OpenIGTLinkTrackerConfigurationFileReader::
+      OpenIGTLinkDataType::iterator
       toolNamesAndDestinationsIt, toolNamesAndDestinationsEnd;
 
     toolNamesAndDestinationsIt =
@@ -117,7 +119,7 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
 
 
 void 
-OIGTLinkTrackingBroadcaster::StartTracking()
+OpenIGTLinkTrackingBroadcaster::StartTracking()
 {
   StartTrackingErrorObserver::Pointer steo= 
     StartTrackingErrorObserver::New();
@@ -136,7 +138,7 @@ OIGTLinkTrackingBroadcaster::StartTracking()
   
 
 void 
-OIGTLinkTrackingBroadcaster::StopTracking()
+OpenIGTLinkTrackingBroadcaster::StopTracking()
 {
   StopTrackingErrorObserver::Pointer steo= 
     StopTrackingErrorObserver::New();
@@ -154,8 +156,8 @@ OIGTLinkTrackingBroadcaster::StopTracking()
 }
 
 
-igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType 
-* OIGTLinkTrackingBroadcaster::GetTrackerConfiguration( 
+igstk::OpenIGTLinkTrackerConfigurationFileReader::OpenIGTLinkConfigurationDataType 
+* OpenIGTLinkTrackingBroadcaster::GetTrackerConfiguration( 
   std::string &configurationFileName) throw ( ExceptionWithMessage )
 {
   const unsigned int NUM_TRACKER_TYPES = 5;
@@ -173,32 +175,33 @@ igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType
     igstk::MicronConfigurationXMLFileReader::New();
 
 
-  igstk::OIGTLinkTrackerConfigurationFileReader::Pointer trackerConfigReader = 
-    igstk::OIGTLinkTrackerConfigurationFileReader::New();
+  igstk::OpenIGTLinkTrackerConfigurationFileReader::Pointer trackerConfigReader =
+    igstk::OpenIGTLinkTrackerConfigurationFileReader::New();
 
                 //need to observe if the request read succeeds or fails
                 //there is a third option that the read is invalid, if the
                 //file name or xml reader weren't set
-  igstk::OIGTLinkTrackerConfigurationFileReader::
+  igstk::OpenIGTLinkTrackerConfigurationFileReader::
     ReadFailSuccessObserver::Pointer 
-    rfso = igstk::OIGTLinkTrackerConfigurationFileReader::
+    rfso = igstk::OpenIGTLinkTrackerConfigurationFileReader::
     ReadFailSuccessObserver::New();
   trackerConfigReader->AddObserver(
-     igstk::OIGTLinkTrackerConfigurationFileReader::ReadSuccessEvent(),
+     igstk::OpenIGTLinkTrackerConfigurationFileReader::ReadSuccessEvent(),
      rfso );
   trackerConfigReader->AddObserver(
-     igstk::OIGTLinkTrackerConfigurationFileReader::ReadFailureEvent(),
+     igstk::OpenIGTLinkTrackerConfigurationFileReader::ReadFailureEvent(),
      rfso );
   trackerConfigReader->AddObserver(
-     igstk::OIGTLinkTrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(),
+     igstk::OpenIGTLinkTrackerConfigurationFileReader::
+     UnexpectedTrackerTypeEvent(),
      rfso );
 
              //setting the file name and reader always succeeds so I don't
              //observe for success event
   trackerConfigReader->RequestSetFileName( configurationFileName );
 
-  OIGTLinkTrackerConfigurationObserver::Pointer tco = 
-    OIGTLinkTrackerConfigurationObserver::New();
+  OpenIGTLinkTrackerConfigurationObserver::Pointer tco = 
+    OpenIGTLinkTrackerConfigurationObserver::New();
 
   for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
     {
@@ -221,20 +224,20 @@ igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType
       {
       //get the configuration data from the reader
       trackerConfigReader->AddObserver( 
-        igstk::OIGTLinkTrackerConfigurationFileReader::
-        OIGTLinkConfigurationDataEvent(),
+        igstk::OpenIGTLinkTrackerConfigurationFileReader::
+        OpenIGTLinkConfigurationDataEvent(),
         tco );
       trackerConfigReader->RequestGetData();
 
-      if( tco->GotOIGTLinkTrackerConfiguration() )
+      if( tco->GotOpenIGTLinkTrackerConfiguration() )
         {
-        igstk::OIGTLinkTrackerConfigurationFileReader::
-          OIGTLinkConfigurationDataType *returnedResult =
-          new igstk::OIGTLinkTrackerConfigurationFileReader::
-          OIGTLinkConfigurationDataType();
-        igstk::OIGTLinkTrackerConfigurationFileReader::
-          OIGTLinkConfigurationDataType *
-          result = tco->GetOIGTLinkTrackerConfiguration();
+        igstk::OpenIGTLinkTrackerConfigurationFileReader::
+          OpenIGTLinkConfigurationDataType *returnedResult =
+          new igstk::OpenIGTLinkTrackerConfigurationFileReader::
+          OpenIGTLinkConfigurationDataType();
+        igstk::OpenIGTLinkTrackerConfigurationFileReader::
+          OpenIGTLinkConfigurationDataType *
+          result = tco->GetOpenIGTLinkTrackerConfiguration();
 
         returnedResult->m_TrackerConfiguration = result->m_TrackerConfiguration;
         returnedResult->m_ToolNamesAndConnections.insert(

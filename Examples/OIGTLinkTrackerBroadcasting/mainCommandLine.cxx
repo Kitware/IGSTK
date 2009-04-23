@@ -1,4 +1,4 @@
-#include "OIGTLinkTrackingBroadcaster.h"
+#include "OpenIGTLinkTrackingBroadcaster.h"
 
 int main( int argc, char *argv[] )
 {
@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
   try 
   {
     std::string s = argv[1] ;
-    OIGTLinkTrackingBroadcaster *b = new OIGTLinkTrackingBroadcaster( s );
+    OpenIGTLinkTrackingBroadcaster *b = new OpenIGTLinkTrackingBroadcaster( s );
     b->StartTracking();
     while( 1 ) 
     {

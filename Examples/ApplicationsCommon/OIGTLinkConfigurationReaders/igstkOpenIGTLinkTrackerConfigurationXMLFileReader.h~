@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkOIGTLinkTrackerConfigurationXMLFileReader.h
+  Module:    igstkOpenIGTLinkTrackerConfigurationXMLFileReader.h~
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
