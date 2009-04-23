@@ -37,7 +37,7 @@ OIGTLinkTrackerConfigurationFileReader::
   igstkAddStateMacro( AttemptingRead );
   igstkAddStateMacro( HaveData );
 
-           //define the state machines inputs
+  //define the state machines inputs
   igstkAddInputMacro( SetReader );
   igstkAddInputMacro( SetFileName );
   igstkAddInputMacro( Read );
@@ -45,7 +45,7 @@ OIGTLinkTrackerConfigurationFileReader::
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
 
-            //define the state machine's transitions
+  //define the state machine's transitions
   igstkAddTransitionMacro( Idle,
                            SetReader,
                            AttemptingSetReader,
@@ -296,10 +296,10 @@ OIGTLinkTrackerConfigurationFileReader::
                            HaveData,
                            ReportInvalidRequest );  
 
-          //set the initial state of the state machine
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();  
 }
 
@@ -371,16 +371,16 @@ void
 OIGTLinkTrackerConfigurationFileReader::SetReaderProcessing()
 {
   if( this->m_TmpXMLFileReader.IsNull() )
-  {
+    {
     igstkPushInputMacro( Failure );
-  }
+    }
   else
-  {
+    {
     this->m_XMLFileReader = this->m_TmpXMLFileReader;
     this->m_TmpXMLFileReader = NULL;
     this->m_ReadFailureErrorMessage.clear();
     igstkPushInputMacro( Success );
-  }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -409,15 +409,15 @@ void
 OIGTLinkTrackerConfigurationFileReader::SetFileNameProcessing()
 {
   if( this->m_TmpFileName.empty() )
-  {
+    {
     igstkPushInputMacro( Failure );
-  }
+    }
   else
-  {
+    {
     this->m_FileName = this->m_TmpFileName;
     this->m_TmpFileName.clear();
     igstkPushInputMacro( Success );
-  }
+    }
   this->m_StateMachine.ProcessInputs();
 }
 
@@ -449,23 +449,23 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
             //than zero), and is not a directory
   if(itksys::SystemTools::FileLength( this->m_FileName.c_str() ) == 0 ||
     itksys::SystemTools::FileIsDirectory( this->m_FileName.c_str() ) )
-  {
+    {
     std::ostringstream msg;
     msg<<"File ("<<this->m_FileName<<") does not exist or is a directory";
     this->m_ReadFailureErrorMessage = msg.str();
-    igstkPushInputMacro( Failure );    
-  }
+    igstkPushInputMacro( Failure );
+    }
   else
-  {
+    {
     this->m_XMLFileReader->SetFilename( this->m_FileName );
     try {       //read the xml file
       this->m_XMLFileReader->GenerateOutputInformation();
-                    //xml reading is successful (no exception generation) even 
-                    //when the file is empty, need to check that the data was
-                    //actually read
+      //xml reading is successful (no exception generation) even 
+      //when the file is empty, need to check that the data was
+      //actually read
  
       if( this->m_XMLFileReader->HaveConfigurationData() )
-      {
+        {
         this->m_OIGTLinkTrackerConfiguration.m_TrackerConfiguration = 
           this->m_XMLFileReader->GetTrackerConfigurationData();
               //we have read the standard igstk tracker congifuration
@@ -475,42 +475,42 @@ OIGTLinkTrackerConfigurationFileReader::ReadProcessing()
         oigtLinkXmlReader->SetFilename( this->m_FileName );
         oigtLinkXmlReader->GenerateOutputInformation();
         if( !oigtLinkXmlReader->HaveConfigurationData() )
-        {
+          {
           this->m_ReadFailureErrorMessage = 
             "XML file does not contain openIGTLink configuration data"; 
           igstkPushInputMacro( Failure )
-        }
+          }
         else 
-        {
+          {
           oigtLinkXmlReader->GetOIGTLinkToolConfigurationData( 
             this->m_OIGTLinkTrackerConfiguration.m_ToolNamesAndConnections );
-          igstkPushInputMacro( Success );    
-        }
-      }     //we successfuly read the file, it just didn't contain the data, so
+          igstkPushInputMacro( Success );
+          }
+        }   //we successfuly read the file, it just didn't contain the data, so
             //data loading is considered a failure
       else
-      {
+        {
         this->m_ReadFailureErrorMessage = 
           "XML file does not contain tracker configuration data"; 
-        igstkPushInputMacro( Failure );    
+        igstkPushInputMacro( Failure );
+        }
       }
-    }
     catch( igstk::TrackerConfigurationXMLFileReaderBase::
              UnexpectedTrackerTypeException & )
-    {
+      {
       this->InvokeEvent( UnexpectedTrackerTypeEvent() );
       this->m_ReadFailureErrorMessage = "Unexpected tracker type";
-      igstkPushInputMacro( Failure );    
-    }
-               //an itk exception is thrown if the xml is malformed, and a 
-               //FileFormatException is thrown if the data format is incorrect.
-               //both are decendants of std::exception 
+      igstkPushInputMacro( Failure );
+      }
+      //an itk exception is thrown if the xml is malformed, and a 
+      //FileFormatException is thrown if the data format is incorrect.
+      //both are decendants of std::exception 
     catch( std::exception &e ) 
-    { 
+      { 
       this->m_ReadFailureErrorMessage = e.what();
-      igstkPushInputMacro( Failure );    
+      igstkPushInputMacro( Failure );
+      }
     }
-  }
   this->m_StateMachine.ProcessInputs();
 }
 

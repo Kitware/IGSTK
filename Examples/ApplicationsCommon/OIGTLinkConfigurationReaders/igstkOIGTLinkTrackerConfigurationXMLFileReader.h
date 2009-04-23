@@ -34,19 +34,19 @@ class OIGTLinkTrackerConfigurationXMLFileReader : public itk::XMLReaderBase
 {
 public:
   /**
-   * This is the exception that is thrown if there is a problem with the
+   * \class This is the exception that is thrown if there is a problem with the
    * file format (does not follow the expected format).
    */
   class FileFormatException : public std::exception
-  {
+    {
   public:
     /**
      * Construct an exception with a specifc message.
      */
     FileFormatException(const std::string &errorMessage) 
-    {
+      {
       this->m_ErrorMessage = errorMessage;
-    }
+      }
 
     /**
      * Virtual destructor.
@@ -56,20 +56,20 @@ public:
     /**
      * Get the error message.
      */
-     virtual const char* what() const throw() 
-     {
-       return m_ErrorMessage.c_str();
-     }
+    virtual const char* what() const throw() 
+      {
+      return m_ErrorMessage.c_str();
+      }
   private:
     std::string m_ErrorMessage;
   };
 
-    //standard typedefs
+  //standard typedefs
   typedef OIGTLinkTrackerConfigurationXMLFileReader    Self;
   typedef itk::XMLReaderBase                           Superclass;
   typedef itk::SmartPointer<Self>                      Pointer;
 
-           //run-time type information (and related methods)
+          //run-time type information (and related methods)
   itkTypeMacro( OIGTLinkTrackerConfigurationXMLFileReader, itk::XMLReaderBase );
 
           //method for creation through the object factory
@@ -97,13 +97,14 @@ public:
   virtual void CharacterDataHandler( const char *inData, int inLength );
 
   typedef std::pair<std::string, unsigned int> ConnectionDataType;
-  typedef std::map<std::string, std::vector<ConnectionDataType> > OIGTLinkDataType;
+  typedef std::map<std::string, std::vector<ConnectionDataType> >
+    OIGTLinkDataType;
 
   /**
    * Get the map between tool names and ip ports.
    */
   void GetOIGTLinkToolConfigurationData( OIGTLinkDataType 
-    &toolNamesAndConnections );     
+    &toolNamesAndConnections );
     
   bool HaveConfigurationData();
 
@@ -111,9 +112,9 @@ protected:
           //this is the constructor that is called by the factory to 
          //create a new object
   OIGTLinkTrackerConfigurationXMLFileReader() : 
-                                 m_ReadingTrackerConfiguration( false ),                             
-                                 m_ReadingToolConfiguration( false )                                 
-                                 {}
+    m_ReadingTrackerConfiguration( false ),
+    m_ReadingToolConfiguration( false )
+    {}
   virtual ~OIGTLinkTrackerConfigurationXMLFileReader() {}
 
   void ProcessToolName() 
@@ -122,10 +123,10 @@ protected:
   void ProcessToolAttributes( const char **atts );
 
   void ProcessToolConnection() 
-    throw ( FileFormatException );
+  throw ( FileFormatException );
   
   void ProcessToolData()
-    throw ( FileFormatException );
+  throw ( FileFormatException );
 
   bool m_ReadingTrackerConfiguration;
   bool m_ReadingToolConfiguration;
@@ -135,7 +136,7 @@ protected:
   std::string                     m_CurrentToolName;
   std::vector<ConnectionDataType> m_CurrentConnections;
   
-  OIGTLinkDataType m_ToolNamesAndConnections;     
+  OIGTLinkDataType m_ToolNamesAndConnections;
 
 private:
   OIGTLinkTrackerConfigurationXMLFileReader( 

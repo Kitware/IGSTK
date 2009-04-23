@@ -45,32 +45,35 @@ OIGTLinkTrackerConfigurationXMLFileReader::StartElement( const char * name,
   //check for the root of the xml tree
   if( itksys::SystemTools::Strucmp( name, "tracking_system" ) == 0 ) 
     {
-    //there can only be one "tracking_system" per xml file                  
+    //there can only be one "tracking_system" per xml file 
     if( HaveConfigurationData() )
       {
       throw FileFormatException(
-      std::string( "The tag \"tracking_system\" appears multiple times, should only appear once." ) );
+      std::string( "The tag \"tracking_system\" appears multiple times, \
+        should only appear once." ) );
       }
     this->m_ReadingTrackerConfiguration = true;
-  }
+    }
   else if( itksys::SystemTools::Strucmp( name, "tool" ) == 0 )
-  {
+    {
     if( !m_ReadingTrackerConfiguration )
       throw FileFormatException( "Tag not nested correctly in xml structure." );
     if( m_ReadingToolConfiguration )
       throw FileFormatException( "Self nested \"tool\" tag not allowed." );
     else
-    {
+      {
       ProcessToolAttributes( atts );
       this->m_ReadingToolConfiguration = true;
+      }
     }
-  }
   else if( itksys::SystemTools::Strucmp( name, "name" ) == 0 ||
            itksys::SystemTools::Strucmp( name, "send_to" ) == 0 )
-  {
+    {
     if( !m_ReadingToolConfiguration )
+      {
       throw FileFormatException( "Tag not nested correctly in xml structure." );
-  }
+      }
+    }
 }
 
 
@@ -82,14 +85,14 @@ OIGTLinkTrackerConfigurationXMLFileReader::EndElement( const char *name )
   size_t startpos = this->m_CurrentTagData.find_first_not_of(" \t\n\r");
   size_t endpos = this->m_CurrentTagData.find_last_not_of(" \t\n\r");   
   if( startpos == std::string::npos || endpos == std::string::npos )
-  {
+    {
     this->m_CurrentTagData.clear();
-  }
+    }
   else
-  {
+    {
     this->m_CurrentTagData = this->m_CurrentTagData.substr( startpos, 
                                                             endpos-startpos+1 );
-  }
+    }
            //replace all newlines ('\n') and carriage returns ('\r') with space
   std::replace( this->m_CurrentTagData.begin(), 
                 this->m_CurrentTagData.end(), 
@@ -112,7 +115,8 @@ OIGTLinkTrackerConfigurationXMLFileReader::EndElement( const char *name )
                 //specific message with regard to the missing tag(s)
     if( !HaveConfigurationData() )
       {
-      throw FileFormatException( std::string( "Missing information in xml file." ) );
+      throw FileFormatException( std::string(
+        "Missing information in xml file." ) );
       }
     return;
     }
@@ -130,10 +134,10 @@ OIGTLinkTrackerConfigurationXMLFileReader::EndElement( const char *name )
     }
 
   if( itksys::SystemTools::Strucmp( name, "tool" ) == 0 )
-   {
-   this->m_ReadingToolConfiguration = false;
-   ProcessToolData();
-   }
+    {
+    this->m_ReadingToolConfiguration = false;
+    ProcessToolData();
+    }
 }
 
 
@@ -211,9 +215,11 @@ throw ( FileFormatException )
   end = this->m_CurrentConnections.end();
   for(; it!=end; it++)
     {
-      if( (*it).first == connectionData.first &&
-          (*it).second == connectionData.second )
-          return;
+    if( (*it).first == connectionData.first &&
+        (*it).second == connectionData.second )
+      {
+      return;
+      }
     }
   this->m_CurrentConnections.push_back( connectionData );
 }
@@ -224,42 +230,45 @@ OIGTLinkTrackerConfigurationXMLFileReader::ProcessToolData()
 throw ( FileFormatException )
 {
   if( this->m_CurrentToolName.empty() )
+    {
     throw FileFormatException( "\"name\" tag missing for one of the tools." );
+    }
   if( this->m_CurrentConnections.empty()  && !this->m_CurrentToolIsReference )
+    { 
     throw FileFormatException( "\"send_to\" tag missing for one of the tools." );
-
+    }
   OIGTLinkDataType::const_iterator it, end;
   it = this->m_ToolNamesAndConnections.begin();
   end = this->m_ToolNamesAndConnections.end();
 
   //check that both the name and connection data are unique, don't send
   //two data streams to the same socket
-  for(; it !=end ; it++ )
-  {
-    if( it->first == this->m_CurrentToolName )
+  for(; it !=end; it++ )
     {
+    if( it->first == this->m_CurrentToolName )
+      {
       throw FileFormatException( "Non unique tool name given." );
-    }
+      }
     std::vector<ConnectionDataType>::const_iterator it1, it2, end1, end2;
     it1 = this->m_CurrentConnections.begin();
     end1 = this->m_CurrentConnections.end();
     for(; it1 != end1; it1++ )
-    {
+      {
       it2 = it->second.begin();
       end2 = it->second.end();
       for(; it2 != end2; it2++ )
-      {
+        {
         if( it1->first == it2->first &&
             it1->second == it2->second )
-        {
+          {
           std::ostringstream msg;
           msg<<"Tools '"<<it->first<<"' and '"<<this->m_CurrentToolName;
           msg<<"' send data to the same destination.";
           throw FileFormatException( msg.str() );
+          }
         }
       }
     }
-  }
   this->m_ToolNamesAndConnections.insert( 
     std::pair<std::string, std::vector<ConnectionDataType> >
     ( this->m_CurrentToolName, this->m_CurrentConnections ) );
