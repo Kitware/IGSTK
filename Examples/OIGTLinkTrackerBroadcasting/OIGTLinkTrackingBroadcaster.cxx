@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    OIGTLinkTrackingBroadcaster.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include "OIGTLinkTrackingBroadcaster.h"
 
 OIGTLinkTrackingBroadcaster::OIGTLinkTrackingBroadcaster( 
@@ -7,11 +23,12 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
                     //if there is an error reading a recognized tracker's 
                     //configuration an exception is thrown , otherwise the method
                     //returns NULL
-    *oigtLinkTrackerConfiguration = GetTrackerConfiguration( trackerXMLConfigurationFileName );
+    *oigtLinkTrackerConfiguration =
+     GetTrackerConfiguration( trackerXMLConfigurationFileName );
   if( !oigtLinkTrackerConfiguration )
-  {
+    {
     throw ExceptionWithMessage( std::string( "Unknown tracker type." ) );
-  }
+    }
   //initialize the tracker controller, and setup the observers
   this->m_TrackerController = 
     igstk::TrackerController::New();
@@ -23,9 +40,9 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
   this->m_TrackerController->RequestInitialize( 
     oigtLinkTrackerConfiguration->m_TrackerConfiguration );
   if( ieo->GotInitializeError() )
-  {
-    throw ExceptionWithMessage( ieo->GetInitializeError() );      
-  }
+    {
+    throw ExceptionWithMessage( ieo->GetInitializeError() );
+    }
   //to deal with the optional use of a reference we use
   //the "world" coordinate system as our anchor. if there is no
   //reference it is connected as the parent of the tracker 
@@ -44,24 +61,25 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
   this->m_TrackerController->RequestGetReferenceTool();
   //we have a reference
   if( requestReferenceToolObserver->GotTool() )
-  {
+    {
     igstk::TrackerController::ToolEntryType referenceToolData = 
       requestReferenceToolObserver->GetTool();
     referenceToolData.second->RequestSetTransformAndParent( I, world );
-  }
+    }
   else 
-  {
+    {
     this->m_TrackerController->RequestSetParentSpatialObject( I, world );
-  }
+    }
 
   ToolListObserver::Pointer requestNonReferenceToolsObserver = 
     ToolListObserver::New();
-  this->m_TrackerController->AddObserver( igstk::TrackerController::RequestToolsEvent(),
+  this->m_TrackerController->AddObserver(
+    igstk::TrackerController::RequestToolsEvent(),
     requestNonReferenceToolsObserver );
 
   this->m_TrackerController->RequestGetNonReferenceToolList();
   if( requestNonReferenceToolsObserver->GotToolList() )
-  {                   //get the tools from the tracker controller
+    {                   //get the tools from the tracker controller
     igstk::TrackerController::ToolContainerType toolContainer = 
       requestNonReferenceToolsObserver->GetToolList();
     igstk::TrackerController::ToolContainerType::iterator toolNamesAndToolsIt;
@@ -76,23 +94,25 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
 
     for(; toolNamesAndDestinationsIt!=toolNamesAndDestinationsEnd; 
       toolNamesAndDestinationsIt++ )
-    {
-      toolNamesAndToolsIt = toolContainer.find( toolNamesAndDestinationsIt->first );   
-      if( toolNamesAndToolsIt != toolContainer.end() )
       {
+      toolNamesAndToolsIt = toolContainer.find(
+        toolNamesAndDestinationsIt->first );   
+      if( toolNamesAndToolsIt != toolContainer.end() )
+        {
         ToolUpdatedObserver::Pointer updateObserver = ToolUpdatedObserver::New();
         //this method can throw an exception, the user is responsible for
         //dealing with this
         updateObserver->Initialize( toolNamesAndDestinationsIt->first, 
           toolNamesAndToolsIt->second, 
           world, 
-          toolNamesAndDestinationsIt->second );          
+          toolNamesAndDestinationsIt->second );
 
-        toolNamesAndToolsIt->second->AddObserver( igstk::TrackerToolTransformUpdateEvent(), 
+        toolNamesAndToolsIt->second->AddObserver(
+          igstk::TrackerToolTransformUpdateEvent(), 
           updateObserver );
+        } 
       }
     }
-  }
 }
 
 
@@ -109,9 +129,9 @@ OIGTLinkTrackingBroadcaster::StartTracking()
   this->m_TrackerController->RemoveObserver( observerID );
 
   if( steo->GotStartTrackingError() )
-  {
+    {
     throw ExceptionWithMessage( std::string( "Failed to start tracking." ) );
-  }
+    }
 }
   
 
@@ -128,9 +148,9 @@ OIGTLinkTrackingBroadcaster::StopTracking()
   this->m_TrackerController->RemoveObserver( observerID );
 
   if( steo->GotStopTrackingError() )
-  {
+    {
     throw ExceptionWithMessage( std::string( "Failed to stop tracking." ) );
-  }
+    }
 }
 
 
@@ -159,14 +179,19 @@ igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType
                 //need to observe if the request read succeeds or fails
                 //there is a third option that the read is invalid, if the
                 //file name or xml reader weren't set
-  igstk::OIGTLinkTrackerConfigurationFileReader::ReadFailSuccessObserver::Pointer 
-    rfso = igstk::OIGTLinkTrackerConfigurationFileReader::ReadFailSuccessObserver::New();
-  trackerConfigReader->AddObserver( igstk::OIGTLinkTrackerConfigurationFileReader::ReadSuccessEvent(),
-                                    rfso );
-  trackerConfigReader->AddObserver( igstk::OIGTLinkTrackerConfigurationFileReader::ReadFailureEvent(),
-                                    rfso );
-  trackerConfigReader->AddObserver( igstk::OIGTLinkTrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(),
-                                    rfso );
+  igstk::OIGTLinkTrackerConfigurationFileReader::
+    ReadFailSuccessObserver::Pointer 
+    rfso = igstk::OIGTLinkTrackerConfigurationFileReader::
+    ReadFailSuccessObserver::New();
+  trackerConfigReader->AddObserver(
+     igstk::OIGTLinkTrackerConfigurationFileReader::ReadSuccessEvent(),
+     rfso );
+  trackerConfigReader->AddObserver(
+     igstk::OIGTLinkTrackerConfigurationFileReader::ReadFailureEvent(),
+     rfso );
+  trackerConfigReader->AddObserver(
+     igstk::OIGTLinkTrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(),
+     rfso );
 
              //setting the file name and reader always succeeds so I don't
              //observe for success event
@@ -176,7 +201,7 @@ igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType
     OIGTLinkTrackerConfigurationObserver::New();
 
   for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
-  {
+    {
     //setting the xml reader always succeeds so I don't
     //observe the success event
     trackerConfigReader->RequestSetReader( trackerCofigurationXMLReaders[i] );  
@@ -185,34 +210,39 @@ igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType
 
 
     if( rfso->GotUnexpectedTrackerType() )
-    {
+      {
       rfso->Reset();
-    }
+      }
     else if( rfso->GotFailure() && !rfso->GotUnexpectedTrackerType() )
-    {
-      throw ExceptionWithMessage( rfso->GetFailureMessage() );          
-    }
+      {
+      throw ExceptionWithMessage( rfso->GetFailureMessage() );
+      }
     else if( rfso->GotSuccess() )
-    {
+      {
       //get the configuration data from the reader
       trackerConfigReader->AddObserver( 
-        igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataEvent(),
+        igstk::OIGTLinkTrackerConfigurationFileReader::
+        OIGTLinkConfigurationDataEvent(),
         tco );
       trackerConfigReader->RequestGetData();
 
       if( tco->GotOIGTLinkTrackerConfiguration() )
-      {
-        igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType *returnedResult =
-          new igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType();
-        igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType *
+        {
+        igstk::OIGTLinkTrackerConfigurationFileReader::
+          OIGTLinkConfigurationDataType *returnedResult =
+          new igstk::OIGTLinkTrackerConfigurationFileReader::
+          OIGTLinkConfigurationDataType();
+        igstk::OIGTLinkTrackerConfigurationFileReader::
+          OIGTLinkConfigurationDataType *
           result = tco->GetOIGTLinkTrackerConfiguration();
 
         returnedResult->m_TrackerConfiguration = result->m_TrackerConfiguration;
-        returnedResult->m_ToolNamesAndConnections.insert( result->m_ToolNamesAndConnections.begin(), 
-                                                          result->m_ToolNamesAndConnections.end() );
+        returnedResult->m_ToolNamesAndConnections.insert(
+          result->m_ToolNamesAndConnections.begin(), 
+          result->m_ToolNamesAndConnections.end() );
         return returnedResult;
+        }
       }
     }
-  }
   return NULL;
 }

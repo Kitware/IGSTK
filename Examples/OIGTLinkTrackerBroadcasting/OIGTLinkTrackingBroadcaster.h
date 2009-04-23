@@ -47,39 +47,42 @@
 #include "igtlClientSocket.h"
 // EndCodeSnippet
 
+
 /**
- * \class This class performs broadcasting of tracking data using the OpenIGTLink
+ * \class OIGTLinkTrackingBroadcaster
+ * \brief This class performs broadcasting of tracking data using the OpenIGTLink
  * communication protocol. 
  *
  * The class is instantiated with the name of the xml file containing the 
  * tracker and OIGTLink information. The user can then start and stop the 
  * tracking.
+ * 
  */
 class OIGTLinkTrackingBroadcaster
 {
 public:
 
   /**
-  * This class was created due to the need for platform independence. 
-  * In windows the std::exception class has a constructor which has a string as
-  * payload, sadly in linux/unix this constructor does not exist. 
-  */
+   * \class This class was created due to the need for platform independence. 
+   * In windows the std::exception class has a constructor which has a string as
+   * payload, sadly in linux/unix this constructor does not exist. 
+   */
   class ExceptionWithMessage : public std::exception
-  {
-  public:
-    ExceptionWithMessage (const std::string & str) throw()
     {
+    public:
+    ExceptionWithMessage (const std::string & str) throw()
+      {
       this->m_Str = str;
-    }
+      }
     virtual ~ExceptionWithMessage() throw () {} 
 
     virtual const char *what() const throw ()
-    {
+      {
       return this->m_Str.c_str();
-    }
-  private:
-    std::string m_Str;
-  };
+      }
+    private:
+      std::string m_Str;
+    };
 
   OIGTLinkTrackingBroadcaster( std::string &trackerXMLConfigurationFileName ) 
     throw ( ExceptionWithMessage );
@@ -97,8 +100,10 @@ private:
   * TrackerConfigurationFileReader->RequestGetData() method.
   */
   igstkObserverMacro( OIGTLinkTrackerConfiguration, 
-    igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataEvent, 
-    igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataPointerType )
+    igstk::OIGTLinkTrackerConfigurationFileReader::
+      OIGTLinkConfigurationDataEvent, 
+    igstk::OIGTLinkTrackerConfigurationFileReader::
+      OIGTLinkConfigurationDataPointerType )
 
     /**
     * Observer for the TrackerController->RequestInitialize() failure.
@@ -144,95 +149,104 @@ private:
  * broadcasted to all destinations.
  */
 // BeginLatex
-// \code{ToolUpdatedObserver} class observes the TrackerToolTransformUpdateEvent
-// for a specific tool. It checks that the event is for the relevant tool and then
-// gets the tool's transform to its parent and sends it via socket.
+// \code{ToolUpdatedObserver} class observes the
+// TrackerToolTransformUpdateEvent for a specific tool. It checks that
+// the event is for the relevant tool and then gets the tool's
+// transform
+// to its parent and sends it via socket.
 // EndLatex
 
   class ToolUpdatedObserver : public ::itk::Command
-  {
-  public:
-    typedef  ToolUpdatedObserver    Self;
-    typedef  ::itk::Command             Superclass;
-    typedef  ::itk::SmartPointer<Self>  Pointer;
-    itkNewMacro( Self );
-  protected:
+    {
+    public:
+      typedef  ToolUpdatedObserver        Self;
+      typedef  ::itk::Command             Superclass;
+      typedef  ::itk::SmartPointer<Self>  Pointer;
+      itkNewMacro( Self );
+    protected:
 // BeginLatex
 // In the \code{ToolUpdatedObserver} constructor  we instantiate a 
 // \code{igtl::PositionMessage}, which is updated with the transformtaion data.
 // EndLatex
 
-    ToolUpdatedObserver() {
+      ToolUpdatedObserver()
+      {
       this->m_TransformObserver = igstk::TransformObserver::New();
 // BeginCodeSnippet
       this->m_PositionMessage = igtl::PositionMessage::New();
 // EndCodeSnippet
-    }
+      }
 
-    ~ToolUpdatedObserver() {
+      ~ToolUpdatedObserver()
+      {
       std::vector< igtl::ClientSocket::Pointer >::iterator it; 
       for (it = this->m_Sockets.begin(); it != this->m_Sockets.end(); ++it)
-      {
+        {
         (*it)->CloseSocket();
         (*it)->Delete();
-      }
+        }
       this->m_Sockets.clear();
 
-    }
+      }
 
-  public:
+    public:
 
-    void Initialize( 
-      const std::string toolName, 
-      igstk::TrackerTool::Pointer trackerTool,
-      igstk::SpatialObject::Pointer world,
-      std::vector< std::pair<std::string, unsigned int> > & destinations)
-    {
+      void Initialize( 
+        const std::string toolName, 
+        igstk::TrackerTool::Pointer trackerTool,
+        igstk::SpatialObject::Pointer world,
+        std::vector< std::pair<std::string, unsigned int> > & destinations)
+      {
       this->m_Tool = trackerTool;
       this->m_World = world;
       this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
-// BeginLatex
-// In \emph{ToolUpdatedObserver::Initialize()}, we set the device name of the message
-// by invoking the \emph{SetDeviceName()} method.
-// EndLatex
-// BeginCodeSnippet
+      // BeginLatex
+      // In \emph{ToolUpdatedObserver::Initialize()}, we set the device name
+      // of the
+      // message by invoking the \emph{SetDeviceName()} method.
+      // EndLatex
+      // BeginCodeSnippet
       this->m_PositionMessage->SetDeviceName( toolName.c_str() );
-// EndCodeSnippet
+      // EndCodeSnippet
 
       std::vector< igtl::ClientSocket::Pointer >::iterator it; 
       for (it = this->m_Sockets.begin(); it != this->m_Sockets.end(); ++it)
-      {
+        {
         (*it)->CloseSocket();
         (*it)->Delete();
-      }
+        }
       this->m_Sockets.clear();
 
-// BeginLatex
-// We create a list of destination to support multicast data transfer.
-// Then we establish connections for each destation on the list.
-// EndLatex
-// BeginCodeSnippet
-      std::vector< std::pair<std::string, unsigned int> >::iterator destinationIt; 
-      for ( destinationIt = destinations.begin(); destinationIt != destinations.end(); ++destinationIt)
-      {
-        igtl::ClientSocket::Pointer socket = igtl::ClientSocket::New(); 
-        int r = socket->ConnectToServer( destinationIt->first.c_str() , (int)destinationIt->second );
-        if (r != 0)
+      // BeginLatex
+      // We create a list of destination to support multicast data transfer.
+      // Then we establish connections for each destation on the list.
+      // EndLatex
+      // BeginCodeSnippet
+      std::vector< std::pair<std::string, unsigned int> >::iterator
+        destinationIt; 
+      for ( destinationIt = destinations.begin();
+            destinationIt != destinations.end(); ++destinationIt)
         {
+        igtl::ClientSocket::Pointer socket = igtl::ClientSocket::New(); 
+        int r = socket->ConnectToServer( destinationIt->first.c_str() ,
+                                         (int)destinationIt->second );
+        if (r != 0)
+          {
 
           for (it = this->m_Sockets.begin(); it != this->m_Sockets.end(); ++it)
-          {
+            {
             (*it)->CloseSocket();
             (*it)->Delete();
-          }
+            }
           this->m_Sockets.clear();
           std::ostringstream msg;
-          msg<<"Failed to connect to " <<  destinationIt->first << " port " <<  destinationIt->second;
-          throw ExceptionWithMessage( msg.str() );          
+          msg<<"Failed to connect to " <<  destinationIt->first
+             << " port " <<  destinationIt->second;
+          throw ExceptionWithMessage( msg.str() );
         }
         this->m_Sockets.push_back(socket);
       }
-// EndCodeSnippet
+      // EndCodeSnippet
     }
 
     void Execute(itk::Object *caller, const itk::EventObject & event)
@@ -242,8 +256,9 @@ private:
     }
 
 // BeginLatex
-// In \emph{ToolUpdatedObserver::Excecute()}, we define the event handler to receive
-// a transform, fill the OpenIGTLink message, and send it out.
+// In \emph{ToolUpdatedObserver::Excecute()}, we define the event
+// handler to receive a transform, fill the OpenIGTLink message, and
+// send it out.
 // EndLatex
 
     void Execute(const itk::Object *caller, const itk::EventObject & event)
@@ -251,37 +266,44 @@ private:
 
       //if no destinations, just return
       if( m_Sockets.empty() )
+        {
         return;
+        }
 
       //do something only for the correct tool
       if( this->m_Tool.GetPointer() == caller )
-      {               //the tool transform has been updated, get it
-        if( dynamic_cast<const igstk::TrackerToolTransformUpdateEvent  *>( &event) )
-        {                 //request to get the transform               
+        {               //the tool transform has been updated, get it
+        if( dynamic_cast<const
+            igstk::TrackerToolTransformUpdateEvent  *>( &event) )
+          {                 //request to get the transform 
           this->m_Tool->RequestComputeTransformTo( this->m_World );
           //check that we got it
           if ( this->m_TransformObserver->GotTransform() )
-          {
-// BeginCodeSnippet
-            igstk::Transform transform = this->m_TransformObserver->GetTransform();
+            {
+            // BeginCodeSnippet
+            igstk::Transform transform =
+              this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
             this->m_PositionMessage->SetPosition(t[0], t[1], t[2]);
-            this->m_PositionMessage->SetQuaternion(r.GetX(), r.GetY(), r.GetZ(), r.GetW());
+            this->m_PositionMessage->SetQuaternion(r.GetX(), r.GetY(),
+                                                     r.GetZ(), r.GetW());
             this->m_PositionMessage->Pack();
 
             std::vector< igtl::ClientSocket::Pointer >::iterator it; 
-            for (it = this->m_Sockets.begin(); it != this->m_Sockets.end(); ++it)
-            {
-              (*it)->Send(this->m_PositionMessage->GetPackPointer(), this->m_PositionMessage->GetPackSize());
+            for (it = this->m_Sockets.begin(); it != this->m_Sockets.end();
+                 ++it)
+              {
+              (*it)->Send(this->m_PositionMessage->GetPackPointer(),
+                          this->m_PositionMessage->GetPackSize());
+              }
+            // EndCodeSnippet
             }
-// EndCodeSnippet
           }
         }
       }
-    }
 
-  private:
+    private:
     std::string m_HostName;
     unsigned int m_PortNumber;  
     //we are interested in the tool location relative to the world's 
@@ -293,15 +315,16 @@ private:
     //send data to these socket connections
     std::vector< igtl::ClientSocket::Pointer > m_Sockets;
     igtl::PositionMessage::Pointer m_PositionMessage;
-  };
+    };
 
 
-  igstk::OIGTLinkTrackerConfigurationFileReader::OIGTLinkConfigurationDataType *
+  igstk::OIGTLinkTrackerConfigurationFileReader::
+    OIGTLinkConfigurationDataType *
     GetTrackerConfiguration( std::string &configurationFileName) 
     throw ( ExceptionWithMessage );
 
   igstk::TrackerController::Pointer m_TrackerController;
 };
-
+   
 
 #endif //__OIGTLinkTrackingBroadcaster_h
