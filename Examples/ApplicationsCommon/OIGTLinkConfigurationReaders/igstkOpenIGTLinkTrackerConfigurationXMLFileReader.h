@@ -66,8 +66,8 @@ public:
 
   //standard typedefs
   typedef OpenIGTLinkTrackerConfigurationXMLFileReader    Self;
-  typedef itk::XMLReaderBase                           Superclass;
-  typedef itk::SmartPointer<Self>                      Pointer;
+  typedef itk::XMLReaderBase                              Superclass;
+  typedef itk::SmartPointer<Self>                         Pointer;
 
           //run-time type information (and related methods)
   itkTypeMacro( OpenIGTLinkTrackerConfigurationXMLFileReader,
@@ -119,7 +119,7 @@ protected:
   virtual ~OpenIGTLinkTrackerConfigurationXMLFileReader() {}
 
   void ProcessToolName() 
-    throw ( FileFormatException );
+  throw ( FileFormatException );
 
   void ProcessToolAttributes( const char **atts );
 

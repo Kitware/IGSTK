@@ -287,8 +287,9 @@ OpenIGTLinkTrackerConfigurationXMLFileReader::HaveConfigurationData()
 }
 
 void 
-OpenIGTLinkTrackerConfigurationXMLFileReader::GetOpenIGTLinkToolConfigurationData(
-OpenIGTLinkDataType &toolNamesAndConnections )
+OpenIGTLinkTrackerConfigurationXMLFileReader::
+  GetOpenIGTLinkToolConfigurationData(
+  OpenIGTLinkDataType &toolNamesAndConnections )
 {
   toolNamesAndConnections.clear();
   toolNamesAndConnections.insert( this->m_ToolNamesAndConnections.begin(), 
