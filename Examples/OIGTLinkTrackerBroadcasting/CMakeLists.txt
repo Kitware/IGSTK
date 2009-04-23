@@ -55,11 +55,11 @@ IF(IGSTKSandbox_USE_FLTK)
     )
 
   FLTK_WRAP_UI(OpenIGTLinkTrackerBroadcastingUI ${OpenIGTLinkTrackerBroadcasting_GUI_SRCS})
-  ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcastingUI mainFLTK.cxx ${SRCS} ${HDRS} ${OpenIGTLinkTrackerBroadcastingUI_FLTK_UI_SRCS})  
+  ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcastingUI OpenIGTLinkTrackingBroadcasterMainFLTK.cxx ${SRCS} ${HDRS} ${OpenIGTLinkTrackerBroadcastingUI_FLTK_UI_SRCS})  
   TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcastingUI TrackerConfiguration ConfigurationFileReaders OpenIGTLinkConfigurationReaders IGSTKSandbox)
   
 ENDIF(IGSTKSandbox_USE_FLTK)
 
-ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcasting mainCommandLine.cxx ${SRCS} ${HDRS})
+ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcasting OpenIGTLinkTrackingBroadcasterMainCommandLine.cxx ${SRCS} ${HDRS})
 TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcasting TrackerConfiguration ConfigurationFileReaders OpenIGTLinkConfigurationReaders IGSTKSandbox)
 

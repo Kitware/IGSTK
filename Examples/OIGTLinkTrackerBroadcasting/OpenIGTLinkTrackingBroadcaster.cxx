@@ -156,7 +156,8 @@ OpenIGTLinkTrackingBroadcaster::StopTracking()
 }
 
 
-igstk::OpenIGTLinkTrackerConfigurationFileReader::OpenIGTLinkConfigurationDataType 
+igstk::OpenIGTLinkTrackerConfigurationFileReader::
+  OpenIGTLinkConfigurationDataType
 * OpenIGTLinkTrackingBroadcaster::GetTrackerConfiguration( 
   std::string &configurationFileName) throw ( ExceptionWithMessage )
 {
