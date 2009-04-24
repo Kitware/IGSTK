@@ -373,7 +373,7 @@ CompressedDVImager::InternalThreadedUpdateStatus( void )
 
       if( CompressedDVImager::frameBuffer !=NULL)
       {
-        memcpy(frame.GetImagePtr(),(unsigned char*)CompressedDVImager::frameBuffer,imageData,frameDims[0]*frameDims[1]*frameDims[2]);
+        memcpy(frame.GetImagePtr(),(unsigned char*)CompressedDVImager::frameBuffer,frameDims[0]*frameDims[1]*frameDims[2]);
         free(CompressedDVImager::frameBuffer);
       }
       CompressedDVImager::m_FrameBufferLock->Unlock();
