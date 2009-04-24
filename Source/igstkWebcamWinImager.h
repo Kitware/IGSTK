@@ -144,7 +144,7 @@ private:
   /** Container holding status of the tools */
   std::map< std::string, int >  m_ToolStatusContainer;
 
-  /** Members and functions for communication with DV library */
+  /** Members and functions for communication with the webcam */
 
   public:
   FILE *f;// = NULL;//
