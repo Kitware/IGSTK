@@ -75,8 +75,6 @@ CompressedDVImager::CompressedDVImager(void):m_StateMachine(this)
     this->CreateErrorCodeList();
     m_ErrorCodeListCreated = true;
     }
-
-
 }
 
 /** Destructor */
@@ -251,7 +249,7 @@ CompressedDVImager::ResultType CompressedDVImager::InternalStopImaging( void )
   /*
     Stop the device
   */
-  iec61883_dv_fb_close (frame);
+  iec61883_dv_fb_close (dvFrame);
 
   return SUCCESS;
 }
@@ -363,19 +361,22 @@ CompressedDVImager::InternalThreadedUpdateStatus( void )
       this->GetImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
 
       unsigned int frameDims[3];
-    imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
+      imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
 
-      CompressedDVImager::m_FrameBufferLock->Lock();
 
       int result = 0;
       result = raw1394_loop_iterate (handle);
 
+      CompressedDVImager::m_FrameBufferLock->Lock();
 
       if( CompressedDVImager::frameBuffer !=NULL)
       {
-        memcpy(frame.GetImagePtr(),(unsigned char*)CompressedDVImager::frameBuffer,frameDims[0]*frameDims[1]*frameDims[2]);
-        free(CompressedDVImager::frameBuffer);
+        memcpy(frame.GetImagePtr(),
+               (unsigned char*)CompressedDVImager::frameBuffer,
+                frameDims[0]*frameDims[1]*frameDims[2]);
+             //free(CompressedDVImager::frameBuffer);
       }
+
       CompressedDVImager::m_FrameBufferLock->Unlock();
 
      //update frame validity time
@@ -468,12 +469,12 @@ int write_frame (unsigned char *data, int len, int complete, void *callback_data
   {
         fprintf(stderr, "dv_decoder_new failed.\n");
         return 1;
-    }
+  }
 
   mydecoder->video->arg_monochrome = 0; // color frames
     mydecoder->quality = mydecoder->video->quality = DV_QUALITY_BEST;
 
-    if((ret = dv_parse_header(mydecoder, data)) < 0)
+  if((ret = dv_parse_header(mydecoder, data)) < 0)
   {
     fprintf(stderr, "dv_parse_header failed.\n");
     return 1;
@@ -484,6 +485,7 @@ int write_frame (unsigned char *data, int len, int complete, void *callback_data
   if(pixelsTemp[0] == NULL)
   {
     pixelsTemp[0] = (unsigned char*)malloc(mydecoder->width * mydecoder->height * 3);
+
     if(pixelsTemp[0] == NULL)
     {
       fprintf(stderr, "malloc failed.\n");
@@ -491,27 +493,35 @@ int write_frame (unsigned char *data, int len, int complete, void *callback_data
     }
   }
 
-    pitches = mydecoder->width * 3;
+  pitches = mydecoder->width * 3;
 
   //it takes long
   dv_decode_full_frame(mydecoder,data,e_dv_color_rgb,pixelsTemp,&pitches);
 
   CompressedDVImager::m_FrameBufferLock->Lock();
-    CompressedDVImager::frameBuffer = (unsigned char*)malloc(mydecoder->width * mydecoder->height * 3);
-    memcpy(CompressedDVImager::frameBuffer,pixelsTemp[0],3*mydecoder->width*mydecoder->height);
+
+  if( CompressedDVImager::frameBuffer !=NULL)
+  {
+    free(CompressedDVImager::frameBuffer);
+  }
+  CompressedDVImager::frameBuffer = (unsigned char*)malloc(mydecoder->width * mydecoder->height * 3);
+
+  memcpy(CompressedDVImager::frameBuffer,pixelsTemp[0],mydecoder->width*mydecoder->height* 3);
     if(pixelsTemp[0] != NULL)
+    {
       free(pixelsTemp[0]);
+    }
   CompressedDVImager::m_FrameBufferLock->Unlock();
 
-    dv_decoder_free(mydecoder);
+  dv_decoder_free(mydecoder);
   return 0;
 }
 
 void CompressedDVImager::dv_receive( raw1394handle_t handle, FILE *f, int channel)
 {
-  iec61883_dv_fb_t frame = iec61883_dv_fb_init (handle, write_frame, (void *)f );
+  iec61883_dv_fb_t dvFrame = iec61883_dv_fb_init (handle, write_frame, (void *)f );
 
-  if (frame && iec61883_dv_fb_start (frame, channel) == 0)
+  if (dvFrame && iec61883_dv_fb_start (dvFrame, channel) == 0)
   {
     fprintf (stderr, "Starting to receive\n");
   }
