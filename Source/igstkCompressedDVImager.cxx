@@ -190,16 +190,13 @@ bool CompressedDVImager::Initialize( void )
   if (handle)
   {
     fprintf (stderr, "1: got libraw1394 handle\n");
-    //dv_receive (handle, f, 63);
+    return SUCCESS;
   }
   else
   {
     fprintf (stderr, "Failed to get libraw1394 handle\n");
     return -1;
   }
-
-  bool result = true;
-  return result;
 }
 
 /** Verify imager tool information. */
@@ -235,10 +232,6 @@ CompressedDVImager::ResultType CompressedDVImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::CompressedDVImager::InternalStartImaging called ...\n");
-
-  // Report errors, if any, and return SUCCESS or FAILURE
-  // (the return value will be used by the superclass to
-  //  set the appropriate input to the state machine)
 
   dv_receive (handle, f, 63);
 
@@ -310,7 +303,7 @@ CompressedDVImager::ResultType CompressedDVImager::InternalUpdateStatus()
       continue;
     }
 
-    // report to the imager tool that the tool is Visible
+    // report to the imager tool that the tool is sending frames
     this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
 
     cout << ":" << endl;
@@ -366,34 +359,21 @@ CompressedDVImager::InternalThreadedUpdateStatus( void )
       // create the frame
       ImagerToolsContainerType imagerToolContainer =
                                               this->GetImagerToolContainer();
-//TODO commented due to higher frame rates
-//      // image dimension set on tools
-//      unsigned int toolDims[3];
-//      imagerToolContainer[deviceItr->first]->GetFrameDimensions(toolDims);
-//
-//      unsigned int toolSize = toolDims[0] * toolDims[1] * toolDims[2];
-//
-//      if (buffer.buffer_size != toolSize)
-//      {
-//        igstkLogMacro( CRITICAL, "Incoming image size does not match with expected" );
-//        m_BufferLock->Unlock();
-//        return FAILURE;
-//      }
-
-    int result = 0;
-    result = raw1394_loop_iterate (handle);
-
-      //this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       FrameType frame;
       this->GetImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
 
+      unsigned int frameDims[3];
+    imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
 
       CompressedDVImager::m_FrameBufferLock->Lock();
 
+      int result = 0;
+      result = raw1394_loop_iterate (handle);
+
+
       if( CompressedDVImager::frameBuffer !=NULL)
       {
-        //TODO hard coded dims
-        memcpy(frame.GetImagePtr(),(unsigned char*)CompressedDVImager::frameBuffer,720 * 576 * 3);
+        memcpy(frame.GetImagePtr(),(unsigned char*)CompressedDVImager::frameBuffer,imageData,frameDims[0]*frameDims[1]*frameDims[2]);
         free(CompressedDVImager::frameBuffer);
       }
       CompressedDVImager::m_FrameBufferLock->Unlock();
@@ -546,4 +526,5 @@ void CompressedDVImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 } // end of namespace igstk
+
 
