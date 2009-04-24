@@ -23,8 +23,10 @@
 #include "itksys/Directory.hxx"
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
 //Terason Ultrasound specific header
 #include "igstkTerasonImager.h"
+#endif
 //WebcamWin specific header
 #include "igstkWebcamWinImager.h"
 #else
@@ -51,9 +53,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitialize );
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   igstkAddStateMacro( AttemptingToInitializeTerason );
   //Terason Ultrasound specific :end
+#endif
   //WebcamWin framegrabber specific :begin
     igstkAddStateMacro( AttemptingToInitializeWebcamWin );
   //WebcamWin framegrabber specific :end
@@ -81,9 +85,11 @@ ImagerController::ImagerController() : m_StateMachine( this )
   igstkAddInputMacro( ImagerShutdown );
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   //Terason Ultrasound specific :begin
   igstkAddInputMacro( TerasonInitialize );
   //Terason Ultrasound specific :end
+#endif
  //WebcamWin framegrabber specific :begin
     igstkAddInputMacro( WebcamWinInitialize );
   //WebcamWin framegrabber specific :end
@@ -95,7 +101,7 @@ ImagerController::ImagerController() : m_StateMachine( this )
     igstkAddInputMacro( CompressedDVInitialize );
   //CompressedDV framegrabber specific :end
 #endif
- 
+
   igstkAddInputMacro( Failed  );
   igstkAddInputMacro( Succeeded  );
   igstkAddInputMacro( GetImager  );
@@ -114,10 +120,12 @@ ImagerController::ImagerController() : m_StateMachine( this )
                           Idle,
                           ReportInvalidRequest);
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   igstkAddTransitionMacro(Idle,
                           TerasonInitialize,
                           Idle,
                           ReportInvalidRequest);
+#endif
 igstkAddTransitionMacro(Idle,
                         WebcamWinInitialize,
                             Idle,
@@ -132,7 +140,7 @@ igstkAddTransitionMacro(Idle,
                           Idle,
                           ReportInvalidRequest);
 #endif
-  
+
 
   igstkAddTransitionMacro(Idle,
                           Failed,
@@ -160,13 +168,15 @@ igstkAddTransitionMacro(Idle,
                           Idle,
                           ReportInitializationFailure);
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   igstkAddTransitionMacro(AttemptingToInitialize,
                           TerasonInitialize,
                           AttemptingToInitializeTerason,
                           TerasonInitialize);
+#endif
 igstkAddTransitionMacro(AttemptingToInitialize,
                             WebcamWinInitialize,
-                              AttemptingToInitializeTerason,
+                              AttemptingToInitializeWebcamWin,
                               WebcamWinInitialize);
 #else
   igstkAddTransitionMacro(AttemptingToInitialize,
@@ -177,7 +187,7 @@ igstkAddTransitionMacro(AttemptingToInitialize,
                           CompressedDVInitialize,
                             AttemptingToInitializeTerason,
                             CompressedDVInitialize);
-#endif 
+#endif
 
   igstkAddTransitionMacro(AttemptingToInitialize,
                           ImagerInitialize,
@@ -346,7 +356,7 @@ igstkAddTransitionMacro(AttemptingToInitialize,
                             Idle,
                             ReportInvalidRequest);
 #endif
- 
+
 
   //transitions from Initialized state
   igstkAddTransitionMacro(Initialized,
@@ -391,7 +401,7 @@ igstkAddTransitionMacro(Initialized,
                             CompressedDVInitialize,
                             Initialized,
                             ReportInvalidRequest);
-#endif  
+#endif
 
   igstkAddTransitionMacro(Initialized,
                           ImagerStop,
@@ -463,7 +473,7 @@ igstkAddTransitionMacro(AttemptingToStart,
                             AttemptingToStart,
                             ReportInvalidRequest);
 #endif
-  
+
   igstkAddTransitionMacro(AttemptingToStart,
                           ImagerStop,
                           AttemptingToStart,
@@ -607,7 +617,7 @@ igstkAddTransitionMacro(AttemptingToShutdown,
                            AttemptingToShutdown,
                            ReportInvalidRequest);
 #endif
-  
+
   igstkAddTransitionMacro(AttemptingToShutdown,
                           ImagerShutdown,
                           AttemptingToShutdown,
@@ -711,7 +721,8 @@ ImagerController::ImagerInitializeProcessing()
   else
   {
 #if defined(WIN32) || defined(_WIN32)
-  //Terason Ultrasound specific :begin
+#ifdef IGSTKSandbox_USE_OpenIGTLink
+    //Terason Ultrasound specific :begin
     if( dynamic_cast<TerasonImagerConfiguration *>
       ( this->m_TmpImagerConfiguration ) )
     {
@@ -719,8 +730,9 @@ ImagerController::ImagerInitializeProcessing()
       igstkPushInputMacro( TerasonInitialize );
     }
     //Terason Ultrasound specific :end
+#endif
    //WebcamWin framegrabber specific :begin
-            else if( dynamic_cast<WebcamWinImagerConfiguration *>
+            if( dynamic_cast<WebcamWinImagerConfiguration *>
               ( this->m_TmpImagerConfiguration ) )
             {
               this->m_ImagerConfiguration = m_TmpImagerConfiguration;
@@ -895,6 +907,7 @@ ImagerController::InitializeSerialCommunication()
 }
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
 
 //Terason Ultrasound specific :begin
 bool
@@ -949,6 +962,7 @@ TerasonImagerTool::Pointer ImagerController::InitializeTerasonTool(
   return imagerTool;
 }
 //Terason Ultrasound specific :end
+#endif
 
 //WebcamWin framegrabber specific :begin
 WebcamWinImagerTool::Pointer ImagerController::InitializeWebcamWinTool(
@@ -1018,6 +1032,7 @@ CompressedDVImagerTool::Pointer ImagerController::InitializeCompressedDVTool(
 #endif
 
 #if defined(WIN32) || defined(_WIN32)
+#ifdef IGSTKSandbox_USE_OpenIGTLink
 
 //Terason Ultrasound specific :begin
 void ImagerController::TerasonInitializeProcessing()
@@ -1082,6 +1097,7 @@ void ImagerController::TerasonInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 }
 //Terason Ultrasound specific :end
+#endif
 
 //WebcamWin framegrabber specific :begin
 void ImagerController::WebcamWinInitializeProcessing()
@@ -1393,3 +1409,4 @@ ImagerController::ErrorObserver::Execute(const itk::Object *caller,
 }
 
 }//end namespace igstk
+
