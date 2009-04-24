@@ -43,12 +43,25 @@ IF (IGSTKSandbox_USE_FLTK)
   IF (IGSTKSandbox_USE_MicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
   ENDIF(IGSTKSandbox_USE_MicronTracker)
+  
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
     IF (IGSTKSandbox_USE_OpenCV)
       SUBDIRS( VideoFrameGrabberAndViewerWebcam )
     ENDIF (IGSTKSandbox_USE_OpenCV)
   ENDIF ( WIN32 )
+  
+  IF (IGSTKSandbox_USE_CompressedDV)
+    SUBDIRS( VideoFrameGrabberAndViewerCompressedDV )
+  ENDIF (IGSTKSandbox_USE_CompressedDV)
+  
+  IF (IGSTKSandbox_USE_unicap)
+    INCLUDE_DIRECTORIES(
+    /usr/local/include/unicap
+    )
+    #SUBDIRS( VideoTemporalCalibrationWizard )
+  ENDIF (IGSTKSandbox_USE_unicap) 
+
 ENDIF (IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
@@ -57,14 +70,7 @@ IF (IGSTKSandbox_USE_OpenIGTLink)
     SUBDIRS(  OIGTLinkTrackerBroadcasting )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
-IF (IGSTKSandbox_USE_unicap)
-    INCLUDE_DIRECTORIES(
-    /usr/local/include/unicap
-    )
-    #todo compile this app also when CompressedDV is enabled
-    SUBDIRS( VideoFrameGrabberAndViewer )
-    #SUBDIRS( VideoTemporalCalibrationWizard )
-ENDIF (IGSTKSandbox_USE_unicap)
+
 
 IF (IGSTKSandbox_USE_Qt)
   SUBDIRS( OneViewAndTrackingUsingQTWidget )
