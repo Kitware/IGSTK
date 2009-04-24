@@ -46,12 +46,8 @@ TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
 {
   this->m_Observer = NULL; // FIXME also disconnect as an observer
 
-//  this->m_SocketController->Delete();
-//  this->m_SocketCommunicator->Delete();
   this->m_Matrix->Delete();
 
-//  this->m_SocketController = NULL;
-//  this->m_SocketCommunicator = NULL;
   this->m_Matrix = NULL;
 
   this->m_FramesPerSecond = 1.0;
@@ -94,19 +90,7 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
 {
   char * hostname = const_cast< char * >( this->m_HostName.c_str() );
 
-  std::cout << "Trying to connect to host = " << hostname << std::endl;
-  std::cout << "In port = " << this->m_Port << std::endl;
-
-  /*
-  if( !this->m_SocketCommunicator->ConnectTo( hostname, this->m_Port ) )
-    {
-    std::cerr << "Client error: Could not connect to the server." << std::endl;
-    }
-    */
-
-  //this->m_Tag = 0;
   this->m_Tag = 17;
-
 
   int r = this->m_Socket->ConnectToServer(hostname, this->m_Port);
   if (r != 0)
@@ -121,8 +105,6 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
 void
 TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::Object * caller, const itk::EventObject & event )
 {
-  std::cout << "TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink() " << std::endl;
-
   const CoordinateSystemTransformToEvent * transformEvent =
     dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
 
@@ -132,8 +114,6 @@ TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::O
       transformEvent->Get();
 
     igstk::Transform transform = transformCarrier.GetTransform();
-
-    std::cout << "Sending transform " << transform << std::endl;
 
     transform.ExportTransform( *(this->m_Matrix) );
 
