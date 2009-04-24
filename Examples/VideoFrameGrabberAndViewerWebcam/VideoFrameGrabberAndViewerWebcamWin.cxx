@@ -78,7 +78,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   /*
   // BeginLatex
   // 
-  // The GUI is impelented using FLTK. For this purpose
+  // The GUI is implemented using FLTK. For this purpose
   // an instance of \doxygen{FLTKWidget} and \doxygen{View3D}  
   // are created and connected via the method:
   // EndLatex
@@ -109,9 +109,9 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // BeginLatex
   // 
   // The geometrical description of the videoframe in the scene is
-  // managed by the videoframe Spatialobject. For this purpose we need 
+  // managed by the videoframe SpatialObject. For this purpose we need 
   // \doxygen{VideoFrameSpatialObject}. 
-  // Since \doxygen{VideoFrameSpatialObject} is a templated class we 
+  // Since \doxygen{VideoFrameSpatialObject} is a template class we 
   // define in the first parameter the pixeltype and in the second
   // parameter the channel number. Here we set "unsigned char" for pixeltype
   // and 3 channels for RGB. 
@@ -120,7 +120,7 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   //
   // EndLatex
 
-  /** videoframe Spatialobject and Representation
+  /** videoframe SpatialObject and Representation
   // BeginCodeSnippet
   typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >
                                             VideoFrameSpatialObjectType;
@@ -235,7 +235,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   //
   // The following code instantiates a new Imager object for conventional webcams.
   // The \doxygen{WebcamWinImager} derive from \doxygen{Imager} and implement device
-  // specific communication. See for device specific impelementations \doxygen{WebcamWinImager.h}
+  // specific communication. See for device specific implementations \doxygen{WebcamWinImager.h}
   // and \doxygen{WebcamWinImager.cxx}
   // 
   // EndLatex
@@ -258,7 +258,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
   // BeginLatex
   //
-  // Befor request calls to the Imager we add an observer to the
+  // Before request calls to the Imager we add an observer to the
   // Imager class in order to catch possible error events.
   // 
   // EndLatex
@@ -271,7 +271,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // BeginLatex
   //
   // Now, we try to open the communication with the device and retrieve for
-  // possibly occured errors.
+  // possibly occurred errors.
   // 
   // EndLatex
   
@@ -343,7 +343,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // BeginLatex
   //
   // Here we request to start the Imager. In case of success the 
-  // communication thread starts retrieving continously frames from
+  // communication thread starts retrieving continuously frames from
   // the device and the main application thread fills according to 
   // the pulse-generator-frequency the ringbuffer in the Imager tool. 
   // 
