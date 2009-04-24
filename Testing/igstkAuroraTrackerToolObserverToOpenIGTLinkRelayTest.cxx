@@ -31,6 +31,9 @@
 #include "igstkSimulatedTrackerTool.h"
 #include "igstkTrackerToolObserverToOpenIGTLinkRelay.h"
 
+namespace igstk
+{
+
 int igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv [] )
 {
 
@@ -103,3 +106,5 @@ int igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv 
 
   return EXIT_SUCCESS;
 }
+
+} 
