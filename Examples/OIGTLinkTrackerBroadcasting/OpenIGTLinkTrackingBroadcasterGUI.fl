@@ -14,7 +14,7 @@ class OpenIGTLinkTrackingBroadcasterGUI {open
   Function {OpenIGTLinkTrackingBroadcasterGUI()} {open
   } {
     Fl_Window m_Window1 {
-      label {OIGTLink Transform Broadcasting}
+      label {OpenIGTLink Transform Broadcasting}
       callback {this->Quit();} open
       private xywh {164 198 514 89} type Double visible
     } {
@@ -60,7 +60,7 @@ else {
       }
     }
     Fl_Window m_Window2 {
-      label {OIGTLink Transform Broadcasting}
+      label {OpenIGTLink Transform Broadcasting}
       callback {this->Quit();} open
       private xywh {341 38 549 111} type Double box PLASTIC_UP_BOX color 7 selection_color 7 visible
     } {
