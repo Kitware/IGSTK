@@ -153,13 +153,13 @@ private:
   /** Members and functions for communication with DV library */
 
   public:
-  FILE *f;// = NULL;//
-  int node_specified;// = 0;//
-  int channel;//
-  int bandwidth;// = -1;//
-  nodeid_t node;// = 0xffc0;//
-  raw1394handle_t handle;//
-  iec61883_dv_fb_t frame;//
+  FILE *f;
+  int node_specified;
+  int channel;
+  int bandwidth;
+  nodeid_t node;
+  raw1394handle_t handle;
+  iec61883_dv_fb_t dvFrame;
   void dv_receive( raw1394handle_t handle, FILE *f, int channel);
   static unsigned char  *pixels[1];// = NULL;
   static unsigned char* frameBuffer;
