@@ -13,7 +13,7 @@ SET(TRACKER_CONFIGURATION_READERS_DIR
 )
 
 SET(OpenIGTLINK_CONFIGURATION_READERS_DIR
-    ../ApplicationsCommon/OpenIGTLinkConfigurationReaders
+    ../ApplicationsCommon/OIGTLinkConfigurationReaders
 )
 
 

@@ -6,12 +6,12 @@ decl {\#include <FL/Fl_File_Chooser.H>} {}
 
 decl {\#include <FL/fl_draw.H>} {} 
 
-decl {\#include "OIGTLinkTrackingBroadcaster.h"} {public
+decl {\#include "OpenIGTLinkTrackingBroadcaster.h"} {public
 } 
 
-class OIGTLinkTrackingBroadcasterGUI {open
+class OpenIGTLinkTrackingBroadcasterGUI {open
 } {
-  Function {OIGTLinkTrackingBroadcasterGUI()} {open
+  Function {OpenIGTLinkTrackingBroadcasterGUI()} {open
   } {
     Fl_Window m_Window1 {
       label {OIGTLink Transform Broadcasting}
@@ -43,7 +43,7 @@ else {
                //and establish all the communication channels
   try {
     fl_cursor(FL_CURSOR_WAIT);
-    this->m_Broadcaster = new OIGTLinkTrackingBroadcaster( configurationFileName );
+    this->m_Broadcaster = new OpenIGTLinkTrackingBroadcaster( configurationFileName );
     this->m_Window1->hide();
     this->m_Window2->show();
     fl_cursor(FL_CURSOR_DEFAULT);
@@ -124,7 +124,7 @@ else
     code {fl_alert(errorMessage.c_str());
 fl_beep(FL_BEEP_ERROR);} {}
   }
-  decl {OIGTLinkTrackingBroadcaster *m_Broadcaster;} {public
+  decl {OpenIGTLinkTrackingBroadcaster *m_Broadcaster;} {public
   }
   decl {bool hasQuitted;} {}
   Function {HasQuitted()} {open return_type bool
