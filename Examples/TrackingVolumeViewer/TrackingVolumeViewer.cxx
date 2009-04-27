@@ -159,9 +159,9 @@ TrackingVolumeViewer::TrackingVolumeViewer() :
   igstkAddTransitionMacro( Initial, Failure, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, LoadWorkingVolumeMesh,
-                           Initial, LoadWorkingVolumeMesh );
+                           Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, LoadTrackerMesh,
-                           Initial, LoadTrackerMesh );
+                           Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, InitializeTracker, 
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StartTracking,
@@ -449,13 +449,13 @@ TrackingVolumeViewer::TrackingVolumeViewer() :
   igstkSetInitialStateMacro( Initial );
 
   m_StateMachine.SetReadyToRun();
-/*
+
   std::ofstream ofile;
   ofile.open("TrackingVolumeViewerStateMachineDiagram.dot");
   const bool skipLoops = false;
   this->ExportStateMachineDescription( ofile, skipLoops );
   ofile.close();
-*/
+
 }
 
 /** -----------------------------------------------------------------
@@ -479,7 +479,7 @@ void TrackingVolumeViewer::ConfigureTrackerProcessing()
   {
       igstkLogMacro2( m_Logger, DEBUG, 
              "TrackingVolumeViewer::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
-      m_StateMachine.PushInput( m_FailureInput );
+      igstkPushInputMacro( Failure );
       m_StateMachine.ProcessInputs();
       return;
   }
@@ -537,17 +537,13 @@ void TrackingVolumeViewer::ConfigureTrackerProcessing()
      rfso->Reset();
    }
    else if( rfso->GotFailure() && !rfso->GotUnexpectedTrackerType() )
-   {
-    //throw ExceptionWithMessage( rfso->GetFailureMessage() );
-    std::string errorMessage = rfso->GetFailureMessage();
-    fl_alert( errorMessage.c_str() );
-    fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
-
-     m_StateMachine.PushInput( m_FailureInput );
+     {
+     ReportError( rfso->GetFailureMessage() );
+     igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
+     igstkPushInputMacro( Failure );
      m_StateMachine.ProcessInputs();
      return; 
-   }
+     }
    else if( rfso->GotSuccess() )
    {
      //get the configuration data from the reader
@@ -558,12 +554,12 @@ void TrackingVolumeViewer::ConfigureTrackerProcessing()
      if( tco->GotTrackerConfiguration() )
      {
        m_TrackerConfiguration = tco->GetTrackerConfiguration();
-       m_StateMachine.PushInput( m_SuccessInput );
+       igstkPushInputMacro( Success );
      }
      else
      {
        igstkLogMacro2( m_Logger, DEBUG, "Could not get tracker configuration error\n" )
-       m_StateMachine.PushInput( m_FailureInput );
+       igstkPushInputMacro( Failure );       
      }
 
      m_StateMachine.ProcessInputs();
@@ -573,7 +569,7 @@ void TrackingVolumeViewer::ConfigureTrackerProcessing()
    {
     // just to complete all possibilities
        igstkLogMacro2( m_Logger, DEBUG, "Very strange tracker configuration error\n" )
-       m_StateMachine.PushInput( m_FailureInput );
+       igstkPushInputMacro( Failure );
        m_StateMachine.ProcessInputs();
        return;
    }
@@ -584,7 +580,7 @@ void TrackingVolumeViewer::RequestLoadTrackerMesh()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "TrackingVolumeViewer::RequestLoadTrackerMesh called...\n" )
-  m_StateMachine.PushInput( m_LoadTrackerMeshInput );
+  igstkPushInputMacro( LoadTrackerMesh );
   m_StateMachine.ProcessInputs();
 }
 
@@ -592,7 +588,7 @@ void TrackingVolumeViewer::RequestLoadWorkingVolumeMesh()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "TrackingVolumeViewer::RequestLoadWorkingVolumeMesh called...\n" )
-  m_StateMachine.PushInput( m_LoadWorkingVolumeMeshInput );
+  igstkPushInputMacro( LoadWorkingVolumeMesh );
   m_StateMachine.ProcessInputs();
 }
 
@@ -600,8 +596,7 @@ void TrackingVolumeViewer::RequestConfigureTracker()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "TrackingVolumeViewer::RequestConfigureTracker called...\n" )
-
-  m_StateMachine.PushInput( m_ConfigureTrackerInput );
+  igstkPushInputMacro( ConfigureTracker );
   m_StateMachine.ProcessInputs();
 }
 
@@ -609,8 +604,7 @@ void TrackingVolumeViewer::RequestInitializeTracker()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
              "TrackingVolumeViewer::RequestInitializeTracker called...\n" )
-
-  m_StateMachine.PushInput( m_InitializeTrackerInput );
+  igstkPushInputMacro( InitializeTracker );
   m_StateMachine.ProcessInputs();
 }
 
@@ -618,8 +612,7 @@ void TrackingVolumeViewer::RequestStartTracking()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                     "TrackingVolumeViewer::RequestStartTracking called...\n" )
-
-  m_StateMachine.PushInput( m_StartTrackingInput );
+  igstkPushInputMacro( StartTracking );
   m_StateMachine.ProcessInputs();  
 }
 
@@ -627,8 +620,7 @@ void TrackingVolumeViewer::RequestStopTracking()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                     "TrackingVolumeViewer::RequestStopTracking called...\n" )
-
-  m_StateMachine.PushInput( m_StopTrackingInput );
+  igstkPushInputMacro( StopTracking );
   m_StateMachine.ProcessInputs();  
 }
 
@@ -636,8 +628,7 @@ void TrackingVolumeViewer::RequestDisconnectTracker()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
                     "TrackingVolumeViewer::RequestDisconnectTracker called...\n" )
-
-  m_StateMachine.PushInput( m_DisconnectTrackerInput );
+  igstkPushInputMacro( DisconnectTracker );
   m_StateMachine.ProcessInputs();  
 }
 
@@ -670,6 +661,7 @@ TrackingVolumeViewer::ReportFailuredMeshLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::TrackingVolumeViewer::"
                  "ReportFailuredMeshLoadedProcessing called...\n");
+  ReportError("Failed loading mesh file.");
 }
 
 
@@ -732,6 +724,8 @@ TrackingVolumeViewer::ReportSuccessStartTrackingProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::TrackingVolumeViewer::"
                  "ReportSuccessStartTrackingProcessing called...\n")
+  this->m_LoadTrackerMeshButton->activate();
+  this->m_LoadWorkVolumeMeshButton->activate();
 }
 
 /** Method to be invoked on failured tracker start */
@@ -772,7 +766,7 @@ void TrackingVolumeViewer::LoadWorkingVolumeMeshProcessing()
     if ( !fileName )
     {
        igstkLogMacro2( m_Logger, DEBUG, "No file was selected\n" )
-       m_StateMachine.PushInput( m_FailureInput );
+       igstkPushInputMacro( Failure );
        m_StateMachine.ProcessInputs();
        return;
     }
@@ -787,7 +781,7 @@ void TrackingVolumeViewer::LoadWorkingVolumeMeshProcessing()
     if(!observer->GotMeshObject())
     {
        igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-       m_StateMachine.PushInput( m_FailureInput);
+       igstkPushInputMacro( Failure );
        m_StateMachine.ProcessInputs();
        return;
     }
@@ -796,7 +790,7 @@ void TrackingVolumeViewer::LoadWorkingVolumeMeshProcessing()
     if ( m_MeshSpatialObject.IsNull() )
     {
      igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-     m_StateMachine.PushInput( m_FailureInput);
+     igstkPushInputMacro( Failure );
      m_StateMachine.ProcessInputs();
      return;
     }
@@ -910,7 +904,7 @@ void TrackingVolumeViewer::LoadWorkingVolumeMeshProcessing()
     m_ViewerGroup->m_CoronalView->RequestResetCamera();
     m_ViewerGroup->m_3DView->RequestResetCamera();
 
-    m_StateMachine.PushInput( m_SuccessInput );
+    igstkPushInputMacro( Success );
     m_StateMachine.ProcessInputs();
 }
 
@@ -939,7 +933,7 @@ void TrackingVolumeViewer::LoadTrackerMeshProcessing()
      if(!observer->GotMeshObject())
      {
          igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-         m_StateMachine.PushInput( m_FailureInput);
+         igstkPushInputMacro( Failure );
          m_StateMachine.ProcessInputs();
          return;
      }
@@ -948,7 +942,7 @@ void TrackingVolumeViewer::LoadTrackerMeshProcessing()
      if ( m_MeshSpatialObject.IsNull() )
      {
        igstkLogMacro2( m_Logger, DEBUG, "Cannot read mesh\n" )
-       m_StateMachine.PushInput( m_FailureInput);
+       igstkPushInputMacro( Failure );
        m_StateMachine.ProcessInputs();
        return;
      }
@@ -976,14 +970,14 @@ void TrackingVolumeViewer::LoadTrackerMeshProcessing()
      m_ViewerGroup->m_CoronalView->RequestResetCamera();
      m_ViewerGroup->m_3DView->RequestResetCamera();
 
-     m_StateMachine.PushInput( m_SuccessInput );
+     igstkPushInputMacro( Success );
      m_StateMachine.ProcessInputs();
      return;
   }
   else
   {
      igstkLogMacro2( m_Logger, DEBUG, "No directory is selected\n" )
-     m_StateMachine.PushInput( m_FailureInput );
+     igstkPushInputMacro( Failure );     
      m_StateMachine.ProcessInputs();
      return;
   }
@@ -1004,7 +998,7 @@ void TrackingVolumeViewer::InitializeTrackerProcessing()
   {
     igstkLogMacro2( m_Logger, DEBUG, "TrackingVolumeViewer::InitializeTrackerProcessing\
                                      There is no tracker configuration\n" )
-    m_StateMachine.PushInput( m_FailureInput );
+    igstkPushInputMacro( Failure );
     m_StateMachine.ProcessInputs();
     return;
   }
@@ -1017,18 +1011,15 @@ void TrackingVolumeViewer::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
-    fl_beep( FL_BEEP_ERROR );
+    ReportError( errorMessage );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
-    m_StateMachine.PushInput( m_FailureInput );
+    igstkPushInputMacro( Failure );
     m_StateMachine.ProcessInputs();
     return;
   }
 
   m_TrackerController->RequestGetNonReferenceToolList();
- // m_TrackerController->RequestGetReferenceTool();
-  
-  m_StateMachine.PushInput( m_SuccessInput );
+  igstkPushInputMacro( Success );
   m_StateMachine.ProcessInputs();
   return;
 }
@@ -1052,7 +1043,7 @@ void TrackingVolumeViewer::StartTrackingProcessing()
     {
       igstkLogMacro2( m_Logger, DEBUG, "TrackingVolumeViewer::StartTrackingProcessing \
                                        There is not tracker configuration object\n" )
-      m_StateMachine.PushInput( m_FailureInput );
+      igstkPushInputMacro( Failure );
       m_StateMachine.ProcessInputs();
       return;
     }
@@ -1065,10 +1056,9 @@ void TrackingVolumeViewer::StartTrackingProcessing()
       std::string errorMessage;
       m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
       m_TrackerControllerObserver->ClearError();
-      fl_alert( errorMessage.c_str() );
-      fl_beep( FL_BEEP_ERROR );
+      ReportError( errorMessage );
       igstkLogMacro2( m_Logger, DEBUG, "Tracker start error\n" )
-      m_StateMachine.PushInput( m_FailureInput );
+      igstkPushInputMacro( Failure );
       m_StateMachine.ProcessInputs();
       return;
     }    
@@ -1088,7 +1078,7 @@ void TrackingVolumeViewer::StartTrackingProcessing()
       so->SetRadius(10,10,10);
       so->RequestDetachFromParent();
       so->RequestSetTransformAndParent( identity, (*iter));
-
+     
       m_TipSpatialObjectVector.push_back( so );
 
       EllipsoidRepresentationType::Pointer rep = EllipsoidRepresentationType::New();
@@ -1105,7 +1095,7 @@ void TrackingVolumeViewer::StartTrackingProcessing()
       m_ViewerGroup->m_AxialView->RequestAddObject( rep->Copy() );
       m_ViewerGroup->m_SagittalView->RequestAddObject( rep->Copy() );
       m_ViewerGroup->m_CoronalView->RequestAddObject( rep->Copy() );
-      m_ViewerGroup->m_3DView->RequestAddObject( rep->Copy() );
+      m_ViewerGroup->m_3DView->RequestAddObject( rep );
     }    
 
     // set views' background colors
@@ -1125,7 +1115,7 @@ void TrackingVolumeViewer::StartTrackingProcessing()
       identity, m_WorldReference );
 
     m_ViewerGroup->m_3DView->RequestSetTransformAndParent(
-      identity, m_ViewerGroup->m_AxialView );
+      identity, m_WorldReference );
 
     // set up view parameters
     m_ViewerGroup->m_AxialView->SetRefreshRate( VIEW_2D_REFRESH_RATE );
@@ -1155,7 +1145,7 @@ void TrackingVolumeViewer::StartTrackingProcessing()
     m_ViewerGroup->m_CoronalView->RequestResetCamera();
     m_ViewerGroup->m_3DView->RequestResetCamera();
 
-    m_StateMachine.PushInput( m_SuccessInput );
+    igstkPushInputMacro( Success );
     m_StateMachine.ProcessInputs();
 
   return;
@@ -1177,16 +1167,14 @@ void TrackingVolumeViewer::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
-    fl_beep( FL_BEEP_ERROR );
+    ReportError( errorMessage );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker stop error\n" )
-    m_StateMachine.PushInput( m_FailureInput );
+    igstkPushInputMacro( Failure );
     m_StateMachine.ProcessInputs();
     return;
   }
-
-  m_StateMachine.PushInput( m_SuccessInput );
+  igstkPushInputMacro( Success );
   m_StateMachine.ProcessInputs();
 }
 /** -----------------------------------------------------------------
@@ -1205,17 +1193,15 @@ void TrackingVolumeViewer::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
-    fl_beep( FL_BEEP_ERROR );
+    ReportError( errorMessage );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker disconnect error\n" )
 
-    m_StateMachine.PushInput( m_FailureInput );
+    igstkPushInputMacro( Failure );
     m_StateMachine.ProcessInputs();
     return;
   }
-
-  m_StateMachine.PushInput( m_SuccessInput );
+  igstkPushInputMacro( Success );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1276,7 +1262,6 @@ TrackingVolumeViewer::TrackerControllerObserver::Execute( itk::Object *caller,
     for ( ; iter != toolContainer.end(); iter++ )
     {
       m_Parent->m_ToolVector.push_back( (*iter).second );
-      std::cout << "TrackingVolumeViewer::TrackerControllerObserver::Execute() found tool: " << (*iter).first << std::endl;
     }
   }
   else if ( evt4 )
@@ -1297,3 +1282,16 @@ TrackingVolumeViewer
 }
 
 
+void 
+TrackingVolumeViewer::ReportError( const std::string &message )
+{
+  ReportError( message.c_str() );
+}
+
+
+void
+TrackingVolumeViewer::ReportError( const char *message )
+{
+  fl_alert( message );
+  fl_beep( FL_BEEP_ERROR );
+}

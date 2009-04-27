@@ -1,40 +1,30 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class TrackingVolumeViewerGUI {: {public igstk::Object}
+class TrackingVolumeViewerGUI {open : {public igstk::Object}
 } {
-  Function {TrackingVolumeViewerGUI()} {} {
+  Function {TrackingVolumeViewerGUI()} {open
+  } {
     Fl_Window mainWindow {
       label {IGSTK - Tracking Volume Viewer}
       callback {Quit();} open
       xywh {92 111 1280 800} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
-      Fl_Group m_ControlGroup {
+      Fl_Group m_ControlGroup {open
         xywh {3 5 145 793} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
       } {
         Fl_Box m_InstitutionBox {
           image {IGSTK.jpg} xywh {11 27 130 61} color 7 labelsize 23 labelcolor 15
         }
-        Fl_Button {} {
-          label Quit
-          callback {Quit();}
-          tooltip {Load segmentation (.msh)} xywh {10 745 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-        }
-        Fl_Button {} {
-          label Load
-          callback {RequestLoadTrackerMesh();}
-          tooltip {Load tracker mesh  (.msh)} xywh {10 220 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
-        }
-        Fl_Button {} {
-          label Load
-          callback {RequestLoadWorkingVolumeMesh();}
-          tooltip {Load working volume mesh (.msh)} xywh {10 300 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        Fl_Box {} {
+          label {Tracker Configuration}
+          xywh {10 108 130 37} labelsize 13
         }
         Fl_Button {} {
           label Load
@@ -42,16 +32,27 @@ class TrackingVolumeViewerGUI {: {public igstk::Object}
           tooltip {Start application} xywh {10 145 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
         }
         Fl_Box {} {
-          label {Working Volume Rep.}
-          xywh {10 260 130 37} labelsize 13
-        }
-        Fl_Box {} {
           label {Tracker Rep.}
           xywh {10 183 130 37} labelsize 13
         }
+        Fl_Button m_LoadTrackerMeshButton {
+          label Load
+          callback {RequestLoadTrackerMesh();}
+          tooltip {Load tracker mesh  (.msh)} xywh {10 220 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16 deactivate
+        }
         Fl_Box {} {
-          label {Tracker Configuration}
-          xywh {10 108 130 37} labelsize 13
+          label {Working Volume Rep.}
+          xywh {10 260 130 37} labelsize 13
+        }
+        Fl_Button m_LoadWorkVolumeMeshButton {
+          label Load
+          callback {RequestLoadWorkingVolumeMesh();} selected
+          tooltip {Load working volume mesh (.msh)} xywh {10 300 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16 deactivate
+        }
+        Fl_Button {} {
+          label Quit
+          callback {Quit();}
+          tooltip {Load segmentation (.msh)} xywh {10 745 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
         }
       }
       Fl_Group m_ViewerGroup {
@@ -68,7 +69,7 @@ int y = m_ControlGroup->y();
 int height = m_ControlGroup->h();
 m_ControlGroup->resize(x,y,150,height);} {}
     Fl_Window m_ConfirmToQuitWindow {
-      label {Shut down system} selected
+      label {Shut down system}
       xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
     } {
       Fl_Box {} {

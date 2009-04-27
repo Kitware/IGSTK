@@ -335,6 +335,9 @@ private:
   void StopTrackingProcessing();
   void DisconnectTrackerProcessing();
 
+  void ReportError( const std::string &message );
+  void ReportError( const char *message );
+
   /** Observer type for loaded event, 
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
