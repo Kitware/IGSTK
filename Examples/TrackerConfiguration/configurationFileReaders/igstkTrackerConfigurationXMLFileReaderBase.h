@@ -129,6 +129,8 @@ protected:
     m_HaveRefreshRate = false;
     m_ReferenceTool = NULL;
     m_CurrentToolIsReference = false;
+    m_CurrentToolCalibration.SetToIdentity( 
+    igstk::TimeStamp::GetLongestPossibleTime() );
     }
   virtual ~TrackerConfigurationXMLFileReaderBase() 
     {
