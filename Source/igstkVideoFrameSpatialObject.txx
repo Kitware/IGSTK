@@ -45,7 +45,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     m_ItkRGBExporter = ITKRGBExportFilterType::New();
     m_VtkRGBImporter = VTKImportFilterType::New();
 
-    
+
 
     // Connect the given itk::VTKImageExport filter to the given vtkImageImport filter.
     m_VtkRGBImporter->SetUpdateInformationCallback(
@@ -143,7 +143,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     else
       m_RawBuffer[i]='a';
     }
-  
+
     RGBImportFilter = RGBImportFilterType::New();
 
     RGBImportFilter->SetRegion( m_Region );
@@ -153,8 +153,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     RGBImportFilter->SetSpacing( spacing );
 
     int j=0;
-    RGBPixelType* tmp;
-    tmp = new RGBPixelType[m_Width * m_Height];
+    RGBPixelType tmp[m_Width * m_Height];
     for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
     {
       RGBPixelType temp;
@@ -176,7 +175,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   }
   else if (m_NumberOfChannels == 1)
   {
-  
+
     m_ImportFilter = ImportFilterType::New();
 
     m_ImportFilter->SetRegion( m_Region );
@@ -354,8 +353,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   {
 
   int j=0;
-  RGBPixelType* tmp;
-  tmp = new RGBPixelType[m_Width * m_Height];
+  RGBPixelType tmp[m_Width * m_Height];
   for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
   {
     RGBPixelType temp;
@@ -375,7 +373,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   m_VtkRGBImporter->Update();
 
   m_VTKImage = m_VtkRGBImporter->GetOutput();
-  
+
   }
   else if(m_NumberOfChannels == 1)
   {
