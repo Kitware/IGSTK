@@ -25,8 +25,8 @@
 
 class vtkImageData;
 class vtkImageActor;
-class vtkImageMapToColors;
 class vtkLookupTable;
+class vtkImageMapToColors;
 
 namespace igstk
 {
@@ -53,7 +53,7 @@ public:
 
   /** Observer macro that will received a event with an image as payload and
    * will store it internally. This will be the receptor of the event sent by
-   * the ImageSpatialObject when an image is requested. */
+   * the VideoFrameSpatialObject when an image is requested. */
   igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
                       EventHelperType::VTKImagePointerType );
 
@@ -118,14 +118,14 @@ private:
   typename VTKImageObserver::Pointer   m_VTKImageObserver;
 
    /** Inputs to the State Machine */
-  igstkDeclareInputMacro( ValidImageSpatialObject );
-  igstkDeclareInputMacro( NullImageSpatialObject );
-  igstkDeclareInputMacro( EmptyImageSpatialObject );
+  igstkDeclareInputMacro( ValidVideoFrameSpatialObject );
+  igstkDeclareInputMacro( NullVideoFrameSpatialObject );
+  igstkDeclareInputMacro( EmptyVideoFrameSpatialObject );
   igstkDeclareInputMacro( ConnectVTKPipeline );
 
   /** States for the State Machine */
-  igstkDeclareStateMacro( NullImageSpatialObject );
-  igstkDeclareStateMacro( ValidImageSpatialObject );
+  igstkDeclareStateMacro( NullVideoFrameSpatialObject );
+  igstkDeclareStateMacro( ValidVideoFrameSpatialObject );
 
 };
 
