@@ -351,6 +351,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
+    cout << "-";
 
   int j=0;
   RGBPixelType tmp[m_Width * m_Height];
