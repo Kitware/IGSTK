@@ -39,12 +39,12 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
   m_StateMachine(this),
   m_ImageData(NULL),
   m_ImageActor(NULL),
-  m_MapColors(NULL),
-  m_LookupTable(NULL)
+  m_LookupTable(NULL),
+  m_MapColors(NULL)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation constructor called ...\n");
 
-  // We create the image spatial object
+  // We create the VideoFrame spatial object
   m_VideoFrameSpatialObject = NULL;
 
   this->RequestSetSpatialObject( m_VideoFrameSpatialObject );
@@ -53,8 +53,6 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
   m_ImageActor->SetZSlice(0);
   m_ImageActor->SetPosition(0,0,0);
   m_ImageActor->SetOrientation(0,0,0);
-  //TODO beyond a specific size the OS crashes maybe justify this
-  //m_ImageActor->SetDisplayExtent(0,640-1,0,480-1,0,1-1);
 
   this->AddActor( m_ImageActor );
 
@@ -65,33 +63,33 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
   // Create the observer to VTK image events
   m_VTKImageObserver = VTKImageObserver::New();
 
-  igstkAddInputMacro( ValidImageSpatialObject );
-  igstkAddInputMacro( NullImageSpatialObject  );
-  igstkAddInputMacro( EmptyImageSpatialObject  );
+  igstkAddInputMacro( ValidVideoFrameSpatialObject );
+  igstkAddInputMacro( NullVideoFrameSpatialObject  );
+  igstkAddInputMacro( EmptyVideoFrameSpatialObject  );
   igstkAddInputMacro( ConnectVTKPipeline );
 
-  igstkAddStateMacro( NullImageSpatialObject );
-  igstkAddStateMacro( ValidImageSpatialObject );
+  igstkAddStateMacro( NullVideoFrameSpatialObject );
+  igstkAddStateMacro( ValidVideoFrameSpatialObject );
 
-  igstkAddTransitionMacro( NullImageSpatialObject, NullImageSpatialObject,
-                           NullImageSpatialObject, No );
-  igstkAddTransitionMacro( NullImageSpatialObject, EmptyImageSpatialObject,
-                           NullImageSpatialObject, No );
-  igstkAddTransitionMacro( NullImageSpatialObject, ValidImageSpatialObject,
-                           ValidImageSpatialObject,SetVideoFrameSpatialObject );
-  igstkAddTransitionMacro( NullImageSpatialObject, ConnectVTKPipeline,
-                           NullImageSpatialObject, No );
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, NullVideoFrameSpatialObject,
+                           NullVideoFrameSpatialObject, No );
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, EmptyVideoFrameSpatialObject,
+                           NullVideoFrameSpatialObject, No );
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, ValidVideoFrameSpatialObject,
+                           ValidVideoFrameSpatialObject,SetVideoFrameSpatialObject );
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, ConnectVTKPipeline,
+                           NullVideoFrameSpatialObject, No );
 
-  igstkAddTransitionMacro( ValidImageSpatialObject, NullImageSpatialObject,
-                           NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, EmptyImageSpatialObject,
-                           NullImageSpatialObject,  No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, ValidImageSpatialObject,
-                           ValidImageSpatialObject, No );
-  igstkAddTransitionMacro( ValidImageSpatialObject, ConnectVTKPipeline,
-                           ValidImageSpatialObject, ConnectVTKPipeline );
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, NullVideoFrameSpatialObject,
+                           NullVideoFrameSpatialObject,  No );
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, EmptyVideoFrameSpatialObject,
+                           NullVideoFrameSpatialObject,  No );
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, ValidVideoFrameSpatialObject,
+                           ValidVideoFrameSpatialObject, No );
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, ConnectVTKPipeline,
+                           ValidVideoFrameSpatialObject, ConnectVTKPipeline );
 
-  igstkSetInitialStateMacro( NullImageSpatialObject );
+  igstkSetInitialStateMacro( NullVideoFrameSpatialObject );
 
   m_StateMachine.SetReadyToRun();
 }
@@ -172,17 +170,17 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
 
   if( !m_VideoFrameSpatialObjectToAdd )
   {
-    m_StateMachine.PushInput( m_NullImageSpatialObjectInput );
+    m_StateMachine.PushInput( m_NullVideoFrameSpatialObjectInput );
   }
   else
   {
     if( m_VideoFrameSpatialObjectToAdd->IsEmpty() )
     {
-      m_StateMachine.PushInput( m_EmptyImageSpatialObjectInput );
+      m_StateMachine.PushInput( m_EmptyVideoFrameSpatialObjectInput );
     }
     else
     {
-      m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
+      m_StateMachine.PushInput( m_ValidVideoFrameSpatialObjectInput );
     }
   }
 
