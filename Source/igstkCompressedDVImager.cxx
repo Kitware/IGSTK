@@ -304,7 +304,7 @@ CompressedDVImager::ResultType CompressedDVImager::InternalUpdateStatus()
     // report to the imager tool that the tool is sending frames
     this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
 
-    cout << ":" << endl;
+//    cout << ":" << endl;
 
     this->SetImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
@@ -363,18 +363,16 @@ CompressedDVImager::InternalThreadedUpdateStatus( void )
       unsigned int frameDims[3];
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
 
-
       int result = 0;
       result = raw1394_loop_iterate (handle);
 
       CompressedDVImager::m_FrameBufferLock->Lock();
-
+//      cout << "+" << endl;
       if( CompressedDVImager::frameBuffer !=NULL)
       {
         memcpy(frame.GetImagePtr(),
                (unsigned char*)CompressedDVImager::frameBuffer,
                 frameDims[0]*frameDims[1]*frameDims[2]);
-             //free(CompressedDVImager::frameBuffer);
       }
 
       CompressedDVImager::m_FrameBufferLock->Unlock();
