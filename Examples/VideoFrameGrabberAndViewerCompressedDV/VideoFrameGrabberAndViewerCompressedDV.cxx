@@ -28,8 +28,8 @@
 // EndLatex
 
 // BeginCodeSnippet
-#define VIEW_2D_REFRESH_RATE 25
-#define IMAGER_DEFAULT_REFRESH_RATE 25
+#define VIEW_2D_REFRESH_RATE 15
+#define IMAGER_DEFAULT_REFRESH_RATE 15
 // EndCodeSnippet
 
 namespace igstk{
