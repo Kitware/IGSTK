@@ -49,32 +49,28 @@ CompressedDVImagerConfiguration::InternalAddTool( const
   const CompressedDVToolConfiguration *wirelessTool =
     dynamic_cast<const CompressedDVToolConfiguration *>( tool );
 
-  if( wirelessTool == NULL )
-  {
-    fe.Set( "Given tool configuration type not compatible with tracker type." );
-    this->InvokeEvent( fe );
-    return;
-  }
+if( wirelessTool == NULL )
+{
+  fe.Set( "Given tool configuration type not compatible with tracker type." );
+  this->InvokeEvent( fe );
+  return;
+}
 
   this->m_ImagerToolList.push_back( new CompressedDVToolConfiguration(
                                                               *wirelessTool ) );
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
-
 CompressedDVToolConfiguration::CompressedDVToolConfiguration()
 {
 
 }
-
-
 
 CompressedDVToolConfiguration::CompressedDVToolConfiguration( const
   CompressedDVToolConfiguration &other ) : ImagerToolConfiguration( other )
 {
 
 }
-
 
 CompressedDVToolConfiguration::~CompressedDVToolConfiguration()
 {
