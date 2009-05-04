@@ -25,6 +25,7 @@ namespace igstk
 Frame
 ::Frame()
 {
+ 
 }
 
 Frame
@@ -37,17 +38,20 @@ Frame
 Frame
 ::~Frame()
 {
-  //free(m_ImagePtr);
+//  if(m_ImagePtr != NULL)
+//  free(m_ImagePtr);
+ 
 }
 
-void 
+void
 Frame::SetFrameDimensions(int width, int height, int channels)
 {
   m_Width = width;
   m_Height = height;
   m_NumberOfChannels = channels;
-  
+
   m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  cout << "malloc frame " << endl;
 }
 
 Frame::TimePeriodType
