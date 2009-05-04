@@ -42,6 +42,7 @@ namespace igstk
 
 
 /**
+ * \class ImagerToolConfiguration
  * Generic Imager tool settings container with the variables common to all 
  * tools.
  */
@@ -50,7 +51,7 @@ class ImagerToolConfiguration
 public:
   ImagerToolConfiguration();
   ImagerToolConfiguration(const ImagerToolConfiguration &other);
-  virtual ~ImagerToolConfiguration();      
+  virtual ~ImagerToolConfiguration();
 
   void SetFrameDimensions ( unsigned int * );
   void GetFrameDimensions ( unsigned int * ) const;
@@ -77,9 +78,8 @@ protected:
 
 };
 
-
-
 /**
+ * \class ImagerConfiguration
  * Abstract base class for all Imager configurations.
  */
 class ImagerConfiguration : public Object
@@ -99,7 +99,8 @@ public:
    * (user specified a value that was zero, negative, or greater than the 
    * Imager's maximal refresh rate). 
    */
-  igstkLoadedEventMacro( FrequencySetFailureEvent, IGSTKErrorEvent, std::string );
+  igstkLoadedEventMacro( FrequencySetFailureEvent, 
+                                                  IGSTKErrorEvent, std::string);
 
   /** This event is generated when a tool was added successfuly. */
   igstkEventMacro( AddToolSuccessEvent, IGSTKEvent );
@@ -152,39 +153,41 @@ protected:
   //the frequency at which the Imager is queried for new transforms [Hz]
   double m_Frequency;
 
-  //the list of tools we want to connect to the Imager (excluding the reference tool)
+  //list of tools we want to connect to the Imager (excluding reference tool)
   std::vector< ImagerToolConfiguration * > m_ImagerToolList;
 
 //  ImagerToolConfiguration * m_ReferenceTool; 
 };
 
 /**
+ * \class SocketCommunicatingImagerConfiguration
  * A base class for all imager configurations that require socket 
  * communication.
  */
 class SocketCommunicatingImagerConfiguration : public ImagerConfiguration
 {
 public:
-    igstkSetMacro( SocketPort, unsigned int );
-    igstkGetMacro( SocketPort, unsigned int );
+  igstkSetMacro( SocketPort, unsigned int );
+  igstkGetMacro( SocketPort, unsigned int );
 
 protected:
-    SocketCommunicatingImagerConfiguration();
-    virtual ~SocketCommunicatingImagerConfiguration();
+  SocketCommunicatingImagerConfiguration();
+  virtual ~SocketCommunicatingImagerConfiguration();
 
 private:
   unsigned int m_SocketPort;
-//  std::string m_HostName;
+  //std::string m_HostName;
 };
 
 /**
+ * \class SerialCommunicatingImagerConfiguration
  * A base class for all Imager configurations that require serial 
  * communication.
  */
 class SerialCommunicatingImagerConfiguration : public ImagerConfiguration
 {
 public:
-        //standard typedefs
+  //standard typedefs
   igstkStandardClassBasicTraitsMacro( SerialCommunicatingImagerConfiguration, 
                                       ImagerConfiguration )
 
@@ -201,8 +204,9 @@ public:
 
   /**
    * Set the com port to the given value. Generates ComPortSetEvent if 
-   * successful otherwise ComPortSetErrorEvent.*/
-  void RequestSetCOMPort( igstk::SerialCommunication::PortNumberType portNumber);
+   * successful otherwise ComPortSetErrorEvent.
+   */
+  void RequestSetCOMPort(igstk::SerialCommunication::PortNumberType portNumber);
   igstkGetMacro( COMPort, igstk::SerialCommunication::PortNumberType );
 
 
@@ -218,7 +222,8 @@ public:
 
   /**
    * Set the baud rate to the given value. Generates BaudRateSetEvent if 
-   * successful otherwise BaudRateSetErrorEvent.*/
+   * successful otherwise BaudRateSetErrorEvent.
+   */
   void RequestSetBaudRate( igstk::SerialCommunication::BaudRateType baudRate );
   igstkGetMacro( BaudRate, igstk::SerialCommunication::BaudRateType );
 
@@ -253,12 +258,12 @@ public:
 
   igstkEventMacro( HandshakeSetErrorEvent, IGSTKErrorWithStringEvent );
 
-  void RequestSetHandshake( igstk::SerialCommunication::HandshakeType handShake );
+  void RequestSetHandshake(igstk::SerialCommunication::HandshakeType handShake);
   igstkGetMacro( Handshake, igstk::SerialCommunication::HandshakeType );
 
 protected:
-    SerialCommunicatingImagerConfiguration();
-    virtual ~SerialCommunicatingImagerConfiguration();
+  SerialCommunicatingImagerConfiguration();
+  virtual ~SerialCommunicatingImagerConfiguration();
 
 private:
   igstk::SerialCommunication::PortNumberType m_COMPort;

@@ -25,6 +25,7 @@ namespace igstk
 
 
 /**
+ * \class CompressedDVToolConfiguration
  * A CompressedDV imager tool.
  */
 class CompressedDVToolConfiguration : public ImagerToolConfiguration
@@ -42,9 +43,10 @@ protected:
 
 
 /**
+ * \class CompressedDVImagerConfiguration
  * Configuration for the CompressedDV imager.
  */
-class CompressedDVImagerConfiguration : public ImagerConfiguration//SocketCommunicatingImagerConfiguration
+class CompressedDVImagerConfiguration : public ImagerConfiguration
 {
 public:
   CompressedDVImagerConfiguration();
@@ -62,13 +64,9 @@ protected:
   virtual void InternalAddTool( const ImagerToolConfiguration *tool );
 
 private:
-
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
-
-  unsigned int m_BufferSize;
-
-
+  unsigned int        m_BufferSize;
 };
 
 

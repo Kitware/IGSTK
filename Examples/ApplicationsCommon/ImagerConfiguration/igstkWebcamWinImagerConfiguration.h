@@ -25,6 +25,7 @@ namespace igstk
 
 
 /**
+ * \class WebcamWinToolConfiguration
  * A WebcamWin imager tool.
  */
 class WebcamWinToolConfiguration : public ImagerToolConfiguration
@@ -42,9 +43,10 @@ protected:
 
 
 /**
+ * \class WebcamWinImagerConfiguration
  * Configuration for the WebcamWin imager.
  */
-class WebcamWinImagerConfiguration : public ImagerConfiguration//SocketCommunicatingImagerConfiguration
+class WebcamWinImagerConfiguration : public ImagerConfiguration
 {
 public:
   WebcamWinImagerConfiguration();
@@ -63,7 +65,7 @@ protected:
 
 private:
 
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 
   unsigned int m_BufferSize;

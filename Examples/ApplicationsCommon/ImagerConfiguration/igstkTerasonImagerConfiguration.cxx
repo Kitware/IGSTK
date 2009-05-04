@@ -23,7 +23,7 @@ const double TerasonImagerConfiguration::MAXIMAL_REFERESH_RATE = 30;
 
 
 TerasonImagerConfiguration::TerasonImagerConfiguration():
-  m_BufferSize(50)
+m_BufferSize(50)
 {
   this->m_Frequency = this->MAXIMAL_REFERESH_RATE;
 
@@ -55,19 +55,15 @@ TerasonImagerConfiguration::InternalAddTool( const
     this->InvokeEvent( fe );
     return;
   }
-
   this->m_ImagerToolList.push_back( new TerasonToolConfiguration( 
                                                               *wirelessTool ) );
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
-
 TerasonToolConfiguration::TerasonToolConfiguration()
 {
 
 }
-
-
 
 TerasonToolConfiguration::TerasonToolConfiguration( const 
   TerasonToolConfiguration &other ) : ImagerToolConfiguration( other )
@@ -75,11 +71,9 @@ TerasonToolConfiguration::TerasonToolConfiguration( const
 
 }
 
-
 TerasonToolConfiguration::~TerasonToolConfiguration() 
 {
 }
-
 
 std::string 
 TerasonToolConfiguration::GetToolTypeAsString()

@@ -55,19 +55,15 @@ ImagingSourceImagerConfiguration::InternalAddTool( const
     this->InvokeEvent( fe );
     return;
   }
-
   this->m_ImagerToolList.push_back( new ImagingSourceToolConfiguration( 
                                                               *wirelessTool ) );
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
-
 ImagingSourceToolConfiguration::ImagingSourceToolConfiguration()
 {
 
 }
-
-
 
 ImagingSourceToolConfiguration::ImagingSourceToolConfiguration( const 
   ImagingSourceToolConfiguration &other ) : ImagerToolConfiguration( other )
@@ -75,11 +71,9 @@ ImagingSourceToolConfiguration::ImagingSourceToolConfiguration( const
 
 }
 
-
 ImagingSourceToolConfiguration::~ImagingSourceToolConfiguration() 
 {
 }
-
 
 std::string 
 ImagingSourceToolConfiguration::GetToolTypeAsString()

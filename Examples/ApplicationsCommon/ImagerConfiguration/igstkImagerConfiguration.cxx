@@ -1,5 +1,4 @@
 /*=========================================================================
-
   Program:   Image Guided Surgery Software Toolkit
   Module:    igstkImagerConfiguration.cxx
   Language:  C++
@@ -12,7 +11,6 @@
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-
 =========================================================================*/
 
 #include "igstkImagerConfiguration.h"
@@ -32,8 +30,8 @@ ImagerConfiguration::~ImagerConfiguration()
   std::vector< ImagerToolConfiguration * >::iterator endIt = 
     this->m_ImagerToolList.end();
 
-  for(it=this->m_ImagerToolList.begin(); it!=endIt; it++)
-  {    
+  for( it=this->m_ImagerToolList.begin(); it!=endIt; it++ )
+  {
     delete (*it);
   }
   this->m_ImagerToolList.clear();
@@ -61,20 +59,16 @@ ImagerConfiguration::RequestSetFrequency( double frequency )
   }
 }
 
-
 void 
 ImagerConfiguration::RequestAddTool( const ImagerToolConfiguration *tool )
 {
   InternalAddTool( tool );
 }
 
-
-
 ImagerToolConfiguration::ImagerToolConfiguration() 
 {
  
-};
-
+}
 
 ImagerToolConfiguration::ImagerToolConfiguration(const 
   ImagerToolConfiguration &other)
@@ -123,8 +117,8 @@ SocketCommunicatingImagerConfiguration::SocketCommunicatingImagerConfiguration()
   m_SocketPort = 0;
 }
 
-
-SocketCommunicatingImagerConfiguration::~SocketCommunicatingImagerConfiguration()
+SocketCommunicatingImagerConfiguration::
+                                       ~SocketCommunicatingImagerConfiguration()
 {
 }
 
@@ -152,7 +146,8 @@ SerialCommunicatingImagerConfiguration::SerialCommunicatingImagerConfiguration()
 }
 
 
-SerialCommunicatingImagerConfiguration::~SerialCommunicatingImagerConfiguration()
+SerialCommunicatingImagerConfiguration::
+                                       ~SerialCommunicatingImagerConfiguration()
 {
 }
 
@@ -162,25 +157,25 @@ SerialCommunicatingImagerConfiguration::RequestSetCOMPort(
 {
   switch( portNumber ) 
   {
-  case igstk::SerialCommunication::PortNumber0:
-  case igstk::SerialCommunication::PortNumber1:
-  case igstk::SerialCommunication::PortNumber2:
-  case igstk::SerialCommunication::PortNumber3:
-  case igstk::SerialCommunication::PortNumber4:
-  case igstk::SerialCommunication::PortNumber5:
-  case igstk::SerialCommunication::PortNumber6:
-  case igstk::SerialCommunication::PortNumber7:
-    this->m_COMPort = portNumber;
-    this->InvokeEvent( ComPortSetEvent() );
-    break;
-  default:
-    ComPortSetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid COM port ("<<portNumber<<"). Supported ports are ";
-    msg<<"in the range ["<<igstk::SerialCommunication::PortNumber0<<",";
-    msg<<igstk::SerialCommunication::PortNumber7<<"].";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
+    case igstk::SerialCommunication::PortNumber0:
+    case igstk::SerialCommunication::PortNumber1:
+    case igstk::SerialCommunication::PortNumber2:
+    case igstk::SerialCommunication::PortNumber3:
+    case igstk::SerialCommunication::PortNumber4:
+    case igstk::SerialCommunication::PortNumber5:
+    case igstk::SerialCommunication::PortNumber6:
+    case igstk::SerialCommunication::PortNumber7:
+      this->m_COMPort = portNumber;
+      this->InvokeEvent( ComPortSetEvent() );
+      break;
+    default:
+      ComPortSetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid COM port ("<<portNumber<<"). Supported ports are ";
+      msg<<"in the range ["<<igstk::SerialCommunication::PortNumber0<<",";
+      msg<<igstk::SerialCommunication::PortNumber7<<"].";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
   }
 }
 
@@ -191,20 +186,20 @@ SerialCommunicatingImagerConfiguration::RequestSetBaudRate(
 {
   switch( baudRate ) 
   {
-  case igstk::SerialCommunication::BaudRate9600:
-  case igstk::SerialCommunication::BaudRate19200:
-  case igstk::SerialCommunication::BaudRate38400:
-  case igstk::SerialCommunication::BaudRate57600:
-  case igstk::SerialCommunication::BaudRate115200:
-    this->m_BaudRate = baudRate;
-    this->InvokeEvent( BaudRateSetEvent() );
-    break;
-  default:
-    BaudRateSetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid baud rate ("<<baudRate<<")";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
+    case igstk::SerialCommunication::BaudRate9600:
+    case igstk::SerialCommunication::BaudRate19200:
+    case igstk::SerialCommunication::BaudRate38400:
+    case igstk::SerialCommunication::BaudRate57600:
+    case igstk::SerialCommunication::BaudRate115200:
+      this->m_BaudRate = baudRate;
+      this->InvokeEvent( BaudRateSetEvent() );
+      break;
+    default:
+      BaudRateSetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid baud rate ("<<baudRate<<")";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
   }
 }
 
@@ -214,19 +209,19 @@ SerialCommunicatingImagerConfiguration::RequestSetDataBits(
   igstk::SerialCommunication::DataBitsType dataBits)
 {
   switch( dataBits ) 
-  {
-  case igstk::SerialCommunication::DataBits7:
-  case igstk::SerialCommunication::DataBits8:
-    this->m_DataBits = dataBits;
-    this->InvokeEvent( DataBitsSetEvent() );
-    break;
-  default:
-    DataBitsSetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid data bits value ("<<dataBits<<")";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
-  }
+    {
+    case igstk::SerialCommunication::DataBits7:
+    case igstk::SerialCommunication::DataBits8:
+      this->m_DataBits = dataBits;
+      this->InvokeEvent( DataBitsSetEvent() );
+      break;
+    default:
+      DataBitsSetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid data bits value ("<<dataBits<<")";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
+    }
 }
 
 void 
@@ -234,19 +229,19 @@ SerialCommunicatingImagerConfiguration::RequestSetParity(
   igstk::SerialCommunication::ParityType parity)
 {
   switch( parity ) 
-  {
-  case igstk::SerialCommunication::NoParity:
-  case igstk::SerialCommunication::OddParity:
-  case igstk::SerialCommunication::EvenParity:
-    this->m_Parity = parity;
-    this->InvokeEvent( ParitySetEvent() );
-  default:
-    ParitySetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid parity value ("<<parity<<")";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
-  }
+    {
+    case igstk::SerialCommunication::NoParity:
+    case igstk::SerialCommunication::OddParity:
+    case igstk::SerialCommunication::EvenParity:
+      this->m_Parity = parity;
+      this->InvokeEvent( ParitySetEvent() );
+    default:
+      ParitySetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid parity value ("<<parity<<")";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
+    }
 }
 
 void 
@@ -254,18 +249,18 @@ SerialCommunicatingImagerConfiguration::RequestSetStopBits(
   igstk::SerialCommunication::StopBitsType stopBits)
 {
   switch( stopBits ) 
-  {
-  case igstk::SerialCommunication::StopBits1:
-  case igstk::SerialCommunication::StopBits2:
-    this->m_StopBits = stopBits;
-    this->InvokeEvent( StopBitsSetEvent() );
-  default:
-    StopBitsSetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid stop bits value ("<<stopBits<<")";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
-  }
+    {
+    case igstk::SerialCommunication::StopBits1:
+    case igstk::SerialCommunication::StopBits2:
+      this->m_StopBits = stopBits;
+      this->InvokeEvent( StopBitsSetEvent() );
+    default:
+      StopBitsSetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid stop bits value ("<<stopBits<<")";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
+    }
 }
 
 
@@ -274,18 +269,18 @@ SerialCommunicatingImagerConfiguration::RequestSetHandshake(
   igstk::SerialCommunication::HandshakeType handShake)
 {
   switch( handShake ) 
-  {
-  case igstk::SerialCommunication::HandshakeOff:
-  case igstk::SerialCommunication::HandshakeOn:
-    this->m_Handshake = handShake;
-    this->InvokeEvent( HandshakeSetEvent() );
-  default:
-    HandshakeSetErrorEvent errorEvt;
-    std::ostringstream msg;
-    msg<<"Invalid handshake value ("<<handShake<<")";
-    errorEvt.Set( msg.str() );
-    this->InvokeEvent( errorEvt );
-  }
+    {
+    case igstk::SerialCommunication::HandshakeOff:
+    case igstk::SerialCommunication::HandshakeOn:
+      this->m_Handshake = handShake;
+      this->InvokeEvent( HandshakeSetEvent() );
+    default:
+      HandshakeSetErrorEvent errorEvt;
+      std::ostringstream msg;
+      msg<<"Invalid handshake value ("<<handShake<<")";
+      errorEvt.Set( msg.str() );
+      this->InvokeEvent( errorEvt );
+    }
 }
 
 } // end of name space

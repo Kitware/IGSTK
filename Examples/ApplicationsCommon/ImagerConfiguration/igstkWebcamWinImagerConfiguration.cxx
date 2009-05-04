@@ -23,7 +23,7 @@ const double WebcamWinImagerConfiguration::MAXIMAL_REFERESH_RATE = 30;
 
 
 WebcamWinImagerConfiguration::WebcamWinImagerConfiguration():
-  m_BufferSize(50)
+m_BufferSize(50)
 {
   this->m_Frequency = this->MAXIMAL_REFERESH_RATE;
 
@@ -61,13 +61,10 @@ WebcamWinImagerConfiguration::InternalAddTool( const
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
-
 WebcamWinToolConfiguration::WebcamWinToolConfiguration()
 {
 
 }
-
-
 
 WebcamWinToolConfiguration::WebcamWinToolConfiguration( const
   WebcamWinToolConfiguration &other ) : ImagerToolConfiguration( other )
@@ -75,11 +72,9 @@ WebcamWinToolConfiguration::WebcamWinToolConfiguration( const
 
 }
 
-
 WebcamWinToolConfiguration::~WebcamWinToolConfiguration()
 {
 }
-
 
 std::string
 WebcamWinToolConfiguration::GetToolTypeAsString()

@@ -25,6 +25,7 @@ namespace igstk
 
 
 /**
+ * \class ImagingSourceToolConfiguration
  * A ImagingSource imager tool.
  */
 class ImagingSourceToolConfiguration : public ImagerToolConfiguration
@@ -42,9 +43,10 @@ protected:
 
 
 /**
+ * \class ImagingSourceImagerConfiguration
  * Configuration for the ImagingSource imager.
  */
-class ImagingSourceImagerConfiguration : public ImagerConfiguration//SocketCommunicatingImagerConfiguration
+class ImagingSourceImagerConfiguration : public ImagerConfiguration
 {
 public:
   ImagingSourceImagerConfiguration();
@@ -63,7 +65,7 @@ protected:
 
 private:
 
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 
   unsigned int m_BufferSize;

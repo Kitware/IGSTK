@@ -82,8 +82,8 @@ public:
    *       shut down (stop imaging, close communication, and if using serial
    *       communication that will be closed too).
    *
-   * @param configuration A specific imager configuration (Terason, ImagingSource, etc)
-   *                      which is identified at runtime.
+   * @param configuration A specific imager configuration (Terason, 
+   *        ImagingSource, etc) which is identified at runtime.
    * This method generates two events, InitializationSuccessEvent if everything
    * went well and, InitializationFailureEvent if the imager could not be
    * initialized (the specific error is described in the string contained in the
@@ -109,53 +109,53 @@ public:
 
   void RequestGetToolList();
 
-   /** This event is generated if the initialization succeeds. */
+  /** This event is generated if the initialization succeeds. */
   igstkEventMacro( InitializeSuccessEvent, IGSTKEvent );
 
-   /** This event is generated if the start imaging procedure succeeds. */
+  /** This event is generated if the start imaging procedure succeeds. */
   igstkEventMacro( StartSuccessEvent, IGSTKEvent );
 
-   /** This event is generated if the stop imaging procedure succeeds. */
+  /** This event is generated if the stop imaging procedure succeeds. */
   igstkEventMacro( StopSuccessEvent, IGSTKEvent );
 
-   /** This event is generated if the shutdown succeeds. */
+  /** This event is generated if the shutdown succeeds. */
   igstkEventMacro( ShutdownSuccessEvent, IGSTKEvent );
 
-   /** This event is generated if communication open fails*/
+  /** This event is generated if communication open fails*/
   igstkLoadedEventMacro( OpenCommunicationFailureEvent,
                          IGSTKErrorEvent,
                          EventHelperType::StringType );
 
-   /** This event is generated if the initialization fails*/
+  /** This event is generated if the initialization fails*/
   igstkLoadedEventMacro( InitializeFailureEvent,
                          IGSTKErrorEvent,
                          EventHelperType::StringType );
 
-   /** This event is generated if the start imaging procedure fails*/
+  /** This event is generated if the start imaging procedure fails*/
   igstkLoadedEventMacro( StartFailureEvent,
                          IGSTKErrorEvent,
                          EventHelperType::StringType );
 
-   /** This event is generated if the user requests the imager and it is
-    *  initialized. */
+  /** This event is generated if the user requests the imager and it is
+   *  initialized. */
   igstkLoadedEventMacro( RequestImagerEvent,
                          IGSTKEvent,
                          Imager::Pointer );
 
-   /** This event is generated if the user requests the imager tools and the
-    *  imager is initialized. */
+  /** This event is generated if the user requests the imager tools and the
+   *  imager is initialized. */
   igstkLoadedEventMacro( RequestToolsEvent,
                          IGSTKEvent,
                          std::vector<ImagerTool::Pointer> );
 
-   /** This event is generated if the stop imaging procedure encountered
-    *  difficulties */
+  /** This event is generated if the stop imaging procedure encountered
+   *  difficulties */
   igstkLoadedEventMacro( StopFailureEvent,
                          IGSTKErrorEvent,
                          EventHelperType::StringType );
 
-   /** This event is generated if the shutdown encountered difficulties
-    *   (e.g. imager communication was already closed from outside). */
+  /** This event is generated if the shutdown encountered difficulties
+   *   (e.g. imager communication was already closed from outside). */
   igstkLoadedEventMacro( ShutdownFailureEvent,
                          IGSTKErrorEvent,
                          EventHelperType::StringType );
@@ -180,7 +180,7 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializeTerason );
   //Terason Ultrasound specific :end
 #endif
- //WebcamWin framegrabber specific :begin
+  //WebcamWin framegrabber specific :begin
     igstkDeclareStateMacro( AttemptingToInitializeWebcamWin  );
   //WebcamWin framegrabber specific :end
 #else
@@ -210,7 +210,7 @@ private:
 #endif
 
  //WebcamWin framegrabber specific :begin
-    igstkDeclareInputMacro( WebcamWinInitialize );
+  igstkDeclareInputMacro( WebcamWinInitialize );
   //WebcamWin framegrabber specific :end
 #else
   //ImagingSource framegrabber specific :begin
@@ -241,7 +241,7 @@ private:
   //Terason Ultrasound specific :end
 
   //WebcamWin framegrabber specific :begin
-    void WebcamWinInitializeProcessing();
+  void WebcamWinInitializeProcessing();
   //WebcamWin framegrabber specific :end
 #endif
 #else
@@ -297,8 +297,6 @@ private:
   //CompressedDV framegrabber specific :end
 #endif
 
-
-
   class ErrorObserver : public itk::Command
   {
   public:
@@ -321,16 +319,20 @@ private:
                          const itk::EventObject & event) throw (std::exception);
 
     /**Clear the current error.*/
-    void ClearError() { this->m_ErrorOccured = false;
-                        this->m_ErrorMessage.clear(); }
+    void ClearError() 
+    { 
+      this->m_ErrorOccured = false;
+      this->m_ErrorMessage.clear(); 
+    }
+    
     /**If an error occurs in one of the observed IGSTK components this method
      * will return true.*/
     bool ErrorOccured() { return this->m_ErrorOccured; }
     /**Get the error message associated with the last IGSTK error.*/
     void GetErrorMessage(std::string &errorMessage)
-    {
-      errorMessage = this->m_ErrorMessage;
-    }
+      {
+        errorMessage = this->m_ErrorMessage;
+      }
 
   protected:
 
@@ -339,14 +341,14 @@ private:
     ErrorObserver();
     virtual ~ErrorObserver(){}
   private:
-    bool m_ErrorOccured;
-    std::string m_ErrorMessage;
+    bool                              m_ErrorOccured;
+    std::string                       m_ErrorMessage;
     std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
 
-             //purposely not implemented
+    //purposely not implemented
     ErrorObserver(const Self&);
     void operator=(const Self&);
-  };
+    };
 
   ErrorObserver::Pointer m_ErrorObserver;
   std::string m_ErrorMessage;

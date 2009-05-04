@@ -1081,7 +1081,7 @@ void ImagerController::TerasonInitializeProcessing()
         ImagerTool::Pointer imagerTool;
         TerasonToolConfiguration * currentToolConfig;
 
-        for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+        for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
         {
           currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
 
@@ -1134,7 +1134,7 @@ void ImagerController::WebcamWinInitializeProcessing()
     ImagerTool::Pointer imagerTool;
     TerasonToolConfiguration * currentToolConfig;
 
-    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
     {
       currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
 
@@ -1187,7 +1187,7 @@ void ImagerController::ImagingSourceInitializeProcessing()
     ImagerTool::Pointer imagerTool;
     TerasonToolConfiguration * currentToolConfig;
 
-    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
     {
       currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
 
@@ -1238,7 +1238,7 @@ void ImagerController::CompressedDVInitializeProcessing()
     ImagerTool::Pointer imagerTool;
     TerasonToolConfiguration * currentToolConfig;
 
-    for(it = toolConfigurations.begin(); it!=toolConfigEnd; it++)
+    for( it = toolConfigurations.begin(); it!=toolConfigEnd; it++ )
     {
       currentToolConfig = static_cast<TerasonToolConfiguration *>(*it);
 
@@ -1409,4 +1409,3 @@ ImagerController::ErrorObserver::Execute(const itk::Object *caller,
 }
 
 }//end namespace igstk
-

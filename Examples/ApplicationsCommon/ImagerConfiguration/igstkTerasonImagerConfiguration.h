@@ -25,6 +25,7 @@ namespace igstk
 
 
 /**
+ * \class TerasonToolConfiguration
  * A terason imager tool.
  */
 class TerasonToolConfiguration : public ImagerToolConfiguration
@@ -40,8 +41,8 @@ protected:
 
 };
 
-
 /**
+ * \class TerasonImagerConfiguration
  * Configuration for the Terason imager.
  */
 class TerasonImagerConfiguration : public SocketCommunicatingImagerConfiguration
@@ -63,7 +64,7 @@ protected:
 
 private:
 
-                  //manufacturer specified maximal refresh rate [Hz]
+  //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
 
   unsigned int m_BufferSize;
