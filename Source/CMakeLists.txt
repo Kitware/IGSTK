@@ -374,6 +374,7 @@ SET(IGSTKSandbox_HEADS
   igstkVesselObject.h
   igstkVesselObjectRepresentation.h
 
+  igstkMeshClippingObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -503,6 +504,8 @@ SET(IGSTKSandbox_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
+  
+  igstkMeshClippingObjectRepresentation.cxx
 
 )
 
