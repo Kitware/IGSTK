@@ -345,6 +345,7 @@ WebcamWinImager::InternalThreadedUpdateStatus( void )
 
     if( deviceItr != this->m_ToolFrameBuffer.end() )
       {
+
       // create the frame
       ImagerToolsContainerType imagerToolContainer =
                                               this->GetImagerToolContainer();
