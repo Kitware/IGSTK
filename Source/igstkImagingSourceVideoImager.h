@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkWebcamWinImager.h
+  Module:    igstkImagingSourceVideoImager.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkWebcamWinImager_h
-#define __igstkWebcamWinImager_h
+#ifndef __igstkImagingSourceVideoImager_h
+#define __igstkImagingSourceVideoImager_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -24,33 +24,37 @@
 //information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
-#include "igstkSandboxConfigure.h"
 
-#include "igstkImager.h"
-#include "igstkWebcamWinImagerTool.h"
+#include "igstkVideoImager.h"
+#include "igstkImagingSourceVideoImagerTool.h"
 
+#include "unicap.h"
+#include "unicap_status.h"
 #include <sys/types.h>
+#include <linux/types.h>
 #include <stdio.h>
 #include <map>
-#include <signal.h>
 
-#include "cv.h"
-#include "highgui.h"
+class vtkImageData;
 
 namespace igstk {
 
-/** \class WebcamWinImager
- * \brief This derivation of the Imager class provides communication
- * to a Webcam in Windows
+/** \class ImagingSourceVideoImager
+ * \brief This derivation of the VideoImager class provides communication
+ * to the ImagingSource frame grabber
  *
- * \ingroup Imager
+ * This class controlls the communication with the video device.
+ * The communication with the frame grabber is established with the unicap
+ * library over firewire
+ *
+ * \ingroup VideoImager
  */
 
-class WebcamWinImager : public Imager
+class ImagingSourceVideoImager : public VideoImager
 {
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( WebcamWinImager, Imager )
+  igstkStandardClassTraitsMacro( ImagingSourceVideoImager, VideoImager )
 
 public:
 
@@ -59,12 +63,12 @@ public:
 
 protected:
 
-  WebcamWinImager(void);
+  ImagingSourceVideoImager(void);
 
-  virtual ~WebcamWinImager(void);
+  virtual ~ImagingSourceVideoImager(void);
 
   /** Typedef for internal boolean return type. */
-  typedef Imager::ResultType   ResultType;
+  typedef VideoImager::ResultType   ResultType;
 
   /** Open communication with the imaging device. */
   virtual ResultType InternalOpen( void );
@@ -78,7 +82,7 @@ protected:
   /** Take the imaging device out of imaging mode. */
   virtual ResultType InternalStopImaging( void );
 
-  /** Update the status and the transforms for all ImagerTools. */
+  /** Update the status and the transforms for all VideoImagerTools. */
   virtual ResultType InternalUpdateStatus( void );
 
   /** Update the status and the frames.
@@ -89,10 +93,10 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyImagerToolInformation( const ImagerToolType * );
+  virtual ResultType VerifyVideoImagerToolInformation( const VideoImagerToolType * );
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified
-   * frequency is valid for the imaging device that is being used. */
+  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
+   * valid for the imaging device that is being used. */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
   /** Print object information */
@@ -106,16 +110,16 @@ protected:
   static std::string GetErrorDescription( unsigned int );
 
   /** Remove imager tool entry from internal containers */
-  virtual ResultType RemoveImagerToolFromInternalDataContainers( const
-                                     ImagerToolType * imagerTool );
+  virtual ResultType RemoveVideoImagerToolFromInternalDataContainers( const
+                                     VideoImagerToolType * imagerTool );
 
   /** Add imager tool entry to internal containers */
-  virtual ResultType AddImagerToolToInternalDataContainers( const
-                                     ImagerToolType * imagerTool );
+  virtual ResultType AddVideoImagerToolToInternalDataContainers( const
+                                     VideoImagerToolType * imagerTool );
 
 private:
 
-  WebcamWinImager(const Self&);   //purposely not implemented
+  ImagingSourceVideoImager(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
 
   /** Initialize camera */
@@ -129,10 +133,10 @@ private:
 
   /** A buffer to hold frames */
   typedef std::map< std::string, igstk::Frame >
-                                ImagerToolFrameContainerType;
+                                VideoImagerToolFrameContainerType;
 
   typedef igstk::Frame   FrameType;
-  ImagerToolFrameContainerType           m_ToolFrameBuffer;
+  VideoImagerToolFrameContainerType           m_ToolFrameBuffer;
 
   /** Error map container */
   typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
@@ -144,24 +148,19 @@ private:
   /** Container holding status of the tools */
   std::map< std::string, int >  m_ToolStatusContainer;
 
-  /** Members and functions for communication with the webcam */
+  /** Members and functions for communication with Unicap library */
+  unicap_handle_t handle;
+  unicap_format_t format;
+  unicap_data_buffer_t buffer;
+  unicap_data_buffer_t *returned_buffer;
 
-  public:
-  FILE *f;// = NULL;//
-  static unsigned char  *pixels[1];// = NULL;
-  static unsigned char* frameBuffer;
-  /** A mutex for multithreaded access to frameBuffer */
-  static itk::MutexLock::Pointer  m_FrameBufferLock;
-
-#ifdef IGSTKSandbox_USE_OpenCV
-  CvCapture *capture;
-  IplImage  *cvframe;
-#endif
-  int       key;
-
+  unicap_handle_t open_device ();
+  void set_format (unicap_handle_t handle);
+  size_t uyvy2rgb24( __u8 *dest, __u8 *source, size_t dest_size,
+             size_t source_size );
 
 };
 
 }  // namespace igstk
 
-#endif //__igstk_WebcamWinImager_h_
+#endif //__igstk_ImagingSourceVideoImager_h_

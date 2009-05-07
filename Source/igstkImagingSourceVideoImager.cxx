@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImagingSourceImager.cxx
+  Module:    igstkImagingSourceVideoImager.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -22,7 +22,7 @@
 #endif
 
 
-#include "igstkImagingSourceImager.h"
+#include "igstkImagingSourceVideoImager.h"
 #include "igstkEvents.h"
 #include "vtkImageData.h"
 #include <itksys/SystemTools.hxx>
@@ -45,11 +45,11 @@ namespace igstk
 {
 
 //Initialize static variables
-std::map< unsigned int, std::string> ImagingSourceImager::m_ErrorCodeContainer;
-bool ImagingSourceImager::m_ErrorCodeListCreated = false;
+std::map< unsigned int, std::string> ImagingSourceVideoImager::m_ErrorCodeContainer;
+bool ImagingSourceVideoImager::m_ErrorCodeListCreated = false;
 
 /** Constructor: Initializes all internal variables. */
-ImagingSourceImager::ImagingSourceImager(void):m_StateMachine(this)
+ImagingSourceVideoImager::ImagingSourceVideoImager(void):m_StateMachine(this)
 {
   this->m_NumberOfTools = 0;
 
@@ -70,20 +70,20 @@ ImagingSourceImager::ImagingSourceImager(void):m_StateMachine(this)
 }
 
 /** Destructor */
-ImagingSourceImager::~ImagingSourceImager(void)
+ImagingSourceVideoImager::~ImagingSourceVideoImager(void)
 {
 
 }
 
 /** Create a map data structure containing MTC error code and description */
-void ImagingSourceImager::CreateErrorCodeList()
+void ImagingSourceVideoImager::CreateErrorCodeList()
 {
   ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
 
   ecc[0]  = "OK";
   ecc[1]  = "Invalid object handle";
   ecc[2]  = "Reentrant access - library is not thread-safe";
-  ecc[3]  = "Internal ImagingSourceImager software error";
+  ecc[3]  = "Internal ImagingSourceVideoImager software error";
   ecc[4]  = "Null pointer parameter";
   ecc[5]  = "Out of memory";
   ecc[6]  = "Parameter out of range";
@@ -140,11 +140,11 @@ void ImagingSourceImager::CreateErrorCodeList()
 }
 
 std::string
-ImagingSourceImager::GetErrorDescription( unsigned int code )
+ImagingSourceVideoImager::GetErrorDescription( unsigned int code )
 {
   if ( code >= 0 && code <= 55 )
     {
-    return ImagingSourceImager::m_ErrorCodeContainer[code];
+    return ImagingSourceVideoImager::m_ErrorCodeContainer[code];
     }
   else
     {
@@ -152,9 +152,9 @@ ImagingSourceImager::GetErrorDescription( unsigned int code )
     }
 }
 
-ImagingSourceImager::ResultType ImagingSourceImager::InternalOpen( void )
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalOpen called ...\n");
 
   if( ! this->Initialize() )
     {
@@ -166,9 +166,9 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalOpen( void )
 }
 
 /** Initialize socket */
-bool ImagingSourceImager::Initialize( void )
+bool ImagingSourceVideoImager::Initialize( void )
 {
-  igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::Initialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::Initialize called ...\n");
 
   bool result = true;
 
@@ -176,20 +176,20 @@ bool ImagingSourceImager::Initialize( void )
 }
 
 /** Verify imager tool information. */
-ImagingSourceImager::ResultType
-ImagingSourceImager
-::VerifyImagerToolInformation( const ImagerToolType * imagerTool )
+ImagingSourceVideoImager::ResultType
+ImagingSourceVideoImager
+::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::VerifyImagerToolInformation called ...\n");
+    "igstk::ImagingSourceVideoImager::VerifyVideoImagerToolInformation called ...\n");
 
   return SUCCESS;
 }
 
 /** Detach camera. */
-ImagingSourceImager::ResultType ImagingSourceImager::InternalClose( void )
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalClose called ...\n");
 
   /*
     Close the device
@@ -208,10 +208,10 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalClose( void )
 }
 
 /** Put the imaging device into imaging mode. */
-ImagingSourceImager::ResultType ImagingSourceImager::InternalStartImaging( void )
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::InternalStartImaging called ...\n");
+    "igstk::ImagingSourceVideoImager::InternalStartImaging called ...\n");
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -282,10 +282,10 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalStartImaging( void 
 }
 
 /** Take the imaging device out of imaging mode. */
-ImagingSourceImager::ResultType ImagingSourceImager::InternalStopImaging( void )
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalStopImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::InternalStopImaging called ...\n");
+    "igstk::ImagingSourceVideoImager::InternalStopImaging called ...\n");
   /*
     Stop the device
   */
@@ -301,18 +301,18 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalStopImaging( void )
 }
 
 /** Reset the imaging device to put it back to its original state. */
-ImagingSourceImager::ResultType ImagingSourceImager::InternalReset( void )
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::InternalReset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalReset called ...\n");
   return SUCCESS;
 }
 
 
-/** Update the status and the transforms for all ImagerTools. */
-ImagingSourceImager::ResultType ImagingSourceImager::InternalUpdateStatus()
+/** Update the status and the transforms for all VideoImagerTools. */
+ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::InternalUpdateStatus called ...\n");
+    "igstk::ImagingSourceVideoImager::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Imaging state.  This method is called from
@@ -323,13 +323,13 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
-  typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+  typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
 
   InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
-  ImagerToolsContainerType imagerToolContainer =
-  this->GetImagerToolContainer();
+  VideoImagerToolsContainerType imagerToolContainer =
+  this->GetVideoImagerToolContainer();
 
   unsigned int toolId = 0;
 
@@ -338,7 +338,7 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalUpdateStatus()
     // only report tools that have useful data
     if (! this->m_ToolStatusContainer[inputItr->first])
     {
-      igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " is not in view\n");
       // report to the imager tool that the imager is not available
       this->ReportImagingToolNotAvailable(
@@ -353,10 +353,10 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalUpdateStatus()
 
     cout << ":" << endl;
 
-    this->SetImagerToolFrame(
+    this->SetVideoImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
 
-    this->SetImagerToolUpdate(
+    this->SetVideoImagerToolUpdate(
       imagerToolContainer[inputItr->first], true );
 
     ++inputItr;
@@ -371,16 +371,16 @@ ImagingSourceImager::ResultType ImagingSourceImager::InternalUpdateStatus()
 /** Update the shared memory buffer and the tool's internal frame. This function
  *  is called by the thread that communicates with the imager while
  *  the imager is in the Imaging state. */
-ImagingSourceImager::ResultType
-ImagingSourceImager::InternalThreadedUpdateStatus( void )
+ImagingSourceVideoImager::ResultType
+ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::ImagingSourceImager::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalThreadedUpdateStatus called ...\n");
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
 
   //reset the status of all the imager tools
-  typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+  typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
   InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
@@ -394,7 +394,7 @@ ImagingSourceImager::InternalThreadedUpdateStatus( void )
   {
     igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus Receive passed" );
     // Check if an imager tool was added with this device name
-    typedef ImagerToolFrameContainerType::iterator InputIterator;
+    typedef VideoImagerToolFrameContainerType::iterator InputIterator;
 
     //TODO toolname hard coded
     InputIterator deviceItr = this->m_ToolFrameBuffer.find( "Camera" );
@@ -402,8 +402,8 @@ ImagingSourceImager::InternalThreadedUpdateStatus( void )
     if( deviceItr != this->m_ToolFrameBuffer.end() )
     {
       // create the frame
-      ImagerToolsContainerType imagerToolContainer =
-                                              this->GetImagerToolContainer();
+      VideoImagerToolsContainerType imagerToolContainer =
+                                              this->GetVideoImagerToolContainer();
 //TODO commented due to higher frame rates
 //      // image dimension set on tools
 //      unsigned int toolDims[3];
@@ -430,7 +430,7 @@ ImagingSourceImager::InternalThreadedUpdateStatus( void )
 
       //this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       FrameType frame;
-      this->GetImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+      this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
       uyvy2rgb24(
          (unsigned char*)frame.GetImagePtr(),//data pointer in frame, new buffer dest
          returned_buffer->data,//buffer with frame from device (UYVY)
@@ -460,12 +460,12 @@ ImagingSourceImager::InternalThreadedUpdateStatus( void )
   }
 }
 
-ImagingSourceImager::ResultType
-ImagingSourceImager::
-AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
+ImagingSourceVideoImager::ResultType
+ImagingSourceVideoImager::
+AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::RemoveImagerToolFromInternalDataContainers "
+    "igstk::ImagingSourceVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
                  "called ...\n");
 
   if ( imagerTool == NULL )
@@ -474,7 +474,7 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
   }
 
   const std::string imagerToolIdentifier =
-                  imagerTool->GetImagerToolIdentifier();
+                  imagerTool->GetVideoImagerToolIdentifier();
 
   igstk::Frame frame;
 
@@ -485,17 +485,17 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
 }
 
 
-ImagingSourceImager::ResultType
-ImagingSourceImager::
-RemoveImagerToolFromInternalDataContainers
-( const ImagerToolType * imagerTool )
+ImagingSourceVideoImager::ResultType
+ImagingSourceVideoImager::
+RemoveVideoImagerToolFromInternalDataContainers
+( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceImager::RemoveImagerToolFromInternalDataContainers "
+    "igstk::ImagingSourceVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
                  "called ...\n");
 
   const std::string imagerToolIdentifier =
-                      imagerTool->GetImagerToolIdentifier();
+                      imagerTool->GetVideoImagerToolIdentifier();
 
   // remove the tool from the frame buffer and status container
   this->m_ToolStatusContainer.erase( imagerToolIdentifier );
@@ -506,8 +506,8 @@ RemoveImagerToolFromInternalDataContainers
 
 /**The "ValidateSpecifiedFrequency" method checks if the specified
   * frequency is valid for the imaging device that is being used. */
-ImagingSourceImager::ResultType
-ImagingSourceImager::ValidateSpecifiedFrequency( double frequencyInHz )
+ImagingSourceVideoImager::ResultType
+ImagingSourceVideoImager::ValidateSpecifiedFrequency( double frequencyInHz )
 {
   const double MAXIMUM_FREQUENCY = 30;
   if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
@@ -519,7 +519,7 @@ ImagingSourceImager::ValidateSpecifiedFrequency( double frequencyInHz )
 
 
 /** Print Self function */
-void ImagingSourceImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ImagingSourceVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -527,7 +527,7 @@ void ImagingSourceImager::PrintSelf( std::ostream& os, itk::Indent indent ) cons
 }
 
 unicap_handle_t
-ImagingSourceImager::open_device ()
+ImagingSourceVideoImager::open_device ()
 {
   int dev_count;
   int status = STATUS_SUCCESS;
@@ -570,7 +570,7 @@ ImagingSourceImager::open_device ()
 }
 
 void
-ImagingSourceImager::set_format (unicap_handle_t handle)
+ImagingSourceVideoImager::set_format (unicap_handle_t handle)
 {
   unicap_format_t formats[MAX_FORMATS];
   int format_count;
@@ -636,7 +636,7 @@ ImagingSourceImager::set_format (unicap_handle_t handle)
   }
 }
 
-size_t ImagingSourceImager::uyvy2rgb24(
+size_t ImagingSourceVideoImager::uyvy2rgb24(
                  __u8 *dest,
                  __u8 *source,
                  size_t dest_size,

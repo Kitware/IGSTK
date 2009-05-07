@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImager.cxx
+  Module:    igstkVideoImager.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -21,13 +21,13 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#include "igstkImager.h"
+#include "igstkVideoImager.h"
 
 namespace igstk
 {
 
 /** Constructor */
-Imager::Imager(void) :  m_StateMachine( this )
+VideoImager::VideoImager(void) :  m_StateMachine( this )
 {
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
@@ -36,8 +36,8 @@ Imager::Imager(void) :  m_StateMachine( this )
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToEstablishCommunication );
   igstkAddStateMacro( AttemptingToCloseCommunication);
-  igstkAddStateMacro( AttemptingToAttachImagerTool );
-  igstkAddStateMacro( ImagerToolAttached );
+  igstkAddStateMacro( AttemptingToAttachVideoImagerTool );
+  igstkAddStateMacro( VideoImagerToolAttached );
   igstkAddStateMacro( CommunicationEstablished );
   igstkAddStateMacro( AttemptingToImaging );
   igstkAddStateMacro( AttemptingToStopImaging);
@@ -46,7 +46,7 @@ Imager::Imager(void) :  m_StateMachine( this )
 
   // Set the input descriptors
   igstkAddInputMacro( EstablishCommunication);
-  igstkAddInputMacro( AttachImagerTool);
+  igstkAddInputMacro( AttachVideoImagerTool);
   igstkAddInputMacro( StartImaging);
   igstkAddInputMacro( UpdateStatus);
   igstkAddInputMacro( StopImaging);
@@ -72,7 +72,7 @@ Imager::Imager(void) :  m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
   igstkAddTransitionMacro( Idle,
-                           AttachImagerTool,
+                           AttachVideoImagerTool,
                            Idle,
                            ReportInvalidRequest );
   igstkAddTransitionMacro( Idle,
@@ -110,9 +110,9 @@ Imager::Imager(void) :  m_StateMachine( this )
 
   // Transitions from CommunicationEstablished
   igstkAddTransitionMacro( CommunicationEstablished,
-                           AttachImagerTool,
-                           AttemptingToAttachImagerTool,
-                           AttemptToAttachImagerTool );
+                           AttachVideoImagerTool,
+                           AttemptingToAttachVideoImagerTool,
+                           AttemptToAttachVideoImagerTool );
 
   igstkAddTransitionMacro( CommunicationEstablished,
                            StartImaging,
@@ -149,44 +149,44 @@ Imager::Imager(void) :  m_StateMachine( this )
                            CommunicationEstablished,
                            SetFrequency );
 
-  // Transitions from AttemptingToAttachImagerTool
-  igstkAddTransitionMacro( AttemptingToAttachImagerTool,
+  // Transitions from AttemptingToAttachVideoImagerTool
+  igstkAddTransitionMacro( AttemptingToAttachVideoImagerTool,
                            Success,
-                           ImagerToolAttached,
-                           AttachingImagerToolSuccess );
+                           VideoImagerToolAttached,
+                           AttachingVideoImagerToolSuccess );
 
-  igstkAddTransitionMacro( AttemptingToAttachImagerTool,
+  igstkAddTransitionMacro( AttemptingToAttachVideoImagerTool,
                            Failure,
                            CommunicationEstablished,
-                           AttachingImagerToolFailure );
+                           AttachingVideoImagerToolFailure );
 
-  igstkAddTransitionMacro( AttemptingToAttachImagerTool,
+  igstkAddTransitionMacro( AttemptingToAttachVideoImagerTool,
                            ValidFrequency,
-                           AttemptingToAttachImagerTool,
+                           AttemptingToAttachVideoImagerTool,
                            ReportInvalidRequest );
 
-  // Transitions from ImagerToolAttached
-  igstkAddTransitionMacro( ImagerToolAttached,
+  // Transitions from VideoImagerToolAttached
+  igstkAddTransitionMacro( VideoImagerToolAttached,
                            StartImaging,
                            AttemptingToImaging,
                            AttemptToStartImaging );
 
-  igstkAddTransitionMacro( ImagerToolAttached,
-                           AttachImagerTool,
-                           AttemptingToAttachImagerTool,
-                           AttemptToAttachImagerTool );
+  igstkAddTransitionMacro( VideoImagerToolAttached,
+                           AttachVideoImagerTool,
+                           AttemptingToAttachVideoImagerTool,
+                           AttemptToAttachVideoImagerTool );
 
-  igstkAddTransitionMacro( ImagerToolAttached,
+  igstkAddTransitionMacro( VideoImagerToolAttached,
                            ValidFrequency,
-                           ImagerToolAttached,
+                           VideoImagerToolAttached,
                            SetFrequency );
 
-  igstkAddTransitionMacro( ImagerToolAttached,
+  igstkAddTransitionMacro( VideoImagerToolAttached,
                            StopImaging,
-                           ImagerToolAttached,
+                           VideoImagerToolAttached,
                            ReportInvalidRequest );
 
-  igstkAddTransitionMacro( ImagerToolAttached,
+  igstkAddTransitionMacro( VideoImagerToolAttached,
                            CloseCommunication,
                            AttemptingToCloseCommunication,
                            CloseFromCommunicatingState );
@@ -290,7 +290,7 @@ Imager::Imager(void) :  m_StateMachine( this )
   m_PulseGenerator = PulseGenerator::New();
 
   m_PulseObserver = ObserverType::New();
-  m_PulseObserver->SetCallbackFunction( this, & Imager::UpdateStatus );
+  m_PulseObserver->SetCallbackFunction( this, & VideoImager::UpdateStatus );
   m_PulseGenerator->AddObserver( PulseEvent(), m_PulseObserver );
 
   // This is update rate for sending imaging information to the
@@ -314,7 +314,7 @@ Imager::Imager(void) :  m_StateMachine( this )
   m_ImagingThreadStarted = false;
 
   std::ofstream ofile;
-  ofile.open("ImagerStateMachineDiagram.dot");
+  ofile.open("VideoImagerStateMachineDiagram.dot");
   const bool skipLoops = false;
   this->ExportStateMachineDescription( ofile, skipLoops );
   ofile.close();
@@ -322,73 +322,73 @@ Imager::Imager(void) :  m_StateMachine( this )
 }
 
 /** Destructor */
-Imager::~Imager(void)
+VideoImager::~VideoImager(void)
 {
 }
 
 
 /** The "RequestOpen" method attempts to open communication with the
  *  imaging device. */
-void Imager::RequestOpen( void )
+void VideoImager::RequestOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestOpen called...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestOpen called...\n");
   igstkPushInputMacro( EstablishCommunication );
   this->m_StateMachine.ProcessInputs();
 }
 
 
 /** The "RequestClose" method closes communication with the device. */
-void Imager::RequestClose( void )
+void VideoImager::RequestClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestClose called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestClose called ...\n");
   igstkPushInputMacro( CloseCommunication );
   m_StateMachine.ProcessInputs();
 }
 
-/** The "RequestReset" imager method should be used to set the imager
+/** The "RequestReset" VideoImager method should be used to set the VideoImager
  * to some defined default state. */
-void Imager::RequestReset( void )
+void VideoImager::RequestReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestReset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestReset called ...\n");
   igstkPushInputMacro( Reset );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "RequestStartImaging" method readies the imager for imaging the
- *  tools connected to the imager. */
-void Imager::RequestStartImaging( void )
+/** The "RequestStartImaging" method readies the VideoImager for imaging the
+ *  tools connected to the VideoImager. */
+void VideoImager::RequestStartImaging( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestStartImaging called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestStartImaging called ...\n");
   igstkPushInputMacro( StartImaging );
   m_StateMachine.ProcessInputs();
 }
 
 
-/** The "RequestStopImaging" stops imager from imaging the tools. */
-void Imager::RequestStopImaging( void )
+/** The "RequestStopImaging" stops VideoImager from imaging the tools. */
+void VideoImager::RequestStopImaging( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestStopImaging called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestStopImaging called ...\n");
   igstkPushInputMacro( StopImaging );
   m_StateMachine.ProcessInputs();
 }
 
 
 /** The "UpdateStatus" method is used for updating the status of
- *  tools when the imager is in imaging state. */
-void Imager::UpdateStatus( void )
+ *  tools when the VideoImager is in imaging state. */
+void VideoImager::UpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::UpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::UpdateStatus called ...\n");
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
 
 
 /** The "RequestSetFrequency" method is used for defining the rate at which
- * Transforms are queried from the Imager device */
-void Imager::RequestSetFrequency( double frequencyInHz )
+ * Transforms are queried from the VideoImager device */
+void VideoImager::RequestSetFrequency( double frequencyInHz )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::RequestSetFrequency called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager::RequestSetFrequency called ...\n");
   if( this->ValidateSpecifiedFrequency( frequencyInHz ) )
     {
     this->m_FrequencyToBeSet = frequencyInHz;
@@ -401,8 +401,8 @@ void Imager::RequestSetFrequency( double frequencyInHz )
  * valid for the imaging device that is being used. This method is to be
  * overridden in the derived imaging-device specific classes to take
  * into account the maximum frequency possible in the imaging device */
-Imager::ResultType
-Imager::ValidateSpecifiedFrequency( double frequencyInHz )
+VideoImager::ResultType
+VideoImager::ValidateSpecifiedFrequency( double frequencyInHz )
 {
   if ( frequencyInHz < 0.0 )
     {
@@ -413,10 +413,10 @@ Imager::ValidateSpecifiedFrequency( double frequencyInHz )
 
 /** The "AttemptToOpen" method attempts to open communication with a
  *  imaging device. */
-void Imager::AttemptToOpenProcessing( void )
+void VideoImager::AttemptToOpenProcessing( void )
 {
   igstkLogMacro( DEBUG,
-                 "igstk::Imager::AttemptToOpenProcessing called ...\n");
+                 "igstk::VideoImager::AttemptToOpenProcessing called ...\n");
 
   ResultType result = this->InternalOpen();
 
@@ -427,82 +427,82 @@ void Imager::AttemptToOpenProcessing( void )
 
 
 /** Post-processing after communication setup has been successful. */
-void Imager::CommunicationEstablishmentSuccessProcessing( void )
+void VideoImager::CommunicationEstablishmentSuccessProcessing( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::CommunicationEstablishmentSuccessProcessing called ...\n");
+    "igstk::VideoImager::CommunicationEstablishmentSuccessProcessing called ...\n");
 
-  this->InvokeEvent( ImagerOpenEvent() );
+  this->InvokeEvent( VideoImagerOpenEvent() );
 }
 
 
 /** Post-processing after communication setup has failed. */
-void Imager::CommunicationEstablishmentFailureProcessing( void )
+void VideoImager::CommunicationEstablishmentFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "CommunicationEstablishmentFailureProcessing called ...\n");
 
-  this->InvokeEvent( ImagerOpenErrorEvent() );
+  this->InvokeEvent( VideoImagerOpenErrorEvent() );
 }
 
-/** The Reset methods force the imager to the
+/** The Reset methods force the VideoImager to the
  *  CommunicationEstablished state */
-void Imager::ResetFromImagingStateProcessing( void )
+void VideoImager::ResetFromImagingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "ResetFromImagingStateProcessing() called ...\n");
   // leaving ImagingState, going to CommunicationEstablishedState
   this->ExitImagingStateProcessing();
   this->ResetFromToolsActiveStateProcessing();
 }
 
-/** The Reset methods force the imager to the
+/** The Reset methods force the VideoImager to the
  *  CommunicationEstablished  state */
-void Imager::ResetFromToolsActiveStateProcessing( void )
+void VideoImager::ResetFromToolsActiveStateProcessing( void )
 {
   igstkLogMacro( DEBUG,
-         "igstk::Imager::ResetFromToolsActiveStateProcessing() called ...\n");
+         "igstk::VideoImager::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
-/** The Reset methods force the imager to the
+/** The Reset methods force the VideoImager to the
  *  CommunicationEstablished state */
-void Imager::ResetFromCommunicatingStateProcessing( void )
+void VideoImager::ResetFromCommunicatingStateProcessing( void )
 {
   ResultType result = this->InternalReset();
 
   if( result == SUCCESS )
     {
-    igstkLogMacro( DEBUG, "igstk::Imager::InternalReset succeeded ...\n");
+    igstkLogMacro( DEBUG, "igstk::VideoImager::InternalReset succeeded ...\n");
     }
   else if( result == FAILURE )
     {
-    igstkLogMacro( DEBUG, "igstk::Imager::InternalReset failed ...\n");
+    igstkLogMacro( DEBUG, "igstk::VideoImager::InternalReset failed ...\n");
     }
 }
 
 /** Post-processing after tools setup has been successful. */
-void Imager::ToolsActivationSuccessProcessing( void )
+void VideoImager::ToolsActivationSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::ToolsActivationSuccessProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ToolsActivationSuccessProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( ImagerInitializeEvent() );
+  this->InvokeEvent( VideoImagerInitializeEvent() );
 }
 
 /** Post-processing after tools setup has failed. */
-void Imager::ToolsActivationFailureProcessing( void )
+void VideoImager::ToolsActivationFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::ToolsActivationFailureProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ToolsActivationFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( ImagerInitializeErrorEvent() );
+  this->InvokeEvent( VideoImagerInitializeErrorEvent() );
 }
 
 /** The "AttemptToStartImaging" method attempts to start imaging. */
-void Imager::AttemptToStartImagingProcessing( void )
+void VideoImager::AttemptToStartImagingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::AttemptToStartImagingProcessing  "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::AttemptToStartImagingProcessing  "
                  "called ...\n");
 
   ResultType result = this->InternalStartImaging();
@@ -513,16 +513,16 @@ void Imager::AttemptToStartImagingProcessing( void )
 }
 
 /** Post-processing after start imaging has been successful. */
-void Imager::StartImagingSuccessProcessing( void )
+void VideoImager::StartImagingSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::StartImagingSuccessProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::StartImagingSuccessProcessing "
                  "called ...\n");
 
-  // Report to all the imager tools that imaging has been started
-  typedef ImagerToolsContainerType::iterator  InputConstIterator;
+  // Report to all the VideoImager tools that imaging has been started
+  typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();
-  InputConstIterator inputEnd = m_ImagerTools.end();
+  InputConstIterator inputItr = m_VideoImagerTools.begin();
+  InputConstIterator inputEnd = m_VideoImagerTools.end();
 
   while( inputItr != inputEnd )
     {
@@ -534,62 +534,62 @@ void Imager::StartImagingSuccessProcessing( void )
   // going from AttemptingToImagingState to ImagingState
   this->EnterImagingStateProcessing();
 
-  this->InvokeEvent( ImagerStartImagingEvent() );
+  this->InvokeEvent( VideoImagerStartImagingEvent() );
 }
 
 /** Post-processing after start imaging has failed. */
-void Imager::StartImagingFailureProcessing( void )
+void VideoImager::StartImagingFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::StartImagingFailureProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::StartImagingFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( ImagerStartImagingErrorEvent() );
+  this->InvokeEvent( VideoImagerStartImagingErrorEvent() );
 }
 
-/** Post-processing after attaching a imager tool to the imager
+/** Post-processing after attaching a VideoImager tool to the VideoImager
  *  has been successful. */
-void Imager::AttachingImagerToolSuccessProcessing( void )
+void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::AttachingImagerToolSuccessProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::AttachingVideoImagerToolSuccessProcessing "
                  "called ...\n");
 
-  m_ImagerTools[ m_ImagerToolToBeAttached->GetImagerToolIdentifier() ]
-                                   = m_ImagerToolToBeAttached;
+  m_VideoImagerTools[ m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ]
+                                   = m_VideoImagerToolToBeAttached;
 
-  // report to the imager tool that the attachment has been
+  // report to the VideoImager tool that the attachment has been
   // successful
-  m_ImagerToolToBeAttached->RequestReportSuccessfulImagerToolAttachment();
+  m_VideoImagerToolToBeAttached->RequestReportSuccessfulVideoImagerToolAttachment();
 
-  // Add the imager tool to the internal data containers
-  this->AddImagerToolToInternalDataContainers( m_ImagerToolToBeAttached );
+  // Add the VideoImager tool to the internal data containers
+  this->AddVideoImagerToolToInternalDataContainers( m_VideoImagerToolToBeAttached );
 
-  //connect the imager tool coordinate system to the imager
-  //system. By default, make the imager coordinate system to
-  //be a parent of the imager tool coordinate system
+  //connect the VideoImager tool coordinate system to the VideoImager
+  //system. By default, make the VideoImager coordinate system to
+  //be a parent of the VideoImager tool coordinate system
 
   TransformType identityTransform;
   identityTransform.SetToIdentity(
                   igstk::TimeStamp::GetZeroValue() );
 
-  m_ImagerToolToBeAttached->RequestSetTransformAndParent(
+  m_VideoImagerToolToBeAttached->RequestSetTransformAndParent(
     identityTransform, this );
 }
 
-/** Post-processing after attaching a imager tool to the imager
+/** Post-processing after attaching a VideoImager tool to the VideoImager
  *  has failed. */
-void Imager::AttachingImagerToolFailureProcessing( void )
+void VideoImager::AttachingVideoImagerToolFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::AttachingImagerToolFailureProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::AttachingVideoImagerToolFailureProcessing "
                  "called ...\n");
 
-  // report to the imager tool that the attachment has failed
-  m_ImagerToolToBeAttached->RequestReportFailedImagerToolAttachment();
+  // report to the VideoImager tool that the attachment has failed
+  m_VideoImagerToolToBeAttached->RequestReportFailedVideoImagerToolAttachment();
 }
 
 /** The "AttemptToStopImaging" method attempts to stop imaging. */
-void Imager::AttemptToStopImagingProcessing( void )
+void VideoImager::AttemptToStopImagingProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::AttemptToStopImagingProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::AttemptToStopImagingProcessing "
                         "called ...\n");
   // leaving ImagingState, going to AttemptingToStopImagingState
   this->ExitImagingStateProcessing();
@@ -603,16 +603,16 @@ void Imager::AttemptToStopImagingProcessing( void )
 
 
 /** Post-processing after stop imaging has been successful. */
-void Imager::StopImagingSuccessProcessing( void )
+void VideoImager::StopImagingSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::StopImagingSuccessProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::StopImagingSuccessProcessing "
                  "called ...\n");
 
-  // Report to all the imager tools that imaging has been stopped
-  typedef ImagerToolsContainerType::iterator  InputConstIterator;
+  // Report to all the VideoImager tools that imaging has been stopped
+  typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();
-  InputConstIterator inputEnd = m_ImagerTools.end();
+  InputConstIterator inputItr = m_VideoImagerTools.begin();
+  InputConstIterator inputEnd = m_VideoImagerTools.end();
 
   while( inputItr != inputEnd )
     {
@@ -620,24 +620,24 @@ void Imager::StopImagingSuccessProcessing( void )
     ++inputItr;
     }
 
-  this->InvokeEvent( ImagerStopImagingEvent() );
+  this->InvokeEvent( VideoImagerStopImagingEvent() );
 }
 
 /** Post-processing after start imaging has failed. */
-void Imager::StopImagingFailureProcessing( void )
+void VideoImager::StopImagingFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::StopImagingFailureProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::StopImagingFailureProcessing "
                  "called ...\n");
   // going from AttemptingToStopImagingState to ImagingState
   this->EnterImagingStateProcessing();
 
-  this->InvokeEvent( ImagerStopImagingErrorEvent() );
+  this->InvokeEvent( VideoImagerStopImagingErrorEvent() );
 }
 
 /** Needs to be called every time when entering imaging state. */
-void Imager::EnterImagingStateProcessing( void )
+void VideoImager::EnterImagingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::EnterImagingStateProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::EnterImagingStateProcessing "
                  "called ...\n");
 
   if ( ! m_ImagingThreadStarted && this->GetThreadingEnabled() )
@@ -650,9 +650,9 @@ void Imager::EnterImagingStateProcessing( void )
 }
 
 /** Needs to be called every time when exiting imaging state. */
-void Imager::ExitImagingStateProcessing( void )
+void VideoImager::ExitImagingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::ExitImagingStateProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ExitImagingStateProcessing "
                  "called ...\n");
 
   // by default, we will exit imaging by terminating imaging thread
@@ -660,19 +660,19 @@ void Imager::ExitImagingStateProcessing( void )
 }
 
 /** Exit imaging without terminating imaging thread */
-void Imager::ExitImagingWithoutTerminatingImagingThread( void )
+void VideoImager::ExitImagingWithoutTerminatingImagingThread( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::ExitImagingWithoutTerminatingImagingThread "
+    "igstk::VideoImager::ExitImagingWithoutTerminatingImagingThread "
     "called ...\n");
 
   m_PulseGenerator->RequestStop();
 }
 
 /** Exit imaging by terminating imaging thread */
-void Imager::ExitImagingTerminatingImagingThread( void )
+void VideoImager::ExitImagingTerminatingImagingThread( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::ExitImagingTerminatingImagingThread "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ExitImagingTerminatingImagingThread "
                  "called ...\n");
 
   m_PulseGenerator->RequestStop();
@@ -687,17 +687,17 @@ void Imager::ExitImagingTerminatingImagingThread( void )
 
 /** The "AttemptToUpdateStatus" method attempts to update status
     during imaging. */
-void Imager::AttemptToUpdateStatusProcessing( void )
+void VideoImager::AttemptToUpdateStatusProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::AttemptToUpdateStatusProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::AttemptToUpdateStatusProcessing "
                         "called ...\n");
 
   // Set all tools to "not updated"
   //
-  typedef ImagerToolsContainerType::iterator  InputConstIterator;
+  typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();
-  InputConstIterator inputEnd = m_ImagerTools.end();
+  InputConstIterator inputItr = m_VideoImagerTools.begin();
+  InputConstIterator inputEnd = m_VideoImagerTools.end();
 
   while( inputItr != inputEnd )
     {
@@ -723,15 +723,15 @@ void Imager::AttemptToUpdateStatusProcessing( void )
 }
 
 /** This method is called when a call to UpdateStatus succeeded */
-void Imager::UpdateStatusSuccessProcessing( void )
+void VideoImager::UpdateStatusSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::UpdateStatusSuccessProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::UpdateStatusSuccessProcessing "
                  "called ...\n");
 
-  typedef ImagerToolsContainerType::iterator  InputConstIterator;
+  typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();
-  InputConstIterator inputEnd = m_ImagerTools.end();
+  InputConstIterator inputItr = m_VideoImagerTools.begin();
+  InputConstIterator inputEnd = m_VideoImagerTools.end();
 
   while( inputItr != inputEnd )
     {
@@ -751,24 +751,24 @@ void Imager::UpdateStatusSuccessProcessing( void )
     ++inputItr;
     }
 
-  this->InvokeEvent( ImagerUpdateStatusEvent() );
+  this->InvokeEvent( VideoImagerUpdateStatusEvent() );
 }
 
 /** This method is called when a UpdateStatus failed */
-void Imager::UpdateStatusFailureProcessing( void )
+void VideoImager::UpdateStatusFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::UpdateStatusFailureProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::UpdateStatusFailureProcessing "
                  "called ...\n");
 
-  this->InvokeEvent( ImagerUpdateStatusErrorEvent() );
+  this->InvokeEvent( VideoImagerUpdateStatusErrorEvent() );
 }
 
 
-/** The "CloseFromImagingStateProcessing" method closes imager in
- *  use, when the imager is in imaging state. */
-void Imager::CloseFromImagingStateProcessing( void )
+/** The "CloseFromImagingStateProcessing" method closes VideoImager in
+ *  use, when the VideoImager is in imaging state. */
+void VideoImager::CloseFromImagingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::CloseFromImagingStateProcessing "
+  igstkLogMacro( DEBUG, "igstk::VideoImager::CloseFromImagingStateProcessing "
                  "called ...\n");
 
   // leaving ImagingState, going to AttemptingToCloseState
@@ -776,8 +776,8 @@ void Imager::CloseFromImagingStateProcessing( void )
 
   ResultType result = this->InternalStopImaging();
 
-  // detach all the imager tools from the imager
-  this->DetachAllImagerToolsFromImager();
+  // detach all the VideoImager tools from the VideoImager
+  this->DetachAllVideoImagerToolsFromVideoImager();
 
   // Terminating the ImagingThread and if it is started
   if ( m_ImagingThreadStarted && this->GetThreadingEnabled() )
@@ -797,33 +797,33 @@ void Imager::CloseFromImagingStateProcessing( void )
                                    m_FailureInput );
 }
 
-/** Detach all imager tools from the imager */
-void Imager::DetachAllImagerToolsFromImager()
+/** Detach all VideoImager tools from the VideoImager */
+void VideoImager::DetachAllVideoImagerToolsFromVideoImager()
 {
 
-  typedef ImagerToolsContainerType::iterator  InputConstIterator;
+  typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
-  InputConstIterator inputItr = m_ImagerTools.begin();
-  InputConstIterator inputEnd = m_ImagerTools.end();
+  InputConstIterator inputItr = m_VideoImagerTools.begin();
+  InputConstIterator inputEnd = m_VideoImagerTools.end();
 
   while( inputItr != inputEnd )
     {
-    this->RemoveImagerToolFromInternalDataContainers( inputItr->second );
+    this->RemoveVideoImagerToolFromInternalDataContainers( inputItr->second );
     ++inputItr;
     }
 
-  m_ImagerTools.clear();
+  m_VideoImagerTools.clear();
 }
 
 /** The "CloseFromCommunicatingStateProcessing" method closes
- *  imager in use, when the imager is in communicating state. */
-void Imager::CloseFromCommunicatingStateProcessing( void )
+ *  VideoImager in use, when the VideoImager is in communicating state. */
+void VideoImager::CloseFromCommunicatingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "CloseFromCommunicatingStateProcessing called ...\n");
 
-  // Detach all the imager tools from the imager
-  this->DetachAllImagerToolsFromImager();
+  // Detach all the VideoImager tools from the VideoImager
+  this->DetachAllVideoImagerToolsFromVideoImager();
 
   // Terminating the ImagingThread and if it is started
   if ( m_ImagingThreadStarted && this->GetThreadingEnabled() )
@@ -842,25 +842,25 @@ void Imager::CloseFromCommunicatingStateProcessing( void )
 
 
 /** Post-processing after close imaging has been successful. */
-void Imager::CloseCommunicationSuccessProcessing( void )
+void VideoImager::CloseCommunicationSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "CloseCommunicationSuccessProcessing called ...\n");
 
-  this->InvokeEvent( ImagerCloseEvent() );
+  this->InvokeEvent( VideoImagerCloseEvent() );
 }
 
 /** Post-processing after close imaging has failed. */
-void Imager::CloseCommunicationFailureProcessing( void )
+void VideoImager::CloseCommunicationFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "CloseCommunicationFailureProcessing called ...\n");
 
-  this->InvokeEvent( ImagerCloseErrorEvent() );
+  this->InvokeEvent( VideoImagerCloseErrorEvent() );
 }
 
 /** Print object information */
-void Imager::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void VideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
@@ -882,14 +882,14 @@ void Imager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 /** The "SetFrequencyProcessing" passes the frequency value to the Pulse
  * Generator. Note that it is still possible for the PulseGenerator to reject
  * the value and stay at its current frequency. */
-void Imager::SetFrequencyProcessing( void )
+void VideoImager::SetFrequencyProcessing( void )
 {
   igstkLogMacro( DEBUG,
-                 "igstk::Imager::SetFrequencyProcessing called ...\n");
+                 "igstk::VideoImager::SetFrequencyProcessing called ...\n");
 
   this->m_PulseGenerator->RequestSetFrequency( this->m_FrequencyToBeSet );
 
-  //Set the validity time of the frames based on the imager frequency
+  //Set the validity time of the frames based on the VideoImager frequency
   //Add a constant to avoid any flickering effect
 
   const double nonFlickeringConstant = 10;
@@ -897,56 +897,56 @@ void Imager::SetFrequencyProcessing( void )
 }
 
 
-/** Request adding a tool to the imager  */
+/** Request adding a tool to the VideoImager  */
 void
-Imager::
-RequestAttachTool( ImagerToolType * imagerTool )
+VideoImager::
+RequestAttachTool( VideoImagerToolType * VideoImagerTool )
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::"
+  igstkLogMacro( DEBUG, "igstk::VideoImager::"
                  "RequestAttachTool called ...\n");
 
-  m_ImagerToolToBeAttached = imagerTool;
+  m_VideoImagerToolToBeAttached = VideoImagerTool;
 
-  igstkPushInputMacro( AttachImagerTool );
+  igstkPushInputMacro( AttachVideoImagerTool );
   this->m_StateMachine.ProcessInputs();
 }
 
-/** The "AttemptToAttachImagerToolProcessing" method attempts to
- * add a imager tool to the imager */
-void Imager::AttemptToAttachImagerToolProcessing( void )
+/** The "AttemptToAttachVideoImagerToolProcessing" method attempts to
+ * add a VideoImager tool to the VideoImager */
+void VideoImager::AttemptToAttachVideoImagerToolProcessing( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::AttemptToAttachImagerToolProcessing called ...\n");
+    "igstk::VideoImager::AttemptToAttachVideoImagerToolProcessing called ...\n");
 
-  // Verify the imager tool information before adding it to the
-  // imager. The conditions that need be verified depend on
-  // the imager type.
+  // Verify the VideoImager tool information before adding it to the
+  // VideoImager. The conditions that need be verified depend on
+  // the VideoImager type.
   ResultType result =
-    this->VerifyImagerToolInformation( m_ImagerToolToBeAttached );
+    this->VerifyVideoImagerToolInformation( m_VideoImagerToolToBeAttached );
 
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
 
-/** Request remove a tool from the imager  */
-Imager::ResultType
-Imager::
-RequestRemoveTool( ImagerToolType * imagerTool )
+/** Request remove a tool from the VideoImager  */
+VideoImager::ResultType
+VideoImager::
+RequestRemoveTool( VideoImagerToolType * VideoImagerTool )
 {
-  this->m_ImagerTools.erase( imagerTool->GetImagerToolIdentifier() );
-  this->RemoveImagerToolFromInternalDataContainers( imagerTool );
+  this->m_VideoImagerTools.erase( VideoImagerTool->GetVideoImagerToolIdentifier() );
+  this->RemoveVideoImagerToolFromInternalDataContainers( VideoImagerTool );
   return SUCCESS;
 }
 
-const Imager::ImagerToolsContainerType &
-Imager::GetImagerToolContainer() const
+const VideoImager::VideoImagerToolsContainerType &
+VideoImager::GetVideoImagerToolContainer() const
 {
-  return m_ImagerTools;
+  return m_VideoImagerTools;
 }
 
 /** Thread function for imaging */
-ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
+ITK_THREAD_RETURN_TYPE VideoImager::ImagingThreadFunction(void* pInfoStruct)
 {
   struct itk::MultiThreader::ThreadInfoStruct * pInfo =
     (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
@@ -961,7 +961,7 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
     return ITK_THREAD_RETURN_VALUE;
     }
 
-  Imager *pImager = (Imager*)pInfo->UserData;
+  VideoImager *pVideoImager = (VideoImager*)pInfo->UserData;
 
   // counters for error rates
   unsigned long errorCount = 0;
@@ -970,8 +970,8 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
   int activeFlag = 1;
   while ( activeFlag )
     {
-    ResultType result = pImager->InternalThreadedUpdateStatus();
-    pImager->m_ConditionNextFrameReceived->Signal();
+    ResultType result = pVideoImager->InternalThreadedUpdateStatus();
+    pVideoImager->m_ConditionNextFrameReceived->Signal();
 
     totalCount++;
     if (result != SUCCESS)
@@ -985,65 +985,65 @@ ITK_THREAD_RETURN_TYPE Imager::ImagingThreadFunction(void* pInfoStruct)
     pInfo->ActiveFlagLock->Unlock();
     }
 
-  igstkLogMacroStatic(pImager, DEBUG, "ImagingThreadFunction was "
+  igstkLogMacroStatic(pVideoImager, DEBUG, "ImagingThreadFunction was "
                       "terminated, " << errorCount << " errors "
                       "out of " << totalCount << "updates." << std::endl );
 
   return ITK_THREAD_RETURN_VALUE;
 }
 
-/** Report to the imager tool that the tool is not available */
+/** Report to the VideoImager tool that the tool is not available */
 void
-Imager::ReportImagingToolNotAvailable( ImagerToolType * imagerTool ) const
+VideoImager::ReportImagingToolNotAvailable( VideoImagerToolType * videoImagerTool ) const
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::ReportImagingToolNotAvailable called...\n");
-  imagerTool->RequestReportImagingToolNotAvailable();
+    "igstk::VideoImager::ReportImagingToolNotAvailable called...\n");
+  videoImagerTool->RequestReportImagingToolNotAvailable();
 }
 
-/** Report to the imager tool that the tool is Visible */
+/** Report to the VideoImager tool that the tool is Visible */
 void
-Imager::ReportImagingToolVisible( ImagerToolType * imagerTool ) const
+VideoImager::ReportImagingToolVisible( VideoImagerToolType * videoImagerTool ) const
 {
-  igstkLogMacro( DEBUG, "igstk::Imager::ReportImagingToolVisible called...\n");
-  imagerTool->RequestReportImagingToolVisible();
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ReportImagingToolVisible called...\n");
+  videoImagerTool->RequestReportImagingToolVisible();
 }
 
-/** Set Imager Tool Frame */
+/** Set VideoImager Tool Frame */
 void
-Imager::SetImagerToolFrame(
-  ImagerToolType * imagerTool, const FrameType& frame )
+VideoImager::SetVideoImagerToolFrame(
+  VideoImagerToolType * videoImagerTool, const FrameType& frame )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::SetImagerToolFrame called...\n");
-  imagerTool->SetInternalFrame( frame );
+    "igstk::VideoImager::SetVideoImagerToolFrame called...\n");
+  videoImagerTool->SetInternalFrame( frame );
 }
 
-/** Get Imager Tool Frame */
-void Imager::GetImagerToolFrame(
-  ImagerToolType * imagerTool, FrameType& frame )
+/** Get VideoImager Tool Frame */
+void VideoImager::GetVideoImagerToolFrame(
+  VideoImagerToolType * videoImagerTool, FrameType& frame )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::GetImagerToolFrame called...\n");
-  frame = imagerTool->GetInternalFrame( );
+    "igstk::VideoImager::GetVideoImagerToolFrame called...\n");
+  frame = videoImagerTool->GetInternalFrame( );
 }
 
 
-/** Turn on/off update flag of the imager tool */
+/** Turn on/off update flag of the VideoImager tool */
 void
-Imager::SetImagerToolUpdate(
-  ImagerToolType * imagerTool, bool flag ) const
+VideoImager::SetVideoImagerToolUpdate(
+  VideoImagerToolType * videoImagerTool, bool flag ) const
 {
   igstkLogMacro( DEBUG,
-     "igstk::Imager::SetImagerToolUpdate called...\n");
-  imagerTool->SetUpdated( flag );
+     "igstk::VideoImager::SetVideoImagerToolUpdate called...\n");
+  videoImagerTool->SetUpdated( flag );
 }
 
 /** Report invalid request */
-void Imager::ReportInvalidRequestProcessing( void )
+void VideoImager::ReportInvalidRequestProcessing( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::Imager::ReportInvalidRequestProcessing called...\n");
+    "igstk::VideoImager::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }

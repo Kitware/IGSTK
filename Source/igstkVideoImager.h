@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImager.h
+  Module:    igstkVideoImager.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkImager_h
-#define __igstkImager_h
+#ifndef __igstkVideoImager_h
+#define __igstkVideoImager_h
 
 #include <vector>
 #include <map>
@@ -30,7 +30,7 @@
 #include "igstkTransform.h"
 #include "igstkFrame.h"
 #include "igstkPulseGenerator.h"
-#include "igstkImagerTool.h"
+#include "igstkVideoImagerTool.h"
 
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
@@ -38,29 +38,29 @@
 namespace igstk
 {
 
-igstkEventMacro( ImagerEvent,                             StringEvent);
-igstkEventMacro( ImagerErrorEvent,                IGSTKErrorWithStringEvent);
+igstkEventMacro( VideoImagerEvent,                             StringEvent);
+igstkEventMacro( VideoImagerErrorEvent,                IGSTKErrorWithStringEvent);
 
-igstkEventMacro( ImagerOpenEvent,                         ImagerEvent);
-igstkEventMacro( ImagerOpenErrorEvent,                    ImagerErrorEvent);
+igstkEventMacro( VideoImagerOpenEvent,                         VideoImagerEvent);
+igstkEventMacro( VideoImagerOpenErrorEvent,                    VideoImagerErrorEvent);
 
-igstkEventMacro( ImagerCloseEvent,                        ImagerEvent);
-igstkEventMacro( ImagerCloseErrorEvent,                   ImagerErrorEvent);
+igstkEventMacro( VideoImagerCloseEvent,                        VideoImagerEvent);
+igstkEventMacro( VideoImagerCloseErrorEvent,                   VideoImagerErrorEvent);
 
-igstkEventMacro( ImagerInitializeEvent,                   ImagerEvent);
-igstkEventMacro( ImagerInitializeErrorEvent,              ImagerErrorEvent);
+igstkEventMacro( VideoImagerInitializeEvent,                   VideoImagerEvent);
+igstkEventMacro( VideoImagerInitializeErrorEvent,              VideoImagerErrorEvent);
 
-igstkEventMacro( ImagerStartImagingEvent,                 ImagerEvent);
-igstkEventMacro( ImagerStartImagingErrorEvent,            ImagerErrorEvent);
+igstkEventMacro( VideoImagerStartImagingEvent,                 VideoImagerEvent);
+igstkEventMacro( VideoImagerStartImagingErrorEvent,            VideoImagerErrorEvent);
 
-igstkEventMacro( ImagerStopImagingEvent,                  ImagerEvent);
-igstkEventMacro( ImagerStopImagingErrorEvent,             ImagerErrorEvent);
+igstkEventMacro( VideoImagerStopImagingEvent,                  VideoImagerEvent);
+igstkEventMacro( VideoImagerStopImagingErrorEvent,             VideoImagerErrorEvent);
 
-igstkEventMacro( ImagerUpdateStatusEvent,                 ImagerEvent);
-igstkEventMacro( ImagerUpdateStatusErrorEvent,            ImagerErrorEvent);
+igstkEventMacro( VideoImagerUpdateStatusEvent,                 VideoImagerEvent);
+igstkEventMacro( VideoImagerUpdateStatusErrorEvent,            VideoImagerErrorEvent);
 
-/** \class Imager
- *  \brief Abstract superclass for concrete IGSTK Imager classes.
+/** \class VideoImager
+ *  \brief Abstract superclass for concrete IGSTK VideoImager classes.
  *
  *  This class presents a generic interface for grabbing videostream
  *  from video-devices such Ultrasound, Endoscope, Bronchoscope, etc.
@@ -68,67 +68,67 @@ igstkEventMacro( ImagerUpdateStatusErrorEvent,            ImagerErrorEvent);
  *  communicate with several standard imaging systems.
  *
  *  The state machine of this class implements the basic
- *  state transitions of an imager. Inputs to the state
+ *  state transitions of an video-imager. Inputs to the state
  *  machine are translated into method calls that can be
  *  overridden by device-specific derive classes that do
  *  the appropriate processing for a particular device.
  *
  *  The following diagram illustrates the state machine of
- *  the imager class
+ *  the video-imager class
  *
- *  \image html  igstkImager.png  "Imager State Machine Diagram"
- *  \image latex igstkImager.eps  "Imager State Machine Diagram"
+ *  \image html  igstkVideoImager.png  "VideoImager State Machine Diagram"
+ *  \image latex igstkVideoImager.eps  "VideoImager State Machine Diagram"
  *
- *  \ingroup Imager
+ *  \ingroup VideoImager
  */
 
-class Imager : public Object
+class VideoImager : public Object
 {
 
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardAbstractClassTraitsMacro( Imager, Object )
+  igstkStandardAbstractClassTraitsMacro( VideoImager, Object )
 
 public:
 
-  igstkFriendClassMacro( ImagerTool );
+  igstkFriendClassMacro( VideoImagerTool );
 
-  /** typedefs from ImagerTool class */
-  typedef ImagerTool       ImagerToolType;
+  /** typedefs from VideoImagerTool class */
+  typedef VideoImagerTool       VideoImagerToolType;
 
   /** The "RequestOpen" method attempts to open communication with the
-   *  imaging device. It generates a ImagerOpenEvent if successful,
-   *  or a ImagerOpenErrorEvent if not successful.  */
+   *  imaging device. It generates a VideoImagerOpenEvent if successful,
+   *  or a VideoImagerOpenErrorEvent if not successful.  */
   void RequestOpen( void );
 
   /** The "RequestClose" method closes communication with the device.
-   *  It generates a ImagerCloseEvent if successful,
-   *  or a ImagerCloseErrorEvent if not successful. */
+   *  It generates a VideoImagerCloseEvent if successful,
+   *  or a VideoImagerCloseErrorEvent if not successful. */
   void RequestClose( void );
 
-  /** The "RequestReset" method should be used to bring the imager
+  /** The "RequestReset" method should be used to bring the VideoImager
   to some defined default state. */
   void RequestReset( void );
 
-  /** The "RequestStartImaging" method readies the imager for imaging the
-  tools connected to the imager. */
+  /** The "RequestStartImaging" method readies the VideoImager for imaging the
+  tools connected to the VideoImager. */
   void RequestStartImaging( void );
 
-  /** The "RequestStopImaging" stops imager from imaging the tools. */
+  /** The "RequestStopImaging" stops VideoImager from imaging the tools. */
   void RequestStopImaging( void );
 
 
   /** The "RequestSetFrequency" method defines the frequency at which a frame
-   * will be queried from the Imager device. Note that
-   * Imager devices have their own internal frequency rate, and if you set here
-   * a frequency that is higher than what the Imager device is capable to
+   * will be queried from the VideoImager device. Note that
+   * VideoImager devices have their own internal frequency rate, and if you set here
+   * a frequency that is higher than what the VideoImager device is capable to
    * follow, then you will start receiving similar frames. */
   void RequestSetFrequency( double frequencyInHz );
 
 protected:
 
-  Imager(void);
-  virtual ~Imager(void);
+  VideoImager(void);
+  virtual ~VideoImager(void);
 
   /** SetThreadingEnabled(bool) : set m_ThreadingEnabled value */
   igstkSetMacro( ThreadingEnabled, bool );
@@ -136,7 +136,7 @@ protected:
   /** GetThreadingEnabled(bool) : get m_ThreadingEnabled value  */
   igstkGetMacro( ThreadingEnabled, bool );
 
-  /** typedef for times used by the imager */
+  /** typedef for times used by the VideoImager */
   typedef Transform::TimePeriodType         TimePeriodType;
 
   /** Get the validity time. */
@@ -164,7 +164,7 @@ protected:
       and responsible for device-specific processing */
   virtual ResultType InternalClose( void ) = 0;
 
-  /** The "InternalReset" method resets imager to a known configuration.
+  /** The "InternalReset" method resets VideoImager to a known configuration.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalReset( void ) = 0;
@@ -180,12 +180,12 @@ protected:
   virtual ResultType InternalStopImaging( void ) = 0;
 
 
-  /** The "InternalUpdateStatus" method updates imager status.
+  /** The "InternalUpdateStatus" method updates VideoImager status.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
   virtual ResultType InternalUpdateStatus( void ) = 0;
 
-  /** The "InternalThreadedUpdateStatus" method updates imager status.
+  /** The "InternalThreadedUpdateStatus" method updates VideoImager status.
       This method is called in a separate thread.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
@@ -194,13 +194,13 @@ protected:
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  /** Verify if a imager tool information is correct before attaching
-   *  it to the imager. This method is used to verify the information supplied
-   *  by the user about the imager tool. The information depends on the
-   *  imager type.
+  /** Verify if a VideoImager tool information is correct before attaching
+   *  it to the VideoImager. This method is used to verify the information supplied
+   *  by the user about the VideoImager tool. The information depends on the
+   *  VideoImager type.
    */
   virtual ResultType
-        VerifyImagerToolInformation( const ImagerToolType * ) = 0;
+        VerifyVideoImagerToolInformation( const VideoImagerToolType * ) = 0;
 
   /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
    * valid for the imaging device that is being used. This method is to be
@@ -211,35 +211,35 @@ protected:
 
   /** This method will remove entries of the tracker tool from internal
     * data containers */
-  virtual ResultType RemoveImagerToolFromInternalDataContainers(
-                                     const ImagerToolType * imagerTool ) = 0;
+  virtual ResultType RemoveVideoImagerToolFromInternalDataContainers(
+                                     const VideoImagerToolType * videoImagerTool ) = 0;
 
-  /** Add imager tool entry to internal containers */
-  virtual ResultType AddImagerToolToInternalDataContainers(
-                                    const ImagerToolType * imagerTool ) = 0;
+  /** Add VideoImager tool entry to internal containers */
+  virtual ResultType AddVideoImagerToolToInternalDataContainers(
+                                    const VideoImagerToolType * videoImagerTool ) = 0;
 
-  /** typedefs from ImagerTool class */
-  typedef std::map< std::string, ImagerToolType *>  ImagerToolsContainerType;
+  /** typedefs from VideoImagerTool class */
+  typedef std::map< std::string, VideoImagerToolType *>  VideoImagerToolsContainerType;
 
-  /** Access method for the imager tool container. This method
+  /** Access method for the VideoImager tool container. This method
     * is useful in the derived classes to access the unique identifiers
-    * of the imager tools */
-  const ImagerToolsContainerType & GetImagerToolContainer() const;
+    * of the VideoImager tools */
+  const VideoImagerToolsContainerType & GetVideoImagerToolContainer() const;
 
-  /** Report to imager tool that it is not available for imaging */
-  void ReportImagingToolNotAvailable( ImagerToolType * imagerTool ) const;
+  /** Report to VideoImager tool that it is not available for imaging */
+  void ReportImagingToolNotAvailable( VideoImagerToolType * VideoImagerTool ) const;
 
-  /** Report to imager tool that it is visible */
-  void ReportImagingToolVisible( ImagerToolType * imagerTool ) const;
+  /** Report to VideoImager tool that it is visible */
+  void ReportImagingToolVisible( VideoImagerToolType * videoImagerTool ) const;
 
-  void SetImagerToolFrame( ImagerToolType * imagerTool,
+  void SetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
                                    const FrameType & frame );
 
-  void GetImagerToolFrame( ImagerToolType * imagerTool,
+  void GetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
                                    FrameType & frame );
 
-  /** Turn on/off update flag of the imager tool */
-  void SetImagerToolUpdate( ImagerToolType * imagerTool,
+  /** Turn on/off update flag of the VideoImager tool */
+  void SetVideoImagerToolUpdate( VideoImagerToolType * videoImagerTool,
                                       bool flag ) const;
 
   /** Always called when exiting imaging state. This methold will be
@@ -253,22 +253,22 @@ protected:
   void ExitImagingTerminatingImagingThread();
 
 private:
-  Imager(const Self&);           //purposely not implemented
+  VideoImager(const Self&);           //purposely not implemented
   void operator=(const Self&);    //purposely not implemented
 
-  /** Pulse generator for driving the rate of imager updates. */
+  /** Pulse generator for driving the rate of VideoImager updates. */
   PulseGenerator::Pointer   m_PulseGenerator;
 
   /** Pulse observer for receiving the events from the pulse generator. */
   typedef itk::SimpleMemberCommand< Self >   ObserverType;
   ObserverType::Pointer     m_PulseObserver;
 
-  /** An associative container of ImagerTool Pointer with
-   * ImagerTool identifier used as a Key*/
-  ImagerToolsContainerType           m_ImagerTools;
+  /** An associative container of VideoImagerTool Pointer with
+   * VideoImagerTool identifier used as a Key*/
+  VideoImagerToolsContainerType           m_VideoImagerTools;
 
-  /** typedefs from ImagerTool class */
-  typedef ImagerToolType::Pointer                   ImagerToolPointer;
+  /** typedefs from VideoImagerTool class */
+  typedef VideoImagerToolType::Pointer                   VideoImagerToolPointer;
 
   /** Validity time, and its default value [milliseconds] */
   TimePeriodType                      m_ValidityTime;
@@ -301,8 +301,8 @@ private:
   igstkDeclareStateMacro( AttemptingToEstablishCommunication );
   igstkDeclareStateMacro( AttemptingToCloseCommunication );
   igstkDeclareStateMacro( CommunicationEstablished );
-  igstkDeclareStateMacro( AttemptingToAttachImagerTool );
-  igstkDeclareStateMacro( ImagerToolAttached );
+  igstkDeclareStateMacro( AttemptingToAttachVideoImagerTool );
+  igstkDeclareStateMacro( VideoImagerToolAttached );
   igstkDeclareStateMacro( AttemptingToImaging );
   igstkDeclareStateMacro( Imaging );
   igstkDeclareStateMacro( AttemptingToUpdate );
@@ -311,7 +311,7 @@ private:
   /** List of Inputs */
   igstkDeclareInputMacro( EstablishCommunication );
   igstkDeclareInputMacro( StartImaging );
-  igstkDeclareInputMacro( AttachImagerTool );
+  igstkDeclareInputMacro( AttachVideoImagerTool );
   igstkDeclareInputMacro( UpdateStatus );
   igstkDeclareInputMacro( StopImaging );
   igstkDeclareInputMacro( Reset );
@@ -321,18 +321,18 @@ private:
   igstkDeclareInputMacro( Success );
   igstkDeclareInputMacro( Failure );
 
-  /** Attach a imager tool to the imager. This method
-   *  should be called by the imager tool.  */
-  void RequestAttachTool( ImagerToolType * imagerTool );
+  /** Attach a VideoImager tool to the VideoImager. This method
+   *  should be called by the VideoImager tool.  */
+  void RequestAttachTool( VideoImagerToolType * videoImagerTool );
 
-  /** Request to remove a imager tool from this imager  */
-  ResultType RequestRemoveTool( ImagerToolType * imagerTool );
+  /** Request to remove a VideoImager tool from this VideoImager  */
+  ResultType RequestRemoveTool( VideoImagerToolType * videoImagerTool );
 
   /** Thread function for imaging */
   static ITK_THREAD_RETURN_TYPE ImagingThreadFunction(void* pInfoStruct);
 
   /** The "UpdateStatus" method is used for updating the status of
-      tools when the imager is in imaging state. It is a callback
+      tools when the VideoImager is in imaging state. It is a callback
       method that gets invoked when a pulse event is observed */
   void UpdateStatus( void );
 
@@ -347,9 +347,9 @@ private:
   /** The "AttemptToStopImagingProcessing" method attempts to stop imaging. */
   void AttemptToStopImagingProcessing( void );
 
-  /** The "AttemptToAttachImagerToolProcessing" method attempts
-   *  to attach a imager tool to the imager . */
-  void AttemptToAttachImagerToolProcessing( void );
+  /** The "AttemptToAttachVideoImagerToolProcessing" method attempts
+   *  to attach a VideoImager tool to the VideoImager . */
+  void AttemptToAttachVideoImagerToolProcessing( void );
 
   /** The "AttemptToUpdateStatusProcessing" method attempts to update status
       during imaging. */
@@ -363,24 +363,24 @@ private:
       attempt to update failes. */
   void UpdateStatusFailureProcessing( void );
 
-  /** The "CloseFromImagingStateProcessing" method closes imager in
-      use, when the imager is in imaging state. */
+  /** The "CloseFromImagingStateProcessing" method closes VideoImager in
+      use, when the VideoImager is in imaging state. */
   void CloseFromImagingStateProcessing( void );
 
   /** The "CloseFromCommunicatingStateProcessing" method closes
-      imager in use, when the imager is in communicating state. */
+      VideoImager in use, when the VideoImager is in communicating state. */
   void CloseFromCommunicatingStateProcessing( void );
 
-  /** The "ResetFromImagingStateProcessing" method resets imager in
-      use, when the imager is in imaging state. */
+  /** The "ResetFromImagingStateProcessing" method resets VideoImager in
+      use, when the VideoImager is in imaging state. */
   void ResetFromImagingStateProcessing( void );
 
-  /** The "ResetFromToolsActiveStateProcessing" method resets imager
-      in use, when the imager is in active tools state. */
+  /** The "ResetFromToolsActiveStateProcessing" method resets VideoImager
+      in use, when the VideoImager is in active tools state. */
   void ResetFromToolsActiveStateProcessing( void);
 
   /** The "ResetFromCommunicatingStateProcessing" method resets
-      imager in use, when the imager is in communicating state. */
+      VideoImager in use, when the VideoImager is in communicating state. */
   void ResetFromCommunicatingStateProcessing( void );
 
   /** Post-processing after communication setup has been successful. */
@@ -401,13 +401,13 @@ private:
   /** Post-processing after start imaging has failed. */
   void StartImagingFailureProcessing( void );
 
-  /** Post-processing after attaching a imager tool
+  /** Post-processing after attaching a VideoImager tool
      has been successful. */
-  void AttachingImagerToolSuccessProcessing( void );
+  void AttachingVideoImagerToolSuccessProcessing( void );
 
-  /** Post-processing after an attempt to attach a imager tool
+  /** Post-processing after an attempt to attach a VideoImager tool
    *  has failed. */
-  void AttachingImagerToolFailureProcessing( void );
+  void AttachingVideoImagerToolFailureProcessing( void );
 
   /** Post-processing after stop imaging has been successful. */
   void StopImagingSuccessProcessing( void );
@@ -424,8 +424,8 @@ private:
   /** Always called when entering imaging state. */
   void EnterImagingStateProcessing( void );
 
-  /** Detach all imager tools from the imager */
-  void DetachAllImagerToolsFromImager();
+  /** Detach all VideoImager tools from the VideoImager */
+  void DetachAllVideoImagerToolsFromVideoImager();
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
@@ -437,11 +437,11 @@ private:
    */
   igstkCoordinateSystemClassInterfaceMacro();
 
-  ImagerToolType   * m_ImagerToolToBeAttached;
+  VideoImagerToolType   * m_VideoImagerToolToBeAttached;
 
   double              m_FrequencyToBeSet;
 };
 
 }
 
-#endif //__igstk_Imager_h_
+#endif //__igstk_VideoImager_h_

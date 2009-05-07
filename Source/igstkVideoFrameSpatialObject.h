@@ -21,7 +21,7 @@
 #include "igstkSpatialObject.h"
 #include "igstkFrame.h"
 #include "igstkTimeStamp.h"
-#include "igstkImagerTool.h"
+#include "igstkVideoImagerTool.h"
 
 #include "itkVTKImageExport.h"
 #include "itkImage.h"
@@ -97,7 +97,7 @@ public:
 
   void RequestGetITKImage();
   void RequestGetVTKImage()const;
-  void SetImagerTool(igstk::ImagerTool::Pointer);
+  void SetVideoImagerTool(igstk::VideoImagerTool::Pointer);
 
 
   void UpdateImages();
@@ -124,7 +124,7 @@ private:
   vtkImageData*       m_VTKImage;
   TPixelType *        m_RawBuffer;
 
-  igstk::ImagerTool::Pointer                     m_ImagerTool;
+  igstk::VideoImagerTool::Pointer                     m_VideoImagerTool;
   /** raw frame for the spatial object */
   FrameType                       m_Frame;
 

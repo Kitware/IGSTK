@@ -35,7 +35,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
   m_Width=0;
   m_Height=0;
 
-  this->m_ImagerTool=NULL;
+  this->m_VideoImagerTool=NULL;
   m_PixelSizeX = 0;
   m_PixelSizeY = 0;
   m_NumberOfScalarComponents = 0;
@@ -153,7 +153,8 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     RGBImportFilter->SetSpacing( spacing );
 
     int j=0;
-    RGBPixelType tmp[m_Width * m_Height];
+    RGBPixelType* tmp;
+    tmp = new RGBPixelType[m_Width * m_Height];
     for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
     {
       RGBPixelType temp;
@@ -262,9 +263,9 @@ TimeStamp::TimePeriodType
 VideoFrameSpatialObject< TPixelType, TChannels >
 ::GetFrameExpirationTime() const
 {
-  if(this->m_ImagerTool.IsNotNull())
+  if(this->m_VideoImagerTool.IsNotNull())
   {
-    return (m_ImagerTool->GetInternalFrame()).GetExpirationTime();
+    return (m_VideoImagerTool->GetInternalFrame()).GetExpirationTime();
   }
   else
   return igstk::TimeStamp::GetZeroValue();
@@ -275,9 +276,9 @@ TimeStamp::TimePeriodType
 VideoFrameSpatialObject< TPixelType, TChannels >
 ::GetFrameStartTime() const
 {
-  if(this->m_ImagerTool.IsNotNull())
+  if(this->m_VideoImagerTool.IsNotNull())
   {
-    return (m_ImagerTool->GetInternalFrame()).GetStartTime();
+    return (m_VideoImagerTool->GetInternalFrame()).GetStartTime();
   }
   else
   return igstk::TimeStamp::GetLongestPossibleTime();
@@ -286,9 +287,9 @@ VideoFrameSpatialObject< TPixelType, TChannels >
 template< class TPixelType, unsigned int TChannels >
 void
 VideoFrameSpatialObject< TPixelType, TChannels >
-::SetImagerTool(igstk::ImagerTool::Pointer imagerTool)
+::SetVideoImagerTool(igstk::VideoImagerTool::Pointer VideoImagerTool)
 {
-  this->m_ImagerTool = imagerTool;
+  this->m_VideoImagerTool = VideoImagerTool;
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -340,13 +341,13 @@ void
 VideoFrameSpatialObject< TPixelType, TChannels>
 ::UpdateImages()
 {
-  if(this->m_ImagerTool.IsNotNull())
+  if(this->m_VideoImagerTool.IsNotNull())
   {
-    m_RawBuffer=(unsigned char*)(m_ImagerTool->GetTemporalCalibratedFrame()).GetImagePtr();
+    m_RawBuffer=(unsigned char*)(m_VideoImagerTool->GetTemporalCalibratedFrame()).GetImagePtr();
   }
   else
   {
-    igstkLogMacro( DEBUG, "VideoFrameSpatialObject::UpdateImages(): ImagerTool is not set properly\n");
+    igstkLogMacro( DEBUG, "VideoFrameSpatialObject::UpdateImages(): VideoImagerTool is not set properly\n");
   }
 
   if( m_NumberOfChannels == 3 )
@@ -354,7 +355,8 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     cout << "-";
 
   int j=0;
-  RGBPixelType tmp[m_Width * m_Height];
+  RGBPixelType* tmp;
+  tmp = new RGBPixelType[m_Width * m_Height];
   for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
   {
     RGBPixelType temp;

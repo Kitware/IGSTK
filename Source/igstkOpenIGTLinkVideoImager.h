@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkImagingSourceImager.h
+  Module:    igstkOpenIGTLinkVideoImager.h
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -15,8 +15,8 @@
 
 =========================================================================*/
 
-#ifndef __igstkImagingSourceImager_h
-#define __igstkImagingSourceImager_h
+#ifndef __igstkOpenIGTLinkVideoImager_h
+#define __igstkOpenIGTLinkVideoImager_h
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4018 )
@@ -25,36 +25,41 @@
 #pragma warning( disable : 4284 )
 #endif
 
-#include "igstkImager.h"
-#include "igstkImagingSourceImagerTool.h"
-
-#include "unicap.h"
-#include "unicap_status.h"
-#include <sys/types.h>
-#include <linux/types.h>
-#include <stdio.h>
-#include <map>
+#include "igstkVideoImager.h"
+#include "igstkOpenIGTLinkVideoImagerTool.h"
+#include "igtlServerSocket.h"
+#include "igtlImageMessage.h"
 
 class vtkImageData;
 
+// OpenIGTLinkVideoImager utilitiy classes declarations.
+
+#include <map>
+
 namespace igstk {
 
-/** \class ImagingSourceImager
- * \brief This derivation of the Imager class provides communication
- * to the ImagingSource frame grabber
+/** \class OpenIGTLinkVideoImager
+ * \brief This imager provides support for socket communication (using the
+ * Open IGTLink protocol) to the OpenIGTLink system
  *
- * This class controlls the communication with the video device.
- * The communication with the frame grabber is established with the unicap
- * library over firewire
  *
- * \ingroup Imager
+ * \ingroup VideoImager
  */
 
-class ImagingSourceImager : public Imager
+class OpenIGTLinkVideoImager : public VideoImager
 {
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( ImagingSourceImager, Imager )
+  igstkStandardClassTraitsMacro( OpenIGTLinkVideoImager, VideoImager )
+
+  /** Communication type */
+  typedef igtl::ServerSocket     CommunicationType;
+  //typedef igtl::ClientSocket     CommunicationType;
+
+
+  /** The SetCommunication method is used to attach a communication
+    * object to the tracker object. */
+  void SetCommunication( CommunicationType *communication );
 
 public:
 
@@ -63,40 +68,40 @@ public:
 
 protected:
 
-  ImagingSourceImager(void);
+  OpenIGTLinkVideoImager(void);
 
-  virtual ~ImagingSourceImager(void);
+  virtual ~OpenIGTLinkVideoImager(void);
 
   /** Typedef for internal boolean return type. */
-  typedef Imager::ResultType   ResultType;
+  typedef VideoImager::ResultType   ResultType;
 
-  /** Open communication with the imaging device. */
+  /** Open communication with the tracking device. */
   virtual ResultType InternalOpen( void );
 
-  /** Close communication with the imaging device. */
+  /** Close communication with the tracking device. */
   virtual ResultType InternalClose( void );
 
-  /** Put the imaging device into imaging mode. */
+  /** Put the tracking device into tracking mode. */
   virtual ResultType InternalStartImaging( void );
 
-  /** Take the imaging device out of imaging mode. */
+  /** Take the tracking device out of tracking mode. */
   virtual ResultType InternalStopImaging( void );
 
-  /** Update the status and the transforms for all ImagerTools. */
+  /** Update the status and the transforms for all VideoImagerTools. */
   virtual ResultType InternalUpdateStatus( void );
 
-  /** Update the status and the frames.
+  /** Update the status and the transforms.
       This function is called by a separate thread. */
   virtual ResultType InternalThreadedUpdateStatus( void );
 
-  /** Reset the imaging device to put it back to its original state. */
+  /** Reset the tracking device to put it back to its original state. */
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyImagerToolInformation( const ImagerToolType * );
+  virtual ResultType VerifyVideoImagerToolInformation( const VideoImagerToolType * );
 
   /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
-   * valid for the imaging device that is being used. */
+   * valid for the tracking device that is being used. */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
   /** Print object information */
@@ -110,19 +115,21 @@ protected:
   static std::string GetErrorDescription( unsigned int );
 
   /** Remove imager tool entry from internal containers */
-  virtual ResultType RemoveImagerToolFromInternalDataContainers( const
-                                     ImagerToolType * imagerTool );
+  virtual ResultType RemoveVideoImagerToolFromInternalDataContainers( const
+                                     VideoImagerToolType * imagerTool );
 
-  /** Add imager tool entry to internal containers */
-  virtual ResultType AddImagerToolToInternalDataContainers( const
-                                     ImagerToolType * imagerTool );
+  /** Add imager tool entry from internal containers */
+  virtual ResultType AddVideoImagerToolToInternalDataContainers( const
+                                     VideoImagerToolType * imagerTool );
+
 
 private:
 
-  ImagingSourceImager(const Self&);   //purposely not implemented
+  OpenIGTLinkVideoImager(const Self&);   //purposely not implemented
   void operator=(const Self&);   //purposely not implemented
 
-  /** Initialize camera */
+  /** Initialize camera and algorithm attributes such as Frame interleave
+      template matching tolerance, extrapolate frame etc */
   bool Initialize();
 
   /** A mutex for multithreaded access to the buffer arrays */
@@ -131,12 +138,16 @@ private:
   /** Total number of tools detected. */
   unsigned int   m_NumberOfTools;
 
-  /** A buffer to hold frames */
-  typedef std::map< std::string, igstk::Frame >
-                                ImagerToolFrameContainerType;
+  bool m_FirstFrame;
 
-  typedef igstk::Frame   FrameType;
-  ImagerToolFrameContainerType           m_ToolFrameBuffer;
+  /** A buffer to hold frames */
+//  typedef std::map< std::string, igtl::ImageMessage::Pointer >
+//                                VideoImagerToolFrameContainerType;
+
+  typedef std::map< std::string, igstk::Frame >
+                                VideoImagerToolFrameContainerType;
+
+  VideoImagerToolFrameContainerType           m_ToolFrameBuffer;
 
   /** Error map container */
   typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
@@ -148,19 +159,17 @@ private:
   /** Container holding status of the tools */
   std::map< std::string, int >  m_ToolStatusContainer;
 
-  /** Members and functions for communication with Unicap library */
-  unicap_handle_t handle;
-  unicap_format_t format;
-  unicap_data_buffer_t buffer;
-  unicap_data_buffer_t *returned_buffer;
+   /** The "Communication" instance */
+  CommunicationType::Pointer       m_Communication;
 
-  unicap_handle_t open_device ();
-  void set_format (unicap_handle_t handle);
-  size_t uyvy2rgb24( __u8 *dest, __u8 *source, size_t dest_size,
-             size_t source_size );
+  igtl::MessageHeader::Pointer    m_HeaderMsg;
+
+  igtl::ImageMessage::Pointer     imgMsg;
+
+  igtl::Socket::Pointer            m_Socket;
 
 };
 
-}  // namespace igstk
+}
 
-#endif //__igstk_ImagingSourceImager_h_
+#endif //__igstk_OpenIGTLinkVideoImager_h_

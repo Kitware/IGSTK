@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkTerasonImager.cxx
+  Module:    igstkOpenIGTLinkVideoImager.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -23,7 +23,7 @@
 
 #include <math.h>
 
-#include "igstkTerasonImager.h"
+#include "igstkOpenIGTLinkVideoImager.h"
 
 #include "igstkEvents.h"
 
@@ -37,14 +37,14 @@ namespace igstk
 {
 
 //Initialize static variables
-std::map< unsigned int, std::string> TerasonImager::m_ErrorCodeContainer;
-bool TerasonImager::m_ErrorCodeListCreated = false;
+std::map< unsigned int, std::string> OpenIGTLinkVideoImager::m_ErrorCodeContainer;
+bool OpenIGTLinkVideoImager::m_ErrorCodeListCreated = false;
 
 /** Constructor: Initializes all internal variables. */
-TerasonImager::TerasonImager(void):m_StateMachine(this)
+OpenIGTLinkVideoImager::OpenIGTLinkVideoImager(void):m_StateMachine(this)
 {
   this->m_NumberOfTools = 0;
-  
+
   this->m_FirstFrame = true;
 
   this->SetThreadingEnabled( true );
@@ -65,20 +65,20 @@ TerasonImager::TerasonImager(void):m_StateMachine(this)
 }
 
 /** Destructor */
-TerasonImager::~TerasonImager(void)
+OpenIGTLinkVideoImager::~OpenIGTLinkVideoImager(void)
 {
 
 }
 
 /** Create a map data structure containing MTC error code and description */
-void TerasonImager::CreateErrorCodeList()
+void OpenIGTLinkVideoImager::CreateErrorCodeList()
 {
   ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
 
   ecc[0]  = "OK";
   ecc[1]  = "Invalid object handle";
   ecc[2]  = "Reentrant access - library is not thread-safe";
-  ecc[3]  = "Internal TerasonImager software error";
+  ecc[3]  = "Internal OpenIGTLinkVideoImager software error";
   ecc[4]  = "Null pointer parameter";
   ecc[5]  = "Out of memory";
   ecc[6]  = "Parameter out of range";
@@ -135,11 +135,11 @@ void TerasonImager::CreateErrorCodeList()
 }
 
 std::string
-TerasonImager::GetErrorDescription( unsigned int code )
+OpenIGTLinkVideoImager::GetErrorDescription( unsigned int code )
 {
   if ( code >= 0 && code <= 55 )
     {
-    return TerasonImager::m_ErrorCodeContainer[code];
+    return OpenIGTLinkVideoImager::m_ErrorCodeContainer[code];
     }
   else
     {
@@ -147,9 +147,9 @@ TerasonImager::GetErrorDescription( unsigned int code )
     }
 }
 
-TerasonImager::ResultType TerasonImager::InternalOpen( void )
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::TerasonImager::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::InternalOpen called ...\n");
 
 
   if( ! this->Initialize() )
@@ -162,9 +162,9 @@ TerasonImager::ResultType TerasonImager::InternalOpen( void )
 }
 
 /** Initialize socket */
-bool TerasonImager::Initialize( void )
+bool OpenIGTLinkVideoImager::Initialize( void )
 {
-  igstkLogMacro( DEBUG, "igstk::TerasonImager::Initialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::Initialize called ...\n");
 
   bool result = true;
 
@@ -172,36 +172,36 @@ bool TerasonImager::Initialize( void )
 }
 
 /** Set the communication object*/
-void TerasonImager::SetCommunication( CommunicationType *communication )
+void OpenIGTLinkVideoImager::SetCommunication( CommunicationType *communication )
 {
-  igstkLogMacro( DEBUG, 
-    "igstk::TerasonImager:: Entered SetCommunication ...\n");
+  igstkLogMacro( DEBUG,
+    "igstk::OpenIGTLinkVideoImager:: Entered SetCommunication ...\n");
   m_Communication = communication;
 }
 
 /** Verify imager tool information. */
-TerasonImager::ResultType
-TerasonImager
-::VerifyImagerToolInformation( const ImagerToolType * imagerTool )
+OpenIGTLinkVideoImager::ResultType
+OpenIGTLinkVideoImager
+::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::VerifyImagerToolInformation called ...\n");
+    "igstk::OpenIGTLinkVideoImager::VerifyVideoImagerToolInformation called ...\n");
 
   return SUCCESS;
 }
 
 /** Detach camera. */
-TerasonImager::ResultType TerasonImager::InternalClose( void )
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::TerasonImager::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::InternalClose called ...\n");
   return SUCCESS;
 }
 
 /** Put the tracking device into tracking mode. */
-TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::InternalStartImaging called ...\n");
+    "igstk::OpenIGTLinkVideoImager::InternalStartImaging called ...\n");
 
   // Report errors, if any, and return SUCCESS or FAILURE
   // (the return value will be used by the superclass to
@@ -218,11 +218,11 @@ TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
 
   // Waiting for Connection
   m_Socket = NULL;
-  
+
   unsigned int times = 0;
   unsigned int maxTimes = 20;
 
-  do 
+  do
   {
     times++;
 
@@ -249,27 +249,27 @@ TerasonImager::ResultType TerasonImager::InternalStartImaging( void )
 }
 
 /** Take the tracking device out of tracking mode. */
-TerasonImager::ResultType TerasonImager::InternalStopImaging( void )
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalStopImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::InternalStopImaging called ...\n");
+    "igstk::OpenIGTLinkVideoImager::InternalStopImaging called ...\n");
 
   return SUCCESS;
 }
 
 /** Reset the tracking device to put it back to its original state. */
-TerasonImager::ResultType TerasonImager::InternalReset( void )
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::TerasonImager::InternalReset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::InternalReset called ...\n");
   return SUCCESS;
 }
 
 
-/** Update the status and the transforms for all ImagerTools. */
-TerasonImager::ResultType TerasonImager::InternalUpdateStatus()
+/** Update the status and the transforms for all VideoImagerTools. */
+OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::InternalUpdateStatus called ...\n");
+    "igstk::OpenIGTLinkVideoImager::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Imaging state.  This method is called from
@@ -280,22 +280,22 @@ TerasonImager::ResultType TerasonImager::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
-  typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+  typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
 
   InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
-  ImagerToolsContainerType imagerToolContainer =
-    this->GetImagerToolContainer();
+  VideoImagerToolsContainerType imagerToolContainer =
+    this->GetVideoImagerToolContainer();
 
   unsigned int toolId = 0;
 
   while( inputItr != inputEnd )
-    {      
+    {
     // only report tools that have useful data
     if (! this->m_ToolStatusContainer[inputItr->first])
     {
-      igstkLogMacro( DEBUG, "igstk::TerasonImager::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " is not in view\n");
       // report to the imager tool that the imager is not available
       this->ReportImagingToolNotAvailable(
@@ -304,14 +304,14 @@ TerasonImager::ResultType TerasonImager::InternalUpdateStatus()
       ++inputItr;
       continue;
     }
-        
+
     // report to the imager tool that the tool is Visible
     this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
 
-    this->SetImagerToolFrame(
+    this->SetVideoImagerToolFrame(
       imagerToolContainer[inputItr->first], (inputItr->second) );
 
-    this->SetImagerToolUpdate(
+    this->SetVideoImagerToolUpdate(
       imagerToolContainer[inputItr->first], true );
 
     ++inputItr;
@@ -326,10 +326,10 @@ TerasonImager::ResultType TerasonImager::InternalUpdateStatus()
 /** Update the shared memory buffer and the tool's internal frame. This function
  *  is called by the thread that communicates with the imager while
  *  the imager is in the Imaging state. */
-TerasonImager::ResultType 
-TerasonImager::InternalThreadedUpdateStatus( void )
+OpenIGTLinkVideoImager::ResultType
+OpenIGTLinkVideoImager::InternalThreadedUpdateStatus( void )
 {
-    igstkLogMacro( DEBUG, "igstk::TerasonImager::InternalThreadedUpdateStatus "
+    igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::InternalThreadedUpdateStatus "
                  "called ...\n");
 
     igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus entered" );
@@ -338,7 +338,7 @@ TerasonImager::InternalThreadedUpdateStatus( void )
     m_BufferLock->Lock();
 
     //reset the status of all the tracker tools
-    typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+    typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
     InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
     InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
@@ -349,7 +349,7 @@ TerasonImager::InternalThreadedUpdateStatus( void )
     }
 
     try
-    {      
+    {
 
       m_HeaderMsg = igtl::MessageHeader::New();
 
@@ -358,28 +358,28 @@ TerasonImager::InternalThreadedUpdateStatus( void )
 
       // Receive generic header from the socket
       int r = 0;
-    
+
       r = this->m_Socket->Receive(m_HeaderMsg->GetPackPointer(), m_HeaderMsg->GetPackSize());
 
       if (r != m_HeaderMsg->GetPackSize())
-      { 
+      {
         igstkLogMacro( CRITICAL, "Error in pack size" );
         m_BufferLock->Unlock();
-        return FAILURE;        
+        return FAILURE;
       }
 
       igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus Receive passed" );
-      
+
       // Deserialize the header
       m_HeaderMsg->Unpack();
-         
+
       // Check data type and receive data body
       if (strcmp(m_HeaderMsg->GetDeviceType(), "IMAGE") == 0)
-      {     
+      {
           // Create a message buffer to receive transform data
-          igtl::ImageMessage::Pointer imgMsg;          
-          imgMsg = igtl::ImageMessage::New();            
-          
+          igtl::ImageMessage::Pointer imgMsg;
+          imgMsg = igtl::ImageMessage::New();
+
          // if (m_FirstFrame)
          // {
             imgMsg->SetMessageHeader(m_HeaderMsg);
@@ -389,20 +389,20 @@ TerasonImager::InternalThreadedUpdateStatus( void )
 
           // Receive transform data from the socket
           this->m_Socket->Receive(imgMsg->GetPackBodyPointer(), imgMsg->GetPackBodySize());
-          
+
           // Deserialize the transform data
           // If you want to skip CRC check, call Unpack() without argument.
           int c = imgMsg->Unpack(1);
-          
+
           if (!(c & igtl::MessageHeader::UNPACK_BODY)) // if CRC check is OK
           {
             igstkLogMacro( CRITICAL, "Error in CRC check while unpacking" );
             m_BufferLock->Unlock();
             return FAILURE;
           }
-           
-          // Check if an imager tool was added with this device name        
-          typedef ImagerToolFrameContainerType::iterator InputIterator;
+
+          // Check if an imager tool was added with this device name
+          typedef VideoImagerToolFrameContainerType::iterator InputIterator;
 
           InputIterator deviceItr =
             this->m_ToolFrameBuffer.find( imgMsg->GetDeviceName() );
@@ -412,16 +412,16 @@ TerasonImager::InternalThreadedUpdateStatus( void )
             // Retrive the incoming image dimensions
             //unsigned int   inDims[3];
             //imgMsg->GetDimensions(inDims);
-            
+
             int fsize = imgMsg->GetImageSize();
-              
+
             // create the frame
-            ImagerToolsContainerType imagerToolContainer =
-              this->GetImagerToolContainer();
+            VideoImagerToolsContainerType imagerToolContainer =
+              this->GetVideoImagerToolContainer();
 
             unsigned int toolDims[3];          // image dimension set on tools
             imagerToolContainer[deviceItr->first]->GetFrameDimensions(toolDims);
-           
+
             int toolSize = toolDims[0] * toolDims[1] * toolDims[2];
 
             if (fsize != toolSize)
@@ -432,9 +432,9 @@ TerasonImager::InternalThreadedUpdateStatus( void )
             }
 
             FrameType frame;
-            this->GetImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
-               
-            memcpy(frame.GetImagePtr(),imgMsg->GetScalarPointer(),fsize);            
+            this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+
+            memcpy(frame.GetImagePtr(),imgMsg->GetScalarPointer(),fsize);
 
             this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
             this->m_ToolStatusContainer[ deviceItr->first ] = 1;
@@ -445,25 +445,25 @@ TerasonImager::InternalThreadedUpdateStatus( void )
       }
       else
       {
-        this->m_Communication->Skip(m_HeaderMsg->GetBodySizeToRead(), 0);       
+        this->m_Communication->Skip(m_HeaderMsg->GetBodySizeToRead(), 0);
         m_BufferLock->Unlock();
         return SUCCESS;
       }
   }
   catch(...)
   {
-      igstkLogMacro( CRITICAL, "Unknown error catched" );      
+      igstkLogMacro( CRITICAL, "Unknown error catched" );
       m_BufferLock->Unlock();
-      return FAILURE;  
+      return FAILURE;
   }
 }
 
-TerasonImager::ResultType
-TerasonImager::
-AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
+OpenIGTLinkVideoImager::ResultType
+OpenIGTLinkVideoImager::
+AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::RemoveImagerToolFromInternalDataContainers "
+    "igstk::OpenIGTLinkVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
                  "called ...\n");
 
   if ( imagerTool == NULL )
@@ -472,7 +472,7 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
     }
 
   const std::string imagerToolIdentifier =
-                    imagerTool->GetImagerToolIdentifier();
+                    imagerTool->GetVideoImagerToolIdentifier();
 
  // igtl::ImageMessage::Pointer imgMsg;
   igstk::Frame frame;
@@ -484,17 +484,17 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
 }
 
 
-TerasonImager::ResultType
-TerasonImager::
-RemoveImagerToolFromInternalDataContainers
-( const ImagerToolType * imagerTool )
+OpenIGTLinkVideoImager::ResultType
+OpenIGTLinkVideoImager::
+RemoveVideoImagerToolFromInternalDataContainers
+( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::TerasonImager::RemoveImagerToolFromInternalDataContainers "
+    "igstk::OpenIGTLinkVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
                  "called ...\n");
 
   const std::string imagerToolIdentifier =
-                      imagerTool->GetImagerToolIdentifier();
+                      imagerTool->GetVideoImagerToolIdentifier();
 
   // remove the tool from the frame buffer container
   //this->m_ToolTransformBuffer.erase( imagerToolIdentifier );
@@ -507,20 +507,20 @@ RemoveImagerToolFromInternalDataContainers
 
 /**The "ValidateSpecifiedFrequency" method checks if the specified
   * frequency is valid for the tracking device that is being used. */
-TerasonImager::ResultType
-TerasonImager::ValidateSpecifiedFrequency( double frequencyInHz )
+OpenIGTLinkVideoImager::ResultType
+OpenIGTLinkVideoImager::ValidateSpecifiedFrequency( double frequencyInHz )
 {
   const double MAXIMUM_FREQUENCY = 30;
   if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
     {
     return FAILURE;
-    } 
+    }
   return SUCCESS;
 }
 
 
 /** Print Self function */
-void TerasonImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void OpenIGTLinkVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 

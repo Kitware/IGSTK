@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Image Guided Surgery Software Toolkit
-  Module:    igstkWebcamWinImager.cxx
+  Module:    igstkWebcamWinVideoImager.cxx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -22,7 +22,7 @@
 #endif
 
 
-#include "igstkWebcamWinImager.h"
+#include "igstkWebcamWinVideoImager.h"
 #include "igstkEvents.h"
 #include "vtkImageData.h"
 #include <itksys/SystemTools.hxx>
@@ -52,15 +52,15 @@ namespace igstk
 
 
 //Initialize static variables
-std::map< unsigned int, std::string> WebcamWinImager::m_ErrorCodeContainer;
-bool WebcamWinImager::m_ErrorCodeListCreated = false;
-unsigned char* WebcamWinImager::pixels[1] = {NULL};
-unsigned char* WebcamWinImager::frameBuffer = NULL;
-itk::MutexLock::Pointer WebcamWinImager::m_FrameBufferLock = itk::MutexLock::New();
+std::map< unsigned int, std::string> WebcamWinVideoImager::m_ErrorCodeContainer;
+bool WebcamWinVideoImager::m_ErrorCodeListCreated = false;
+unsigned char* WebcamWinVideoImager::pixels[1] = {NULL};
+unsigned char* WebcamWinVideoImager::frameBuffer = NULL;
+itk::MutexLock::Pointer WebcamWinVideoImager::m_FrameBufferLock = itk::MutexLock::New();
 
 
 /** Constructor: Initializes all internal variables. */
-WebcamWinImager::WebcamWinImager(void):m_StateMachine(this)
+WebcamWinVideoImager::WebcamWinVideoImager(void):m_StateMachine(this)
 {
   this->m_NumberOfTools = 0;
 
@@ -89,20 +89,20 @@ WebcamWinImager::WebcamWinImager(void):m_StateMachine(this)
 }
 
 /** Destructor */
-WebcamWinImager::~WebcamWinImager(void)
+WebcamWinVideoImager::~WebcamWinVideoImager(void)
 {
   cvReleaseCapture( &capture );
 }
 
 /** Create a map data structure containing MTC error code and description */
-void WebcamWinImager::CreateErrorCodeList()
+void WebcamWinVideoImager::CreateErrorCodeList()
 {
   ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
 
   ecc[0]  = "OK";
   ecc[1]  = "Invalid object handle";
   ecc[2]  = "Reentrant access - library is not thread-safe";
-  ecc[3]  = "Internal WebcamWinImager software error";
+  ecc[3]  = "Internal WebcamWinVideoImager software error";
   ecc[4]  = "Null pointer parameter";
   ecc[5]  = "Out of memory";
   ecc[6]  = "Parameter out of range";
@@ -159,11 +159,11 @@ void WebcamWinImager::CreateErrorCodeList()
 }
 
 std::string
-WebcamWinImager::GetErrorDescription( unsigned int code )
+WebcamWinVideoImager::GetErrorDescription( unsigned int code )
 {
   if ( code >= 0 && code <= 55 )
     {
-    return WebcamWinImager::m_ErrorCodeContainer[code];
+    return WebcamWinVideoImager::m_ErrorCodeContainer[code];
     }
   else
     {
@@ -171,9 +171,9 @@ WebcamWinImager::GetErrorDescription( unsigned int code )
     }
 }
 
-WebcamWinImager::ResultType WebcamWinImager::InternalOpen( void )
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::WebcamWinImager::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalOpen called ...\n");
 
   if( ! this->Initialize() )
     {
@@ -185,9 +185,9 @@ WebcamWinImager::ResultType WebcamWinImager::InternalOpen( void )
 }
 
 /** Initialize socket */
-bool WebcamWinImager::Initialize( void )
+bool WebcamWinVideoImager::Initialize( void )
 {
-  igstkLogMacro( DEBUG, "igstk::WebcamWinImager::Initialize called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::Initialize called ...\n");
 
     capture = cvCaptureFromCAM( 0 );
     if ( !capture ) {
@@ -199,20 +199,20 @@ bool WebcamWinImager::Initialize( void )
 }
 
 /** Verify imager tool information. */
-WebcamWinImager::ResultType
-WebcamWinImager
-::VerifyImagerToolInformation( const ImagerToolType * imagerTool )
+WebcamWinVideoImager::ResultType
+WebcamWinVideoImager
+::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::VerifyImagerToolInformation called ...\n");
+    "igstk::WebcamWinVideoImager::VerifyVideoImagerToolInformation called ...\n");
 
   return SUCCESS;
 }
 
 /** Detach camera. */
-WebcamWinImager::ResultType WebcamWinImager::InternalClose( void )
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::WebcamWinImager::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalClose called ...\n");
 
   cvReleaseCapture( &capture );
 
@@ -220,10 +220,10 @@ WebcamWinImager::ResultType WebcamWinImager::InternalClose( void )
 }
 
 /** Put the imaging device into imaging mode. */
-WebcamWinImager::ResultType WebcamWinImager::InternalStartImaging( void )
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::InternalStartImaging called ...\n");
+    "igstk::WebcamWinVideoImager::InternalStartImaging called ...\n");
 
     igstk::DoubleTypeEvent evt;
     evt.Set( 1.0 );
@@ -234,10 +234,10 @@ WebcamWinImager::ResultType WebcamWinImager::InternalStartImaging( void )
 }
 
 /** Take the imaging device out of imaging mode. */
-WebcamWinImager::ResultType WebcamWinImager::InternalStopImaging( void )
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalStopImaging( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::InternalStopImaging called ...\n");
+    "igstk::WebcamWinVideoImager::InternalStopImaging called ...\n");
   /*
     Stop the device
   */
@@ -245,17 +245,17 @@ WebcamWinImager::ResultType WebcamWinImager::InternalStopImaging( void )
 }
 
 /** Reset the imaging device to put it back to its original state. */
-WebcamWinImager::ResultType WebcamWinImager::InternalReset( void )
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::WebcamWinImager::InternalReset called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalReset called ...\n");
   return SUCCESS;
 }
 
-/** Update the status and the transforms for all ImagerTools. */
-WebcamWinImager::ResultType WebcamWinImager::InternalUpdateStatus()
+/** Update the status and the transforms for all VideoImagerTools. */
+WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::InternalUpdateStatus called ...\n");
+    "igstk::WebcamWinVideoImager::InternalUpdateStatus called ...\n");
 
   // This method and the InternalThreadedUpdateStatus are both called
   // continuously in the Imaging state.  This method is called from
@@ -266,13 +266,13 @@ WebcamWinImager::ResultType WebcamWinImager::InternalUpdateStatus()
   // accessing it.
   m_BufferLock->Lock();
 
-  typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+  typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
 
   InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
-  ImagerToolsContainerType imagerToolContainer =
-  this->GetImagerToolContainer();
+  VideoImagerToolsContainerType imagerToolContainer =
+  this->GetVideoImagerToolContainer();
 
   unsigned int toolId = 0;
 
@@ -281,7 +281,7 @@ WebcamWinImager::ResultType WebcamWinImager::InternalUpdateStatus()
     // only report tools that have useful data
     if (! this->m_ToolStatusContainer[inputItr->first])
     {
-      igstkLogMacro( DEBUG, "igstk::WebcamWinImager::InternalUpdateStatus: " <<
+      igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalUpdateStatus: " <<
               "tool " << inputItr->first << " failed\n");
 
       // report to the imager tool that the imager is not available
@@ -297,10 +297,10 @@ WebcamWinImager::ResultType WebcamWinImager::InternalUpdateStatus()
 
     cout << ":" << endl;
 
-    this->SetImagerToolFrame(
+    this->SetVideoImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
 
-    this->SetImagerToolUpdate(
+    this->SetVideoImagerToolUpdate(
       imagerToolContainer[inputItr->first], true );
 
     ++inputItr;
@@ -315,16 +315,16 @@ WebcamWinImager::ResultType WebcamWinImager::InternalUpdateStatus()
 /** Update the shared memory buffer and the tool's internal frame. This function
  *  is called by the thread that communicates with the imager while
  *  the imager is in the Imaging state. */
-WebcamWinImager::ResultType
-WebcamWinImager::InternalThreadedUpdateStatus( void )
+WebcamWinVideoImager::ResultType
+WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::WebcamWinImager::InternalThreadedUpdateStatus called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus called ...\n");
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
 
   //reset the status of all the imager tools
-  typedef ImagerToolFrameContainerType::const_iterator  InputConstIterator;
+  typedef VideoImagerToolFrameContainerType::const_iterator  InputConstIterator;
   InputConstIterator inputItr = this->m_ToolFrameBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolFrameBuffer.end();
 
@@ -338,7 +338,7 @@ WebcamWinImager::InternalThreadedUpdateStatus( void )
   {
     igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus Receive passed" );
     // Check if an imager tool was added with this device name
-    typedef ImagerToolFrameContainerType::iterator InputIterator;
+    typedef VideoImagerToolFrameContainerType::iterator InputIterator;
 
     //TODO toolname hard coded
     InputIterator deviceItr = this->m_ToolFrameBuffer.find( "Camera" );
@@ -347,16 +347,16 @@ WebcamWinImager::InternalThreadedUpdateStatus( void )
       {
 
       // create the frame
-      ImagerToolsContainerType imagerToolContainer =
-                                              this->GetImagerToolContainer();
+      VideoImagerToolsContainerType imagerToolContainer =
+                                              this->GetVideoImagerToolContainer();
 
       FrameType frame;
-      this->GetImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+      this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
 
       unsigned int frameDims[3];
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
 
-      WebcamWinImager::m_FrameBufferLock->Lock();
+      WebcamWinVideoImager::m_FrameBufferLock->Lock();
 
       cvframe = cvQueryFrame( capture );
 
@@ -366,7 +366,7 @@ WebcamWinImager::InternalThreadedUpdateStatus( void )
       memcpy(frame.GetImagePtr(),
           (unsigned char*)cvframe->imageData,frameDims[0]*frameDims[1]*frameDims[2]);
 
-      WebcamWinImager::m_FrameBufferLock->Unlock();
+      WebcamWinVideoImager::m_FrameBufferLock->Unlock();
 
       //update frame validity time
       frame.SetTimeToExpiration(this->GetValidityTime());
@@ -385,12 +385,12 @@ WebcamWinImager::InternalThreadedUpdateStatus( void )
   }
 }
 
-WebcamWinImager::ResultType
-WebcamWinImager::
-AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
+WebcamWinVideoImager::ResultType
+WebcamWinVideoImager::
+AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::AddImagerToolToInternalDataContainers "
+    "igstk::WebcamWinVideoImager::AddVideoImagerToolToInternalDataContainers "
                  "called ...\n");
 
   if ( imagerTool == NULL )
@@ -399,7 +399,7 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
   }
 
   const std::string imagerToolIdentifier =
-                  imagerTool->GetImagerToolIdentifier();
+                  imagerTool->GetVideoImagerToolIdentifier();
 
   igstk::Frame frame;
 
@@ -410,17 +410,17 @@ AddImagerToolToInternalDataContainers( const ImagerToolType * imagerTool )
 }
 
 
-WebcamWinImager::ResultType
-WebcamWinImager::
-RemoveImagerToolFromInternalDataContainers
-( const ImagerToolType * imagerTool )
+WebcamWinVideoImager::ResultType
+WebcamWinVideoImager::
+RemoveVideoImagerToolFromInternalDataContainers
+( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinImager::RemoveImagerToolFromInternalDataContainers "
+    "igstk::WebcamWinVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
                  "called ...\n");
 
   const std::string imagerToolIdentifier =
-                      imagerTool->GetImagerToolIdentifier();
+                      imagerTool->GetVideoImagerToolIdentifier();
 
   // remove the tool from the frame buffer and status container
   this->m_ToolStatusContainer.erase( imagerToolIdentifier );
@@ -431,8 +431,8 @@ RemoveImagerToolFromInternalDataContainers
 
 /**The "ValidateSpecifiedFrequency" method checks if the specified
   * frequency is valid for the imaging device that is being used. */
-WebcamWinImager::ResultType
-WebcamWinImager::ValidateSpecifiedFrequency( double frequencyInHz )
+WebcamWinVideoImager::ResultType
+WebcamWinVideoImager::ValidateSpecifiedFrequency( double frequencyInHz )
 {
   const double MAXIMUM_FREQUENCY = 30;
   if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
@@ -443,7 +443,7 @@ WebcamWinImager::ValidateSpecifiedFrequency( double frequencyInHz )
 }
 
 /** Print Self function */
-void WebcamWinImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void WebcamWinVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
