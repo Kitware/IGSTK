@@ -31,8 +31,8 @@
 #include "igstkVideoFrameSpatialObject.h"
 #include "igstkVideoFrameRepresentation.h"
 
-#include "igstkCompressedDVImager.h"
-#include "igstkCompressedDVImagerTool.h"
+#include "igstkCompressedDVVideoImager.h"
+#include "igstkCompressedDVVideoImagerTool.h"
 
 #include "itkStdStreamLogOutput.h"
 
@@ -69,8 +69,8 @@ public:
   VideoFrameRepresentationType::Pointer m_VideoFrameRepresentationForVideoView;
 
 
-  /** imager object and imager tool*/
-  igstk::ImagerTool::Pointer                m_CompressedDVImagerTool;
+  /** VideoImager object and VideoImager tool*/
+  igstk::VideoImagerTool::Pointer                m_CompressedDVVideoImagerTool;
 
   /** Public request methods from the GUI */
   virtual void RequestPrepareToQuit();
@@ -145,8 +145,8 @@ private:
   ErrorObserver::Pointer m_ErrorObserver;
   std::string m_ErrorMessage;
 
-  Imager::Pointer       m_Imager;
-  std::vector<ImagerTool::Pointer> m_Tools;
+  VideoImager::Pointer       m_VideoImager;
+  std::vector<VideoImagerTool::Pointer> m_Tools;
 
 };
 
