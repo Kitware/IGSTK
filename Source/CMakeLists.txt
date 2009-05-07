@@ -347,8 +347,8 @@ SET(IGSTKSandbox_HEADS
   igstkVideoFrameSpatialObject.h
   igstkVideoFrameRepresentation.h
   igstkFrame.h
-  igstkImager.h
-  igstkImagerTool.h
+  igstkVideoImager.h
+  igstkVideoImagerTool.h
 
   igstkPivotCalibration.h
   igstkPrincipalAxisCalibration.h
@@ -414,10 +414,10 @@ ENDIF(IGSTKSandbox_USE_FLTK)
 IF (IGSTKSandbox_USE_OpenIGTLink)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkTerasonImager.h
-      igstkTerasonImager.cxx
-      igstkTerasonImagerTool.h
-      igstkTerasonImagerTool.cxx
+      igstkOpenIGTLinkVideoImager.h
+      igstkOpenIGTLinkVideoImager.cxx
+      igstkOpenIGTLinkVideoImagerTool.h
+      igstkOpenIGTLinkVideoImagerTool.cxx
       )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
@@ -427,20 +427,20 @@ IF (IGSTKSandbox_USE_unicap)
   )
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkImagingSourceImager.h
-      igstkImagingSourceImager.cxx
-      igstkImagingSourceImagerTool.h
-      igstkImagingSourceImagerTool.cxx
+      igstkImagingSourceVideoImager.h
+      igstkImagingSourceVideoImager.cxx
+      igstkImagingSourceVideoImagerTool.h
+      igstkImagingSourceVideoImagerTool.cxx
       )
 ENDIF (IGSTKSandbox_USE_unicap)
 
 IF (IGSTKSandbox_USE_CompressedDV)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
-      igstkCompressedDVImager.h
-      igstkCompressedDVImager.cxx
-      igstkCompressedDVImagerTool.h
-      igstkCompressedDVImagerTool.cxx
+      igstkCompressedDVVideoImager.h
+      igstkCompressedDVVideoImager.cxx
+      igstkCompressedDVVideoImagerTool.h
+      igstkCompressedDVVideoImagerTool.cxx
       )
 ENDIF (IGSTKSandbox_USE_CompressedDV)
 
@@ -454,8 +454,8 @@ IF( WIN32 )
       IF(IGSTKSandbox_USE_OpenCV)
          SET(IGSTKSandbox_SRCS
              ${IGSTKSandbox_SRCS}
-             igstkWebcamWinImager.h
-             igstkWebcamWinImagerTool.h
+             igstkWebcamWinVideoImager.h
+             igstkWebcamWinVideoImagerTool.h
              )
       ENDIF(IGSTKSandbox_USE_OpenCV)
 ENDIF( WIN32 )
@@ -477,8 +477,8 @@ SET(IGSTKSandbox_SRCS
   igstkVideoFrameSpatialObject.txx
   igstkVideoFrameRepresentation.txx
   igstkFrame.cxx
-  igstkImager.cxx
-  igstkImagerTool.cxx
+  igstkVideoImager.cxx
+  igstkVideoImagerTool.cxx
 
   igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
@@ -553,8 +553,8 @@ IF( WIN32 )
       IF(IGSTKSandbox_USE_OpenCV)
         SET(IGSTKSandbox_SRCS
             ${IGSTKSandbox_SRCS}
-            igstkWebcamWinImager.cxx
-            igstkWebcamWinImagerTool.cxx
+            igstkWebcamWinVideoImager.cxx
+            igstkWebcamWinVideoImagerTool.cxx
             )
       ENDIF(IGSTKSandbox_USE_OpenCV)        
 ENDIF( WIN32 )
