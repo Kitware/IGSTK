@@ -39,11 +39,11 @@
 #define VIEW_2D_REFRESH_RATE 15
 #define VIEW_3D_REFRESH_RATE 15
 
-#define IMAGER_DEFAULT_REFRESH_RATE 10
+#define VideoImager_DEFAULT_REFRESH_RATE 10
 
 // name of the tool that is going to drive the reslicing
 #define TRACKER_TOOL_NAME "probe" //sPtr // bayonet // hybrid_pointer
-#define IMAGER_TOOL_NAME "reference" //sPtr // bayonet // hybrid_pointer
+#define VideoImager_TOOL_NAME "reference" //sPtr // bayonet // hybrid_pointer
 
 
 /** -----------------------------------------------------------------
@@ -58,7 +58,7 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
 
   m_VideoEnabled = false;
   m_CollectorEnabled = false;
-  m_ImagerInitialized = false;
+  m_VideoImagerInitialized = false;
   m_VideoRunning = false;
   m_CollectingProbeSamples = false;
   m_CollectingPointerSamples = false;
@@ -145,12 +145,12 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
   igstkAddStateMacro( StoppingTracker );
   igstkAddStateMacro( DisconnectingTracker );
   igstkAddStateMacro( Tracking );
-  igstkAddStateMacro( LoadingImagerToolSpatialObject );
+  igstkAddStateMacro( LoadingVideoImagerToolSpatialObject );
   igstkAddStateMacro( TrackingAndImaging );
-  igstkAddStateMacro( InitializingImager );
-  igstkAddStateMacro( StartingImager );
-  igstkAddStateMacro( StoppingImager );
-  igstkAddStateMacro( DisconnectingImager );
+  igstkAddStateMacro( InitializingVideoImager );
+  igstkAddStateMacro( StartingVideoImager );
+  igstkAddStateMacro( StoppingVideoImager );
+  igstkAddStateMacro( DisconnectingVideoImager );
 
   /** Machine Inputs*/
 
@@ -164,11 +164,11 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( DisconnectTracker );
-  igstkAddInputMacro( LoadImagerToolSpatialObject );
-  igstkAddInputMacro( InitializeImager );
+  igstkAddInputMacro( LoadVideoImagerToolSpatialObject );
+  igstkAddInputMacro( InitializeVideoImager );
   igstkAddInputMacro( StartImaging );
   igstkAddInputMacro( StopImaging );
-  igstkAddInputMacro( DisconnectImager );
+  igstkAddInputMacro( DisconnectVideoImager );
 
   /** Initial State */
 
@@ -194,15 +194,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, DisconnectTracker,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( Initial, LoadVideoImagerToolSpatialObject,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, InitializeImager,
+  igstkAddTransitionMacro( Initial, InitializeVideoImager,
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StartImaging,
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StopImaging,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, DisconnectImager,
+  igstkAddTransitionMacro( Initial, DisconnectVideoImager,
                            Initial, ReportInvalidRequest );
 
   /** LoadingTrackerToolSpatialObject State */
@@ -232,15 +232,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectTracker,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeImager,
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, InitializeVideoImager,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, LoadVideoImagerToolSpatialObject,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StartImaging,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, StopImaging,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectImager,
+  igstkAddTransitionMacro( LoadingTrackerToolSpatialObject, DisconnectVideoImager,
                            LoadingTrackerToolSpatialObject, ReportInvalidRequest );
 
   /** TrackerToolSpatialObjectReady State */
@@ -268,15 +268,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectTracker,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeImager,
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, InitializeVideoImager,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, LoadVideoImagerToolSpatialObject,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StartImaging,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerToolSpatialObjectReady, StopImaging,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectImager,
+  igstkAddTransitionMacro( TrackerToolSpatialObjectReady, DisconnectVideoImager,
                            TrackerToolSpatialObjectReady, ReportInvalidRequest );
 
   /** ConfiguringTracker State */
@@ -305,15 +305,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, DisconnectTracker,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, InitializeImager,
+  igstkAddTransitionMacro( ConfiguringTracker, InitializeVideoImager,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( ConfiguringTracker, LoadVideoImagerToolSpatialObject,
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StartImaging,
                            ConfiguringTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfiguringTracker, StopImaging,
                            ConfiguringTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfiguringTracker, DisconnectImager,
+  igstkAddTransitionMacro( ConfiguringTracker, DisconnectVideoImager,
                            ConfiguringTracker, ReportInvalidRequest );
 
   /** TrackerConfigurationReady State */
@@ -340,15 +340,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectTracker,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeImager,
+  igstkAddTransitionMacro( TrackerConfigurationReady, InitializeVideoImager,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( TrackerConfigurationReady, LoadVideoImagerToolSpatialObject,
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StartImaging,
                            TrackerConfigurationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerConfigurationReady, StopImaging,
                            TrackerConfigurationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectImager,
+  igstkAddTransitionMacro( TrackerConfigurationReady, DisconnectVideoImager,
                            TrackerConfigurationReady, ReportInvalidRequest );
 
   /** InitializingTracker State */
@@ -377,15 +377,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, DisconnectTracker,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, InitializeImager,
+  igstkAddTransitionMacro( InitializingTracker, InitializeVideoImager,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( InitializingTracker, LoadVideoImagerToolSpatialObject,
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StartImaging,
                            InitializingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( InitializingTracker, StopImaging,
                            InitializingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingTracker, DisconnectImager,
+  igstkAddTransitionMacro( InitializingTracker, DisconnectVideoImager,
                            InitializingTracker, ReportInvalidRequest );
 
   /** TrackerInitializationReady State */
@@ -414,15 +414,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StopTracking,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, InitializeImager,
+  igstkAddTransitionMacro( TrackerInitializationReady, InitializeVideoImager,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( TrackerInitializationReady, LoadVideoImagerToolSpatialObject,
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StartImaging,
                            TrackerInitializationReady, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackerInitializationReady, StopImaging,
                            TrackerInitializationReady, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectImager,
+  igstkAddTransitionMacro( TrackerInitializationReady, DisconnectVideoImager,
                            TrackerInitializationReady, ReportInvalidRequest );
   /** LoadingMesh State */
 
@@ -450,15 +450,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, DisconnectTracker,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, InitializeImager,
+  igstkAddTransitionMacro( LoadingMesh, InitializeVideoImager,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( LoadingMesh, LoadVideoImagerToolSpatialObject,
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, StartImaging,
                            LoadingMesh, ReportInvalidRequest );
   igstkAddTransitionMacro( LoadingMesh, StopImaging,
                            LoadingMesh, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingMesh, DisconnectImager,
+  igstkAddTransitionMacro( LoadingMesh, DisconnectVideoImager,
                            LoadingMesh, ReportInvalidRequest );
 
   /** StartingTracker State*/
@@ -487,15 +487,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, DisconnectTracker,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, InitializeImager,
+  igstkAddTransitionMacro( StartingTracker, InitializeVideoImager,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( StartingTracker, LoadVideoImagerToolSpatialObject,
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StartImaging,
                            StartingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StartingTracker, StopImaging,
                            StartingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingTracker, DisconnectImager,
+  igstkAddTransitionMacro( StartingTracker, DisconnectVideoImager,
                            StartingTracker, ReportInvalidRequest );
   /** Tracking State */
 
@@ -503,10 +503,10 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            LoadingMesh, LoadWorkingVolumeMesh );
   igstkAddTransitionMacro( Tracking, LoadTrackerMesh,
                            LoadingMesh, LoadTrackerMesh );
-  igstkAddTransitionMacro( Tracking, InitializeImager,
-                           InitializingImager, InitializeImager );
+  igstkAddTransitionMacro( Tracking, InitializeVideoImager,
+                           InitializingVideoImager, InitializeVideoImager );
   igstkAddTransitionMacro( Tracking, StartImaging,
-                           StartingImager, StartImaging );
+                           StartingVideoImager, StartImaging );
   igstkAddTransitionMacro( Tracking, StopTracking,
                            StoppingTracker, StopTracking );
 
@@ -526,11 +526,11 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, DisconnectTracker,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( Tracking, LoadVideoImagerToolSpatialObject,
                            Tracking, ReportInvalidRequest );
   igstkAddTransitionMacro( Tracking, StopImaging,
                            Tracking, ReportInvalidRequest );
-  igstkAddTransitionMacro( Tracking, DisconnectImager,
+  igstkAddTransitionMacro( Tracking, DisconnectVideoImager,
                            Tracking, ReportInvalidRequest );
 
    /** StoppingTracker State */
@@ -560,15 +560,15 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, DisconnectTracker,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, InitializeImager,
+  igstkAddTransitionMacro( StoppingTracker, InitializeVideoImager,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( StoppingTracker, LoadVideoImagerToolSpatialObject,
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StartImaging,
                            StoppingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( StoppingTracker, StopImaging,
                            StoppingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingTracker, DisconnectImager,
+  igstkAddTransitionMacro( StoppingTracker, DisconnectVideoImager,
                            StoppingTracker, ReportInvalidRequest );
 
    /** DisconnectingTracker Tracker */
@@ -597,132 +597,132 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, DisconnectTracker,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( DisconnectingTracker, LoadVideoImagerToolSpatialObject,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, InitializeImager,
+  igstkAddTransitionMacro( DisconnectingTracker, InitializeVideoImager,
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StartImaging,
                            DisconnectingTracker, ReportInvalidRequest );
   igstkAddTransitionMacro( DisconnectingTracker, StopImaging,
                            DisconnectingTracker, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingTracker, DisconnectImager,
+  igstkAddTransitionMacro( DisconnectingTracker, DisconnectVideoImager,
                            DisconnectingTracker, ReportInvalidRequest );
 
-    /** LoadingImagerToolSpatialObject State */
+    /** LoadingVideoImagerToolSpatialObject State */
 
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, Success,
-                           Tracking, ReportSuccessImagerToolSpatialObjectLoaded );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, Success,
+                           Tracking, ReportSuccessVideoImagerToolSpatialObjectLoaded );
 
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, Failure,
-                           Tracking, ReportFailureImagerToolSpatialObjectLoaded );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, Failure,
+                           Tracking, ReportFailureVideoImagerToolSpatialObjectLoaded );
 
-  //complete table for state: LoadingImagerToolSpatialObject
+  //complete table for state: LoadingVideoImagerToolSpatialObject
 
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadWorkingVolumeMesh,
-                           LoadingImagerToolSpatialObject, LoadWorkingVolumeMesh );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadTrackerToolSpatialObject,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadImagerToolSpatialObject,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, ConfigureTracker,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeTracker,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartTracking,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StopTracking,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, DisconnectTracker,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StartImaging,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, StopImaging,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, DisconnectImager,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, InitializeImager,
-                           LoadingImagerToolSpatialObject, ReportInvalidRequest );
-  igstkAddTransitionMacro( LoadingImagerToolSpatialObject, LoadTrackerMesh,
-                           LoadingImagerToolSpatialObject, LoadTrackerMesh );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, LoadWorkingVolumeMesh,
+                           LoadingVideoImagerToolSpatialObject, LoadWorkingVolumeMesh );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, LoadTrackerToolSpatialObject,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, LoadVideoImagerToolSpatialObject,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, ConfigureTracker,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, InitializeTracker,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, StartTracking,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, StopTracking,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, DisconnectTracker,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, StartImaging,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, StopImaging,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, DisconnectVideoImager,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, InitializeVideoImager,
+                           LoadingVideoImagerToolSpatialObject, ReportInvalidRequest );
+  igstkAddTransitionMacro( LoadingVideoImagerToolSpatialObject, LoadTrackerMesh,
+                           LoadingVideoImagerToolSpatialObject, LoadTrackerMesh );
 
-  /** InitializingImager State */
+  /** InitializingVideoImager State */
 
-  igstkAddTransitionMacro( InitializingImager, Success,
-                           Tracking, ReportSuccessImagerInitialization );
+  igstkAddTransitionMacro( InitializingVideoImager, Success,
+                           Tracking, ReportSuccessVideoImagerInitialization );
 
-  igstkAddTransitionMacro( InitializingImager, Failure,
-                           Tracking, ReportFailureImagerInitialization );
+  igstkAddTransitionMacro( InitializingVideoImager, Failure,
+                           Tracking, ReportFailureVideoImagerInitialization );
 
-  //complete table for state: InitializingImager
+  //complete table for state: InitializingVideoImager
 
-  igstkAddTransitionMacro( InitializingImager, LoadWorkingVolumeMesh,
-                           InitializingImager, LoadWorkingVolumeMesh );
-  igstkAddTransitionMacro( InitializingImager, LoadTrackerToolSpatialObject,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, LoadImagerToolSpatialObject,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, ConfigureTracker,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, InitializeTracker,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, StartTracking,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, StopTracking,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, DisconnectTracker,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, StartImaging,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, StopImaging,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, DisconnectImager,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, InitializeImager,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, LoadTrackerMesh,
-                           InitializingImager, LoadTrackerMesh );
+  igstkAddTransitionMacro( InitializingVideoImager, LoadWorkingVolumeMesh,
+                           InitializingVideoImager, LoadWorkingVolumeMesh );
+  igstkAddTransitionMacro( InitializingVideoImager, LoadTrackerToolSpatialObject,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, LoadVideoImagerToolSpatialObject,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, ConfigureTracker,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, InitializeTracker,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, StartTracking,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, StopTracking,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, DisconnectTracker,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, StartImaging,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, StopImaging,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, DisconnectVideoImager,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, InitializeVideoImager,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, LoadTrackerMesh,
+                           InitializingVideoImager, LoadTrackerMesh );
 
-  /** StartingImager State*/
+  /** StartingVideoImager State*/
 
-  igstkAddTransitionMacro( StartingImager, Success,
+  igstkAddTransitionMacro( StartingVideoImager, Success,
                            TrackingAndImaging, ReportSuccessStartImaging );
 
-  igstkAddTransitionMacro( StartingImager, Failure,
+  igstkAddTransitionMacro( StartingVideoImager, Failure,
                            Tracking, ReportFailureStartImaging );
 
-  //complete table for state: StartingImager
+  //complete table for state: StartingVideoImager
 
-  igstkAddTransitionMacro( StartingImager, LoadWorkingVolumeMesh,
-                           StartingImager, LoadWorkingVolumeMesh );
-  igstkAddTransitionMacro( StartingImager, LoadTrackerToolSpatialObject,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, LoadImagerToolSpatialObject,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, ConfigureTracker,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, InitializeTracker,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, StartTracking,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, StopTracking,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, DisconnectTracker,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, StartImaging,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, StopImaging,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, DisconnectImager,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, InitializeImager,
-                           StartingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StartingImager, LoadTrackerMesh,
-                           StartingImager, LoadTrackerMesh );
+  igstkAddTransitionMacro( StartingVideoImager, LoadWorkingVolumeMesh,
+                           StartingVideoImager, LoadWorkingVolumeMesh );
+  igstkAddTransitionMacro( StartingVideoImager, LoadTrackerToolSpatialObject,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, LoadVideoImagerToolSpatialObject,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, ConfigureTracker,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, InitializeTracker,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, StartTracking,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, StopTracking,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, DisconnectTracker,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, StartImaging,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, StopImaging,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, DisconnectVideoImager,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, InitializeVideoImager,
+                           StartingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StartingVideoImager, LoadTrackerMesh,
+                           StartingVideoImager, LoadTrackerMesh );
 
   /** TrackingAndImagingAndImaging State */
 
   igstkAddTransitionMacro( TrackingAndImaging, StopImaging,
-                           StoppingImager, StopImaging );
+                           StoppingVideoImager, StopImaging );
 
   //complete table for state: TrackingAndImaging
 
@@ -734,7 +734,7 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, LoadTrackerToolSpatialObject,
                            TrackingAndImaging, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackingAndImaging, LoadImagerToolSpatialObject,
+  igstkAddTransitionMacro( TrackingAndImaging, LoadVideoImagerToolSpatialObject,
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, InitializeTracker,
                            TrackingAndImaging, ReportInvalidRequest );
@@ -748,86 +748,86 @@ VideoTemporalCalibrationWizard::VideoTemporalCalibrationWizard() :
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, StartImaging,
                            TrackingAndImaging, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackingAndImaging, InitializeImager,
+  igstkAddTransitionMacro( TrackingAndImaging, InitializeVideoImager,
                            TrackingAndImaging, ReportInvalidRequest );
-  igstkAddTransitionMacro( TrackingAndImaging, DisconnectImager,
+  igstkAddTransitionMacro( TrackingAndImaging, DisconnectVideoImager,
                            TrackingAndImaging, ReportInvalidRequest );
   igstkAddTransitionMacro( TrackingAndImaging, LoadTrackerMesh,
                            TrackingAndImaging, LoadTrackerMesh );
 
-  /** StoppingImager State */
+  /** StoppingVideoImager State */
 
-  igstkAddTransitionMacro( StoppingImager, Success,
+  igstkAddTransitionMacro( StoppingVideoImager, Success,
                            Tracking, ReportSuccessStopImaging);
 
-  igstkAddTransitionMacro( StoppingImager, Failure,
+  igstkAddTransitionMacro( StoppingVideoImager, Failure,
                            TrackingAndImaging, ReportFailureStopImaging );
 
-  //complete table for state: StoppingImager
+  //complete table for state: StoppingVideoImager
 
-  igstkAddTransitionMacro( StoppingImager, LoadTrackerToolSpatialObject,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, LoadWorkingVolumeMesh,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, InitializeTracker,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, ConfigureTracker,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, StartTracking,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, StopTracking,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, DisconnectTracker,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, LoadImagerToolSpatialObject,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, StartImaging,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, StopImaging,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, DisconnectImager,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, InitializeImager,
-                           StoppingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( StoppingImager, LoadTrackerMesh,
-                           StoppingImager, LoadTrackerMesh );
+  igstkAddTransitionMacro( StoppingVideoImager, LoadTrackerToolSpatialObject,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, LoadWorkingVolumeMesh,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, InitializeTracker,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, ConfigureTracker,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, StartTracking,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, StopTracking,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, DisconnectTracker,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, LoadVideoImagerToolSpatialObject,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, StartImaging,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, StopImaging,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, DisconnectVideoImager,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, InitializeVideoImager,
+                           StoppingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( StoppingVideoImager, LoadTrackerMesh,
+                           StoppingVideoImager, LoadTrackerMesh );
 
-  /** DisconnectingImager */
+  /** DisconnectingVideoImager */
 
-  igstkAddTransitionMacro( DisconnectingImager, Success,
-                           Tracking, ReportSuccessImagerDisconnection);
+  igstkAddTransitionMacro( DisconnectingVideoImager, Success,
+                           Tracking, ReportSuccessVideoImagerDisconnection);
 
-  igstkAddTransitionMacro( DisconnectingImager, Failure,
+  igstkAddTransitionMacro( DisconnectingVideoImager, Failure,
                            Tracking, ReportFailureTrackerDisconnection );
 
-  //complete table for state: DisconnectingImager
+  //complete table for state: DisconnectingVideoImager
 
-  igstkAddTransitionMacro( DisconnectingImager, LoadWorkingVolumeMesh,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, LoadTrackerToolSpatialObject,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, InitializeTracker,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, ConfigureTracker,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, StartTracking,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, StopTracking,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, DisconnectTracker,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, LoadImagerToolSpatialObject,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, StartImaging,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, StopImaging,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, DisconnectImager,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, InitializeImager,
-                           DisconnectingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( DisconnectingImager, LoadTrackerMesh,
-                           DisconnectingImager, LoadTrackerMesh );
+  igstkAddTransitionMacro( DisconnectingVideoImager, LoadWorkingVolumeMesh,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, LoadTrackerToolSpatialObject,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, InitializeTracker,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, ConfigureTracker,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, StartTracking,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, StopTracking,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, DisconnectTracker,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, LoadVideoImagerToolSpatialObject,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, StartImaging,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, StopImaging,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, DisconnectVideoImager,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, InitializeVideoImager,
+                           DisconnectingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( DisconnectingVideoImager, LoadTrackerMesh,
+                           DisconnectingVideoImager, LoadTrackerMesh );
 
   /** Set Initial State */
 
@@ -1171,27 +1171,27 @@ void VideoTemporalCalibrationWizard::RequestConfigureTracker()
 }
 
 /** -----------------------------------------------------------------
-* Disconnects the imager and closes the socket
+* Disconnects the VideoImager and closes the socket
 *---------------------------------------------------------------------
 */
 void
-VideoTemporalCalibrationWizard::DisconnectImagerProcessing()
+VideoTemporalCalibrationWizard::DisconnectVideoImagerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-           "VideoTemporalCalibrationWizard::DisconnectImagerProcessing called...\n" )
+           "VideoTemporalCalibrationWizard::DisconnectVideoImagerProcessing called...\n" )
 
   // try to disconnect
-  m_ImagerController->RequestShutdown( );
+  m_VideoImagerController->RequestShutdown( );
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager disconnect error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );
   }
   else
@@ -1203,12 +1203,12 @@ VideoTemporalCalibrationWizard::DisconnectImagerProcessing()
 }
 
 void
-VideoTemporalCalibrationWizard::InitializeImagerProcessing()
+VideoTemporalCalibrationWizard::InitializeVideoImagerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-      "VideoTemporalCalibrationWizard::InitializeImagerProcessing called...\n" )
+      "VideoTemporalCalibrationWizard::InitializeVideoImagerProcessing called...\n" )
 
-  m_ImagerConfiguration = new igstk::ImagingSourceImagerConfiguration();
+  m_VideoImagerConfiguration = new igstk::ImagingSourceVideoImagerConfiguration();
 
   //set the tool parameters
   igstk::ImagingSourceToolConfiguration toolconfig;
@@ -1224,76 +1224,76 @@ VideoTemporalCalibrationWizard::InitializeImagerProcessing()
 //  toolconfig.SetCalibrationFileName( "Terason2000_Calibration.igstk" );
   toolconfig.SetToolUniqueIdentifier( deviceName );
 
-  m_ImagerConfiguration->RequestAddTool( &toolconfig );
+  m_VideoImagerConfiguration->RequestAddTool( &toolconfig );
 
-  m_ImagerConfiguration->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+  m_VideoImagerConfiguration->RequestSetFrequency( VideoImager_DEFAULT_REFRESH_RATE );
 
-  if (!m_ImagerConfiguration)
+  if (!m_VideoImagerConfiguration)
   {
     std::string errorMessage;
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
   }
 
-  /** Create the controller for the imager and assign observers to it*/
-  m_ImagerController = igstk::ImagerController::New();
+  /** Create the controller for the VideoImager and assign observers to it*/
+  m_VideoImagerController = igstk::VideoImagerController::New();
 
-  m_ImagerControllerObserver = ImagerControllerObserver::New();
-  m_ImagerControllerObserver->SetParent( this );
+  m_VideoImagerControllerObserver = VideoImagerControllerObserver::New();
+  m_VideoImagerControllerObserver->SetParent( this );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::InitializeFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::InitializeFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::StartFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::StartFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::StopFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::StopFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::ShutdownFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::ShutdownFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::RequestImagerEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::RequestVideoImagerEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::RequestToolsEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::RequestToolsEvent(),
+    m_VideoImagerControllerObserver );
 
   // Initialize the progress command
   m_SocketProgressCommand = ProgressCommandType::New();
   m_SocketProgressCommand->SetCallbackFunction( this, &VideoTemporalCalibrationWizard::OnSocketProgressEvent );
 
-  // Provide a progress observer to the imager controller
-  m_ImagerController->RequestSetProgressCallback( m_SocketProgressCommand );
+  // Provide a progress observer to the VideoImager controller
+  m_VideoImagerController->RequestSetProgressCallback( m_SocketProgressCommand );
 
-  // initialize the imager controller with our image configuration file
-  m_ImagerController->RequestInitialize( m_ImagerConfiguration );
+  // initialize the VideoImager controller with our image configuration file
+  m_VideoImagerController->RequestInitialize( m_VideoImagerConfiguration );
 
   //check that initialization was successful
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
   }
 
-  m_ImagerController->RequestGetImager();
-  m_ImagerController->RequestGetToolList();
+  m_VideoImagerController->RequestGetVideoImager();
+  m_VideoImagerController->RequestGetToolList();
 
   igstk::Frame frame;
-  m_ImagingSourceImagerTool->SetInternalFrame(frame);
+  m_ImagingSourceVideoImagerTool->SetInternalFrame(frame);
 
-  m_VideoFrame->SetImagerTool(m_ImagingSourceImagerTool);
+  m_VideoFrame->SetVideoImagerTool(m_ImagingSourceVideoImagerTool);
 
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
@@ -1310,12 +1310,12 @@ VideoTemporalCalibrationWizard::RequestInitializeTracker()
 }
 
 void
-VideoTemporalCalibrationWizard::RequestInitializeImager()
+VideoTemporalCalibrationWizard::RequestInitializeVideoImager()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-             "VideoTemporalCalibrationWizard::RequestInitializeImager called...\n" )
+             "VideoTemporalCalibrationWizard::RequestInitializeVideoImager called...\n" )
 
-  m_StateMachine.PushInput( m_InitializeImagerInput );
+  m_StateMachine.PushInput( m_InitializeVideoImagerInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1340,12 +1340,12 @@ VideoTemporalCalibrationWizard::RequestStartImaging()
 }
 
 void
-VideoTemporalCalibrationWizard::RequestDisconnectImager()
+VideoTemporalCalibrationWizard::RequestDisconnectVideoImager()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-                    "VideoTemporalCalibrationWizard::RequestDisconnectImager called...\n" )
+                    "VideoTemporalCalibrationWizard::RequestDisconnectVideoImager called...\n" )
 
-  m_StateMachine.PushInput( m_DisconnectImagerInput );
+  m_StateMachine.PushInput( m_DisconnectVideoImagerInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -1360,17 +1360,17 @@ VideoTemporalCalibrationWizard::StartImagingProcessing()
   igstkLogMacro2( m_Logger, DEBUG,
                     "VideoTemporalCalibrationWizard::StartImagingProcessing called...\n" )
 
-  m_ImagerController->RequestStart();
+  m_VideoImagerController->RequestStart();
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -1380,7 +1380,7 @@ VideoTemporalCalibrationWizard::StartImagingProcessing()
   m_StateMachine.ProcessInputs();
 }
 
-/** Method to be invoked on successful imager start */
+/** Method to be invoked on successful VideoImager start */
 void
 VideoTemporalCalibrationWizard::ReportSuccessStartImagingProcessing()
 {
@@ -1391,7 +1391,7 @@ VideoTemporalCalibrationWizard::ReportSuccessStartImagingProcessing()
   m_VideoRunning = true;
 }
 
-/** Method to be invoked on Failure imager start */
+/** Method to be invoked on Failure VideoImager start */
 void
 VideoTemporalCalibrationWizard::ReportFailureStartImagingProcessing()
 {
@@ -1439,40 +1439,40 @@ VideoTemporalCalibrationWizard::ReportInvalidRequestProcessing()
   this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
-/** Method to be invoked on successful imager tool spatial object loading */
+/** Method to be invoked on successful VideoImager tool spatial object loading */
 void
-VideoTemporalCalibrationWizard::ReportSuccessImagerToolSpatialObjectLoadedProcessing()
+VideoTemporalCalibrationWizard::ReportSuccessVideoImagerToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportSuccessImagerToolSpatialObjectLoadedProcessing called...\n");
+                 "ReportSuccessVideoImagerToolSpatialObjectLoadedProcessing called...\n");
 
-//  this->RequestConfigureImager();
+//  this->RequestConfigureVideoImager();
 }
 
 
-/** Method to be invoked on Failure imager initialization */
+/** Method to be invoked on Failure VideoImager initialization */
 void
-VideoTemporalCalibrationWizard::ReportFailureImagerInitializationProcessing()
+VideoTemporalCalibrationWizard::ReportFailureVideoImagerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportFailureImagerInitializationProcessing called...\n");
+                 "ReportFailureVideoImagerInitializationProcessing called...\n");
 
   std::string errorMessage;
-  errorMessage = "Could not initialize imager device";
+  errorMessage = "Could not initialize VideoImager device";
   fl_alert( errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 
-  m_ImagerInitialized = false;
+  m_VideoImagerInitialized = false;
 }
 
 
-/** Method to be invoked on successful imager initialization */
+/** Method to be invoked on successful VideoImager initialization */
 void
-VideoTemporalCalibrationWizard::ReportSuccessImagerInitializationProcessing()
+VideoTemporalCalibrationWizard::ReportSuccessVideoImagerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportSuccessImagerInitializationProcessing called...\n");
-  m_ImagerInitialized = true;
+                 "ReportSuccessVideoImagerInitializationProcessing called...\n");
+  m_VideoImagerInitialized = true;
 }
 
 /** Method to be invoked on successful mesh loading */
@@ -1571,7 +1571,7 @@ VideoTemporalCalibrationWizard
                  "ReportFailureStopTrackingProcessing called...\n")
 }
 
-/** Method to be invoked on Failure imager stop */
+/** Method to be invoked on Failure VideoImager stop */
 void
 VideoTemporalCalibrationWizard
 ::ReportFailureStopImagingProcessing()
@@ -1602,18 +1602,18 @@ VideoTemporalCalibrationWizard
   m_VideoRunning = false;
 }
 
-/** Method to be invoked on Failure imager tool spatial object loading */
+/** Method to be invoked on Failure VideoImager tool spatial object loading */
 void
 VideoTemporalCalibrationWizard
-::ReportFailureImagerToolSpatialObjectLoadedProcessing()
+::ReportFailureVideoImagerToolSpatialObjectLoadedProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportFailureImagerToolSpatialObjectLoadedProcessing called...\n");
+                 "ReportFailureVideoImagerToolSpatialObjectLoadedProcessing called...\n");
 
 }
 
 /** -----------------------------------------------------------------
-* Stops imaging but keeps the imager connected to the
+* Stops imaging but keeps the VideoImager connected to the
 * communication port
 *---------------------------------------------------------------------
 */
@@ -1624,17 +1624,17 @@ VideoTemporalCalibrationWizard::StopImagingProcessing()
                   "StopImagingProcessing called...\n" )
 
   // try to stop
-  m_ImagerController->RequestStop( );
+  m_VideoImagerController->RequestStop( );
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager stop error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
   }
   else
@@ -2025,17 +2025,17 @@ void VideoTemporalCalibrationWizard::StartTrackingProcessing()
     m_WorldReferenceRepresentation->RequestSetAxesObject( m_WorldReference );
     m_WorldReference->SetSize(50,50,50);
 
-    //imager tool
-    m_ImagerToolSpatialObject = EllipsoidType::New();
-    m_ImagerToolSpatialObject->SetRadius(30,30,30);
-    m_ImagerToolSpatialObject->RequestDetachFromParent();
-    m_ImagerToolSpatialObject->RequestSetTransformAndParent( identity, m_ImagerTool );
+    //VideoImager tool
+    m_VideoImagerToolSpatialObject = EllipsoidType::New();
+    m_VideoImagerToolSpatialObject->SetRadius(30,30,30);
+    m_VideoImagerToolSpatialObject->RequestDetachFromParent();
+    m_VideoImagerToolSpatialObject->RequestSetTransformAndParent( identity, m_VideoImagerTool );
 
-    m_ImagerToolRepresentation = EllipsoidRepresentationType::New();
-    m_ImagerToolRepresentation->RequestSetEllipsoidObject( m_ImagerToolSpatialObject );
-    m_ImagerToolRepresentation->SetColor(0, 0, 1);
+    m_VideoImagerToolRepresentation = EllipsoidRepresentationType::New();
+    m_VideoImagerToolRepresentation->RequestSetEllipsoidObject( m_VideoImagerToolSpatialObject );
+    m_VideoImagerToolRepresentation->SetColor(0, 0, 1);
 
-    m_ViewerGroup->m_3DView->RequestAddObject( m_ImagerToolRepresentation );
+    m_ViewerGroup->m_3DView->RequestAddObject( m_VideoImagerToolRepresentation );
 
 
 
@@ -2148,22 +2148,22 @@ VideoTemporalCalibrationWizard::DisconnectTrackerProcessing()
   m_StateMachine.ProcessInputs();
 }
 
-/** Method to be invoked on failure imager disconnection */
+/** Method to be invoked on failure VideoImager disconnection */
 void
 VideoTemporalCalibrationWizard
-::ReportFailureImagerDisconnectionProcessing()
+::ReportFailureVideoImagerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportFailureImagerDisconnectionProcessing called...\n");
+                 "ReportFailureVideoImagerDisconnectionProcessing called...\n");
 }
 
-/** Method to be invoked on successful imager disconnection */
+/** Method to be invoked on successful VideoImager disconnection */
 void
 VideoTemporalCalibrationWizard
-::ReportSuccessImagerDisconnectionProcessing()
+::ReportSuccessVideoImagerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoTemporalCalibrationWizard::"
-                 "ReportSuccessImagerDisconnectionProcessing called...\n");
+                 "ReportSuccessVideoImagerDisconnectionProcessing called...\n");
 }
 
 /** Method to set the parent tp the tracker observer */
@@ -2250,33 +2250,33 @@ VideoTemporalCalibrationWizard::TrackerControllerObserver::Execute( itk::Object 
                                &VideoTemporalCalibrationWizard::TrackerToolUpdateTransformCallback );
     }
 
-    igstk::TrackerController::ToolContainerType::iterator imagerIter = toolContainer.find(IMAGER_TOOL_NAME);
+    igstk::TrackerController::ToolContainerType::iterator VideoImagerIter = toolContainer.find(VideoImager_TOOL_NAME);
 
-    if ( imagerIter!=toolContainer.end() )
+    if ( VideoImagerIter!=toolContainer.end() )
     {
-        m_Parent->m_ImagerTool = (*imagerIter).second;
+        m_Parent->m_VideoImagerTool = (*VideoImagerIter).second;
 
-        std::cout << "found imager tool: " << IMAGER_TOOL_NAME << std::endl;
+        std::cout << "found VideoImager tool: " << VideoImager_TOOL_NAME << std::endl;
 
-        // observer imager tool not available events
-        m_Parent->m_ImagerToolNotAvailableObserver = LoadedObserverType::New();
-        m_Parent->m_ImagerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
-                                                 &VideoTemporalCalibrationWizard::ImagerToolNotAvailableCallback );
-        m_Parent->m_ImagerTool->AddObserver(
-         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ImagerToolNotAvailableObserver);
+        // observer VideoImager tool not available events
+        m_Parent->m_VideoImagerToolNotAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_VideoImagerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &VideoTemporalCalibrationWizard::VideoImagerToolNotAvailableCallback );
+        m_Parent->m_VideoImagerTool->AddObserver(
+         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_VideoImagerToolNotAvailableObserver);
 
-        // observer imager tool available events
-        m_Parent->m_ImagerToolAvailableObserver = LoadedObserverType::New();
-        m_Parent->m_ImagerToolAvailableObserver->SetCallbackFunction( m_Parent,
-                                                 &VideoTemporalCalibrationWizard::ImagerToolAvailableCallback );
+        // observer VideoImager tool available events
+        m_Parent->m_VideoImagerToolAvailableObserver = LoadedObserverType::New();
+        m_Parent->m_VideoImagerToolAvailableObserver->SetCallbackFunction( m_Parent,
+                                                 &VideoTemporalCalibrationWizard::VideoImagerToolAvailableCallback );
 
-        m_Parent->m_ImagerTool->AddObserver(
-         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ImagerToolAvailableObserver);
+        m_Parent->m_VideoImagerTool->AddObserver(
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_VideoImagerToolAvailableObserver);
 
         // instantiate it but not add it yet (see toggle collector)
-        m_Parent->m_ImagerToolUpdateObserver    = LoadedObserverType::New();
-        m_Parent->m_ImagerToolUpdateObserver->SetCallbackFunction( m_Parent,
-                               &VideoTemporalCalibrationWizard::ImagerToolUpdateTransformCallback );
+        m_Parent->m_VideoImagerToolUpdateObserver    = LoadedObserverType::New();
+        m_Parent->m_VideoImagerToolUpdateObserver->SetCallbackFunction( m_Parent,
+                               &VideoTemporalCalibrationWizard::VideoImagerToolUpdateTransformCallback );
     }
     /*
     igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.begin();
@@ -2294,7 +2294,7 @@ VideoTemporalCalibrationWizard::TrackerControllerObserver::Execute( itk::Object 
 
 void
 VideoTemporalCalibrationWizard
-::ImagerControllerObserver::SetParent(
+::VideoImagerControllerObserver::SetParent(
   VideoTemporalCalibrationWizard *p )
 {
   m_Parent = p;
@@ -2302,7 +2302,7 @@ VideoTemporalCalibrationWizard
 
 void
 VideoTemporalCalibrationWizard
-::ImagerControllerObserver::Execute( const itk::Object *caller,
+::VideoImagerControllerObserver::Execute( const itk::Object *caller,
                                      const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
@@ -2331,46 +2331,46 @@ VideoTemporalCalibrationWizard
 
 void
 VideoTemporalCalibrationWizard
-::ImagerToolAvailableCallback(const itk::EventObject & event )
+::VideoImagerToolAvailableCallback(const itk::EventObject & event )
 {
-  m_ImagerSemaphore->color(FL_GREEN);
-  m_ImagerSemaphore->label("tracking");
+  m_VideoImagerSemaphore->color(FL_GREEN);
+  m_VideoImagerSemaphore->label("tracking");
   m_ControlGroup->redraw();
   Fl::check();
 }
 
 void
 VideoTemporalCalibrationWizard
-::ImagerToolNotAvailableCallback(const itk::EventObject & event )
+::VideoImagerToolNotAvailableCallback(const itk::EventObject & event )
 {
-  m_ImagerSemaphore->color(FL_RED);
-  m_ImagerSemaphore->label("not visible");
+  m_VideoImagerSemaphore->color(FL_RED);
+  m_VideoImagerSemaphore->label("not visible");
   m_ControlGroup->redraw();
   Fl::check();
 }
 
 void
 VideoTemporalCalibrationWizard
-::ImagerControllerObserver::Execute( itk::Object *caller,
+::VideoImagerControllerObserver::Execute( itk::Object *caller,
                                      const itk::EventObject & event )
 {
-  const igstk::ImagerController::InitializeFailureEvent *evt1a =
-    dynamic_cast< const igstk::ImagerController::InitializeFailureEvent * > (&event);
+  const igstk::VideoImagerController::InitializeFailureEvent *evt1a =
+    dynamic_cast< const igstk::VideoImagerController::InitializeFailureEvent * > (&event);
 
-  const igstk::ImagerController::StartFailureEvent *evt1b =
-    dynamic_cast< const igstk::ImagerController::StartFailureEvent * > (&event);
+  const igstk::VideoImagerController::StartFailureEvent *evt1b =
+    dynamic_cast< const igstk::VideoImagerController::StartFailureEvent * > (&event);
 
-    const igstk::ImagerController::StopFailureEvent *evt1c =
-    dynamic_cast< const igstk::ImagerController::StopFailureEvent * > (&event);
+    const igstk::VideoImagerController::StopFailureEvent *evt1c =
+    dynamic_cast< const igstk::VideoImagerController::StopFailureEvent * > (&event);
 
-  const igstk::ImagerController::RequestImagerEvent *evt2 =
-    dynamic_cast< const igstk::ImagerController::RequestImagerEvent * > (&event);
+  const igstk::VideoImagerController::RequestVideoImagerEvent *evt2 =
+    dynamic_cast< const igstk::VideoImagerController::RequestVideoImagerEvent * > (&event);
 
-  const igstk::ImagerController::RequestToolsEvent *evt3 =
-    dynamic_cast< const igstk::ImagerController::RequestToolsEvent * > (&event);
+  const igstk::VideoImagerController::RequestToolsEvent *evt3 =
+    dynamic_cast< const igstk::VideoImagerController::RequestToolsEvent * > (&event);
 
-  const igstk::ImagerController::OpenCommunicationFailureEvent *evt4 =
-    dynamic_cast< const igstk::ImagerController::OpenCommunicationFailureEvent * > (&event);
+  const igstk::VideoImagerController::OpenCommunicationFailureEvent *evt4 =
+    dynamic_cast< const igstk::VideoImagerController::OpenCommunicationFailureEvent * > (&event);
 
   if( evt1a )
   {
@@ -2389,16 +2389,16 @@ VideoTemporalCalibrationWizard
   }
   else if ( evt2 )
   {
-    m_Parent->m_Imager = evt2->Get();
+    m_Parent->m_VideoImager = evt2->Get();
   }
   else if ( evt3 )
   {
-    const std::vector<igstk::ImagerTool::Pointer> &tools = evt3->Get();
+    const std::vector<igstk::VideoImagerTool::Pointer> &tools = evt3->Get();
 
     igstkLogMacro2( m_Parent->m_Logger, DEBUG,
-                    "VideoTemporalNavigator::ImagerControllerObserver found imager tool!\n" )
+                    "VideoTemporalNavigator::VideoImagerControllerObserver found VideoImager tool!\n" )
 
-    m_Parent->m_ImagingSourceImagerTool = tools[0];
+    m_Parent->m_ImagingSourceVideoImagerTool = tools[0];
   }
   else if ( evt4 )
   {
@@ -2423,9 +2423,9 @@ VideoTemporalCalibrationWizard
     m_TrackerTool->RemoveObserver( m_TrackerToolUpdateObserverID );
     }
 
-    if ( m_ImagerTool.IsNotNull() )
+    if ( m_VideoImagerTool.IsNotNull() )
     {
-    m_ImagerTool->RemoveObserver( m_ImagerToolUpdateObserverID );
+    m_VideoImagerTool->RemoveObserver( m_VideoImagerToolUpdateObserverID );
     }
 
     std::string   samplePoints;
@@ -2443,10 +2443,10 @@ VideoTemporalCalibrationWizard
                     igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
     }
 
-    if ( m_ImagerTool.IsNotNull() )
+    if ( m_VideoImagerTool.IsNotNull() )
     {
-      m_ImagerToolUpdateObserverID = m_ImagerTool->AddObserver(
-                    igstk::TrackerToolTransformUpdateEvent(), m_ImagerToolUpdateObserver);
+      m_VideoImagerToolUpdateObserverID = m_VideoImagerTool->AddObserver(
+                    igstk::TrackerToolTransformUpdateEvent(), m_VideoImagerToolUpdateObserver);
     }
   }
 
@@ -2492,7 +2492,7 @@ void VideoTemporalCalibrationWizard::EnableVideo()
      igstk::Transform identity;
      identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-     // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to
+     // set transformation between m_VideoFrame and m_VideoImagerToolSpatialObject according to
      // VideoTemporal calibration
      m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -2551,12 +2551,12 @@ VideoTemporalCalibrationWizard
 ::StartVideo()
 {
   // if we are not initialize
-  if (!m_ImagerInitialized)
+  if (!m_VideoImagerInitialized)
   {
-  this->RequestInitializeImager();
+  this->RequestInitializeVideoImager();
   }
 
-  if (m_ImagerInitialized)
+  if (m_VideoImagerInitialized)
   {
   this->RequestStartImaging();
   }
@@ -2617,7 +2617,7 @@ VideoTemporalCalibrationWizard
              m_ViewerGroup->m_3DView->RequestResetCamera();
              break;
 
-    case 'g':// grab tracker and imager transforms
+    case 'g':// grab tracker and VideoImager transforms
              if (m_CollectorEnabled)
              {
                m_CollectingProbeSamples = true;
@@ -2722,16 +2722,16 @@ VideoTemporalCalibrationWizard
 
 void
 VideoTemporalCalibrationWizard
-::ImagerToolUpdateTransformCallback(const itk::EventObject & event )
+::VideoImagerToolUpdateTransformCallback(const itk::EventObject & event )
 {
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
   {
     typedef igstk::TransformObserver ObserverType;
     ObserverType::Pointer transformObserver = ObserverType::New();
-    transformObserver->ObserveTransformEventsFrom( m_ImagerTool );
+    transformObserver->ObserveTransformEventsFrom( m_VideoImagerTool );
     transformObserver->Clear();
 
-    m_ImagerTool->RequestComputeTransformTo( m_WorldReference );
+    m_VideoImagerTool->RequestComputeTransformTo( m_WorldReference );
 
     if ( transformObserver->GotTransform() )
     {
