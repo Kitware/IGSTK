@@ -25,7 +25,7 @@
 #include "igstkTransformObserver.h"
 
 #define VIEW_2D_REFRESH_RATE 25
-#define IMAGER_DEFAULT_REFRESH_RATE 25
+#define VideoVideoImager_DEFAULT_REFRESH_RATE 25
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -35,7 +35,7 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
   m_StateMachine(this)
 {
   m_VideoEnabled = false;
-  m_ImagerInitialized = false;
+  m_VideoVideoImagerInitialized = false;
   m_VideoRunning = false;
 
   /** Setup logger, for all igstk components. */
@@ -107,26 +107,26 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
   /** Machine States*/
 
   igstkAddStateMacro( Initial );
-  igstkAddStateMacro( InitializingImager );
+  igstkAddStateMacro( InitializingVideoVideoImager );
   igstkAddStateMacro( Imaging );
   igstkAddStateMacro( StopImaging );
   /** Machine Inputs*/
 
   igstkAddInputMacro( Success );
   igstkAddInputMacro( Failure );
-  igstkAddInputMacro( InitializeImager );
+  igstkAddInputMacro( InitializeVideoVideoImager );
   igstkAddInputMacro( StartImaging );
   igstkAddInputMacro( StopImaging );
-  igstkAddInputMacro( DisconnectImager );
+  igstkAddInputMacro( DisconnectVideoVideoImager );
 
   /** Initial State */
 
-  igstkAddTransitionMacro( Initial, InitializeImager,
-                           InitializingImager, InitializeImager );
+  igstkAddTransitionMacro( Initial, InitializeVideoImager,
+                           InitializingVideoImager, InitializeVideoImager );
   igstkAddTransitionMacro( Initial, Success,
-                           Initial, ReportSuccessImagerDisconnection );
+                           Initial, ReportSuccessVideoImagerDisconnection );
   igstkAddTransitionMacro( Initial, Failure,
-                           Initial, ReportFailureImagerDisconnection );
+                           Initial, ReportFailureVideoImagerDisconnection );
 
   //complete table for state: Initial
 
@@ -134,29 +134,29 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
                            Initial, ReportInvalidRequest );
   igstkAddTransitionMacro( Initial, StopImaging,
                            Initial, ReportInvalidRequest );
-  igstkAddTransitionMacro( Initial, DisconnectImager,
+  igstkAddTransitionMacro( Initial, DisconnectVideoImager,
                            Initial, ReportInvalidRequest );
 
-  /** InitializingImager State */
+  /** InitializingVideoImager State */
 
-  igstkAddTransitionMacro( InitializingImager, Success,
-                       InitializingImager, ReportSuccessImagerInitialization );
+  igstkAddTransitionMacro( InitializingVideoImager, Success,
+                       InitializingVideoImager, ReportSuccessVideoImagerInitialization );
 
-  igstkAddTransitionMacro( InitializingImager, Failure,
-                           Initial, ReportFailureImagerInitialization );
+  igstkAddTransitionMacro( InitializingVideoImager, Failure,
+                           Initial, ReportFailureVideoImagerInitialization );
 
-  igstkAddTransitionMacro( InitializingImager, StartImaging,
+  igstkAddTransitionMacro( InitializingVideoImager, StartImaging,
                            Imaging, StartImaging);
 
-  igstkAddTransitionMacro( InitializingImager, DisconnectImager,
-                           Initial, DisconnectImager );
+  igstkAddTransitionMacro( InitializingVideoImager, DisconnectVideoImager,
+                           Initial, DisconnectVideoImager );
 
-  //complete table for state: InitializingImager
+  //complete table for state: InitializingVideoImager
 
-  igstkAddTransitionMacro( InitializingImager, StopImaging,
-                           InitializingImager, ReportInvalidRequest );
-  igstkAddTransitionMacro( InitializingImager, InitializeImager,
-                           InitializingImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, StopImaging,
+                           InitializingVideoImager, ReportInvalidRequest );
+  igstkAddTransitionMacro( InitializingVideoImager, InitializeVideoImager,
+                           InitializingVideoImager, ReportInvalidRequest );
 
   /** Imaging State */
 
@@ -165,31 +165,31 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
   igstkAddTransitionMacro( Imaging, Success,
                    Imaging, ReportSuccessStartImaging );
   igstkAddTransitionMacro( Imaging, Failure,
-                   InitializingImager, ReportFailureStartImaging );
+                   InitializingVideoImager, ReportFailureStartImaging );
 
-   //complete table for state: InitializingImager
+   //complete table for state: InitializingVideoImager
 
    igstkAddTransitionMacro( Imaging, StartImaging,
                             Imaging, ReportInvalidRequest);
-   igstkAddTransitionMacro( Imaging, DisconnectImager,
+   igstkAddTransitionMacro( Imaging, DisconnectVideoImager,
                 Imaging, ReportInvalidRequest );
-   igstkAddTransitionMacro( Imaging, InitializeImager,
+   igstkAddTransitionMacro( Imaging, InitializeVideoImager,
                 Imaging, ReportInvalidRequest );
 
    /** StopImaging State */
 
    igstkAddTransitionMacro( StopImaging, Success,
-                        InitializingImager, ReportSuccessStopImaging );
+                        InitializingVideoImager, ReportSuccessStopImaging );
    igstkAddTransitionMacro( StopImaging, Failure,
-                  InitializingImager, ReportFailureStopImaging );
+                  InitializingVideoImager, ReportFailureStopImaging );
 
    //complete table for state: StopImaging
 
    igstkAddTransitionMacro( StopImaging, StartImaging,
                         StopImaging, ReportInvalidRequest);
-   igstkAddTransitionMacro( StopImaging, DisconnectImager,
+   igstkAddTransitionMacro( StopImaging, DisconnectVideoImager,
                         StopImaging, ReportInvalidRequest );
-   igstkAddTransitionMacro( StopImaging, InitializeImager,
+   igstkAddTransitionMacro( StopImaging, InitializeVideoImager,
                         StopImaging, ReportInvalidRequest );
    igstkAddTransitionMacro( StopImaging, StopImaging,
                           StopImaging, ReportInvalidRequest );
@@ -214,30 +214,30 @@ VideoFrameGrabberAndViewer::VideoFrameGrabberAndViewer() :
 */
 VideoFrameGrabberAndViewer::~VideoFrameGrabberAndViewer()
 {
-  delete m_ImagerConfiguration;
+  delete m_VideoImagerConfiguration;
 }
 
 /** -----------------------------------------------------------------
-* Disconnects the imager
+* Disconnects the VideoImager
 *---------------------------------------------------------------------*/
 void
-VideoFrameGrabberAndViewer::DisconnectImagerProcessing()
+VideoFrameGrabberAndViewer::DisconnectVideoImagerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-           "VideoFrameGrabberAndViewer::DisconnectImagerProcessing called...\n" )
+           "VideoFrameGrabberAndViewer::DisconnectVideoImagerProcessing called...\n" )
 
   // try to disconnect
-  m_ImagerController->RequestShutdown( );
+  m_VideoImagerController->RequestShutdown( );
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager disconnect error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );
   }
   else
@@ -249,12 +249,12 @@ VideoFrameGrabberAndViewer::DisconnectImagerProcessing()
 }
 
 void
-VideoFrameGrabberAndViewer::InitializeImagerProcessing()
+VideoFrameGrabberAndViewer::InitializeVideoImagerProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-      "VideoFrameGrabberAndViewer::InitializeImagerProcessing called...\n" )
+      "VideoFrameGrabberAndViewer::InitializeVideoImagerProcessing called...\n" )
 
-  m_ImagerConfiguration = new igstk::CompressedDVImagerConfiguration();
+  m_VideoImagerConfiguration = new igstk::CompressedDVVideoImagerConfiguration();
 
   //set the tool parameters
   igstk::CompressedDVToolConfiguration toolconfig;
@@ -272,81 +272,81 @@ VideoFrameGrabberAndViewer::InitializeImagerProcessing()
   //  toolconfig.SetCalibrationFileName( ".igstk" );
   toolconfig.SetToolUniqueIdentifier( deviceName );
 
-  m_ImagerConfiguration->RequestAddTool( &toolconfig );
-  m_ImagerConfiguration->RequestSetFrequency( IMAGER_DEFAULT_REFRESH_RATE );
+  m_VideoImagerConfiguration->RequestAddTool( &toolconfig );
+  m_VideoImagerConfiguration->RequestSetFrequency( VideoImager_DEFAULT_REFRESH_RATE );
 
-  if (!m_ImagerConfiguration)
+  if (!m_VideoImagerConfiguration)
   {
     std::string errorMessage;
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
   }
 
-  /** Create the controller for the imager and assign observers to it*/
-  m_ImagerController = igstk::ImagerController::New();
+  /** Create the controller for the VideoImager and assign observers to it*/
+  m_VideoImagerController = igstk::VideoImagerController::New();
 
-  m_ImagerControllerObserver = ImagerControllerObserver::New();
-  m_ImagerControllerObserver->SetParent( this );
+  m_VideoImagerControllerObserver = VideoImagerControllerObserver::New();
+  m_VideoImagerControllerObserver->SetParent( this );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::InitializeFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::InitializeFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::StartFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::StartFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::StopFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::StopFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::ShutdownFailureEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::ShutdownFailureEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::RequestImagerEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::RequestVideoImagerEvent(),
+    m_VideoImagerControllerObserver );
 
-  m_ImagerController->AddObserver(igstk::ImagerController::RequestToolsEvent(),
-    m_ImagerControllerObserver );
+  m_VideoImagerController->AddObserver(igstk::VideoImagerController::RequestToolsEvent(),
+    m_VideoImagerControllerObserver );
 
-  // initialize the imager controller with our imager configuration file
-  m_ImagerController->RequestInitialize( m_ImagerConfiguration );
+  // initialize the VideoImager controller with our VideoImager configuration file
+  m_VideoImagerController->RequestInitialize( m_VideoImagerConfiguration );
 
   //check that initialization was successful
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
   }
 
-  m_ImagerController->RequestGetImager();
-  m_ImagerController->RequestGetToolList();
+  m_VideoImagerController->RequestGetVideoImager();
+  m_VideoImagerController->RequestGetToolList();
 
   igstk::Frame frame;
 
-  m_CompressedDVImagerTool->SetInternalFrame(frame);
+  m_CompressedDVVideoImagerTool->SetInternalFrame(frame);
 
-  m_VideoFrame->SetImagerTool(m_CompressedDVImagerTool);
+  m_VideoFrame->SetVideoImagerTool(m_CompressedDVVideoImagerTool);
 
   m_StateMachine.PushInput( m_SuccessInput );
   m_StateMachine.ProcessInputs();
 }
 
 void
-VideoFrameGrabberAndViewer::RequestInitializeImager()
+VideoFrameGrabberAndViewer::RequestInitializeVideoImager()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-             "VideoFrameGrabberAndViewer::RequestInitializeImager called...\n" )
+             "VideoFrameGrabberAndViewer::RequestInitializeVideoImager called...\n" )
 
-  m_StateMachine.PushInput( m_InitializeImagerInput );
+  m_StateMachine.PushInput( m_InitializeVideoImagerInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -361,12 +361,12 @@ VideoFrameGrabberAndViewer::RequestStartImaging()
 }
 
 void
-VideoFrameGrabberAndViewer::RequestDisconnectImager()
+VideoFrameGrabberAndViewer::RequestDisconnectVideoImager()
 {
   igstkLogMacro2( m_Logger, DEBUG,
-            "VideoFrameGrabberAndViewer::RequestDisconnectImager called...\n" )
+            "VideoFrameGrabberAndViewer::RequestDisconnectVideoImager called...\n" )
 
-  m_StateMachine.PushInput( m_DisconnectImagerInput );
+  m_StateMachine.PushInput( m_DisconnectVideoImagerInput );
   m_StateMachine.ProcessInputs();
 }
 
@@ -376,17 +376,17 @@ VideoFrameGrabberAndViewer::StartImagingProcessing()
   igstkLogMacro2( m_Logger, DEBUG,
              "VideoFrameGrabberAndViewer::StartImagingProcessing called...\n" )
 
-  m_ImagerController->RequestStart();
+  m_VideoImagerController->RequestStart();
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -396,7 +396,7 @@ VideoFrameGrabberAndViewer::StartImagingProcessing()
   m_StateMachine.ProcessInputs();
 }
 
-/** Method to be invoked on successful imager start */
+/** Method to be invoked on successful VideoImager start */
 void
 VideoFrameGrabberAndViewer::ReportSuccessStartImagingProcessing()
 {
@@ -408,7 +408,7 @@ VideoFrameGrabberAndViewer::ReportSuccessStartImagingProcessing()
   m_VideoRunning = true;
 }
 
-/** Method to be invoked on Failure imager start */
+/** Method to be invoked on Failure VideoImager start */
 void
 VideoFrameGrabberAndViewer::ReportFailureStartImagingProcessing()
 {
@@ -435,32 +435,32 @@ VideoFrameGrabberAndViewer::ReportInvalidRequestProcessing()
   this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
-/** Method to be invoked on Failure imager initialization */
+/** Method to be invoked on Failure VideoImager initialization */
 void
-VideoFrameGrabberAndViewer::ReportFailureImagerInitializationProcessing()
+VideoFrameGrabberAndViewer::ReportFailureVideoImagerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoFrameGrabberAndViewer::"
-                 "ReportFailureImagerInitializationProcessing called...\n");
+                 "ReportFailureVideoImagerInitializationProcessing called...\n");
 
   std::string errorMessage;
-  errorMessage = "Could not initialize imager device";
+  errorMessage = "Could not initialize VideoImager device";
   fl_alert( errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 
-  m_ImagerInitialized = false;
+  m_VideoImagerInitialized = false;
 }
 
 
-/** Method to be invoked on successful imager initialization */
+/** Method to be invoked on successful VideoImager initialization */
 void
-VideoFrameGrabberAndViewer::ReportSuccessImagerInitializationProcessing()
+VideoFrameGrabberAndViewer::ReportSuccessVideoImagerInitializationProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoFrameGrabberAndViewer::"
-                 "ReportSuccessImagerInitializationProcessing called...\n");
-  m_ImagerInitialized = true;
+                 "ReportSuccessVideoImagerInitializationProcessing called...\n");
+  m_VideoImagerInitialized = true;
 }
 
-/** Method to be invoked on Failure imager stop */
+/** Method to be invoked on Failure VideoImager stop */
 void
 VideoFrameGrabberAndViewer::ReportFailureStopImagingProcessing()
 {
@@ -468,7 +468,7 @@ VideoFrameGrabberAndViewer::ReportFailureStopImagingProcessing()
                  "ReportFailureStopImagingProcessing called...\n")
 }
 
-/** Method to be invoked on successful imager stop */
+/** Method to be invoked on successful VideoImager stop */
 void
 VideoFrameGrabberAndViewer::ReportSuccessStopImagingProcessing()
 {
@@ -480,7 +480,7 @@ VideoFrameGrabberAndViewer::ReportSuccessStopImagingProcessing()
 }
 
 /** -----------------------------------------------------------------
-* Stops imaging but keeps the imager connected to the
+* Stops imaging but keeps the VideoImager connected to the
 * communication port
 *---------------------------------------------------------------------*/
 void
@@ -490,17 +490,17 @@ VideoFrameGrabberAndViewer::StopImagingProcessing()
                   "StopImagingProcessing called...\n" )
 
   // try to stop
-  m_ImagerController->RequestStop( );
+  m_VideoImagerController->RequestStop( );
 
   //check if succeded
-  if( m_ImagerControllerObserver->Error() )
+  if( m_VideoImagerControllerObserver->Error() )
   {
     std::string errorMessage;
-    m_ImagerControllerObserver->GetErrorMessage( errorMessage );
-    m_ImagerControllerObserver->ClearError();
+    m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
+    m_VideoImagerControllerObserver->ClearError();
     fl_alert( errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
-    igstkLogMacro2( m_Logger, DEBUG, "Imager stop error\n" )
+    igstkLogMacro2( m_Logger, DEBUG, "VideoImager stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
   }
   else
@@ -511,31 +511,31 @@ VideoFrameGrabberAndViewer::StopImagingProcessing()
   m_StateMachine.ProcessInputs();
 }
 
-/** Method to be invoked on failure imager disconnection */
+/** Method to be invoked on failure VideoImager disconnection */
 void
-VideoFrameGrabberAndViewer::ReportFailureImagerDisconnectionProcessing()
+VideoFrameGrabberAndViewer::ReportFailureVideoImagerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoFrameGrabberAndViewer::"
-                 "ReportFailureImagerDisconnectionProcessing called...\n");
+                 "ReportFailureVideoImagerDisconnectionProcessing called...\n");
 }
 
-/** Method to be invoked on successful imager disconnection */
+/** Method to be invoked on successful VideoImager disconnection */
 void
-VideoFrameGrabberAndViewer::ReportSuccessImagerDisconnectionProcessing()
+VideoFrameGrabberAndViewer::ReportSuccessVideoImagerDisconnectionProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "VideoFrameGrabberAndViewer::"
-                 "ReportSuccessImagerDisconnectionProcessing called...\n");
+                 "ReportSuccessVideoImagerDisconnectionProcessing called...\n");
 }
 
 void
-VideoFrameGrabberAndViewer::ImagerControllerObserver::SetParent(
+VideoFrameGrabberAndViewer::VideoImagerControllerObserver::SetParent(
   VideoFrameGrabberAndViewer *p )
 {
   m_Parent = p;
 }
 
 void
-VideoFrameGrabberAndViewer::ImagerControllerObserver::Execute( const itk::Object *caller,
+VideoFrameGrabberAndViewer::VideoImagerControllerObserver::Execute( const itk::Object *caller,
                                      const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
@@ -543,26 +543,26 @@ VideoFrameGrabberAndViewer::ImagerControllerObserver::Execute( const itk::Object
 }
 
 void
-VideoFrameGrabberAndViewer::ImagerControllerObserver::Execute( itk::Object *caller,
+VideoFrameGrabberAndViewer::VideoImagerControllerObserver::Execute( itk::Object *caller,
                                      const itk::EventObject & event )
 {
-  const igstk::ImagerController::InitializeFailureEvent *evt1a =
-    dynamic_cast< const igstk::ImagerController::InitializeFailureEvent * > (&event);
+  const igstk::VideoImagerController::InitializeFailureEvent *evt1a =
+    dynamic_cast< const igstk::VideoImagerController::InitializeFailureEvent * > (&event);
 
-  const igstk::ImagerController::StartFailureEvent *evt1b =
-    dynamic_cast< const igstk::ImagerController::StartFailureEvent * > (&event);
+  const igstk::VideoImagerController::StartFailureEvent *evt1b =
+    dynamic_cast< const igstk::VideoImagerController::StartFailureEvent * > (&event);
 
-    const igstk::ImagerController::StopFailureEvent *evt1c =
-    dynamic_cast< const igstk::ImagerController::StopFailureEvent * > (&event);
+    const igstk::VideoImagerController::StopFailureEvent *evt1c =
+    dynamic_cast< const igstk::VideoImagerController::StopFailureEvent * > (&event);
 
-  const igstk::ImagerController::RequestImagerEvent *evt2 =
-    dynamic_cast< const igstk::ImagerController::RequestImagerEvent * > (&event);
+  const igstk::VideoImagerController::RequestVideoImagerEvent *evt2 =
+    dynamic_cast< const igstk::VideoImagerController::RequestVideoImagerEvent * > (&event);
 
-  const igstk::ImagerController::RequestToolsEvent *evt3 =
-    dynamic_cast< const igstk::ImagerController::RequestToolsEvent * > (&event);
+  const igstk::VideoImagerController::RequestToolsEvent *evt3 =
+    dynamic_cast< const igstk::VideoImagerController::RequestToolsEvent * > (&event);
 
-  const igstk::ImagerController::OpenCommunicationFailureEvent *evt4 =
-    dynamic_cast< const igstk::ImagerController::OpenCommunicationFailureEvent * > (&event);
+  const igstk::VideoImagerController::OpenCommunicationFailureEvent *evt4 =
+    dynamic_cast< const igstk::VideoImagerController::OpenCommunicationFailureEvent * > (&event);
 
   if( evt1a )
   {
@@ -581,16 +581,16 @@ VideoFrameGrabberAndViewer::ImagerControllerObserver::Execute( itk::Object *call
   }
   else if ( evt2 )
   {
-    m_Parent->m_Imager = evt2->Get();
+    m_Parent->m_VideoImager = evt2->Get();
   }
   else if ( evt3 )
   {
-    const std::vector<igstk::ImagerTool::Pointer> &tools = evt3->Get();
+    const std::vector<igstk::VideoImagerTool::Pointer> &tools = evt3->Get();
 
     igstkLogMacro2( m_Parent->m_Logger, DEBUG,
-                    "VideoFrameGrabberAndViewer::ImagerControllerObserver found imager tool!\n" )
+                    "VideoFrameGrabberAndViewer::VideoImagerControllerObserver found VideoImager tool!\n" )
 
-    m_Parent->m_CompressedDVImagerTool = tools[0];
+    m_Parent->m_CompressedDVVideoImagerTool = tools[0];
   }
   else if ( evt4 )
   {
@@ -636,7 +636,7 @@ void VideoFrameGrabberAndViewer::EnableVideo()
      igstk::Transform identity;
      identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
-     // set transformation between m_VideoFrame and m_ImagerToolSpatialObject according to
+     // set transformation between m_VideoFrame and m_VideoImagerToolSpatialObject according to
      // calibration for now identity
      m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
 
@@ -661,7 +661,7 @@ void VideoFrameGrabberAndViewer::EnableVideo()
 
   m_ToggleEnableVideoButton->label("Disable");
 
-  this->RequestInitializeImager();
+  this->RequestInitializeVideoImager();
 
   m_ViewerGroup->m_VideoView->RequestResetCamera();
 }
@@ -675,7 +675,7 @@ void VideoFrameGrabberAndViewer::DisableVideo()
   m_ToggleEnableVideoButton->label("Enable");
   m_ToggleRunVideoButton->deactivate();
 
-  this->RequestDisconnectImager();
+  this->RequestDisconnectVideoImager();
 }
 
 void VideoFrameGrabberAndViewer::RequestToggleRunVideo()
