@@ -31,8 +31,8 @@
 #include "igstkVideoFrameSpatialObject.h"
 #include "igstkVideoFrameRepresentation.h"
 
-#include "igstkWebcamWinImager.h"
-#include "igstkWebcamWinImagerTool.h"
+#include "igstkWebcamWinVideoImager.h"
+#include "igstkWebcamWinVideoImagerTool.h"
 
 #include "itkStdStreamLogOutput.h"
 
@@ -69,14 +69,14 @@ public:
   VideoFrameRepresentationType::Pointer m_VideoFrameRepresentationForVideoView;
 
 
-  /** imager object and imager tool*/
-  igstk::ImagerTool::Pointer                m_WebcamWinImagerTool;
+  /** VideoImager object and VideoImager tool*/
+  igstk::VideoImagerTool::Pointer                m_WebcamWinVideoImagerTool;
 
   /** Public request methods from the GUI */
   virtual void RequestPrepareToQuit();
   void RequestInitialize();
   void RequestShutdown();
- 
+
   VideoFrameGrabberAndViewerWebcamWin();
   virtual ~VideoFrameGrabberAndViewerWebcamWin();
 
@@ -145,8 +145,8 @@ private:
   ErrorObserver::Pointer m_ErrorObserver;
   std::string m_ErrorMessage;
 
-  Imager::Pointer       m_Imager;
-  std::vector<ImagerTool::Pointer> m_Tools;
+  VideoImager::Pointer       m_VideoImager;
+  std::vector<VideoImagerTool::Pointer> m_Tools;
 
 };
 

@@ -40,7 +40,6 @@ VideoFrameGrabberAndViewerWebcamWinView::VideoFrameGrabberAndViewerWebcamWinView
 
   // Create views
   m_VideoView    = ViewType3D::New();
-  //m_VideoView->RequestSetOrientation( View2D::Axial );
 
   m_VideoWidget->RequestSetView( m_VideoView );
 
