@@ -1,6 +1,6 @@
 
 SUBDIRS(TrackerConfiguration)
-SUBDIRS(ImagerConfiguration)
+SUBDIRS(VideoImagerConfiguration)
 SUBDIRS(CalibrationRegistrationLoading)
 SUBDIRS(Tools)
 SUBDIRS(ConfigurationFileReaders)
