@@ -343,7 +343,7 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
     this->m_ToolStatusContainer[inputItr->first] = 0;
     ++inputItr;
   }
-  SetPixelDepth
+
   try
   {
     igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus Receive passed" );
