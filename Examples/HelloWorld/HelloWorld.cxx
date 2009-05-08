@@ -302,7 +302,8 @@ int main(int , char** )
   // \code{RequestStart()} method of the View. After the \code{RequestStart()}
   // function is called, the pulse generator inside the display window will
   // start ticking, and will call the display to update itself 60 times per
-  // second, as follows: EndLatex
+  // second, as follows: 
+  // EndLatex
   // BeginCodeSnippet
   m_GUI->View->SetRefreshRate( 60 ); 
   m_GUI->Show();
