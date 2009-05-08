@@ -302,7 +302,7 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalUpdateStatu
     }
 
     // report to the imager tool that the tool is sending frames
-    this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
+    this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
 //    cout << ":" << endl;
 
