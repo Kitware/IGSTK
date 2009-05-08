@@ -45,7 +45,7 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   igstkAddStateMacro( Attached );
   igstkAddStateMacro( AttemptingToDetachVideoImagerToolFromVideoImager );
   igstkAddStateMacro( NotAvailable );
-  igstkAddStateMacro( Connected );
+  igstkAddStateMacro( Streaming );
 
   // Set the input descriptors
   igstkAddInputMacro( ConfigureTool );
@@ -56,7 +56,7 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   igstkAddInputMacro( AttachmentToVideoImagerFailure );
   igstkAddInputMacro( ImagingStarted );
   igstkAddInputMacro( ImagingStopped );
-  igstkAddInputMacro( VideoImagerToolVisible );
+  igstkAddInputMacro( VideoImagerToolStreaming );
   igstkAddInputMacro( VideoImagerToolNotAvailable );
   igstkAddInputMacro( DetachVideoImagerToolFromVideoImager );
   igstkAddInputMacro( DetachmentFromVideoImagerSuccess );
@@ -128,9 +128,9 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
 
   // Transition from NotAvailable state
   igstkAddTransitionMacro( NotAvailable,
-                           VideoImagerToolVisible,
-                           Connected,
-                           ReportVideoImagerToolVisibleState );
+                           VideoImagerToolStreaming,
+                           Streaming,
+                           ReportVideoImagerToolStreamingState );
 
   igstkAddTransitionMacro( NotAvailable,
                            ImagingStopped,
@@ -142,18 +142,18 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
                            NotAvailable,
                            No );
 
-  // Transition from Connected state
-  igstkAddTransitionMacro( Connected,
+  // Transition from Streaming state
+  igstkAddTransitionMacro( Streaming,
                            VideoImagerToolNotAvailable,
                            NotAvailable,
                            ReportVideoImagerToolNotAvailable );
 
-  igstkAddTransitionMacro( Connected,
-                           VideoImagerToolVisible,
-                           Connected,
+  igstkAddTransitionMacro( Streaming,
+                           VideoImagerToolStreaming,
+                           Streaming,
                            No );
 
-  igstkAddTransitionMacro( Connected,
+  igstkAddTransitionMacro( Streaming,
                            ImagingStopped,
                            Attached,
                            ReportImagingStopped );
@@ -414,13 +414,13 @@ void VideoImagerTool::VideoImagerToolDetachmentFromVideoImagerFailureProcessing(
   this->InvokeEvent( VideoImagerToolDetachmentFromVideoImagerErrorEvent() );
 }
 
-/** Report VideoImager tool is in a Connected state */
-void VideoImagerTool::ReportVideoImagerToolVisibleStateProcessing( void )
+/** Report VideoImager tool is in a Streaming state */
+void VideoImagerTool::ReportVideoImagerToolStreamingStateProcessing( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::VideoImagerTool::ReportVideoImagerToolVisibleStateProcessing called ...\n");
+    "igstk::VideoImagerTool::ReportVideoImagerToolStreamingStateProcessing called ...\n");
 
-  this->InvokeEvent( VideoImagerToolMadeTransitionToConnectedStateEvent() );
+  this->InvokeEvent( VideoImagerToolMadeTransitionToStreamingStateEvent() );
 }
 
 /** Report VideoImager tool not available state. */
@@ -429,10 +429,10 @@ void VideoImagerTool::ReportVideoImagerToolNotAvailableProcessing( void )
   igstkLogMacro( DEBUG,
     "igstk::VideoImagerTool::ReportVideoImagerToolNotAvailableProcessing called ...\n");
 
-  this->InvokeEvent( VideoImagerToolNotAvailableToBeConnectedEvent() );
+  this->InvokeEvent( VideoImagerToolNotAvailableEvent() );
 }
 
-/** Report tracking started */
+/** Report imaging started */
 void VideoImagerTool::ReportImagingStartedProcessing( void )
 {
   igstkLogMacro( DEBUG,
@@ -441,7 +441,7 @@ void VideoImagerTool::ReportImagingStartedProcessing( void )
   this->InvokeEvent( ToolImagingStartedEvent() );
 }
 
-/** Report tracking stopped */
+/** Report imaging stopped */
 void VideoImagerTool::ReportImagingStoppedProcessing( void )
 {
   igstkLogMacro( DEBUG,
@@ -480,13 +480,13 @@ void VideoImagerTool::RequestReportImagingToolNotAvailable( )
   this->m_StateMachine.ProcessInputs();
 }
 
-/** Push VideoImagerToolVisible input to the VideoImager tool  */
-void VideoImagerTool::RequestReportImagingToolVisible( )
+/** Push VideoImagerToolStreaming input to the VideoImager tool  */
+void VideoImagerTool::RequestReportImagingToolStreaming( )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::RequestReportImagingToolVisible "
+  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::RequestReportImagingToolStreaming "
   << "called...\n");
 
-  igstkPushInputMacro( VideoImagerToolVisible );
+  igstkPushInputMacro( VideoImagerToolStreaming );
   this->m_StateMachine.ProcessInputs();
 }
 
