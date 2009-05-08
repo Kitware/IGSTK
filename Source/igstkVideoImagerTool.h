@@ -47,9 +47,9 @@ igstkEventMacro( VideoImagerToolAttachmentToVideoImagerErrorEvent,
 igstkEventMacro( VideoImagerToolDetachmentFromVideoImagerEvent,VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolDetachmentFromVideoImagerErrorEvent,
                                                        VideoImagerToolErrorEvent);
-igstkEventMacro( VideoImagerToolMadeTransitionToConnectedStateEvent,
+igstkEventMacro( VideoImagerToolMadeTransitionToStreamingStateEvent,
                                                             VideoImagerToolEvent);
-igstkEventMacro( VideoImagerToolNotAvailableToBeConnectedEvent,VideoImagerToolEvent);
+igstkEventMacro( VideoImagerToolNotAvailableEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStartedEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStoppedEvent,VideoImagerToolEvent);
 
@@ -60,9 +60,9 @@ class VideoImager;
 /**  \class VideoImagerTool
   *  \brief Abstract superclass for concrete IGSTK VideoImagerTool classes.
   *
-  *  This class provides a generic implementation of a tool of
-  *  an VideoImager. This may contain hardware specific details of
-  *  the tool.
+  *  This class provides a generic implementation of an VideoImager. 
+  *  This may contain hardware specific details of
+  *  the video-device.
   *
   *
   *  \image html  igstkVideoImagerTool.png  "VideoImagerTool State Machine Diagram"
@@ -152,8 +152,8 @@ private:
   /** Push VideoImagerToolNotAvailable input to the VideoImager tool */
   virtual void RequestReportImagingToolNotAvailable( );
 
-  /** Push VideoImagerToolVisible input to the VideoImager tool */
-  virtual void RequestReportImagingToolVisible( );
+  /** Push VideoImagerToolStreaming input to the VideoImager tool */
+  virtual void RequestReportImagingToolStreaming( );
 
   /** Push AttachmentToVideoImagerSuccess input to the VideoImager tool*/
   void RequestReportSuccessfulVideoImagerToolAttachment();
@@ -176,7 +176,7 @@ private:
   igstkDeclareInputMacro( ImagingStarted );
   igstkDeclareInputMacro( ImagingStopped );
   igstkDeclareInputMacro( VideoImagerToolNotAvailable );
-  igstkDeclareInputMacro( VideoImagerToolVisible );
+  igstkDeclareInputMacro( VideoImagerToolStreaming );
   igstkDeclareInputMacro( DetachVideoImagerToolFromVideoImager );
   igstkDeclareInputMacro( AttachmentToVideoImagerSuccess );
   igstkDeclareInputMacro( AttachmentToVideoImagerFailure );
@@ -192,7 +192,7 @@ private:
   igstkDeclareStateMacro( Attached );
   igstkDeclareStateMacro( AttemptingToDetachVideoImagerToolFromVideoImager );
   igstkDeclareStateMacro( NotAvailable );
-  igstkDeclareStateMacro( Connected );
+  igstkDeclareStateMacro( Streaming );
 
   /** Attempt method to configure */
   void AttemptToConfigureProcessing( void );
@@ -226,8 +226,8 @@ private:
   /** Retrieve frame as an event. */
   void GetFrameProcessing( void );
 
-  /** Report VideoImager tool is in visible state. */
-  void ReportVideoImagerToolVisibleStateProcessing( void );
+  /** Report VideoImager tool is in streaming state. */
+  void ReportVideoImagerToolStreamingStateProcessing( void );
 
   /** Report VideoImager tool not available state. */
   void ReportVideoImagerToolNotAvailableProcessing( void );
