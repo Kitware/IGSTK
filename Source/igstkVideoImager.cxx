@@ -1001,12 +1001,12 @@ VideoImager::ReportImagingToolNotAvailable( VideoImagerToolType * videoImagerToo
   videoImagerTool->RequestReportImagingToolNotAvailable();
 }
 
-/** Report to the VideoImager tool that the tool is Visible */
+/** Report to the VideoImager tool that the tool is Streaming */
 void
-VideoImager::ReportImagingToolVisible( VideoImagerToolType * videoImagerTool ) const
+VideoImager::ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImager::ReportImagingToolVisible called...\n");
-  videoImagerTool->RequestReportImagingToolVisible();
+  igstkLogMacro( DEBUG, "igstk::VideoImager::ReportImagingToolStreaming called...\n");
+  videoImagerTool->RequestReportImagingToolStreaming();
 }
 
 /** Set VideoImager Tool Frame */
