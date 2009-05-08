@@ -305,8 +305,8 @@ OpenIGTLinkVideoImager::ResultType OpenIGTLinkVideoImager::InternalUpdateStatus(
       continue;
     }
 
-    // report to the imager tool that the tool is Visible
-    this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
+    // report to the imager tool that the tool is Streaming
+    this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
     this->SetVideoImagerToolFrame(
       imagerToolContainer[inputItr->first], (inputItr->second) );
