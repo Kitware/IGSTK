@@ -209,7 +209,7 @@ protected:
   */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
-  /** This method will remove entries of the tracker tool from internal
+  /** This method will remove entries of the VideoImager tool from internal
     * data containers */
   virtual ResultType RemoveVideoImagerToolFromInternalDataContainers(
                                      const VideoImagerToolType * videoImagerTool ) = 0;
@@ -229,8 +229,8 @@ protected:
   /** Report to VideoImager tool that it is not available for imaging */
   void ReportImagingToolNotAvailable( VideoImagerToolType * VideoImagerTool ) const;
 
-  /** Report to VideoImager tool that it is visible */
-  void ReportImagingToolVisible( VideoImagerToolType * videoImagerTool ) const;
+  /** Report to VideoImager tool that it is streaming */
+  void ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const;
 
   void SetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
                                    const FrameType & frame );
