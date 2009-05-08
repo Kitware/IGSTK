@@ -29,7 +29,7 @@
 
 // BeginCodeSnippet
 #define VIEW_3D_REFRESH_RATE 25
-#define VideoImager_DEFAULT_REFRESH_RATE 25
+#define VIDEOIMAGER_DEFAULT_REFRESH_RATE 25
 // EndCodeSnippet
 
 namespace igstk{
@@ -144,7 +144,6 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   m_VideoFrame->Initialize();
   // EndCodeSnippet
 
-
   igstk::Transform identity;
   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
@@ -241,10 +240,10 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // EndLatex
 
   // BeginCodeSnippet
-  igstk::WebcamWinVideoImager::Pointer VideoImager = igstk::WebcamWinVideoImager::New();
+  igstk::WebcamWinVideoImager::Pointer videoImager = igstk::WebcamWinVideoImager::New();
   // EndCodeSnippet
 
-  this->m_VideoImager = VideoImager;
+  this->m_VideoImager = videoImager;
 
   // BeginLatex
   //
@@ -253,7 +252,7 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // EndLatex
 
   // BeginCodeSnippet
-  VideoImager->RequestSetFrequency( VideoImager_DEFAULT_REFRESH_RATE );
+  videoImager->RequestSetFrequency( VIDEOIMAGER_DEFAULT_REFRESH_RATE );
   // EndCodeSnippet
 
   // BeginLatex
