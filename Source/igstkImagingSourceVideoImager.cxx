@@ -348,8 +348,8 @@ ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalUpdateSta
       continue;
     }
 
-    // report to the imager tool that the tool is Visible
-    this->ReportImagingToolVisible(imagerToolContainer[inputItr->first]);
+    // report to the imager tool that the tool is Streaming
+    this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
     cout << ":" << endl;
 
