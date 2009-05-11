@@ -72,6 +72,10 @@
 #include "igstkView3D.h"
 #include "igstkCoordinateSystemDelegator.h"
 
+#include "igstkReslicerPlaneSpatialObject.h"
+#include "igstkImageResliceObjectRepresentation.h"
+#include "igstkMeshResliceObjectRepresentation.h"
+
 #if defined(IGSTK_USE_MicronTracker)
 #include "igstkMicronTracker.h"
 #include "igstkMicronTrackerTool.h"
@@ -350,6 +354,9 @@ typedef ImageSpatialObjectRepresentation< ImageSpatialObjectType >
 
 typedef SpatialObjectReader<3,float>                SpatialObjectReaderType;
 
+typedef ImageResliceObjectRepresentation< ImageSpatialObjectType >
+                                        ImageResliceRepresentationType;
+
 class ObjectRepresentationSurrogate : public ObjectRepresentation
 {
 public:
@@ -458,6 +465,11 @@ int main( int argc, char * argv [] )
 
   igstkTestExportStateMachine1(
     igstk::CoordinateSystemDelegator, outputDirectory, skipLoops );
+
+
+  igstkTestExportStateMachine1( igstk::ReslicerPlaneSpatialObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ImageResliceRepresentationType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MeshResliceObjectRepresentation, outputDirectory, skipLoops );
 
 #if defined(IGSTK_USE_FLTK)
   // The Widget classes don't use SmartPointer and don't have a
