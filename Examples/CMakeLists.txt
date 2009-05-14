@@ -32,6 +32,7 @@ IF (IGSTKSandbox_USE_FLTK)
    # classes
    #DeckOfCardRobot
     View
+    Reslicing
     Logging
     Navigator
     BronchoscopyNavigator
