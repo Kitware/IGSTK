@@ -248,7 +248,6 @@ int main( int argc , char * argv [] )
     ImageResliceRepresentationType::New(); 
 
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
-
   // EndCodeSnippet
 
   // BeginLatex
@@ -376,7 +375,7 @@ int main( int argc , char * argv [] )
   // objects. In this 2D view, the resliced image will be displayed. 
   // EndLatex
   //
-  // BeginCodSnippet
+  // BeginCodeSnippet
   view2D->RequestAddObject( imageResliceRepresentation );
   // EndCodeSnippet
 
