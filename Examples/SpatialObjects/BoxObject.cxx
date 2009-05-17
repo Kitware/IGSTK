@@ -22,8 +22,8 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::BoxObject}
-// The \doxygen{BoxObject} represents an hexahedron in space. It is a useful
-// building bloc unit to create more complex object (see the 3D ultrasound
+// The \doxygen{BoxObject} represents a hexahedron in space. It is a useful
+// building block to create a more complex object (see the 3D ultrasound
 // probe for reference).
 //
 // Let's include the appropriate header:

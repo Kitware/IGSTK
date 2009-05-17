@@ -24,7 +24,7 @@
 // \index{igstk::ReadVascularNetworkObject}
 // This example describes how to use the \doxygen{VascularNetworkReader} to read a
 // SpatialObject vascular tree from a file.
-// Let's start by including the appropriate header files:
+// Start by including the appropriate header files:
 // Software Guide : EndLatex 
 // Software Guide : BeginCodeSnippet
 #include "igstkVascularNetworkReader.h"
@@ -143,7 +143,7 @@ int main( int argc, char *argv[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// Finally, we get the vascular networ using the \code{GetVascularNetwork()} function.
+// Finally, we get the vascular network using the \code{GetVascularNetwork()} function.
 //
 // Software Guide : EndLatex 
 

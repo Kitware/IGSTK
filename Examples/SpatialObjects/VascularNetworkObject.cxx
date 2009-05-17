@@ -22,7 +22,7 @@
 // Software Guide : BeginLatex
 //
 // \index{igstk::VascularNetworkObject}
-// This example describes how to create a \doxygen{VesselObject} and 
+// This example describes how to create an \doxygen{VesselObject} and 
 // how to use the \doxygen{VascularNetworkObject} to group VesselObjects 
 // together to represent a vascular tree.
 //
@@ -63,7 +63,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Like the \doxygen{TubeObject}, a \doxygen{VesselObject} is defined as a collection
+// Like the \doxygen{TubeObject}, an \doxygen{VesselObject} is defined as a collection
 // of centerline points with an associated radius.
 //
 // Software Guide : EndLatex 
@@ -83,8 +83,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We then add the newly created vessel to the vascular network. We use the
-// \code{RequestAddVessel()} function. This function requires to provide
-// the \doxygen{Transform} that relates the vessel to the vascular tree.
+// \code{RequestAddVessel()} function. This function requires an
+// \doxygen{Transform} that relates the vessel to the vascular tree.
 // In this example we set the identity transform with the longest possible
 // expiration time.
 //
@@ -98,7 +98,7 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 // Software Guide : BeginLatex
 //
-// In some cases, it might interesting to get a vessel of interest from a
+// In some cases, we may want to get a vessel of interest from a
 // \code{VascularNetworkObject}. To retrieve the vessel, we first need to create
 // an observer.
 // \begin{verbatim}

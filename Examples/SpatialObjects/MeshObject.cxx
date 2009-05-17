@@ -67,7 +67,7 @@ mesh->AddPoint(3,10,0,10);
 
 // Software Guide : BeginLatex
 // 
-// The list of points can be retrieve using the \code{GetPoints()}
+// The list of points can be retrieved using the \code{GetPoints()}
 // function. The list of points returned consist of a list of std::pair
 // with the first argument of the pair being the id of the point and
 // the second argument storing the geometrical representation.
@@ -93,7 +93,7 @@ mesh->AddPoint(3,10,0,10);
 // Software Guide : BeginLatex
 // The next step is to define cells for the mesh. IGSTK currently supports
 // two type of cells: tetrahedron and triangle cells. The functions for adding
-// cells to the mesh are defined as follows, where the vertices referes to the ID
+// cells to the mesh are defined as follows, where the vertices refer to the ID
 // of the points previously defined.
 // 
 // \begin{verbatim}
