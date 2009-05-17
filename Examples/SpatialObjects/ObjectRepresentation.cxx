@@ -131,8 +131,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We set the refresh rate of the view. The refresh rate defines
-// when the view should be renderer. Note that faster refresh rate
-// might be request but might not be achieved, depending on the different
+// when the view should be rendered. Note that a faster refresh rate
+// might be requested but might not be achieved, depending on the different
 // component of the system.
 //
 // Software Guide : EndLatex 
@@ -166,8 +166,8 @@ int main( int , char *[] )
 // Software Guide : BeginLatex
 //
 // We then refresh the display until the window is closed.
-// Note that we use the internal timer from FLTK to make sure the view as
-// time to be renderer. The \code{PulseGenerator::CheckTimeouts()}
+// Note that we use the internal timer from FLTK to make sure the view has
+// time to be rendered. The \code{PulseGenerator::CheckTimeouts()}
 // function is the heart of the system which tells the views to refresh itself.
 //
 // Software Guide : EndLatex 
