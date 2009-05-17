@@ -38,7 +38,7 @@ using namespace std;
 // 
 // The XMLLogger class constructs log messages in XML format.  Indentation is
 // done automatically.  Most XML viewers show the hierarchical structure of log
-// messages and provide user interfaces to collapse and expand subelements.
+// messages and provide user interfaces to collapse and expand sub-elements.
 // XMLLogger opens a new element when the first character of the log message is
 // ``\verb$<$'' and closes an element when the first character is ``\verb$>$''.
 // Otherwise, a self-closing element is created when no angular bracket is used

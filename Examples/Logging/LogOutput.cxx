@@ -387,7 +387,7 @@ int main( int argc, char* argv[] )
   // used with compilers with weak C++ template support.
 
   // To use this class, an application should include the header file
-  // \code{itkLoggerThreadWrapper.h} to use this class. The example code
+  // \code{itkLoggerThreadWrapper.h}. The example code
   // fragment shows how to wrap a logger within the
   // \code{itk::LoggerThreadWrapper} class:
   //
