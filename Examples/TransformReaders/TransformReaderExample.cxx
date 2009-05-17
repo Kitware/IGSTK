@@ -5,7 +5,7 @@
 // registration (e.g. MR/CT). The program recieves an xml file containing a precomputed
 // transformation, reads it, presents the user with the general information 
 // about the transformation (when computed and estimation error). The user is
-// then asked if to use the transformation or not. If the answer is yes, the
+// then asked if they wish to use the transformation or not. If the answer is yes, the
 // program prints the transformation and exits, otherwise it just exits.
 //
 // To use the xml readers and the precomputed transform data type we need to 
