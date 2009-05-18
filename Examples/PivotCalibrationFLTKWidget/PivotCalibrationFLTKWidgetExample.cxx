@@ -220,7 +220,6 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
 
   this->m_pivotCalibrationFLTKWidget->RequestSetDelay( delay );
 
-  igstk::Tracker * genericTracker = this->m_tracker.GetPointer();
   igstk::TrackerTool * genericTrackerTool = this->m_tool.GetPointer();
 
   this->m_pivotCalibrationFLTKWidget->RequestInitialize(numberOfFrames,
@@ -321,7 +320,7 @@ PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
   if( it != this->m_ErrorEvent2ErrorMessage.end() )
     {
     this->m_ErrorOccured = true;
-    fl_alert( (*it).second.c_str() );
+    fl_alert( "%s\n", (*it).second.c_str() );
     fl_beep( FL_BEEP_ERROR );
     }
 }
