@@ -71,7 +71,7 @@ public:
   virtual int WriteFile();
   /**Check that the transformation matches the writer type*/ 
   virtual bool IsCompatible(
-     PrecomputedTransformData::Pointer transformation )=0;
+     const PrecomputedTransformData::Pointer transformation )=0;
 
 protected:
 

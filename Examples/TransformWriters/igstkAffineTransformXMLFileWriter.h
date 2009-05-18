@@ -64,7 +64,8 @@ public:
          //method for creation through the object factory
   itkNewMacro( Self );
 
-  virtual bool IsCompatible( PrecomputedTransformData::Pointer transformation );
+  virtual bool IsCompatible(
+     const PrecomputedTransformData::Pointer transformation );
 
 protected:
 

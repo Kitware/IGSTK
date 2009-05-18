@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    TransformWriterExample.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include "igstkPrecomputedTransformData.h"
 #include "igstkTransformFileWriter.h"
 #include "igstkRigidTransformXMLFileWriter.h"
@@ -24,7 +40,7 @@ int main(int argc, char *argv[])
   
   igstk::Transform registrationResult;
   registrationResult.SetTranslationAndRotation( t, r, estimationError,
-                                                igstk::TimeStamp::GetLongestPossibleTime() );
+    igstk::TimeStamp::GetLongestPossibleTime() );
   std::string description;
   description = "MR/CT registration"; 
 

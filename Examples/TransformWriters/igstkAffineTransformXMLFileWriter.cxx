@@ -70,10 +70,10 @@ AffineTransformXMLFileWriter::IsCompatible(
   PrecomputedTransformData::Pointer transformation )
 {
   TransformRequestObserver::Pointer transformObserver = 
-    TransformRequestObserver::New();
-  unsigned long observerID = transformation->AddObserver( 
-    igstk::PrecomputedTransformData::TransformTypeEvent(), 
-    transformObserver );
+     TransformRequestObserver::New();
+  transformation->AddObserver( 
+     igstk::PrecomputedTransformData::TransformTypeEvent(), 
+     transformObserver );
   transformation->RequestTransform();
 
   if( transformObserver->GotTransformRequest() )
