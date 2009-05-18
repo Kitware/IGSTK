@@ -161,14 +161,14 @@ int main( int argc, char * argv[] )
 
 
   //BeginLatex
-  //Next, request tracker communication be opened
+  //Next, request tracker communication be opened.
   //EndLatex
   //BeginCodeSnippet
   tracker->RequestOpen();
   //EndCodeSnippet
 
   //BeginLatex
-  //Next, add tracker tools to the tracker
+  //Next, add tracker tools to the tracker.
   //EndLatex
   //
   //BeginCodeSnippet
@@ -252,7 +252,7 @@ int main( int argc, char * argv[] )
   //EndCodeSnippet
   //
   //BeginLatex
-  //Stop tracking and close the communication with the tracker
+  //Stop tracking and close the communication with the tracker.
   //EndLatex
   //
   //
