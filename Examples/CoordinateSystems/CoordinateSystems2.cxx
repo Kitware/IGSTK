@@ -64,7 +64,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Now, we create a Axes object with an AxesObjectRepresentation
+// Now, we create an AxesObject with an AxesObjectRepresentation
 // to provide a visual reference for the Tracker's coordinate system.
 //
 // Software Guide : EndLatex
@@ -182,8 +182,8 @@ int main( int , char *[] )
 // Here we build up the scene graph. We define an identity transform, just
 // to make things simple. 
 //
-// Then, we attach the axes object to the tracker
-// using the identity transformation. As a result the axes object will
+// Then, we attach the AxesObject to the tracker
+// using the identity transformation. As a result the AxesObject will
 // be displayed in tracker coordinates. 
 //
 // Next, we connect the object representing the tracker tool to the 
@@ -203,10 +203,10 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// \emph{ This next line differentiates the two examples, CoordinateSystems1.cxx
+// This next line differentiates the two examples, CoordinateSystems1.cxx
 // (View From Tracker Coordinates Example) and CoordinateSystems2.cxx
 // (View Follows Tracker Tool Example). Here, we view the scene from the trackerTool's 
-// perspective. }
+// perspective.
 // 
 // Software Guide : EndLatex
 

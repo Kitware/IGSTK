@@ -64,7 +64,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Here we create an Axes object to function as the world 
+// Here we create an AxesObject to function as the world 
 // coordinate system. We do not create a representation since
 // we will not be displaying the world coordinate system object.
 // The worldCoordinateSystem just provides a placeholder node
@@ -80,7 +80,7 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 //
-// Now, we create a Axes object with an AxesObjectRepresentation
+// Now, we create an AxesObject with an AxesObjectRepresentation
 // to provide a visual reference for the Tracker's coordinate system.
 //
 // Software Guide : EndLatex
@@ -197,8 +197,8 @@ int main( int , char *[] )
 // Here we build up the scene graph. We define an identity transform, just
 // to make things simple. 
 //
-// Then, we attach the axes object to the tracker
-// using the identity transformation. As a result the axes object will
+// Then, we attach the AxesObject to the tracker
+// using the identity transformation. As a result the AxesObject will
 // be in the same position as the tracker. 
 //
 // Next, we connect the object representing the tracker tool to the 
@@ -218,12 +218,12 @@ int main( int , char *[] )
 
 // Software Guide : BeginLatex
 // 
-// \emph{ These next lines are key differences from CoordinateSystems1.cxx
+// These next lines are key differences from CoordinateSystems1.cxx
 // (View From Tracker Coordinates Example) and CoordinateSystems2.cxx
 // (View Follows Tracker Tool Example).
 // In this example, we place the view and the 
 // tracker into world coordinates using an identity transformation. In a real-world
-// application, the transformation would not be the trivial identity transform. }
+// application, the transformation would not be the trivial identity transform.
 // 
 // Software Guide : EndLatex
 
