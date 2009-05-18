@@ -223,8 +223,8 @@ TransformFileWriter::~TransformFileWriter()
 }
 
 void 
-TransformFileWriter::RequestSetWriter( 
-                 TransformXMLFileWriterBase::Pointer transformWriter )
+TransformFileWriter::RequestSetWriter(
+   const TransformXMLFileWriterBase::Pointer transformWriter )
 {
   igstkLogMacro( DEBUG, "igstk::TransformFileWriter::"
                         "RequestSetWriter called...\n" );

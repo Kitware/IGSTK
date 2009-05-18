@@ -67,7 +67,7 @@ AffineTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
 
 bool 
 AffineTransformXMLFileWriter::IsCompatible( 
-  PrecomputedTransformData::Pointer transformation )
+  const PrecomputedTransformData::Pointer transformation )
 {
   TransformRequestObserver::Pointer transformObserver = 
      TransformRequestObserver::New();

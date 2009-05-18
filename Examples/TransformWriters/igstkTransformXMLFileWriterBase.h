@@ -67,8 +67,12 @@ public:
   itkTypeMacro( TransformXMLFileWriterBase<PrecomputedTransformData>, 
                 itk::XMLWriterBase );
 
+  //Calling program must check that we have a valid file name, it is not a directory
   virtual int CanWriteFile( const char* name );
+
+  //Calling program can then write, if filename is valid.  
   virtual int WriteFile();
+
   /**Check that the transformation matches the writer type*/ 
   virtual bool IsCompatible(
      const PrecomputedTransformData::Pointer transformation )=0;

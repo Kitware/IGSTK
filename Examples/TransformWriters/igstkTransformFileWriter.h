@@ -49,7 +49,8 @@ public:
   /**
    * Set a specific writer, which also defines the type of transformation.
    */
-  void RequestSetWriter( TransformXMLFileWriterBase::Pointer transformWriter );
+  void RequestSetWriter(
+     const TransformXMLFileWriterBase::Pointer transformWriter );
 
   /**
    * Set the required data.
@@ -126,6 +127,12 @@ private:
   void WriteProcessing();
   void ReportWriteSuccessProcessing();
   void ReportWriteFailureProcessing();
+      
+  TransformFileWriter( 
+    const TransformFileWriter & other );
+
+  const TransformFileWriter & operator=( 
+    const TransformFileWriter & right );
 
   TransformDataType::Pointer          m_TmpTransformData;
   TransformDataType::Pointer          m_TransformData;

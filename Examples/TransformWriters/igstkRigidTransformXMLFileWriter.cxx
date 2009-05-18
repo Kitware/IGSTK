@@ -60,7 +60,7 @@ RigidTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
 
 bool 
 RigidTransformXMLFileWriter::IsCompatible( 
-  PrecomputedTransformData::Pointer transformation )
+  const PrecomputedTransformData::Pointer transformation )
 {
   TransformRequestObserver::Pointer transformObserver = 
     TransformRequestObserver::New();

@@ -51,15 +51,15 @@ class RigidTransformXMLFileWriter : public TransformXMLFileWriterBase
 {
 public:
 
-    //standard typedefs
+  //standard typedefs
   typedef RigidTransformXMLFileWriter    Self;
   typedef TransformXMLFileWriterBase     Superclass;
   typedef itk::SmartPointer<Self>        Pointer;
 
-           //run-time type information (and related methods)
+  //run-time type information (and related methods)
   itkTypeMacro( RigidTransformXMLFileWriter, TransformXMLFileWriterBase );
 
-         //method for creation through the object factory
+  //method for creation through the object factory
   itkNewMacro( Self );
 
   virtual bool IsCompatible(
