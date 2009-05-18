@@ -224,7 +224,7 @@ int main( int argc, char * argv[] )
 
   //start tracking 
   //BeginLatex
-  //Start tracking and observer tracker tool pose information
+  //Start tracking and observer tracker tool pose information.
   //EndLatex
   //
   //BeginCodeSnippet
@@ -279,7 +279,7 @@ int main( int argc, char * argv[] )
  
   //BeginLatex
   //To end the tracking process, stop and close the tracker and close the
-  //serial communication channel
+  //serial communication channel.
   //EndLatex 
   //BeginCodeSnippet
   std::cout << "RequestStopTracking()" << std::endl;
