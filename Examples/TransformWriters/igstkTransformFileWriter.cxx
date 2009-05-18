@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTransformFileWriter.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include <itksys/SystemTools.hxx>
 #include "igstkTransformFileWriter.h"
 
@@ -339,12 +355,12 @@ TransformFileWriter::WriteProcessing()
 {
   //check that the file name is not a directory
   if( itksys::SystemTools::FileIsDirectory( this->m_FileName.c_str() ) )
-  {
+    {
     std::ostringstream msg;
     msg<<"File ("<<this->m_FileName<<") is a directory";
     this->m_WriteFailureErrorMessage = msg.str();
     igstkPushInputMacro( Failure );
-  }
+    }
   else
     {
     this->m_XMLFileWriter->SetFilename( this->m_FileName );

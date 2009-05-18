@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkRigidTransformXMLFileWriter.cxx
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include "igstkRigidTransformXMLFileWriter.h"
 
 #include "igstkTransform.h"
@@ -26,19 +42,19 @@ RigidTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
 
   if( transformObserver->GotTransformRequest() && 
       transformErrorObserver->GotTransformError() )
-  {
+    {
     igstk::TransformBase *transformData = 
       transformObserver->GetTransformRequest();
     const igstk::Transform *rigidTransformation = 
       dynamic_cast<const igstk::Transform *>( transformData );
     out<<"\t <transformation estimation_error=\"";
-    out<<transformErrorObserver->GetTransformError()<<"\">\n";    
+    out<<transformErrorObserver->GetTransformError()<<"\">\n";
     igstk::Transform::VectorType t = rigidTransformation->GetTranslation();
     igstk::Transform::VersorType r = rigidTransformation->GetRotation();
     out<<"\t"<<r.GetX()<<"\t"<<r.GetY()<<"\t"<<r.GetZ()<<"\t"<< r.GetW()<<"\t";
     out<<t[0]<<"\t"<<t[1]<<"\t"<<t[2]<<"\n";
     out<<"\t</transformation>\n\n";
-  }
+    }
 }
 
 
@@ -55,7 +71,8 @@ RigidTransformXMLFileWriter::IsCompatible(
 
   if( transformObserver->GotTransformRequest() )
     {
-    igstk::TransformBase *transformData = transformObserver->GetTransformRequest();
+    igstk::TransformBase *transformData =
+      transformObserver->GetTransformRequest();
     return dynamic_cast<const igstk::Transform *>( transformData ) != NULL;
     }
   return false;

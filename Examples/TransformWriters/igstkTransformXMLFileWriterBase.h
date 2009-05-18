@@ -1,3 +1,19 @@
+/*=========================================================================
+
+  Program:   Image Guided Surgery Software Toolkit
+  Module:    igstkTransformXMLFileWriterBase.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+  See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkTransformXMLFileWriterBase_h
 #define __igstkTransformXMLFileWriterBase_h
 
@@ -37,7 +53,8 @@ namespace igstk
  *
  * 
  */
-class TransformXMLFileWriterBase : public itk::XMLWriterBase<PrecomputedTransformData> 
+class TransformXMLFileWriterBase :
+         public itk::XMLWriterBase<PrecomputedTransformData> 
 {
 public:
   
@@ -53,7 +70,8 @@ public:
   virtual int CanWriteFile( const char* name );
   virtual int WriteFile();
   /**Check that the transformation matches the writer type*/ 
-  virtual bool IsCompatible( PrecomputedTransformData::Pointer transformation )=0;
+  virtual bool IsCompatible(
+     PrecomputedTransformData::Pointer transformation )=0;
 
 protected:
 
@@ -64,14 +82,14 @@ protected:
   void WriteDate( std::ofstream &out ); 
   virtual void WriteTransformation( std::ofstream &out ) = 0;
  
-       //observer to get the transformation description using IGSTK's event
-       //based approach
+  //observer to get the transformation description using IGSTK's event
+  //based approach
   igstkObserverMacro( TransformationDescription, 
                       igstk::StringEvent, 
                       std::string )
 
-       //observer to get the transformation date using IGSTK's event
-       //based approach
+  //observer to get the transformation date using IGSTK's event
+  //based approach
   igstkObserverMacro( TransformationDate, 
                       igstk::PrecomputedTransformData::TransformDateTypeEvent, 
                       std::string )
@@ -79,14 +97,14 @@ protected:
   typedef igstk::PrecomputedTransformData::TransformType * 
     TransformTypePointer;
 
-         //observer to get the transformation using IGSTK's event
-       //based approach
+  //observer to get the transformation using IGSTK's event
+  //based approach
   igstkObserverMacro( TransformRequest, 
                       igstk::PrecomputedTransformData::TransformTypeEvent, 
                       TransformTypePointer )
 
-         //observer to get the transformation's estimation error using IGSTK's 
-         //event based approach
+  //observer to get the transformation's estimation error using IGSTK's 
+  //event based approach
   igstkObserverMacro( TransformError, 
                       igstk::PrecomputedTransformData::TransformErrorTypeEvent, 
                       igstk::PrecomputedTransformData::ErrorType )
