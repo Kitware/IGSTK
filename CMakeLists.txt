@@ -205,7 +205,9 @@ ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree
 #
 OPTION(IGSTK_USE_SceneGraphVisualization "Enable scene graph visualization by allowing the observer to listen to relevant events" ON)
-
+IF(IGSTK_USE_SceneGraphVisualization)
+  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/SceneGraphVisualization )
+ENDIF(IGSTK_USE_SceneGraphVisualization)
 
 #
 # Use unicap library 
