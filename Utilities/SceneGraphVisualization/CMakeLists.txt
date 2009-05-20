@@ -21,5 +21,5 @@ INCLUDE_DIRECTORIES(
   ${SceneGraphVisualization_BINARY_DIR}
   )
   
-ADD_LIBRARY(igstkSceneGraphVisualization ${SceneGraphVisualization_SRC} )
-TARGET_LINK_LIBRARIES(igstkSceneGraphVisualization IGSTKSandbox)
+ADD_LIBRARY(SceneGraphVisualization ${SceneGraphVisualization_SRC} )
+TARGET_LINK_LIBRARIES(SceneGraphVisualization IGSTKSandbox)
