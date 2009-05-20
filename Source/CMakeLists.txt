@@ -384,32 +384,12 @@ IF(IGSTKSandbox_USE_FLTK)
       )
 ENDIF(IGSTKSandbox_USE_FLTK)      
 
-IF(IGSTK_USE_SceneGraphVisualization)
-  # SceneGraph visualization classes
-  SET(IGSTKSandbox_HEADS
-    ${IGSTKSandbox_HEADS}
-    igstkSceneGraphObserver.h
-    igstkSceneGraphNode.h
-    igstkSceneGraph.h
-    )
-ENDIF(IGSTK_USE_SceneGraphVisualization)
-
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
       igstkTrackerToolObserverToOpenIGTLinkRelay.h
       )
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
-IF(IGSTKSandbox_USE_FLTK)
-  IF(IGSTK_USE_SceneGraphVisualization)
-    #SceneGraph visualization classes
-    SET(IGSTKSandbox_HEADS
-        ${IGSTKSandbox_HEADS}
-        igstkSceneGraphUI.h
-        )
-  ENDIF(IGSTK_USE_SceneGraphVisualization)
-ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
   SET(IGSTKSandbox_HEADS
@@ -516,32 +496,12 @@ IF(IGSTKSandbox_USE_FLTK)
       )
 ENDIF(IGSTKSandbox_USE_FLTK)      
 
-IF(IGSTK_USE_SceneGraphVisualization)
-  #SceneGraph visualization classes
-  SET(IGSTKSandbox_SRCS
-    ${IGSTKSandbox_SRCS}
-    igstkSceneGraphNode.cxx
-    igstkSceneGraph.cxx
-    )
-ENDIF(IGSTK_USE_SceneGraphVisualization)
-
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTKSandbox_SRCS
       ${IGSTKSandbox_SRCS}
       igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
       )
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
-
-IF(IGSTKSandbox_USE_FLTK)
-  IF(IGSTK_USE_SceneGraphVisualization)
-    #SceneGraph visualization classes
-    SET(IGSTKSandbox_SRCS
-      ${IGSTKSandbox_SRCS}
-      igstkSceneGraphUI.cxx
-      )
-  ENDIF(IGSTK_USE_SceneGraphVisualization)
-ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF( WIN32 )
   SET(IGSTKSandbox_SRCS
