@@ -15,3 +15,6 @@ IF(IGSTKSandbox_USE_vtkKWImage )
     SUBDIRS( vtkKWImage )
 ENDIF( IGSTKSandbox_USE_vtkKWImage )
 
+IF(IGSTK_USE_SceneGraphVisualization )
+    SUBDIRS( SceneGraphVisualization )
+ENDIF( IGSTK_USE_SceneGraphVisualization )
