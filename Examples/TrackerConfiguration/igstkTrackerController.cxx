@@ -1216,7 +1216,7 @@ TrackerController::TrackerInitializeProcessing()
     else
       {
       this->m_ErrorMessage = 
-        "Could not initialize the tracker. See the debug log.";
+    "Unrecognized tracker type (Possibly IGSTK_USE_MicronTracker flag is off).";
       igstkPushInputMacro( Failed );
       }
     }
