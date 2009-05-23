@@ -166,7 +166,7 @@ private:
     protected:
 // BeginLatex
 // In the \code{ToolUpdatedObserver} constructor  we instantiate a 
-// \code{igtl::PositionMessage}, which is updated with the transformtaion data.
+// \code{igtl::PositionMessage}, which is updated with the transformation data.
 // EndLatex
 
       ToolUpdatedObserver()
@@ -218,7 +218,7 @@ private:
       this->m_Sockets.clear();
 
       // BeginLatex
-      // We create a list of destination to support multicast data transfer.
+      // We create a list of destinations to support multicast data transfer.
       // Then we establish connections for each destation on the list.
       // EndLatex
       // BeginCodeSnippet
