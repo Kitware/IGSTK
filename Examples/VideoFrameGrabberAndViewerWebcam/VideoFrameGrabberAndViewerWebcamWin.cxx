@@ -341,10 +341,10 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
   // BeginLatex
   //
-  // Here we request to start the VideoImager. In case of success the
+  // Here we request the system to start the VideoImager. In case of success the
   // communication thread starts retrieving  frames continuously from
   // the device and the main application thread fills the ringbuffer
-  // in the VideoImager tool according to the pulse-generator-frequency.
+  // in the VideoImager tool according to the pulse generator frequency.
   //
   // EndLatex
 
