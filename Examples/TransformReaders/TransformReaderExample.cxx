@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
     // BeginLatex
     // 
-    // Set the reader and the name of the file we want to read
+    // Set the reader and the name of the file we want to read.
     //
     // EndLatex
     // BeginCodeSnippet    
