@@ -41,7 +41,7 @@
 // name of the tool that is going to drive the reslicing
 #define DRIVING_TOOL_NAME "tool"
 // name of the tool that is going to be used as dynamic reference
-#define REFERENCE_NAME "reference" //reference
+#define REFERENCE_NAME "reference" 
 
 /** ---------------------------------------------------------------
 *     Constructor
@@ -1517,11 +1517,15 @@ Navigator::AcceptTrackerFiducialProcessing()
 
   if ( !transformObserver->GotTransform() )
     return;
+         //check that the transform is indeed valid
+  igstk::Transform transform = transformObserver->GetTransform();
+  if( !transform.IsValidNow() )
+    return;
 
   int n = m_FiducialsPointList->value();
   int m = m_FiducialsPointList->size();
-  m_LandmarksContainer[n] = 
-        TransformToPoint( transformObserver->GetTransform() );
+  m_LandmarksContainer[n] = TransformToPoint( transform );
+
   m_AcceptedLandmarksContainer[n] = true;
 
   m_AxialFiducialRepresentationVector[n]->SetColor( 0.0, 1.0, 0.0 );
