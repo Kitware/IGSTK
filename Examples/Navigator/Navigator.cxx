@@ -39,7 +39,7 @@
 #define VIEW_2D_REFRESH_RATE 10
 #define VIEW_3D_REFRESH_RATE 10
 // name of the tool that is going to drive the reslicing
-#define DRIVING_TOOL_NAME "sPtr" //sPtr // bayonet // hybrid_pointer
+#define DRIVING_TOOL_NAME "tool"
 // name of the tool that is going to be used as dynamic reference
 #define REFERENCE_NAME "reference" //reference
 
