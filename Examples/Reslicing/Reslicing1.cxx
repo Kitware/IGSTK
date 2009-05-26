@@ -236,7 +236,7 @@ int main( int argc , char * argv [] )
  
   // BeginLatex
   // Instantiate image reslice object representation object and set rendering properties such as 
-  // window level
+  // window level.
   // EndLatex
 
 
@@ -251,7 +251,7 @@ int main( int argc , char * argv [] )
   // EndCodeSnippet
 
   // BeginLatex
-  // Set the input image spatial object to the reslice object representation object  
+  // Set the input image spatial object to the reslice object representation object.
   // EndLatex
   //
   // BeginCodeSnippet
@@ -310,7 +310,7 @@ int main( int argc , char * argv [] )
 
 
   // BeginLatex
-  // Instantiate a reslicer plane spatial object
+  // Instantiate a reslicer plane spatial object.
   // EndLatex
 
   // BeginCodeSnippet
@@ -339,7 +339,7 @@ int main( int argc , char * argv [] )
 
   // BeginLatex
   // Reslicer plane spatial object extent needs to be defined. The extent is defined using input image spatial object or other spatial object. 
-  // To specify the spatial object that is needed to define the bounding box, use RequestSetBoundingBoxProviderSpatialObject method 
+  // To specify the spatial object that is needed to define the bounding box, use RequestSetBoundingBoxProviderSpatialObject method.
   // EndLatex
   //
   // BeginCodeSnippet
@@ -351,7 +351,7 @@ int main( int argc , char * argv [] )
 
 
   // BeginLatex
-  // Set the reslicer plane spatial object to the image representation
+  // Set the reslicer plane spatial object to the image representation.
   // EndLatex
   //
   // BeginCodeSnippet
@@ -359,7 +359,7 @@ int main( int argc , char * argv [] )
   // EndCodeSnippet
 
   // BeginLatex
-  // Then, set the tool spatial object that will be used to reslice the input image
+  // Then, set the tool spatial object that will be used to reslice the input image.
   // EndLatex
   //
   // BeginCodeSnippet
