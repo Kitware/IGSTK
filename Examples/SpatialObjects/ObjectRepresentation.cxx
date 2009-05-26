@@ -132,8 +132,8 @@ int main( int , char *[] )
 //
 // We set the refresh rate of the view. The refresh rate defines
 // when the view should be rendered. Note that a faster refresh rate
-// might be requested but might not be achieved, depending on the different
-// component of the system.
+// might be requested but might not be achieved, depending on the capabilities
+// of the system.
 //
 // Software Guide : EndLatex 
 
