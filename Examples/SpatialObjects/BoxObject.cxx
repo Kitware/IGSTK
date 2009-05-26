@@ -24,7 +24,7 @@
 // \index{igstk::BoxObject}
 // The \doxygen{BoxObject} represents a hexahedron in space. It is a useful
 // building block to create a more complex object (see the 3D ultrasound
-// probe for reference).
+// probe in Chapter~\ref{Chapter:SpatialObjectRepresentation:UltrasoundProbeRepresentation} for reference).
 //
 // Let's include the appropriate header:
 // Software Guide : EndLatex 
