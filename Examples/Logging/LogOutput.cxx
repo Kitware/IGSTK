@@ -400,7 +400,7 @@ int main( int argc, char* argv[] )
 
   // BeginLatex
   // 
-  // The wrapped logger is the same as other loggers except that it runs on a
+  // The wrapped logger is the same as other loggers except that it runs in a
   // separate thread from the thread that uses the logger object.
   //
   // \subsubsection{ThreadLogger}
