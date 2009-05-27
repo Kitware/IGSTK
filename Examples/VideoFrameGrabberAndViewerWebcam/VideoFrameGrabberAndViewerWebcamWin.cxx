@@ -175,14 +175,15 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   /*
   // BeginCodeSnippet
   typedef igstk::VideoFrameRepresentation<VideoFrameSpatialObjectType>
-                                                      VideoFrameRepresentationType;
+                                            VideoFrameRepresentationType;
 
   VideoFrameRepresentationType::Pointer m_VideoFrameRepresentationForVideoView;
   // EndCodeSnippet
   */
 
   // BeginCodeSnippet
-  m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
+  m_VideoFrameRepresentationForVideoView = 
+                                     VideoFrameRepresentationType::New();
   // EndCodeSnippet
 
   // BeginLatex
@@ -192,7 +193,8 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // EndLatex
 
   // BeginCodeSnippet
-  m_VideoFrameRepresentationForVideoView->RequestSetVideoFrameSpatialObject( m_VideoFrame );
+  m_VideoFrameRepresentationForVideoView->
+                       RequestSetVideoFrameSpatialObject( m_VideoFrame );
   // EndCodeSnippet
 
 
@@ -203,7 +205,8 @@ VideoFrameGrabberAndViewerWebcamWin::VideoFrameGrabberAndViewerWebcamWin()
   // EndLatex
 
   // BeginCodeSnippet
-  m_ViewerGroup->m_VideoView->RequestAddObject( m_VideoFrameRepresentationForVideoView );
+  m_ViewerGroup->m_VideoView->RequestAddObject( 
+                                m_VideoFrameRepresentationForVideoView );
   // EndCodeSnippet
 
   // BeginLatex
@@ -240,7 +243,8 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
   // EndLatex
 
   // BeginCodeSnippet
-  igstk::WebcamWinVideoImager::Pointer videoImager = igstk::WebcamWinVideoImager::New();
+  igstk::WebcamWinVideoImager::Pointer videoImager = 
+                                      igstk::WebcamWinVideoImager::New();
   // EndCodeSnippet
 
   this->m_VideoImager = videoImager;
@@ -298,7 +302,8 @@ void VideoFrameGrabberAndViewerWebcamWin::RequestInitialize()
 
     // BeginCodeSnippet
     VideoImagerTool::Pointer videoImagerTool;
-    WebcamWinVideoImagerTool::Pointer videoImagerToolWebcam = WebcamWinVideoImagerTool::New();
+    WebcamWinVideoImagerTool::Pointer videoImagerToolWebcam = 
+                                         WebcamWinVideoImagerTool::New();
     unsigned int dims[3];
     dims[0] = 320;
     dims[1] = 240;
@@ -375,7 +380,8 @@ VideoFrameGrabberAndViewerWebcamWin::RequestPrepareToQuit()
   //
   // EndLatex
   // BeginCodeSnippet
-  m_ViewerGroup->m_VideoView->RequestRemoveObject( m_VideoFrameRepresentationForVideoView );
+  m_ViewerGroup->m_VideoView->RequestRemoveObject( 
+                                m_VideoFrameRepresentationForVideoView );
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   // EndCodeSnippet
 
