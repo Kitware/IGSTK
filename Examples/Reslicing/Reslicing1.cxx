@@ -343,7 +343,8 @@ int main( int argc , char * argv [] )
   // EndLatex
   //
   // BeginCodeSnippet
-  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject(
+                                                    imageSpatialObject );
   // EndCodeSnippet
   //
   // set transform and parent to the reslicer plane
@@ -355,7 +356,8 @@ int main( int argc , char * argv [] )
   // EndLatex
   //
   // BeginCodeSnippet
-  imageResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
+  imageResliceRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                            reslicerPlaneSpatialObject );
   // EndCodeSnippet
 
   // BeginLatex
@@ -363,7 +365,8 @@ int main( int argc , char * argv [] )
   // EndLatex
   //
   // BeginCodeSnippet
-  reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
+  reslicerPlaneSpatialObject->RequestSetToolSpatialObject( 
+                                                     toolSpatialObject );
   // EndCodeSnippet
 
   view2D->RequestDetachFromParent();
