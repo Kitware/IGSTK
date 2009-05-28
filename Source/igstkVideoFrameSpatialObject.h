@@ -124,6 +124,8 @@ private:
   vtkImageData*       m_VTKImage;
   TPixelType *        m_RawBuffer;
 
+  VTKImageModifiedEvent  vtkImageLoadedEvent;
+
   igstk::VideoImagerTool::Pointer                     m_VideoImagerTool;
   /** raw frame for the spatial object */
   FrameType                       m_Frame;
@@ -133,6 +135,7 @@ private:
   double                    m_PixelSizeX;
   double                    m_PixelSizeY;
   igstk::Transform          m_CalibrationTransform;
+  RGBPixelType*             m_RGBPixelContainer;
 
   unsigned int              m_NumberOfScalarComponents;
 
