@@ -135,6 +135,9 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
+
+    m_RGBPixelContainer = new RGBPixelType[m_Width * m_Height];//
+
     m_RawBuffer = (TPixelType*)malloc(m_Width * m_Height * 3);
     for(unsigned int i = 0; i< m_Width * m_Height * 3; i++)
     {
@@ -153,18 +156,16 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     RGBImportFilter->SetSpacing( spacing );
 
     int j=0;
-    RGBPixelType* tmp;
-    tmp = new RGBPixelType[m_Width * m_Height];
     for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
     {
       RGBPixelType temp;
       temp[0]=m_RawBuffer[i];
       temp[1]=m_RawBuffer[i+1];
       temp[2]=m_RawBuffer[i+2];
-      tmp[j]=temp;
+      m_RGBPixelContainer[j]=temp;
       j++;
     }
-    RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
+    RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
     RGBImportFilter->Update();
 
     this->m_RGBImage = RGBImportFilter->GetOutput();
@@ -185,10 +186,10 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
     m_ImportFilter->SetSpacing( spacing );
 
-//    for( unsigned int i=0; i < m_Width * m_Height; i++ )
-//    {
-//    pixels[i]=m_RawBuffer[i];
-//    }
+    for( unsigned int i=0; i < m_Width * m_Height; i++ )
+    {
+      //pixels[i]=m_RawBuffer[i];
+    }
 
     m_ImportFilter->SetImportPointer(m_RawBuffer,
                       m_Width * m_Height,
@@ -220,7 +221,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   {
     if(m_RGBImage.IsNull())
     {
-    cout << "mrgbimage is null" <<  endl;
     return true;
     }
     else
@@ -228,7 +228,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     typename RGBImportFilterType::RegionType    tmpregion;
     tmpregion = m_RGBImage->GetLargestPossibleRegion();
     const unsigned int numberOfPixels = tmpregion.GetNumberOfPixels();
-    cout << "number of pixels " << numberOfPixels  << endl;
     const bool isEmpty = ( numberOfPixels == 0 );
     return isEmpty;
     }
@@ -237,7 +236,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   {
     if(m_RGBImage.IsNull())
     {
-      cout << "mrgbimage is null" <<  endl;
       return true;
     }
     else
@@ -331,9 +329,9 @@ VideoFrameSpatialObject< TPixelType, TChannels >
   Self * self = const_cast< Self * >( this );
   self->UpdateImages();
 
-  VTKImageModifiedEvent  event;
-  event.Set( m_VTKImage );
-  this->InvokeEvent( event );
+  VTKImageModifiedEvent  vtkImageLoadedEvent;
+  vtkImageLoadedEvent.Set( m_VTKImage );
+  this->InvokeEvent( vtkImageLoadedEvent );
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -352,30 +350,25 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
-    cout << "-";
+    int j=0;
+    for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
+    {
+      RGBPixelType temp;
+      temp[0]=m_RawBuffer[i];
+      temp[1]=m_RawBuffer[i+1];
+      temp[2]=m_RawBuffer[i+2];
+      m_RGBPixelContainer[j]=temp;
+      j++;
+    }
+    RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
+    RGBImportFilter->Update();
+    this->m_RGBImage = RGBImportFilter->GetOutput();
 
-  int j=0;
-  RGBPixelType* tmp;
-  tmp = new RGBPixelType[m_Width * m_Height];
-  for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
-  {
-    RGBPixelType temp;
-    temp[0]=m_RawBuffer[i];
-    temp[1]=m_RawBuffer[i+1];
-    temp[2]=m_RawBuffer[i+2];
-    tmp[j]=temp;
-    j++;
-  }
-  RGBImportFilter->SetImportPointer(tmp, m_Width * m_Height, false );
-  RGBImportFilter->Update();
+    m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
+    m_VtkRGBImporter->UpdateWholeExtent();
+    m_VtkRGBImporter->Update();
 
-  this->m_RGBImage = RGBImportFilter->GetOutput();
-
-  m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
-  m_VtkRGBImporter->UpdateWholeExtent();
-  m_VtkRGBImporter->Update();
-
-  m_VTKImage = m_VtkRGBImporter->GetOutput();
+    m_VTKImage = m_VtkRGBImporter->GetOutput();
 
   }
   else if(m_NumberOfChannels == 1)
