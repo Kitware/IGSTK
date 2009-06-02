@@ -148,6 +148,13 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_OpenIGTLink)
+    SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.h
+      )
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
+
 # The implementation files
 
 SET(IGSTK_SRCS
@@ -279,6 +286,14 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_OpenIGTLink)
+    SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
+      )
+ENDIF(IGSTKSandbox_USE_OpenIGTLink)
+
+
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS}
     igstkSerialCommunicationForWindows.h
@@ -384,13 +399,6 @@ IF(IGSTKSandbox_USE_FLTK)
       )
 ENDIF(IGSTKSandbox_USE_FLTK)      
 
-IF(IGSTKSandbox_USE_OpenIGTLink)
-    SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkTrackerToolObserverToOpenIGTLinkRelay.h
-      )
-ENDIF(IGSTKSandbox_USE_OpenIGTLink)
-
 IF (IGSTKSandbox_USE_OpenIGTLink)
   SET(IGSTKSandbox_HEADS
       ${IGSTKSandbox_HEADS}
@@ -495,13 +503,6 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkPivotCalibrationFLTKWidget.cxx
       )
 ENDIF(IGSTKSandbox_USE_FLTK)      
-
-IF(IGSTKSandbox_USE_OpenIGTLink)
-    SET(IGSTKSandbox_SRCS
-      ${IGSTKSandbox_SRCS}
-      igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
-      )
-ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 IF( WIN32 )
   SET(IGSTKSandbox_SRCS

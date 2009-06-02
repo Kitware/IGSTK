@@ -36,15 +36,6 @@ void RegisterTests()
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
 
-#ifdef IGSTKSandbox_USE_OpenIGTLink
-  REGISTER_TEST( igstkOpenIGTLinkReceiverTest );
-  REGISTER_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest );
-  REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
-#ifdef IGSTKSandbox_USE_MicronTracker
-  REGISTER_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest );
-#endif  
-#endif
-
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkVascularNetworkReaderTest);
 #endif /* IGSTKSandbox_USE_FLTK */

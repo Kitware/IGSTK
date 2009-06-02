@@ -108,32 +108,6 @@ SET(SandboxTests_SRCS
 
 )
 
-IF(IGSTKSandbox_USE_OpenIGTLink)
-
-    SET(SandboxTests_SRCS
-      ${SandboxTests_SRCS}
-      igstkOpenIGTLinkReceiverTest.cxx
-      )
-
-    SET(SandboxTests_SRCS
-      ${SandboxTests_SRCS}
-      igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-
-    SET(SandboxTests_SRCS
-      ${SandboxTests_SRCS}
-      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-
-  IF(IGSTKSandbox_USE_MicronTracker)
-     SET(SandboxTests_SRCS
-      ${SandboxTests_SRCS}
-      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-  ENDIF(IGSTKSandbox_USE_MicronTracker)
-
-ENDIF(IGSTKSandbox_USE_OpenIGTLink)  
-
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
 
@@ -145,39 +119,6 @@ ADD_TEST( igstkLandmarkUltrasoundCalibrationTest ${IGSTKSandbox_TESTS} igstkLand
 
 ADD_TEST( igstkSocketCommunicationTest ${IGSTKSandbox_TESTS} igstkSocketCommunicationTest)
 ADD_TEST( igstkTransductionMacroTest ${IGSTKSandbox_TESTS} igstkTransductionMacroTest)
-
-IF(IGSTKSandbox_USE_OpenIGTLink)
-
-    ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
-      ${IGSTKSandbox_TESTS}
-      igstkTrackerToolObserverToOpenIGTLinkRelayTest
-      localhost 16666 1000 100 10 
-      ${TRACKER_FREQUENCY}
-      )
- 
-    ADD_TEST( igstkOpenIGTLinkReceiverTest
-      ${IGSTKSandbox_TESTS}
-      igstkOpenIGTLinkReceiverTest
-      16666 
-      )
- 
-    ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
-      ${IGSTKSandbox_TESTS}
-      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
-      localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER} 10
-      ${TRACKER_FREQUENCY}
-      )
-  IF(IGSTKSandbox_USE_MicronTracker)
-    ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
-      ${IGSTKSandbox_TESTS}
-      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
-      localhost 16666 1000 
-      ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
-      ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
-      ${IGSTK_DATA_ROOT}/Input/Markers )
-  ENDIF(IGSTKSandbox_USE_MicronTracker)
-
-ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
 ADD_TEST( igstkGroupObjectTest ${IGSTKSandbox_TESTS} igstkGroupObjectTest)
 ADD_TEST( igstkVesselObjectTest ${IGSTKSandbox_TESTS} igstkVesselObjectTest)
@@ -311,5 +252,6 @@ IGSTKTesting(igstkLatestTests
              IGSTKSandbox_USE_KWSTYLE
              IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED
              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
+             IGSTKSandbox_USE_OpenIGTLink
              )
 
