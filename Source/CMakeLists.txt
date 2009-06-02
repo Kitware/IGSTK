@@ -136,6 +136,13 @@ IF(IGSTK_USE_MicronTracker)
 ENDIF(IGSTK_USE_MicronTracker)
 
 
+IF(IGSTK_USE_OpenIGTLink)
+    SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.h
+      )
+ENDIF(IGSTK_USE_OpenIGTLink)
+
 
 # The implementation files
 
@@ -266,6 +273,13 @@ IF(IGSTK_USE_MicronTracker)
  
      )
 ENDIF(IGSTK_USE_MicronTracker)
+
+IF(IGSTK_USE_OpenIGTLink)
+    SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelay.cxx
+      )
+ENDIF(IGSTK_USE_OpenIGTLink)
 
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
