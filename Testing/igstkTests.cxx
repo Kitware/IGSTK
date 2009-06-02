@@ -185,6 +185,14 @@ void RegisterTests()
 #endif 
 #endif
 
- 
+#ifdef IGSTK_USE_OpenIGTLink
+  REGISTER_TEST( igstkOpenIGTLinkReceiverTest );
+  REGISTER_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest );
+  REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
+#ifdef IGSTK_USE_MicronTracker
+  REGISTER_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest );
+#endif  
+#endif
+
   
 }

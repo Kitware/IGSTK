@@ -18,6 +18,7 @@
 # IGSTK_TEST_LOOPBACK_PORT_NUMBER(int) : port number used by the loopback
 # IGSTK_TEST_FLOCKOFBIRD_ATTACHED(boolean) : Option for ascension tracker 
 # IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER(int) : port number used for ascension tracker
+# IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
  
 
 
@@ -39,6 +40,7 @@ MACRO(IGSTKTesting
       IGSTK_USE_KWSTYLE
       IGSTK_TEST_FLOCKOFBIRD_ATTACHED
       IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER
+      IGSTK_USE_OpenIGTLink
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -560,6 +562,63 @@ IF(${IGSTK_USE_MicronTracker})
         igstkMicronTrackerToolTest.cxx)
 
 ENDIF(${IGSTK_USE_MicronTracker})
+
+IF(IGSTK_USE_OpenIGTLink)
+
+    SET(Tests_SRCS
+      ${Tests_SRCS}
+      igstkOpenIGTLinkReceiverTest.cxx
+      )
+
+    SET(Tests_SRCS
+      ${Tests_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+
+    SET(Tests_SRCS
+      ${Tests_SRCS}
+      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+
+  IF(IGSTKSandbox_USE_MicronTracker)
+     SET(Tests_SRCS
+      ${Tests_SRCS}
+      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+
+  ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTK_TESTS}
+      igstkTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 100 10 
+      ${TRACKER_FREQUENCY}
+      )
+ 
+  ADD_TEST( igstkOpenIGTLinkReceiverTest
+      ${IGSTK_TESTS}
+      igstkOpenIGTLinkReceiverTest
+      16666 
+      )
+ 
+  ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTK_TESTS}
+      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER} 10
+      ${TRACKER_FREQUENCY}
+      )
+
+  IF(IGSTK_USE_MicronTracker)
+    ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
+      ${IGSTK_TESTS}
+      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
+      localhost 16666 1000 
+      ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
+      ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
+      ${IGSTK_DATA_ROOT}/Input/Markers )
+  ENDIF(IGSTK_USE_MicronTracker)
+
+ENDIF(IGSTK_USE_OpenIGTLink)  
 
 IF(${IGSTK_USE_Qt})
     ADD_TEST( igstkQTWidgetTest
