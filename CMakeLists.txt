@@ -182,6 +182,22 @@ IF(IGSTK_USE_MicronTracker)
   ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTK_USE_MicronTracker)
 
+#
+# Use OpenIGTLink protocol 
+#
+OPTION(IGSTK_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)
+IF(IGSTK_USE_OpenIGTLink)
+  #
+  #  FIND OpenIGTLink 
+  #
+  FIND_PACKAGE(OpenIGTLink)
+  IF (OpenIGTLink_USE_FILE)
+    INCLUDE (${OpenIGTLink_USE_FILE})
+  ELSE (OpenIGTLink_USE_FILE)
+    MESSAGE( FATAL_ERROR "This application requires OpenIGTLink. One of these components is missing. Please verify configuration")
+  ENDIF (OpenIGTLink_USE_FILE)
+ENDIF(IGSTK_USE_OpenIGTLink)
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.
 FIND_PATH(IGSTK_DATA_ROOT igstkDataReadMe.txt ${IGSTK_SOURCE_DIR}/Testing/Data $ENV{IGSTK_DATA_ROOT})
