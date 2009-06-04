@@ -553,40 +553,11 @@ IF(${IGSTK_USE_MicronTracker})
               ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
               ${IGSTK_DATA_ROOT}/Input/Markers
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
-    SET(Tests_SRCS ${Tests_SRCS}
-        igstkMicronTrackerTest.cxx)
-
     ADD_TEST( igstkMicronTrackerToolTest
               ${IGSTK_TESTS} igstkMicronTrackerToolTest )
-    SET(Tests_SRCS ${Tests_SRCS}
-        igstkMicronTrackerToolTest.cxx)
-
 ENDIF(${IGSTK_USE_MicronTracker})
 
 IF(IGSTK_USE_OpenIGTLink)
-
-    SET(Tests_SRCS
-      ${Tests_SRCS}
-      igstkOpenIGTLinkReceiverTest.cxx
-      )
-
-    SET(Tests_SRCS
-      ${Tests_SRCS}
-      igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-
-    SET(Tests_SRCS
-      ${Tests_SRCS}
-      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-
-  IF(IGSTKSandbox_USE_MicronTracker)
-     SET(Tests_SRCS
-      ${Tests_SRCS}
-      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
-      )
-  ENDIF(IGSTKSandbox_USE_MicronTracker)
-
 
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
@@ -911,6 +882,32 @@ IF(${IGSTK_USE_Qt})
 
 ENDIF(${IGSTK_USE_Qt})
  
+IF(IGSTK_USE_OpenIGTLink)
+
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkOpenIGTLinkReceiverTest.cxx
+      )
+
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+
+  IF(IGSTKSandbox_USE_MicronTracker)
+     SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
+      )
+  ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+ENDIF(IGSTK_USE_OpenIGTLink)  
+
 
 IF(${SANDBOX_BUILD})
   FOREACH(SourceFile ${BasicTests_SRCS})

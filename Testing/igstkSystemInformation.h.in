@@ -7,6 +7,8 @@
 
 #cmakedefine IGSTK_USE_Qt
 
+#cmakedefine IGSTK_USE_OpenIGTLink
+
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT
 #  undef IGSTK_DATA_ROOT
