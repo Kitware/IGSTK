@@ -4,6 +4,7 @@
 
 SUBDIRS(
  TransformReaders
+ TransformWriters
  TrackerConfiguration
  Tools
 )
