@@ -5,6 +5,7 @@
 SUBDIRS(
  TransformReaders
  TrackerConfiguration
+ Tools
 )
 
 
@@ -22,5 +23,12 @@ IF(IGSTK_USE_FLTK)
     Navigator
     )
 ENDIF(IGSTK_USE_FLTK)
+
+IF (IGSTK_USE_OpenIGTLink)
+    SUBDIRS(  OpenIGTLinkTrackerBroadcasting )
+    SUBDIRS(  OpenIGTLinkConfigurationReaders )
+ENDIF (IGSTK_USE_OpenIGTLink)
+
+
 
 

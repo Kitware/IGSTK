@@ -9,7 +9,6 @@ SET(SRCS
     igstkAffineTransformXMLFileReader.cxx
     igstkPerspectiveTransformXMLFileReader.cxx
     igstkTransformFileReader.cxx
-    TransformReaderExample.cxx
 )
 SET(HDRS
     igstkPrecomputedTransformData.h
@@ -27,14 +26,6 @@ INCLUDE_DIRECTORIES(
 .
 )
 
-#
-# Link to the following libraries
-#
-LINK_LIBRARIES (
-   IGSTK
-)
-
-
-ADD_EXECUTABLE(TransformReaderExample ${SRCS} ${HDRS})
-
-TARGET_LINK_LIBRARIES(TransformReaderExample ${LINK_LIBRARIES})
+ADD_LIBRARY( TransformReaders ${SRCS} ${HDRS})
+ADD_EXECUTABLE(TransformReaderExample TransformReaderExample.cxx) 
+TARGET_LINK_LIBRARIES(TransformReaderExample TransformReaders IGSTK)

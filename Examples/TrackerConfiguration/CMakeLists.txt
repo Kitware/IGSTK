@@ -8,9 +8,6 @@ SET(PRECOMPUTED_TRANSFORM_READER_DIR
 # Source code for the project
 #
 SET(SRCS
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkPrecomputedTransformData.cxx
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkTransformXMLFileReaderBase.cxx
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkRigidTransformXMLFileReader.cxx
     igstkTrackerConfiguration.cxx
     igstkAuroraTrackerConfiguration.cxx
     igstkMicronTrackerConfiguration.cxx
@@ -29,9 +26,6 @@ SET(SRCS
     configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
 )
 SET(HDRS
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkPrecomputedTransformData.h
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkTransformXMLFileReaderBase.h
-    ${PRECOMPUTED_TRANSFORM_READER_DIR}/igstkRigidTransformXMLFileReader.h
     igstkTrackerConfiguration.h
     igstkAuroraTrackerConfiguration.h
     igstkMicronTrackerConfiguration.h
@@ -58,12 +52,8 @@ INCLUDE_DIRECTORIES(
  ./configurationFileReaders
 )
 
-#
-# Link to the following libraries
-#
-LINK_LIBRARIES (
-  IGSTK
-)
+ADD_LIBRARY(TrackerConfiguration ${SRCS} ${HDRS})
+TARGET_LINK_LIBRARIES(TrackerConfiguration IGSTK)
 
-ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx ${SRCS} ${HDRS})
-TARGET_LINK_LIBRARIES(TrackerConfigurationExample ${LINK_LIBRARIES})
+ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx)
+TARGET_LINK_LIBRARIES(TrackerConfigurationExample TrackerConfiguration TransformReaders IGSTK)
