@@ -23,28 +23,28 @@ namespace igstk
 SceneGraph::SceneGraph()
 {
   //m_SceneGraphUI = new igstk::SceneGraphUI();
-  isUIBeingShown = false;
-  isChanged = false;
+  m_IsUIBeingShown = false;
+  m_IsChanged = false;
 }
 
 SceneGraph::~SceneGraph()
 {
-  instanceFlag = false;
+  m_InstanceFlag = false;
 }
 
-bool SceneGraph::instanceFlag = false;
-SceneGraph* SceneGraph::single = NULL;
+bool SceneGraph::m_InstanceFlag = false;
+SceneGraph* SceneGraph::m_Single = NULL;
 SceneGraph* SceneGraph::getInstance()
 {
-    if(! instanceFlag)
+    if(! m_InstanceFlag)
     {
-        single = new SceneGraph();
-        instanceFlag = true;
-        return single;
+        m_Single = new SceneGraph();
+        m_InstanceFlag = true;
+        return m_Single;
     }
     else
     {
-        return single;
+        return m_Single;
     }
 }
 
@@ -54,8 +54,8 @@ void SceneGraph
             CoordinateSystemSetTransformEvent *setTransformEvent)
 {
   bool parentFound = false;
-  for(std::list<SceneGraphNode*>::iterator i = rootNodes.begin(); 
-    i != rootNodes.end(); ++i)
+  for(std::list<SceneGraphNode*>::iterator i = m_RootNodes.begin(); 
+    i != m_RootNodes.end(); ++i)
   {
     if(IsParentExisting((*i), setTransformEvent->Get().
       GetSource()->GetName()))
@@ -75,15 +75,15 @@ void SceneGraph
 void SceneGraph::OptimizeTree()
 {
   bool parentFound = false;
-  for(std::list<SceneGraphNode*>::iterator rootNode1 = rootNodes.begin(); 
-    rootNode1 != rootNodes.end(); ++rootNode1)
+  for(std::list<SceneGraphNode*>::iterator rootNode1 = m_RootNodes.begin(); 
+    rootNode1 != m_RootNodes.end(); ++rootNode1)
   {
-    for(std::list<SceneGraphNode*>::iterator rootNode2 = rootNodes.begin();
-    rootNode2 != rootNodes.end(); ++rootNode2)
+    for(std::list<SceneGraphNode*>::iterator rootNode2 = m_RootNodes.begin();
+    rootNode2 != m_RootNodes.end(); ++rootNode2)
     {
       if(rootNode1 == rootNode2)
         continue;
-      if(IsParentExisting(*rootNode1, (*rootNode2)->name))
+      if(IsParentExisting(*rootNode1, (*rootNode2)->GetName()))
       {
         ClubBothRootNodes(*rootNode1, *rootNode2);
         parentFound = true;
@@ -98,19 +98,19 @@ void SceneGraph::OptimizeTree()
 bool SceneGraph
 ::ClubBothRootNodes(SceneGraphNode* rootNode, SceneGraphNode* childNode)
 { 
-  if(strcmp(rootNode->name,childNode->name) == 0)
+  if(strcmp(rootNode->GetName(),childNode->GetName()) == 0)
   {
-    rootNode->parent->children.push_back(childNode);
-    childNode->parent = rootNode->parent;
-    rootNodes.remove(childNode);
+    rootNode->GetParent()->GetChildren()->push_back(childNode);
+    childNode->SetParent(rootNode->GetParent());
+    m_RootNodes.remove(childNode);
     return true;
   }
-  for(std::list<SceneGraphNode*>::iterator j = rootNode->children.begin();
-    j != rootNode->children.end(); ++j)
+  for(std::list<SceneGraphNode*>::iterator j = rootNode->GetChildren()->begin();
+    j != rootNode->GetChildren()->end(); ++j)
   {
     if(ClubBothRootNodes((*j),childNode))
     {
-      rootNode->children.remove(*j);
+      rootNode->GetChildren()->remove(*j);
       break;
     }
   }
@@ -121,14 +121,14 @@ bool SceneGraph
 ::IsParentExisting(SceneGraphNode *rootNode, const char *parentName)
 {
   bool parentFound = false;
-  if(strcmp(rootNode->name,parentName) == 0)
+  if(strcmp(rootNode->GetName(),parentName) == 0)
   {
     return true;
   }
-  for(std::list<SceneGraphNode*>::iterator j = rootNode->children.begin();
-    j != rootNode->children.end(); ++j)
+  for(std::list<SceneGraphNode*>::iterator j = rootNode->GetChildren()->begin();
+    j != rootNode->GetChildren()->end(); ++j)
   {
-    if(strcmp((*j)->name,parentName) == 0)
+    if(strcmp((*j)->GetName(),parentName) == 0)
     {
       parentFound = true;
       return true;
@@ -149,55 +149,55 @@ void SceneGraph
                 *setTransformEvent)
 {
   
-  if(strcmp(rootNode->name,setTransformEvent->Get().GetSource()->GetName())
+  if(strcmp(rootNode->GetName(),setTransformEvent->Get().GetSource()->GetName())
         == 0)
   {
-    for(std::list<SceneGraphNode*>::iterator i = rootNode->children.
-      begin(); i != rootNode->children.end(); ++i)
+    for(std::list<SceneGraphNode*>::iterator i = rootNode->GetChildren()->
+      begin(); i != rootNode->GetChildren()->end(); ++i)
     {
-      if(strcmp((*i)->name,setTransformEvent->Get().GetDestination()->
+      if(strcmp((*i)->GetName(),setTransformEvent->Get().GetDestination()->
         GetName()) == 0)
       {
         return;
       }
     }
     SceneGraphNode* child = new SceneGraphNode();
-    child->coordinateSystem = const_cast<CoordinateSystem *> 
-            (setTransformEvent->Get().GetDestination());
-    child->type = const_cast<char*> 
-            (setTransformEvent->Get().GetDestination()->GetType());
-    child->name = const_cast<char*> 
-            (setTransformEvent->Get().GetDestination()->GetName());
-    child->parent = rootNode;
+    child->SetCoordinateSystem(const_cast<CoordinateSystem *> 
+                               (setTransformEvent->Get().GetDestination()));
+    child->SetType(const_cast<char*> 
+                   (setTransformEvent->Get().GetDestination()->GetType()));
+    child->SetName(const_cast<char*> 
+                   (setTransformEvent->Get().GetDestination()->GetName()));
+    child->SetParent(rootNode);
 
-    rootNode->children.push_back(child);
+    rootNode->GetChildren()->push_back(child);
     return;
   }
-  for(std::list<SceneGraphNode*>::iterator j = rootNode->children.begin();
-    j != rootNode->children.end(); ++j)
+  for(std::list<SceneGraphNode*>::iterator j = rootNode->GetChildren()->begin();
+    j != rootNode->GetChildren()->end(); ++j)
   {
-    if(strcmp((*j)->name, setTransformEvent->Get().GetSource()->
+    if(strcmp((*j)->GetName(), setTransformEvent->Get().GetSource()->
       GetName()) == 0)
     {
-      for(std::list<SceneGraphNode*>::iterator k = (*j)->children.
-        begin(); k != (*j)->children.end(); ++k)
+      for(std::list<SceneGraphNode*>::iterator k = (*j)->GetChildren()->
+        begin(); k != (*j)->GetChildren()->end(); ++k)
       {
-        if(strcmp((*k)->name,setTransformEvent->Get().
+        if(strcmp((*k)->GetName(),setTransformEvent->Get().
           GetDestination()->GetName()) == 0)
         {
           return;
         }
       }
       SceneGraphNode* child = new  SceneGraphNode();
-      child->coordinateSystem = const_cast<CoordinateSystem *> 
-            (setTransformEvent->Get().GetDestination());
-      child->type = const_cast<char*> 
-            (setTransformEvent->Get().GetDestination()->GetType());
-      child->name = const_cast<char*> 
-            (setTransformEvent->Get().GetDestination()->GetName());
-      child->parent = (*j);
+      child->SetCoordinateSystem(const_cast<CoordinateSystem *> 
+                                 (setTransformEvent->Get().GetDestination()));
+      child->SetType(const_cast<char*> 
+                     (setTransformEvent->Get().GetDestination()->GetType()));
+      child->SetName(const_cast<char*> 
+                     (setTransformEvent->Get().GetDestination()->GetName()));
+      child->SetParent((*j));
       
-      (*j)->children.push_back(child);
+      (*j)->GetChildren()->push_back(child);
     }  
     else if(IsParentExisting((*j), setTransformEvent->Get().
       GetSource()->GetName()))
@@ -213,25 +213,25 @@ void SceneGraph
                     *setTransformEvent)
 {
   SceneGraphNode* parent = new SceneGraphNode();
-  parent->type = const_cast<char *> 
-          (setTransformEvent->Get().GetSource()->GetType());
-  parent->name = const_cast<char *> 
-          (setTransformEvent->Get().GetSource()->GetName());
-  parent->coordinateSystem = const_cast<CoordinateSystem *> 
-          ( setTransformEvent->Get().GetSource());
-  parent->parent = NULL;
+  parent->SetType( const_cast<char *> 
+                  (setTransformEvent->Get().GetSource()->GetType()) );
+  parent->SetName( const_cast<char *> 
+                  (setTransformEvent->Get().GetSource()->GetName()) );
+  parent->SetCoordinateSystem( const_cast<CoordinateSystem *> 
+                               ( setTransformEvent->Get().GetSource()) );
+  parent->SetParent(NULL);
 
   SceneGraphNode* child = new SceneGraphNode();
-  child->coordinateSystem = const_cast<CoordinateSystem *> 
-          (setTransformEvent->Get().GetDestination());
-  child->type = const_cast<char *> 
-          (setTransformEvent->Get().GetDestination()->GetType());
-  child->name = const_cast<char *> 
-          (setTransformEvent->Get().GetDestination()->GetName());
-  child->parent = parent;
-  child->parentTransform = setTransformEvent->Get().GetTransform();
-  parent->children.push_back(child);
-  rootNodes.push_back(parent);
+  child->SetCoordinateSystem( const_cast<CoordinateSystem *> 
+                              (setTransformEvent->Get().GetDestination()) );
+  child->SetType( const_cast<char *> 
+                 (setTransformEvent->Get().GetDestination()->GetType()) );
+  child->SetName( const_cast<char *> 
+                  (setTransformEvent->Get().GetDestination()->GetName()));
+  child->SetParent(parent);
+  child->SetParentTransform(setTransformEvent->Get().GetTransform());
+  parent->GetChildren()->push_back(child);
+  m_RootNodes.push_back(parent);
 }
 
 void SceneGraph::printNodeDetails()
@@ -239,8 +239,8 @@ void SceneGraph::printNodeDetails()
   std::cout << "START SceneGraph Details." << std::endl;
   std::cout << "--------------------------------" << std::endl;
 
-  for(std::list<SceneGraphNode*>::iterator k = rootNodes.begin();
-    k != rootNodes.end(); ++k)
+  for(std::list<SceneGraphNode*>::iterator k = m_RootNodes.begin();
+    k != m_RootNodes.end(); ++k)
   {
     printParentNodeDetails(*k);
   }
@@ -252,8 +252,8 @@ void SceneGraph::printNodeDetails()
 void SceneGraph::printParentNodeDetails(SceneGraphNode* parentNode)
 {
   print(parentNode);
-  for(std::list<SceneGraphNode*>::iterator m = parentNode->children.begin();
-    m != parentNode->children.end(); ++m)
+  for(std::list<SceneGraphNode*>::const_iterator m = parentNode->GetChildren()->begin();
+    m != parentNode->GetChildren()->end(); ++m)
   {
     printParentNodeDetails(*m);
   }
@@ -262,16 +262,16 @@ void SceneGraph::printParentNodeDetails(SceneGraphNode* parentNode)
 void SceneGraph::print(igstk::SceneGraphNode *node)
 {
   std::cout << "********Details********" << std::endl;
-  std::cout << "Name  : " << node->name << std::endl;
-  if(node->parent != NULL)
+  std::cout << "Name  : " << node->GetName() << std::endl;
+  if(node->GetParent() != NULL)
   {
-    std::cout << "Parent: " << node->parent->name << std::endl;
+    std::cout << "Parent: " << node->GetParent()->GetName() << std::endl;
   }
   else 
   {
     std::cout << "Parent: No parent" << std::endl;
   }
-  std::cout << "Coordinate System: " << node->coordinateSystem->
+  std::cout << "Coordinate System: " << node->GetCoordinateSystem()->
       GetName() << std::endl;
   std::cout << "Trasform to parent: " << std::endl;
   std::cout << "*******End Details*******" << std::endl;
@@ -287,9 +287,9 @@ void SceneGraph
   SceneGraphNode* child = LocateSceneGraphNodeWithName(
     setTransformEvent->Get().GetDestination()->GetName());
 
-  child->parent = NULL;
-  rootNodes.push_back(child);
-  parent->children.remove(child);
+  child->SetParent(NULL);
+  m_RootNodes.push_back(child);
+  parent->GetChildren()->remove(child);
 }
 
 void SceneGraph::ExportSceneGraphToDot(std::string filename)
@@ -310,13 +310,13 @@ void SceneGraph::ExportSceneGraphToDot(std::string filename)
 void SceneGraph::ExportDescriptionToDot(std::ostream & ostr)
 {
   ostr << "digraph G {" << std::endl;
-  for(std::list<SceneGraphNode *>::iterator rootNode = rootNodes.begin();
-    rootNode != rootNodes.end(); ++rootNode)
+  for(std::list<SceneGraphNode *>::const_iterator rootNode = m_RootNodes.begin();
+    rootNode != m_RootNodes.end(); ++rootNode)
   {
     DrawParentChildrenRelationship(ostr, *rootNode);
   }
-  for(std::list<SceneGraphNode *>::iterator rootNode = rootNodes.begin();
-    rootNode != rootNodes.end(); ++rootNode)
+  for(std::list<SceneGraphNode *>::const_iterator rootNode = m_RootNodes.begin();
+    rootNode != m_RootNodes.end(); ++rootNode)
   {
     DrawDescription(ostr, *rootNode);
   }
@@ -327,12 +327,12 @@ void SceneGraph
 ::DrawParentChildrenRelationship(std::ostream &ostr, 
                  igstk::SceneGraphNode *parentNode)
 {
-  for(std::list<SceneGraphNode*>::iterator child = parentNode->
-      children.begin();
-    child != parentNode->children.end(); ++child)
+  for(std::list<SceneGraphNode*>::const_iterator child =
+         parentNode->GetChildren()->begin();
+    child != parentNode->GetChildren()->end(); ++child)
   {
-    ostr << "\"" << parentNode->name << "\"" <<" -> " << 
-          "\""<<(*child)->name<< "\""<<";" << std::endl;
+    ostr << "\"" << parentNode->GetName() << "\"" <<" -> " << 
+          "\""<<(*child)->GetName()<< "\""<<";" << std::endl;
     DrawParentChildrenRelationship(ostr, *child);
   } 
 }
@@ -341,31 +341,31 @@ void SceneGraph
 ::DrawDescription(std::ostream &ostr, 
           igstk::SceneGraphNode *parentNode)
 {
-  if(strcmp(parentNode->type, "TrackerTool") == 0)
+  if(strcmp(parentNode->GetType(), "TrackerTool") == 0)
   {
-    ostr << "\"" << parentNode->name << "\"" << 
+    ostr << "\"" << parentNode->GetName() << "\"" << 
       "[shape=polygon, sides=6, color=red, style=filled];" << std::endl;
   }
-  else if(strcmp(parentNode->type, "SpatialObject") == 0)
+  else if(strcmp(parentNode->GetType(), "SpatialObject") == 0)
   {
-    ostr << "\"" << parentNode->name << "\"" << 
+    ostr << "\"" << parentNode->GetName() << "\"" << 
       "[shape=polygon, sides=4, color=blue, style=filled];" << std::endl;
   }
-  else if(strcmp(parentNode->type, "Tracker") == 0)
+  else if(strcmp(parentNode->GetType(), "Tracker") == 0)
   {
-    ostr << "\"" << parentNode->name << "\"" << 
+    ostr << "\"" << parentNode->GetName() << "\"" << 
   "[shape=polygon, sides=4, distortion=-0.7, color=yellow, style=filled];"
       << std::endl;
   }
-  else if(strcmp(parentNode->type, "View") == 0)
+  else if(strcmp(parentNode->GetType(), "View") == 0)
   {
-    ostr << "\"" << parentNode->name << "\"" << 
+    ostr << "\"" << parentNode->GetName() << "\"" << 
       "[shape=polygon, sides=8, color=green, style=filled];" << 
       std::endl;
   }
-  for(std::list<SceneGraphNode*>::iterator child = parentNode->
-      children.begin();
-    child != parentNode->children.end(); ++child)
+  for(std::list<SceneGraphNode*>::const_iterator child =
+         parentNode->GetChildren()->begin();
+      child != parentNode->GetChildren()->end(); ++child)
   {
     DrawDescription(ostr, *child);
   } 
@@ -373,17 +373,17 @@ void SceneGraph
 
  void SceneGraph::ShowSceneGraph(bool showFlag)
 {
-  isUIBeingShown = showFlag;
-  //m_SceneGraphUI->DrawSceneGraph(rootNodes,showFlag,transitionsStore);
+  m_IsUIBeingShown = showFlag;
+  //m_SceneGraphUI->DrawSceneGraph(m_RootNodes,showFlag,transitionsStore);
 } 
 
 void SceneGraph::ResetCurrentTransformFlag(SceneGraphNode* parentNode)
 {
-  parentNode->isCurrentTransform = false;
-  parentNode->isCurrentInverseTransform = false;
-  for(std::list<SceneGraphNode*>::iterator it = parentNode->
-    children.begin();
-    it != parentNode->children.end(); ++it)
+  parentNode->SetIsCurrentTransform(false);
+  parentNode->SetIsCurrentInverseTransform(false);
+  for(std::list<SceneGraphNode*>::const_iterator it =
+         parentNode->GetChildren()->begin();
+      it != parentNode->GetChildren()->end(); ++it)
   {
     ResetCurrentTransformFlag(*it);
   }
@@ -397,8 +397,8 @@ void SceneGraph
     IsNewTranformEvent(transformPathEvent))
   {
     std::cout << "Got tranformPathEvent" << std::endl;
-    for(std::list<SceneGraphNode*>::iterator i = 
-      rootNodes.begin(); i != rootNodes.end(); ++i)
+    for(std::list<SceneGraphNode*>::const_iterator i = 
+      m_RootNodes.begin(); i != m_RootNodes.end(); ++i)
     {
       ResetCurrentTransformFlag((*i));
     }
@@ -411,9 +411,9 @@ void SceneGraph
         GetName(), transformPathEvent->
         Get().GetDestination()->GetName(), false);
     }
-    /* m_SceneGraphUI->DrawSceneGraph(rootNodes,
-      isUIBeingShown, transitionsStore); */
-    isChanged = true;
+    /* m_SceneGraphUI->DrawSceneGraph(m_RootNodes,
+      m_IsUIBeingShown, transitionsStore); */
+    m_IsChanged = true;
   }
 }
 
@@ -423,8 +423,8 @@ bool SceneGraph
 {
   bool isNew = true;
   
-  for(std::list<Transition *>::iterator it = transitionsStore.begin();
-      it != transitionsStore.end(); ++it)
+  for(std::list<Transition *>::const_iterator it = m_TransitionsStore.begin();
+      it != m_TransitionsStore.end(); ++it)
   {
     if( (strcmp(setTransformEvent->Get().GetSource()->GetName(), 
           (*it)->source) == 0)
@@ -447,7 +447,7 @@ bool SceneGraph
         GetDestination()->GetName();
     newTransition->cAncestor = setTransformEvent->Get().
         GetCommonAncestor()->GetName();
-    transitionsStore.push_back(newTransition);
+    m_TransitionsStore.push_back(newTransition);
   }
   return true;
 }
@@ -467,32 +467,32 @@ bool SceneGraph
                const char * childName, 
                bool isInverse)
 {
-  if(strcmp(ancestorNode->name,childName) == 0)
+  if(strcmp(ancestorNode->GetName(),childName) == 0)
   {
     if(!isInverse)
     {
-      ancestorNode->isCurrentTransform = true;
+      ancestorNode->SetIsCurrentTransform(true);
     }
     else 
     {
-      ancestorNode->isCurrentInverseTransform = true;
+      ancestorNode->SetIsCurrentInverseTransform(true);
     }
     return true;
   }
-  for(std::list<SceneGraphNode*>::iterator i = ancestorNode->
-    children.begin(); i != ancestorNode->children.end(); ++i)
+  for(std::list<SceneGraphNode*>::const_iterator i = ancestorNode->
+    GetChildren()->begin(); i != ancestorNode->GetChildren()->end(); ++i)
   {
-    if(strcmp((*i)->name, childName) == 0)
+    if(strcmp((*i)->GetName(), childName) == 0)
     {
       if(!isInverse)
       {
-        (*i)->isCurrentTransform = true;
-        ancestorNode->isCurrentTransform = true;
+        (*i)->SetIsCurrentTransform(true);
+        ancestorNode->SetIsCurrentTransform(true);
       }
       else 
       {
-        (*i)->isCurrentInverseTransform = true;
-        ancestorNode->isCurrentInverseTransform = true;
+        (*i)->SetIsCurrentInverseTransform(true);
+        ancestorNode->SetIsCurrentInverseTransform(true);
       }
       return true;
     }
@@ -500,11 +500,11 @@ bool SceneGraph
     {
       if(!isInverse)
       {
-        ancestorNode->isCurrentTransform = true;
+        ancestorNode->SetIsCurrentTransform(true);
       }
       else 
       {
-        ancestorNode->isCurrentInverseTransform = true;
+        ancestorNode->SetIsCurrentInverseTransform(true);
       }
       break;
     }
@@ -517,8 +517,8 @@ SceneGraphNode* SceneGraph
 {
   bool nodeFound = false;
   SceneGraphNode* node = NULL;
-  for(std::list<SceneGraphNode*>::iterator i = 
-    rootNodes.begin(); i != rootNodes.end(); ++i)
+  for(std::list<SceneGraphNode*>::const_iterator i = 
+    m_RootNodes.begin(); i != m_RootNodes.end(); ++i)
   {
     node = LocateSceneGraphNodeInRootNode((*i), name);
     if(node != NULL)
@@ -534,12 +534,12 @@ SceneGraphNode* SceneGraph
 ::LocateSceneGraphNodeInRootNode(SceneGraphNode* parentNode,
                  const char * name)
 {
-  if(strcmp(parentNode->name,name) == 0)
+  if(strcmp(parentNode->GetName(),name) == 0)
   {
     return parentNode;
   }
-  for(std::list<SceneGraphNode*>::iterator i = 
-    parentNode->children.begin(); i != parentNode->children.end(); ++i)
+  for(std::list<SceneGraphNode*>::const_iterator i = 
+    parentNode->GetChildren()->begin(); i != parentNode->GetChildren()->end(); ++i)
   {
     SceneGraphNode* node = LocateSceneGraphNodeInRootNode((*i),name);
     if(node != NULL)
@@ -552,24 +552,23 @@ SceneGraphNode* SceneGraph
 
 void SceneGraph::SetNodeDetails(const char* nodeName, bool includeFlag)
 {
-     SceneGraphNode* sceneGraphNode = 
-    LocateSceneGraphNodeWithName(nodeName);
-  sceneGraphNode->isSelected = includeFlag;
+  SceneGraphNode* sceneGraphNode = LocateSceneGraphNodeWithName(nodeName);
+  sceneGraphNode->SetIsSelected(includeFlag);
   for(std::list<SceneGraphNode*>::iterator i = 
-    rootNodes.begin(); i != rootNodes.end(); ++i)
+    m_RootNodes.begin(); i != m_RootNodes.end(); ++i)
   {
     ResetCurrentTransformFlag((*i));
   }
-  /*m_SceneGraphUI->DrawSceneGraph(rootNodes,
-    isUIBeingShown, transitionsStore); */
+  /*m_SceneGraphUI->DrawSceneGraph(m_RootNodes,
+    m_IsUIBeingShown, m_TransitionsStore); */
 }
 
 bool SceneGraph
 ::IsRequestedItemThere(const CoordinateSystemTransformToEvent 
              *setTransformEvent)
 {
-  for(std::list<SceneGraphNode*>::iterator i = rootNodes.begin(); 
-    i != rootNodes.end(); ++i)
+  for(std::list<SceneGraphNode*>::iterator i = m_RootNodes.begin(); 
+    i != m_RootNodes.end(); ++i)
   {
     if(CheckRequestedItemThere((*i),setTransformEvent))
       return true;
@@ -586,8 +585,8 @@ bool SceneGraph
   {
     return true;
   }
-  for(std::list<SceneGraphNode*>::iterator j = node->children.begin() 
-    ; j != node->children.end() ; ++j)
+  for(std::list<SceneGraphNode*>::const_iterator j = node->GetChildren()->begin() 
+  ; j != node->GetChildren()->end() ; ++j)
   {
     if(CheckRequestedItemThere((*j),setTransformEvent))
     {
@@ -602,22 +601,17 @@ bool SceneGraph
                    const CoordinateSystemTransformToEvent 
                    *setTransformEvent)
 {
-  if(node->isSelected)
+  if(node->GetIsSelected())
   {
-    if( (strcmp(node->name,setTransformEvent->Get().
+    if( (strcmp(node->GetName(),setTransformEvent->Get().
         GetSource()->GetName()) == 0) || 
-      (strcmp(node->name,setTransformEvent->Get().
+      (strcmp(node->GetName(),setTransformEvent->Get().
         GetDestination()->GetName()) == 0) )
     {
       return true;
     }
   }
   return false;
-}
-
-std::list<SceneGraphNode*> SceneGraph::GetRootNodes()
-{
-  return rootNodes;
 }
 
 } // end namespace igstk

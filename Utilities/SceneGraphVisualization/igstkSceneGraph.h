@@ -61,19 +61,6 @@ class SceneGraph
 
 public:
 
-  /** flag to check if the UI window is open. 
-   */
-  bool isUIBeingShown;
-
-  /** flag to check if the root Nodes have changed 
-   *  to draw the scene graph UI.
-   */
-  bool isChanged;
-
-  /** The data structure to store all the wanted transitions. 
-   */
-  std::list<Transition *> transitionsStore;
-
   /**  Function to add the coordinate system relationships 
   * to the scene graph.
   */
@@ -110,18 +97,32 @@ public:
   */
   void SetNodeDetails(const char* nodeName, bool includeFlag);
 
-  /** Getter for rootNodes 
-  */
-  std::list<SceneGraphNode*> GetRootNodes();
 
+  /** Get/Set for rootNodes list */
+  igstkGetMacro(RootNodes, std::list<SceneGraphNode*>); 
+  igstkSetMacro(RootNodes, std::list<SceneGraphNode*>); 
+
+  /** Get/Set flag to check if the UI window is open. */
+  igstkGetMacro(IsUIBeingShown, bool); 
+  igstkSetMacro(IsUIBeingShown, bool); 
+
+  /** Get/Set flag to check if the root Nodes have changed 
+   *  to draw the scene graph UI.*/
+  igstkGetMacro(IsChanged, bool);
+  igstkSetMacro(IsChanged, bool);
+      
+  /** Get/Set data structure to store all the wanted transitions. */
+  igstkGetMacro(TransitionsStore, std::list<Transition *>); 
+  igstkSetMacro(TransitionsStore, std::list<Transition *>); 
+      
 private:
+  /**  Constructor.
+   */
+  SceneGraph();
+
   /** Destructor. 
    */
   ~SceneGraph();
-
-   /** The main data structure of the scene graph class. 
-   */
-   std::list<SceneGraphNode*> rootNodes;
 
    /** Function to check if the parent is existing, when a new relationship
    *  is created.
@@ -139,18 +140,6 @@ private:
   void CreateNewParentAndAddCoordinateSystem(const 
        CoordinateSystemSetTransformEvent *setTransformEvent);
 
-  /**  Flag to check if the singleton class is created.
-   */
-  static bool instanceFlag;
-
-  /**  The variable to hold singleton class.
-   */
-    static SceneGraph *single;
-
-  /**  Constructor.
-   */
-  SceneGraph();
-
   /**  Function to print the details of the given parent.
    */
   void printParentNodeDetails(SceneGraphNode* parentNode);
@@ -159,7 +148,7 @@ private:
    */
   void print(SceneGraphNode* node);
 
-  /**  Fucntion to export the description to dot to the given
+  /**  Function to export the description to dot to the given
   * stream.
    */
   void ExportDescriptionToDot(std::ostream & ostr);
@@ -236,6 +225,33 @@ private:
   */
   bool IsNewTranformEvent(const 
     CoordinateSystemTransformToEvent *setTransformEvent);
+      
+      
+  /** The main data structure of the scene graph class. 
+   */
+  std::list<SceneGraphNode*> m_RootNodes;
+
+  /**  Flag to check if the singleton class is created.
+   */
+  static bool m_InstanceFlag;
+
+  /**  The variable to hold singleton class.
+   */
+  static SceneGraph *m_Single;
+
+  /** flag to check if the UI window is open. 
+   */
+  bool m_IsUIBeingShown;
+
+  /** flag to check if the root Nodes have changed 
+   *  to draw the scene graph UI.
+   */
+  bool m_IsChanged;
+
+  /** The data structure to store all the wanted transitions. 
+   */
+  std::list<Transition *> m_TransitionsStore;
+    
 };
 } //end namespace igstk.
 #endif

@@ -21,15 +21,18 @@ namespace igstk
 
 SceneGraphNode::SceneGraphNode(void)
 {  
-  parentTransform = igstk::Transform::Transform();
-  xC1 = 0;
-  yC1 = 0;
-  isCurrentTransform = false;
-  isSelected = false;
-  isCurrentInverseTransform = false;
+  m_ParentTransform = igstk::Transform::Transform();
+  m_XC1 = 0;
+  m_YC1 = 0;
+  m_IsCurrentTransform = false;
+  m_IsSelected = false;
+  m_IsCurrentInverseTransform = false;
+  m_Children = new std::list<SceneGraphNode*>;
 }
 
 SceneGraphNode::~SceneGraphNode(void)
 {
+  delete m_Children;
 }
+   
 }

@@ -21,27 +21,27 @@ namespace igstk
 {
 SceneGraphUI::SceneGraphUI() 
 {
-  windowDrawn = false;
-  SceneGraphWindow = NULL;
+  m_WindowDrawn = false;
+  m_SceneGraphWindow = NULL;
 }
 
 SceneGraphUI::~SceneGraphUI()
 {
 }
 
-bool SceneGraphUI::instanceFlag = false;
-SceneGraphUI* SceneGraphUI::single = NULL;
+bool SceneGraphUI::m_InstanceFlag = false;
+SceneGraphUI* SceneGraphUI::m_Single = NULL;
 SceneGraphUI* SceneGraphUI::getInstance()
 {
-    if(! instanceFlag)
+    if(! m_InstanceFlag)
     {
-        single = new SceneGraphUI();
-        instanceFlag = true;
-        return single;
+        m_Single = new SceneGraphUI();
+        m_InstanceFlag = true;
+        return m_Single;
     }
     else
     {
-        return single;
+        return m_Single;
     }
 }
 
@@ -50,8 +50,8 @@ void SceneGraphUI
 {
 
   std::list<SceneGraphNode*> rootNodes = sceneGraph->GetRootNodes();
-  bool showFlag     = sceneGraph->isUIBeingShown;
-  std::list<Transition *> transitionsStore = sceneGraph->transitionsStore;
+  bool showFlag     = sceneGraph->GetIsUIBeingShown();
+  std::list<Transition *> transitionsStore = sceneGraph->GetTransitionsStore();
 
   if(showFlag)
   {
@@ -63,9 +63,9 @@ void SceneGraphUI
     int yDepth = FindYDepth(xDepthIndividual);
     int xDepthMax = FindMaxInXDepth(xDepthIndividual);
     CalculateXYForNodes(rootNodes,xDepthIndividual);
-    if(!windowDrawn)
+    if(!m_WindowDrawn)
     {
-      Fl_Window* o = SceneGraphWindow = new Fl_Window(xDepth * 
+      Fl_Window* o = m_SceneGraphWindow = new Fl_Window(xDepth * 
         (xDepthMax +1) * 250 + 50,yDepth * 60 + 200,"SceneGraph");
       o->resizable(o);
       w = o;
@@ -73,7 +73,7 @@ void SceneGraphUI
     }
     else 
     {
-      w = SceneGraphWindow;
+      w = m_SceneGraphWindow;
       //w->clear();
     }
     int count = 0;
@@ -113,14 +113,14 @@ void SceneGraphUI
     outText->redraw();
     w->add(outText);
     w->end();
-    windowDrawn = true;
+    m_WindowDrawn = true;
     w->redraw();
   }
   else 
   {
-    if(SceneGraphWindow != NULL)
-      SceneGraphWindow->hide();
-    windowDrawn = false;
+    if(m_SceneGraphWindow != NULL)
+      m_SceneGraphWindow->hide();
+    m_WindowDrawn = false;
   }
 }
 
@@ -130,27 +130,27 @@ void SceneGraphUI
             int xPreset)
 {
   Fl_Light_Button * box = new Fl_Light_Button(
-    xPreset + parentNode->xC1,parentNode->yC1,200,40,parentNode->name);
+     xPreset + parentNode->GetXC1(),parentNode->GetYC1(),200,40,parentNode->GetName());
   box->box(FL_UP_BOX);
   box->color(FL_WHITE);
   group->add(box);
   box->callback((Fl_Callback*)cb_NodeBt);
-  if(parentNode->isCurrentTransform)
+  if(parentNode->GetIsCurrentTransform())
   {
     box->color(FL_GREEN);
   }
-  if(parentNode->isCurrentInverseTransform)
+  if(parentNode->GetIsCurrentInverseTransform())
   {
     box->color(FL_RED);
   }
-  if(parentNode->isSelected)
+  if(parentNode->GetIsSelected())
   {
     box->value(1);
   }
 
-  for(std::list<SceneGraphNode *>::iterator childNode = 
-    parentNode->children.begin();
-    childNode != parentNode->children.end(); ++childNode)
+  for(std::list<SceneGraphNode *>::const_iterator childNode = 
+         parentNode->GetChildren()->begin();
+    childNode != parentNode->GetChildren()->end(); ++childNode)
   {
     CreateBoxesForNodes(group,*childNode, xPreset);
   }
@@ -161,7 +161,7 @@ void SceneGraphUI
             int xDepthIndividual[2][10])
 {
   int count = 0;
-  for(std::list<SceneGraphNode *>::iterator rootNode = rootNodes.begin();
+  for(std::list<SceneGraphNode *>::const_iterator rootNode = rootNodes.begin();
     rootNode != rootNodes.end(); ++rootNode)
   {
     int boxNumberInRow[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -197,12 +197,12 @@ void SceneGraphUI
     xValue = 250*maxValue/2;
   }
 
-  parentNode->xC1 = xValue;
-  parentNode->yC1 = yValue;
+  parentNode->SetXC1(xValue);
+  parentNode->SetYC1(yValue);
   boxNumberInRow[depth]++;
-  for(std::list<SceneGraphNode *>::iterator childNode = 
-    parentNode->children.begin();
-    childNode != parentNode->children.end(); ++childNode)
+  for(std::list<SceneGraphNode *>::const_iterator childNode = 
+    parentNode->GetChildren()->begin();
+    childNode != parentNode->GetChildren()->end(); ++childNode)
   {
     CalculateXYForNode(*childNode, xDepth, depth +1, boxNumberInRow);
   }
@@ -264,7 +264,7 @@ void SceneGraphUI
              int finalDepth[2][10])
 {
   int count = 0;
-  for(std::list<SceneGraphNode *>::iterator rootNode = rootNodes.begin();
+  for(std::list<SceneGraphNode *>::const_iterator rootNode = rootNodes.begin();
     rootNode != rootNodes.end(); ++rootNode)
   {
     FindXD(*rootNode, finalDepth[count],0);
@@ -277,9 +277,9 @@ void SceneGraphUI
      int result[10], int depth)
 {
   result[depth]++;
-  for(std::list<SceneGraphNode *>::iterator childNode = 
-    parentNode->children.begin();
-    childNode != parentNode->children.end(); ++childNode)
+  for(std::list<SceneGraphNode *>::const_iterator childNode = 
+    parentNode->GetChildren()->begin();
+    childNode != parentNode->GetChildren()->end(); ++childNode)
   {
     FindXD(*childNode, result, depth +1);
   }
