@@ -10,18 +10,25 @@ class HelloWorldGUI {open
   }
   decl {bool quit;} {}
   decl {TrackerPointer m_Tracker;} {}
+  decl {public: std::string fileName;} {}
   decl {igstk::View3D::Pointer  View;} {public
   }
-  Function {HelloWorldGUI()} {} {
+  Function {HelloWorldGUI()} {open
+  } {
     Fl_Window MainWindow {
-      label {IGSTK: HelloWorld Example} open
-      xywh {619 249 515 375} type Double resizable visible
+      label {IGSTK: HelloWorld Example} open selected
+      xywh {619 249 515 375} type Double resizable
+      code0 {\#include <FL/fl_ask.H>}
+      code1 {\#include "igstkView3D.h"}
+      code2 {\#include "igstkFLTKWidget.h"}
+      code3 {\#include "igstkConfigure.h"} visible
     } {
       Fl_Box Display {
-        label Display selected
+        label Display
         xywh {5 5 505 330} box FLAT_BOX color 0 labelcolor 7
-        code0 {\#include "igstkView3D.h"}
-        code1 {\#include "igstkFLTKWidget.h"}
+        code0 {\#ifdef IGSTK_USE_SceneGraphVisualization}
+        code1 {\#include "igstkSceneGraphUI.h"}
+        code2 {\#endif}
         class {igstk::FLTKWidget}
       }
       Fl_Light_Button TrackingBt {
@@ -29,6 +36,16 @@ class HelloWorldGUI {open
         callback {this->SetTracking(o->value());}
         xywh {5 345 85 25} labelsize 11
         code0 {\#include "igstkTracker.h"}
+      }
+      Fl_Light_Button SceneGraphBt {
+        label SceneGraph
+        callback {this->ShowSceneGraph(o->value());}
+        xywh {95 345 85 25} labelsize 11
+      }
+      Fl_Button ExportBt {
+        label ExportSceneGraph
+        callback {this->ExportSceneGraph(fileName);}
+        xywh {185 345 105 25} labelsize 11
       }
       Fl_Button {} {
         label Quit
@@ -62,6 +79,26 @@ else
   {
   this->m_Tracker->RequestStopTracking();
   }} {}
+  }
+  Function {ShowSceneGraph( bool showingSG )} {open return_type {virtual void}
+  } {
+    code {\#ifdef IGSTK_USE_SceneGraphVisualization
+igstk::SceneGraph* m_SceneGraph = igstk::SceneGraph::getInstance();  
+m_SceneGraph->ShowSceneGraph(showingSG);
+igstk::SceneGraphUI * m_SceneGraphUI = igstk::SceneGraphUI::getInstance();
+m_SceneGraphUI->DrawSceneGraph(m_SceneGraph);
+\#else
+fl_alert("SceneGraphVisualization is turned off in CMake configuration");
+\#endif} {}
+  }
+  Function {ExportSceneGraph( std::string fileName)} {open return_type {virtual void}
+  } {
+    code {\#ifdef IGSTK_USE_SceneGraphVisualization
+igstk::SceneGraph *m_SceneGraph = igstk::SceneGraph::getInstance();  
+m_SceneGraph->ExportSceneGraphToDot(fileName);
+\#else
+fl_alert("SceneGraphVisualization is turned off in CMake configuration");
+\#endif} {}
   }
   Function {~HelloWorldGUI()} {return_type virtual
   } {

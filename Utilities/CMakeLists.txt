@@ -6,6 +6,8 @@ IF( IGSTK_USE_MicronTracker )
     SUBDIRS( MicronTracker )
 ENDIF( IGSTK_USE_MicronTracker )
 
+SUBDIRS( SceneGraphVisualization )
+
 
 
 

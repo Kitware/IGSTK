@@ -15,5 +15,10 @@ INCLUDE_DIRECTORIES(
 
 FLTK_WRAP_UI(HelloWorld ${HelloWorld_GUI_SRCS})
 ADD_EXECUTABLE(HelloWorld ${HelloWorld_FLTK_UI_SRCS} ${HelloWorld_SRCS})
-TARGET_LINK_LIBRARIES(HelloWorld IGSTK)
+
+IF(IGSTK_USE_SceneGraphVisualization)
+  SET(LibrariesToLink SceneGraphVisualization)
+ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+TARGET_LINK_LIBRARIES(HelloWorld ${LibrariesToLink} IGSTK)
 

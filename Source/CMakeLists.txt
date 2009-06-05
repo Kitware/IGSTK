@@ -322,6 +322,11 @@ IF(IGSTK_USE_OpenIGTLink)
   SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
 ENDIF(IGSTK_USE_OpenIGTLink)
 
+IF(IGSTK_USE_SceneGraphVisualization)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
+ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+
 # Adding the IGSTK library
 
 ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS})

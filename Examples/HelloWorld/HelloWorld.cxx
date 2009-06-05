@@ -105,7 +105,6 @@
 //
 #include "igstkTransformObserver.h"
 
-
 // BeginLatex
 //
 // We are now ready to write the code of the actual application. Of course, we
@@ -138,6 +137,7 @@ int main(int , char** )
   // 
   // BeginCodeSnippet
   HelloWorldGUI * m_GUI = new HelloWorldGUI();
+  m_GUI->fileName = "igstkHelloWorld.dot";
   // EndCodeSnippet
   // 
   m_GUI->MainWindow->show();
@@ -158,6 +158,7 @@ int main(int , char** )
   // EndLatex
   // BeginCodeSnippet
   ellipsoid->SetRadius(1,1,1);
+
   // EndCodeSnippet
 
   // BeginLatex
@@ -252,6 +253,8 @@ int main(int , char** )
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
 
+  // EndCodeSnippet
+  //
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
@@ -302,8 +305,7 @@ int main(int , char** )
   // \code{RequestStart()} method of the View. After the \code{RequestStart()}
   // function is called, the pulse generator inside the display window will
   // start ticking, and will call the display to update itself 60 times per
-  // second, as follows: 
-  // EndLatex
+  // second, as follows: EndLatex
   // BeginCodeSnippet
   m_GUI->View->SetRefreshRate( 60 ); 
   m_GUI->Show();
@@ -327,26 +329,23 @@ int main(int , char** )
   // All applications should include the following code. This is the main event
   // loop of the application. First, it checks if the application is aborted by
   // user. If not, it calls for the \doxygen{PulseGenerator} to check its time
-  // out, which will allow the separate tracker thread to update itself. It is 
-  // very important to include the igstk::PulseGenerator::CheckTimeouts() in the
-  // main thread. Otherwise,trackers will not update. After checking time out, 
-  // the application request the transform of the tracker tool using event 
-  // through the Coordinate system API 
-  // (see Chapter \ref{Chapter:Coordinate Systems}). 
-  // The command is as follows:
+  // out. The command is as follows:
   // EndLatex
   // BeginCodeSnippet
-  
+  //
+  //
+
+  typedef ::itk::Vector<double, 3>    VectorType;
+  typedef ::itk::Versor<double>       VersorType;
+
   while( !m_GUI->HasQuitted() )
     {
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
 
-    typedef ::itk::Vector<double, 3>    VectorType;
-    typedef ::itk::Versor<double>       VersorType;
-    TransformType                       transform;
-    VectorType                          position;
-
+    TransformType             transform;
+    VectorType                position;
+  
     coordSystemAObserver->Clear();
     trackerTool->RequestGetTransformToParent();
     if (coordSystemAObserver->GotTransform())
