@@ -899,12 +899,12 @@ IF(IGSTK_USE_OpenIGTLink)
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
 
-  IF(IGSTKSandbox_USE_MicronTracker)
+  IF(IGSTK_USE_MicronTracker)
      SET(BasicTests_SRCS
       ${BasicTests_SRCS}
       igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
-  ENDIF(IGSTKSandbox_USE_MicronTracker)
+  ENDIF(IGSTK_USE_MicronTracker)
 
 ENDIF(IGSTK_USE_OpenIGTLink)  
 
