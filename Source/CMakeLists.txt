@@ -558,6 +558,10 @@ IF(IGSTKSandbox_USE_OpenIGTLink)
   SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
 ENDIF(IGSTKSandbox_USE_OpenIGTLink)
 
+IF(IGSTK_USE_SceneGraphVisualization)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
+ENDIF(IGSTK_USE_SceneGraphVisualization)
+
 IF (IGSTKSandbox_USE_unicap)
  SET(EXTRA_LIBS ${EXTRA_LIBS} unicap)
 ENDIF (IGSTKSandbox_USE_unicap)
