@@ -575,6 +575,8 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
 
   std::cout << "Saving snapshot to: " << argv[3] << std::endl;
   view2D->RequestStop();
+  QTest::qWait(1);
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( argv[3] );
 
   // stop the view

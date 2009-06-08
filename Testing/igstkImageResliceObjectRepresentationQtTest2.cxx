@@ -369,6 +369,9 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
   data = point.GetVnlVector().data_block();
 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  view2D->RequestStop();
+  QTest::qWait(1);
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( argv[2] );
   QTest::qWait(10);
   igstk::PulseGenerator::CheckTimeouts();
