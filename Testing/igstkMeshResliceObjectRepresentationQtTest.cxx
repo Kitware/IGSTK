@@ -347,6 +347,8 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
     // stop the view
     view2D->RequestStop();
+    view2D->RequestSaveScreenShot( argv[3] );
+
     delete qtWidget2D;
     qtMainWindow->hide();
     delete qtMainWindow;
