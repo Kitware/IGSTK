@@ -496,7 +496,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
            ${IGSTK_TESTS}
            --compare
            ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationFltkTest.png
-                        ${IGSTK_TEST_OUTPUT_DIR}/Baseline/igstkImageResliceObjectRepresentationFltkTest.png
+                        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest.png
               --toleranceIntensity 10
               --toleranceRadius    5
               --toleranceNumberOfPixels 5
@@ -527,6 +527,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               --toleranceNumberOfPixels 5
               igstkImageResliceObjectRepresentationFltkTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest3.png
          )
 
