@@ -117,6 +117,8 @@ SET(IGSTK_HEADS
   igstkCrossHairObjectRepresentation.h
 
   igstkPivotCalibrationAlgorithm.h
+
+  igstkPivotCalibration.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -128,6 +130,7 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkFLTKWidget.h
       igstkFLTKWidget.h
       igstkMouseTrackerTool.h
+      igstkPivotCalibrationFLTKWidget.h
       )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -255,6 +258,8 @@ SET(IGSTK_SRCS
   igstkCrossHairObjectRepresentation.cxx
 
   igstkPivotCalibrationAlgorithm.cxx
+
+  igstkPivotCalibration.cxx
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -265,6 +270,7 @@ IF(IGSTKSandbox_USE_FLTK)
       igstkFLTKTextLogOutput.cxx
       igstkFLTKWidget.cxx
       igstkMouseTrackerTool.cxx
+      igstkPivotCalibrationFLTKWidget.cxx
       )
 ENDIF(IGSTKSandbox_USE_FLTK)
 
@@ -365,7 +371,6 @@ SET(IGSTKSandbox_HEADS
   igstkVideoImager.h
   igstkVideoImagerTool.h
 
-  igstkPivotCalibration.h
   igstkPrincipalAxisCalibration.h
   igstkContourMeshObjectRepresentation.h
   igstkContourObjectRepresentation.h
@@ -393,10 +398,6 @@ SET(IGSTKSandbox_HEADS
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTKSandbox_HEADS
-      ${IGSTKSandbox_HEADS}
-      igstkPivotCalibrationFLTKWidget.h
-      )
 ENDIF(IGSTKSandbox_USE_FLTK)      
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
@@ -468,7 +469,6 @@ SET(IGSTKSandbox_SRCS
   igstkVideoImager.cxx
   igstkVideoImagerTool.cxx
 
-  igstkPivotCalibration.cxx
   igstkPrincipalAxisCalibration.cxx
 
 #  igstkContourMeshObjectRepresentation.cxx
@@ -498,10 +498,6 @@ SET(IGSTKSandbox_SRCS
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-  SET(IGSTKSandbox_SRCS
-      ${IGSTKSandbox_SRCS}
-      igstkPivotCalibrationFLTKWidget.cxx
-      )
 ENDIF(IGSTKSandbox_USE_FLTK)      
 
 IF( WIN32 )
