@@ -22,6 +22,7 @@ IF(IGSTK_USE_FLTK)
     TrackingVolumeViewer 
     NeedleBiopsy
     Navigator
+    PivotCalibrationFLTKWidget
     )
 ENDIF(IGSTK_USE_FLTK)
 

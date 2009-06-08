@@ -105,6 +105,8 @@ SET(IGSTK_HEADS
   igstkCrossHairObjectRepresentation.h
 
   igstkPivotCalibrationAlgorithm.h
+
+  igstkPivotCalibration.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -115,6 +117,7 @@ IF(IGSTK_USE_FLTK)
     igstkMouseTracker.h
     igstkMouseTrackerTool.h
     igstkFLTKWidget.h
+    igstkPivotCalibrationFLTKWidget.h
     )
 ENDIF(IGSTK_USE_FLTK)
 
@@ -243,6 +246,8 @@ SET(IGSTK_SRCS
   igstkCrossHairObjectRepresentation.cxx
 
   igstkPivotCalibrationAlgorithm.cxx
+
+  igstkPivotCalibration.cxx
 )
 
 IF(IGSTK_USE_FLTK)
@@ -253,6 +258,7 @@ IF(IGSTK_USE_FLTK)
     igstkMouseTracker.cxx
     igstkMouseTrackerTool.cxx
     igstkFLTKWidget.cxx
+    igstkPivotCalibrationFLTKWidget.cxx
     )
 ENDIF(IGSTK_USE_FLTK)
 
