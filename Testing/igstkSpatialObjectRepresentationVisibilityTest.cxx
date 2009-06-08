@@ -475,7 +475,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   if(  representationObserver1->GetTransformExpired() ||
        representationObserver2->GetTransformExpired() ||
-      !representationObserver3->GetTransformExpired() )
+       representationObserver3->GetTransformExpired() )
     {
     std::cerr << "Failure to capture the TransformExpiredErrorEvent properly" << std::endl;
     return EXIT_FAILURE;
