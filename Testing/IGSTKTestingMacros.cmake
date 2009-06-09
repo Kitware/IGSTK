@@ -682,7 +682,7 @@ IF(${IGSTK_USE_Qt})
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshResliceObjectRepresentationQtTest.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceNumberOfPixels 200
               igstkMeshResliceObjectRepresentationQtTest
               ${IGSTK_DATA_ROOT}/Input/TrackerWorkingVolumeMeshes/ascension_mrt_volume.msh 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
