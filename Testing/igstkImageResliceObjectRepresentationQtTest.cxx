@@ -386,7 +386,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   toolTransform.SetTranslation(
                       translation,
                       transformUncertainty,
-                      igstk::TimeStamp::GetZeroValue() );
+                      igstk::TimeStamp::GetLongestPossibleTime() );
 
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
@@ -397,17 +397,16 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
   //Reslice to the center axial slice and take a screenshot.
   //
-  view2D->RequestStop();
+  //view2D->RequestStop();
 
-//  view2D->RequestSetOrientation( View2DType::Axial );
+  //  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  //view2D->RequestStart();
+  view2D->RequestResetCamera();
 
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
   index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
-
-  view2D->RequestStart();
-  view2D->RequestResetCamera();
 
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   data = point.GetVnlVector().data_block();
@@ -419,13 +418,26 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   toolTransform.SetTranslation(
                       translation,
                       transformUncertainty,
-                      igstk::TimeStamp::GetZeroValue() );
+                      igstk::TimeStamp::GetLongestPossibleTime() );
 
-  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
+  toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );
+
+  for (unsigned int i=0; i<10; i++)
+    {
+    QTest::qWait(10);
+    igstk::PulseGenerator::CheckTimeouts();   
+    view2D->RequestResetCamera();
+    }
+
+  std::cout << " axial slice index " << index << "  point " << point << std::endl;
 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
-  view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
+  QTest::qWait(200);
+  view2D->RequestSaveScreenShot( argv[2] );
+  QTest::qWait(200);
+  view2D->RequestStop();
+
 
   delete qtWidget2D;
   qtMainWindow->hide();
