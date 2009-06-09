@@ -346,9 +346,9 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
     }
 
     // stop the view
+    QTest::qWait(200);
     view2D->RequestStop();
-    QTest::qWait(1);
-    igstk::PulseGenerator::CheckTimeouts();
+    QTest::qWait(200);
     view2D->RequestSaveScreenShot( argv[3] );
 
     delete qtWidget2D;

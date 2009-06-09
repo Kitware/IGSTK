@@ -574,9 +574,9 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );    
 
   std::cout << "Saving snapshot to: " << argv[3] << std::endl;
+  QTest::qWait(200);
   view2D->RequestStop();
-  QTest::qWait(1);
-  igstk::PulseGenerator::CheckTimeouts();
+  QTest::qWait(200);
   view2D->RequestSaveScreenShot( argv[3] );
 
   // stop the view

@@ -236,8 +236,17 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
   /* Save screenshots in a file */
   std::string filename;
   filename = argv[2]; 
+  Fl::wait( 0.05 );
+  igstk::PulseGenerator::CheckTimeouts();
+  Fl::check();       // trigger FLTK redraws
+  view2D->RequestStop();
+  Fl::wait( 0.05 );
+  igstk::PulseGenerator::CheckTimeouts();
+  Fl::check();       // trigger FLTK redraws
   view2D->RequestSaveScreenShot( filename ); 
-  
+  view2D->RequestStart();
+
+
   // Do manual redraws for each orientation while changing slice numbers
     {
     representation->RequestSetOrientation( RepresentationType::Axial );

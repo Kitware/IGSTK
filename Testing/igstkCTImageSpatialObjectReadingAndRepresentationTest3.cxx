@@ -191,8 +191,14 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest3(
 
   /* Save screenshots in a file */
   std::string filename;
-  filename = argv[2]; 
+  filename = argv[2];
+  QTest::qWait(500);
+  igstk::PulseGenerator::CheckTimeouts();
+  view2D->RequestStop();
+  QTest::qWait(500);
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( filename ); 
+  view2D->RequestStart();
 
   
   // Do manual redraws for each orientation while changing slice numbers
@@ -225,7 +231,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest3(
     {
     representation->RequestSetOrientation( RepresentationType::Coronal );
     view2D->RequestSetOrientation( igstk::View2D::Coronal );
-    view2D->RequestResetCamera();
+    view2D->RequestResetCamera();    
     for(unsigned int i=0; i<10; i++)
       {
       representation->RequestSetSliceNumber( i );

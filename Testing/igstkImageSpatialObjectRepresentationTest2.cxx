@@ -339,6 +339,9 @@ int igstkImageSpatialObjectRepresentationTest2( int argc, char* argv[] )
   std::string filename;
   filename = argv[2]; 
   std::cout << "Saving a screen shot in file:" << argv[2] << std::endl;
+  igstk::PulseGenerator::Sleep(500);
+  view2D->RequestStop();
+  igstk::PulseGenerator::Sleep(500);
   view2D->RequestSaveScreenShot( filename );
 
   delete widget2D;

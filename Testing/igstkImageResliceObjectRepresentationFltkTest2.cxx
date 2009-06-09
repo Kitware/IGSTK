@@ -367,9 +367,11 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
 
   std::cout << " index " << index << "  point " << point << "\n"; 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
-  igstk::PulseGenerator::Sleep(10);
+  Fl::wait( 0.05 );
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestStop();
-  igstk::PulseGenerator::Sleep(10);
+  Fl::wait( 0.05 );
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( argv[2] );
   //Fl::wait( 0.1 );
   //igstk::PulseGenerator::CheckTimeouts();
