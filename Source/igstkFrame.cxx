@@ -44,14 +44,14 @@ Frame
 }
 
 void
-Frame::SetFrameDimensions(int width, int height, int channels)
+Frame::SetFrameDimensions(unsigned int width, 
+                          unsigned int height, unsigned int channels)
 {
   m_Width = width;
   m_Height = height;
   m_NumberOfChannels = channels;
 
   m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-  cout << "malloc frame " << endl;
 }
 
 Frame::TimePeriodType

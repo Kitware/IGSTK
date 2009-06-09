@@ -51,16 +51,16 @@ public:
 
   typedef TimeStamp::TimePeriodType   TimePeriodType;
 
-  igstkSetMacro( Width, int );
-  igstkGetMacro( Width, int );
+  igstkSetMacro( Width, unsigned int );
+  igstkGetMacro( Width, unsigned int );
 
-  igstkSetMacro( Height, int );
-  igstkGetMacro( Height, int );
+  igstkSetMacro( Height, unsigned int );
+  igstkGetMacro( Height, unsigned int );
 
-  igstkSetMacro( NumberOfChannels, int );
-  igstkGetMacro( NumberOfChannels, int );
+  igstkSetMacro( NumberOfChannels, unsigned int );
+  igstkGetMacro( NumberOfChannels, unsigned int );
 
-  void SetFrameDimensions(int, int, int);
+  void SetFrameDimensions(unsigned int, unsigned int, unsigned int);
 
   /** Constructor and destructor */
   Frame();
@@ -133,9 +133,9 @@ private:
   TimeStamp       m_TimeStamp;
 
   void*         m_ImagePtr;
-  int m_Width;
-  int m_Height;
-  int m_NumberOfChannels;
+  unsigned int m_Width;
+  unsigned int m_Height;
+  unsigned int m_NumberOfChannels;
 
 };
 
