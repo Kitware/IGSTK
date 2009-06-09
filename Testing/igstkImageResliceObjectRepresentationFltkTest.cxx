@@ -421,6 +421,8 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  view2D->RequestStop();
+  igstk::PulseGenerator::Sleep(30);
   view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 

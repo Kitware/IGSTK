@@ -457,11 +457,6 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   while( !bEnd )
     {
     igstk::PulseGenerator::Sleep(20);
-    if ( ! screenShotTaken )  
-        {
-        view3D->RequestSaveScreenShot( screenShotFileName2 );
-        screenShotTaken = true;
-        }
     igstk::PulseGenerator::CheckTimeouts();
     }
   
@@ -469,13 +464,15 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
 
   tracker->RequestClose();
   view3D->RequestStop();
+  igstk::PulseGenerator::Sleep(1);
+  view3D->RequestSaveScreenShot( screenShotFileName2 );
   viewObserver->SetView(NULL);
 
   delete widget;
 
-  if(  representationObserver1->GetTransformExpired() ||
-       representationObserver2->GetTransformExpired() ||
-       representationObserver3->GetTransformExpired() )
+  if( !representationObserver1->GetTransformExpired() ||
+      !representationObserver2->GetTransformExpired() ||
+      !representationObserver3->GetTransformExpired() )
     {
     std::cerr << "Failure to capture the TransformExpiredErrorEvent properly" << std::endl;
     return EXIT_FAILURE;

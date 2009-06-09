@@ -531,7 +531,9 @@ int igstkToolProjectionSpatialObjectQtTest2( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );    
 
   std::cout << "Saving snapshot to: " << argv[3] << std::endl;
+  igstk::PulseGenerator::Sleep(10);
   view3D->RequestStop();
+  igstk::PulseGenerator::Sleep(10);
   view3D->RequestSaveScreenShot( argv[3] );
 
   // stop the view

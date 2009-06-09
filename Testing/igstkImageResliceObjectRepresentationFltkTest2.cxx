@@ -365,10 +365,14 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   data = point.GetVnlVector().data_block();
 
+  std::cout << " index " << index << "  point " << point << "\n"; 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
+  igstk::PulseGenerator::Sleep(10);
+  view2D->RequestStop();
+  igstk::PulseGenerator::Sleep(10);
   view2D->RequestSaveScreenShot( argv[2] );
-  Fl::wait( 0.1 );
-  igstk::PulseGenerator::CheckTimeouts();
+  //Fl::wait( 0.1 );
+  //igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestStop();
 
   delete fltkWidget2D;

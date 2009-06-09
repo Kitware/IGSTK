@@ -270,15 +270,17 @@ int igstkMeshObjectTest2( int argc, char * argv [] )
   while( !bEnd )
   {
     igstk::PulseGenerator::Sleep(20);
-    if ( ! screenShotTaken )  
-    {
-      view->RequestSaveScreenShot( screenShotFileName );
-      screenShotTaken = true;
-    }
+    //if ( ! screenShotTaken )  
+    //{
+    //view->RequestSaveScreenShot( screenShotFileName );
+    //screenShotTaken = true;
+    //}
     igstk::PulseGenerator::CheckTimeouts();
   }
 
   view->RequestStop();
+  igstk::PulseGenerator::Sleep(1);
+  view->RequestSaveScreenShot( screenShotFileName );
   viewObserver->SetView(NULL);
 
   std::cout << representation << std::endl;
