@@ -177,7 +177,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   }
   else if (m_NumberOfChannels == 1)
   {
-
     m_ImportFilter = ImportFilterType::New();
 
     m_ImportFilter->SetRegion( m_Region );
@@ -185,11 +184,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     m_ImportFilter->SetOrigin( origin );
 
     m_ImportFilter->SetSpacing( spacing );
-
-    for( unsigned int i=0; i < m_Width * m_Height; i++ )
-    {
-      //pixels[i]=m_RawBuffer[i];
-    }
 
     m_ImportFilter->SetImportPointer(m_RawBuffer,
                       m_Width * m_Height,
@@ -234,7 +228,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   }
   else if(m_NumberOfChannels == 1)
   {
-    if(m_RGBImage.IsNull())
+    if(m_Image.IsNull())
     {
       return true;
     }
