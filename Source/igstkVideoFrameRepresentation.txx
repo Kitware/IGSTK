@@ -212,15 +212,18 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   if( m_VTKImageObserver->GotVTKImage() )
   {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
-
-    //this->m_MapColors->SetInput( this->m_ImageData );
+    this->m_ImageActor->SetInput( this->m_ImageData  );  
+    
+    if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
+    {
+      this->m_MapColors->SetInput( this->m_ImageData );
+      this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+    }
   }
   else
   {
     igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation::SetVideoFrameSpatialObjectProcessing: No VTKImage Event\n");
   }
-  //this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
-  this->m_ImageActor->SetInput( this->m_ImageData  );
 }
 
 template< class TVideoFrameSpatialObject >
@@ -262,27 +265,28 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
                  "::CreateActors called...\n");
 
-/*  double hue = 0.0;
-    double saturation = 0.0;
-    double value = 1.0;
+  double hue = 0.0;
+  double saturation = 0.0;
+  double value = 1.0;
 
-    vtkMath::RGBToHSV( this->GetRed(),
-                       this->GetGreen(),
-                       this->GetBlue(),
-                       &hue,&saturation,&value );
+  vtkMath::RGBToHSV( this->GetRed(),
+                     this->GetGreen(),
+                     this->GetBlue(),
+                     &hue,&saturation,&value );
 
-    m_LookupTable->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
-    m_LookupTable->SetSaturationRange (saturation, saturation);
-    m_LookupTable->SetAlphaRange (m_Opacity, m_Opacity);
-    m_LookupTable->SetHueRange (hue, hue);
-    m_LookupTable->SetValueRange (0, value);
-    m_LookupTable->SetRampToLinear();
+  m_LookupTable->SetSaturationRange (saturation, saturation);
+  m_LookupTable->SetAlphaRange (m_Opacity, m_Opacity);
+  m_LookupTable->SetHueRange (hue, hue);
+  m_LookupTable->SetValueRange (0, value);
+  m_LookupTable->SetRampToLinear();
 
-*/
-    //TODO according to channel amount connect colormapper with lookuptable
+  if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
+  {
     m_MapColors->SetLookupTable( m_LookupTable );
-    igstkPushInputMacro( ConnectVTKPipeline );
-    m_StateMachine.ProcessInputs();
+  }
+    
+  igstkPushInputMacro( ConnectVTKPipeline );
+  m_StateMachine.ProcessInputs();
 }
 
 template< class TVideoFrameSpatialObject >
@@ -303,9 +307,20 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 
     if( m_ImageData )
     {
-      m_ImageActor->SetInput(this->m_ImageData);
-      //m_MapColors->SetInput( m_ImageData );
-      //m_MapColors->Update();
+      if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
+      {
+        m_MapColors->SetInput( m_ImageData );
+        m_MapColors->Update();
+      }
+      else if(m_VideoFrameSpatialObject->GetNumberOfChannels()==3)
+      {
+        m_ImageActor->SetInput( m_ImageData );
+      }
+      else
+      {
+        igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
+          "::UpdateRepresentationProcessing: Number of channel is not supported. Should be 1 or 3!\n");
+      }
     }
   }
 }
@@ -315,10 +330,21 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::ConnectVTKPipelineProcessing()
 {
-  //m_MapColors->SetInput( m_ImageData );
-  //m_ImageActor->SetInput( m_MapColors->GetOutput() );
-  m_ImageActor->SetInput( this->m_ImageData );
-  m_ImageActor->InterpolateOn();
+  if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
+  {
+    m_MapColors->SetInput( m_ImageData );
+    m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  }
+  else if(m_VideoFrameSpatialObject->GetNumberOfChannels()==3)
+  {
+    m_ImageActor->SetInput( m_ImageData );
+    m_ImageActor->InterpolateOn();
+  }
+  else
+  {
+    igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
+      "::UpdateRepresentationProcessing: Number of channel is not supported. Should be 1 or 3!\n");
+  }
 }
 
 /** Create a copy of the current object representation */
