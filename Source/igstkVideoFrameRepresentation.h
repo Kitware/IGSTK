@@ -80,7 +80,7 @@ protected:
 
 private:
 
-  /** Internal itkSpatialObject */
+  /** Internal VideoFrameSpatialObject */
   VideoFrameSpatialObjectConstPointer         m_VideoFrameSpatialObject;
   VideoFrameSpatialObjectConstPointer         m_VideoFrameSpatialObjectToAdd;
 
