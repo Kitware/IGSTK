@@ -352,27 +352,20 @@ OpenIGTLinkVideoImager::InternalThreadedUpdateStatus( void )
     {
 
       m_HeaderMsg = igtl::MessageHeader::New();
-
       // Initialize receive buffer
       m_HeaderMsg->InitPack();
-
       // Receive generic header from the socket
       int r = 0;
-
       r = this->m_Socket->Receive(m_HeaderMsg->GetPackPointer(), m_HeaderMsg->GetPackSize());
-
       if (r != m_HeaderMsg->GetPackSize())
       {
         igstkLogMacro( CRITICAL, "Error in pack size" );
         m_BufferLock->Unlock();
         return FAILURE;
       }
-
       igstkLogMacro( DEBUG, "InternalThreadedUpdateStatus Receive passed" );
-
       // Deserialize the header
       m_HeaderMsg->Unpack();
-
       // Check data type and receive data body
       if (strcmp(m_HeaderMsg->GetDeviceType(), "IMAGE") == 0)
       {
@@ -401,29 +394,31 @@ OpenIGTLinkVideoImager::InternalThreadedUpdateStatus( void )
             return FAILURE;
           }
 
+
+
           // Check if an imager tool was added with this device name
           typedef VideoImagerToolFrameContainerType::iterator InputIterator;
-
+          //TODO name
           InputIterator deviceItr =
-            this->m_ToolFrameBuffer.find( imgMsg->GetDeviceName() );
+            this->m_ToolFrameBuffer.find("Camera");//imgMsg->GetDeviceName() );
 
           if( deviceItr != this->m_ToolFrameBuffer.end() )
           {
-            // Retrive the incoming image dimensions
-            //unsigned int   inDims[3];
-            //imgMsg->GetDimensions(inDims);
-
-            int fsize = imgMsg->GetImageSize();
-
+            
             // create the frame
             VideoImagerToolsContainerType imagerToolContainer =
               this->GetVideoImagerToolContainer();
+           
+            FrameType frame;
+           this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
 
-            unsigned int toolDims[3];          // image dimension set on tools
-            imagerToolContainer[deviceItr->first]->GetFrameDimensions(toolDims);
+            unsigned int frameDims[3];          
+            imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
+            int toolSize = frameDims[0] * frameDims[1] * frameDims[2];
+            int fsize = imgMsg->GetImageSize();
 
-            int toolSize = toolDims[0] * toolDims[1] * toolDims[2];
-
+cout << toolSize;
+cout << fsize << " fsize ";
             if (fsize != toolSize)
             {
               igstkLogMacro( CRITICAL, "Incoming image size does not match with expected" );
@@ -431,12 +426,16 @@ OpenIGTLinkVideoImager::InternalThreadedUpdateStatus( void )
               return FAILURE;
             }
 
-            FrameType frame;
-            this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
 
-            memcpy(frame.GetImagePtr(),imgMsg->GetScalarPointer(),fsize);
-
-            this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
+          memcpy(frame.GetImagePtr(),
+          imgMsg->GetScalarPointer(),frameDims[0]*frameDims[1]*frameDims[2]);
+                      
+           
+   
+           //update frame validity time
+           frame.SetTimeToExpiration(this->GetValidityTime());
+           
+           this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
             this->m_ToolStatusContainer[ deviceItr->first ] = 1;
           }
 
