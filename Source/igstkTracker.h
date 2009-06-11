@@ -128,7 +128,6 @@ public:
   /** The "RequestStopTracking" stops tracker from tracking the tools. */
   void RequestStopTracking( void );
   
-
   /** The "RequestSetFrequency" method defines the frequency at which the
    * Transform information will be queried from the Tracker device. Note that
    * Tracker devices have their own internal frequency rate, and if you set here
@@ -139,17 +138,17 @@ public:
   /** Set a reference tracker tool */
   void RequestSetReferenceTool( TrackerToolType * trackerTool );
 
-protected:
-
-  Tracker(void);
-
-  virtual ~Tracker(void);
-
   /** SetThreadingEnabled(bool) : set m_ThreadingEnabled value */
   igstkSetMacro( ThreadingEnabled, bool );
 
   /** GetThreadingEnabled(bool) : get m_ThreadingEnabled value  */
   igstkGetMacro( ThreadingEnabled, bool );
+
+protected:
+
+  Tracker(void);
+
+  virtual ~Tracker(void);
 
   /** typedef for times used by the tracker */
   typedef Transform::TimePeriodType         TimePeriodType;
