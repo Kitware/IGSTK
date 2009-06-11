@@ -69,6 +69,7 @@ IF (IGSTKSandbox_USE_OpenIGTLink)
     #SUBDIRS( UltrasoundNavigator )
     #SUBDIRS( UltrasoundCalibrationWizard )
     SUBDIRS(  OIGTLinkTrackerBroadcasting )
+    SUBDIRS( VideoFrameGrabberAndViewerOpenIGTLink )
 ENDIF (IGSTKSandbox_USE_OpenIGTLink)
 
 
