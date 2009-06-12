@@ -564,7 +564,6 @@ IF(IGSTK_USE_OpenIGTLink)
       ${IGSTK_TESTS}
       igstkTrackerToolObserverToOpenIGTLinkRelayTest
       localhost 16666 1000 100 10 
-      ${TRACKER_FREQUENCY}
       )
  
   ADD_TEST( igstkOpenIGTLinkReceiverTest
@@ -573,13 +572,14 @@ IF(IGSTK_USE_OpenIGTLink)
       16666 
       )
  
+  IF (IGSTK_TEST_AURORA_ATTACHED)
   ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
-      localhost 16666 1000 ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER} 10
-      ${TRACKER_FREQUENCY}
+      localhost 16666 1000 ${IGSTK_TEST_AURORA_PORT_NUMBER} 10
       )
-
+  ENDIF (IGSTK_TEST_AURORA_ATTACHED)
+  
   IF(IGSTK_USE_MicronTracker)
     ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
