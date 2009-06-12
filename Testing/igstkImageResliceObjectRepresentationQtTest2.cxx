@@ -254,8 +254,6 @@ int igstkImageResliceObjectRepresentationQtTest2( int argc , char * argv [] )
 
   data = point.GetVnlVector().data_block();
 
-  const double transformUncertainty = 1.0;
-
   // Instantiate and use a reslicer plane spatial object
   typedef igstk::ReslicerPlaneSpatialObject            ReslicerPlaneType;
 

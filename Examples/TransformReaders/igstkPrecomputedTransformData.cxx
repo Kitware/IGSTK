@@ -220,10 +220,10 @@ void
 PrecomputedTransformData::PrintSelf( std::ostream& os, 
                                      itk::Indent indent ) const
 {
-  os<<this->m_TransformationDescription<<"("<<this->m_ComputationDateAndTime;
+  os<< indent << this->m_TransformationDescription<<"("<<this->m_ComputationDateAndTime;
   os<<"):\n";
-  os<<this->m_Transform;
-  os<<"Error: "<<this->m_TransformationError<<"\n";
+  os<< indent << this->m_Transform;
+  os<< indent << "Error: "<<this->m_TransformationError<<"\n";
 }
 
 }

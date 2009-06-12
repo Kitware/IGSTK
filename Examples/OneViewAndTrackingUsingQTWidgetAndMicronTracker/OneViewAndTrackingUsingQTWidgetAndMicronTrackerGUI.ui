@@ -1,0 +1,87 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>990</width>
+    <height>695</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>IGSTK: Tracking Example Using QTWidget </string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <widget class="igstk::QTWidget" native="1" name="Display3D" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>940</width>
+      <height>630</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="QuitPushButton" >
+    <property name="geometry" >
+     <rect>
+      <x>210</x>
+      <y>640</y>
+      <width>75</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Quit</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="TrackingCheckBox" >
+    <property name="geometry" >
+     <rect>
+      <x>20</x>
+      <y>640</y>
+      <width>80</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Tracking</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="InteractionCheckBox" >
+    <property name="geometry" >
+     <rect>
+      <x>120</x>
+      <y>640</y>
+      <width>80</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Interaction</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>990</width>
+     <height>19</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>igstk::QTWidget</class>
+   <extends></extends>
+   <header>igstkQTWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

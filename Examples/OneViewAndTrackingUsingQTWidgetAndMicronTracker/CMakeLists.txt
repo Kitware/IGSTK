@@ -1,0 +1,28 @@
+PROJECT(OneViewAndTrackingUsingQTWidgetAndMicronTracker)
+  
+SET(OneViewAndTrackingUsingQTWidgetAndMicronTracker_GUI_SRCS
+  OneViewAndTrackingUsingQTWidgetAndMicronTrackerGUI.ui
+  )
+
+INCLUDE_DIRECTORIES(
+  ${OneViewAndTrackingUsingQTWidgetAndMicronTracker_SOURCE_DIR}
+  ${OneViewAndTrackingUsingQTWidgetAndMicronTracker_BINARY_DIR}
+)
+
+  
+QT4_WRAP_UI(OneViewAndTrackingUsingQTWidgetAndMicronTracker_QT_UI_SRCS ${OneViewAndTrackingUsingQTWidgetAndMicronTracker_GUI_SRCS})
+
+SET(OneViewAndTrackingUsingQTWidgetAndMicronTracker_SRCS
+  OneViewAndTrackingUsingQTWidgetAndMicronTracker.cxx
+  OneViewAndTrackingUsingQTWidgetAndMicronTrackerGUI.cxx
+  )
+
+QT4_AUTOMOC(${OneViewAndTrackingUsingQTWidgetAndMicronTracker_SRCS})
+
+ADD_EXECUTABLE(OneViewAndTrackingUsingQTWidgetAndMicronTracker ${OneViewAndTrackingUsingQTWidgetAndMicronTracker_QT_UI_SRCS} ${OneViewAndTrackingUsingQTWidgetAndMicronTracker_SRCS})
+
+TARGET_LINK_LIBRARIES(OneViewAndTrackingUsingQTWidgetAndMicronTracker IGSTK
+${QT_LIBRARIES})
+
+
+

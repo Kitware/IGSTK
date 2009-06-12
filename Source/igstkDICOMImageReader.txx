@@ -850,7 +850,15 @@ template <class TPixelType>
 bool
 DICOMImageReader<TPixelType>::CheckModalityType( DICOMInformationType modality )
 {
-  return true;
+  //Default modality type is CT
+  if ( modality != "CT" )
+    {
+    return false;
+    }
+  else 
+    {
+    return true;
+    }
 }
 
 /** Print Self function */

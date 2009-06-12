@@ -154,7 +154,7 @@ int igstkMicronTrackerTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<100; i++)
+  for(unsigned int i=0; i<2000; i++)
     {
     igstk::PulseGenerator::CheckTimeouts(); 
 

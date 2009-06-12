@@ -526,6 +526,7 @@ void
 TransformFileReader::PrintSelf( std::ostream& os, 
                                      itk::Indent indent ) const
 {
+  os << indent << this->m_FileName << std::endl; 
 }
 
 

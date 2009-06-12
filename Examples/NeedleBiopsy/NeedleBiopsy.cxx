@@ -443,7 +443,7 @@ void NeedleBiopsy::ReadTreatmentPlan()
 
   m_TrackerLandmarksContainer.clear();
   char buf[10];
-  for( int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
+  for( unsigned int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
     {
     sprintf( buf, "Fiducial%i", i+1 );
     TPlanPointList->add( buf );
@@ -637,7 +637,7 @@ void NeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       FiducialNumber->clear();
       m_TrackerLandmarksContainer.clear();
       char buf[8];
-      for ( int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
+      for ( unsigned int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
         {
           sprintf( buf, "%d", i+1 );
           FiducialNumber->add(buf);
@@ -669,7 +669,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
   m_TrackerToolList.clear();
   int n = 0;
   std::string s;
-  for ( int i=0; i<m_TrackerInitializerList.size(); i++)
+  for ( unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
       char buf[10];
       sprintf(buf, "%d", i+1);
@@ -679,7 +679,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
       TrackerList->add( s.c_str() );
       std::vector< igstk::TrackerTool::Pointer > toolList = 
                       m_TrackerInitializerList[i]->GetNonReferenceToolList();
-      for ( int j=0; j< toolList.size(); j++)
+      for ( unsigned int j=0; j< toolList.size(); j++)
         {
           char buf[10];
           sprintf(buf,"%d", ++n);
@@ -701,7 +701,7 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
 void NeedleBiopsy::RequestDisconnetTracker()
 {
   RequestStopTracking();
-  int n = TrackerList->value();
+  unsigned int n = TrackerList->value();
   if ( n < m_TrackerInitializerList.size() )
     {
     m_TrackerInitializerList[n]->StopAndCloseTracker();
@@ -736,7 +736,7 @@ void NeedleBiopsy::ChangeActiveTrackerTool()
 
   if (m_TrackerToolList.size() != 0)
     {
-      for (int i=0; i<m_TrackerToolList.size(); i++)
+      for (unsigned int i=0; i<m_TrackerToolList.size(); i++)
       {
         m_TrackerToolList[i]->RemoveAllObservers();
       }
@@ -801,7 +801,7 @@ void NeedleBiopsy::SetTrackerFiducialPoint()
 void NeedleBiopsy::RequestRegistration()
 {
   m_LandmarkRegistration->RequestResetRegistration();
-  for( int i=0; i< m_TrackerLandmarksContainer.size(); i++)
+  for( unsigned int i=0; i< m_TrackerLandmarksContainer.size(); i++)
     {
     m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
                                                m_Plan->m_FiducialPoints[i] );
@@ -866,7 +866,7 @@ void NeedleBiopsy::RequestRegistration()
 */
 void NeedleBiopsy::RequestStartTracking()
 {
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
     m_TrackerInitializerList[i]->GetTracker()->RequestStartTracking();
     }
@@ -882,7 +882,7 @@ void NeedleBiopsy::RequestStartTracking()
 */
 void NeedleBiopsy::RequestStopTracking()
 {
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStopTracking();
   }
