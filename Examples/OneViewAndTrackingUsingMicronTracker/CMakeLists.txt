@@ -1,4 +1,4 @@
-PROJECT(OneViewAndTrackingUsingAndMicronTracker)
+PROJECT(OneViewAndTrackingUsingMicronTracker)
   
 SET(OneViewAndTrackingUsingMicronTracker_GUI_SRCS
   OneViewAndTrackingUsingMicronTrackerGUI.fl
@@ -9,8 +9,8 @@ SET(OneViewAndTrackingUsingMicronTracker_SRCS
   )
 
 FLTK_WRAP_UI(OneViewAndTrackingUsingMicronTracker ${OneViewAndTrackingUsingMicronTracker_GUI_SRCS})
-ADD_EXECUTABLE(OneViewAndTrackingUsingAndMicronTracker ${OneViewAndTrackingUsingMicronTracker_FLTK_UI_SRCS} ${OneViewAndTrackingUsingMicronTracker_SRCS})
-TARGET_LINK_LIBRARIES(OneViewAndTrackingUsingAndMicronTracker IGSTK)
+ADD_EXECUTABLE(OneViewAndTrackingUsingMicronTracker ${OneViewAndTrackingUsingMicronTracker_FLTK_UI_SRCS} ${OneViewAndTrackingUsingMicronTracker_SRCS})
+TARGET_LINK_LIBRARIES(OneViewAndTrackingUsingMicronTracker IGSTK)
 
 
 
