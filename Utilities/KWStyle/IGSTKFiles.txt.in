@@ -1,10 +1,7 @@
-@IGSTK_SOURCE_DIR@/Examples/*.h [R]
-@IGSTK_SOURCE_DIR@/Examples/*.cxx [R]
-@IGSTK_SOURCE_DIR@/Examples/*.txx [R]
+@IGSTK_SOURCE_DIR@/Examples/HelloWorld/*.h
+@IGSTK_SOURCE_DIR@/Examples/HelloWorld/*.cxx
+@IGSTK_SOURCE_DIR@/Examples/HelloWorld/*.txx
 @IGSTK_SOURCE_DIR@/Source/*.h
 @IGSTK_SOURCE_DIR@/Source/*.cxx
 @IGSTK_SOURCE_DIR@/Source/*.txx
-@IGSTK_SOURCE_DIR@/Testing/*.h
-@IGSTK_SOURCE_DIR@/Testing/*.cxx
-@IGSTK_SOURCE_DIR@/Testing/*.txx
 
