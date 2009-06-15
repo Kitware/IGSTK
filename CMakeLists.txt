@@ -348,9 +348,7 @@ ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt
  ADD_CUSTOM_COMMAND(
     OUTPUT ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt
     COMMAND ${KWSTYLE_EXECUTABLE}
-    ARGS    -xml ${IGSTKSandbox_BINARY_DIR}/IGSTK.kws.xml -o
-${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt
-${KWSTYLE_ARGUMENTS} -D ${IGSTKSandbox_BINARY_DIR}/IGSTKFiles.txt 
+    ARGS    ${KWSTYLE_ARGUMENTS}
     COMMENT "Coding Style Checker"
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt)
