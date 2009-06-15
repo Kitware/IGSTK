@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #include "igstkFrame.h"
-
+#include <algorithm> 
 #include "vtkImageData.h"
 
 namespace igstk
@@ -25,14 +25,26 @@ namespace igstk
 Frame
 ::Frame()
 {
- 
+  /** Setup logger */
+  m_Logger   = LoggerType::New();
+  this->GetLogger()->SetTimeStampFormat( itk::LoggerBase::HUMANREADABLE );
+  this->GetLogger()->SetHumanReadableFormat("%Y %b %d, %H:%M:%S");
+  this->GetLogger()->SetPriorityLevel( LoggerType::DEBUG);
+
+  /** Direct the application log message to the std::cout */
+  itk::StdStreamLogOutput::Pointer m_LogCoutOutput
+                                           = itk::StdStreamLogOutput::New();
+  m_LogCoutOutput->SetStream( std::cout );
+  this->GetLogger()->AddLogOutput( m_LogCoutOutput );
 }
 
 Frame
 ::Frame( const Frame & inputFrame  )
+: m_TimeStamp(inputFrame.m_TimeStamp)
 {
-  m_TimeStamp    = inputFrame.m_TimeStamp;
-  m_ImagePtr    = inputFrame.m_ImagePtr;
+  m_ImagePtr = inputFrame.m_ImagePtr;
+  //m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  //memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels ); 
 }
 
 Frame
@@ -40,18 +52,28 @@ Frame
 {
 //  if(m_ImagePtr != NULL)
 //  free(m_ImagePtr);
- 
 }
 
 void
-Frame::SetFrameDimensions(unsigned int width, 
+Frame::SetFrameDimensions(unsigned int width,
                           unsigned int height, unsigned int channels)
 {
+
   m_Width = width;
   m_Height = height;
   m_NumberOfChannels = channels;
 
-  m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+//  if(m_ImagePtr != NULL)
+//    free(m_ImagePtr);
+//  else
+    m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+    //m_ImagePtr = new (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  
+  if (m_ImagePtr == NULL)
+  {
+    igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: Memory could not be allocated (malloc failed)!\n" );
+  }
+
 }
 
 Frame::TimePeriodType
