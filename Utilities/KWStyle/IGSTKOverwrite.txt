@@ -1,5 +1,8 @@
 igstkMacros.h Indent Disable
 igstkMacros.h InternalVariables Disable
+igstkCoordinateSystemInterfaceMacros.h Indent Disable
+igstkCoordinateSystemInterfaceMacros.h LineLength Disable
+igstkCoordinateSystemInterfaceMacros.h Typedefs Disable
 igstkNDICommandInterpreter.h Indent Disable
 igstkNDICommandInterpreter.h InternalVariables Disable
 igstkDICOMImageReaderTest.cxx Namespace Disable
@@ -35,3 +38,6 @@ igstkLandmark3DRegistrationTest2 Namespace Disable
 .*\Examples.*\.cxx Namespace Disable
 igstk.*\Test.*\.h Namespace Disable
 igstk.*\Test.*\.cxx Namespace Disable
+igstkPivotCalibrationFLTKWidget.cxx InternalVariables Disable
+igstkPivotCalibrationFLTKWidget.h InternalVariables Disable
+igstkPivotCalibrationAlgorithm.h InternalVariables Disable
