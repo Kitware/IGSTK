@@ -87,10 +87,10 @@ public:
   bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
 
   /** Returns the validity status of the transform when it is called 
-  *
-  * \sa TimeStamp 
-  *
-  * */
+   *
+   * \sa TimeStamp 
+   *
+   * */
   bool IsValidNow() const;
 
   
