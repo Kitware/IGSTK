@@ -23,6 +23,7 @@
 
 #include "igstkTimeStamp.h"
 #include "igstkMacros.h"
+#include "itkStdStreamLogOutput.h"
 
 class vtkImageData;
 
@@ -49,6 +50,10 @@ class Frame
 {
 public:
 
+  friend class VideoImager;
+
+  igstkLoggerMacro();
+
   typedef TimeStamp::TimePeriodType   TimePeriodType;
 
   igstkSetMacro( Width, unsigned int );
@@ -66,10 +71,6 @@ public:
   Frame();
   Frame( const Frame & t );
   virtual ~Frame();
-
-  void SetImagePtr(
-          void*,
-          TimePeriodType millisecondsToExpiration);
 
   void * GetImagePtr();
 
@@ -129,6 +130,10 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
+
+  void SetImagePtr(
+          void*,
+          TimePeriodType millisecondsToExpiration);
 
   TimeStamp       m_TimeStamp;
 
