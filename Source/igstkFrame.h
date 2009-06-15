@@ -69,6 +69,7 @@ public:
 
   /** Constructor and destructor */
   Frame();
+  Frame(unsigned int width, unsigned int height, unsigned int channels);
   Frame( const Frame & t );
   virtual ~Frame();
 
@@ -118,6 +119,7 @@ public:
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
 
+  void Free();
 
 protected:
 
@@ -131,16 +133,18 @@ protected:
 
 private:
 
+
   void SetImagePtr(
           void*,
           TimePeriodType millisecondsToExpiration);
 
   TimeStamp       m_TimeStamp;
 
-  void*         m_ImagePtr;
-  unsigned int m_Width;
-  unsigned int m_Height;
-  unsigned int m_NumberOfChannels;
+  void*           m_ImagePtr;
+  std::vector< unsigned char > *m_Image;
+  unsigned int    m_Width;
+  unsigned int    m_Height;
+  unsigned int    m_NumberOfChannels;
 
 };
 
