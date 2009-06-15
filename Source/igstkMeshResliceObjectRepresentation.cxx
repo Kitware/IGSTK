@@ -73,7 +73,7 @@ MeshResliceObjectRepresentation
   // from ValidMeshObject 
 
   igstkAddTransitionMacro( ValidMeshObject, ValidReslicePlaneSpatialObject, 
-                           ValidReslicePlaneSpatialObject,  SetReslicePlaneSpatialObject );
+                ValidReslicePlaneSpatialObject,  SetReslicePlaneSpatialObject );
 
   igstkAddTransitionMacro( ValidMeshObject, InValidReslicePlaneSpatialObject, 
                            ValidMeshObject,  No );
@@ -86,10 +86,12 @@ MeshResliceObjectRepresentation
 
   // from ValidReslicePlaneSpatialObject 
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, ValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, 
+                           ValidReslicePlaneSpatialObject, 
                            ValidReslicePlaneSpatialObject,  No );
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, InValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject,
+                           InValidReslicePlaneSpatialObject,
                            ValidReslicePlaneSpatialObject,  No );
 
   igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, NullMeshObject, 
@@ -202,11 +204,13 @@ MeshResliceObjectRepresentation
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
-  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneCenterEvent(),
-                                            m_ReslicerPlaneCenterObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( 
+                                  ReslicerPlaneType::ReslicerPlaneCenterEvent(),
+                                                m_ReslicerPlaneCenterObserver );
 
-  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
-                                            m_ReslicerPlaneNormalObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( 
+                                  ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                                m_ReslicerPlaneNormalObserver );
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();  
 }
@@ -237,18 +241,18 @@ void MeshResliceObjectRepresentation
   ReslicerPlaneType::VectorType center;
   if( m_ReslicerPlaneCenterObserver->GotReslicerPlaneCenter() )
     {
-      center = m_ReslicerPlaneCenterObserver->GetReslicerPlaneCenter();     
+    center = m_ReslicerPlaneCenterObserver->GetReslicerPlaneCenter();
     }
   else
-    return;
+  return;
 
   ReslicerPlaneType::VectorType normal;
   if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
     {
-      normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
+    normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
     }
   else
-    return;
+  return;
 
   m_Plane->SetNormal( normal[0], normal[1], normal[2] );
   m_Plane->SetOrigin( center[0], center[1], center[2] );
@@ -413,19 +417,21 @@ MeshResliceObjectRepresentation
     if( this->GetRenderTimeStamp().GetExpirationTime() <
       this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
       this->GetRenderTimeStamp().GetStartTime() >
-      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
+      this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime())
       {
-        // fixme
-        double diff = 
-          this->GetRenderTimeStamp().GetStartTime() - this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+      // fixme
+      double diff = 
+        this->GetRenderTimeStamp().GetStartTime() - 
+        this->m_ReslicePlaneSpatialObject->
+                                       GetToolTransform().GetExpirationTime();
 
-        if (diff > 250 )
+      if (diff > 250 )
         {
-          //std::cout << diff << std::endl;
-          return false;
+        //std::cout << diff << std::endl;
+        return false;
         }
-        else
-          return true;
+      else
+      return true;
       }
     else
       {
@@ -442,4 +448,3 @@ MeshResliceObjectRepresentation
 
 
 #endif
-

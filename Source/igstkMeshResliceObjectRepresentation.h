@@ -52,7 +52,7 @@ public:
 
 public:
     
- /** Typedefs */
+  /** Typedefs */
 
   typedef MeshObject                               MeshObjectType;
 
@@ -74,12 +74,12 @@ public:
 
   /** Sets the reslicer plane */
   void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
-                                                             planeSpatialObject);
+                                                            planeSpatialObject);
   /** Set/Get line width */
   void SetLineWidth(double LineWidth);
   igstkGetMacro( LineWidth, double );
 
- // void RequestSetResliceAxes( vtkMatrix4x4 *matrix );
+  // void RequestSetResliceAxes( vtkMatrix4x4 *matrix );
 
 protected:
 
@@ -101,16 +101,18 @@ protected:
 
 private:
   
-  /** Declare the observers that will receive the reslicing plane parameters from the
-   * ReslicerPlaneSpatialObject */
+  /** Declare the observers that will receive the reslicing plane parameters 
+   * from the ReslicerPlaneSpatialObject */
 
-  igstkObserverMacro( ReslicerPlaneCenter, ReslicerPlaneType::ReslicerPlaneCenterEvent,
-                      ReslicerPlaneType::VectorType);
+  igstkObserverMacro( ReslicerPlaneCenter, 
+                                    ReslicerPlaneType::ReslicerPlaneCenterEvent,
+                                                 ReslicerPlaneType::VectorType);
 
   ReslicerPlaneCenterObserver::Pointer  m_ReslicerPlaneCenterObserver;
 
-  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
-                      ReslicerPlaneType::VectorType);
+  igstkObserverMacro( ReslicerPlaneNormal, 
+                                    ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                                                 ReslicerPlaneType::VectorType);
 
   ReslicerPlaneNormalObserver::Pointer  m_ReslicerPlaneNormalObserver;
 
@@ -152,11 +154,12 @@ private:
   ReslicerPlanePointerType  m_ReslicePlaneSpatialObject;
 
   /** Plane defining the contour */
-  vtkPlane*  m_Plane;
-  vtkCutter* m_Cutter;
+  vtkPlane*    m_Plane;
+  vtkCutter*   m_Cutter;
   vtkProperty* m_ContourProperty;
-//  vtkTubeFilter* m_Tuber;
-  double                          m_LineWidth;
+
+  //vtkTubeFilter* m_Tuber;
+  double       m_LineWidth;
 };
 
 } // end namespace igstk
