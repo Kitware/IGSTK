@@ -314,13 +314,13 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObjectToAdd = image;
 
   if( !m_ImageSpatialObjectToAdd )
-    {
-    m_StateMachine.PushInput( m_InValidImageSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_InValidImageSpatialObjectInput );
+  }
   else 
-    {
-    m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
+  }
   
   m_StateMachine.ProcessInputs();
 }
@@ -357,13 +357,13 @@ reslicePlaneSpatialObject )
                     const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
-    {
-    m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
+  }
   else
-    {
-    m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
+  }
 
   m_StateMachine.ProcessInputs();
 }
@@ -399,7 +399,7 @@ ImageResliceObjectRepresentation < TImageSpatialObject >
     "igstk::ImageResliceObjectRepresentation::VerifyTimeStamp called...\n");
 
   if( this->m_ReslicePlaneSpatialObject.IsNull() )
-    return false;
+  return false;
 
 
   if( !this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
