@@ -369,7 +369,10 @@ IF(IGSTK_USE_KWSTYLE)
   CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
                ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
 
-  SET(KWSTYLE_ARGUMENTS -xml ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+  SET(KWSTYLE_ARGUMENTS -xml ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml 
+                        -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt 
+                        -v 
+                        -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
   )
 
   IF(KWSTYLE_USE_VIM_FORMAT)
@@ -381,9 +384,9 @@ IF(IGSTK_USE_KWSTYLE)
   ENDIF(KWSTYLE_USE_MSVC_FORMAT)
 
     ADD_CUSTOM_COMMAND(
-    OUTPUT ${IGSTK_BINARY_DIR}/KWStyleReport.txt
+    OUTPUT  ${IGSTK_BINARY_DIR}/KWStyleReport.txt
     COMMAND ${KWSTYLE_EXECUTABLE}
-    ARGS    -xml ${IGSTK_BINARY_DIR}/IGSTK.kws.xml -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt ${KWSTYLE_ARGUMENTS} -D ${IGSTK_BINARY_DIR}/IGSTKFiles.txt 
+    ARGS    ${KWSTYLE_ARGUMENTS}
     COMMENT "Coding Style Checker"
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTK_BINARY_DIR}/KWStyleReport.txt)
