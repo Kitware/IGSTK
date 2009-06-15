@@ -211,8 +211,15 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
     meshResliceRepresentation->SetLineWidth(3);
     meshResliceRepresentation->SetColor(0, 0, 1);     
     meshResliceRepresentation->RequestSetMeshObject( objectSpatialObject );
-    meshResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject ); 
+    meshResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
 
+    //Code Coverage.
+    MeshResliceRepresentationType::Pointer  meshResliceRepresentationCopy =
+       meshResliceRepresentation->Copy();
+    meshResliceRepresentationCopy->Print(std::cout);
+    meshResliceRepresentationCopy->SetVisibility(true);
+    
+    
     // set up the view
 
     typedef igstk::View2D          View2DType;
