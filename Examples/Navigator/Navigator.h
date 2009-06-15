@@ -105,8 +105,8 @@ public:
 
   /** typedef for a cylinder spatial object and representation
   * used to represent the tracked tool */
-  typedef igstk::CylinderObject                       CylinderType;
-  typedef igstk::CylinderObjectRepresentation         CylinderRepresentationType;  
+  typedef igstk::CylinderObject                      CylinderType;
+  typedef igstk::CylinderObjectRepresentation        CylinderRepresentationType;
 
   /** typedef for an image voxel index and world coordinates */
   typedef ImageSpatialObjectType::IndexType           IndexType;
@@ -118,7 +118,8 @@ public:
 
   /** tool projection spatial object and representation */
   typedef igstk::ToolProjectionSpatialObject             ToolProjectionType;
-  typedef igstk::ToolProjectionObjectRepresentation      ToolProjectionRepresentationType;
+  typedef igstk::ToolProjectionObjectRepresentation      
+                                               ToolProjectionRepresentationType;
 
   /** reslicer plane spatial object */
   typedef igstk::ReslicerPlaneSpatialObject              ReslicerPlaneType;
@@ -196,8 +197,9 @@ public:
                       igstk::PrecomputedTransformData::TransformDateTypeEvent, 
                       std::string )
 
-  typedef igstk::TrackerConfigurationFileReader::ReadTrackerConfigurationFailSuccessObserver
-                    ReadTrackerConfigurationFailSuccessObserverType;
+  typedef igstk::TrackerConfigurationFileReader::
+  ReadTrackerConfigurationFailSuccessObserver
+                                ReadTrackerConfigurationFailSuccessObserverType;
 
   igstkObserverMacro( DICOMImageReaderInvalidDirectoryNameError, 
                       igstk::DICOMImageDirectoryIsNotDirectoryErrorEvent, 
@@ -212,8 +214,8 @@ public:
                       igstk::EventHelperType::StringType )
 
   igstkObserverMacro( DICOMImageDirectoryNameDoesNotHaveEnoughFilesError, 
-                      igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent, 
-                      igstk::EventHelperType::StringType )
+                     igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent,
+                     igstk::EventHelperType::StringType )
 
   igstkObserverMacro( DICOMImageDirectoryDoesNotContainValidDICOMSeriesError, 
                       igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent, 
@@ -313,13 +315,13 @@ private:
   double                                                m_WindowLevel;
   double                                                m_WindowWidth;
 
-  double                                                m_TrackerRMS;  
-  bool                                                  m_AxialViewInitialized;
-  bool                                                  m_SagittalViewInitialized;
-  bool                                                  m_CoronalViewInitialized;
+  double                                              m_TrackerRMS;  
+  bool                                                m_AxialViewInitialized;
+  bool                                                m_SagittalViewInitialized;
+  bool                                                m_CoronalViewInitialized;
 
-  bool                                                  m_ImagePlanesIn3DViewEnabled;
-  bool                                                  m_ModifyImageFiducialsEnabled;
+  bool                                            m_ImagePlanesIn3DViewEnabled;
+  bool                                            m_ModifyImageFiducialsEnabled;
 
   /* Command used for progress tracking */
   itk::SmartPointer<ProgressCommandType>                m_ProgressCommand;  
@@ -334,15 +336,18 @@ private:
   CrossHairType::Pointer                                m_CrossHair;
 
   /** tool projection representations */
-  ToolProjectionRepresentationType::Pointer             m_AxialToolProjectionRepresentation;
-  ToolProjectionRepresentationType::Pointer             m_SagittalToolProjectionRepresentation;
-  ToolProjectionRepresentationType::Pointer             m_CoronalToolProjectionRepresentation;
+  ToolProjectionRepresentationType::Pointer             
+                                            m_AxialToolProjectionRepresentation;
+  ToolProjectionRepresentationType::Pointer  
+                                         m_SagittalToolProjectionRepresentation;
+  ToolProjectionRepresentationType::Pointer             
+                                          m_CoronalToolProjectionRepresentation;
 
   /** cross hair representation */
-  CrossHairRepresentationType::Pointer                  m_AxialCrossHairRepresentation;
-  CrossHairRepresentationType::Pointer                  m_SagittalCrossHairRepresentation;
-  CrossHairRepresentationType::Pointer                  m_CoronalCrossHairRepresentation;
-  CrossHairRepresentationType::Pointer                  m_3DViewCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer        m_AxialCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer        m_SagittalCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer        m_CoronalCrossHairRepresentation;
+  CrossHairRepresentationType::Pointer        m_3DViewCrossHairRepresentation;
 
   /** a vector of mesh spatial objects */
   std::vector< MeshType::Pointer >                      m_MeshVector;
@@ -351,27 +356,30 @@ private:
   MeshType::Pointer                                     m_ToolSpatialObject;
   MeshRepresentationType::Pointer                       m_ToolRepresentation;
 
-  ReslicerPlaneType::Pointer                            m_AxialPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_SagittalPlaneSpatialObject;
-  ReslicerPlaneType::Pointer                            m_CoronalPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                     m_AxialPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                     m_SagittalPlaneSpatialObject;
+  ReslicerPlaneType::Pointer                     m_CoronalPlaneSpatialObject;
 
-  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation;
-  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation;
-  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation;
+  ImageRepresentationType::Pointer               m_AxialPlaneRepresentation;
+  ImageRepresentationType::Pointer               m_SagittalPlaneRepresentation;
+  ImageRepresentationType::Pointer               m_CoronalPlaneRepresentation;
 
-  ImageRepresentationType::Pointer                      m_AxialPlaneRepresentation2;
-  ImageRepresentationType::Pointer                      m_SagittalPlaneRepresentation2;
-  ImageRepresentationType::Pointer                      m_CoronalPlaneRepresentation2;
+  ImageRepresentationType::Pointer               m_AxialPlaneRepresentation2;
+  ImageRepresentationType::Pointer               m_SagittalPlaneRepresentation2;
+  ImageRepresentationType::Pointer               m_CoronalPlaneRepresentation2;
 
-  std::vector< MeshRepresentationType::Pointer >        m_MeshRepresentationVector;
+  std::vector< MeshRepresentationType::Pointer >     m_MeshRepresentationVector;
 
-  std::vector< MeshResliceRepresentationType::Pointer > m_AxialMeshResliceRepresentationVector;
-  std::vector< MeshResliceRepresentationType::Pointer > m_SagittalMeshResliceRepresentationVector;
-  std::vector< MeshResliceRepresentationType::Pointer > m_CoronalMeshResliceRepresentationVector; 
+  std::vector< MeshResliceRepresentationType::Pointer > 
+                                         m_AxialMeshResliceRepresentationVector;
+  std::vector< MeshResliceRepresentationType::Pointer > 
+                                      m_SagittalMeshResliceRepresentationVector;
+  std::vector< MeshResliceRepresentationType::Pointer > 
+                                       m_CoronalMeshResliceRepresentationVector;
   
   /** Landmark registration points containers */
-  LandmarkPointContainerType                            m_LandmarksContainer;
-  AcceptedLandmarkPointContainerType                    m_AcceptedLandmarksContainer;
+  LandmarkPointContainerType                       m_LandmarksContainer;
+  AcceptedLandmarkPointContainerType               m_AcceptedLandmarksContainer;
 
   /** Class that observes the events generated by the tracker controller. */
   class TrackerControllerObserver : public itk::Command
@@ -400,7 +408,8 @@ private:
       this->m_ErrorMessage.clear();
     }
     /**
-     * If an error occurs in one of the observed IGSTK components this method will return true.
+     * If an error occurs in one of the observed IGSTK components this method 
+     * will return true.
      */
     bool Error() 
     {
@@ -428,8 +437,8 @@ private:
     void operator=(const Self&); 
   };
 
-  igstk::TrackerController::Pointer                     m_TrackerController;
-  TrackerControllerObserver::Pointer                    m_TrackerControllerObserver;
+  igstk::TrackerController::Pointer                 m_TrackerController;
+  TrackerControllerObserver::Pointer                m_TrackerControllerObserver;
 
   /** tracker configuration object */
   const igstk::TrackerConfiguration *                   m_TrackerConfiguration;
@@ -510,10 +519,14 @@ private:
 
   /** Objects for path planning and fiducial selection */
   std::vector< EllipsoidType::Pointer >                m_FiducialPointVector;
-  std::vector< EllipsoidRepresentationType::Pointer >  m_AxialFiducialRepresentationVector;
-  std::vector< EllipsoidRepresentationType::Pointer >  m_SagittalFiducialRepresentationVector;
-  std::vector< EllipsoidRepresentationType::Pointer >  m_CoronalFiducialRepresentationVector;
-  std::vector< EllipsoidRepresentationType::Pointer >  m_3DViewFiducialRepresentationVector;      
+  std::vector< EllipsoidRepresentationType::Pointer >  
+                                            m_AxialFiducialRepresentationVector;
+  std::vector< EllipsoidRepresentationType::Pointer >  
+                                         m_SagittalFiducialRepresentationVector;
+  std::vector< EllipsoidRepresentationType::Pointer >  
+                                          m_CoronalFiducialRepresentationVector;
+  std::vector< EllipsoidRepresentationType::Pointer >  
+                                           m_3DViewFiducialRepresentationVector;
 
   /** Define a initial world coordinate system */
   typedef igstk::AxesObject                       AxesObjectType;
@@ -560,8 +573,10 @@ private:
   void UpdateFiducialPoint();
   void RequestToggleOrthogonalPlanes();
   void ResliceImage( IndexType index );
-  void HandleKeyPressed ( igstk::NavigatorQuadrantViews::KeyboardCommandType keyCommand );
-  void HandleMousePressed ( igstk::NavigatorQuadrantViews::MouseCommandType mouseCommand );
+  void HandleKeyPressed ( igstk::NavigatorQuadrantViews::KeyboardCommandType 
+                                                                   keyCommand );
+  void HandleMousePressed ( igstk::NavigatorQuadrantViews::MouseCommandType 
+                                                                 mouseCommand );
   void EnableOrthogonalPlanes();
   void DisableOrthogonalPlanes();
 

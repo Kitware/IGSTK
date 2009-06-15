@@ -259,7 +259,7 @@ Navigator::Navigator() : m_StateMachine(this)
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, InitializeTracker,
                            ConfirmingImagePatientName, ReportInvalidRequest );
-  igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( ConfirmingImagePatientName, StartSetTrackerFiducials,
                            ConfirmingImagePatientName, ReportInvalidRequest );
   igstkAddTransitionMacro( ConfirmingImagePatientName, AcceptTrackerFiducial,
                            ConfirmingImagePatientName, ReportInvalidRequest );
@@ -281,7 +281,7 @@ Navigator::Navigator() : m_StateMachine(this)
   igstkAddTransitionMacro( ImageReady, SetPickingPosition, 
                            ImageReady, SetImagePicking );
   igstkAddTransitionMacro( ImageReady, StartSetImageFiducials,
-                           SettingImageFiducials, ReportSuccessStartSetImageFiducials );
+                   SettingImageFiducials, ReportSuccessStartSetImageFiducials );
   igstkAddTransitionMacro( ImageReady, ConfigureTracker, 
                            ConfiguringTracker, ConfigureTracker );  
 
@@ -448,7 +448,7 @@ Navigator::Navigator() : m_StateMachine(this)
   /** ConfiguringTracker State */
 
   igstkAddTransitionMacro( ConfiguringTracker, Success, 
-                           TrackerConfigurationReady, ReportSuccessTrackerConfiguration );
+                 TrackerConfigurationReady, ReportSuccessTrackerConfiguration );
 
   igstkAddTransitionMacro( ConfiguringTracker, Failure, 
                            ImageReady, ReportFailureTrackerConfiguration );
@@ -534,7 +534,7 @@ Navigator::Navigator() : m_StateMachine(this)
   /** InitializingTracker State */
 
   igstkAddTransitionMacro( InitializingTracker, Success, 
-                           TrackerInitializationReady, ReportSuccessTrackerInitialization );
+               TrackerInitializationReady, ReportSuccessTrackerInitialization );
 
   igstkAddTransitionMacro( InitializingTracker, Failure, 
                            ImageReady, ReportFailureTrackerInitialization );
@@ -577,7 +577,7 @@ Navigator::Navigator() : m_StateMachine(this)
 
   /** TrackerInitializationReady State */
 
-  igstkAddTransitionMacro( TrackerInitializationReady, StartSetTrackerFiducials, 
+  igstkAddTransitionMacro( TrackerInitializationReady, StartSetTrackerFiducials,
                            SettingTrackerFiducials, StartSetTrackerFiducials );
 
   igstkAddTransitionMacro( TrackerInitializationReady, SetPickingPosition, 
@@ -664,10 +664,10 @@ Navigator::Navigator() : m_StateMachine(this)
   /** EndingSetTrackerFiducials State*/
 
   igstkAddTransitionMacro( EndingSetTrackerFiducials, Success, 
-                           TrackerFiducialsReady, ReportSuccessEndSetTrackerFiducials );
+                   TrackerFiducialsReady, ReportSuccessEndSetTrackerFiducials );
 
   igstkAddTransitionMacro( EndingSetTrackerFiducials, Failure, 
-                           SettingTrackerFiducials, ReportFailureEndSetTrackerFiducials );
+                 SettingTrackerFiducials, ReportFailureEndSetTrackerFiducials );
 
   //complete table for state: EndingSetTrackerFiducials
   igstkAddTransitionMacro( EndingSetTrackerFiducials, LoadImage, 
@@ -748,9 +748,9 @@ Navigator::Navigator() : m_StateMachine(this)
   /** RegisteringTracker State*/
 
   igstkAddTransitionMacro( RegisteringTracker, Success, 
-                           AcceptingRegistration, ReportSuccessTrackerRegistration );
+                      AcceptingRegistration, ReportSuccessTrackerRegistration );
   igstkAddTransitionMacro( RegisteringTracker, Failure, 
-                           TrackerInitializationReady, ReportFailureTrackerRegistration );
+                 TrackerInitializationReady, ReportFailureTrackerRegistration );
 
   //complete table for state: RegisteringTracker
 
@@ -791,9 +791,9 @@ Navigator::Navigator() : m_StateMachine(this)
   /** AcceptingRegistration State*/
 
   igstkAddTransitionMacro( AcceptingRegistration, Success, 
-                           RegistrationReady, ReportSuccessAcceptingRegistration );
+                        RegistrationReady, ReportSuccessAcceptingRegistration );
   igstkAddTransitionMacro( AcceptingRegistration, Failure, 
-                           TrackerInitializationReady, ReportFailureAcceptingRegistration );
+               TrackerInitializationReady, ReportFailureAcceptingRegistration );
 
   //complete table for state: RegisteringTracker
 
@@ -1009,7 +1009,7 @@ Navigator::Navigator() : m_StateMachine(this)
                            ImageReady, ReportSuccessTrackerDisconnection);
 
   igstkAddTransitionMacro( DisconnectingTracker, Failure,
-                           RegistrationReady, ReportFailureTrackerDisconnection );
+                         RegistrationReady, ReportFailureTrackerDisconnection );
 
   //complete table for state: DisconnectingTracker
 
@@ -1080,12 +1080,13 @@ void Navigator::ConfigureTrackerProcessing()
              "BronchoscopyNavigator::ConfigureTrackerProcessing called...\n" )
  
   const char*  fileName = 
-    fl_file_chooser("Select a tracker configuration file","*.xml", "auroraConfiguration.xml");
+    fl_file_chooser("Select a tracker configuration file","*.xml", 
+                                                     "auroraConfiguration.xml");
 
   if ( fileName == NULL )
   {
-      igstkLogMacro2( m_Logger, DEBUG, 
-             "WorkingVolumeTester::ConfigureTrackerProcessing none file was selected or operation canceled...\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Navigator::ConfigureTrackerProcessing \
+      none file was selected or operation canceled...\n" )
       m_StateMachine.PushInput( m_FailureInput );
       m_StateMachine.ProcessInputs();
       return;
@@ -1114,7 +1115,7 @@ void Navigator::ConfigureTrackerProcessing()
   //there is a third option that the read is invalid, if the
   //file name or xml reader weren't set
   igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::Pointer
-        rfso = igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::New();
+   rfso = igstk::TrackerConfigurationFileReader::ReadFailSuccessObserver::New();
 
   trackerConfigReader->AddObserver( 
            igstk::TrackerConfigurationFileReader::ReadSuccessEvent(), rfso );
@@ -1123,13 +1124,14 @@ void Navigator::ConfigureTrackerProcessing()
            igstk::TrackerConfigurationFileReader::ReadFailureEvent(), rfso );
 
   trackerConfigReader->AddObserver( 
-           igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(), rfso );
+    igstk::TrackerConfigurationFileReader::UnexpectedTrackerTypeEvent(), rfso );
 
   //setting the file name and reader always succeeds so I don't
   //observe for success event
   trackerConfigReader->RequestSetFileName( fileName );
 
-  TrackerConfigurationObserver::Pointer tco = TrackerConfigurationObserver::New();
+  TrackerConfigurationObserver::Pointer tco = 
+                                            TrackerConfigurationObserver::New();
 
   for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
   {
@@ -1159,7 +1161,8 @@ void Navigator::ConfigureTrackerProcessing()
    {
      //get the configuration data from the reader
      trackerConfigReader->AddObserver(
-       igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), tco );
+       igstk::TrackerConfigurationFileReader::TrackerConfigurationDataEvent(), 
+                                                                          tco );
      trackerConfigReader->RequestGetData();
 
      if( tco->GotTrackerConfiguration() )
@@ -1169,7 +1172,8 @@ void Navigator::ConfigureTrackerProcessing()
      }
      else
      {
-       igstkLogMacro2( m_Logger, DEBUG, "Could not get tracker configuration error\n" )
+       igstkLogMacro2( m_Logger, DEBUG, 
+                                 "Could not get tracker configuration error\n" )
        m_StateMachine.PushInput( m_FailureInput );
      }
 
@@ -1179,7 +1183,8 @@ void Navigator::ConfigureTrackerProcessing()
    else
    {
     // just to complete all possibilities
-       igstkLogMacro2( m_Logger, DEBUG, "Very strange tracker configuration error\n" )
+       igstkLogMacro2( m_Logger, DEBUG, 
+                                  "Very strange tracker configuration error\n" )
        m_StateMachine.PushInput( m_FailureInput );
        m_StateMachine.ProcessInputs();
        return;
@@ -1370,10 +1375,14 @@ Navigator::ReportSuccessImageLoadedProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_AxialView->RequestRemoveObject( 
+                                       m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_SagittalView->RequestRemoveObject( 
+                                    m_SagittalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                     m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_3DView->RequestRemoveObject( 
+                                      m_3DViewFiducialRepresentationVector[i] );
   }
 
   this->DisableAll();
@@ -1474,7 +1483,7 @@ void
 Navigator::ReportSuccessPinpointingTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportSuccessPinpointingTrackerFiducialProcessing called...\n");
+               "ReportSuccessPinpointingTrackerFiducialProcessing called...\n");
 }
 
 /** Method to be invoked on failure pinpointing */
@@ -1482,7 +1491,7 @@ void
 Navigator::ReportFailurePinpointingTrackerFiducialProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
-                 "ReportFailurePinpointingTrackerFiducialProcessing called...\n");
+               "ReportFailurePinpointingTrackerFiducialProcessing called...\n");
 }
 
 /** Method to be invoked on successful end set tracker fiducials */
@@ -1494,10 +1503,14 @@ Navigator::ReportSuccessEndSetTrackerFiducialsProcessing()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_AxialView->RequestRemoveObject( 
+                                       m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_SagittalView->RequestRemoveObject( 
+                                    m_SagittalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                     m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_3DView->RequestRemoveObject( 
+                                      m_3DViewFiducialRepresentationVector[i] );
   }
 
   this->RequestTrackerRegistration();
@@ -1629,9 +1642,11 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
                  "ReportSuccessAcceptingRegistration called...\n");  
 
   // add the tool object to the image planes
-  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );   
-  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
-  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
+  m_AxialPlaneSpatialObject->RequestSetToolSpatialObject( m_ToolSpatialObject );
+  m_SagittalPlaneSpatialObject->RequestSetToolSpatialObject( 
+                                                          m_ToolSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetToolSpatialObject( 
+                                                          m_ToolSpatialObject );
 
   m_CrossHair->RequestSetToolSpatialObject( m_ToolSpatialObject ); 
        
@@ -1645,34 +1660,40 @@ Navigator::ReportSuccessAcceptingRegistrationProcessing()
 
   // setup axial tool projection
   m_AxialToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_AxialToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_AxialToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+  m_AxialToolProjectionRepresentation->RequestSetToolProjectionObject( 
+                                                             m_ToolProjection );
+  m_AxialToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                    m_AxialPlaneSpatialObject );
   m_AxialToolProjectionRepresentation->SetColor( 1,1,0 );
 
   // setup sagittal tool projection
-  m_SagittalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_SagittalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_SagittalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+  m_SagittalToolProjectionRepresentation = 
+                                        ToolProjectionRepresentationType::New();
+  m_SagittalToolProjectionRepresentation->RequestSetToolProjectionObject( 
+                                                             m_ToolProjection );
+  m_SagittalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                 m_SagittalPlaneSpatialObject );
   m_SagittalToolProjectionRepresentation->SetColor( 1,1,0 );
 
   // setup coronal tool projection
-  m_CoronalToolProjectionRepresentation = ToolProjectionRepresentationType::New();
-  m_CoronalToolProjectionRepresentation->RequestSetToolProjectionObject( m_ToolProjection );
-  m_CoronalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+  m_CoronalToolProjectionRepresentation = 
+                                        ToolProjectionRepresentationType::New();
+  m_CoronalToolProjectionRepresentation->RequestSetToolProjectionObject( 
+                                                             m_ToolProjection );
+  m_CoronalToolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                  m_CoronalPlaneSpatialObject );
   m_CoronalToolProjectionRepresentation->SetColor( 1,1,0 );
 
   // add tool representation to the 3D view
   m_ViewerGroup->m_3DView->RequestAddObject( m_ToolRepresentation );
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_AxialToolProjectionRepresentation->Copy() );
-
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_SagittalToolProjectionRepresentation->Copy() );
-
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalToolProjectionRepresentation );
- // m_ViewerGroup->m_3DView->RequestAddObject( m_CoronalToolProjectionRepresentation->Copy() );
-
+  m_ViewerGroup->m_AxialView->RequestAddObject( 
+                                          m_AxialToolProjectionRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( 
+                                       m_SagittalToolProjectionRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                        m_CoronalToolProjectionRepresentation );
+ 
   // reset the cameras in the different views
   m_ViewerGroup->m_AxialView->RequestResetCamera();
   m_ViewerGroup->m_SagittalView->RequestResetCamera();
@@ -1745,16 +1766,17 @@ Navigator::ReportSuccessTrackerDisconnectionProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportSuccessTrackerDisconnectionProcessing called...\n");
   
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, 
+                                                               "DISCONNECTED" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, 
+                                                               "DISCONNECTED" );
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "DISCONNECTED" );
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, 
+                                                               "DISCONNECTED" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
-
-//  m_ViewerGroup->RequestUpdateOverlays();
 
 }
 
@@ -1772,10 +1794,10 @@ Navigator::ReportSuccessStartTrackingProcessing()
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
 
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0);
 
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0.0 );
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor( 1, 0.0, 1.0, 0);
 
 //  m_ViewerGroup->RequestUpdateOverlays();
   
@@ -1813,13 +1835,15 @@ Navigator::ReportSuccessStopTrackingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportSuccessStopTrackingProcessing called...\n")
  
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "STOPPED");
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1,
+                                                                     "STOPPED");
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "STOPPED" );
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, 
+                                                                     "STOPPED");
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 1.0); 
 
 //  m_ViewerGroup->RequestUpdateOverlays();
@@ -1867,7 +1891,7 @@ void Navigator::LoadImageProcessing()
    m_ProgressCommand = ProgressCommandType::New();
 
    /** Set the callback to the itk progress command */
-   m_ProgressCommand->SetCallbackFunction( this, &Navigator::OnITKProgressEvent );
+   m_ProgressCommand->SetCallbackFunction(this, &Navigator::OnITKProgressEvent);
 
    // Provide a progress observer to the image reader      
    m_ImageReader->RequestSetProgressCallback( m_ProgressCommand );
@@ -1887,17 +1911,19 @@ void Navigator::LoadImageProcessing()
    //Add observer for a an empty directory name (null string) 
    DICOMImageReaderEmptyDirectoryErrorObserver::Pointer decb = 
                       DICOMImageReaderEmptyDirectoryErrorObserver::New();
-   m_ImageReader->AddObserver( igstk::DICOMImageDirectoryEmptyErrorEvent(), decb );
+   m_ImageReader->AddObserver( igstk::DICOMImageDirectoryEmptyErrorEvent(), 
+                                                                         decb );
 
    //Add observer for a directory which does not have enough number of files 
-   DICOMImageDirectoryNameDoesNotHaveEnoughFilesErrorObserver::Pointer ddhefcb = 
+   DICOMImageDirectoryNameDoesNotHaveEnoughFilesErrorObserver::Pointer ddhefcb =
             DICOMImageDirectoryNameDoesNotHaveEnoughFilesErrorObserver::New();
    m_ImageReader->AddObserver( 
       igstk::DICOMImageDirectoryDoesNotHaveEnoughFilesErrorEvent(), ddhefcb );
 
    //Add observer for a directory containing non-DICOM files 
-   DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::Pointer disgcb = 
-            DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::New();
+   DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::Pointer 
+   disgcb = 
+          DICOMImageDirectoryDoesNotContainValidDICOMSeriesErrorObserver::New();
    m_ImageReader->AddObserver( 
       igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent(), disgcb );
   
@@ -1911,7 +1937,8 @@ void Navigator::LoadImageProcessing()
 
    if( didcb->GotDICOMImageReaderInvalidDirectoryNameError() )
     {
-    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderInvalidDirectoryNameError\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                             "Got DICOMImageReaderInvalidDirectoryNameError\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -1919,7 +1946,8 @@ void Navigator::LoadImageProcessing()
 
    if( dndcb->GotDICOMImageReaderNonExistingDirectoryError() )
     {
-    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderNonExistingDirectoryError\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                             "Got DICOMImageReaderNonExistingDirectoryError\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -1927,7 +1955,8 @@ void Navigator::LoadImageProcessing()
 
    if( decb->GotDICOMImageReaderEmptyDirectoryError() )
     {
-    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageReaderEmptyDirectoryError\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                                   "Got DICOMImageReaderEmptyDirectoryError\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -1944,7 +1973,8 @@ void Navigator::LoadImageProcessing()
 
    if( disgcb->GotDICOMImageDirectoryDoesNotContainValidDICOMSeriesError() )
     {
-    igstkLogMacro2( m_Logger, DEBUG, "Got DICOMImageDirectoryDoesNotContainValidDICOMSeriesError\n" )
+    igstkLogMacro2( m_Logger, DEBUG, 
+                "Got DICOMImageDirectoryDoesNotContainValidDICOMSeriesError\n" )
     m_StateMachine.PushInput( m_FailureInput );
     m_StateMachine.ProcessInputs();
     return;
@@ -2038,15 +2068,18 @@ void Navigator::RequestAcceptImageLoad()
   igstkLogMacro2( m_Logger, DEBUG, 
               "Navigator::RequestAcceptImageLoad called...\n" )
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, "AXIAL VIEW");
+  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText(3, 
+                                                                  "AXIAL VIEW");
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontSize(3, 12);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(3, "SAGITTAL VIEW");
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(3, 
+                                                               "SAGITTAL VIEW");
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1);
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontSize(3, 12);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(3, "CORONAL VIEW");
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(3, 
+                                                                "CORONAL VIEW");
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(3, 1.0, 1.0, 1.0);
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontSize(3, 12);
 
@@ -2080,7 +2113,8 @@ void Navigator::LoadToolSpatialObjectProcessing()
 
    if ( !fileName )
     {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadToolSpatialObjectProcessing No file was selected\n" )
+     igstkLogMacro2( m_Logger, DEBUG, 
+           "Navigator::LoadToolSpatialObjectProcessing No file was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
      return;
@@ -2099,7 +2133,8 @@ void Navigator::LoadToolSpatialObjectProcessing()
 
    if( !observer->GotMeshObject() )
    {
-       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadToolSpatialObjectProcessing cannot read mesh\n" )
+       igstkLogMacro2( m_Logger, DEBUG, 
+               "Navigator::LoadToolSpatialObjectProcessing cannot read mesh\n" )
        m_StateMachine.PushInput( m_FailureInput );
        m_StateMachine.ProcessInputs();
        return;
@@ -2125,7 +2160,8 @@ void Navigator::LoadToolSpatialObjectProcessing()
 
 /** -----------------------------------------------------------------
 * Load mesh. This method asks for a file with the a mesh (e.g representing a 
-* segmentation). The file must be in the .msh format (see mesh SpatialObject in ITK)
+* segmentation). The file must be in the .msh format (see mesh SpatialObject in 
+* ITK)
 * Any number of meshes can be loaded. Both, spatial object and representation 
 * will be kept in a vector.
 * -----------------------------------------------------------------
@@ -2140,7 +2176,8 @@ void Navigator::LoadMeshProcessing()
 
    if ( !fileName )
     {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing No directory was selected\n" )
+     igstkLogMacro2( m_Logger, DEBUG, 
+                   "Navigator::LoadMeshProcessing No directory was selected\n" )
      m_StateMachine.PushInput( m_FailureInput );
      m_StateMachine.ProcessInputs();
      return;
@@ -2160,7 +2197,8 @@ void Navigator::LoadMeshProcessing()
 
    if( !observer->GotMeshObject() )
    {
-       igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Could not read the mesh\n" )
+       igstkLogMacro2( m_Logger, DEBUG, 
+                     "Navigator::LoadMeshProcessing Could not read the mesh\n" )
        m_StateMachine.PushInput( m_FailureInput);
        m_StateMachine.ProcessInputs();
        return;
@@ -2171,7 +2209,8 @@ void Navigator::LoadMeshProcessing()
     
    if (meshSpatialObject.IsNull())
    {
-     igstkLogMacro2( m_Logger, DEBUG, "Navigator::LoadMeshProcessing Could not retrieve the mesh\n" )
+     igstkLogMacro2( m_Logger, DEBUG, 
+                 "Navigator::LoadMeshProcessing Could not retrieve the mesh\n" )
      m_StateMachine.PushInput( m_FailureInput);
      m_StateMachine.ProcessInputs();
      return;
@@ -2180,7 +2219,7 @@ void Navigator::LoadMeshProcessing()
    // set transform and parent to the mesh spatial object
    igstk::Transform identity;
    identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-   meshSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+   meshSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference);
    
    // set a random color
    double r = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
@@ -2188,14 +2227,16 @@ void Navigator::LoadMeshProcessing()
    double b = ( ( ( double ) ( std::rand( ) ) ) / ( ( double ) ( RAND_MAX ) ) );
 
    // setup a mesh representation
-   MeshRepresentationType::Pointer meshRepresentation = MeshRepresentationType::New();     
+   MeshRepresentationType::Pointer meshRepresentation = 
+                                                  MeshRepresentationType::New();
    meshRepresentation->RequestSetMeshObject( meshSpatialObject );
    meshRepresentation->SetOpacity(1);
    meshRepresentation->SetColor(r, g, b);
    m_MeshRepresentationVector.push_back( meshRepresentation );
 
    // build axial mesh reslice representation
-   MeshResliceRepresentationType::Pointer axialContour = MeshResliceRepresentationType::New();
+   MeshResliceRepresentationType::Pointer axialContour = 
+                                           MeshResliceRepresentationType::New();
    axialContour->SetOpacity(1);
    axialContour->SetLineWidth(3);
    axialContour->SetColor(r, g, b);     
@@ -2203,20 +2244,24 @@ void Navigator::LoadMeshProcessing()
    axialContour->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );   
 
    // build sagittal mesh reslice representation
-   MeshResliceRepresentationType::Pointer sagittalContour = MeshResliceRepresentationType::New(); 
+   MeshResliceRepresentationType::Pointer sagittalContour = 
+                                           MeshResliceRepresentationType::New();
    sagittalContour->SetOpacity(1);
    sagittalContour->SetLineWidth(3);
    sagittalContour->SetColor(r, g, b);
    sagittalContour->RequestSetMeshObject( meshSpatialObject );
-   sagittalContour->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+   sagittalContour->RequestSetReslicePlaneSpatialObject( 
+                                                 m_SagittalPlaneSpatialObject );
    
    // build coronal mesh reslice representation
-   MeshResliceRepresentationType::Pointer coronalContour = MeshResliceRepresentationType::New();
+   MeshResliceRepresentationType::Pointer coronalContour = 
+                                           MeshResliceRepresentationType::New();
    coronalContour->SetOpacity(1);
    coronalContour->SetLineWidth(3);
    coronalContour->SetColor(r, g, b);
    coronalContour->RequestSetMeshObject( meshSpatialObject );
-   coronalContour->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );
+   coronalContour->RequestSetReslicePlaneSpatialObject( 
+                                                  m_CoronalPlaneSpatialObject );
       
    // add repressentations to the views
    m_ViewerGroup->m_AxialView->RequestAddObject( axialContour );
@@ -2250,7 +2295,8 @@ void Navigator::SetImagePickingProcessing()
   igstkLogMacro2( m_Logger, DEBUG, 
                   "Navigator::SetImagePickingProcessing called...\n" )
 
-  ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
+  ImageSpatialObjectType::PointType point = TransformToPoint( 
+                                                           m_PickingTransform );
 
   if ( m_ImageSpatialObject->IsInside( point ) )
   {
@@ -2280,27 +2326,28 @@ void Navigator::SetImageFiducialProcessing()
     igstkLogMacro2( m_Logger, DEBUG, 
                     "Navigator::SetImageFiducialProcessing called...\n" )
 
-    ImageSpatialObjectType::PointType point = TransformToPoint( m_PickingTransform );
+    ImageSpatialObjectType::PointType point = TransformToPoint( 
+                                                           m_PickingTransform );
   
     if( m_ImageSpatialObject->IsInside( point ) )
     {
       int choice = m_FiducialsPointList->value();
 
       m_FiducialPointVector[choice]->RequestSetTransformAndParent(
-                                              m_PickingTransform, m_WorldReference );
+                                         m_PickingTransform, m_WorldReference );
 
       m_Plan->m_FiducialPoints[choice] = point;
 
       char buf[50];
       sprintf( buf, "[%.2f, %.2f, %.2f]", point[0], point[1], point[2]);
       m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+      m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1);
 
-      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2,buf);
+      m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0, 0, 1);
 
-      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);     
+      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf);
+      m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0, 1);
 
 //      m_ViewerGroup->RequestUpdateOverlays();
 
@@ -2358,8 +2405,9 @@ void Navigator::InitializeTrackerProcessing()
   m_TrackerControllerObserver->SetParent( this );
 
   // todo: replace these with igstk observers
-  m_TrackerController->AddObserver(igstk::TrackerController::InitializeErrorEvent(),
-    m_TrackerControllerObserver );
+  m_TrackerController->AddObserver(
+                               igstk::TrackerController::InitializeErrorEvent(),
+                                                  m_TrackerControllerObserver );
 
   m_TrackerController->AddObserver(igstk::TrackerStartTrackingEvent(),
     m_TrackerControllerObserver );
@@ -2376,11 +2424,13 @@ void Navigator::InitializeTrackerProcessing()
   m_TrackerController->AddObserver(igstk::TrackerController::RequestToolEvent(),
     m_TrackerControllerObserver );
 
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolErrorEvent(),
-    m_TrackerControllerObserver );
+  m_TrackerController->AddObserver(
+                              igstk::TrackerController::RequestToolErrorEvent(),
+                                                  m_TrackerControllerObserver );
  
-  m_TrackerController->AddObserver(igstk::TrackerController::RequestToolsEvent(),
-    m_TrackerControllerObserver );
+  m_TrackerController->AddObserver(
+                                  igstk::TrackerController::RequestToolsEvent(),
+                                                  m_TrackerControllerObserver );
 
   m_TrackerController->RequestInitialize( m_TrackerConfiguration );
                
@@ -2461,7 +2511,7 @@ void Navigator::InitializeTrackerProcessing()
 void Navigator::StartSetTrackerFiducialsProcessing()
 {
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::StartSetTrackerFiducialsProcessing called...\n" )
+                    "Navigator::StartSetTrackerFiducialsProcessing called...\n")
 
   this->DisableAll();
 
@@ -2470,13 +2520,16 @@ void Navigator::StartSetTrackerFiducialsProcessing()
   m_RegisterButton->color(FL_RED); 
   m_RegisterButton->label("Registering...");
 
-  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
+  m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, 
+                                                                "REGISTERING" );
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, 
+                                                                "REGISTERING" );
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0);
 
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, "REGISTERING" );
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, 
+                                                                "REGISTERING" );
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 1.0, 0.0, 0.0);
 
 //  m_ViewerGroup->RequestUpdateOverlays(); 
@@ -2502,7 +2555,7 @@ void Navigator::StartSetTrackerFiducialsProcessing()
     m_FiducialsPointList->add(buf);
     RegistrationType::LandmarkTrackerPointType p;
     m_LandmarksContainer.push_back(p);
-    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false) );
+    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false));
   }
 
   m_FiducialsPointList->value(0);
@@ -2528,7 +2581,7 @@ void Navigator::EndSetTrackerFiducialsProcessing()
   }
 
   igstkLogMacro2( m_Logger, DEBUG, 
-                    "numberOfAcceptedLandmarks " << numberOfAcceptedLandmarks << "\n" )
+             "numberOfAcceptedLandmarks " << numberOfAcceptedLandmarks << "\n" )
 
   if (numberOfAcceptedLandmarks >= 3)
   {
@@ -2587,7 +2640,8 @@ void Navigator::TrackerRegistrationProcessing()
     if( lRmscb->GotRegistrationError() )
     {
        igstkLogMacro2( m_Logger, DEBUG,  
-         "Tracker to Image Registration Error " << lRmscb->GetRegistrationError() << "\n" )
+         "Tracker to Image Registration Error " << 
+                                       lRmscb->GetRegistrationError() << "\n" )
        m_TrackerRMS = lRmscb->GetRegistrationError();
 
        char buf[50];
@@ -2595,13 +2649,13 @@ void Navigator::TrackerRegistrationProcessing()
        //sprintf( buf, "TRACKING");
 
        m_ViewerGroup->m_AxialViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+       m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(1, 0.0, 1, 0);
 
-       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0);
+       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText(1,buf);
+       m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(1, 0, 1, 0);
 
-       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 1, buf );
-       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0.0, 1.0, 0.0); 
+       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText(1,buf);
+       m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(1, 0, 1, 0);
 
 //       m_ViewerGroup->RequestUpdateOverlays();    
     }
@@ -2620,7 +2674,8 @@ void Navigator::TrackerRegistrationProcessing()
     if ( m_ReferenceTool.IsNotNull() )
     {
       m_ReferenceTool->RequestDetachFromParent();
-      m_ReferenceTool->RequestSetTransformAndParent(m_RegistrationTransform, m_WorldReference);
+      m_ReferenceTool->RequestSetTransformAndParent(m_RegistrationTransform, 
+                                                              m_WorldReference);
     }
 
     m_ViewerGroup->m_3DView->RequestResetCamera();
@@ -2773,61 +2828,82 @@ void Navigator::ConnectImageRepresentation()
     m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
 
     m_AxialFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_AxialFiducialRepresentationVector[i]->RequestSetEllipsoidObject( 
+                                                     m_FiducialPointVector[i] );
     m_AxialFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
     m_AxialFiducialRepresentationVector[i]->SetOpacity( 0.6 );
 
-    m_SagittalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_SagittalFiducialRepresentationVector[i] = 
+                                             EllipsoidRepresentationType::New();
+    m_SagittalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( 
+                                                     m_FiducialPointVector[i] );
     m_SagittalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
     m_SagittalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
 
-    m_CoronalFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_CoronalFiducialRepresentationVector[i] = 
+                                             EllipsoidRepresentationType::New();
+    m_CoronalFiducialRepresentationVector[i]->RequestSetEllipsoidObject( 
+                                                     m_FiducialPointVector[i] );
     m_CoronalFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
     m_CoronalFiducialRepresentationVector[i]->SetOpacity( 0.6 );
 
-    m_3DViewFiducialRepresentationVector[i] = EllipsoidRepresentationType::New();
-    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( m_FiducialPointVector[i] );
+    m_3DViewFiducialRepresentationVector[i] =EllipsoidRepresentationType::New();
+    m_3DViewFiducialRepresentationVector[i]->RequestSetEllipsoidObject( 
+                                                     m_FiducialPointVector[i] );
     m_3DViewFiducialRepresentationVector[i]->SetColor( 1.0, 0.0, 0.0);
     m_3DViewFiducialRepresentationVector[i]->SetOpacity( 0.6 );
   }  
 
   // create reslice plane spatial object for axial view
   m_AxialPlaneSpatialObject = ReslicerPlaneType::New();
-  m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-  m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  m_AxialPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+  m_AxialPlaneSpatialObject->RequestSetOrientationType( 
+                                                     ReslicerPlaneType::Axial );
+  m_AxialPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( 
+                                                         m_ImageSpatialObject );
 
   // create reslice plane spatial object for sagittal view
   m_SagittalPlaneSpatialObject = ReslicerPlaneType::New();
-  m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-  m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  m_SagittalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+  m_SagittalPlaneSpatialObject->RequestSetOrientationType( 
+                                                  ReslicerPlaneType::Sagittal );
+  m_SagittalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( 
+                                                         m_ImageSpatialObject );
 
   // create reslice plane spatial object for coronal view
   m_CoronalPlaneSpatialObject = ReslicerPlaneType::New();
-  m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-  m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-  m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  m_CoronalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+  m_CoronalPlaneSpatialObject->RequestSetOrientationType( 
+                                                   ReslicerPlaneType::Coronal );
+  m_CoronalPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( 
+                                                         m_ImageSpatialObject );
 
   // create reslice plane representation for axial view
   m_AxialPlaneRepresentation = ImageRepresentationType::New();
   m_AxialPlaneRepresentation->SetFrameColor(1,0,0);
-  m_AxialPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_AxialPlaneSpatialObject );
+  m_AxialPlaneRepresentation->RequestSetImageSpatialObject( 
+                                                         m_ImageSpatialObject );
+  m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                    m_AxialPlaneSpatialObject );
 
   // create reslice plane representation for sagittal view
   m_SagittalPlaneRepresentation = ImageRepresentationType::New();
   m_SagittalPlaneRepresentation->SetFrameColor(0,1,0);
-  m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_SagittalPlaneSpatialObject );
+  m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( 
+                                                         m_ImageSpatialObject );
+  m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                 m_SagittalPlaneSpatialObject );
 
   // create reslice plane representation for coronal view
   m_CoronalPlaneRepresentation = ImageRepresentationType::New();
   m_CoronalPlaneRepresentation->SetFrameColor(0,0,1);
-  m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( m_ImageSpatialObject );
-  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( m_CoronalPlaneSpatialObject );  
+  m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( 
+                                                         m_ImageSpatialObject );
+  m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 
+                                                  m_CoronalPlaneSpatialObject );
 
    /** 
    *  Request information about the slice bounds. The answer will be
@@ -2839,17 +2915,19 @@ void Navigator::ConnectImageRepresentation()
   
   unsigned int extentObserverID;
 
-  extentObserverID = m_ImageSpatialObject->AddObserver( igstk::ImageExtentEvent(), extentObserver );
+  extentObserverID = m_ImageSpatialObject->AddObserver( 
+                                    igstk::ImageExtentEvent(), extentObserver );
 
   m_ImageSpatialObject->RequestGetImageExtent();
 
   if( extentObserver->GotImageExtent() )
   {
-    const igstk::EventHelperType::ImageExtentType& extent = extentObserver->GetImageExtent();
+    const igstk::EventHelperType::ImageExtentType& extent = 
+                                               extentObserver->GetImageExtent();
 
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
-    const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax) / 2.0 );
+    const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax)/2 );
     m_ViewerGroup->m_Sliders[0]->minimum( zmin );
     m_ViewerGroup->m_Sliders[0]->maximum( zmax );
     m_ViewerGroup->m_Sliders[0]->value( zslice );
@@ -2857,7 +2935,7 @@ void Navigator::ConnectImageRepresentation()
 
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
-    const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax) / 2.0 );
+    const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax)/2 );
     m_ViewerGroup->m_Sliders[1]->minimum( ymin );
     m_ViewerGroup->m_Sliders[1]->maximum( ymax );
     m_ViewerGroup->m_Sliders[1]->value( yslice );
@@ -2865,7 +2943,7 @@ void Navigator::ConnectImageRepresentation()
 
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
-    const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax) / 2.0 );
+    const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax)/2 );
     m_ViewerGroup->m_Sliders[2]->minimum( xmin );
     m_ViewerGroup->m_Sliders[2]->maximum( xmax );
     m_ViewerGroup->m_Sliders[2]->value( xslice );
@@ -2876,7 +2954,7 @@ void Navigator::ConnectImageRepresentation()
 
   // Set up cross hairs
   m_CrossHair = CrossHairType::New();
-  m_CrossHair->RequestSetBoundingBoxProviderSpatialObject( m_ImageSpatialObject );
+  m_CrossHair->RequestSetBoundingBoxProviderSpatialObject(m_ImageSpatialObject);
 
   // buid the cross hair representations
   m_AxialCrossHairRepresentation = CrossHairRepresentationType::New();
@@ -2900,9 +2978,11 @@ void Navigator::ConnectImageRepresentation()
   m_3DViewCrossHairRepresentation->RequestSetCrossHairObject( m_CrossHair );
 
   // add the cross hair representation to the different views
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialCrossHairRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalCrossHairRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalCrossHairRepresentation );
+  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialCrossHairRepresentation);
+  m_ViewerGroup->m_SagittalView->RequestAddObject( 
+                                            m_SagittalCrossHairRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                             m_CoronalCrossHairRepresentation );
   m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewCrossHairRepresentation );
 
   // set background color to the views
@@ -2933,34 +3013,47 @@ void Navigator::ConnectImageRepresentation()
   m_WorldReference  = igstk::AxesObject::New();
 
   // set transform and parent to the image spatial object
-  m_ImageSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_ImageSpatialObject->RequestSetTransformAndParent(identity,m_WorldReference);
 
   // set transform and parent to the image plane reslice spatial objects
-  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_AxialPlaneSpatialObject->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
+  m_SagittalPlaneSpatialObject->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
+  m_CoronalPlaneSpatialObject->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
 
-  m_ViewerGroup->m_AxialView->RequestSetTransformAndParent( identity, m_AxialPlaneSpatialObject );
+  m_ViewerGroup->m_AxialView->RequestSetTransformAndParent( identity, 
+                                                    m_AxialPlaneSpatialObject );
 
-  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent( identity, m_SagittalPlaneSpatialObject );
+  m_ViewerGroup->m_SagittalView->RequestSetTransformAndParent( identity, 
+                                                 m_SagittalPlaneSpatialObject );
 
-  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent( identity, m_CoronalPlaneSpatialObject );
+  m_ViewerGroup->m_CoronalView->RequestSetTransformAndParent( identity, 
+                                                  m_CoronalPlaneSpatialObject );
 
-  m_ViewerGroup->m_3DView->RequestSetTransformAndParent( identity, m_WorldReference );
+  m_ViewerGroup->m_3DView->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
 
   // set transform and parent to the cross hair object
   m_CrossHair->RequestSetTransformAndParent( identity, m_WorldReference );
 
   // set transform and parent to the fiducial points
-  m_FiducialPointVector[0]->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_FiducialPointVector[1]->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_FiducialPointVector[2]->RequestSetTransformAndParent( identity, m_WorldReference );
-  m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, m_WorldReference );  
+  m_FiducialPointVector[0]->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
+  m_FiducialPointVector[1]->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
+  m_FiducialPointVector[2]->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
+  m_FiducialPointVector[3]->RequestSetTransformAndParent( identity, 
+                                                             m_WorldReference );
 
   // add reslice plane representations to the orthogonal views
   m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialPlaneRepresentation );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalPlaneRepresentation );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalPlaneRepresentation );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( 
+                                                m_SagittalPlaneRepresentation );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                                 m_CoronalPlaneRepresentation );
 
   // add reslice plane representations to the 3D views
   m_AxialPlaneRepresentation2 = m_AxialPlaneRepresentation->Copy();
@@ -3007,21 +3100,24 @@ void Navigator::ConnectImageRepresentation()
 
   /** Add observer for picking events in the Axial view */
   m_AxialViewPickerObserver = LoadedObserverType::New();
-  m_AxialViewPickerObserver->SetCallbackFunction( this, &Navigator::AxialViewPickingCallback );
+  m_AxialViewPickerObserver->SetCallbackFunction( this, 
+                                         &Navigator::AxialViewPickingCallback );
 
   m_ViewerGroup->m_AxialView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_AxialViewPickerObserver );
 
   /** Add observer for picking events in the Axial view */
   m_SagittalViewPickerObserver = LoadedObserverType::New();
-  m_SagittalViewPickerObserver->SetCallbackFunction( this, &Navigator::SagittalViewPickingCallback );
+  m_SagittalViewPickerObserver->SetCallbackFunction( this, 
+                                      &Navigator::SagittalViewPickingCallback );
 
   m_ViewerGroup->m_SagittalView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_SagittalViewPickerObserver );
 
   /** Add observer for picking events in the Axial view */
   m_CoronalViewPickerObserver = LoadedObserverType::New();
-  m_CoronalViewPickerObserver->SetCallbackFunction( this, &Navigator::CoronalViewPickingCallback );
+  m_CoronalViewPickerObserver->SetCallbackFunction( this, 
+                                       &Navigator::CoronalViewPickingCallback );
 
   m_ViewerGroup->m_CoronalView->AddObserver(
       igstk::CoordinateSystemTransformToEvent(), m_CoronalViewPickerObserver );
@@ -3031,8 +3127,9 @@ void Navigator::ConnectImageRepresentation()
   m_ManualReslicingObserver->SetCallbackFunction( this,
     &Navigator::ResliceImageCallback );
 
-  m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
-    m_ManualReslicingObserver );
+  m_ViewerGroup->AddObserver( 
+                          igstk::NavigatorQuadrantViews::ManualReslicingEvent(),
+                                                    m_ManualReslicingObserver );
 
   /** Add observer for key pressed event */
   m_KeyPressedObserver = LoadedObserverType::New();
@@ -3040,15 +3137,16 @@ void Navigator::ConnectImageRepresentation()
     &Navigator::HandleKeyPressedCallback );
 
   m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::KeyPressedEvent(),
-    m_KeyPressedObserver );
+                                                         m_KeyPressedObserver );
 
   /** Add observer for mouse pressed event */
   m_MousePressedObserver = LoadedObserverType::New();
   m_MousePressedObserver->SetCallbackFunction( this,
     &Navigator::HandleMousePressedCallback );
 
-  m_ViewerGroup->AddObserver( igstk::NavigatorQuadrantViews::MousePressedEvent(),
-    m_MousePressedObserver );  
+  m_ViewerGroup->AddObserver( 
+                             igstk::NavigatorQuadrantViews::MousePressedEvent(),
+                                                       m_MousePressedObserver );
 
 }
 
@@ -3092,7 +3190,7 @@ void Navigator::ReadFiducials()
     m_FiducialsPointList->add( buf );
     RegistrationType::LandmarkTrackerPointType p;
     m_LandmarksContainer.push_back(p);
-    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false) );
+    m_AcceptedLandmarksContainer.insert( std::pair<unsigned int,bool>(i,false));
   }
 
   m_FiducialsPointList->value(0);
@@ -3135,47 +3233,77 @@ void Navigator::RequestChangeSelectedViewMode()
   switch (choice)
   {
     case 0:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-      m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialCrossHairRepresentation );
-      m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestAddObject( m_3DViewCrossHairRepresentation );      
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( 
+                                                     ReslicerPlaneType::Axial );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( 
+                                                  ReslicerPlaneType::Sagittal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( 
+                                                   ReslicerPlaneType::Coronal );
+      m_ViewerGroup->m_AxialView->RequestAddObject( 
+                                               m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestAddObject( 
+                                            m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                             m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                              m_3DViewCrossHairRepresentation );
       break;
 
     case 1:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-      m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialCrossHairRepresentation );
-      m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_3DViewCrossHairRepresentation );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( 
+                                             ReslicerPlaneType::OffOrthogonal );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( 
+                                                  ReslicerPlaneType::OffAxial );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( 
+                                             ReslicerPlaneType::OffOrthogonal );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( 
+                                               ReslicerPlaneType::OffSagittal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                ReslicerPlaneType::Orthogonal );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( 
+                                                  ReslicerPlaneType::Sagittal );
+      m_ViewerGroup->m_AxialView->RequestRemoveObject( 
+                                               m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestRemoveObject( 
+                                            m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                             m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                              m_3DViewCrossHairRepresentation );
       break;
 
     case 2:
-      m_AxialPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_AxialPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
-      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_SagittalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
-      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
-      m_CoronalPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
-      m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialCrossHairRepresentation );
-      m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalCrossHairRepresentation );
-      m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_3DViewCrossHairRepresentation );
+      m_AxialPlaneSpatialObject->RequestSetReslicingMode( 
+                                                   ReslicerPlaneType::Oblique );
+      m_AxialPlaneSpatialObject->RequestSetOrientationType( 
+                           ReslicerPlaneType::PlaneOrientationWithXAxesNormal );
+      m_SagittalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                   ReslicerPlaneType::Oblique );
+      m_SagittalPlaneSpatialObject->RequestSetOrientationType( 
+                           ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
+      m_CoronalPlaneSpatialObject->RequestSetReslicingMode( 
+                                                   ReslicerPlaneType::Oblique );
+      m_CoronalPlaneSpatialObject->RequestSetOrientationType( 
+                           ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+      m_ViewerGroup->m_AxialView->RequestRemoveObject( 
+                                               m_AxialCrossHairRepresentation );
+      m_ViewerGroup->m_SagittalView->RequestRemoveObject( 
+                                            m_SagittalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                             m_CoronalCrossHairRepresentation );
+      m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                              m_3DViewCrossHairRepresentation );
       break;
 
   default:
     igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::RequestChangeSelectedViewMode invalid choice \n" )
+                 "Navigator::RequestChangeSelectedViewMode invalid choice \n" )
     return;
   }
 
@@ -3220,16 +3348,24 @@ void Navigator::RequestChangeSelectedFiducial()
 
   for (int i=0; i<4; i++)
   {
-    m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_CoronalView->RequestRemoveObject( m_CoronalFiducialRepresentationVector[i] );
-    m_ViewerGroup->m_3DView->RequestRemoveObject( m_3DViewFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_AxialView->RequestRemoveObject( 
+                                       m_AxialFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_SagittalView->RequestRemoveObject( 
+                                    m_SagittalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_CoronalView->RequestRemoveObject( 
+                                     m_CoronalFiducialRepresentationVector[i] );
+    m_ViewerGroup->m_3DView->RequestRemoveObject( 
+                                      m_3DViewFiducialRepresentationVector[i] );
   }
 
-  m_ViewerGroup->m_AxialView->RequestAddObject( m_AxialFiducialRepresentationVector[choice] );
-  m_ViewerGroup->m_SagittalView->RequestAddObject( m_SagittalFiducialRepresentationVector[choice] );
-  m_ViewerGroup->m_CoronalView->RequestAddObject( m_CoronalFiducialRepresentationVector[choice] );
-  m_ViewerGroup->m_3DView->RequestAddObject( m_3DViewFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_AxialView->RequestAddObject( 
+                                  m_AxialFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_SagittalView->RequestAddObject( 
+                               m_SagittalFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_CoronalView->RequestAddObject( 
+                                m_CoronalFiducialRepresentationVector[choice] );
+  m_ViewerGroup->m_3DView->RequestAddObject( 
+                                 m_3DViewFiducialRepresentationVector[choice] );
 
   char buf[50];
 
@@ -3240,10 +3376,10 @@ void Navigator::RequestChangeSelectedFiducial()
   m_ViewerGroup->m_AxialViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
   m_ViewerGroup->m_SagittalViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
+  m_ViewerGroup->m_SagittalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1);
 
   m_ViewerGroup->m_CoronalViewAnnotation->RequestSetAnnotationText( 2, buf );
-  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0); 
+  m_ViewerGroup->m_CoronalViewAnnotation->RequestSetFontColor(2, 0.0, 0.0, 1.0);
 
 //  m_ViewerGroup->RequestUpdateOverlays();
 
@@ -3281,7 +3417,7 @@ void Navigator::RequestChangeSelectedFiducial()
 void Navigator::ResliceImageCallback( const itk::EventObject & event )
 {
 
-  if ( igstk::NavigatorQuadrantViews::ManualReslicingEvent().CheckEvent( &event ) )
+  if ( igstk::NavigatorQuadrantViews::ManualReslicingEvent().CheckEvent(&event))
   {
     igstk::NavigatorQuadrantViews::ManualReslicingEvent *resliceEvent =
     ( igstk::NavigatorQuadrantViews::ManualReslicingEvent *) & event;
@@ -3356,14 +3492,17 @@ void Navigator::AxialViewPickingCallback( const itk::EventObject & event)
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
-      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
-      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
-      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+      igstk::CoordinateSystemTransformToResult transformToResult = 
+                             coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = 
+                                               transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( 
+                            viewToWorldReferenceTransform, m_PickingTransform );
     }
     else
     {
-      igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::AxialViewPickingCallback could not get coordinate system transform...\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Navigator::AxialViewPickingCallback \
+                              could not get coordinate system transform...\n" )
       return;
     }
 
@@ -3403,14 +3542,17 @@ void Navigator::SagittalViewPickingCallback( const itk::EventObject & event)
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
-      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
-      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
-      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+      igstk::CoordinateSystemTransformToResult transformToResult = 
+                             coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = 
+                                               transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( 
+                            viewToWorldReferenceTransform, m_PickingTransform );
     }
     else
     {
-      igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::SagittalViewPickingCallback could not get coordinate system transform...\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Navigator::SagittalViewPickingCallback \
+                              could not get coordinate system transform...\n" )
       return;
     }
 
@@ -3450,14 +3592,16 @@ void Navigator::CoronalViewPickingCallback( const itk::EventObject & event)
 
     if( coordinateObserver->GotCoordinateSystemTransform() )
     {
-      igstk::CoordinateSystemTransformToResult transformToResult = coordinateObserver->GetCoordinateSystemTransform();
-      igstk::Transform viewToWorldReferenceTransform = transformToResult.GetTransform();
-      m_PickingTransform = igstk::Transform::TransformCompose( viewToWorldReferenceTransform, m_PickingTransform );
+      igstk::CoordinateSystemTransformToResult transformToResult = 
+                             coordinateObserver->GetCoordinateSystemTransform();
+      igstk::Transform viewToWorldReferenceTransform = 
+                                               transformToResult.GetTransform();
+      m_PickingTransform = igstk::Transform::TransformCompose( 
+                            viewToWorldReferenceTransform, m_PickingTransform );
     }
     else
     {
-      igstkLogMacro2( m_Logger, DEBUG, 
-                    "Navigator::CoronalViewPickingCallback could not get coordinate system transform...\n" )
+      igstkLogMacro2( m_Logger, DEBUG, "Navigator::CoronalViewPickingCallback could not get coordinate system transform...\n" )
       return;
     }
 
@@ -3479,12 +3623,12 @@ void Navigator::HandleMousePressed (
     m_WindowLevel += mouseCommand.dy * 2;
 
     m_AxialPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_SagittalPlaneRepresentation->SetWindowLevel(m_WindowWidth, m_WindowLevel);
+    m_CoronalPlaneRepresentation->SetWindowLevel( m_WindowWidth, m_WindowLevel);
 
     m_AxialPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_SagittalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
-    m_CoronalPlaneRepresentation2->SetWindowLevel( m_WindowWidth, m_WindowLevel );
+    m_SagittalPlaneRepresentation2->SetWindowLevel(m_WindowWidth,m_WindowLevel);
+    m_CoronalPlaneRepresentation2->SetWindowLevel(m_WindowWidth, m_WindowLevel);
 }
 
 void Navigator::HandleKeyPressed ( 
@@ -3502,12 +3646,12 @@ void Navigator::HandleKeyPressed (
         m_ViewerGroup->m_CoronalView->RequestResetCamera();
         m_ViewerGroup->m_3DView->RequestResetCamera();
         break;
-
-    case 'h': // accepts a fiducial pointed out by the tracker while doing the registration        
+    // accepts a fiducial pointed out by the tracker while doing registration
+    case 'h': 
           this->RequestAcceptTrackerFiducial();
         break;
-
-    case 'g': // attempts to finish the registration
+    // attempts to finish the registration
+    case 'g': 
         this->RequestEndSetTrackerFiducials();
         break;
 
@@ -3589,7 +3733,7 @@ void Navigator::TrackerControllerObserver::SetParent( Navigator *p )
 }
 
 void Navigator::TrackerControllerObserver::Execute( const itk::Object *caller, 
-                                                    const itk::EventObject & event )
+                                                const itk::EventObject & event )
 {
   const itk::Object * constCaller = caller;
   this->Execute(constCaller, event);
@@ -3597,10 +3741,10 @@ void Navigator::TrackerControllerObserver::Execute( const itk::Object *caller,
   
 void 
 Navigator::TrackerControllerObserver::Execute( itk::Object *caller, 
-                                                             const itk::EventObject & event )
+                                                const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =
-    dynamic_cast< const igstk::TrackerController::InitializeErrorEvent * > (&event);
+  dynamic_cast<const igstk::TrackerController::InitializeErrorEvent * >(&event);
 
   const igstk::TrackerStartTrackingErrorEvent *evt1b =
     dynamic_cast< const igstk::TrackerStartTrackingErrorEvent * > (&event);
@@ -3609,7 +3753,7 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     dynamic_cast< const igstk::TrackerStopTrackingErrorEvent * > (&event);
 
    const igstk::TrackerController::RequestToolsEvent *evt3 = 
-    dynamic_cast< const igstk::TrackerController::RequestToolsEvent * > (&event);
+    dynamic_cast< const igstk::TrackerController::RequestToolsEvent * >(&event);
 
    const igstk::TrackerController::RequestToolEvent *evt4 = 
     dynamic_cast< const igstk::TrackerController::RequestToolEvent * > (&event);
@@ -3632,30 +3776,34 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
   else if ( evt3 )
   {
     igstk::TrackerController::ToolContainerType toolContainer = evt3->Get();
-    igstk::TrackerController::ToolContainerType::iterator iter = toolContainer.find(DRIVING_TOOL_NAME);
+    igstk::TrackerController::ToolContainerType::iterator iter = 
+                                          toolContainer.find(DRIVING_TOOL_NAME);
 
     if ( iter!=toolContainer.end() )
     {      
         igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
-          "Navigator::TrackerControllerObserver found tool with name: " << (*iter).first << "\n" )
+          "Navigator::TrackerControllerObserver found tool with name: " 
+                                                      << (*iter).first << "\n" )
 
         m_Parent->m_TrackerTool = (*iter).second;
 
         m_Parent->m_TrackerToolNotAvailableObserver = LoadedObserverType::New();
 
-        m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( m_Parent,
-                                                   &Navigator::ToolNotAvailableCallback );
+        m_Parent->m_TrackerToolNotAvailableObserver->SetCallbackFunction( 
+                               m_Parent, &Navigator::ToolNotAvailableCallback );
 
         m_Parent->m_TrackerTool->AddObserver(
-         igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_TrackerToolNotAvailableObserver);
+                               igstk::TrackerToolNotAvailableToBeTrackedEvent(),
+                                   m_Parent->m_TrackerToolNotAvailableObserver);
    
         m_Parent->m_TrackerToolAvailableObserver = LoadedObserverType::New();
 
         m_Parent->m_TrackerToolAvailableObserver->SetCallbackFunction( m_Parent,
-                                                 &Navigator::ToolAvailableCallback ); 
+                                            &Navigator::ToolAvailableCallback );
 
         m_Parent->m_TrackerTool->AddObserver(
-         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_TrackerToolAvailableObserver);
+         igstk::TrackerToolMadeTransitionToTrackedStateEvent(), 
+                                      m_Parent->m_TrackerToolAvailableObserver);
     }
   }
   else if ( evt4 )
@@ -3664,22 +3812,25 @@ Navigator::TrackerControllerObserver::Execute( itk::Object *caller,
     if ( entry.first == REFERENCE_NAME )
     {
         igstkLogMacro2( m_Parent->m_Logger, DEBUG, 
-                    "Navigator::TrackerControllerObserver found reference tool with name: " << entry.first << "\n" )
+        "Navigator::TrackerControllerObserver found reference tool with name:" 
+                                                        << entry.first << "\n" )
 
         m_Parent->m_ReferenceTool = entry.second;
 
         m_Parent->m_ReferenceNotAvailableObserver = LoadedObserverType::New();
-        m_Parent->m_ReferenceNotAvailableObserver->SetCallbackFunction( m_Parent,
-                                                 &Navigator::ReferenceNotAvailableCallback );
+        m_Parent->m_ReferenceNotAvailableObserver->SetCallbackFunction(m_Parent,
+                                    &Navigator::ReferenceNotAvailableCallback );
         m_Parent->m_ReferenceTool->AddObserver(
-            igstk::TrackerToolNotAvailableToBeTrackedEvent(), m_Parent->m_ReferenceNotAvailableObserver);
+                               igstk::TrackerToolNotAvailableToBeTrackedEvent(),
+                                     m_Parent->m_ReferenceNotAvailableObserver);
 
         m_Parent->m_ReferenceAvailableObserver = LoadedObserverType::New();
         m_Parent->m_ReferenceAvailableObserver->SetCallbackFunction( m_Parent,
-                                                 &Navigator::ReferenceAvailableCallback );
+                                       &Navigator::ReferenceAvailableCallback );
 
         m_Parent->m_ReferenceTool->AddObserver(
-            igstk::TrackerToolMadeTransitionToTrackedStateEvent(), m_Parent->m_ReferenceAvailableObserver);
+                          igstk::TrackerToolMadeTransitionToTrackedStateEvent(),
+                                        m_Parent->m_ReferenceAvailableObserver);
     }
   }
 }
@@ -3689,7 +3840,7 @@ Navigator
 ::OnITKProgressEvent(itk::Object *source, const itk::EventObject &)
 {
   // Get the value of the progress
-  float progress = reinterpret_cast<itk::ProcessObject *>(source)->GetProgress();
+  float progress =reinterpret_cast<itk::ProcessObject *>(source)->GetProgress();
 
   // Update the progress bar and value
   m_OutProgressMeter->value(100 * progress);
