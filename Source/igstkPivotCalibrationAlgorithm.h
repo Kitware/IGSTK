@@ -188,26 +188,26 @@ private:
   void GetPivotPointProcessing();
   void GetRMSEProcessing();
 
-             //transformations used for pivot calibration
+  //transformations used for pivot calibration
   TransformContainerType m_Transforms;
-             //transformations the user wants to add, because of the way the 
-             //state machine works we need to first store them in 
-             //a temporary variable. They will be moved to the m_Transforms 
-             //container only if the state machine is in a state that
-             //enables adding transformations
+  //transformations the user wants to add, because of the way the 
+  //state machine works we need to first store them in 
+  //a temporary variable. They will be moved to the m_Transforms 
+  //container only if the state machine is in a state that
+  //enables adding transformations
   TransformContainerType m_TmpTransforms;
 
-           //computed translation between tracked coordinate system and pivot 
-           //point
+  //computed translation between tracked coordinate system and pivot 
+  //point
   TransformType m_Transform;
 
-                  //computed pivot point in the tracker's coordinate system
+  //computed pivot point in the tracker's coordinate system
   itk::Point< double,3 > m_PivotPoint;
 
-         //root mean squared error of the vector [Ax-b]
+  //root mean squared error of the vector [Ax-b]
   double m_RMSE;
 
-            //below this threshold the singular values of SVD(A) are set to zero
+  //below this threshold the singular values of SVD(A) are set to zero
   double m_SingularValueThreshold;
   double m_TmpSingularValueThreshold;
 

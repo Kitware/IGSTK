@@ -1,3 +1,19 @@
+/*=========================================================================
+
+Program:   Image Guided Surgery Software Toolkit
+Module:    igstkPivotCalibrationFLTKWidget.cxx
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
+
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #include "igstkPivotCalibrationFLTKWidget.h"
 #include <strstream>
 
@@ -36,71 +52,80 @@ PivotCalibrationFLTKWidget::PivotCalibrationFLTKWidget( int x, int y,
                                                         const char *label ) :
 Fl_Group( x, y, w, h, label )
 {
-          //setup the UI
+  //setup the UI
   this->m_toolDescription = new Fl_Output( 
     static_cast<int>(x+TOOL_DESCRIPTION_X_SCALE*w+0.5),
     static_cast<int>(y+TOOL_DESCRIPTION_Y_SCALE*h+0.5),
     static_cast<int>(TOOL_DESCRIPTION_W_SCALE*w+0.5),
     static_cast<int>(TOOL_DESCRIPTION_H_SCALE*h+0.5) );
   
-  this->m_progress = new Fl_Progress( static_cast<int>(x+PROGRESS_X_SCALE*w+0.5),
-                                      static_cast<int>(y+PROGRESS_Y_SCALE*h+0.5),
-                                      static_cast<int>(PROGRESS_W_SCALE*w+0.5),
-                                      static_cast<int>(PROGRESS_H_SCALE*h+0.5) );
+  this->m_progress = new Fl_Progress(static_cast<int>(x+PROGRESS_X_SCALE*w+0.5),
+                                     static_cast<int>(y+PROGRESS_Y_SCALE*h+0.5),
+                                     static_cast<int>(PROGRESS_W_SCALE*w+0.5),
+                                     static_cast<int>(PROGRESS_H_SCALE*h+0.5) );
   this->m_progress->minimum(0.0);
   this->m_progress->maximum(1.0);
   this->m_progress->selection_color(FL_DARK_BLUE);
 
-  this->m_calibrateButton = new Fl_Button( static_cast<int>(x+BUTTON_X_SCALE*w+0.5),
-                                           static_cast<int>(y+BUTTON_Y_SCALE*h+0.5),
-                                           static_cast<int>(BUTTON_W_SCALE*w+0.5),
-                                           static_cast<int>(BUTTON_H_SCALE*h+0.5),
+  this->m_calibrateButton = new Fl_Button(
+                                       static_cast<int>(x+BUTTON_X_SCALE*w+0.5),
+                                       static_cast<int>(y+BUTTON_Y_SCALE*h+0.5),
+                                       static_cast<int>(BUTTON_W_SCALE*w+0.5),
+                                       static_cast<int>(BUTTON_H_SCALE*h+0.5),
                                            "Calibrate" );
   this->m_calibrateButton->deactivate();
-  this->m_calibrateButton->callback( ( Fl_Callback* ) ( Self::RequestComputeCalibrationCB ), 
+  this->m_calibrateButton->callback( 
+                         ( Fl_Callback* ) ( Self::RequestComputeCalibrationCB ),
                                       this);
 
-  this->m_output = new Fl_Multiline_Output( static_cast<int>(x+OUTPUT_X_SCALE*w+0.5),
-                                            static_cast<int>(y+OUTPUT_Y_SCALE*h+0.5),
-                                            static_cast<int>(OUTPUT_W_SCALE*w+0.5),
-                                            static_cast<int>(OUTPUT_H_SCALE*h+0.5) );
+  this->m_output = new Fl_Multiline_Output( 
+                                       static_cast<int>(x+OUTPUT_X_SCALE*w+0.5),
+                                       static_cast<int>(y+OUTPUT_Y_SCALE*h+0.5),
+                                       static_cast<int>(OUTPUT_W_SCALE*w+0.5),
+                                       static_cast<int>(OUTPUT_H_SCALE*h+0.5) );
   end();
 
   m_delay = 0;
-              //create the class that actually does all the work
+  //create the class that actually does all the work
   this->m_pivotCalibration = PivotCalibration::New();
 
-              //add observer for initialization events
+  //add observer for initialization events
   this->m_InitializationObserver = InitializationObserverType::New();
   this->m_InitializationObserver->SetCallbackFunction( 
     this, 
     &PivotCalibrationFLTKWidget::OnInitializationEvent );
 
-  this->m_pivotCalibration->AddObserver( PivotCalibration::InitializationFailureEvent(),
-                                         this->m_InitializationObserver );
-  this->m_pivotCalibration->AddObserver( PivotCalibration::InitializationSuccessEvent(),
-                                         this->m_InitializationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                 PivotCalibration::InitializationFailureEvent(),
+                                               this->m_InitializationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                 PivotCalibration::InitializationSuccessEvent(),
+                                               this->m_InitializationObserver );
 
-              //add observer for the events generated during pivot calibration
+  //add observer for the events generated during pivot calibration
   this->m_CalibrationObserver = CalibrationObserverType::New();
   this->m_CalibrationObserver->SetCallbackFunction( 
     this, 
     &PivotCalibrationFLTKWidget::OnCalibrationEvent );
 
-  this->m_pivotCalibration->AddObserver( PivotCalibration::DataAcquisitionEvent(),
-                                         this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( PivotCalibration::DataAcquisitionEndEvent(),
-                                         this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( PivotCalibration::CalibrationSuccessEvent(),
-                                         this->m_CalibrationObserver );
-  this->m_pivotCalibration->AddObserver( PivotCalibration::CalibrationFailureEvent(),
-                                         this->m_CalibrationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                       PivotCalibration::DataAcquisitionEvent(),
+                                                  this->m_CalibrationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                    PivotCalibration::DataAcquisitionEndEvent(),
+                                                  this->m_CalibrationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                    PivotCalibration::CalibrationSuccessEvent(),
+                                                  this->m_CalibrationObserver );
+  this->m_pivotCalibration->AddObserver( 
+                                    PivotCalibration::CalibrationFailureEvent(),
+                                                  this->m_CalibrationObserver );
             
   this->m_TransformToObserver = TransformToObserver::New();
   this->m_PivotPointObserver = PivotPointObserver::New();
   this->m_RMSEObserver = RMSEObserver::New();
 
-    //settings for the stream that accumulates the calibration information
+  //settings for the stream that accumulates the calibration information
   this->m_calibrationInformationStream.precision(3);
   this->m_calibrationInformationStream.setf(ios::fixed); 
 }
@@ -117,15 +142,15 @@ PivotCalibrationFLTKWidget::~PivotCalibrationFLTKWidget()
 
 void 
 PivotCalibrationFLTKWidget::RequestInitialize( unsigned int n, 
-                                              igstk::TrackerTool::Pointer trackerTool )
+                                       igstk::TrackerTool::Pointer trackerTool )
 {
-              //show the description of the current tool on the UI
-    const std::string trackerToolIdentifier =
+  //show the description of the current tool on the UI
+  const std::string trackerToolIdentifier =
           trackerTool->GetTrackerToolIdentifier();
 
-    this->m_toolDescription->value(trackerToolIdentifier.c_str());
+  this->m_toolDescription->value(trackerToolIdentifier.c_str());
 
-            //try to initialize  
+  //try to initialize  
   this->m_pivotCalibration->RequestInitialize( n, trackerTool );   
 }
 
@@ -150,9 +175,6 @@ PivotCalibrationFLTKWidget::RequestComputeCalibration()
   Fl::check();
   this->m_pivotCalibration->RequestComputeCalibration();
 }
-
-
-
 
 void 
 PivotCalibrationFLTKWidget::RequestComputeCalibrationCB( Fl_Button *b, 
@@ -214,17 +236,21 @@ PivotCalibrationFLTKWidget::RemoveObserver( unsigned long observerID )
 
 void 
 PivotCalibrationFLTKWidget::OnInitializationEvent( itk::Object *caller, 
-                                                   const itk::EventObject & event )
+                                                const itk::EventObject & event )
 {
-  if( dynamic_cast< const igstk::PivotCalibration::InitializationSuccessEvent * > (&event) ) 
-  {            //activate "Calibrate" button 
-    this->m_calibrateButton->activate();               
-  }
-  else if( dynamic_cast< const igstk::PivotCalibration::InitializationFailureEvent * > (&event) ) 
-  {
-    fl_alert("Failed to initialize pivot calibration.\n Check that tool is valid.");
-    fl_beep(FL_BEEP_ERROR);;
-  }
+  if( dynamic_cast< const 
+              igstk::PivotCalibration::InitializationSuccessEvent * > (&event) )
+    {
+    //activate "Calibrate" button 
+    this->m_calibrateButton->activate();
+    }
+  else if( dynamic_cast< 
+        const igstk::PivotCalibration::InitializationFailureEvent * > (&event) )
+    {
+    fl_alert("Failed to initialize pivot calibration.\n\
+                                                    Check that tool is valid.");
+    fl_beep(FL_BEEP_ERROR);
+    }
 }
 
 
@@ -235,38 +261,44 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
   std::ostringstream msg;
 
   if( const PivotCalibration::DataAcquisitionEvent *evt = 
-      dynamic_cast< const PivotCalibration::DataAcquisitionEvent * > (&event) ) 
-  {
+       dynamic_cast< const PivotCalibration::DataAcquisitionEvent * > (&event) )
+    {
     this->m_progress->value( evt->Get() );
     Fl::check();
-  }
-  else if( dynamic_cast< const PivotCalibration::DataAcquisitionEndEvent * > (&event) ) 
-  {            
+    }
+  else if( dynamic_cast< 
+                  const PivotCalibration::DataAcquisitionEndEvent * > (&event) )
+    {
     this->m_progress->value(0.0);
-  }
+    }
   else if( const PivotCalibration::CalibrationFailureEvent *evt = 
-           dynamic_cast< const PivotCalibration::CalibrationFailureEvent * > (&event) ) 
-  {
+           dynamic_cast< 
+                  const PivotCalibration::CalibrationFailureEvent * > (&event) )
+    {
     this->m_calibrateButton->activate();
     this->m_progress->value(0.0);
     msg.str("");
     msg<<"Calibration failed:\n\t"<<evt->Get();
     fl_alert(msg.str().c_str());
-    fl_beep(FL_BEEP_ERROR);;
-  }               //calibration succeeded, get all the information 
-                  //(Transformation, Pivot Point, RMSE) and display it
-  else if( dynamic_cast< const PivotCalibration::CalibrationSuccessEvent * > (&event) ) 
+    fl_beep(FL_BEEP_ERROR);
+   }
+  //calibration succeeded, get all the information 
+  //(Transformation, Pivot Point, RMSE) and display it
+  else if( dynamic_cast< 
+                  const PivotCalibration::CalibrationSuccessEvent * > (&event) )
     {
     this->m_progress->value(0.0);
     this->m_calibrationInformationStream.str("");
     PivotCalibration* calib = dynamic_cast< PivotCalibration *> (caller);
 
-                 //get the transformation
-    unsigned long observerID = calib->AddObserver( igstk::CoordinateSystemTransformToEvent(),
-                                                   this->m_TransformToObserver );
+    //get the transformation
+    unsigned long observerID = calib->AddObserver( 
+                                      igstk::CoordinateSystemTransformToEvent(),
+                                                  this->m_TransformToObserver );
     calib->RequestCalibrationTransform();
     calib->RemoveObserver( observerID );
-    igstk::Transform transform = this->m_TransformToObserver->GetTransformTo().GetTransform();
+    igstk::Transform transform = 
+                   this->m_TransformToObserver->GetTransformTo().GetTransform();
     igstk::Transform::VersorType v = transform.GetRotation();
     igstk::Transform::VectorType t = transform.GetTranslation();
 
@@ -282,15 +314,17 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
     calib->RequestPivotPoint();
     calib->RemoveObserver( observerID );
     igstk::EventHelperType::PointType pnt = 
-      this->m_PivotPointObserver->GetPivotPoint();    
+                                    this->m_PivotPointObserver->GetPivotPoint();
     this->m_calibrationInformationStream<<"Pivot point: ";
-    this->m_calibrationInformationStream<<pnt[0]<<"\t"<<pnt[1]<<"\t"<<pnt[2]<<"\n";
-                //get the RMS error
+    this->m_calibrationInformationStream<<pnt[0]<<"\t"<<pnt[1]<<"\t"
+                                                                 <<pnt[2]<<"\n";
+    //get the RMS error
     observerID = calib->AddObserver( igstk::DoubleTypeEvent(),
-      this->m_RMSEObserver );
+                                                         this->m_RMSEObserver );
     calib->RequestCalibrationRMSE();
     calib->RemoveObserver( observerID );
-    this->m_calibrationInformationStream<<"RMSE: "<<this->m_RMSEObserver->GetRMSE()<<"\n";
+    this->m_calibrationInformationStream<<"RMSE: "<<
+                                          this->m_RMSEObserver->GetRMSE()<<"\n";
     this->m_output->value(this->m_calibrationInformationStream.str().c_str());
     this->m_calibrateButton->activate();
     }

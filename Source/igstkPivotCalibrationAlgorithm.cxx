@@ -32,13 +32,13 @@ PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() :
   m_StateMachine( this ), 
   m_SingularValueThreshold( DEFAULT_SINGULAR_VALUE_THRESHOLD )
 {
-        //define the state machine's states 
+  //define the state machine's states 
   igstkAddStateMacro( Idle );
   igstkAddStateMacro( AttemptingToComputeCalibration  );
   igstkAddStateMacro( CalibrationComputed );
 
 
-                   //define the state machines inputs
+  //define the state machines inputs
   igstkAddInputMacro( AddTransform );
   igstkAddInputMacro( SetSingularValueThreshold );
   igstkAddInputMacro( ComputeCalibration );
@@ -49,7 +49,7 @@ PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() :
   igstkAddInputMacro( CalibrationComputationSuccess  );
   igstkAddInputMacro( CalibrationComputationFailure  );
 
-            //define the state machine's transitions
+  //define the state machine's transitions
   igstkAddTransitionMacro(Idle,
                           AddTransform,
                           Idle,
@@ -185,14 +185,14 @@ PivotCalibrationAlgorithm::PivotCalibrationAlgorithm() :
                           CalibrationComputed,
                           ReportInvalidRequest);
 
-         //set the initial state of the state machine
+  //set the initial state of the state machine
   igstkSetInitialStateMacro( Idle );
 
-         // done setting the state machine, ready to run
+  // done setting the state machine, ready to run
   this->m_StateMachine.SetReadyToRun();
   
-       //internal variables are not initialized as they are not accessible till
-       //they are assigned valid values later on
+  //internal variables are not initialized as they are not accessible till
+  //they are assigned valid values later on
 } 
 
 
@@ -220,10 +220,11 @@ PivotCalibrationAlgorithm::RequestAddTransforms(
   
   std::vector< TransformType >::const_iterator it = t.begin();
   std::vector< TransformType >::const_iterator transformsEnd = t.end(); 
-  while(it!=transformsEnd) {
+  while(it!=transformsEnd) 
+    {
     this->m_TmpTransforms.push_back((*it));
     it++;
-  }
+    }
   igstkPushInputMacro( AddTransform );
   this->m_StateMachine.ProcessInputs();
 }
@@ -325,10 +326,10 @@ void
 PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
 {
   if(this->m_Transforms.empty()) 
-  {
+    {
     igstkPushInputMacro( CalibrationComputationFailure );
     return;
-  }
+    }
 
   unsigned int rows = 3*this->m_Transforms.size();
   unsigned int columns = 6;
@@ -339,58 +340,58 @@ PivotCalibrationAlgorithm::ComputeCalibrationProcessing()
   minusI( 1, 1 ) = -1;
   minusI( 2, 2 ) = -1;
 
-              //do the computation and set the internal variables
+  //do the computation and set the internal variables
   TransformContainerType::const_iterator it, 
     transformsEnd = this->m_Transforms.end();
   unsigned int currentRow;
   for( currentRow = 0, it = this->m_Transforms.begin(); 
        it != transformsEnd; 
        it++, currentRow += 3 ) 
-  {
+    {
     t = (*it).GetTranslation().GetVnlVector();
     t *= -1;
     b.update( t, currentRow );
     R = (*it).GetRotation().GetMatrix().GetVnlMatrix();
     A.update( R, currentRow, 0 );
     A.update( minusI, currentRow, 3 );
-  }
+    }
   vnl_svd<double> svdA(A);
 
   svdA.zero_out_absolute( this->m_SingularValueThreshold );
 
-          //there is a solution only if rank(A)=6 (columns are linearly 
-          //independent) 
+  //there is a solution only if rank(A)=6 (columns are linearly 
+  //independent) 
   if( svdA.rank() < 6 ) 
-  {
+    {
     igstkPushInputMacro( CalibrationComputationFailure );
-  }
+    }
   else
-  {
+    {
     x = svdA.solve( b );
 
-             //set the RMSE
+    //set the RMSE
     this->m_RMSE = ( A * x - b ).rms();
 
-                 //set the transformation
+    //set the transformation
     this->m_Transform.SetToIdentity( itk::NumericTraits<double>::max() );
     igstk::Transform::VectorType translation;
     translation[0] = x[0];
     translation[1] = x[1];
     translation[2] = x[2];
-                     //error value associated with transformation is the RMSE 
-                     //of the equation system, and validity time is set to 
-                     //maximal possible 
+    //error value associated with transformation is the RMSE 
+    //of the equation system, and validity time is set to 
+    //maximal possible 
     this->m_Transform.SetTranslation( translation, 
                                       this->m_RMSE, 
                                       itk::NumericTraits<double>::max() );
 
-             //set the pivot point
+    //set the pivot point
     this->m_PivotPoint[0] = x[3];
     this->m_PivotPoint[1] = x[4];
     this->m_PivotPoint[2] = x[5];
 
     igstkPushInputMacro( CalibrationComputationSuccess );
-  }
+    }
 }
 
 void  
@@ -420,7 +421,8 @@ PivotCalibrationAlgorithm::GetTransformProcessing()
 
   CoordinateSystemTransformToResult result;
   CoordinateSystemTransformToEvent event; 
-  // FIXME: This event should also include the source and destination coordinate systems.
+  // FIXME: This event should also include the source and destination 
+  // coordinate systems.
   result.Initialize( this->m_Transform, NULL, NULL );
 
   event.Set( result );

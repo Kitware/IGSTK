@@ -1,3 +1,19 @@
+/*=========================================================================
+
+Program:   Image Guided Surgery Software Toolkit
+Module:    igstkPivotCalibrationFLTKWidget.h
+Language:  C++
+Date:      $Date$
+Version:   $Revision$
+
+Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
+See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
+
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
 #ifndef __igstkPivotCalibrationFLTKWidget_h
 #define __igstkPivotCalibrationFLTKWidget_h
 
@@ -20,23 +36,23 @@ namespace igstk
 {
 /** \class PivotCalibrationFLTKWidget
  *
- *  \brief This class is a user interface (FLTK-based) for the pivot calibration 
+ *  \brief This class is a user interface (FLTK-based) for the pivot calibration
  *         class.
  *
  *  This class provides a UI for performing pivot calibration (tool tip 
  *  calibration). The class is responsible for acquisition of tracking data and 
  *  computation of the pivot calibration. You set the specific tool and 
  *  number of required transformations using the RequestInitialize() method. 
- *  You can also set a delay before data acquistion starts using the 
+ *  You can also set a delay before data acquisition starts using the 
  *  RequestSetDelay() method. The class expects the tracker to be in tracking 
  *  state. Once initialized pressing the 
- *  "Calibrate" button will start data acquistion (after a user set delay) and 
+ *  "Calibrate" button will start data acquisition (after a user set delay) and 
  *  perform calibration. Corresponding events are also generated
  *  for interested observers:
  *  PivotCalibration::InitializationSuccessEvent 
  *  PivotCalibration::InitializationFailureEvent 
  *  PivotCalibration::DataAcquisitionStartEvent
- *  PivotCalibration::DataAcquisitionEvent - containes the percentage of 
+ *  PivotCalibration::DataAcquisitionEvent - contains the percentage of 
  *                                              data acquired
  *  PivotCalibration::DataAcquisitionEndEvent
  *  PivotCalibration::CalibrationSuccessEvent
@@ -45,12 +61,12 @@ namespace igstk
  *  igstk::PointEvent - contains the pivot point
  *  igstk::DoubleTypeEvent - contains the calibration root mean square error
  *
- *  NOTE: DataAcquisitionEvent is a descendent of DoubleTypeEvent so if you
- *        are observing both of them with the same observer you need to carefully
- *        identify them (when checking which event occured check for 
+ *  NOTE: DataAcquisitionEvent is a descendant of DoubleTypeEvent so if you
+ *        are observing both of them with the same observer you need to 
+ *        carefully identify them (when checking which event occurred check for 
  *        DataAcquisitionEvent and only after that for DoubleTypeEvent, similar
  *        to the situation encountered when catching multiple exceptions from
- *        the same inheritance heirarchy).
+ *        the same inheritance hierarchy).
  */
 class PivotCalibrationFLTKWidget : public Fl_Group
 {
@@ -84,7 +100,7 @@ public:
     igstk::TrackerTool::Pointer trackerTool ); 
 
   /** This method sets the delay in seconds between the moment the 
-   *  "Calibrate" button is pressed and the begining of data acquistion. */
+   *  "Calibrate" button is pressed and the beginning of data acquisition. */
   void RequestSetDelay( unsigned int delayInSeconds );  
 
   /** This method is used to request the calibration transformation.
@@ -146,45 +162,45 @@ private:
   static void RequestComputeCalibrationCB(Fl_Button *b, 
                                           void *v);
   inline void RequestComputeCalibration();
-                    //the igstk class that actually does everything
+  //the igstk class that actually does everything
   PivotCalibration::Pointer m_pivotCalibration;
-               //delay before data acquistion starts [milliseconds]
+  //delay before data acquisition starts [milliseconds]
   unsigned int m_delay;
-              //description of the tool we want to calibrate
+  //description of the tool we want to calibrate
   std::string m_currentToolInformation;
 
-                //accumulate the calibration information in this stream and
-                //then display to the user
+  //accumulate the calibration information in this stream and
+  //then display to the user
   std::ostringstream m_calibrationInformationStream;
 
-                 //pivot calibration initialization observer
+  //pivot calibration initialization observer
   typedef itk::MemberCommand<PivotCalibrationFLTKWidget>   
     InitializationObserverType;
   void OnInitializationEvent( itk::Object *caller, 
                               const itk::EventObject & event );
   InitializationObserverType::Pointer m_InitializationObserver;  
 
-                 //pivot calibration events (start, progress, end) 
-                 //observer
+  //pivot calibration events (start, progress, end) 
+  //observer
   typedef itk::MemberCommand<PivotCalibrationFLTKWidget>   
     CalibrationObserverType;
   void OnCalibrationEvent( itk::Object *caller, 
                            const itk::EventObject & event );
   CalibrationObserverType::Pointer m_CalibrationObserver;  
 
-                 //pivot calibration get transform observer
+  //pivot calibration get transform observer
   igstkObserverMacro( TransformTo, 
                       igstk::CoordinateSystemTransformToEvent, 
                       igstk::CoordinateSystemTransformToResult )
   TransformToObserver::Pointer m_TransformToObserver;
 
-                 //pivot calibration get pivot point observer
+  //pivot calibration get pivot point observer
   igstkObserverMacro( PivotPoint, 
                       igstk::PointEvent, 
                       igstk::EventHelperType::PointType )
   PivotPointObserver::Pointer m_PivotPointObserver;
 
-                 //pivot calibration get RMSE observer
+  //pivot calibration get RMSE observer
   igstkObserverMacro( RMSE, 
                       igstk::DoubleTypeEvent, 
                       igstk::EventHelperType::DoubleType )
