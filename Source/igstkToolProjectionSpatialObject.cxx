@@ -45,7 +45,8 @@ double ToolProjectionSpatialObject::GetSize() const
 }
 
 /** Print object information */
-void ToolProjectionSpatialObject::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ToolProjectionSpatialObject::PrintSelf( 
+                                    std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   os << "Size = " << m_Size << std::endl;
