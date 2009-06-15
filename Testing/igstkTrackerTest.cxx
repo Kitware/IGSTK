@@ -69,9 +69,9 @@ public:
   typedef Superclass::ResultType              ResultType;
 
   double GetTransformValidityTime()
-  {
+    {
     return this->GetValidityTime();
-  }
+    }
 
 protected:
 
@@ -235,7 +235,7 @@ int igstkTrackerTest( int, char * [] )
 
   if( fabs( validityTimeShouldBe - validityTimeReturned ) > 1e-5 )
     {
-    std::cerr << "Error in RequestSetFrequency()/GetValidityTime() " << std::endl;
+    std::cerr << "Error in RequestSetFrequency()/GetValidityTime() "<<std::endl;
     return EXIT_FAILURE;
     }
 
