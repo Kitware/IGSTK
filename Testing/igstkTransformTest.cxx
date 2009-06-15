@@ -100,7 +100,7 @@ int igstkTransformTest( int, char * [] )
       {
       if( vnl_math_abs( translationSet[k] - translation[k] ) > tolerance )
         {
-        std::cerr << "Pair:SetTranslationAndRotation() : GetTranslation() failed"
+        std::cerr << "Pair:SetTranslationAndRotation():GetTranslation() failed"
                   << std::endl;
 
         return EXIT_FAILURE;
@@ -110,7 +110,7 @@ int igstkTransformTest( int, char * [] )
     if( ( vnl_math_abs( rotationSet.GetX() - rotation.GetX() ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetY() - rotation.GetY() ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetZ() - rotation.GetZ() ) > tolerance ) ||
-        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )    )
+        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )  )
       {
       std::cerr << "Pair : SetTranslationAndRotation() : GetRotation() failed " 
                 << std::endl;
@@ -137,7 +137,7 @@ int igstkTransformTest( int, char * [] )
     if( ( vnl_math_abs( rotationSet.GetX() - rotation.GetX() ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetY() - rotation.GetY() ) > tolerance ) ||
         ( vnl_math_abs( rotationSet.GetZ() - rotation.GetZ() ) > tolerance ) ||
-        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )    )
+        ( vnl_math_abs( rotationSet.GetW() - rotation.GetW() ) > tolerance )  )
       {
       std::cerr << "Pair : SetRotation() : GetRotation() failed " << std::endl;
       return EXIT_FAILURE;
