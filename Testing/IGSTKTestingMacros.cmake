@@ -312,8 +312,8 @@ IF(${IGSTK_USE_FLTK})
               --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png 
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000 
               igstkSpatialObjectRepresentationVisibilityTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTestb.png
@@ -324,8 +324,8 @@ IF(${IGSTK_USE_FLTK})
               --compare ${BASELINE}/igstkSpatialObjectRepresentationVisibilityTest2.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2b.png 
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5 
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000 
               igstkSpatialObjectRepresentationVisibilityTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkSpatialObjectRepresentationVisibilityTest2b.png
@@ -418,8 +418,8 @@ IF(${IGSTK_USE_FLTK})
               --compare ${BASELINE}/igstkMeshLiver.png 
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png 
               --toleranceIntensity 20
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 25 
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
               igstkMeshObjectTest2
               ${IGSTK_DATA_ROOT}/Input/liver.msh  
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshLiver.png
@@ -499,7 +499,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest.png
               --toleranceIntensity 10
               --toleranceRadius    10
-              --toleranceNumberOfPixels 200
+              --toleranceNumberOfPixels 1000
               igstkImageResliceObjectRepresentationFltkTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest.png)
@@ -524,7 +524,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationFltkTest3.png
               --toleranceIntensity 10
               --toleranceRadius    10
-              --toleranceNumberOfPixels 200
+              --toleranceNumberOfPixels 1000
               igstkImageResliceObjectRepresentationFltkTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
@@ -537,8 +537,8 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairSpatialObjectTest.png                       
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
               igstkCrossHairSpatialObjectTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
@@ -604,8 +604,8 @@ IF(${IGSTK_USE_Qt})
               --compare ${IGSTK_DATA_ROOT}/Baseline/igstkViewScreenShot3.png
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot3.png
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
               igstkCTImageSpatialObjectReadingAndRepresentationTest3
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkViewScreenShot3.png
@@ -681,8 +681,8 @@ IF(${IGSTK_USE_Qt})
               ${IGSTK_DATA_ROOT}/Baseline/igstkMeshResliceObjectRepresentationQtTest.png                       
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMeshResliceObjectRepresentationQtTest.png
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 200
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
               igstkMeshResliceObjectRepresentationQtTest
               ${IGSTK_DATA_ROOT}/Input/TrackerWorkingVolumeMeshes/ascension_mrt_volume.msh 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
