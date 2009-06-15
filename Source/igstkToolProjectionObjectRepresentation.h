@@ -32,9 +32,10 @@ namespace igstk
 
 /** \class ToolProjectionObjectRepresentation
  * 
- * \brief This class provides a visual representation of a ToolProjectionObject. 
+ * \brief This class provides a visual representation of a ToolProjectionObject.
  *
- * This class displays the projection of a tool spatial object ontop of a reslicing plane.
+ * This class displays the projection of a tool spatial object on top of a 
+ * reslicing plane.
  *
  * \sa ToolProjectionObject
  *
@@ -64,14 +65,14 @@ public:
 
   /** Provides the reslicing plane onto which the tool is projected */
   void RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
-                                                             planeSpatialObject);
+                                                            planeSpatialObject);
 
   /** Return a copy of the current object representation */
   Pointer Copy() const;
 
   /** Connect this representation class to the spatial object */
   void RequestSetToolProjectionObject( const ToolProjectionSpatialObjectType * 
-                                                             toolProjectionObject );
+                                                         toolProjectionObject );
 
   virtual void SetVisibility ( bool visible);
 
@@ -117,26 +118,26 @@ private:
   /** Set the reslice plane spatial object */
   void SetReslicePlaneSpatialObjectProcessing();
 
-   /** Define observers for event communication */
-
+  /** Define observers for event communication */
   igstkObserverMacro( ImageBounds, igstk::ImageBoundsEvent, 
                                   igstk::EventHelperType::ImageBoundsType );
 
-  /** Declare the observer that will receive the reslicer plane normal from the
+  /** Declare the observer that will receive the reslice plane normal from the
   * ReslicerPlaneSpatialObject */
-  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
-                      ReslicerPlaneType::VectorType);
+  igstkObserverMacro( ReslicerPlaneNormal, 
+                                    ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                                                 ReslicerPlaneType::VectorType);
 
   ReslicerPlaneNormalObserver::Pointer  m_ReslicerPlaneNormalObserver;
 
 private:
 
-  /** Variables for maanging reslice plane spatial object */
+  /** Variables for managing reslice plane spatial object */
   ReslicerPlanePointerType  m_ReslicePlaneSpatialObjectToBeSet;
   ReslicerPlanePointerType  m_ReslicePlaneSpatialObject;
 
   vtkLineSource* m_LineSource;  
-  vtkProperty* m_LineProperty;
+  vtkProperty*   m_LineProperty;
 
   double m_LineWidth;
 
