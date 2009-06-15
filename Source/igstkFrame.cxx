@@ -16,7 +16,7 @@
 =========================================================================*/
 
 #include "igstkFrame.h"
-#include <algorithm> 
+#include <algorithm>
 #include "vtkImageData.h"
 
 namespace igstk
@@ -44,7 +44,7 @@ Frame
 {
   m_ImagePtr = inputFrame.m_ImagePtr;
   //m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-  //memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels ); 
+  //memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels );
 }
 
 Frame
@@ -52,6 +52,14 @@ Frame
 {
 //  if(m_ImagePtr != NULL)
 //  free(m_ImagePtr);
+}
+
+void
+Frame
+::Free()
+{
+  if(m_ImagePtr != NULL)
+  free(m_ImagePtr);
 }
 
 void
@@ -68,7 +76,7 @@ Frame::SetFrameDimensions(unsigned int width,
 //  else
     m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
     //m_ImagePtr = new (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-  
+
   if (m_ImagePtr == NULL)
   {
     igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: Memory could not be allocated (malloc failed)!\n" );
