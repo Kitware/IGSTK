@@ -39,6 +39,11 @@ int igstkPerspectiveTransformTest( int argc, char * argv [] )
       K(1,0)= 0;       K(1,1) = 3886.68;  K(1,2)= 511.11;
       K(2,0)= 0;       K(2,1) = 0;        K(2,2) = 1.00;
 
+      igstk::PerspectiveTransform coverageDummyTransform(P);
+      igstk::PerspectiveTransform coverageDummyTransform2;
+      coverageDummyTransform2 = P;
+      coverageDummyTransform2.Print(std::cout, 0); 
+      
       igstk::TimeStamp::TimePeriodType millisecondsToExpiration = 100;
       igstk::TransformBase::ErrorType estimationError = 0.5;
       P.SetTransform( Rt, K, estimationError, millisecondsToExpiration ); 

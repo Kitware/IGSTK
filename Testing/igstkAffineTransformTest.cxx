@@ -43,6 +43,11 @@ int igstkAffineTransformTest( int argc, char * argv [] )
       transform.SetMatrixAndOffset( m, t, 
                                     estimationError,
                                     millisecondsToExpiration );
+      
+      igstk::AffineTransform coverageDummyTransform(transform);
+      igstk::AffineTransform coverageDummyTransform2;
+      coverageDummyTransform2 = transform;
+      coverageDummyTransform2.Print(std::cout, 0); 
     
       vtkMatrix4x4* vtkM1 = vtkMatrix4x4::New();
       transform.ExportTransform( *vtkM1 );

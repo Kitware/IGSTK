@@ -182,8 +182,11 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
 
   ObjectType::Pointer crossHairObject = ObjectType::New();
   //Connect the cross hair spatial object to the reference coordinate system
-  crossHairObject->RequestSetTransformAndParent( identity, worldReference );  
- 
+  crossHairObject->RequestSetTransformAndParent( identity, worldReference );
+       
+  //trigger ReportInvalidBoundingBoxProviderSpatialObjectProcessing in coverage. 
+  crossHairObject->RequestSetBoundingBoxProviderSpatialObject( NULL );
+
   // Set bounding box provider spatial object to the cross hair object
   crossHairObject->RequestSetBoundingBoxProviderSpatialObject( imageSpatialObject );
 
@@ -253,9 +256,14 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
 
   data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data ); 
-  crossHairObject->RequestSetCursorPosition( data );
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
 
+  
+  //trigger ReportInvalidCursorPositionProcessing in code coverage.
+  crossHairObject->RequestSetCursorPosition( NULL );
+
+  crossHairObject->RequestSetCursorPosition( data );
+  
   view2D->RequestStart();
   view2D->RequestResetCamera();
   form->show();
@@ -266,6 +274,9 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 
+  //More code coverage calls. 
+  crossHairObject->RequestSetToolSpatialObject( NULL );
+  
   std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS;
