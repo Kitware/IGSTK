@@ -185,7 +185,7 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   m_MaxBufferSize=MAX_FRAMES;
   m_Index=0;
   m_NumberOfFramesInBuffer=0;
- 
+
   m_FrameRingBuffer = new std::vector< igstk::Frame >(MAX_FRAMES);
 
   std::ofstream ofile;
@@ -198,6 +198,12 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
 
 VideoImagerTool::~VideoImagerTool(void)
 {
+  for(unsigned int i=0;i<MAX_FRAMES;i++)
+      {
+      //igstk::Frame frame;
+      m_FrameRingBuffer->at(i).Free();
+
+    }
 }
 
 void
@@ -524,6 +530,7 @@ VideoImagerTool::SetInternalFrame( const FrameType & frame )
 void
 VideoImagerTool::SetFrameDimensions(unsigned int *dims)
 {
+
   this->m_FrameDimensions[0] = dims[0];
   this->m_FrameDimensions[1] = dims[1];
   this->m_FrameDimensions[2] = dims[2];
