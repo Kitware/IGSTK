@@ -128,7 +128,7 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObject;
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
-   /** Variables for maanging reslice plane spatial object */
+  /** Variables for maanging reslice plane spatial object */
   ReslicerPlanePointerType               m_ReslicePlaneSpatialObjectToBeSet;
   ReslicerPlanePointerType               m_ReslicePlaneSpatialObject;
     
@@ -180,7 +180,7 @@ private:
    * called by the State Machine. */
   void SetImageSpatialObjectProcessing();
 
-   /** Report invalid image spatial object type */
+  /** Report invalid image spatial object type */
   void ReportInvalidImageSpatialObjectProcessing( void );
 
   /** Report invalid tool spatial object type */
@@ -213,16 +213,18 @@ private:
   igstkObserverMacro( VTKImage, VTKImageModifiedEvent,
                       EventHelperType::VTKImagePointerType);
 
-  /** Declare the observers that will receive the reslicing plane parameters from the
-   * ReslicerPlaneSpatialObject */
+  /** Declare the observers that will receive the reslicing plane parameters 
+   * from the ReslicerPlaneSpatialObject */
 
-  igstkObserverMacro( ReslicerPlaneCenter, ReslicerPlaneType::ReslicerPlaneCenterEvent,
-                      ReslicerPlaneType::VectorType);
+  igstkObserverMacro( ReslicerPlaneCenter, 
+                                    ReslicerPlaneType::ReslicerPlaneCenterEvent,
+                                                 ReslicerPlaneType::VectorType);
 
   typename ReslicerPlaneCenterObserver::Pointer  m_ReslicerPlaneCenterObserver;
 
-  igstkObserverMacro( ReslicerPlaneNormal, ReslicerPlaneType::ReslicerPlaneNormalEvent,
-                      ReslicerPlaneType::VectorType);
+  igstkObserverMacro( ReslicerPlaneNormal, 
+                                    ReslicerPlaneType::ReslicerPlaneNormalEvent,
+                                                 ReslicerPlaneType::VectorType);
 
   typename ReslicerPlaneNormalObserver::Pointer  m_ReslicerPlaneNormalObserver;
 

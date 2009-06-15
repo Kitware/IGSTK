@@ -183,11 +183,15 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
                            Initial, ReportInvalidImageSpatialObject );
 
   //From ImageSpatialObjectSet
-  igstkAddTransitionMacro( ImageSpatialObjectSet, ValidReslicePlaneSpatialObject, 
-                           ReslicePlaneSpatialObjectSet, SetReslicePlaneSpatialObject);
+  igstkAddTransitionMacro( ImageSpatialObjectSet,
+                           ValidReslicePlaneSpatialObject,
+                           ReslicePlaneSpatialObjectSet,
+                           SetReslicePlaneSpatialObject);
 
-  igstkAddTransitionMacro( ImageSpatialObjectSet, InValidReslicePlaneSpatialObject, 
-                           ImageSpatialObjectSet, ReportInvalidReslicePlaneSpatialObject );
+  igstkAddTransitionMacro( ImageSpatialObjectSet,
+                           InValidReslicePlaneSpatialObject,
+                           ImageSpatialObjectSet,
+                           ReportInvalidReslicePlaneSpatialObject );
  
   //From ReslicePlaneSpatialObjectSet
   igstkAddTransitionMacro( ReslicePlaneSpatialObjectSet, ConnectVTKPipeline,
@@ -208,72 +212,72 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   //m_EdgesProperty->Delete();
   if ( m_PlaneProperty != NULL )
-  {
-  m_PlaneProperty->Delete();
-  m_PlaneProperty = NULL;
-  }
+    {
+    m_PlaneProperty->Delete();
+    m_PlaneProperty = NULL;
+    }
 
   if ( m_PlaneSource != NULL )
-  {
-  m_PlaneSource->Delete();
-  m_PlaneSource = NULL;
-  }
+    {
+    m_PlaneSource->Delete();
+    m_PlaneSource = NULL;
+    }
 
   if ( m_Plane != NULL )
-  {
-  m_Plane->Delete();
-  m_Plane = NULL;
-  }
+    {
+    m_Plane->Delete();
+    m_Plane = NULL;
+    }
 
   if ( m_ResliceAxes != NULL )
-  {
-  m_ResliceAxes->Delete();
-  m_ResliceAxes = NULL;
-  }
+    {
+    m_ResliceAxes->Delete();
+    m_ResliceAxes = NULL;
+    }
 
   if ( m_ImageReslicer != NULL )
-  {
-  m_ImageReslicer->Delete();
-  m_ImageReslicer = NULL;
-  }
+    {
+    m_ImageReslicer->Delete();
+    m_ImageReslicer = NULL;
+    }
 
   if ( m_LookupTable )
-  {
-  m_LookupTable->Delete();
-  m_LookupTable = NULL;
-  }
+    {
+    m_LookupTable->Delete();
+    m_LookupTable = NULL;
+    }
 
   if ( m_ColorMap )
-  {
-  m_ColorMap->Delete();
-  m_ColorMap = NULL;
-  }
+    {
+    m_ColorMap->Delete();
+    m_ColorMap = NULL;
+    }
 
   if ( m_Texture )
-  {
-  m_Texture->Delete();
-  m_Texture = NULL;
-  }
+    {
+    m_Texture->Delete();
+    m_Texture = NULL;
+    }
 
   if ( m_Box )
-  {
-  m_Box->Delete();
-  m_Box = NULL;
-  }
+    {
+    m_Box->Delete();
+    m_Box = NULL;
+    }
 
   if ( m_Cutter )
-  {
-  m_Cutter->Delete();
-  m_Cutter = NULL;
-  }
+    {
+    m_Cutter->Delete();
+    m_Cutter = NULL;
+    }
 
   //m_Edges->Delete();
   //m_EdgesTuber->Delete();
 
   if ( m_ImageData )
-  {
-  m_ImageData = NULL;
-  }
+    {
+    m_ImageData = NULL;
+    }
 
 }
 
@@ -328,7 +332,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 ::ReportInvalidImageSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageResliceObjectRepresentation\
-                       ::ReportInvalidImageSpatialObjectProcessing called...\n"); 
+                      ::ReportInvalidImageSpatialObjectProcessing called...\n");
 }
 
 template < class TImageSpatialObject >
@@ -337,7 +341,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 ::ReportInvalidReslicePlaneSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::ImageResliceObjectRepresentation\
-                       ::ReportInvalidReslicePlaneSpatialObjectProcessing called...\n");
+              ::ReportInvalidReslicePlaneSpatialObjectProcessing called...\n");
 }
 
 template < class TImageSpatialObject >
@@ -349,7 +353,8 @@ reslicePlaneSpatialObject )
   igstkLogMacro( DEBUG,"igstk::ImageResliceObjectRepresentation\
                        ::RequestSetReslicePlaneSpatialObject called...\n");
 
-  m_ReslicePlaneSpatialObjectToBeSet = const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
+  m_ReslicePlaneSpatialObjectToBeSet = 
+                    const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
     {
@@ -373,11 +378,13 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
-  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneCenterEvent(),
-                                            m_ReslicerPlaneCenterObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( 
+                                  ReslicerPlaneType::ReslicerPlaneCenterEvent(),
+                                                m_ReslicerPlaneCenterObserver );
 
-  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
-                                            m_ReslicerPlaneNormalObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( 
+                                  ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                                m_ReslicerPlaneNormalObserver );
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 }
@@ -392,33 +399,32 @@ ImageResliceObjectRepresentation < TImageSpatialObject >
     "igstk::ImageResliceObjectRepresentation::VerifyTimeStamp called...\n");
 
   if( this->m_ReslicePlaneSpatialObject.IsNull() )
-    {
     return false;
-    }
+
 
   if( !this->m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
     return true;
 
   /* if a tool spatial object is driving the reslicing, compare the 
-  *  tool spatial object transform with the view render time
-  */
+   *  tool spatial object transform with the view render time
+   */
   if( this->GetRenderTimeStamp().GetExpirationTime() <
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
     this->GetRenderTimeStamp().GetStartTime() >
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
     {
-      // fixme
-      double diff = 
-        this->GetRenderTimeStamp().GetStartTime() - 
-        m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+    // fixme
+    double diff = 
+      this->GetRenderTimeStamp().GetStartTime() - 
+      m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
 
-      if (diff > 450 )
+    if (diff > 450 )
       {
-        //std::cout << diff << std::endl;
-        return false;
+      //std::cout << diff << std::endl;
+      return false;
       }
-      else
-        return true;
+    else
+      return true;
     }
   else
     {
@@ -437,7 +443,8 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_Window = window;
   m_Level = level;
 
-  m_LookupTable->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LookupTable->SetTableRange ( (m_Level - m_Window/2.0), 
+                                 (m_Level + m_Window/2.0) );
   m_LookupTable->Build();
 }
 
@@ -463,24 +470,29 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   this->RequestSetSpatialObject( m_ImageSpatialObject );
   
-  unsigned int obsId = m_ImageSpatialObject->AddObserver( VTKImageModifiedEvent(), 
-                                      m_VTKImageObserver );
+  unsigned int obsId = m_ImageSpatialObject->AddObserver( 
+                                                        VTKImageModifiedEvent(),
+                                                           m_VTKImageObserver );
 
   m_VTKImageObserver->Reset();
 
   m_ImageSpatialObject->RequestGetVTKImage();
   
   if( !m_VTKImageObserver->GotVTKImage() )
+    {
     return;
+    }
 
   this->SetImage( m_VTKImageObserver->GetVTKImage() );
 
   if( !m_ImageData )
+    {
     return;
+    }
 
   m_ImageSpatialObject->RemoveObserver( obsId );
 
-  m_ImageData->UpdateInformation();       
+  m_ImageData->UpdateInformation();
   
   double range[2];
   m_ImageData->GetScalarRange(range);
@@ -522,12 +534,12 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ImageData->GetSpacing(m_ImageSpacing);
 
   // Prevent obscuring voxels by offsetting the plane geometry
-  m_xbounds[0] = m_ImageOrigin[0] + m_ImageSpacing[0] * (m_ImageExtent[0] - 0.5);
-  m_xbounds[1] = m_ImageOrigin[0] + m_ImageSpacing[0] * (m_ImageExtent[1] + 0.5);
-  m_ybounds[0] = m_ImageOrigin[1] + m_ImageSpacing[1] * (m_ImageExtent[2] - 0.5);
-  m_ybounds[1] = m_ImageOrigin[1] + m_ImageSpacing[1] * (m_ImageExtent[3] + 0.5);
-  m_zbounds[0] = m_ImageOrigin[2] + m_ImageSpacing[2] * (m_ImageExtent[4] - 0.5);
-  m_zbounds[1] = m_ImageOrigin[2] + m_ImageSpacing[2] * (m_ImageExtent[5] + 0.5);
+  m_xbounds[0]= m_ImageOrigin[0] + m_ImageSpacing[0] * (m_ImageExtent[0] - 0.5);
+  m_xbounds[1]= m_ImageOrigin[0] + m_ImageSpacing[0] * (m_ImageExtent[1] + 0.5);
+  m_ybounds[0]= m_ImageOrigin[1] + m_ImageSpacing[1] * (m_ImageExtent[2] - 0.5);
+  m_ybounds[1]= m_ImageOrigin[1] + m_ImageSpacing[1] * (m_ImageExtent[3] + 0.5);
+  m_zbounds[0]= m_ImageOrigin[2] + m_ImageSpacing[2] * (m_ImageExtent[4] - 0.5);
+  m_zbounds[1]= m_ImageOrigin[2] + m_ImageSpacing[2] * (m_ImageExtent[5] + 0.5);
 
   if ( m_ImageSpacing[0] < 0.0 )
     {
@@ -551,7 +563,9 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
     }
 
   m_Box->SetOrigin(m_xbounds[0],m_ybounds[0],m_zbounds[0]);
-  m_Box->SetSpacing((m_xbounds[1]-m_xbounds[0]),(m_ybounds[1]-m_ybounds[0]),(m_zbounds[1]-m_zbounds[0]));
+  m_Box->SetSpacing((m_xbounds[1]-m_xbounds[0]),
+                    (m_ybounds[1]-m_ybounds[0]),
+                    (m_zbounds[1]-m_zbounds[0]));
 
   m_Cutter->SetInput(m_Box);
 
@@ -605,8 +619,11 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   if( m_ReslicerPlaneCenterObserver->GotReslicerPlaneCenter() )
     {
-      reslicerPlaneCenter = m_ReslicerPlaneCenterObserver->GetReslicerPlaneCenter();
-      m_Plane->SetOrigin( reslicerPlaneCenter[0], reslicerPlaneCenter[1], reslicerPlaneCenter[2] );
+      reslicerPlaneCenter = 
+                        m_ReslicerPlaneCenterObserver->GetReslicerPlaneCenter();
+      m_Plane->SetOrigin( reslicerPlaneCenter[0], 
+                          reslicerPlaneCenter[1], 
+                          reslicerPlaneCenter[2] );
     }
   else
     return;
@@ -615,8 +632,11 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
     {
-      reslicerPlaneNormal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
-      m_Plane->SetNormal( reslicerPlaneNormal[0], reslicerPlaneNormal[1], reslicerPlaneNormal[2] );
+      reslicerPlaneNormal = 
+                        m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
+      m_Plane->SetNormal( reslicerPlaneNormal[0], 
+                          reslicerPlaneNormal[1], 
+                          reslicerPlaneNormal[2] );
     }
   else
     return;
@@ -635,12 +655,15 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   double newcenter[3];
   // project it back onto the reslicing plane
-  m_Plane->ProjectPoint(cutc, m_Plane->GetOrigin(), m_Plane->GetNormal(), newcenter);
+  m_Plane->ProjectPoint(cutc, m_Plane->GetOrigin(), 
+                                               m_Plane->GetNormal(), newcenter);
 
   //m_Sphere->SetCenter(newcenter[0], newcenter[1], newcenter[2] );
   
-  m_PlaneSource->SetCenter(newcenter[0],newcenter[1],newcenter[2]);
-  m_PlaneSource->SetNormal(reslicerPlaneNormal[0],reslicerPlaneNormal[1],reslicerPlaneNormal[2]);
+  m_PlaneSource->SetCenter( newcenter[0], newcenter[1], newcenter[2] );
+  m_PlaneSource->SetNormal( reslicerPlaneNormal[0],
+                            reslicerPlaneNormal[1],
+                            reslicerPlaneNormal[2] );
 
   this->UpdatePlane();
 }
@@ -753,7 +776,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ImageActor->SetTexture(m_Texture);
   
   m_ImageActor->PickableOff();
-//  m_ImageActor->SetProperty(m_PlaneProperty);
+  // m_ImageActor->SetProperty(m_PlaneProperty);
   
   texturePlaneMapper->Delete();
 }
@@ -787,7 +810,7 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
 ::UpdatePlane()
 {
   if ( !m_ImageReslicer ||
-       !(m_ImageData = vtkImageData::SafeDownCast(m_ImageReslicer->GetInput())) )
+       !(m_ImageData = vtkImageData::SafeDownCast(m_ImageReslicer->GetInput())))
     {
     return;
     }
@@ -797,61 +820,63 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
   int i;
 
   for (i = 0; i < 3; i++)
-  {
-    if (m_ImageExtent[2*i] > m_ImageExtent[2*i + 1])
     {
+    if (m_ImageExtent[2*i] > m_ImageExtent[2*i + 1])
+      {
       igstkLogMacro( DEBUG, "igstk::ImageResliceObjectRepresentation\
             invalid extent!\n");
       return;
+      }
     }
-  }
 
   if ( m_RestrictPlaneToVolume )
     {
-      double bounds[] = {m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[0], //xmin
-                         m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[1], //xmax
-                         m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[2], //ymin
-                         m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[3], //ymax
-                         m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[4], //zmin
-                         m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[5]};//zmax
+    double bounds[] = 
+                {m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[0], //xmin
+                 m_ImageOrigin[0] + m_ImageSpacing[0]*m_ImageExtent[1], //xmax
+                 m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[2], //ymin
+                 m_ImageOrigin[1] + m_ImageSpacing[1]*m_ImageExtent[3], //ymax
+                 m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[4], //zmin
+                 m_ImageOrigin[2] + m_ImageSpacing[2]*m_ImageExtent[5]};//zmax
 
-      for ( i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+    for ( i = 0; i <= 4; i += 2 ) // reverse bounds if necessary
+      {
+      if ( bounds[i] > bounds[i+1] )
         {
-        if ( bounds[i] > bounds[i+1] )
-          {
-          double t = bounds[i+1];
-          bounds[i+1] = bounds[i];
-          bounds[i] = t;
-          }
+        double t = bounds[i+1];
+        bounds[i+1] = bounds[i];
+        bounds[i] = t;
         }
+      }
 
-      double abs_normal[3];
-      m_PlaneSource->GetNormal(abs_normal);
-      double planeCenter[3];
-      m_PlaneSource->GetCenter(planeCenter);
-      double nmax = 0.0;
-      int k = 0;
-      for ( i = 0; i < 3; i++ )
+    double abs_normal[3];
+    m_PlaneSource->GetNormal(abs_normal);
+    double planeCenter[3];
+    m_PlaneSource->GetCenter(planeCenter);
+    double nmax = 0.0;
+    int k = 0;
+    for ( i = 0; i < 3; i++ )
+      {
+      abs_normal[i] = fabs(abs_normal[i]);
+      if ( abs_normal[i]>nmax )
         {
-        abs_normal[i] = fabs(abs_normal[i]);
-        if ( abs_normal[i]>nmax )
-          {
-          nmax = abs_normal[i];
-          k = i;
-          }
+        nmax = abs_normal[i];
+        k = i;
         }
-      // Force the plane to lie within the true image bounds along its normal
-      //
-      if ( planeCenter[k] > bounds[2*k+1] )
-        {
-        planeCenter[k] = bounds[2*k+1];
-        }
-      else if ( planeCenter[k] < bounds[2*k] )
-        {
-        planeCenter[k] = bounds[2*k];
-        }
+      }
 
-      m_PlaneSource->SetCenter(planeCenter);
+    // Force the plane to lie within the true image bounds along its normal
+    //
+    if ( planeCenter[k] > bounds[2*k+1] )
+      {
+      planeCenter[k] = bounds[2*k+1];
+      }
+    else if ( planeCenter[k] < bounds[2*k] )
+      {
+      planeCenter[k] = bounds[2*k];
+      }
+
+    m_PlaneSource->SetCenter(planeCenter);
     }
 
   double planeAxis1[3];
@@ -873,11 +898,11 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
 
   m_ResliceAxes->Identity();
   for ( i = 0; i < 3; i++ )
-   {
-     m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
-     m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
-     m_ResliceAxes->SetElement(2,i,normal[i]);
-   }
+    {
+    m_ResliceAxes->SetElement(0,i,planeAxis1[i]);
+    m_ResliceAxes->SetElement(1,i,planeAxis2[i]);
+    m_ResliceAxes->SetElement(2,i,normal[i]);
+    }
 
   double planeOrigin[4];
   m_PlaneSource->GetOrigin(planeOrigin);
@@ -889,14 +914,16 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ResliceAxes->Transpose();
 
   if ( m_ReslicePlaneSpatialObject.IsNotNull() )
-  {
-    // update the current reslicer transformation in the reslicer plane spatial object
+    {
+    // update the current reslicer transformation in the reslicer plane spatial 
+    // object
     igstk::Transform updatedTransform;
-    updatedTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    updatedTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
     updatedTransform.ImportTransform( *m_ResliceAxes );
 
-    m_ReslicePlaneSpatialObject->RequestUpdateTransformToParent( updatedTransform );
-  }
+    m_ReslicePlaneSpatialObject->RequestUpdateTransformToParent( 
+                                                             updatedTransform );
+    }
 
   double neworiginXYZW[4];
   m_ResliceAxes->MultiplyPoint(originXYZW, neworiginXYZW);
@@ -1008,7 +1035,9 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   Pointer newOR = ImageResliceObjectRepresentation::New();
   newOR->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
-  newOR->SetFrameColor( this->GetFrameRed(),this->GetFrameGreen(),this->GetFrameBlue() );
+  newOR->SetFrameColor( this->GetFrameRed(),
+                        this->GetFrameGreen(),
+                        this->GetFrameBlue() );
   newOR->SetOpacity( this->GetOpacity() );
   newOR->RequestSetImageSpatialObject( m_ImageSpatialObject );
   newOR->RequestSetReslicePlaneSpatialObject( m_ReslicePlaneSpatialObject );
