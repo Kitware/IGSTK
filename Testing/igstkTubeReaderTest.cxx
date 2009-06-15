@@ -100,11 +100,11 @@ int igstkTubeReaderTest( int argc, char * argv [] )
   reader->RequestGetOutput();
 
   if(!observer->GotTubeObject())
-  {
+    {
     std::cout << "No MeshObject!" << std::endl;
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
-  }
+    }
 
   observer->GetTubeObject()->Print( std::cout );
 
