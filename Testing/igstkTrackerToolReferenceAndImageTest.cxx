@@ -227,8 +227,7 @@ int igstkTrackerToolReferenceAndImageTest( int argc, char * argv [] )
   typedef igstk::CTImageSpatialObject  CTImageType;
   typedef CTImageType::Pointer         CTImagePointer;
 
-  typedef TrackerToolReferenceAndImageTest::CTImageObserver
-                                                      CTImageObserverType;
+  typedef TrackerToolReferenceAndImageTest::CTImageObserver CTImageObserverType;
 
   CTImageObserverType::Pointer ctImageObserver = CTImageObserverType::New();
 
