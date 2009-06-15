@@ -185,14 +185,14 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   m_MaxBufferSize=MAX_FRAMES;
   m_Index=0;
   m_NumberOfFramesInBuffer=0;
+ 
   m_FrameRingBuffer = new std::vector< igstk::Frame >(MAX_FRAMES);
 
-
-      std::ofstream ofile;
-      ofile.open("VideoImagerToolStateMachineDiagram.dot");
-      const bool skipLoops = false;
-      this->ExportStateMachineDescription( ofile, skipLoops );
-      ofile.close();
+  std::ofstream ofile;
+  ofile.open("VideoImagerToolStateMachineDiagram.dot");
+  const bool skipLoops = false;
+  this->ExportStateMachineDescription( ofile, skipLoops );
+  ofile.close();
 
 }
 
