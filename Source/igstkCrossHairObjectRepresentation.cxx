@@ -230,12 +230,12 @@ CrossHairObjectRepresentation
 
   //get image bounds (use a payloaded event instead)
   
-  m_ImageBounds[0] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(0);
-  m_ImageBounds[1] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(1);
-  m_ImageBounds[2] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(2);
-  m_ImageBounds[3] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(3);
-  m_ImageBounds[4] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(4);
-  m_ImageBounds[5] = m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(5);
+  m_ImageBounds[0]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(0);
+  m_ImageBounds[1]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(1);
+  m_ImageBounds[2]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(2);
+  m_ImageBounds[3]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(3);
+  m_ImageBounds[4]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(4);
+  m_ImageBounds[5]= m_CrossHairSpatialObject->GetBoundingBoxDimensionByIndex(5);
 
 } 
 
@@ -260,7 +260,7 @@ CrossHairObjectRepresentation
   m_CrossHairSpatialObject->RequestGetCrossHairPosition();
   
   if( !m_CrossHairPositionObserver->GotCrossHairPosition() )
-    return;
+  return;
 
   const PointType& position = 
     m_CrossHairPositionObserver->GetCrossHairPosition();

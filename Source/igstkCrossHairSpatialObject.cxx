@@ -116,7 +116,7 @@ CrossHairSpatialObject::CrossHairSpatialObject():m_StateMachine(this)
   // From AttemptingToSetCursorPosition
 
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, ValidCursorPosition,
-                           BoundingBoxProviderSpatialObjectSet,  SetCursorPosition ); 
+                      BoundingBoxProviderSpatialObjectSet,  SetCursorPosition );
 
   igstkAddTransitionMacro( AttemptingToSetCursorPosition, InValidCursorPosition,
                            BoundingBoxProviderSpatialObjectSet,  
@@ -144,7 +144,7 @@ CrossHairSpatialObject
 ::ReportInvalidRequestProcessing( void )
 {
   igstkLogMacro( DEBUG, 
-    "igstk::CrossHairSpatialObject::ReportInvalidRequestProcessing called...\n");
+   "igstk::CrossHairSpatialObject::ReportInvalidRequestProcessing called...\n");
 
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
@@ -178,14 +178,14 @@ CrossHairSpatialObject
   m_StateMachine.ProcessInputs();
 }
 
-/** Receive the tool spatial object transform with respect to the supplied reference
- * coordinate system using a transduction macro */
+/** Receive the tool spatial object transform with respect to the supplied 
+ * reference coordinate system using a transduction macro */
 void
 CrossHairSpatialObject
 ::ReceiveToolTransformWRTImageCoordinateSystemProcessing()
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::ReceiveToolTransformWRTImageCoordinateSystemProcessing called...\n");
+         ::ReceiveToolTransformWRTImageCoordinateSystemProcessing called...\n");
 
   m_ToolTransformWRTImageCoordinateSystem =
     m_ToolTransformWRTImageCoordinateSystemInputToBeSet.GetTransform();
@@ -229,31 +229,31 @@ CrossHairSpatialObject
   igstkLogMacro( DEBUG, "igstk::CrossHairSpatialObject\
                         ::AttemptSetCursorPositionProcessing called...\n");
 
-    bool validPosition = false; 
+  bool validPosition = false; 
 
-    const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
+  const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
 
 
-    if( m_CursorPositionToBeSet[0] < bounds[0] || 
-        m_CursorPositionToBeSet[1] > bounds[1] ||
-        m_CursorPositionToBeSet[2] < bounds[2] || 
-        m_CursorPositionToBeSet[3] > bounds[3] ||
-        m_CursorPositionToBeSet[4] < bounds[4] || 
-        m_CursorPositionToBeSet[5] > bounds[5] )
+  if( m_CursorPositionToBeSet[0] < bounds[0] || 
+      m_CursorPositionToBeSet[1] > bounds[1] ||
+      m_CursorPositionToBeSet[2] < bounds[2] || 
+      m_CursorPositionToBeSet[3] > bounds[3] ||
+      m_CursorPositionToBeSet[4] < bounds[4] || 
+      m_CursorPositionToBeSet[5] > bounds[5] )
     {
-        validPosition = true;
+    validPosition = true;
     }
 
-    if( validPosition )
-      {
-      igstkPushInputMacro( ValidCursorPosition );
-      }
-    else
-      {
-      igstkPushInputMacro( InValidCursorPosition );
-      }
+  if( validPosition )
+    {
+    igstkPushInputMacro( ValidCursorPosition );
+    }
+  else
+    {
+    igstkPushInputMacro( InValidCursorPosition );
+    }
 
-    m_StateMachine.ProcessInputs();
+  m_StateMachine.ProcessInputs();
 }
 
 void 
@@ -277,10 +277,11 @@ CrossHairSpatialObject
 
 void
 CrossHairSpatialObject
-::RequestSetBoundingBoxProviderSpatialObject( const SpatialObjectType* spatialObject )
+::RequestSetBoundingBoxProviderSpatialObject( 
+                                        const SpatialObjectType* spatialObject )
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::RequestSetBoundingBoxProviderSpatialObject called...\n");
+                     ::RequestSetBoundingBoxProviderSpatialObject called...\n");
 
   m_BoundingBoxProviderSpatialObjectToBeSet = 
            const_cast< SpatialObjectType* >(spatialObject);
@@ -296,7 +297,7 @@ CrossHairSpatialObject
 ::AttemptSetBoundingBoxProviderSpatialObjectProcessing( )
 {
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::AttemptSetBoundingBoxProviderSpatialObject called...\n");
+                     ::AttemptSetBoundingBoxProviderSpatialObject called...\n");
 
   if( !m_BoundingBoxProviderSpatialObjectToBeSet )
     {
@@ -311,7 +312,7 @@ CrossHairSpatialObject
 }
 
 
- /** Return a given dimension */
+/** Return a given dimension */
 double
 CrossHairSpatialObject
 ::GetBoundingBoxDimensionByIndex(unsigned int index) const
@@ -356,7 +357,8 @@ CrossHairSpatialObject
                        ::SetToolSpatialObjectProcessing called...\n");
 
   m_ToolSpatialObject = m_ToolSpatialObjectToBeSet;
-  this->ObserveToolTransformWRTImageCoordinateSystemInput( this->m_ToolSpatialObject );
+  this->ObserveToolTransformWRTImageCoordinateSystemInput( 
+                                                    this->m_ToolSpatialObject );
   m_ToolSpatialObjectSet = true;
 }
 
@@ -366,12 +368,12 @@ CrossHairSpatialObject
 ::SetBoundingBoxProviderSpatialObjectProcessing( )
 {  
   igstkLogMacro( DEBUG,"igstk::CrossHairSpatialObject\
-                       ::SetBoundingBoxProviderSpatialObjectProcessing called...\n");
+                  ::SetBoundingBoxProviderSpatialObjectProcessing called...\n");
 
-  m_BoundingBoxProviderSpatialObject = m_BoundingBoxProviderSpatialObjectToBeSet;
+  m_BoundingBoxProviderSpatialObject= m_BoundingBoxProviderSpatialObjectToBeSet;
 
   // get the bounding box from the reference spatial object
-  BoundingBoxObserver::Pointer  boundingBoxObserver = BoundingBoxObserver::New();
+  BoundingBoxObserver::Pointer boundingBoxObserver = BoundingBoxObserver::New();
   boundingBoxObserver->Reset();
   m_BoundingBoxProviderSpatialObject->AddObserver( 
               SpatialObjectType::BoundingBoxEvent(), 
@@ -379,9 +381,9 @@ CrossHairSpatialObject
   m_BoundingBoxProviderSpatialObject->RequestGetBounds();
 
   if( boundingBoxObserver->GotBoundingBox() ) 
-  {
+    {
     m_BoundingBox = boundingBoxObserver->GetBoundingBox();
-  }
+    }
 }
 
 /** Get tool transform WRT Image Coordinate System*/
@@ -397,8 +399,8 @@ void
 CrossHairSpatialObject
 ::RequestUpdateToolTransformWRTImageCoordinateSystem()
 {
-  igstkLogMacro( DEBUG,
-  "igstk::CrossHairSpatialObject::RequestUpdateToolTransformWRTImageCoordinateSystem called ...\n");
+  igstkLogMacro( DEBUG, "igstk::CrossHairSpatialObject:: \
+              RequestUpdateToolTransformWRTImageCoordinateSystem called ...\n");
   
   igstkPushInputMacro( GetToolTransformWRTImageCoordinateSystem );
   this->m_StateMachine.ProcessInputs();
@@ -409,20 +411,21 @@ void
 CrossHairSpatialObject
 ::RequestGetToolTransformWRTImageCoordinateSystemProcessing()
 {
-  igstkLogMacro( DEBUG,
-     "igstk::CrossHairSpatialObject::RequestGetToolTransformWRTImageCoordinateSystemProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::CrossHairSpatialObject::\
+       RequestGetToolTransformWRTImageCoordinateSystemProcessing called ...\n");
 
-  typedef igstk::Friends::CoordinateSystemHelper 
-                          CoordinateSystemHelperType;
+  typedef igstk::Friends::CoordinateSystemHelper    CoordinateSystemHelperType;
 
   const CoordinateSystem* ImageSpatialObjectCoordinateSystem = 
-    CoordinateSystemHelperType::GetCoordinateSystem( m_BoundingBoxProviderSpatialObject );
+    CoordinateSystemHelperType::GetCoordinateSystem( 
+                                           m_BoundingBoxProviderSpatialObject );
 
   CoordinateSystem * ImageSpatialObjectCoordinateSystemNC =
           const_cast< CoordinateSystem *>(ImageSpatialObjectCoordinateSystem);
 
   if ( m_ToolSpatialObjectSet )
-    m_ToolSpatialObject->RequestComputeTransformTo( ImageSpatialObjectCoordinateSystemNC ); 
+  m_ToolSpatialObject->RequestComputeTransformTo( 
+                                         ImageSpatialObjectCoordinateSystemNC );
 }
 
 /** Check if tool spatial object is set to drive the reslicing*/
@@ -449,15 +452,16 @@ CrossHairSpatialObject
   if ( m_ToolSpatialObject ) 
     {
     this->RequestUpdateToolTransformWRTImageCoordinateSystem();
-    const VectorType &vec = m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
+    const VectorType &vec = 
+                       m_ToolTransformWRTImageCoordinateSystem.GetTranslation();
     m_Position[0] = vec[0];
     m_Position[1] = vec[1];
     m_Position[2] = vec[2];
     }
 
-    PointEvent positionEvent;
-    positionEvent.Set( m_Position );
-    this->InvokeEvent( positionEvent );
+  PointEvent positionEvent;
+  positionEvent.Set( m_Position );
+  this->InvokeEvent( positionEvent );
 }
 
 
@@ -467,7 +471,7 @@ CrossHairSpatialObject
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
-//  os << "Size = " << m_Size << std::endl;
+  //  os << "Size = " << m_Size << std::endl;
 }
 
 
