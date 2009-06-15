@@ -193,6 +193,8 @@ int igstkAnnotation2DTest( int argc, char* argv[] )
 
   if( argc > 2 )
     {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
     view2D->RequestSaveScreenShot( argv[2] );
     }
 

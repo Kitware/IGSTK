@@ -260,6 +260,9 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   view2D->RequestResetCamera();
   form->show();
 
+  view2D->RequestStop();
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( argv[2] );
   view2D->RequestStop();
 

@@ -350,6 +350,9 @@ IF(${IGSTK_USE_FLTK})
     ADD_TEST( igstkAnnotation2DTest2 ${IGSTK_TESTS}
        --compare ${BASELINE}/igstkAnnotation2DTest2ScreenShot.png
        ${IGSTK_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png
+       --toleranceIntensity 10
+       --toleranceRadius 10
+       --toleranceNumberOfPixels 1000
               igstkAnnotation2DTest2
               ${IGSTK_DATA_ROOT}/Input/E000192
               ${IGSTK_TEST_OUTPUT_DIR}/igstkAnnotation2DTest2ScreenShot.png)
