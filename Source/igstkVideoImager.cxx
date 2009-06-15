@@ -736,7 +736,7 @@ void VideoImager::UpdateStatusSuccessProcessing( void )
   while( inputItr != inputEnd )
     {
     if ( (inputItr->second)->GetUpdated() )
-      {
+        {
 
        FrameType frame = (inputItr->second)->GetInternalFrame();
 
@@ -747,6 +747,8 @@ void VideoImager::UpdateStatusSuccessProcessing( void )
        updatedFrame.SetImagePtr(frame.GetImagePtr(), timeToExpiration);
 
        (inputItr->second)->SetInternalFrame( updatedFrame );
+
+       (inputItr->second)->InvokeEvent( FrameModifiedEvent() );
       }
     ++inputItr;
     }
