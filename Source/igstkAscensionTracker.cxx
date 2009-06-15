@@ -154,86 +154,86 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
       this->GetTrackerToolContainer();
 
   while( inputItr != inputEnd )
-  {
+    {
 
-      // only report tools that are in view
-      // this is actually not working because the ascension system is always
-      // reporting some data.
-      // TODO:
-      // decide "tool visibility" in terms of signal fidelity. There should be
-      // some parameter that gives that value. I saw it in the pciCubes 
-      // application
-      if (! this->m_ToolStatusContainer[inputItr->first])
-        {
-        igstkLogMacro( INFO, 
-              "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
-              "tool " << inputItr->first << " is not in view\n");
-
-         // report to the tracker tool that the tracker is not available
-         this->ReportTrackingToolNotAvailable(
-              trackerToolContainer[inputItr->first]);
-
-         ++inputItr;
-         continue;
-        }
-
-      // report to the tracker tool that the tracker is Visible
-      this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
-
-      // create the transform
-      TransformType transform;
-
-      typedef TransformType::VectorType TranslationType;
-      TranslationType translation;
-
-      translation[0] = (inputItr->second)[0];
-      translation[1] = (inputItr->second)[1];
-      translation[2] = (inputItr->second)[2];
-
-      typedef TransformType::VersorType RotationType;
-      RotationType rotation;
-
-      const double normsquared =
-          (inputItr->second)[3]*(inputItr->second)[3] +
-          (inputItr->second)[4]*(inputItr->second)[4] +
-          (inputItr->second)[5]*(inputItr->second)[5] +
-          (inputItr->second)[6]*(inputItr->second)[6];
-
-      // don't allow null quaternions
-      if (normsquared < 1e-6)
+    // only report tools that are in view
+    // this is actually not working because the ascension system is always
+    // reporting some data.
+    // TODO:
+    // decide "tool visibility" in terms of signal fidelity. There should be
+    // some parameter that gives that value. I saw it in the pciCubes 
+    // application
+    if (! this->m_ToolStatusContainer[inputItr->first])
       {
-          rotation.Set(0.0, 0.0, 0.0, 1.0);
-          igstkLogMacro( WARNING, 
-              "igstk::AscensionTracker::InternUpdateStatus: bad "
-              "quaternion, norm = " << sqrt(normsquared) << "\n");
-      }
-      else
-      {
-          rotation.Set((inputItr->second)[3],
-                       (inputItr->second)[4],
-                       (inputItr->second)[5],
-                       (inputItr->second)[6]);
+      igstkLogMacro( INFO, 
+            "igstk::FlockOfBirdTracker::InternalUpdateStatus: " <<
+            "tool " << inputItr->first << " is not in view\n");
+
+       // report to the tracker tool that the tracker is not available
+       this->ReportTrackingToolNotAvailable(
+            trackerToolContainer[inputItr->first]);
+
+       ++inputItr;
+       continue;
       }
 
-      // report error value
-      // Get error value from the tracker. TODO
-      typedef TransformType::ErrorType  ErrorType;
-      ErrorType errorValue = 0.0;
+    // report to the tracker tool that the tracker is Visible
+    this->ReportTrackingToolVisible(trackerToolContainer[inputItr->first]);
 
-      transform.SetToIdentity(this->GetValidityTime());
-      transform.SetTranslationAndRotation(translation, rotation, errorValue,
-          this->GetValidityTime());
+    // create the transform
+    TransformType transform;
 
-      // set the raw transform
-      this->SetTrackerToolRawTransform(
-          trackerToolContainer[inputItr->first], transform );
+    typedef TransformType::VectorType TranslationType;
+    TranslationType translation;
 
-      this->SetTrackerToolTransformUpdate(
-          trackerToolContainer[inputItr->first], true );
+    translation[0] = (inputItr->second)[0];
+    translation[1] = (inputItr->second)[1];
+    translation[2] = (inputItr->second)[2];
 
-      ++inputItr;
+    typedef TransformType::VersorType RotationType;
+    RotationType rotation;
 
-  }
+    const double normsquared =
+        (inputItr->second)[3]*(inputItr->second)[3] +
+        (inputItr->second)[4]*(inputItr->second)[4] +
+        (inputItr->second)[5]*(inputItr->second)[5] +
+        (inputItr->second)[6]*(inputItr->second)[6];
+
+    // don't allow null quaternions
+    if (normsquared < 1e-6)
+      {
+        rotation.Set(0.0, 0.0, 0.0, 1.0);
+        igstkLogMacro( WARNING, 
+            "igstk::AscensionTracker::InternUpdateStatus: bad "
+            "quaternion, norm = " << sqrt(normsquared) << "\n");
+      }
+    else
+      {
+        rotation.Set((inputItr->second)[3],
+                     (inputItr->second)[4],
+                     (inputItr->second)[5],
+                     (inputItr->second)[6]);
+      }
+
+    // report error value
+    // Get error value from the tracker. TODO
+    typedef TransformType::ErrorType  ErrorType;
+    ErrorType errorValue = 0.0;
+
+    transform.SetToIdentity(this->GetValidityTime());
+    transform.SetTranslationAndRotation(translation, rotation, errorValue,
+        this->GetValidityTime());
+
+    // set the raw transform
+    this->SetTrackerToolRawTransform(
+        trackerToolContainer[inputItr->first], transform );
+
+    this->SetTrackerToolTransformUpdate(
+        trackerToolContainer[inputItr->first], true );
+
+    ++inputItr;
+
+    }
 
   m_BufferLock->Unlock();
 
@@ -302,7 +302,7 @@ AscensionTracker::InternalThreadedUpdateStatus( void )
     this->m_ToolStatusContainer[ inputItr->first ] = 1;
 
     inputItr++;
-  } 
+    } 
 
   m_BufferLock->Unlock();
 
@@ -341,7 +341,7 @@ AscensionTracker
     "AscensionTracker::RemoveTrackerToolFromInternalDataContainers"
     " called...\n");
 
-   const std::string trackerToolIdentifier =
+  const std::string trackerToolIdentifier =
        trackerTool->GetTrackerToolIdentifier();
 
   // remove the tool from the Transform buffer container
