@@ -31,9 +31,9 @@ namespace igstk
  * 
  * \brief This class represents a cross hair spatial object. 
  *
- * This class is used to indicate a position in an input image. The position could 
- * be manually set using RequestSetCursorPostion or specified using a reslicing tool transform
- * RequestSetToolSpatialObject
+ * This class is used to indicate a position in an input image. The position  
+ * could be manually set using RequestSetCursorPostion or specified using a
+ *  reslicing tool transform RequestSetToolSpatialObject
  * 
  * \ingroup Object
  */
@@ -71,7 +71,8 @@ public:
   void RequestSetToolSpatialObject( const SpatialObjectType * spatialObject );
 
   /** Request set bounding box provider spatial object */
-  void RequestSetBoundingBoxProviderSpatialObject( const SpatialObjectType * spatialObject );
+  void RequestSetBoundingBoxProviderSpatialObject( 
+                                      const SpatialObjectType * spatialObject );
 
   /** Request set cursor position */
   void RequestSetCursorPosition( PointType point);
@@ -170,7 +171,7 @@ private:
   igstkDeclareStateMacro( BoundingBoxProviderSpatialObjectSet );
   igstkDeclareStateMacro( AttemptingToSetBoundingBoxProviderSpatialObject );
   igstkDeclareStateMacro( AttemptingToSetCursorPosition );
-  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
+  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem);
 
   /** Inputs to the State Machine */  
   igstkDeclareInputMacro( SetBoundingBoxProviderSpatialObject );
@@ -187,22 +188,24 @@ private:
 
   // Event macro setup to receive the tool spatial object transform
   // with respect to the image coordinate system
-  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
+  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, 
+                                        ToolTransformWRTImageCoordinateSystem );
 
-  igstkObserverConstObjectMacro( BoundingBox, SpatialObjectType::BoundingBoxEvent,
-                                              SpatialObjectType::BoundingBoxType);
+  igstkObserverConstObjectMacro( BoundingBox, 
+                                            SpatialObjectType::BoundingBoxEvent,
+                                            SpatialObjectType::BoundingBoxType);
 
   inline 
   PointType 
   TransformToPoint( igstk::Transform transform )
-  {
+    {
     PointType point;
     for (int i=0; i<3; i++)
       {
       point[i] = transform.GetTranslation()[i];
       }
     return point;
-  }
+    }
 
 };
 
