@@ -57,7 +57,7 @@ PerspectiveTransform
 void 
 PerspectiveTransform
 ::SetTransform( const ExtrinsicMatrixType &extrinsic,
-                const IntrinsicMatrixType &intrinsic,             
+                const IntrinsicMatrixType &intrinsic,
                 ErrorType errorValue,
                 TimePeriodType millisecondsToExpiration )
 {
@@ -72,12 +72,12 @@ void
 PerspectiveTransform
 ::ExportTransform( vtkPerspectiveTransform &outMatrix ) const
 {
-          //the 3x4 concatenated transformation matrix
+  //the 3x4 concatenated transformation matrix
   ExtrinsicMatrixType::InternalMatrixType T = 
     this->m_IntrinsicTransform.GetVnlMatrix()*
     this->m_ExtrinsicTransform.GetVnlMatrix();
 
-        //constructor initializes vtkMatrix4x4 to identity
+  //constructor initializes vtkMatrix4x4 to identity
   vtkMatrix4x4 *vtkT = vtkMatrix4x4::New();
   for(unsigned int i=0; i<3; i++ )
   {
@@ -175,7 +175,8 @@ std::ostream& operator<<( std::ostream& os, const PerspectiveTransform& o )
 
 
 /** Print object information */
-void PerspectiveTransform::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void PerspectiveTransform::PrintSelf( std::ostream& os, itk::Indent indent ) 
+const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
