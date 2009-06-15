@@ -71,7 +71,8 @@ protected:
   void ResendTransformThroughOpenIGTLink(
     itk::Object * caller, const itk::EventObject & event );
 
-  typedef itk::MemberCommand< TrackerToolObserverToOpenIGTLinkRelay >   ObserverType;
+  typedef itk::MemberCommand< TrackerToolObserverToOpenIGTLinkRelay >   
+                                                                   ObserverType;
 
 
 private:

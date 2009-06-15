@@ -30,10 +30,12 @@ namespace igstk
 {
 
 /** Constructor */
-TrackerToolObserverToOpenIGTLinkRelay::TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
+TrackerToolObserverToOpenIGTLinkRelay::
+TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
 {
   this->m_Observer = ObserverType::New();
-  this->m_Observer->SetCallbackFunction( this, & Self::ResendTransformThroughOpenIGTLink );
+  this->m_Observer->SetCallbackFunction( this, 
+                                     &Self::ResendTransformThroughOpenIGTLink );
 
   this->m_Matrix = vtkMatrix4x4::New();
 
@@ -71,17 +73,19 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestSetFramesPerSecond( double fps )
 
 
 void
-TrackerToolObserverToOpenIGTLinkRelay::RequestSetHostName( const char * hostname )
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetHostName(const char * hostname)
 {
   this->m_HostName = hostname;
 }
 
 
 void
-TrackerToolObserverToOpenIGTLinkRelay::RequestSetTrackerTool( const TrackerTool * trackerTool )
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetTrackerTool( 
+                                               const TrackerTool * trackerTool )
 {
   this->m_TrackerTool = trackerTool;
-  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent(), this->m_Observer );
+  this->m_TrackerTool->AddObserver( CoordinateSystemTransformToEvent(), 
+                                                             this->m_Observer );
 }
 
 
@@ -100,10 +104,9 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
     }
 }
 
-
-
 void
-TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::Object * caller, const itk::EventObject & event )
+TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( 
+                          itk::Object * caller, const itk::EventObject & event )
 {
   const CoordinateSystemTransformToEvent * transformEvent =
     dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
@@ -128,13 +131,15 @@ TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( itk::O
 
     int interval = (int) (1000.0 / this->m_FramesPerSecond);
     igtl::Sleep(interval); // wait
-    this->m_Socket->Send(this->m_TransformMessage->GetPackPointer(), this->m_TransformMessage->GetPackSize());
+    this->m_Socket->Send(this->m_TransformMessage->GetPackPointer(), 
+                                       this->m_TransformMessage->GetPackSize());
     }
 }
 
 
 /** Print Self function */
-void TrackerToolObserverToOpenIGTLinkRelay::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void TrackerToolObserverToOpenIGTLinkRelay::PrintSelf( 
+                                   std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "Port: " << this->m_Port << std::endl;
