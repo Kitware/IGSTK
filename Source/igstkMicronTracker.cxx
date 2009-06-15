@@ -260,7 +260,7 @@ bool MicronTracker::Initialize( void )
   std::string sectionName = "General";
 
   // MTC library has poor const-correctness
-  this->m_Persistence->setSection ( const_cast< char *>( sectionName.c_str() ) );
+  this->m_Persistence->setSection ( const_cast< char *>( sectionName.c_str() ));
 
   // The LightCoolness property provides an indication to the camera of how the
   // illumination spectrum is distributed, allowing it to correct for the
