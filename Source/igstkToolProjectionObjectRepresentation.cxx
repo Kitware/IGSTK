@@ -56,44 +56,54 @@ ToolProjectionObjectRepresentation
   //from NullToolProjectionObject
 
   igstkAddTransitionMacro( NullToolProjectionObject, ValidToolProjectionObject, 
-                           ValidToolProjectionObject,  SetToolProjectionObject );
+                           ValidToolProjectionObject,  
+                           SetToolProjectionObject );
 
   igstkAddTransitionMacro( NullToolProjectionObject, NullToolProjectionObject, 
                            NullToolProjectionObject,  No );
 
-  igstkAddTransitionMacro( NullToolProjectionObject, ValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( NullToolProjectionObject, 
+                           ValidReslicePlaneSpatialObject, 
                            NullToolProjectionObject,  No );
 
-  igstkAddTransitionMacro( NullToolProjectionObject, InValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( NullToolProjectionObject, 
+                           InValidReslicePlaneSpatialObject, 
                            NullToolProjectionObject,  No );
 
   //from ValidToolProjectionObject
 
-  igstkAddTransitionMacro( ValidToolProjectionObject, ValidReslicePlaneSpatialObject, 
-                           ValidReslicePlaneSpatialObject,  SetReslicePlaneSpatialObject );
+  igstkAddTransitionMacro( ValidToolProjectionObject, 
+                           ValidReslicePlaneSpatialObject, 
+                           ValidReslicePlaneSpatialObject,  
+                           SetReslicePlaneSpatialObject );
 
   igstkAddTransitionMacro( ValidToolProjectionObject, NullToolProjectionObject, 
                            NullToolProjectionObject,  No ); 
 
-  igstkAddTransitionMacro( ValidToolProjectionObject, ValidToolProjectionObject, 
+  igstkAddTransitionMacro( ValidToolProjectionObject, ValidToolProjectionObject,
                            ValidToolProjectionObject,  No );
 
-  igstkAddTransitionMacro( ValidToolProjectionObject, InValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( ValidToolProjectionObject, 
+                           InValidReslicePlaneSpatialObject, 
                            ValidToolProjectionObject,  No );
 
 
   //from ValidReslicePlaneSpatialObject
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, ValidToolProjectionObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, 
+                           ValidToolProjectionObject, 
                            ValidReslicePlaneSpatialObject,  No );
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, NullToolProjectionObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, 
+                           NullToolProjectionObject, 
                            ValidReslicePlaneSpatialObject,  No ); 
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, ValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, 
+                           ValidReslicePlaneSpatialObject, 
                            ValidReslicePlaneSpatialObject,  No );
 
-  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, InValidReslicePlaneSpatialObject, 
+  igstkAddTransitionMacro( ValidReslicePlaneSpatialObject, 
+                           InValidReslicePlaneSpatialObject, 
                            ValidReslicePlaneSpatialObject,  No );
 
   m_StateMachine.SelectInitialState( m_NullToolProjectionObjectState );
@@ -108,22 +118,23 @@ ToolProjectionObjectRepresentation
   this->DeleteActors();
 
   if (m_LineSource != NULL)
-  {
+    {
     m_LineSource->Delete();
     m_LineSource=NULL;
-  }
+    }
 
   if (m_LineProperty != NULL)
-  {
+    {
     m_LineProperty->Delete();
     m_LineProperty=NULL;
-  }
+    }
 }
 
 
 /** Request to Set the ToolProjectionSpatial Object */
 void ToolProjectionObjectRepresentation
-::RequestSetToolProjectionObject( const ToolProjectionSpatialObjectType * ToolProjection )
+::RequestSetToolProjectionObject( 
+                        const ToolProjectionSpatialObjectType * ToolProjection )
 {
   m_ToolProjectionObjectToAdd = ToolProjection;
   if( !m_ToolProjectionObjectToAdd )
@@ -161,16 +172,17 @@ reslicePlaneSpatialObject )
   igstkLogMacro( DEBUG,"igstk::ToolProjectionObjectRepresentation\
                        ::RequestSetReslicePlaneSpatialObject called...\n");
 
-  m_ReslicePlaneSpatialObjectToBeSet = const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
+  m_ReslicePlaneSpatialObjectToBeSet = const_cast< ReslicerPlaneType* >(
+                                                     reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
-    {
-    m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
+  }
   else
-    {
-    m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
-    }
+  {
+  m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
+  }
 
   m_StateMachine.ProcessInputs();
 }
@@ -185,8 +197,9 @@ ToolProjectionObjectRepresentation
 
   m_ReslicePlaneSpatialObject = m_ReslicePlaneSpatialObjectToBeSet;
 
-  m_ReslicePlaneSpatialObject->AddObserver( ReslicerPlaneType::ReslicerPlaneNormalEvent(),
-                                            m_ReslicerPlaneNormalObserver );
+  m_ReslicePlaneSpatialObject->AddObserver( 
+                                  ReslicerPlaneType::ReslicerPlaneNormalEvent(),
+                                                m_ReslicerPlaneNormalObserver );
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 }
@@ -205,15 +218,16 @@ void ToolProjectionObjectRepresentation
 {
   igstkLogMacro( DEBUG, "UpdateRepresentationProcessing called ....\n");
 
-  // we don't need to force a plane update in the reslicer plane spatial object. Let's use
-  // the plane the he already has
+  // we don't need to force a plane update in the reslicer plane spatial object.
+  // Let's use the plane the he already has
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
 
   if ( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
-    return;
+  return;
 
   // todo: get the tool's direction directly. do not calculate it again
-  igstk::Transform toolTransform = m_ReslicePlaneSpatialObject->GetToolTransform();
+  igstk::Transform toolTransform = 
+                                m_ReslicePlaneSpatialObject->GetToolTransform();
   VectorType point1 = toolTransform.GetTranslation();
 
   VectorType point2;
@@ -233,21 +247,22 @@ void ToolProjectionObjectRepresentation
   
   ReslicerPlaneType::VectorType normal;
   if( m_ReslicerPlaneNormalObserver->GotReslicerPlaneNormal() )
-  {
-      normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
+    {
+    normal = m_ReslicerPlaneNormalObserver->GetReslicerPlaneNormal();
 
-      VectorType toolProy = itk::CrossProduct( normal, itk::CrossProduct(toolAxis, normal) );
+    VectorType toolProy = itk::CrossProduct( normal, 
+                                        itk::CrossProduct(toolAxis, normal) );
 
-      point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
-  }
+    point2 = point1 + toolProy*this->m_ToolProjectionSpatialObject->GetSize();
+    }
   else
-    return;
+  return;
 
   if ( (point2-point1).GetNorm() > 0.1 )
-  {
+    {
     m_LineSource->SetPoint1( point1[0], point1[1], point1[2] );
     m_LineSource->SetPoint2( point2[0], point2[1], point2[2] );
-  }
+    }
 }
 
 /** Sets actors visibility */
@@ -273,44 +288,47 @@ ToolProjectionObjectRepresentation
 ::VerifyTimeStamp( ) const
 {
   igstkLogMacro( DEBUG, 
-    "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called...\n");
+  "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called..\n");
 
   if( m_ReslicePlaneSpatialObject.IsNull() )
-    {
-    return false;
-    }
+  {
+  return false;
+  }
 
   // if there is no tool spatial object attached to the reslicer plane,
   // we don't want to show the tool projection either
   if( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
-    {
-    return false;
-    }
+  {
+  return false;
+  }
 
   // fixme: we are having severe blinking problems here
   if( this->GetRenderTimeStamp().GetExpirationTime() <
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
     this->GetRenderTimeStamp().GetStartTime() >
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
-    {
-      // fixme
-      double diff = 
-        this->GetRenderTimeStamp().GetStartTime() - 
-        this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime();
+  {
 
-      if (diff > 250 )
-      {       
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
+  // fixme
+  double diff = 
+    this->GetRenderTimeStamp().GetStartTime() - 
+    this->m_ReslicePlaneSpatialObject->
+                                     GetToolTransform().GetExpirationTime();
+
+  if (diff > 250 )
+  {
+  return false;
+  }
   else
-    {
-    return true;
-    }
+  {
+  return true;
+  }
+
+  }
+  else
+  {
+  return true;
+  }
 }
 
 /** Set the line width */
@@ -337,7 +355,7 @@ void ToolProjectionObjectRepresentation
   this->DeleteActors();
 
   // build projection line
-  m_LineSource = vtkLineSource::New();    
+  m_LineSource = vtkLineSource::New();
   m_LineSource->SetPoint1( 0, 0, 0 );
   m_LineSource->SetPoint2( 1, 1, 1 );
 
@@ -370,7 +388,7 @@ ToolProjectionObjectRepresentation
   newOR->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
   newOR->SetOpacity( this->GetOpacity() );
   newOR->RequestSetToolProjectionObject( this->m_ToolProjectionSpatialObject );
-  newOR->RequestSetReslicePlaneSpatialObject( this->m_ReslicePlaneSpatialObject );
+  newOR->RequestSetReslicePlaneSpatialObject(this->m_ReslicePlaneSpatialObject);
 
   return newOR;
 }
