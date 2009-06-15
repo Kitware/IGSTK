@@ -57,14 +57,15 @@ AffineTransform
   itkResult->SetMatrix( leftTransform.m_Transform->GetMatrix() );
   itkResult->SetOffset( leftTransform.m_Transform->GetOffset() );
   itkResult->Compose( rightTransform.m_Transform );
-                  //error values are summed, should be a better way to
-                  //propogate errors
+
+  // error values are summed, should be a better way to
+  // propagate errors
   result.SetMatrixAndOffset( itkResult->GetMatrix(),
                              itkResult->GetOffset(),
                              leftTransform.m_Error + rightTransform.m_Error,
                              0 );
   result.m_TimeStamp = TimeStamp::ComputeOverlap( leftTransform.m_TimeStamp, 
-                                                  rightTransform.m_TimeStamp );  
+                                                  rightTransform.m_TimeStamp );
   return result;
 }
 
