@@ -32,20 +32,28 @@ namespace igstk
  * \brief This class generates reslicing plane equation.  
  *
  * The computed plane is used by spatial object representation classes such as 
- * igstkImageResliceSpatialObjectRepresentation and igstkMeshResliceSpatialObjectRepresentation.
+ * igstkImageResliceSpatialObjectRepresentation and 
+ * igstkMeshResliceSpatialObjectRepresentation.
  *
- * The class provides three modes of reslicing: Orthogonal, OffOrthogonal and Oblique. 
+ * The class provides three modes of reslicing: Orthogonal, OffOrthogonal and 
+ * Oblique. 
  *
- * In orthogonal mode, three types of orientation are defined: Axial, Coronal and Sagittal. 
- * For this mode, the tool tip spatial object provides the reslicing plane postion and orientation
- * information is extraced from the bounding box provider spatial object.
+ * In orthogonal mode, three types of orientation are defined: Axial, Coronal 
+ * and Sagittal. 
+ * For this mode, the tool tip spatial object provides the reslicing plane 
+ * position and orientation
+ * information is extracted from the bounding box provider spatial object.
  *
- * For OffOrthogonal mode, the three types of orientation are OffAxial, OffSagittal and OffCoronal.
- * The orientation of the reslicing plane is computed from both, the tracker tool spatial object and
- * the bounding box provider spatial object. The position of the reslicer plane is determined from 
- * the tracker tool tip postion.
+ * For OffOrthogonal mode, the three types of orientation are OffAxial, 
+ * OffSagittal and OffCoronal.
+ * The orientation of the reslicing plane is computed from both, the tracker 
+ * tool spatial object and
+ * the bounding box provider spatial object. The position of the reslice plane 
+ * is determined from 
+ * the tracker tool tip position.
  *
- * For the oblique mode, both orientation and postion information of the reslicing plane are obtained
+ * For the oblique mode, both orientation and position information of the 
+ * reslicing plane are obtained
  * from the tracker tool.
  *
  *
@@ -63,12 +71,12 @@ public:
 public:
 
   /** Typedefs */
-  typedef SpatialObject                          BoundingBoxProviderSpatialObjectType;
-  typedef BoundingBoxProviderSpatialObjectType::ConstPointer      
-                                                 BoundingBoxProviderSpatialObjectConstPointer;
+  typedef SpatialObject            BoundingBoxProviderSpatialObjectType;
+  typedef BoundingBoxProviderSpatialObjectType::ConstPointer
+                                   BoundingBoxProviderSpatialObjectConstPointer;
 
-  typedef SpatialObject                                 ToolSpatialObjectType;
-  typedef ToolSpatialObjectType::Pointer                ToolSpatialObjectPointer;
+  typedef SpatialObject                               ToolSpatialObjectType;
+  typedef ToolSpatialObjectType::Pointer              ToolSpatialObjectPointer;
 
   typedef igstk::Transform::VectorType                  VectorType;
   typedef igstk::Transform::VersorType                  VersorType;
@@ -106,14 +114,15 @@ public:
   void RequestSetOrientationType( OrientationType orientationType ); 
 
   /** Actually sets boundingbox provider spatial object*/ 
-  void RequestSetBoundingBoxProviderSpatialObject( 
-    const BoundingBoxProviderSpatialObjectType * boundingBoxProviderSpatialObject ); 
+  void RequestSetBoundingBoxProviderSpatialObject( const
+     BoundingBoxProviderSpatialObjectType * boundingBoxProviderSpatialObject ); 
 
-  /** Request the state machine to attempt to set the tool spatial object. A tool 
-  * spatial object is actually optional; althought required for the OffOrthogonal and 
-  * Oblique reslicing modes.
-  **/
-  void RequestSetToolSpatialObject( const ToolSpatialObjectType * toolSpatialObject );
+  /** Request the state machine to attempt to set the tool spatial object. A 
+   * tool spatial object is actually optional; althought required for the 
+   * OffOrthogonal and Oblique reslicing modes.
+   **/
+  void RequestSetToolSpatialObject( const ToolSpatialObjectType * 
+                                                            toolSpatialObject );
 
   /** Request the state machine to attempt to set reslicing cursor position. */
   void RequestSetCursorPosition( const double *point);
@@ -133,7 +142,8 @@ public:
   /** Retrieve current reslicing mode */
   ReslicingMode GetReslicingMode() const;
 
-  /** Request update tool transform WRT reference spatial object coordinate system */
+  /** Request update tool transform WRT reference spatial object coordinate 
+   * system */
   void RequestUpdateToolTransformWRTImageCoordinateSystem();
 
   /** Get tool transform */
@@ -189,7 +199,7 @@ private:
   igstkDeclareStateMacro( BoundingBoxProviderSpatialObjectSet );
   igstkDeclareStateMacro( AttemptingToSetCursorPosition );
   igstkDeclareStateMacro( AttemptingToSetBoundingBoxProviderSpatialObject );  
-  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem );
+  igstkDeclareStateMacro( AttemptingToGetToolTransformWRTImageCoordinateSystem);
 
   /** Null operation for State Machine transition */
   void NoProcessing();
@@ -234,10 +244,12 @@ private:
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
 
-  /** Request get tool transform with respect to reference spatial object coordinate system */ 
+  /** Request get tool transform with respect to reference spatial object 
+   * coordinate system */ 
   void RequestGetToolTransformWRTImageCoordinateSystemProcessing( void );
 
-  /** Receive tool transform with respect to reference spatial object coordinate system */ 
+  /** Receive tool transform with respect to reference spatial object 
+   * coordinate system */ 
   void ReceiveToolTransformWRTImageCoordinateSystemProcessing( void );
 
   /** Report tool position */
@@ -260,8 +272,10 @@ private:
   OrientationType     m_OrientationType;
 
   /** Variables for managing bounding box provider spatial object */
-  BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObjectToBeSet;
-  BoundingBoxProviderSpatialObjectConstPointer     m_BoundingBoxProviderSpatialObject;
+  BoundingBoxProviderSpatialObjectConstPointer
+                                      m_BoundingBoxProviderSpatialObjectToBeSet;
+  BoundingBoxProviderSpatialObjectConstPointer
+                                      m_BoundingBoxProviderSpatialObject;
 
   /** Variables for managing tool spatial object */
   ToolSpatialObjectPointer     m_ToolSpatialObjectToBeSet;
@@ -273,10 +287,12 @@ private:
 
   // Event macro setup to receive the tool spatial object transform
   // with respect to the reference spatial object coordinate system
-  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, ToolTransformWRTImageCoordinateSystem );
+  igstkLoadedEventTransductionMacro( CoordinateSystemTransformTo, 
+                                        ToolTransformWRTImageCoordinateSystem );
   
 
-  // Tool transform with respect to the reference spatial object coordinate system
+  // Tool transform with respect to the reference spatial object 
+  // coordinate system
   igstk::Transform m_ToolTransformWRTImageCoordinateSystem;
 
   /** Observer for the bounding box event */
