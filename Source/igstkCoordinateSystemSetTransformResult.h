@@ -97,7 +97,7 @@ private:
   Transform                        m_Transform;
   const CoordinateSystem       *   m_Source;
   const CoordinateSystem       *   m_Destination;
-  bool                             isAttach;
+  bool                             m_IsAttach;
 
 };
 

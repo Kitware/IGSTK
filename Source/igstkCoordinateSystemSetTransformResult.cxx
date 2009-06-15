@@ -24,7 +24,7 @@ CoordinateSystemSetTransformResult
 {
   m_Source = NULL;
   m_Destination = NULL;
-  isAttach = false;
+  m_IsAttach = false;
 }
 
 CoordinateSystemSetTransformResult
@@ -34,7 +34,7 @@ CoordinateSystemSetTransformResult
   m_Transform = in.m_Transform;
   m_Source = in.m_Source;
   m_Destination = in.m_Destination;
-  isAttach  = in.isAttach;
+  m_IsAttach  = in.m_IsAttach;
 }
 
 const CoordinateSystemSetTransformResult &
@@ -47,7 +47,7 @@ CoordinateSystemSetTransformResult
     m_Transform = in.m_Transform;
     m_Source = in.m_Source;
     m_Destination = in.m_Destination;
-    isAttach  = in.isAttach;
+    m_IsAttach  = in.m_IsAttach;
     }
   return *this;
 }
@@ -59,7 +59,7 @@ CoordinateSystemSetTransformResult
   m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
   m_Source = NULL;
   m_Destination = NULL;
-  isAttach  = false;
+  m_IsAttach  = false;
 }
 
 void
@@ -71,7 +71,7 @@ CoordinateSystemSetTransformResult
   m_Transform = trans;
   m_Source = src;
   m_Destination = dst;
-  isAttach = isAttaching;
+  m_IsAttach = isAttaching;
 }
 
 const Transform & 
@@ -97,7 +97,7 @@ CoordinateSystemSetTransformResult
 
 const bool CoordinateSystemSetTransformResult::IsAttach() const
 {
-  return this->isAttach;
+  return this->m_IsAttach;
 }
 
 } // end namespace igstk
