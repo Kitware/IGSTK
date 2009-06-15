@@ -41,10 +41,14 @@
 #include "igtlStatusMessage.h"
 #include "igtlPositionMessage.h"
 
-static int ReceiveTransform(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
-static int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
-static int ReceiveImage(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
-static int ReceiveStatus(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header);
+static int ReceiveTransform(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header);
+static int ReceivePosition(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header);
+static int ReceiveImage(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header);
+static int ReceiveStatus(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header);
 
 static ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* pInfoStruct);
 static ITK_THREAD_RETURN_TYPE ObserverThreadFunction(void* pInfoStruct);
@@ -58,7 +62,9 @@ int igstkTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv [] )
   if( argc < 6 )
     {
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " hostname portnumber numberOfTransformsToSend angularSpeed(degrees/second) trackerFrequency(Hz)" << std::endl;
+    std::cerr << argv[0] << 
+    "hostname portnumber numberOfTransformsToSend angularSpeed(degrees/second) \
+                                             trackerFrequency(Hz)" << std::endl;
     return EXIT_FAILURE;
     }
   /** itk::MultiThreader object pointer */
@@ -178,7 +184,8 @@ ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* pInfoStruct)
         headerMsg->InitPack();
 
         // Receive generic header from the socket
-        int r = socket->Receive(headerMsg->GetPackPointer(), headerMsg->GetPackSize());
+        int r = socket->Receive(headerMsg->GetPackPointer(), 
+                                                      headerMsg->GetPackSize());
         if (r != headerMsg->GetPackSize())
           {
           continue;
@@ -216,11 +223,12 @@ ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* pInfoStruct)
           }
         }
       
-        if ((countReception >= 99)||((countReception > 0)&& (++countPostReceptionNullSocket >= 10 )))
-        {
-        wantToBreak = true; 
-        break;
-        }
+        if ((countReception >= 99)||((countReception > 0)&& 
+                                      (++countPostReceptionNullSocket >= 10 )))
+          {
+          wantToBreak = true; 
+          break;
+          }
       }
     if (wantToBreak)
       {
@@ -240,7 +248,8 @@ ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* pInfoStruct)
 }
 
 
-int ReceiveTransform(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header)
+int ReceiveTransform(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header)
 {
   std::cerr << "Receiving TRANSFORM data type." << std::endl;
   
@@ -271,7 +280,8 @@ int ReceiveTransform(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer
 }
 
 
-int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header)
+int ReceivePosition(igtl::Socket::Pointer& socket, 
+                                          igtl::MessageHeader::Pointer& header)
 {
   std::cerr << "Receiving POSITION data type." << std::endl;
   
@@ -282,7 +292,8 @@ int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer&
   positionMsg->AllocatePack();
   
   // Receive position position data from the socket
-  socket->Receive(positionMsg->GetPackBodyPointer(), positionMsg->GetPackBodySize());
+  socket->Receive(positionMsg->GetPackBodyPointer(), 
+                                                positionMsg->GetPackBodySize());
   
   // Deserialize the transform data
   // If you want to skip CRC check, call Unpack() without argument.
@@ -297,9 +308,10 @@ int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer&
     positionMsg->GetPosition(position);
     positionMsg->GetQuaternion(quaternion);
 
-    std::cerr << "position   = (" << position[0] << ", " << position[1] << ", " << position[2] << ")" << std::endl;
-    std::cerr << "quaternion = (" << quaternion[0] << ", " << quaternion[1] << ", "
-              << quaternion[2] << ", " << quaternion[3] << ")" << std::endl << std::endl;
+    std::cerr << "position   = (" << position[0] << ", " << position[1] 
+                                     << ", " << position[2] << ")" << std::endl;
+    std::cerr << "quaternion = (" << quaternion[0] << ", " << quaternion[1] 
+          << ", " << quaternion[2] << ", " << quaternion[3] << ")" << std::endl;
 
     return 1;
     }
@@ -309,7 +321,8 @@ int ReceivePosition(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer&
 }
 
 
-int ReceiveImage(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header)
+int ReceiveImage(igtl::Socket::Pointer& socket, 
+                                           igtl::MessageHeader::Pointer& header)
 {
   std::cerr << "Receiving IMAGE data type." << std::endl;
 
@@ -340,16 +353,19 @@ int ReceiveImage(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& he
     imgMsg->GetSpacing(spacing);
     imgMsg->GetSubVolume(svsize, svoffset);
 
-    std::cerr << "Device Name           : " << imgMsg->GetDeviceName() << std::endl;
+    std::cerr << "Device Name           : " << imgMsg->GetDeviceName() << "\n";
     std::cerr << "Scalar Type           : " << scalarType << std::endl;
     std::cerr << "Dimensions            : ("
-              << size[0] << ", " << size[1] << ", " << size[2] << ")" << std::endl;
+              << size[0] << ", " << size[1] << ", " << size[2] << ")" << "\n";
     std::cerr << "Spacing               : ("
-              << spacing[0] << ", " << spacing[1] << ", " << spacing[2] << ")" << std::endl;
+              << spacing[0] << ", " << spacing[1] << ", " << spacing[2] << ")" 
+              << std::endl;
     std::cerr << "Sub-Volume dimensions : ("
-              << svsize[0] << ", " << svsize[1] << ", " << svsize[2] << ")" << std::endl;
+              << svsize[0] << ", " << svsize[1] << ", " << svsize[2] << ")" 
+              << std::endl;
     std::cerr << "Sub-Volume offset     : ("
-              << svoffset[0] << ", " << svoffset[1] << ", " << svoffset[2] << ")" << std::endl;
+              << svoffset[0] << ", " << svoffset[1] << ", " << svoffset[2] 
+              << ")" << std::endl;
     return 1;
     }
 
@@ -358,7 +374,8 @@ int ReceiveImage(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& he
 }
 
 
-int ReceiveStatus(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& header)
+int ReceiveStatus(igtl::Socket::Pointer& socket, 
+                                           igtl::MessageHeader::Pointer& header)
 {
 
   std::cerr << "Receiving STATUS data type." << std::endl;
@@ -370,7 +387,7 @@ int ReceiveStatus(igtl::Socket::Pointer& socket, igtl::MessageHeader::Pointer& h
   statusMsg->AllocatePack();
   
   // Receive transform data from the socket
-  socket->Receive(statusMsg->GetPackBodyPointer(), statusMsg->GetPackBodySize());
+  socket->Receive(statusMsg->GetPackBodyPointer(),statusMsg->GetPackBodySize());
   
   // Deserialize the transform data
   // If you want to skip CRC check, call Unpack() without argument.
