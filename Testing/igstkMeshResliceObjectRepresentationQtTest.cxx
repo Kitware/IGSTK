@@ -223,7 +223,6 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
     meshResliceRepresentationCopy->RequestSetMeshObject( NULL );
     meshResliceRepresentationCopy->RequestSetReslicePlaneSpatialObject( NULL );
  
-    
     // set up the view
 
     typedef igstk::View2D          View2DType;
