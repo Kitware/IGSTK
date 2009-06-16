@@ -130,7 +130,7 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
   imageSpatialObject->RequestSetTransformAndParent( identity, axesObject );
   ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
   reslicerPlaneSpatialObject->SetLogger( logger );
-
+  
   // Select Orthogonal reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
 
@@ -212,6 +212,11 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
   // remove the two observers
   reslicerPlaneSpatialObject->RemoveObserver( planeCenterObserverID );
   reslicerPlaneSpatialObject->RemoveObserver( planeNormalObserverID );
+
+  // code coverage
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( static_cast<ReslicerPlaneType::ReslicingMode> (-1) ); //should be invalid
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+  reslicerPlaneSpatialObject->RequestGetToolPosition();
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
