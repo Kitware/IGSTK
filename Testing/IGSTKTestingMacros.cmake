@@ -541,7 +541,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png
               --toleranceIntensity 10
               --toleranceRadius    10
-              --toleranceNumberOfPixels 1000
+              --toleranceNumberOfPixels 3000
               igstkCrossHairSpatialObjectTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
@@ -553,7 +553,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairObjectRepresentationTest.png
               --toleranceIntensity 10
               --toleranceRadius    10
-              --toleranceNumberOfPixels 1000
+              --toleranceNumberOfPixels 3000
               igstkCrossHairObjectRepresentationTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairObjectRepresentationTest.png)

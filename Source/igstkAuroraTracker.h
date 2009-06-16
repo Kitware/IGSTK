@@ -59,11 +59,6 @@ public:
       w/o communication, via Set/Get. **/     
    igstkSetMacro( SimulatedTestMaintainCoverage, bool );   
    igstkGetMacro( SimulatedTestMaintainCoverage, bool );
-
-  /** allow simulated tracker test to maintain code coverage
-      w/o communication, via Set/Get. **/     
-   igstkSetMacro( SimulatedTestMaintainCoverage, bool );   
-   igstkGetMacro( SimulatedTestMaintainCoverage, bool );
       
 protected:
 
