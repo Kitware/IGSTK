@@ -645,8 +645,8 @@ IF(${IGSTK_USE_Qt})
             ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationQtTest3.png
             ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest3.png
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 200
               igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
