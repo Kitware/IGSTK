@@ -209,6 +209,8 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
     //imageResliceRepresentation->SetLogger( logger );
     meshResliceRepresentation->SetOpacity(1);
     meshResliceRepresentation->SetLineWidth(3);
+    meshResliceRepresentation->SetLineWidth(3);//Should be 3 already: return
+    meshResliceRepresentation->SetVisibility(true);
     meshResliceRepresentation->SetColor(0, 0, 1);     
     meshResliceRepresentation->RequestSetMeshObject( objectSpatialObject );
     meshResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
@@ -217,8 +219,10 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
     MeshResliceRepresentationType::Pointer  meshResliceRepresentationCopy =
        meshResliceRepresentation->Copy();
     meshResliceRepresentationCopy->Print(std::cout);
-    meshResliceRepresentationCopy->SetVisibility(true);
-    
+    meshResliceRepresentationCopy->SetVisibility(false);
+    meshResliceRepresentationCopy->RequestSetMeshObject( NULL );
+    meshResliceRepresentationCopy->RequestSetReslicePlaneSpatialObject( NULL );
+ 
     
     // set up the view
 
@@ -301,6 +305,7 @@ int igstkMeshResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
     // add the mesh reslice representation to the view
     view2D->RequestAddObject( meshResliceRepresentation );
+    view2D->RequestAddObject( meshResliceRepresentationCopy );
 
     // Start the view
     view2D->RequestStart();  

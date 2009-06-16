@@ -223,6 +223,10 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   //imageResliceRepresentation->SetLogger( logger );
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
+
+  //code coverage. 
+  imageResliceRepresentation->RequestSetImageSpatialObject( NULL );
+
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
  // build a tool spatial object using a cylinder object
@@ -286,9 +290,12 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   // set transform and parent to the reslicer plane
   reslicerPlaneSpatialObject->RequestSetTransformAndParent( identity, worldReference );
 
+  // code coverage
+  imageResliceRepresentation->RequestSetReslicePlaneSpatialObject( NULL );
+  imageResliceRepresentation->Print(std::cout);
   // set the reslicer plane spatial object to the image representation
   imageResliceRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
-
+  
   // set the tool spatial object to the reslicer plane
   reslicerPlaneSpatialObject->RequestSetToolSpatialObject( toolSpatialObject );
 
