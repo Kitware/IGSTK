@@ -141,6 +141,9 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
 
+  //This improves coverage by preventing early return.
+  tracker->SetSimulatedTestMaintainCoverage(true);
+
   typedef igstk::AuroraTrackerTool          TrackerToolType;
   typedef TrackerToolType::TransformType    TransformType;
 

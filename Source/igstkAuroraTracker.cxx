@@ -37,6 +37,7 @@ AuroraTracker::AuroraTracker(void):m_StateMachine(this)
   {
     m_HasSpliter[i] = 0;
   }
+  m_SimulatedTestMaintainCoverage = false; 
 }
 
 /** Destructor */
@@ -171,7 +172,8 @@ AuroraTracker::ResultType AuroraTracker
   // But if we have found a spliter in previous operation, meaning there will
   // be two tools attached to the same port, we should go ahead and use
   // those port handle
-  if( !foundTool && !m_HasSpliter[auroraTrackerTool->GetPortNumber()])
+  if( !foundTool && !m_HasSpliter[auroraTrackerTool->GetPortNumber()] &&
+      !m_SimulatedTestMaintainCoverage)
   {
   igstkLogMacro(CRITICAL, 
     "Uninitialized port that corresponds to what is specified: "
