@@ -120,10 +120,10 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
   igstk::USImageObject::Pointer usImage = 
                                        usImageObserver->GetSimulatedUSImage();
 
-  typedef itk::Logger                   LoggerType; 
-  typedef itk::StdStreamLogOutput       LogOutputType;
-  LoggerType::Pointer                   logger = LoggerType::New();
-  LogOutputType::Pointer                logOutput = LogOutputType::New();  
+  typedef igstk::Logger                   LoggerType; 
+  typedef itk::StdStreamLogOutput         LogOutputType;
+  LoggerType::Pointer                     logger = LoggerType::New();
+  LogOutputType::Pointer                  logOutput = LogOutputType::New();  
 
   logOutput->SetStream( std::cout );
   logger->AddLogOutput( logOutput );
@@ -140,7 +140,12 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
   regTranslation[0] = 10;
   initialTransform.SetTranslation(regTranslation,100000,0);
 
-  //registration->SetLogger(logger);
+  //coverage stuff
+  registration->SetLogger( logger );
+  registration->Print( std::cout ); 
+  registration->RequestGetRegistrationTransform(); 
+  registration->RequestReset();
+
   registration->RequestSetMovingMR3D(mrImageObserver->GetMRImage());
   registration->RequestSetFixedUS3D(usImageObserver->GetSimulatedUSImage());
   registration->SetInitialTransform(initialTransform);
