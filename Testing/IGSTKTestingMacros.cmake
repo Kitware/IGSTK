@@ -546,7 +546,18 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairSpatialObjectTest.png)
  
-    
+  ADD_TEST( igstkCrossHairObjectRepresentationTest
+              ${IGSTK_TESTS}
+              --compare
+              ${IGSTK_DATA_ROOT}/Baseline/igstkCrossHairObjectRepresentationTest.png                       
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairObjectRepresentationTest.png
+              --toleranceIntensity 10
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
+              igstkCrossHairObjectRepresentationTest
+              ${IGSTK_DATA_ROOT}/Input/E000192 
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkCrossHairObjectRepresentationTest.png)
+   
 ENDIF(${IGSTK_USE_FLTK})
 
 IF(${IGSTK_USE_MicronTracker})
@@ -853,6 +864,7 @@ IF(${IGSTK_USE_FLTK})
       igstkImageResliceObjectRepresentationFltkTest3.cxx
 
       igstkCrossHairSpatialObjectTest.cxx
+      igstkCrossHairObjectRepresentationTest.cxx
     ) 
   ENDIF(IGSTK_DATA_ROOT)  
 ENDIF(${IGSTK_USE_FLTK})
