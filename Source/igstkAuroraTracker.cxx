@@ -37,7 +37,7 @@ AuroraTracker::AuroraTracker(void):m_StateMachine(this)
   {
     m_HasSpliter[i] = 0;
   }
-  m_SimulatedTestMaintainCoverage = false; 
+  m_SimulatedTestMaintainCoverage = false;
 }
 
 /** Destructor */
