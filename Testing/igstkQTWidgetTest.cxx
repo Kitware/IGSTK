@@ -208,6 +208,21 @@ int igstkQTWidgetTest( int argc, char * argv[])
     QTWidgetType * qtWidget2D = new QTWidgetType();
     qtWidget2D->SetLogger( logger );
     qtWidget2D->RequestSetView( view2D );
+
+    //coverage stuff
+    qtWidget2D->RequestDisableInteractions();
+    qtWidget2D->RequestEnableInteractions();
+    QTestEventList events;
+    QPoint qp(1,1); 
+    events.addMousePress(Qt::LeftButton);
+    events.addMouseRelease(Qt::LeftButton);
+    events.addMousePress(Qt::MidButton);
+    events.addMouseRelease(Qt::MidButton);
+    events.addMousePress(Qt::RightButton);
+    events.addMouseRelease(Qt::RightButton);
+    events.addMouseMove(qp);
+    events.simulate(qtWidget2D); 
+
     qtMainWindow->setCentralWidget( qtWidget2D );
     
     // Set the refresh rate and start 
