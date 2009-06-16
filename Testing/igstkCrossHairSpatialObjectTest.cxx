@@ -257,11 +257,7 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
 
   data = point.GetVnlVector().data_block();
   reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
-
   
-  //trigger ReportInvalidCursorPositionProcessing in code coverage.
-  crossHairObject->RequestSetCursorPosition( NULL );
-
   crossHairObject->RequestSetCursorPosition( data );
   
   view2D->RequestStart();
