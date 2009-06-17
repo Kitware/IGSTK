@@ -108,10 +108,10 @@ public:
   virtual void RequestAttachToVideoImager( VideoImagerType * );
 
   /** Get the frame with the current index for this tool. */
-  FrameType GetInternalFrame( void );
+  FrameType* GetInternalFrame( void );
 
   /** Set the frame for this tool. */
-  void SetInternalFrame( const FrameType & );
+  void SetInternalFrame( FrameType* );
 
   void SetFrameDimensions( unsigned int * );
   void GetFrameDimensions( unsigned int * );
@@ -123,8 +123,8 @@ public:
   igstkGetMacro( Delay, unsigned int );
 
 
-  igstk::Frame GetFrameFromBuffer(const unsigned int index);
-  igstk::Frame GetTemporalCalibratedFrame();
+  igstk::Frame* GetFrameFromBuffer(const unsigned int index);
+  igstk::Frame* GetTemporalCalibratedFrame();
 
 protected:
 
@@ -251,9 +251,9 @@ private:
   void NoProcessing( void );
 
   /** Ring buffer for the tool */
-  void AddFrameToBuffer(const igstk::Frame& frame);
+  void AddFrameToBuffer( igstk::Frame* frame);
 
-  std::vector< igstk::Frame > *m_FrameRingBuffer; // ring buffer with frames
+  std::vector< igstk::Frame* > *m_FrameRingBuffer; // ring buffer with frames
   int m_Index; // next frame will be stored at frameRingBuffer[m_Index]
   unsigned int m_NumberOfFramesInBuffer;
 
@@ -261,12 +261,12 @@ private:
 
   unsigned int          m_Delay;
 
-  unsigned int                  m_FrameDimensions[3];
+  unsigned int          m_FrameDimensions[3];
 
-  unsigned int                  m_PixelDepth;
+  unsigned int          m_PixelDepth;
 
   /** Updated flag */
-  bool               m_Updated;
+  bool                  m_Updated;
 
   /** Unique identifier of the VideoImager tool */
   std::string        m_VideoImagerToolIdentifier;
