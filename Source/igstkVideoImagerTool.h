@@ -33,7 +33,8 @@ namespace igstk
 igstkEventMacro( VideoImagerToolEvent, StringEvent);
 igstkEventMacro( VideoImagerToolErrorEvent, IGSTKErrorWithStringEvent);
 igstkEventMacro( VideoImagerToolConfigurationEvent,VideoImagerToolEvent);
-igstkEventMacro( VideoImagerToolConfigurationErrorEvent,VideoImagerToolErrorEvent);
+igstkEventMacro( VideoImagerToolConfigurationErrorEvent,
+                                              VideoImagerToolErrorEvent);
 
 igstkEventMacro( InvalidRequestToAttachVideoImagerToolErrorEvent,
                VideoImagerToolErrorEvent);
@@ -41,14 +42,16 @@ igstkEventMacro( InvalidRequestToAttachVideoImagerToolErrorEvent,
 igstkEventMacro( InvalidRequestToDetachVideoImagerToolErrorEvent,
                VideoImagerToolErrorEvent);
 
-igstkEventMacro( VideoImagerToolAttachmentToVideoImagerEvent,VideoImagerToolEvent);
+igstkEventMacro( VideoImagerToolAttachmentToVideoImagerEvent,
+                                                          VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolAttachmentToVideoImagerErrorEvent,
-                                                       VideoImagerToolErrorEvent);
-igstkEventMacro( VideoImagerToolDetachmentFromVideoImagerEvent,VideoImagerToolEvent);
+                                                     VideoImagerToolErrorEvent);
+igstkEventMacro( VideoImagerToolDetachmentFromVideoImagerEvent,
+                                                          VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolDetachmentFromVideoImagerErrorEvent,
-                                                       VideoImagerToolErrorEvent);
+                                                     VideoImagerToolErrorEvent);
 igstkEventMacro( VideoImagerToolMadeTransitionToStreamingStateEvent,
-                                                            VideoImagerToolEvent);
+                                                          VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolNotAvailableEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStartedEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStoppedEvent,VideoImagerToolEvent);
@@ -65,11 +68,10 @@ class VideoImager;
   *  the video-device.
   *
   *
-  *  \image html  igstkVideoImagerTool.png  "VideoImagerTool State Machine Diagram"
-  *  \image latex igstkVideoImagerTool.eps  "VideoImagerTool State Machine Diagram"
+  *  \image html  igstkVideoImagerTool.png "VideoImagerTool StateMachineDiagram"
+  *  \image latex igstkVideoImagerTool.eps "VideoImagerTool StateMachineDiagram"
   *
   *  \ingroup VideoImager
-  *
   */
 
 class VideoImagerTool : public Object
@@ -83,18 +85,18 @@ public:
 
   igstkFriendClassMacro( VideoImager );
 
-  typedef VideoImager            VideoImagerType;
+  typedef VideoImager       VideoImagerType;
   typedef Transform         TransformType;
   typedef Frame             FrameType;
 
   /** Get whether the tool was updated during VideoImager UpdateStatus() */
   igstkGetMacro( Updated, bool );
 
-  /** The "RequestConfigure" method attempts to configure the VideoImager tool */
+  /** The "RequestConfigure" method attempts to configure the VideoImager tool*/
   virtual void RequestConfigure( void );
 
-  /** The "RequestDetachFromVideoImager" method detaches the VideoImager tool from the
-   * VideoImager. */
+  /** The "RequestDetachFromVideoImager" method detaches the VideoImager tool
+   *  from the VideoImager. */
   virtual void RequestDetachFromVideoImager( );
 
   /** Request to get the internal frame as an event */
@@ -254,19 +256,17 @@ private:
   void AddFrameToBuffer( igstk::Frame* frame);
 
   std::vector< igstk::Frame* > *m_FrameRingBuffer; // ring buffer with frames
-  int m_Index; // next frame will be stored at frameRingBuffer[m_Index]
-  unsigned int m_NumberOfFramesInBuffer;
-
-  unsigned int          m_MaxBufferSize;
-
-  unsigned int          m_Delay;
-
-  unsigned int          m_FrameDimensions[3];
-
-  unsigned int          m_PixelDepth;
+  
+  // next frame will be stored at frameRingBuffer[m_Index]
+  int                           m_Index; 
+  unsigned int                  m_NumberOfFramesInBuffer;
+  unsigned int                  m_MaxBufferSize;
+  unsigned int                  m_Delay;
+  unsigned int                  m_FrameDimensions[3];
+  unsigned int                  m_PixelDepth;
 
   /** Updated flag */
-  bool                  m_Updated;
+  bool                          m_Updated;
 
   /** Unique identifier of the VideoImager tool */
   std::string        m_VideoImagerToolIdentifier;
