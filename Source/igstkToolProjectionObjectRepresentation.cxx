@@ -163,7 +163,7 @@ void ToolProjectionObjectRepresentation
   this->RequestSetSpatialObject( m_ToolProjectionSpatialObject );
 } 
 
-/** Requests to set the ReslicePlaneSpatialObject*/
+/** Requests to set the ReslicePlaneSpatialObject */
 void 
 ToolProjectionObjectRepresentation
 ::RequestSetReslicePlaneSpatialObject( const ReslicerPlaneType *
@@ -176,18 +176,18 @@ reslicePlaneSpatialObject )
                                                      reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
-  {
-  m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
+    }
   else
-  {
-  m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
+    }
 
   m_StateMachine.ProcessInputs();
 }
 
-/** Sets the ReslicePlaneSpatialObject*/
+/** Sets the ReslicePlaneSpatialObject */
 void 
 ToolProjectionObjectRepresentation
 ::SetReslicePlaneSpatialObjectProcessing( )
@@ -282,7 +282,7 @@ void ToolProjectionObjectRepresentation
     }
 }
 
-/** Verify time stamp of the attached tool*/
+/** Verify time stamp of the attached tool */
 bool
 ToolProjectionObjectRepresentation
 ::VerifyTimeStamp( ) const
@@ -291,44 +291,44 @@ ToolProjectionObjectRepresentation
   "igstk::ImageResliceSpatialObjectRepresentation::VerifyTimeStamp called..\n");
 
   if( m_ReslicePlaneSpatialObject.IsNull() )
-  {
-  return false;
-  }
+    {
+    return false;
+    }
 
   // if there is no tool spatial object attached to the reslicer plane,
   // we don't want to show the tool projection either
   if( !m_ReslicePlaneSpatialObject->IsToolSpatialObjectSet() )
-  {
-  return false;
-  }
+    {
+    return false;
+    }
 
   // fixme: we are having severe blinking problems here
   if( this->GetRenderTimeStamp().GetExpirationTime() <
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetStartTime() ||
     this->GetRenderTimeStamp().GetStartTime() >
     this->m_ReslicePlaneSpatialObject->GetToolTransform().GetExpirationTime() )
-  {
+    {
 
-  // fixme
-  double diff = 
-    this->GetRenderTimeStamp().GetStartTime() - 
-    this->m_ReslicePlaneSpatialObject->
-                                     GetToolTransform().GetExpirationTime();
+    // fixme
+    double diff = 
+      this->GetRenderTimeStamp().GetStartTime() - 
+      this->m_ReslicePlaneSpatialObject->
+                                       GetToolTransform().GetExpirationTime();
 
-  if (diff > 250 )
-  {
-  return false;
-  }
+    if (diff > 250 )
+      {
+      return false;
+      }
+    else
+      {
+      return true;
+      }
+
+    }
   else
-  {
-  return true;
-  }
-
-  }
-  else
-  {
-  return true;
-  }
+    {
+    return true;
+    }
 }
 
 /** Set the line width */
