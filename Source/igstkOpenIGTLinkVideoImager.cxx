@@ -409,8 +409,8 @@ OpenIGTLinkVideoImager::InternalThreadedUpdateStatus( void )
             VideoImagerToolsContainerType imagerToolContainer =
               this->GetVideoImagerToolContainer();
            
-            FrameType frame;
-           this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+            FrameType* frame = new FrameType();
+            frame = this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first] );
 
             unsigned int frameDims[3];          
             imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
@@ -427,13 +427,13 @@ cout << fsize << " fsize ";
             }
 
 
-          memcpy(frame.GetImagePtr(),
+          memcpy(frame->GetImagePtr(),
           imgMsg->GetScalarPointer(),frameDims[0]*frameDims[1]*frameDims[2]);
                       
            
    
            //update frame validity time
-           frame.SetTimeToExpiration(this->GetValidityTime());
+           frame->SetTimeToExpiration(this->GetValidityTime());
            
            this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
             this->m_ToolStatusContainer[ deviceItr->first ] = 1;
@@ -474,7 +474,7 @@ AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTo
                     imagerTool->GetVideoImagerToolIdentifier();
 
  // igtl::ImageMessage::Pointer imgMsg;
-  igstk::Frame frame;
+  igstk::Frame* frame = new igstk::Frame();
 
   this->m_ToolFrameBuffer[ imagerToolIdentifier ] = frame;
   this->m_ToolStatusContainer[ imagerToolIdentifier ] = 0;
