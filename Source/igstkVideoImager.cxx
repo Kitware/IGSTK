@@ -305,7 +305,7 @@ VideoImager::VideoImager(void) :  m_StateMachine( this )
   const double nonFlickeringConstant = 10;
 
   const TimePeriodType DEFAULT_VALIDITY_TIME =
-                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant ;
+                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   m_ConditionNextFrameReceived = itk::ConditionVariable::New();
@@ -429,8 +429,8 @@ void VideoImager::AttemptToOpenProcessing( void )
 /** Post-processing after communication setup has been successful. */
 void VideoImager::CommunicationEstablishmentSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::VideoImager::CommunicationEstablishmentSuccessProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::VideoImager"
+               << "::CommunicationEstablishmentSuccessProcessing called ...\n");
 
   this->InvokeEvent( VideoImagerOpenEvent() );
 }
@@ -461,7 +461,7 @@ void VideoImager::ResetFromImagingStateProcessing( void )
 void VideoImager::ResetFromToolsActiveStateProcessing( void )
 {
   igstkLogMacro( DEBUG,
-         "igstk::VideoImager::ResetFromToolsActiveStateProcessing() called ...\n");
+      "igstk::VideoImager::ResetFromToolsActiveStateProcessing() called ...\n");
   this->ResetFromCommunicatingStateProcessing();
 }
 
@@ -550,18 +550,21 @@ void VideoImager::StartImagingFailureProcessing( void )
  *  has been successful. */
 void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImager::AttachingVideoImagerToolSuccessProcessing "
-                 "called ...\n");
+  igstkLogMacro( DEBUG, 
+  "igstk::VideoImager::AttachingVideoImagerToolSuccessProcessing called ...\n");
 
-  m_VideoImagerTools[ m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ]
-                                   = m_VideoImagerToolToBeAttached;
+  m_VideoImagerTools[ 
+                 m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ] 
+                                                = m_VideoImagerToolToBeAttached;
 
   // report to the VideoImager tool that the attachment has been
   // successful
-  m_VideoImagerToolToBeAttached->RequestReportSuccessfulVideoImagerToolAttachment();
+  m_VideoImagerToolToBeAttached
+                           ->RequestReportSuccessfulVideoImagerToolAttachment();
 
   // Add the VideoImager tool to the internal data containers
-  this->AddVideoImagerToolToInternalDataContainers( m_VideoImagerToolToBeAttached );
+  this->AddVideoImagerToolToInternalDataContainers( 
+                                                m_VideoImagerToolToBeAttached );
 
   //connect the VideoImager tool coordinate system to the VideoImager
   //system. By default, make the VideoImager coordinate system to
@@ -579,8 +582,8 @@ void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
  *  has failed. */
 void VideoImager::AttachingVideoImagerToolFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImager::AttachingVideoImagerToolFailureProcessing "
-                 "called ...\n");
+  igstkLogMacro( DEBUG, 
+  "igstk::VideoImager::AttachingVideoImagerToolFailureProcessing called ...\n");
 
   // report to the VideoImager tool that the attachment has failed
   m_VideoImagerToolToBeAttached->RequestReportFailedVideoImagerToolAttachment();
@@ -672,8 +675,8 @@ void VideoImager::ExitImagingWithoutTerminatingImagingThread( void )
 /** Exit imaging by terminating imaging thread */
 void VideoImager::ExitImagingTerminatingImagingThread( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImager::ExitImagingTerminatingImagingThread "
-                 "called ...\n");
+  igstkLogMacro( DEBUG, 
+        "igstk::VideoImager::ExitImagingTerminatingImagingThread called ...\n");
 
   m_PulseGenerator->RequestStop();
 
@@ -740,15 +743,15 @@ void VideoImager::UpdateStatusSuccessProcessing( void )
 
        FrameType* frame = (inputItr->second)->GetInternalFrame();
 
-       const double timeToExpiration = frame->GetExpirationTime() -
+      const double timeToExpiration = frame->GetExpirationTime() -
                                       frame->GetStartTime();
 
-       FrameType* updatedFrame = new FrameType();
-       updatedFrame->SetImagePtr(frame->GetImagePtr(), timeToExpiration);
+      FrameType* updatedFrame = new FrameType();
+      updatedFrame->SetImagePtr(frame->GetImagePtr(), timeToExpiration);
 
-       (inputItr->second)->SetInternalFrame( updatedFrame );
+      (inputItr->second)->SetInternalFrame( updatedFrame );
 
-       (inputItr->second)->InvokeEvent( FrameModifiedEvent() );
+      (inputItr->second)->InvokeEvent( FrameModifiedEvent() );
       }
     ++inputItr;
     }
@@ -918,7 +921,7 @@ RequestAttachTool( VideoImagerToolType * VideoImagerTool )
 void VideoImager::AttemptToAttachVideoImagerToolProcessing( void )
 {
   igstkLogMacro( DEBUG,
-    "igstk::VideoImager::AttemptToAttachVideoImagerToolProcessing called ...\n");
+   "igstk::VideoImager::AttemptToAttachVideoImagerToolProcessing called ...\n");
 
   // Verify the VideoImager tool information before adding it to the
   // VideoImager. The conditions that need be verified depend on
@@ -936,7 +939,8 @@ VideoImager::ResultType
 VideoImager::
 RequestRemoveTool( VideoImagerToolType * VideoImagerTool )
 {
-  this->m_VideoImagerTools.erase( VideoImagerTool->GetVideoImagerToolIdentifier() );
+  this->m_VideoImagerTools.erase( 
+                              VideoImagerTool->GetVideoImagerToolIdentifier() );
   this->RemoveVideoImagerToolFromInternalDataContainers( VideoImagerTool );
   return SUCCESS;
 }
@@ -996,7 +1000,8 @@ ITK_THREAD_RETURN_TYPE VideoImager::ImagingThreadFunction(void* pInfoStruct)
 
 /** Report to the VideoImager tool that the tool is not available */
 void
-VideoImager::ReportImagingToolNotAvailable( VideoImagerToolType * videoImagerTool ) const
+VideoImager
+::ReportImagingToolNotAvailable( VideoImagerToolType * videoImagerTool ) const
 {
   igstkLogMacro( DEBUG,
     "igstk::VideoImager::ReportImagingToolNotAvailable called...\n");
@@ -1005,9 +1010,11 @@ VideoImager::ReportImagingToolNotAvailable( VideoImagerToolType * videoImagerToo
 
 /** Report to the VideoImager tool that the tool is Streaming */
 void
-VideoImager::ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const
+VideoImager
+::ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImager::ReportImagingToolStreaming called...\n");
+  igstkLogMacro( DEBUG, 
+                  "igstk::VideoImager::ReportImagingToolStreaming called...\n");
   videoImagerTool->RequestReportImagingToolStreaming();
 }
 
