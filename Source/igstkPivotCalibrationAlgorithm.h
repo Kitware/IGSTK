@@ -133,7 +133,7 @@ public:
    *  The solution exists only if rank(A)=6 (columns are linearly independent). 
    *  The rank is evaluated using SVD(A) = USV^T, after zeroing out all 
    *  singular values (diagonal entries of S) that are less than the 
-   *  tolerance.*/
+   *  tolerance. */
   void RequestSetSingularValueThreshold( double threshold );
 
   /** This event is generated if the pivot calibration computation fails. */
@@ -142,7 +142,7 @@ public:
   /** This event is generated if the pivot calibration computation succeeds. */
   igstkEventMacro( CalibrationSuccessEvent, IGSTKEvent );
 
-  /** Defualt threshold value under which singular values are considered to be 
+  /** Default threshold value under which singular values are considered to be 
    *  zero. */
   static const double DEFAULT_SINGULAR_VALUE_THRESHOLD;
 
@@ -157,7 +157,7 @@ protected:
 private:
 
   /** Check that there are transformations, and that their variability is 
-   *  sufficient (rank(A) = 6)*/
+   *  sufficient (rank(A) = 6) */
   bool CheckCalibrationDataValidity();
 
   /** List of state machine states */

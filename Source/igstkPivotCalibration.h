@@ -238,11 +238,11 @@ private:
   
   
   CalibrationTransformObserver::Pointer m_GetCalibrationTransformObserver;
-  PivotPointObserver::Pointer m_GetPivotPointObserver;
-  CalibrationRMSEObserver::Pointer m_GetCalibrationRMSEObserver;
+  PivotPointObserver::Pointer           m_GetPivotPointObserver;
+  CalibrationRMSEObserver::Pointer      m_GetCalibrationRMSEObserver;
 
-  ErrorObserver::Pointer m_ErrorObserver;
-  std::string m_ReasonForCalibrationFailure;
+  ErrorObserver::Pointer                m_ErrorObserver;
+  std::string                           m_ReasonForCalibrationFailure;
   
   //transformations used for pivot calibration
   std::vector< PivotCalibrationAlgorithm::TransformType > m_Transforms;
