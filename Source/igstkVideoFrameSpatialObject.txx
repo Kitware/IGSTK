@@ -118,7 +118,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 ::~VideoFrameSpatialObject()
 {
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
-/*
+  /*
   if( m_NumberOfChannels == 3 )
     {
 
@@ -126,7 +126,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     {
       m_ItkRGBExporter->Delete();
       m_ItkRGBExporter = NULL;
-    }
+      }
 
     if( m_VtkRGBImporter )
       {
@@ -135,16 +135,16 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       }
 
     if( m_RGBPixelContainer )
-    {
+      {
       delete m_RGBPixelContainer;
       m_RGBPixelContainer = NULL;
-    }
+      }
 
     if( m_RGBImportFilter )
-    {
+      {
       m_RGBImportFilter->Delete();
       m_RGBImportFilter = NULL;
-    }
+      }
     }
   else if( m_NumberOfChannels == 1 )
     {
@@ -327,7 +327,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     return (m_VideoImagerTool->GetInternalFrame())->GetExpirationTime();
     }
   else
-    return igstk::TimeStamp::GetZeroValue();
+  return igstk::TimeStamp::GetZeroValue();
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -340,7 +340,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     return (m_VideoImagerTool->GetInternalFrame())->GetStartTime();
     }
   else
-    return igstk::TimeStamp::GetLongestPossibleTime();
+  return igstk::TimeStamp::GetLongestPossibleTime();
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -405,7 +405,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   if(this->m_VideoImagerTool.IsNotNull())
     {
     m_RawBuffer=(unsigned char*)
-                (m_VideoImagerTool->GetTemporalCalibratedFrame())->GetImagePtr();
+               (m_VideoImagerTool->GetTemporalCalibratedFrame())->GetImagePtr();
     }
   else
     {
@@ -473,4 +473,3 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 } // end namespace igstk
 
 #endif
-
