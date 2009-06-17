@@ -40,7 +40,11 @@ namespace igstk {
 class VideoFrameGrabberAndViewerWebcamWinView : public Fl_Group {
 public:
 
-  VideoFrameGrabberAndViewerWebcamWinView(int X, int Y, int W, int H, const char *L = 0);
+  VideoFrameGrabberAndViewerWebcamWinView(int X, 
+                                          int Y, 
+                                          int W, 
+                                          int H, 
+                                          const char *L = 0);
 
   virtual ~VideoFrameGrabberAndViewerWebcamWinView(void);
 
