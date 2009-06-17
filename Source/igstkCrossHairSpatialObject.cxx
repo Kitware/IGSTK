@@ -386,7 +386,7 @@ CrossHairSpatialObject
     }
 }
 
-/** Get tool transform WRT Image Coordinate System*/
+/** Get tool transform WRT Image Coordinate System */
 igstk::Transform
 CrossHairSpatialObject
 ::GetToolTransform( ) const
