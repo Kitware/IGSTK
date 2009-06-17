@@ -144,7 +144,7 @@ private:
 //  typedef std::map< std::string, igtl::ImageMessage::Pointer >
 //                                VideoImagerToolFrameContainerType;
 
-  typedef std::map< std::string, igstk::Frame >
+  typedef std::map< std::string, igstk::Frame* >
                                 VideoImagerToolFrameContainerType;
 
   VideoImagerToolFrameContainerType           m_ToolFrameBuffer;
