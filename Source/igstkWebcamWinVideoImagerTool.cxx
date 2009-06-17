@@ -73,10 +73,11 @@ WebcamWinVideoImagerTool::~WebcamWinVideoImagerTool()
 }
 
 /** Request set VideoImagerTool name */
-void WebcamWinVideoImagerTool::RequestSetVideoImagerToolName( const std::string& clientDeviceName )
+void WebcamWinVideoImagerTool::RequestSetVideoImagerToolName( 
+                                           const std::string& clientDeviceName )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::WebcamWinVideoImagerTool::RequestSetVideoImagerToolName called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImagerTool::"
+                               << "RequestSetVideoImagerToolName called ...\n");
   if ( clientDeviceName == "" )
     {
     m_StateMachine.PushInput( m_InValidVideoImagerToolNameInput );
@@ -93,8 +94,8 @@ void WebcamWinVideoImagerTool::RequestSetVideoImagerToolName( const std::string&
 /** Set valid VideoImagerTool name */
 void WebcamWinVideoImagerTool::SetVideoImagerToolNameProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::WebcamWinVideoImagerTool::SetVideoImagerToolNameProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImagerTool"
+                          << "::SetVideoImagerToolNameProcessing called ...\n");
 
   this->m_VideoImagerToolName = m_VideoImagerToolNameToBeSet;
 
@@ -102,16 +103,14 @@ void WebcamWinVideoImagerTool::SetVideoImagerToolNameProcessing( )
 
   // VideoImagerTool name is used as a unique identifier
   this->SetVideoImagerToolIdentifier( this->m_VideoImagerToolName );
-
-  std::cout << " SetVideoImagerToolIdentifier: " << this->m_VideoImagerToolName << std::endl;
 }
 
 /** Report Invalid VideoImagerTool name*/
-void WebcamWinVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
+void WebcamWinVideoImagerTool
+::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::WebcamWinVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing "
-    "called ...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImagerTool"
+       << "::ReportInvalidVideoImagerToolNameSpecifiedProcessing called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid VideoImagerTool name specified ");
 }
@@ -126,19 +125,21 @@ void WebcamWinVideoImagerTool::ReportInvalidRequestProcessing()
 bool
 WebcamWinVideoImagerTool::CheckIfVideoImagerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG,
-    "igstk::WebcamWinVideoImagerTool::CheckIfVideoImagerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImagerTool"
+                         << "::CheckIfVideoImagerToolIsConfigured called...\n");
   return m_VideoImagerToolConfigured;
 }
 
 /** Print Self function */
-void WebcamWinVideoImagerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void WebcamWinVideoImagerTool::PrintSelf( 
+                                    std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "VideoImagerTool name : "    << m_VideoImagerToolName << std::endl;
-  os << indent << "VideoImagerToolConfigured:" << m_VideoImagerToolConfigured << std::endl;
+  os << indent << "VideoImagerTool name : "
+    << m_VideoImagerToolName << std::endl;
+  os << indent << "VideoImagerToolConfigured:"
+    << m_VideoImagerToolConfigured << std::endl;
 }
 
 }  // namespace igstk
-
