@@ -47,17 +47,20 @@ class VideoFrameSpatialObject
 
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( VideoFrameSpatialObject, SpatialObject )
+  igstkStandardTemplatedClassTraitsMacro( VideoFrameSpatialObject, 
+                                          SpatialObject )
 
   typedef itk::SpatialObject<3>          VideoFrameSpatialObjectType;
 
   typedef typename itk::RGBPixel< TPixelType >      RGBPixelType;
-  typedef typename itk::ImportImageFilter< RGBPixelType, DIMENSION >   RGBImportFilterType;
-  typedef typename itk::Image< RGBPixelType , DIMENSION > RGBImageType;
+  typedef typename itk::ImportImageFilter< RGBPixelType, DIMENSION >   
+                                                            RGBImportFilterType;
+  typedef typename itk::Image< RGBPixelType , DIMENSION >   RGBImageType;
 
   typedef TPixelType              PixelType;
-  typedef typename itk::ImportImageFilter< PixelType, DIMENSION >   ImportFilterType;
-  typedef typename itk::Image< PixelType , DIMENSION > ImageType;
+  typedef typename itk::ImportImageFilter< PixelType, DIMENSION >   
+                                                               ImportFilterType;
+  typedef typename itk::Image< PixelType , DIMENSION >         ImageType;
 
   typedef Frame             FrameType;
   typedef typename TimeStamp::TimePeriodType   TimePeriodType;
@@ -114,10 +117,10 @@ private:
   itkStaticConstMacro( m_NumberOfChannels, unsigned int, TChannels  );
 
   typename RGBImageType::Pointer        m_RGBImage;
-  typename RGBImportFilterType::Pointer     m_RGBImportFilter;
+  typename RGBImportFilterType::Pointer m_RGBImportFilter;
 
   typename ImageType::Pointer         m_Image;
-  typename ImportFilterType::Pointer      m_ImportFilter;
+  typename ImportFilterType::Pointer  m_ImportFilter;
 
   itk::Size<DIMENSION>              m_Size;
   itk::ImageRegion<DIMENSION>       m_Region;
@@ -126,7 +129,7 @@ private:
   vtkImageData*       m_VTKImage;
   TPixelType *        m_RawBuffer;
 
-  VTKImageModifiedEvent  vtkImageLoadedEvent;
+  VTKImageModifiedEvent  m_VtkImageLoadedEvent;
 
   igstk::VideoImagerTool::Pointer                     m_VideoImagerTool;
   /** raw frame for the spatial object */
@@ -142,14 +145,14 @@ private:
   unsigned int              m_NumberOfScalarComponents;
 
   /** Filters for exporting the ITK image as a vtkImageData class. */
-  typedef itk::VTKImageExport< RGBImageType >   ITKRGBExportFilterType;
+  typedef itk::VTKImageExport< RGBImageType >      ITKRGBExportFilterType;
   typedef typename ITKRGBExportFilterType::Pointer ITKRGBExportFilterPointer;
 
-  typedef itk::VTKImageExport< ImageType >   ITKExportFilterType;
+  typedef itk::VTKImageExport< ImageType >      ITKExportFilterType;
   typedef typename ITKExportFilterType::Pointer ITKExportFilterPointer;
 
-  typedef vtkImageImport                        VTKImportFilterType;
-  typedef VTKImportFilterType*          VTKImportFilterPointer;
+  typedef vtkImageImport             VTKImportFilterType;
+  typedef VTKImportFilterType*       VTKImportFilterPointer;
 
   /** Classes to connect an ITK pipeline to a VTK pipeline */
   ITKRGBExportFilterPointer          m_ItkRGBExporter;
