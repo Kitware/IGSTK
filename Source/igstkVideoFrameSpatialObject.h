@@ -47,23 +47,25 @@ class VideoFrameSpatialObject
 
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardTemplatedClassTraitsMacro( VideoFrameSpatialObject, 
+  igstkStandardTemplatedClassTraitsMacro( VideoFrameSpatialObject,
                                           SpatialObject )
 
   typedef itk::SpatialObject<3>          VideoFrameSpatialObjectType;
 
   typedef typename itk::RGBPixel< TPixelType >      RGBPixelType;
-  typedef typename itk::ImportImageFilter< RGBPixelType, DIMENSION >   
+  typedef typename itk::ImportImageFilter< RGBPixelType, DIMENSION >
                                                             RGBImportFilterType;
   typedef typename itk::Image< RGBPixelType , DIMENSION >   RGBImageType;
 
   typedef TPixelType              PixelType;
-  typedef typename itk::ImportImageFilter< PixelType, DIMENSION >   
+  typedef typename itk::ImportImageFilter< PixelType, DIMENSION >
                                                                ImportFilterType;
   typedef typename itk::Image< PixelType , DIMENSION >         ImageType;
 
   typedef Frame             FrameType;
   typedef typename TimeStamp::TimePeriodType   TimePeriodType;
+
+  itkStaticConstMacro( m_NumberOfChannels, unsigned int, TChannels  );
 
   void Initialize();
 
@@ -89,8 +91,9 @@ public:
   igstkSetMacro(NumberOfScalarComponents, unsigned int);
   igstkGetMacro(NumberOfScalarComponents, unsigned int);
 
-  igstkGetMacro(NumberOfChannels, unsigned int);
-  
+  //igstkGetMacro(NumberOfChannels, unsigned int);
+  const unsigned int GetNumberOfChannels() const;
+
   igstkSetMacro(PixelSizeX, double);
   igstkGetMacro(PixelSizeX, double);
 
@@ -113,8 +116,6 @@ protected:
   ~VideoFrameSpatialObject( void );
 
 private:
-
-  itkStaticConstMacro( m_NumberOfChannels, unsigned int, TChannels  );
 
   typename RGBImageType::Pointer        m_RGBImage;
   typename RGBImportFilterType::Pointer m_RGBImportFilter;
