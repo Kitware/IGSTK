@@ -46,13 +46,14 @@ namespace igstk{
 * This class implements the main application.
 *
 */
-class VideoFrameGrabberAndViewerOpenIGTLink : public VideoFrameGrabberAndViewerOpenIGTLinkGUI
+class VideoFrameGrabberAndViewerOpenIGTLink : 
+                                 public VideoFrameGrabberAndViewerOpenIGTLinkGUI
 {
 public:
 
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( VideoFrameGrabberAndViewerOpenIGTLink,
-                                      VideoFrameGrabberAndViewerOpenIGTLinkGUI );
+                                     VideoFrameGrabberAndViewerOpenIGTLinkGUI );
 
   igstkLoggerMacro();
 
@@ -62,7 +63,7 @@ public:
 
   /** video frame spatial object and representation*/
   typedef igstk::VideoFrameSpatialObject<unsigned char, 1 >
-                                            VideoFrameSpatialObjectType;
+                                                    VideoFrameSpatialObjectType;
   VideoFrameSpatialObjectType::Pointer      m_VideoFrame;
 
   typedef igstk::VideoFrameRepresentation<VideoFrameSpatialObjectType>
@@ -81,12 +82,13 @@ public:
 
   VideoFrameGrabberAndViewerOpenIGTLink();
   virtual ~VideoFrameGrabberAndViewerOpenIGTLink();
-  void OnSocketProgressEvent(itk::Object *source, const itk::EventObject & event);
+  void OnSocketProgressEvent(itk::Object *source, 
+                                                const itk::EventObject & event);
 
 private:
 
-  VideoFrameGrabberAndViewerOpenIGTLink(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  VideoFrameGrabberAndViewerOpenIGTLink(const Self&); 
+  void operator=(const Self&); 
 
   /** Define a initial world coordinate system */
   AxesObjectType::Pointer                   m_WorldReference;
