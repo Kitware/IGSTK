@@ -118,22 +118,22 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 ::~VideoFrameSpatialObject()
 {
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
-
+/*
   if( m_NumberOfChannels == 3 )
     {
-    /*
+
     if( m_ItkRGBExporter )
     {
       m_ItkRGBExporter->Delete();
       m_ItkRGBExporter = NULL;
     }
-    */
+
     if( m_VtkRGBImporter )
       {
       m_VtkRGBImporter->Delete();
       m_VtkRGBImporter = NULL;
       }
-/*
+
     if( m_RGBPixelContainer )
     {
       delete m_RGBPixelContainer;
@@ -144,29 +144,26 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     {
       m_RGBImportFilter->Delete();
       m_RGBImportFilter = NULL;
-    }*/
+    }
     }
   else if( m_NumberOfChannels == 1 )
     {
     if( m_ItkExporter )
       {
       m_ItkExporter->Delete();
-      m_ItkExporter = NULL;
       }
 
     if( m_VtkImporter )
       {
       m_VtkImporter->SetInput( NULL );
       m_VtkImporter->Delete();
-      m_VtkImporter = NULL;
       }
 
     if( m_ImportFilter )
       {
       m_ImportFilter->Delete();
-      m_ImportFilter = NULL;
       }
-    }
+    }*/
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -264,6 +261,14 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       "with wrong channel number. Only 1 (grayscale) and 3 (RGB)"
       "are allowed! \n" );
     }
+}
+
+template< class TPixelType, unsigned int TChannels >
+const unsigned int
+VideoFrameSpatialObject< TPixelType, TChannels>
+::GetNumberOfChannels() const
+{
+  return m_NumberOfChannels;
 }
 
 template< class TPixelType, unsigned int TChannels >
