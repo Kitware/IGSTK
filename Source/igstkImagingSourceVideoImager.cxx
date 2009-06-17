@@ -351,8 +351,6 @@ ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalUpdateSta
     // report to the imager tool that the tool is Streaming
     this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
-    cout << ":" << endl;
-
     this->SetVideoImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
 
@@ -375,6 +373,10 @@ ImagingSourceVideoImager::ResultType
 ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImager::InternalThreadedUpdateStatus called ...\n");
+
+  cout << "<>" << endl;
+  cout << "<Update frame in InternalThreadedUpdateStatus>" << endl;
+  cout << "<>" << endl;
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
@@ -429,10 +431,10 @@ ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
       }
 
       //this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
-      FrameType frame;
-      this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+      FrameType* frame = new FrameType();
+      frame = this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first]);
       uyvy2rgb24(
-         (unsigned char*)frame.GetImagePtr(),//data pointer in frame, new buffer dest
+         (unsigned char*)frame->GetImagePtr(),//data pointer in frame, new buffer dest
          returned_buffer->data,//buffer with frame from device (UYVY)
          format.size.width * format.size.height * 3, // size of frame in RGB
          format.size.width * format.size.height * 2  // size of frame in UYVY
@@ -440,11 +442,7 @@ ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
          );
 
      //update frame validity time
-     frame.SetTimeToExpiration(this->GetValidityTime());
-
-     cout << "<>" << endl;
-     cout << "<Update frame in InternalThreadedUpdateStatus>" << endl;
-     cout << "<>" << endl;
+     frame->SetTimeToExpiration(this->GetValidityTime());
 
      this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
      this->m_ToolStatusContainer[ deviceItr->first ] = 1;
@@ -476,7 +474,7 @@ AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTo
   const std::string imagerToolIdentifier =
                   imagerTool->GetVideoImagerToolIdentifier();
 
-  igstk::Frame frame;
+  igstk::Frame* frame;
 
   this->m_ToolFrameBuffer[ imagerToolIdentifier ] = frame;
   this->m_ToolStatusContainer[ imagerToolIdentifier ] = 0;
