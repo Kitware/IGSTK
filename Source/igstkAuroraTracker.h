@@ -56,7 +56,7 @@ public:
   typedef igstk::AuroraTrackerTool      AuroraTrackerToolType;
       
   /** allow simulated tracker test to maintain code coverage
-      w/o communication, via Set/Get. **/     
+      w/o communication, via Set/Get. **/
    igstkSetMacro( SimulatedTestMaintainCoverage, bool );   
    igstkGetMacro( SimulatedTestMaintainCoverage, bool );
       
