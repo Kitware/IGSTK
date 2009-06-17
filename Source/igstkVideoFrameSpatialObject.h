@@ -62,7 +62,7 @@ public:
                                                                ImportFilterType;
   typedef typename itk::Image< PixelType , DIMENSION >         ImageType;
 
-  typedef Frame             FrameType;
+  typedef Frame                                FrameType;
   typedef typename TimeStamp::TimePeriodType   TimePeriodType;
 
   itkStaticConstMacro( m_NumberOfChannels, unsigned int, TChannels  );
@@ -99,9 +99,6 @@ public:
 
   igstkSetMacro(PixelSizeY, double);
   igstkGetMacro(PixelSizeY, double);
-
-  igstkSetMacro(CalibrationTransform, igstk::Transform);
-  igstkGetMacro(CalibrationTransform, igstk::Transform);
 
   void RequestGetITKImage();
   void RequestGetVTKImage()const;
@@ -140,7 +137,6 @@ private:
   unsigned int              m_Height;
   double                    m_PixelSizeX;
   double                    m_PixelSizeY;
-  igstk::Transform          m_CalibrationTransform;
   RGBPixelType*             m_RGBPixelContainer;
 
   unsigned int              m_NumberOfScalarComponents;
