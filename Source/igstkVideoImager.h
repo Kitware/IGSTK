@@ -38,26 +38,26 @@
 namespace igstk
 {
 
-igstkEventMacro( VideoImagerEvent,                             StringEvent);
-igstkEventMacro( VideoImagerErrorEvent,                IGSTKErrorWithStringEvent);
+igstkEventMacro( VideoImagerEvent,                   StringEvent);
+igstkEventMacro( VideoImagerErrorEvent,              IGSTKErrorWithStringEvent);
 
-igstkEventMacro( VideoImagerOpenEvent,                         VideoImagerEvent);
-igstkEventMacro( VideoImagerOpenErrorEvent,                    VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerOpenEvent,               VideoImagerEvent);
+igstkEventMacro( VideoImagerOpenErrorEvent,          VideoImagerErrorEvent);
 
-igstkEventMacro( VideoImagerCloseEvent,                        VideoImagerEvent);
-igstkEventMacro( VideoImagerCloseErrorEvent,                   VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerCloseEvent,              VideoImagerEvent);
+igstkEventMacro( VideoImagerCloseErrorEvent,         VideoImagerErrorEvent);
 
-igstkEventMacro( VideoImagerInitializeEvent,                   VideoImagerEvent);
-igstkEventMacro( VideoImagerInitializeErrorEvent,              VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerInitializeEvent,         VideoImagerEvent);
+igstkEventMacro( VideoImagerInitializeErrorEvent,    VideoImagerErrorEvent);
 
-igstkEventMacro( VideoImagerStartImagingEvent,                 VideoImagerEvent);
-igstkEventMacro( VideoImagerStartImagingErrorEvent,            VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerStartImagingEvent,       VideoImagerEvent);
+igstkEventMacro( VideoImagerStartImagingErrorEvent,  VideoImagerErrorEvent);
 
-igstkEventMacro( VideoImagerStopImagingEvent,                  VideoImagerEvent);
-igstkEventMacro( VideoImagerStopImagingErrorEvent,             VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerStopImagingEvent,        VideoImagerEvent);
+igstkEventMacro( VideoImagerStopImagingErrorEvent,   VideoImagerErrorEvent);
 
-igstkEventMacro( VideoImagerUpdateStatusEvent,                 VideoImagerEvent);
-igstkEventMacro( VideoImagerUpdateStatusErrorEvent,            VideoImagerErrorEvent);
+igstkEventMacro( VideoImagerUpdateStatusEvent,       VideoImagerEvent);
+igstkEventMacro( VideoImagerUpdateStatusErrorEvent,  VideoImagerErrorEvent);
 
 /** \class VideoImager
  *  \brief Abstract superclass for concrete IGSTK VideoImager classes.
@@ -120,9 +120,9 @@ public:
 
   /** The "RequestSetFrequency" method defines the frequency at which a frame
    * will be queried from the VideoImager device. Note that
-   * VideoImager devices have their own internal frequency rate, and if you set here
-   * a frequency that is higher than what the VideoImager device is capable to
-   * follow, then you will start receiving similar frames. */
+   * VideoImager devices have their own internal frequency rate, and if you set 
+   * here a frequency that is higher than what the VideoImager device is capable
+   * to follow, then you will start receiving similar frames. */
   void RequestSetFrequency( double frequencyInHz );
 
 protected:
@@ -195,15 +195,15 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Verify if a VideoImager tool information is correct before attaching
-   *  it to the VideoImager. This method is used to verify the information supplied
-   *  by the user about the VideoImager tool. The information depends on the
-   *  VideoImager type.
+   *  it to the VideoImager. This method is used to verify the information 
+   *  supplied by the user about the VideoImager tool. The information depends 
+   *  on the VideoImager type.
    */
   virtual ResultType
         VerifyVideoImagerToolInformation( const VideoImagerToolType * ) = 0;
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
-   * valid for the imaging device that is being used. This method is to be
+  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency
+   * is valid for the imaging device that is being used. This method is to be
    * overridden in the derived imaging-device specific classes to take
    * into account the maximum frequency possible in the imaging device
   */
@@ -212,14 +212,15 @@ protected:
   /** This method will remove entries of the VideoImager tool from internal
     * data containers */
   virtual ResultType RemoveVideoImagerToolFromInternalDataContainers(
-                                     const VideoImagerToolType * videoImagerTool ) = 0;
+                              const VideoImagerToolType * videoImagerTool ) = 0;
 
   /** Add VideoImager tool entry to internal containers */
   virtual ResultType AddVideoImagerToolToInternalDataContainers(
-                                    const VideoImagerToolType * videoImagerTool ) = 0;
+                              const VideoImagerToolType * videoImagerTool ) = 0;
 
   /** typedefs from VideoImagerTool class */
-  typedef std::map< std::string, VideoImagerToolType *>  VideoImagerToolsContainerType;
+  typedef std::map< std::string, VideoImagerToolType *>  
+                                                  VideoImagerToolsContainerType;
 
   /** Access method for the VideoImager tool container. This method
     * is useful in the derived classes to access the unique identifiers
@@ -227,10 +228,12 @@ protected:
   const VideoImagerToolsContainerType & GetVideoImagerToolContainer() const;
 
   /** Report to VideoImager tool that it is not available for imaging */
-  void ReportImagingToolNotAvailable( VideoImagerToolType * VideoImagerTool ) const;
+  void ReportImagingToolNotAvailable( 
+                                  VideoImagerToolType * VideoImagerTool ) const;
 
   /** Report to VideoImager tool that it is streaming */
-  void ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const;
+  void ReportImagingToolStreaming( 
+                                  VideoImagerToolType * videoImagerTool ) const;
 
   void SetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
                                    FrameType* frame );
