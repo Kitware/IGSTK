@@ -1432,7 +1432,7 @@ ReslicerPlaneSpatialObject
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 
-/** Get tool transform WRT Image Coordinate System*/
+/** Get tool transform WRT Image Coordinate System */
 igstk::Transform
 ReslicerPlaneSpatialObject
 ::GetToolTransform( ) const
@@ -1448,7 +1448,7 @@ ReslicerPlaneSpatialObject
   return m_ToolPosition;
 }
 
-/** Check if tool spatial object is set to drive the reslicing*/
+/** Check if tool spatial object is set to drive the reslicing */
 bool
 ReslicerPlaneSpatialObject
 ::IsToolSpatialObjectSet( ) 
