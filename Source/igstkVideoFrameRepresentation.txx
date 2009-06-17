@@ -17,6 +17,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+#ifndef __igstkVideoFrameRepresentation_txx
+#define __igstkVideoFrameRepresentation_txx
+
 #include "igstkVideoFrameRepresentation.h"
 
 #include <vtkProperty.h>
@@ -71,20 +74,27 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
   igstkAddStateMacro( NullVideoFrameSpatialObject );
   igstkAddStateMacro( ValidVideoFrameSpatialObject );
 
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, NullVideoFrameSpatialObject,
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+                           NullVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject, No );
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, EmptyVideoFrameSpatialObject,
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+                           EmptyVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject, No );
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, ValidVideoFrameSpatialObject,
-                           ValidVideoFrameSpatialObject,SetVideoFrameSpatialObject );
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+                           ValidVideoFrameSpatialObject,
+                           ValidVideoFrameSpatialObject,
+                           SetVideoFrameSpatialObject );
   igstkAddTransitionMacro( NullVideoFrameSpatialObject, ConnectVTKPipeline,
                            NullVideoFrameSpatialObject, No );
 
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, NullVideoFrameSpatialObject,
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+                           NullVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,  No );
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, EmptyVideoFrameSpatialObject,
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+                           EmptyVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,  No );
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, ValidVideoFrameSpatialObject,
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+                           ValidVideoFrameSpatialObject,
                            ValidVideoFrameSpatialObject, No );
   igstkAddTransitionMacro( ValidVideoFrameSpatialObject, ConnectVTKPipeline,
                            ValidVideoFrameSpatialObject, ConnectVTKPipeline );
@@ -138,18 +148,19 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 {
   igstkLogMacro( DEBUG,
     "igstk::VideoFrameRepresentation::VerifyTimeStamp called...\n");
-//TODO
-//  if( this->GetRenderTimeStamp().GetExpirationTime() <
-//    this->m_VideoFrameSpatialObject->GetFrameStartTime() ||
-//      this->GetRenderTimeStamp().GetStartTime() >
-//      this->m_VideoFrameSpatialObject->GetFrameExpirationTime() )
-//  {
-//    return false;
-//  }
-//  else
-  {
+  //TODO
+  /*
+  if( this->GetRenderTimeStamp().GetExpirationTime() <
+    this->m_VideoFrameSpatialObject->GetFrameStartTime() ||
+    this->GetRenderTimeStamp().GetStartTime() >
+    this->m_VideoFrameSpatialObject->GetFrameExpirationTime() )
+    {
+    return false;
+    }
+  else */
+    {
     return true;
-  }
+    }
 }
 
 /** Null Operation for a State Machine Transition */
@@ -166,27 +177,26 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject >
 ::RequestSetVideoFrameSpatialObject( const VideoFrameSpatialObjectType * video )
 {
-   igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation\
+  igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation\
                         ::RequestSetVideoFrameSpatialObject called...\n");
 
   m_VideoFrameSpatialObjectToAdd = video;
 
   if( !m_VideoFrameSpatialObjectToAdd )
-  {
+    {
     m_StateMachine.PushInput( m_NullVideoFrameSpatialObjectInput );
-  }
+    }
   else
-  {
+    {
     if( m_VideoFrameSpatialObjectToAdd->IsEmpty() )
-    {
+      {
       m_StateMachine.PushInput( m_EmptyVideoFrameSpatialObjectInput );
-    }
+      }
     else
-    {
+      {
       m_StateMachine.PushInput( m_ValidVideoFrameSpatialObjectInput );
+      }
     }
-  }
-
   m_StateMachine.ProcessInputs();
 }
 
@@ -213,7 +223,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   m_VideoFrameSpatialObject->RequestGetVTKImage();
 
   if( m_VTKImageObserver->GotVTKImage() )
-  {
+    {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
     this->m_ImageActor->SetInput( this->m_ImageData  );
 
@@ -221,12 +231,13 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     {
       this->m_MapColors->SetInput( this->m_ImageData );
       this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+      }
     }
-  }
   else
-  {
-    igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation::SetVideoFrameSpatialObjectProcessing: No VTKImage Event\n");
-  }
+    {
+    igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
+              << "::SetVideoFrameSpatialObjectProcessing: No VTKImage Event\n");
+    }
 }
 
 template< class TVideoFrameSpatialObject >
@@ -240,7 +251,8 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   m_Window = window;
   m_Level = level;
 
-  m_LookupTable->SetTableRange ( (m_Level - m_Window/2.0), (m_Level + m_Window/2.0) );
+  m_LookupTable->SetTableRange( (m_Level - m_Window/2.0), 
+                                (m_Level + m_Window/2.0) );
   m_LookupTable->Build();
 }
 
@@ -250,7 +262,8 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::SaveScreenShot( const std::string & filename )
 {
-  igstkLogMacro( DEBUG, "VideoFrameRepresentation::SaveScreenShot() called ...\n");
+  igstkLogMacro( DEBUG, 
+                     "VideoFrameRepresentation::SaveScreenShot() called ...\n");
 
   vtkPNGWriter * writer = vtkPNGWriter::New();
   writer->SetInput( m_MapColors->GetOutput() );
@@ -283,8 +296,8 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   m_LookupTable->SetValueRange (0, value);
   m_LookupTable->SetRampToLinear();
 
-  if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
-  {
+  if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 1)
+    {
     m_MapColors->SetLookupTable( m_LookupTable );
   }
 
@@ -305,27 +318,28 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   m_VideoFrameSpatialObject->RequestGetVTKImage();
 
   if( m_VTKImageObserver->GotVTKImage() )
-  {
+    {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
 
     if( m_ImageData )
-    {
-      if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
       {
+      if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 1)
+        {
         m_MapColors->SetInput( m_ImageData );
         m_MapColors->Update();
-      }
-      else if(m_VideoFrameSpatialObject->GetNumberOfChannels()==3)
-      {
+        }
+      else if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 3)
+        {
         m_ImageActor->SetInput( m_ImageData );
-      }
+        }
       else
-      {
+        {
         igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
-          "::UpdateRepresentationProcessing: Number of channel is not supported. Should be 1 or 3!\n");
+                 << "::UpdateRepresentationProcessing: Number of channel is not" 
+                                           << "supported. Should be 1 or 3!\n");
+        }
       }
     }
-  }
 }
 
 template< class TVideoFrameSpatialObject >
@@ -333,21 +347,22 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::ConnectVTKPipelineProcessing()
 {
-  if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
-  {
+  if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 1)
+    {
     m_MapColors->SetInput( m_ImageData );
     m_ImageActor->SetInput( m_MapColors->GetOutput() );
-  }
-  else if(m_VideoFrameSpatialObject->GetNumberOfChannels()==3)
-  {
+    }
+  else if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 3)
+    {
     m_ImageActor->SetInput( m_ImageData );
     m_ImageActor->InterpolateOn();
-  }
+    }
   else
-  {
+    {
     igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
-      "::UpdateRepresentationProcessing: Number of channel is not supported. Should be 1 or 3!\n");
-  }
+      << "::UpdateRepresentationProcessing: "
+      << "Number of channel is not supported. Should be 1 or 3!\n");
+    }
 }
 
 /** Create a copy of the current object representation */
@@ -368,3 +383,5 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 }
 
 } // namespace
+
+#endif
