@@ -43,15 +43,20 @@ Frame
 : m_TimeStamp(inputFrame.m_TimeStamp)
 {
   m_ImagePtr = inputFrame.m_ImagePtr;
-  //m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-  //memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels );
+  /*m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  if(m_ImagePtr!= NULL)
+  {  
+    if(inputFrame.m_ImagePtr!=NULL)
+    { 
+      memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels );
+      free(inputFrame.m_ImagePtr);
+    }
+  }*/
 }
 
 Frame
 ::~Frame()
 {
-//  if(m_ImagePtr != NULL)
-//  free(m_ImagePtr);
 }
 
 void
@@ -59,29 +64,25 @@ Frame
 ::Free()
 {
   if(m_ImagePtr != NULL)
-  free(m_ImagePtr);
+//  delete this->m_ImagePtr;
+  cout << "free" << endl;
 }
 
 void
 Frame::SetFrameDimensions(unsigned int width,
                           unsigned int height, unsigned int channels)
 {
-
   m_Width = width;
   m_Height = height;
   m_NumberOfChannels = channels;
 
-//  if(m_ImagePtr != NULL)
-//    free(m_ImagePtr);
-//  else
-    m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-    //m_ImagePtr = new (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  //m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
+  m_ImagePtr = new unsigned char[m_Width * m_Height * m_NumberOfChannels];
 
   if (m_ImagePtr == NULL)
   {
     igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: Memory could not be allocated (malloc failed)!\n" );
   }
-
 }
 
 Frame::TimePeriodType
