@@ -233,10 +233,9 @@ protected:
   void ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const;
 
   void SetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
-                                   const FrameType & frame );
+                                   FrameType* frame );
 
-  void GetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
-                                   FrameType & frame );
+  FrameType* GetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool);
 
   /** Turn on/off update flag of the VideoImager tool */
   void SetVideoImagerToolUpdate( VideoImagerToolType * videoImagerTool,
