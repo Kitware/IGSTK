@@ -28,7 +28,8 @@ namespace igstk
 {
 
 /** Constructor */
-ImagingSourceVideoImagerTool::ImagingSourceVideoImagerTool():m_StateMachine(this)
+ImagingSourceVideoImagerTool::
+ImagingSourceVideoImagerTool():m_StateMachine(this)
 {
   m_VideoImagerToolConfigured = false;
 
@@ -73,10 +74,11 @@ ImagingSourceVideoImagerTool::~ImagingSourceVideoImagerTool()
 }
 
 /** Request set VideoImagerTool name */
-void ImagingSourceVideoImagerTool::RequestSetVideoImagerToolName( const std::string& clientDeviceName )
+void ImagingSourceVideoImagerTool
+::RequestSetVideoImagerToolName( const std::string& clientDeviceName )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceVideoImagerTool::RequestSetVideoImagerToolName called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImagerTool"
+                             << "::RequestSetVideoImagerToolName called ...\n");
   if ( clientDeviceName == "" )
     {
     m_StateMachine.PushInput( m_InValidVideoImagerToolNameInput );
@@ -93,8 +95,8 @@ void ImagingSourceVideoImagerTool::RequestSetVideoImagerToolName( const std::str
 /** Set valid VideoImagerTool name */
 void ImagingSourceVideoImagerTool::SetVideoImagerToolNameProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceVideoImagerTool::SetVideoImagerToolNameProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImagerTool"
+                          << "::SetVideoImagerToolNameProcessing called ...\n");
 
   this->m_VideoImagerToolName = m_VideoImagerToolNameToBeSet;
 
@@ -102,16 +104,14 @@ void ImagingSourceVideoImagerTool::SetVideoImagerToolNameProcessing( )
 
   // VideoImagerTool name is used as a unique identifier
   this->SetVideoImagerToolIdentifier( this->m_VideoImagerToolName );
-
-  std::cout << " SetVideoImagerToolIdentifier: " << this->m_VideoImagerToolName << std::endl;
 }
 
 /** Report Invalid VideoImagerTool name*/
-void ImagingSourceVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
+void ImagingSourceVideoImagerTool
+::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing "
-    "called ...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImagerTool"
+       << "::ReportInvalidVideoImagerToolNameSpecifiedProcessing called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid VideoImagerTool name specified ");
 }
@@ -126,19 +126,21 @@ void ImagingSourceVideoImagerTool::ReportInvalidRequestProcessing()
 bool
 ImagingSourceVideoImagerTool::CheckIfVideoImagerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG,
-    "igstk::ImagingSourceVideoImagerTool::CheckIfVideoImagerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, "igstk::ImagingSourceVideoImagerTool"
+                         << "::CheckIfVideoImagerToolIsConfigured called...\n");
   return m_VideoImagerToolConfigured;
 }
 
 /** Print Self function */
-void ImagingSourceVideoImagerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void ImagingSourceVideoImagerTool
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "VideoImagerTool name : "    << m_VideoImagerToolName << std::endl;
-  os << indent << "VideoImagerToolConfigured:" << m_VideoImagerToolConfigured << std::endl;
+  os << indent << "VideoImagerTool name : "    
+    << m_VideoImagerToolName << std::endl;
+  os << indent << "VideoImagerToolConfigured:" 
+    << m_VideoImagerToolConfigured << std::endl;
 }
 
 }  // namespace igstk
-
