@@ -66,31 +66,64 @@ public:
   igstkGetMacro(IsCurrentInverseTransform, bool);
   igstkSetMacro(IsCurrentInverseTransform, bool);
 
-  /**  Get/Set reference to the parent node.*/
-  typedef SceneGraphNode* SceneGraphNodePtr;
-  igstkGetMacro(Parent, SceneGraphNodePtr);
-  igstkSetMacro(Parent, SceneGraphNodePtr);
-
-  /**  Get/Set name of the node.*/
-  typedef char* CharPtr; 
-  igstkGetMacro(Name, CharPtr);
-  igstkSetMacro(Name, CharPtr);
-
-  /**  Get/Set type of the node (Spatial Object/View/TrackerTool/Tracker).*/
-  igstkGetMacro(Type, CharPtr);      
-  igstkSetMacro(Type, CharPtr);      
-
-  /**  Get/Set reference to the coordinate system object 
-  * represented by this node. */
-  typedef CoordinateSystem* CoordinateSystemPtr;
-  igstkGetMacro(CoordinateSystem, CoordinateSystemPtr);
-  igstkSetMacro(CoordinateSystem, CoordinateSystemPtr);
-      
-  /**  Get/Set list of children.*/
+  //Previously handled by macros, but there seem to be valgrind issues.
+  CoordinateSystem*GetCoordinateSystem()
+    { 
+    return(m_CoordinateSystem);
+    };
+  void SetCoordinateSystem(CoordinateSystem* coordinateSystem)
+    {
+    if (coordinateSystem != NULL)
+      {
+      m_CoordinateSystem = coordinateSystem;
+      }
+    };
+  SceneGraphNode* GetParent()
+    { 
+    return(m_Parent);
+    };
+  void SetParent(SceneGraphNode* parent)
+    {
+    if (parent != NULL)
+      {
+      m_Parent = parent;
+      }
+    };
   typedef std::list<SceneGraphNode*> SceneGraphNodeList;
-  typedef SceneGraphNodeList* SceneGraphNodeListPtr;
-  igstkGetMacro(Children, SceneGraphNodeListPtr);
-  igstkSetMacro(Children, SceneGraphNodeListPtr);
+  SceneGraphNodeList* GetChildren()
+    { 
+    return(m_Children);
+    };
+  void SetChildren(SceneGraphNodeList *children)
+    {
+    if (children != NULL)
+      {
+      m_Children = children;
+      }
+    };
+  char *GetName()
+    { 
+    return(m_Name);
+    };
+  void SetName(char* name)
+    {
+    if (name != NULL)
+      {
+      m_Name = name;
+      }
+    };
+  char *GetType()
+    { 
+    return(m_Type);
+    };
+  void SetType(char* type)
+    {
+    if (type != NULL)
+      {
+      m_Type = type;
+      }
+    };
+          
 
   /**  Get/Set Reference to the transform with parent coordiante system.*/
   igstkGetMacro(ParentTransform, Transform); 

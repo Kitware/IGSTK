@@ -28,6 +28,10 @@ SceneGraphNode::SceneGraphNode(void)
   m_IsSelected = false;
   m_IsCurrentInverseTransform = false;
   m_Children = new std::list<SceneGraphNode*>;
+  m_Name = NULL; 
+  m_Type = NULL;
+  m_Parent = NULL;
+  m_CoordinateSystem = NULL;
 }
 
 SceneGraphNode::~SceneGraphNode(void)
