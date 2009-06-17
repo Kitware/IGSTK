@@ -22,7 +22,12 @@
 namespace igstk
 {
 
-VideoFrameGrabberAndViewerOpenIGTLinkView::VideoFrameGrabberAndViewerOpenIGTLinkView(int X, int Y, int W, int H, const char *L)
+VideoFrameGrabberAndViewerOpenIGTLinkView::
+VideoFrameGrabberAndViewerOpenIGTLinkView(int X, 
+                                          int Y, 
+                                          int W, 
+                                          int H, 
+                                          const char *L)
   : Fl_Group(X, Y, W, H, L)
 {
   Fl_Group * parentGroup = this->parent();
@@ -46,7 +51,8 @@ VideoFrameGrabberAndViewerOpenIGTLinkView::VideoFrameGrabberAndViewerOpenIGTLink
   end();
 }
 
-VideoFrameGrabberAndViewerOpenIGTLinkView::~VideoFrameGrabberAndViewerOpenIGTLinkView()
+VideoFrameGrabberAndViewerOpenIGTLinkView::
+                                    ~VideoFrameGrabberAndViewerOpenIGTLinkView()
 {
   delete m_VideoWidget;
 }
