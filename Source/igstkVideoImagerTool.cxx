@@ -21,7 +21,7 @@
 
 #include "vtkImageData.h"
 
-#define MAX_FRAMES 50
+#define MAX_FRAMES 20
 
 namespace igstk
 {
@@ -186,7 +186,7 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   m_Index=0;
   m_NumberOfFramesInBuffer=0;
 
-  m_FrameRingBuffer = new std::vector< igstk::Frame >(MAX_FRAMES);
+  m_FrameRingBuffer = new std::vector< igstk::Frame* >(MAX_FRAMES);
 
   std::ofstream ofile;
   ofile.open("VideoImagerToolStateMachineDiagram.dot");
@@ -199,11 +199,10 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
 VideoImagerTool::~VideoImagerTool(void)
 {
   for(unsigned int i=0;i<MAX_FRAMES;i++)
-      {
-      //igstk::Frame frame;
-      m_FrameRingBuffer->at(i).Free();
-
-    }
+  {
+    //igstk::Frame frame;
+    m_FrameRingBuffer->at(i)->Free();
+  }
 }
 
 void
@@ -271,7 +270,7 @@ void VideoImagerTool::GetFrameProcessing( void )
     "igstk::VideoImagerTool::GetFrameProcessing called ...\n");
 
   igstk::FrameModifiedEvent  event;
-  event.Set( this->GetInternalFrame() );
+  event.Set( *this->GetInternalFrame() );
   this->InvokeEvent( event );
 }
 
@@ -513,7 +512,7 @@ void VideoImagerTool::NoProcessing( void )
 
 /** Method to get the internal frame of the VideoImager tool
  *  This method should only be called by the VideoImager */
-VideoImagerTool::FrameType
+VideoImagerTool::FrameType*
 VideoImagerTool::GetInternalFrame( )
 {
    return GetFrameFromBuffer( m_Index );
@@ -522,7 +521,7 @@ VideoImagerTool::GetInternalFrame( )
 /** Method to set the internal frame for the VideoImager tool
  *  This method should only be called by the VideoImager */
 void
-VideoImagerTool::SetInternalFrame( const FrameType & frame )
+VideoImagerTool::SetInternalFrame( FrameType* frame )
 {
   this->AddFrameToBuffer(frame);
 }
@@ -530,18 +529,17 @@ VideoImagerTool::SetInternalFrame( const FrameType & frame )
 void
 VideoImagerTool::SetFrameDimensions(unsigned int *dims)
 {
-
   this->m_FrameDimensions[0] = dims[0];
   this->m_FrameDimensions[1] = dims[1];
   this->m_FrameDimensions[2] = dims[2];
 
   for(unsigned int i=0;i<MAX_FRAMES;i++)
-    {
-    igstk::Frame frame;
-    frame.SetFrameDimensions(
-      this->m_FrameDimensions[0],
-      this->m_FrameDimensions[1],
-      this->m_FrameDimensions[2]);
+  {
+    igstk::Frame* frame = new igstk::Frame();
+    frame->SetFrameDimensions(
+    this->m_FrameDimensions[0],
+    this->m_FrameDimensions[1],
+    this->m_FrameDimensions[2]);
     AddFrameToBuffer(frame);
   }
 }
@@ -554,7 +552,7 @@ VideoImagerTool::GetFrameDimensions(unsigned int *dims)
   dims[2] = this->m_FrameDimensions[2];
 }
 
-igstk::Frame VideoImagerTool::GetFrameFromBuffer(const unsigned int index)
+igstk::Frame* VideoImagerTool::GetFrameFromBuffer(const unsigned int index)
 {
   try
   {
@@ -567,7 +565,7 @@ igstk::Frame VideoImagerTool::GetFrameFromBuffer(const unsigned int index)
   }
 }
 
-igstk::Frame VideoImagerTool::GetTemporalCalibratedFrame()
+igstk::Frame* VideoImagerTool::GetTemporalCalibratedFrame()
 {
   try
   {
@@ -580,11 +578,11 @@ igstk::Frame VideoImagerTool::GetTemporalCalibratedFrame()
   }
 }
 
-void VideoImagerTool::AddFrameToBuffer(const igstk::Frame& frame)
+void VideoImagerTool::AddFrameToBuffer(igstk::Frame* frame)
 {
   try
   {
-    m_FrameRingBuffer->at(m_Index)=frame;
+    m_FrameRingBuffer->at(m_Index) = frame;
   }
   catch( std::exception& e )
   {
