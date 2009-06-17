@@ -44,13 +44,13 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
 
   /** Direct the application log message to the std::cout */
   itk::StdStreamLogOutput::Pointer m_LogCoutOutput
-                                           = itk::StdStreamLogOutput::New();
+                                            = itk::StdStreamLogOutput::New();
   m_LogCoutOutput->SetStream( std::cout );
   this->GetLogger()->AddLogOutput( m_LogCoutOutput );
 
   /** Direct the igstk components log message to the file. */
   itk::StdStreamLogOutput::Pointer m_LogFileOutput
-                                           = itk::StdStreamLogOutput::New();
+                                            = itk::StdStreamLogOutput::New();
 
   std::string   logFileName;
   logFileName = "logVideoFrameGrabberAndViewerOpenIGTLink"
@@ -58,24 +58,24 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   m_LogFile.open( logFileName.c_str() );
 
   if( !m_LogFile.fail() )
-  {
+    {
     m_LogFileOutput->SetStream( m_LogFile );
     this->GetLogger()->AddLogOutput( m_LogFileOutput );
     igstkLogMacro2( m_Logger, DEBUG,
-      "Successfully opened Log file:" << logFileName << "\n" );
-  }
+    "Successfully opened Log file:" << logFileName << "\n" );
+    }
   else
-  {
+    {
     //Return if fail to open the log file
     igstkLogMacro2( m_Logger, DEBUG,
       "Problem opening Log file:" << logFileName << "\n" );
     return;
-  }
+    }
 
   /** Instantiate the world reference */
   m_WorldReference        = AxesObjectType::New();
 
-  /*
+
   // BeginLatex
   //
   // The GUI is implemented using FLTK. For this purpose
@@ -83,14 +83,13 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   // are created and connected via the method:
   // EndLatex
   // BeginCodeSnippet
-  m_VideoWidget->RequestSetView( m_VideoView );
+  // m_VideoWidget->RequestSetView( m_VideoView );
   // EndCodeSnippet
   // BeginLatex
   // This is done in VideoFrameGrabberAndViewerOpenIGTLinkView.cxx.
   // Afterwards we set up and start \doxygen{View3D}.
   //
   // EndLatex
-  */
 
   // BeginCodeSnippet
   // Set background color to the View
@@ -105,29 +104,27 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   m_ViewerGroup->m_VideoWidget->RequestEnableInteractions();
   // EndCodeSnippet
 
-
   // BeginLatex
-  //
-  // The geometrical description of the videoframe in the scene is
-  // managed by the videoframe SpatialObject. For this purpose we need
-  // \doxygen{VideoFrameSpatialObject}.
-  // Since \doxygen{VideoFrameSpatialObject} is a template class we
-  // define in the first parameter the pixeltype and in the second
-  // parameter the channel number. Here we set "unsigned char" for pixeltype
-  // and 1 channel for grayscale.
-  // We then declare and instantiate a \doxygen{VideoFrameSpatialObject}
-  // as follows:
-  //
-  // EndLatex
+   //
+   // The geometrical description of the videoframe in the scene is
+   // managed by the videoframe SpatialObject. For this purpose we need
+   // \doxygen{VideoFrameSpatialObject}.
+   // Since \doxygen{VideoFrameSpatialObject} is a template class we
+   // define in the first parameter the pixeltype and in the second
+   // parameter the channel number. Here we set "unsigned char" for pixeltype
+   // and 1 channel for grayscale.
+   // We then declare and instantiate a \doxygen{VideoFrameSpatialObject}
+   // as follows:
+   //
+   // EndLatex
 
-  /** videoframe SpatialObject and Representation
-  // BeginCodeSnippet
-  typedef igstk::VideoFrameSpatialObject<unsigned char, 1 >
-                                            VideoFrameSpatialObjectType;
-  VideoFrameSpatialObjectType::Pointer      m_VideoFrame;
-  // EndCodeSnippet
-  */
-
+   /** videoframe SpatialObject and Representation
+   // BeginCodeSnippet
+   typedef igstk::VideoFrameSpatialObject<unsigned char, 1 >
+                                             VideoFrameSpatialObjectType;
+   VideoFrameSpatialObjectType::Pointer      m_VideoFrame;
+   // EndCodeSnippet
+   */
   // BeginLatex
   //
   // We set device specific parameters in \doxygen{VideoFrameSpatialObject}.
@@ -158,7 +155,8 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   // BeginCodeSnippet
   m_VideoFrame->RequestSetTransformAndParent( identity, m_WorldReference );
   m_ViewerGroup->m_VideoView->RequestDetachFromParent();
-  m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity, m_VideoFrame );
+  m_ViewerGroup->m_VideoView->RequestSetTransformAndParent( identity,
+                                                                m_VideoFrame );
   // EndCodeSnippet
 
   // BeginLatex
@@ -182,8 +180,7 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   */
 
   // BeginCodeSnippet
-  m_VideoFrameRepresentationForVideoView =
-                                     VideoFrameRepresentationType::New();
+  m_VideoFrameRepresentationForVideoView = VideoFrameRepresentationType::New();
   // EndCodeSnippet
 
   // BeginLatex
@@ -199,6 +196,8 @@ VideoFrameGrabberAndViewerOpenIGTLink::VideoFrameGrabberAndViewerOpenIGTLink()
   // EndCodeSnippet
 
   this->RequestInitialize();
+
+
 }
 
 VideoFrameGrabberAndViewerOpenIGTLink::~VideoFrameGrabberAndViewerOpenIGTLink()
@@ -238,7 +237,7 @@ void VideoFrameGrabberAndViewerOpenIGTLink::RequestInitialize()
   videoImager->SetCommunication( m_SocketCommunication );
 
   typedef itk::MemberCommand<VideoFrameGrabberAndViewerOpenIGTLink>   ProgressCommandType;
-  itk::SmartPointer<ProgressCommandType>                m_SocketProgressCommand; 
+  itk::SmartPointer<ProgressCommandType>                m_SocketProgressCommand;
   m_SocketProgressCommand = ProgressCommandType::New();
   m_SocketProgressCommand->SetCallbackFunction( this, &VideoFrameGrabberAndViewerOpenIGTLink::OnSocketProgressEvent );
   m_VideoImager->AddObserver(igstk::DoubleTypeEvent(), m_SocketProgressCommand);
@@ -264,7 +263,7 @@ void VideoFrameGrabberAndViewerOpenIGTLink::RequestInitialize()
   // BeginCodeSnippet
   unsigned long observerID = m_VideoImager->AddObserver( IGSTKErrorEvent(),this->m_ErrorObserver );
   // EndCodeSnippet
- 
+
   // BeginLatex
   //
   // Now, we try to open the communication with the device and retrieve errors
@@ -367,7 +366,7 @@ void VideoFrameGrabberAndViewerOpenIGTLink::RequestInitialize()
 void
 VideoFrameGrabberAndViewerOpenIGTLink::RequestPrepareToQuit()
 {
-  // BeginLatex
+/*  // BeginLatex
   //
   // Finally, before exiting the application, the VideoImager is properly
   // closed and other clean up procedures are executed, as follows:
@@ -379,7 +378,7 @@ VideoFrameGrabberAndViewerOpenIGTLink::RequestPrepareToQuit()
   m_ViewerGroup->m_VideoView->RequestResetCamera();
   // EndCodeSnippet
 
-  this->RequestShutdown( );
+  this->RequestShutdown( );*/
 }
 
 void
@@ -475,7 +474,7 @@ VideoFrameGrabberAndViewerOpenIGTLink::ErrorObserver::Execute(const itk::Object 
   this->Execute(constCaller, event);
 }
 
-void 
+void
 VideoFrameGrabberAndViewerOpenIGTLink
 ::OnSocketProgressEvent(itk::Object *source, const itk::EventObject & event)
 {
