@@ -49,7 +49,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     m_ItkRGBExporter = ITKRGBExportFilterType::New();
     m_VtkRGBImporter = VTKImportFilterType::New();
 
-    /** Connect the given itk::VTKImageExport filter to the given 
+    /** Connect the given itk::VTKImageExport filter to the given
       * vtkImageImport filter */
     m_VtkRGBImporter->SetUpdateInformationCallback(
                               m_ItkRGBExporter->GetUpdateInformationCallback());
@@ -160,7 +160,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_VtkImporter->Delete();
       m_VtkImporter = NULL;
       }
-   
+
     if( m_ImportFilter )
       {
       m_ImportFilter->Delete();
@@ -224,8 +224,8 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_RGBPixelContainer[j]=temp;
       j++;
       }
-    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer, 
-                                        m_Width * m_Height, 
+    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer,
+                                        m_Width * m_Height,
                                         false );
     m_RGBImportFilter->Update();
 
@@ -258,7 +258,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
     m_VTKImage = m_VtkImporter->GetOutput();
     }
-  else 
+  else
     {
     igstkLogMacro( DEBUG, "VideoFrameSpatialObject::Initialize called "
       "with wrong channel number. Only 1 (grayscale) and 3 (RGB)"
@@ -319,7 +319,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
 {
   if(this->m_VideoImagerTool.IsNotNull())
     {
-    return (m_VideoImagerTool->GetInternalFrame()).GetExpirationTime();
+    return (m_VideoImagerTool->GetInternalFrame())->GetExpirationTime();
     }
   else
     return igstk::TimeStamp::GetZeroValue();
@@ -332,7 +332,7 @@ VideoFrameSpatialObject< TPixelType, TChannels >
 {
   if(this->m_VideoImagerTool.IsNotNull())
     {
-    return (m_VideoImagerTool->GetInternalFrame()).GetStartTime();
+    return (m_VideoImagerTool->GetInternalFrame())->GetStartTime();
     }
   else
     return igstk::TimeStamp::GetLongestPossibleTime();
@@ -351,7 +351,7 @@ void
 VideoFrameSpatialObject< TPixelType, TChannels >
 ::RequestGetITKImage()
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "VideoFrameSpatialObject::RequestGetITKImage() called ....\n");
 
   this->UpdateImages();
@@ -381,7 +381,7 @@ void
 VideoFrameSpatialObject< TPixelType, TChannels >
 ::RequestGetVTKImage()  const
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                  "VideoFrameSpatialObject::RequestGetVTKImage() called ....\n");
 
   Self * self = const_cast< Self * >( this );
@@ -404,7 +404,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
     }
   else
     {
-    igstkLogMacro( DEBUG, "VideoFrameSpatialObject::UpdateImages():" 
+    igstkLogMacro( DEBUG, "VideoFrameSpatialObject::UpdateImages():"
                                     << "VideoImagerTool is not set properly\n");
     }
 
@@ -420,8 +420,8 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_RGBPixelContainer[j]=temp;
       j++;
       }
-    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer, 
-                                        m_Width * m_Height, 
+    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer,
+                                        m_Width * m_Height,
                                         false );
     m_RGBImportFilter->Update();
     this->m_RGBImage = m_RGBImportFilter->GetOutput();
