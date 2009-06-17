@@ -295,8 +295,6 @@ WebcamWinVideoImager::ResultType WebcamWinVideoImager::InternalUpdateStatus()
     // report to the imager tool that the tool is sending frames
     this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
-    cout << ":" << endl;
-
     this->SetVideoImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
 
@@ -319,6 +317,8 @@ WebcamWinVideoImager::ResultType
 WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus called ...\n");
+
+  cout << " ";
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
@@ -350,8 +350,8 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       VideoImagerToolsContainerType imagerToolContainer =
                                               this->GetVideoImagerToolContainer();
 
-      FrameType frame;
-      this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+      FrameType* frame = new FrameType();
+      frame = this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first]);
 
       unsigned int frameDims[3];
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
@@ -363,13 +363,13 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       if( !cvframe )
         cout << "frame failed ";
 
-      memcpy(frame.GetImagePtr(),
+      memcpy(frame->GetImagePtr(),
           (unsigned char*)cvframe->imageData,frameDims[0]*frameDims[1]*frameDims[2]);
 
       WebcamWinVideoImager::m_FrameBufferLock->Unlock();
 
       //update frame validity time
-      frame.SetTimeToExpiration(this->GetValidityTime());
+      frame->SetTimeToExpiration(this->GetValidityTime());
 
       this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       this->m_ToolStatusContainer[ deviceItr->first ] = 1;
@@ -401,7 +401,7 @@ AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTo
   const std::string imagerToolIdentifier =
                   imagerTool->GetVideoImagerToolIdentifier();
 
-  igstk::Frame frame;
+  igstk::Frame* frame = new igstk::Frame();
 
   this->m_ToolFrameBuffer[ imagerToolIdentifier ] = frame;
   this->m_ToolStatusContainer[ imagerToolIdentifier ] = 0;
