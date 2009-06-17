@@ -117,7 +117,7 @@ private:
   /** Observer to the VTK image events */
   typename VTKImageObserver::Pointer   m_VTKImageObserver;
 
-   /** Inputs to the State Machine */
+  /** Inputs to the State Machine */
   igstkDeclareInputMacro( ValidVideoFrameSpatialObject );
   igstkDeclareInputMacro( NullVideoFrameSpatialObject );
   igstkDeclareInputMacro( EmptyVideoFrameSpatialObject );
