@@ -296,16 +296,16 @@ void VideoFrameGrabberAndViewerOpenIGTLink::RequestInitialize()
 
     // BeginCodeSnippet
     VideoImagerTool::Pointer videoImagerTool;
-    OpenIGTLinkVideoImagerTool::Pointer videoImagerToolWebcam =
+    OpenIGTLinkVideoImagerTool::Pointer videoImagerToolOpenIGTLink =
                                          OpenIGTLinkVideoImagerTool::New();
     unsigned int dims[3];
     dims[0] = 256;
     dims[1] = 256;
     dims[2] = 1;
-    videoImagerToolWebcam->SetFrameDimensions(dims);
-    videoImagerToolWebcam->SetPixelDepth(8);
-    videoImagerToolWebcam->RequestSetVideoImagerToolName("Camera");
-    videoImagerToolWebcam->RequestConfigure();
+    videoImagerToolOpenIGTLink->SetFrameDimensions(dims);
+    videoImagerToolOpenIGTLink->SetPixelDepth(8);
+    videoImagerToolOpenIGTLink->RequestSetVideoImagerToolName("Camera");
+    videoImagerToolOpenIGTLink->RequestConfigure();
     // EndCodeSnippet
 
     // BeginLatex
@@ -314,7 +314,7 @@ void VideoFrameGrabberAndViewerOpenIGTLink::RequestInitialize()
     //
     // EndLatex
 
-    videoImagerTool = videoImagerToolWebcam;
+    videoImagerTool = videoImagerToolOpenIGTLink;
 
     // BeginCodeSnippet
     videoImagerTool->RequestAttachToVideoImager( m_VideoImager );
