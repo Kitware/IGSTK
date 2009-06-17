@@ -102,6 +102,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 
   m_VTKImageObserver->Delete();
   m_VTKImageObserver = NULL;
+  
   if( m_LookupTable )
   {
     m_LookupTable->Delete();
