@@ -554,7 +554,7 @@ void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
   "igstk::VideoImager::AttachingVideoImagerToolSuccessProcessing called ...\n");
 
   m_VideoImagerTools[ 
-                 m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ] 
+                 m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ]
                                                 = m_VideoImagerToolToBeAttached;
 
   // report to the VideoImager tool that the attachment has been
