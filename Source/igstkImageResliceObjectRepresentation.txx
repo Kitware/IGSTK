@@ -300,9 +300,9 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 }
  
 /** Set the Image Spatial Object 
-* // to do: get rid of the image spatial object. The required information
-* // should be obtained from the ReslicePlaneSpatialObject
-*/
+  * // to do: get rid of the image spatial object. The required information
+  * // should be obtained from the ReslicePlaneSpatialObject
+  */
 template < class TImageSpatialObject >
 void 
 ImageResliceObjectRepresentation< TImageSpatialObject >
@@ -314,13 +314,13 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ImageSpatialObjectToAdd = image;
 
   if( !m_ImageSpatialObjectToAdd )
-  {
-  m_StateMachine.PushInput( m_InValidImageSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_InValidImageSpatialObjectInput );
+    }
   else 
-  {
-  m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_ValidImageSpatialObjectInput );
+    }
   
   m_StateMachine.ProcessInputs();
 }
@@ -357,13 +357,13 @@ reslicePlaneSpatialObject )
                     const_cast< ReslicerPlaneType* >(reslicePlaneSpatialObject);
 
   if( !m_ReslicePlaneSpatialObjectToBeSet )
-  {
-  m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_InValidReslicePlaneSpatialObjectInput );
+    }
   else
-  {
-  m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
-  }
+    {
+    m_StateMachine.PushInput( m_ValidReslicePlaneSpatialObjectInput );
+    }
 
   m_StateMachine.ProcessInputs();
 }
