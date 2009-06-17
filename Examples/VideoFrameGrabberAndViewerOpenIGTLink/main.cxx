@@ -27,7 +27,8 @@ int main(int, char** )
 
   igstk::RealTimeClock::Initialize();
 
-  igstk::VideoFrameGrabberAndViewerOpenIGTLink * application = new igstk::VideoFrameGrabberAndViewerOpenIGTLink;
+  igstk::VideoFrameGrabberAndViewerOpenIGTLink * application =
+                            new igstk::VideoFrameGrabberAndViewerOpenIGTLink();
 
   while( !application->HasQuitted() )
   {
