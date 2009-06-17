@@ -22,7 +22,12 @@
 namespace igstk
 {
 
-VideoFrameGrabberAndViewerWebcamWinView::VideoFrameGrabberAndViewerWebcamWinView(int X, int Y, int W, int H, const char *L)
+VideoFrameGrabberAndViewerWebcamWinView
+::VideoFrameGrabberAndViewerWebcamWinView(int X, 
+                                          int Y, 
+                                          int W, 
+                                          int H, 
+                                          const char *L)
   : Fl_Group(X, Y, W, H, L)
 {
   Fl_Group * parentGroup = this->parent();
@@ -46,7 +51,8 @@ VideoFrameGrabberAndViewerWebcamWinView::VideoFrameGrabberAndViewerWebcamWinView
   end();
 }
 
-VideoFrameGrabberAndViewerWebcamWinView::~VideoFrameGrabberAndViewerWebcamWinView()
+VideoFrameGrabberAndViewerWebcamWinView
+::~VideoFrameGrabberAndViewerWebcamWinView()
 {
   delete m_VideoWidget;
 }
