@@ -95,7 +95,8 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyVideoImagerToolInformation( const VideoImagerToolType * );
+  virtual ResultType VerifyVideoImagerToolInformation( 
+                                                  const VideoImagerToolType * );
 
   /** The "ValidateSpecifiedFrequency" method checks if the specified
    * frequency is valid for the imaging device that is being used. */
@@ -153,10 +154,10 @@ private:
   /** Members and functions for communication with DV library */
 
   public:
-  FILE *f;
-  int node_specified;
-  int channel;
-  int bandwidth;
+  FILE *m_File;
+  int   m_Node_specified;
+  int   m_Channel;
+  int   m_Bandwidth;
   nodeid_t node;
   raw1394handle_t handle;
   iec61883_dv_fb_t dvFrame;
