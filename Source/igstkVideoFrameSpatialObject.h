@@ -114,7 +114,7 @@ private:
   itkStaticConstMacro( m_NumberOfChannels, unsigned int, TChannels  );
 
   typename RGBImageType::Pointer        m_RGBImage;
-  typename RGBImportFilterType::Pointer     RGBImportFilter;
+  typename RGBImportFilterType::Pointer     m_RGBImportFilter;
 
   typename ImageType::Pointer         m_Image;
   typename ImportFilterType::Pointer      m_ImportFilter;
