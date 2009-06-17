@@ -228,7 +228,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     this->m_ImageActor->SetInput( this->m_ImageData  );
 
     if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
-    {
+      {
       this->m_MapColors->SetInput( this->m_ImageData );
       this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
       }
@@ -299,7 +299,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   if(m_VideoFrameSpatialObject->GetNumberOfChannels() == 1)
     {
     m_MapColors->SetLookupTable( m_LookupTable );
-  }
+    }
 
   igstkPushInputMacro( ConnectVTKPipeline );
   m_StateMachine.ProcessInputs();
