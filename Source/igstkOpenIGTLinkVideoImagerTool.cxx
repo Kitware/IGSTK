@@ -78,10 +78,11 @@ OpenIGTLinkVideoImagerTool::~OpenIGTLinkVideoImagerTool()
 }
 
 /** Request set VideoImagerTool name */
-void OpenIGTLinkVideoImagerTool::RequestSetVideoImagerToolName( const std::string& clientDeviceName )
+void OpenIGTLinkVideoImagerTool
+::RequestSetVideoImagerToolName( const std::string& clientDeviceName )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::OpenIGTLinkVideoImagerTool::RequestSetVideoImagerToolName called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool"
+                             << "::RequestSetVideoImagerToolName called ...\n");
   if ( clientDeviceName == "" )
     {
     m_StateMachine.PushInput( m_InValidVideoImagerToolNameInput );
@@ -98,8 +99,8 @@ void OpenIGTLinkVideoImagerTool::RequestSetVideoImagerToolName( const std::strin
 /** Set valid VideoImagerTool name */
 void OpenIGTLinkVideoImagerTool::SetVideoImagerToolNameProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::OpenIGTLinkVideoImagerTool::SetVideoImagerToolNameProcessing called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool"
+                          << "::SetVideoImagerToolNameProcessing called ...\n");
 
   this->m_VideoImagerToolName = m_VideoImagerToolNameToBeSet;
 
@@ -108,15 +109,16 @@ void OpenIGTLinkVideoImagerTool::SetVideoImagerToolNameProcessing( )
   // VideoImagerTool name is used as a unique identifier
   this->SetVideoImagerToolIdentifier( this->m_VideoImagerToolName );
 
-  std::cout << " SetVideoImagerToolIdentifier: " << this->m_VideoImagerToolName << std::endl;
+  std::cout << " SetVideoImagerToolIdentifier: " 
+                                    << this->m_VideoImagerToolName << std::endl;
 }
 
 /** Report Invalid VideoImagerTool name*/
-void OpenIGTLinkVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
+void OpenIGTLinkVideoImagerTool
+::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::OpenIGTLinkVideoImagerTool::ReportInvalidVideoImagerToolNameSpecifiedProcessing "
-    "called ...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool" 
+       << "::ReportInvalidVideoImagerToolNameSpecifiedProcessing called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid VideoImagerTool name specified ");
 }
@@ -131,17 +133,20 @@ void OpenIGTLinkVideoImagerTool::ReportInvalidRequestProcessing()
 bool
 OpenIGTLinkVideoImagerTool::CheckIfVideoImagerToolIsConfigured( ) const
 {
-  igstkLogMacro( DEBUG,
-    "igstk::OpenIGTLinkVideoImagerTool::CheckIfVideoImagerToolIsConfigured called...\n");
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool"
+                         << "::CheckIfVideoImagerToolIsConfigured called...\n");
   return m_VideoImagerToolConfigured;
 }
 
 /** Print Self function */
-void OpenIGTLinkVideoImagerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void OpenIGTLinkVideoImagerTool
+::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "VideoImagerTool name : "    << m_VideoImagerToolName << std::endl;
-  os << indent << "VideoImagerToolConfigured:" << m_VideoImagerToolConfigured << std::endl;
+  os << indent << "VideoImagerTool name : "
+    << m_VideoImagerToolName << std::endl;
+  os << indent << "VideoImagerToolConfigured:"
+    << m_VideoImagerToolConfigured << std::endl;
 }
 }
