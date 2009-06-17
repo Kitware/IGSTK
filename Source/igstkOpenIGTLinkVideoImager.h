@@ -98,10 +98,11 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyVideoImagerToolInformation( const VideoImagerToolType * );
+  virtual ResultType VerifyVideoImagerToolInformation( 
+                                                  const VideoImagerToolType * );
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
-   * valid for the tracking device that is being used. */
+  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency
+   * is valid for the tracking device that is being used. */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
   /** Print object information */
@@ -159,14 +160,11 @@ private:
   /** Container holding status of the tools */
   std::map< std::string, int >  m_ToolStatusContainer;
 
-   /** The "Communication" instance */
-  CommunicationType::Pointer       m_Communication;
-
-  igtl::MessageHeader::Pointer    m_HeaderMsg;
-
-  igtl::ImageMessage::Pointer     imgMsg;
-
-  igtl::Socket::Pointer            m_Socket;
+  /** The "Communication" instance */
+  CommunicationType::Pointer     m_Communication;
+  igtl::MessageHeader::Pointer   m_HeaderMsg;
+  igtl::ImageMessage::Pointer    m_ImgMsg;
+  igtl::Socket::Pointer          m_Socket;
 
 };
 
