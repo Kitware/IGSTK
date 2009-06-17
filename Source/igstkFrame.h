@@ -31,7 +31,7 @@ namespace igstk
 {
 
 /** \class Frame
- *  \brief Frame from an external input device (ultrasound system).
+ *  \brief Frame from an external input device.
  *
  * It is intended to be used as a
  * communication vehicle between imagers and spatial objects. The class
@@ -93,9 +93,7 @@ public:
    * */
   TimePeriodType GetExpirationTime() const;
 
-
-  void SetTimeToExpiration(
-          TimePeriodType millisecondsToExpiration);
+  void SetTimeToExpiration( TimePeriodType millisecondsToExpiration );
 
   /** Returns the validity status of the frame at the time passed as
    * argument. The frame values should not be used in a scene if the time
@@ -114,10 +112,10 @@ public:
   * */
   bool IsValidNow() const;
 
-
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
 
+  /** Manually free allocated memory */
   void Free();
 
 protected:
@@ -125,25 +123,22 @@ protected:
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
 
   void PrintTrailer(std::ostream& itkNotUsed(os),
-                    itk::Indent itkNotUsed(indent)) const;
+                                          itk::Indent itkNotUsed(indent)) const;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
 private:
 
-  void SetFrameDimensions(unsigned int, unsigned int, unsigned int);
-  void SetImagePtr(
-          void*,
-          TimePeriodType millisecondsToExpiration);
-
-  TimeStamp       m_TimeStamp;
-
-  void*           m_ImagePtr;
+  void SetFrameDimensions( unsigned int, unsigned int, unsigned int);
+  void SetImagePtr( void*, TimePeriodType millisecondsToExpiration);
+  
   std::vector< unsigned char > *m_Image;
-  unsigned int    m_Width;
-  unsigned int    m_Height;
-  unsigned int    m_NumberOfChannels;
+  TimeStamp                     m_TimeStamp;
+  void*                         m_ImagePtr;
+  unsigned int                  m_Width;
+  unsigned int                  m_Height;
+  unsigned int                  m_NumberOfChannels;
 
 };
 
