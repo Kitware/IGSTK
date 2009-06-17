@@ -132,7 +132,7 @@ private:
   unsigned int   m_NumberOfTools;
 
   /** A buffer to hold frames */
-  typedef std::map< std::string, igstk::Frame >
+  typedef std::map< std::string, igstk::Frame* >
                                 VideoImagerToolFrameContainerType;
 
   typedef igstk::Frame   FrameType;
