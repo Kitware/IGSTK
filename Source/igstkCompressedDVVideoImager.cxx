@@ -304,8 +304,6 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalUpdateStatu
     // report to the imager tool that the tool is sending frames
     this->ReportImagingToolStreaming(imagerToolContainer[inputItr->first]);
 
-//    cout << ":" << endl;
-
     this->SetVideoImagerToolFrame(
           imagerToolContainer[inputItr->first], (inputItr->second) );
 
@@ -329,6 +327,8 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
 {
   igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalThreadedUpdateStatus"
                         " called ...\n");
+
+  cout << "";
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
@@ -358,8 +358,8 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
       // create the frame
       VideoImagerToolsContainerType imagerToolContainer =
                                               this->GetVideoImagerToolContainer();
-      FrameType frame;
-      this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first], frame );
+      FrameType* frame = new FrameType();
+      frame = this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first]);
 
       unsigned int frameDims[3];
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
@@ -368,10 +368,10 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
       result = raw1394_loop_iterate (handle);
 
       CompressedDVVideoImager::m_FrameBufferLock->Lock();
-//      cout << "+" << endl;
+
       if( CompressedDVVideoImager::frameBuffer !=NULL)
       {
-        memcpy(frame.GetImagePtr(),
+        memcpy(frame->GetImagePtr(),
                (unsigned char*)CompressedDVVideoImager::frameBuffer,
                 frameDims[0]*frameDims[1]*frameDims[2]);
       }
@@ -379,7 +379,7 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
       CompressedDVVideoImager::m_FrameBufferLock->Unlock();
 
      //update frame validity time
-     frame.SetTimeToExpiration(this->GetValidityTime());
+     frame->SetTimeToExpiration(this->GetValidityTime());
 
      this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
      this->m_ToolStatusContainer[ deviceItr->first ] = 1;
@@ -411,7 +411,7 @@ AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTo
   const std::string imagerToolIdentifier =
                   imagerTool->GetVideoImagerToolIdentifier();
 
-  igstk::Frame frame;
+  igstk::Frame* frame;
 
   this->m_ToolFrameBuffer[ imagerToolIdentifier ] = frame;
   this->m_ToolStatusContainer[ imagerToolIdentifier ] = 0;
