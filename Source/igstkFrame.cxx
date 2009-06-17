@@ -43,15 +43,6 @@ Frame
 : m_TimeStamp(inputFrame.m_TimeStamp)
 {
   m_ImagePtr = inputFrame.m_ImagePtr;
-  /*m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
-  if(m_ImagePtr!= NULL)
-  {  
-    if(inputFrame.m_ImagePtr!=NULL)
-    { 
-      memcpy(m_ImagePtr, inputFrame.m_ImagePtr, m_Width * m_Height * m_NumberOfChannels );
-      free(inputFrame.m_ImagePtr);
-    }
-  }*/
 }
 
 Frame
@@ -76,12 +67,12 @@ Frame::SetFrameDimensions(unsigned int width,
   m_Height = height;
   m_NumberOfChannels = channels;
 
-  //m_ImagePtr = (void*)malloc(m_Width * m_Height * m_NumberOfChannels);
   m_ImagePtr = new unsigned char[m_Width * m_Height * m_NumberOfChannels];
 
   if (m_ImagePtr == NULL)
   {
-    igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: Memory could not be allocated (malloc failed)!\n" );
+    igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: "
+                        << "Memory could not be allocated (malloc failed)!\n" );
   }
 }
 
@@ -101,7 +92,7 @@ Frame
 
 void
 Frame
-::SetImagePtr(void * imagePtr, TimePeriodType millisecondsToExpiration)
+::SetImagePtr(void * imagePtr, TimePeriodType millisecondsToExpiration )
 {
   this->m_ImagePtr = imagePtr;
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
@@ -116,8 +107,7 @@ Frame
 
 void
 Frame
-::SetTimeToExpiration(
-          TimePeriodType millisecondsToExpiration)
+::SetTimeToExpiration( TimePeriodType millisecondsToExpiration )
 {
   m_TimeStamp.SetStartTimeNowAndExpireAfter( millisecondsToExpiration );
 }
@@ -161,7 +151,7 @@ Frame
 void
 Frame
 ::PrintTrailer(std::ostream& itkNotUsed(os),
-               itk::Indent itkNotUsed(indent)) const
+                                           itk::Indent itkNotUsed(indent)) const
 {
 }
 
@@ -182,7 +172,7 @@ void Frame::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
-  this->m_TimeStamp.Print( os, indent ); // Get the right indenting.
+  this->m_TimeStamp.Print( os, indent ); 
   os << indent << this->m_ImagePtr << std::endl;
 }
 
