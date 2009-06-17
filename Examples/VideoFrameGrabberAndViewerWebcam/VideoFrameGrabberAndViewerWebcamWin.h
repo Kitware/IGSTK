@@ -44,7 +44,8 @@ namespace igstk{
 * This class implements the main application.
 *
 */
-class VideoFrameGrabberAndViewerWebcamWin : public VideoFrameGrabberAndViewerWebcamWinGUI
+class VideoFrameGrabberAndViewerWebcamWin : 
+                                   public VideoFrameGrabberAndViewerWebcamWinGUI
 {
 public:
 
@@ -82,8 +83,8 @@ public:
 
 private:
 
-  VideoFrameGrabberAndViewerWebcamWin(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  VideoFrameGrabberAndViewerWebcamWin(const Self&); 
+  void operator=(const Self&); 
 
 
   /** Define a initial world coordinate system */
