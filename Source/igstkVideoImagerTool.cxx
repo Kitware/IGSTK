@@ -288,7 +288,7 @@ void VideoImagerTool::AttemptToConfigureProcessing( void )
                                    this->m_ToolConfigurationFailureInput );
 }
 
-/** The "AttemptToAttachVideoImagerToolToVideoImager" method attempts to attach 
+/** The "AttemptToAttachVideoImagerToolToVideoImager" method attempts to attach
  * the VideoImager tool to the VideoImager. */
 void VideoImagerTool
 ::AttemptToAttachVideoImagerToolToVideoImagerProcessing( void )
@@ -319,7 +319,7 @@ void VideoImagerTool::RequestReportFailedVideoImagerToolAttachment()
   this->m_StateMachine.ProcessInputs();
 }
 
-/** The "AttemptToDetachVideoImagerToolFromVideoImager" method attempts to 
+/** The "AttemptToDetachVideoImagerToolFromVideoImager" method attempts to
  * detach the VideoImager tool from the VideoImager. */
 void VideoImagerTool
 ::AttemptToDetachVideoImagerToolFromVideoImagerProcessing( void )
@@ -377,12 +377,12 @@ void VideoImagerTool::VideoImagerToolConfigurationFailureProcessing( void )
   this->InvokeEvent( VideoImagerToolConfigurationErrorEvent() );
 }
 
-/** Post-processing after a successful VideoImager tool to VideoImager 
+/** Post-processing after a successful VideoImager tool to VideoImager
  * attachment attempt. */
 void VideoImagerTool
 ::VideoImagerToolAttachmentToVideoImagerSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::
+  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::"
     << "VideoImagerToolAttachmentToVideoImagerSuccessiProcessing called ...\n");
 
   this->InvokeEvent( VideoImagerToolAttachmentToVideoImagerEvent() );
@@ -399,12 +399,12 @@ void VideoImagerTool
   this->InvokeEvent( VideoImagerToolAttachmentToVideoImagerErrorEvent() );
 }
 
-/** Post-processing after a successful detachment of the VideoImager tool 
+/** Post-processing after a successful detachment of the VideoImager tool
  * from the VideoImager. */
 void VideoImagerTool
 ::VideoImagerToolDetachmentFromVideoImagerSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::
+  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::"
    << "VideoImagerToolDetachmentFromVideoImagerSuccessProcessing called ...\n");
 
   this->InvokeEvent( VideoImagerToolDetachmentFromVideoImagerEvent() );
@@ -414,7 +414,7 @@ void VideoImagerTool
 void VideoImagerTool
 ::VideoImagerToolDetachmentFromVideoImagerFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::
+  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::"
    << "VideoImagerToolDetachmentFromVideoImagerFailureProcessing called ...\n");
 
   this->InvokeEvent( VideoImagerToolDetachmentFromVideoImagerErrorEvent() );
@@ -423,7 +423,7 @@ void VideoImagerTool
 /** Report VideoImager tool is in a Streaming state */
 void VideoImagerTool::ReportVideoImagerToolStreamingStateProcessing( void )
 {
-  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::
+  igstkLogMacro( DEBUG, "igstk::VideoImagerTool::"
                << "ReportVideoImagerToolStreamingStateProcessing called ...\n");
 
   this->InvokeEvent( VideoImagerToolMadeTransitionToStreamingStateEvent() );
@@ -488,7 +488,7 @@ void VideoImagerTool::RequestReportImagingToolNotAvailable( )
 /** Push VideoImagerToolStreaming input to the VideoImager tool  */
 void VideoImagerTool::RequestReportImagingToolStreaming( )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
   "igstk::VideoImagerTool::RequestReportImagingToolStreaming called...\n");
 
   igstkPushInputMacro( VideoImagerToolStreaming );
@@ -575,6 +575,7 @@ igstk::Frame* VideoImagerTool::GetTemporalCalibratedFrame()
     {
     igstkLogMacro( FATAL,
     "Exception in GetTemporalCalibratedFrame (igstkVideoImagerTool): " << e.what());
+    return NULL;
     }
 }
 
