@@ -738,13 +738,13 @@ void VideoImager::UpdateStatusSuccessProcessing( void )
     if ( (inputItr->second)->GetUpdated() )
         {
 
-       FrameType frame = (inputItr->second)->GetInternalFrame();
+       FrameType* frame = (inputItr->second)->GetInternalFrame();
 
-       const double timeToExpiration = frame.GetExpirationTime() -
-                                      frame.GetStartTime();
+       const double timeToExpiration = frame->GetExpirationTime() -
+                                      frame->GetStartTime();
 
-       FrameType updatedFrame;
-       updatedFrame.SetImagePtr(frame.GetImagePtr(), timeToExpiration);
+       FrameType* updatedFrame = new FrameType();
+       updatedFrame->SetImagePtr(frame->GetImagePtr(), timeToExpiration);
 
        (inputItr->second)->SetInternalFrame( updatedFrame );
 
@@ -1014,7 +1014,7 @@ VideoImager::ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool )
 /** Set VideoImager Tool Frame */
 void
 VideoImager::SetVideoImagerToolFrame(
-  VideoImagerToolType * videoImagerTool, const FrameType& frame )
+  VideoImagerToolType * videoImagerTool, FrameType* frame )
 {
   igstkLogMacro( DEBUG,
     "igstk::VideoImager::SetVideoImagerToolFrame called...\n");
@@ -1022,12 +1022,12 @@ VideoImager::SetVideoImagerToolFrame(
 }
 
 /** Get VideoImager Tool Frame */
-void VideoImager::GetVideoImagerToolFrame(
-  VideoImagerToolType * videoImagerTool, FrameType& frame )
+igstk::Frame* VideoImager::GetVideoImagerToolFrame(
+  VideoImagerToolType * videoImagerTool)
 {
   igstkLogMacro( DEBUG,
     "igstk::VideoImager::GetVideoImagerToolFrame called...\n");
-  frame = videoImagerTool->GetInternalFrame( );
+  return videoImagerTool->GetInternalFrame( );
 }
 
 
