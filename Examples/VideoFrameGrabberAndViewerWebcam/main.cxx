@@ -27,7 +27,8 @@ int main(int, char** )
 
   igstk::RealTimeClock::Initialize();
 
-  igstk::VideoFrameGrabberAndViewerWebcamWin * application = new igstk::VideoFrameGrabberAndViewerWebcamWin;
+  igstk::VideoFrameGrabberAndViewerWebcamWin * application = 
+                                 new igstk::VideoFrameGrabberAndViewerWebcamWin;
 
   while( !application->HasQuitted() )
   {
