@@ -99,22 +99,24 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::~VideoFrameRepresentation(void)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation destructor called ...\n");
+/*
+  if( m_VTKImageObserver.IsNotNull())
+    {
+    m_VTKImageObserver->Delete();
+    }
 
-  m_VTKImageObserver->Delete();
-  m_VTKImageObserver = NULL;
-  
-  if( m_LookupTable )
-  {
+  if( m_LookupTable != NULL )
+    {
     m_LookupTable->Delete();
     m_LookupTable = NULL;
-  }
-  if( m_MapColors )
-  {
+    }
+
+  if( m_MapColors != NULL )
+    {
     m_MapColors->SetLookupTable( NULL );
     m_MapColors->SetInput( NULL );
     m_MapColors->Delete();
-    m_MapColors = NULL;
-  }
+    }*/
 }
 
 /** Overloaded DeleteActors function */
@@ -213,8 +215,8 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   if( m_VTKImageObserver->GotVTKImage() )
   {
     m_ImageData = m_VTKImageObserver->GetVTKImage();
-    this->m_ImageActor->SetInput( this->m_ImageData  );  
-    
+    this->m_ImageActor->SetInput( this->m_ImageData  );
+
     if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
     {
       this->m_MapColors->SetInput( this->m_ImageData );
@@ -285,7 +287,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   {
     m_MapColors->SetLookupTable( m_LookupTable );
   }
-    
+
   igstkPushInputMacro( ConnectVTKPipeline );
   m_StateMachine.ProcessInputs();
 }
