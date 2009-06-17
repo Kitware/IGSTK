@@ -93,10 +93,11 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyVideoImagerToolInformation( const VideoImagerToolType * );
+  virtual ResultType 
+                VerifyVideoImagerToolInformation( const VideoImagerToolType * );
 
-  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency is
-   * valid for the imaging device that is being used. */
+  /** The "ValidateSpecifiedFrequency" method checks if the specified frequency
+  * is valid for the imaging device that is being used. */
   virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz );
 
   /** Print object information */
@@ -149,13 +150,13 @@ private:
   std::map< std::string, int >  m_ToolStatusContainer;
 
   /** Members and functions for communication with Unicap library */
-  unicap_handle_t handle;
-  unicap_format_t format;
-  unicap_data_buffer_t buffer;
+  unicap_handle_t m_Handle;
+  unicap_format_t m_Format;
+  unicap_data_buffer_t m_Buffer;
   unicap_data_buffer_t *returned_buffer;
 
   unicap_handle_t open_device ();
-  void set_format (unicap_handle_t handle);
+  void set_format (unicap_handle_t m_Handle);
   size_t uyvy2rgb24( __u8 *dest, __u8 *source, size_t dest_size,
              size_t source_size );
 
