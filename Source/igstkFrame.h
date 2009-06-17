@@ -51,6 +51,7 @@ class Frame
 public:
 
   friend class VideoImager;
+  friend class VideoImagerTool;
 
   igstkLoggerMacro();
 
@@ -64,8 +65,6 @@ public:
 
   igstkSetMacro( NumberOfChannels, unsigned int );
   igstkGetMacro( NumberOfChannels, unsigned int );
-
-  void SetFrameDimensions(unsigned int, unsigned int, unsigned int);
 
   /** Constructor and destructor */
   Frame();
@@ -133,7 +132,7 @@ protected:
 
 private:
 
-
+  void SetFrameDimensions(unsigned int, unsigned int, unsigned int);
   void SetImagePtr(
           void*,
           TimePeriodType millisecondsToExpiration);
