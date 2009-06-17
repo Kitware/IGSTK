@@ -45,8 +45,6 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     m_ItkRGBExporter = ITKRGBExportFilterType::New();
     m_VtkRGBImporter = VTKImportFilterType::New();
 
-
-
     // Connect the given itk::VTKImageExport filter to the given vtkImageImport filter.
     m_VtkRGBImporter->SetUpdateInformationCallback(
                                     m_ItkRGBExporter->GetUpdateInformationCallback());
@@ -108,6 +106,55 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 ::~VideoFrameSpatialObject()
 {
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
+
+  if( m_NumberOfChannels == 3 )
+  {
+    /*
+    if( m_ItkRGBExporter )
+    {
+      m_ItkRGBExporter->Delete();
+      m_ItkRGBExporter = NULL;
+    }
+*/
+    if( m_VtkRGBImporter )
+    {
+      m_VtkRGBImporter->Delete();
+      m_VtkRGBImporter = NULL;
+    }
+/*
+    if( m_RGBPixelContainer )
+    {
+      delete m_RGBPixelContainer;
+      m_RGBPixelContainer = NULL;
+    }
+
+    if( m_RGBImportFilter )
+    {
+      m_RGBImportFilter->Delete();
+      m_RGBImportFilter = NULL;
+    }*/
+  }
+  else if( m_NumberOfChannels == 1 )
+  {
+    if( m_ItkExporter )
+    {
+      m_ItkExporter->Delete();
+      m_ItkExporter = NULL;
+    }
+
+    if( m_VtkImporter )
+    {
+      m_VtkImporter->SetInput( NULL );
+      m_VtkImporter->Delete();
+      m_VtkImporter = NULL;
+    }
+   
+    if( m_ImportFilter )
+    {
+      m_ImportFilter->Delete();
+      m_ImportFilter = NULL;
+    }
+  }
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -147,13 +194,13 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_RawBuffer[i]='a';
     }
 
-    RGBImportFilter = RGBImportFilterType::New();
+    m_RGBImportFilter = RGBImportFilterType::New();
 
-    RGBImportFilter->SetRegion( m_Region );
+    m_RGBImportFilter->SetRegion( m_Region );
 
-    RGBImportFilter->SetOrigin( origin );
+    m_RGBImportFilter->SetOrigin( origin );
 
-    RGBImportFilter->SetSpacing( spacing );
+    m_RGBImportFilter->SetSpacing( spacing );
 
     int j=0;
     for( unsigned int i=0; i < m_Width * m_Height * 3; i+=3 )
@@ -165,12 +212,12 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_RGBPixelContainer[j]=temp;
       j++;
     }
-    RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
-    RGBImportFilter->Update();
+    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
+    m_RGBImportFilter->Update();
 
-    this->m_RGBImage = RGBImportFilter->GetOutput();
+    this->m_RGBImage = m_RGBImportFilter->GetOutput();
 
-    m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
+    m_ItkRGBExporter->SetInput( m_RGBImportFilter->GetOutput() );
     m_VtkRGBImporter->UpdateWholeExtent();
 
     m_VTKImage = m_VtkRGBImporter->GetOutput();
@@ -335,7 +382,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 {
   if(this->m_VideoImagerTool.IsNotNull())
   {
-    m_RawBuffer=(unsigned char*)(m_VideoImagerTool->GetTemporalCalibratedFrame()).GetImagePtr();
+    m_RawBuffer=(unsigned char*)(m_VideoImagerTool->GetTemporalCalibratedFrame())->GetImagePtr();
   }
   else
   {
@@ -354,11 +401,11 @@ VideoFrameSpatialObject< TPixelType, TChannels>
       m_RGBPixelContainer[j]=temp;
       j++;
     }
-    RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
-    RGBImportFilter->Update();
-    this->m_RGBImage = RGBImportFilter->GetOutput();
+    m_RGBImportFilter->SetImportPointer(m_RGBPixelContainer, m_Width * m_Height, false );
+    m_RGBImportFilter->Update();
+    this->m_RGBImage = m_RGBImportFilter->GetOutput();
 
-    m_ItkRGBExporter->SetInput( RGBImportFilter->GetOutput() );
+    m_ItkRGBExporter->SetInput( m_RGBImportFilter->GetOutput() );
     m_VtkRGBImporter->UpdateWholeExtent();
     m_VtkRGBImporter->Update();
 
