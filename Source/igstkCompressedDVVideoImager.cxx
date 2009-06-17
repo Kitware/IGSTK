@@ -41,18 +41,17 @@
 #define MAX_DEVICES 64
 #define MAX_FORMATS 64
 
-
 namespace igstk
 {
 
-
 //Initialize static variables
-std::map< unsigned int, std::string> CompressedDVVideoImager::m_ErrorCodeContainer;
+std::map< unsigned int, std::string> 
+                                  CompressedDVVideoImager::m_ErrorCodeContainer;
 bool CompressedDVVideoImager::m_ErrorCodeListCreated = false;
 unsigned char* CompressedDVVideoImager::pixels[1] = {NULL};
 unsigned char* CompressedDVVideoImager::frameBuffer = NULL;
-itk::MutexLock::Pointer CompressedDVVideoImager::m_FrameBufferLock = itk::MutexLock::New();
-
+itk::MutexLock::Pointer CompressedDVVideoImager::m_FrameBufferLock 
+                                                        = itk::MutexLock::New();
 
 /** Constructor: Initializes all internal variables. */
 CompressedDVVideoImager::CompressedDVVideoImager(void):m_StateMachine(this)
@@ -160,9 +159,11 @@ CompressedDVVideoImager::GetErrorDescription( unsigned int code )
     }
 }
 
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalOpen( void )
+CompressedDVVideoImager::ResultType 
+                                   CompressedDVVideoImager::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalOpen called ...\n");
+  igstkLogMacro( DEBUG, 
+                   "igstk::CompressedDVVideoImager::InternalOpen called ...\n");
 
   if( ! this->Initialize() )
     {
@@ -176,11 +177,12 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalOpen( void 
 /** Initialize socket */
 bool CompressedDVVideoImager::Initialize( void )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::Initialize called ...\n");
+  igstkLogMacro( DEBUG, 
+                     "igstk::CompressedDVVideoImager::Initialize called ...\n");
 
-  f = NULL;
-  node_specified = 0;
-  bandwidth = -1;
+  m_File = NULL;
+  m_Node_specified = 0;
+  m_Bandwidth = -1;
   node = 0xffc0;
 
   handle = raw1394_new_handle_on_port (0);//
@@ -202,23 +204,25 @@ CompressedDVVideoImager::ResultType
 CompressedDVVideoImager
 ::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
 {
-  igstkLogMacro( DEBUG,
-    "igstk::CompressedDVVideoImager::VerifyVideoImagerToolInformation called ...\n");
+  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager" 
+                          << "::VerifyVideoImagerToolInformation called ...\n");
 
   return SUCCESS;
 }
 
 /** Detach camera. */
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalClose( void )
+CompressedDVVideoImager::ResultType 
+                                  CompressedDVVideoImager::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalClose called ...\n");
+  igstkLogMacro( DEBUG, 
+                  "igstk::CompressedDVVideoImager::InternalClose called ...\n");
 
   /*
     Close the device
     This invalidates the handle
   */
 
-  fclose (f);
+  fclose (m_File);
   raw1394_destroy_handle (handle);
   fprintf( stderr, "Close the device\n");
 
@@ -226,12 +230,13 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalClose( void
 }
 
 /** Put the imaging device into imaging mode. */
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalStartImaging( void )
+CompressedDVVideoImager::ResultType 
+                           CompressedDVVideoImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::CompressedDVVideoImager::InternalStartImaging called ...\n");
 
-  dv_receive (handle, f, 63);
+  dv_receive (handle, m_File, 63);
 
     igstk::DoubleTypeEvent evt;
     evt.Set( 1.0 );
@@ -242,7 +247,8 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalStartImagin
 }
 
 /** Take the imaging device out of imaging mode. */
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalStopImaging( void )
+CompressedDVVideoImager::ResultType 
+                            CompressedDVVideoImager::InternalStopImaging( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::CompressedDVVideoImager::InternalStopImaging called ...\n");
@@ -255,14 +261,17 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalStopImaging
 }
 
 /** Reset the imaging device to put it back to its original state. */
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalReset( void )
+CompressedDVVideoImager::ResultType 
+                                  CompressedDVVideoImager::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalReset called ...\n");
+  igstkLogMacro( DEBUG, 
+                  "igstk::CompressedDVVideoImager::InternalReset called ...\n");
   return SUCCESS;
 }
 
 /** Update the status and the transforms for all VideoImagerTools. */
-CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalUpdateStatus()
+CompressedDVVideoImager::ResultType 
+                                 CompressedDVVideoImager::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG,
     "igstk::CompressedDVVideoImager::InternalUpdateStatus called ...\n");
@@ -291,8 +300,9 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalUpdateStatu
     // only report tools that have useful data
     if (! this->m_ToolStatusContainer[inputItr->first])
     {
-      igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalUpdateStatus: " <<
-              "tool " << inputItr->first << " is not in view\n");
+      igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager"
+                         << "::InternalUpdateStatus: " <<
+                            "tool " << inputItr->first << " is not in view\n");
       // report to the imager tool that the imager is not available
       this->ReportImagingToolNotAvailable(
         imagerToolContainer[inputItr->first]);
@@ -325,8 +335,8 @@ CompressedDVVideoImager::ResultType CompressedDVVideoImager::InternalUpdateStatu
 CompressedDVVideoImager::ResultType
 CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager::InternalThreadedUpdateStatus"
-                        " called ...\n");
+  igstkLogMacro( DEBUG, 
+   "igstk::CompressedDVVideoImager::InternalThreadedUpdateStatus called ...\n");
 
   cout << "";
 
@@ -518,9 +528,9 @@ int write_frame (unsigned char *data, int len, int complete, void *callback_data
 
 void CompressedDVVideoImager::dv_receive( raw1394handle_t handle, FILE *f, int channel)
 {
-  iec61883_dv_fb_t dvFrame = iec61883_dv_fb_init (handle, write_frame, (void *)f );
+  iec61883_dv_fb_t dvFrame = iec61883_dv_fb_init (handle, write_frame, (void *)m_File );
 
-  if (dvFrame && iec61883_dv_fb_start (dvFrame, channel) == 0)
+  if (dvFrame && iec61883_dv_fb_start (dvFrame, m_Channel) == 0)
   {
     fprintf (stderr, "Starting to receive\n");
   }
@@ -535,5 +545,3 @@ void CompressedDVVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) 
 }
 
 } // end of namespace igstk
-
-
