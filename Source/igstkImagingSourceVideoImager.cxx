@@ -196,7 +196,7 @@ ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalClose( vo
 
     This invalidates the handle
   */
-  if( !SUCCESS( unicap_close( handle ) ) )
+  if( !SUCCESS( unicap_close( m_Handle ) ) )
   {
      fprintf( stderr, "Failed to close the device\n");
   }
@@ -232,37 +232,37 @@ ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalStartImag
 
     /**ImaginsSourceConverter begin*/
 
-    handle = open_device();
-    if(!handle)
+    m_Handle = open_device();
+    if(!m_Handle)
     {
       fprintf( stderr, "Failed to get handle %d\n", i );
     }
-    set_format(handle);
+    set_format(m_Handle);
     deviceOpen = true;
 
-    if( !SUCCESS( unicap_get_format( handle, &format ) ) )
+    if( !SUCCESS( unicap_get_format( m_Handle, &m_Format ) ) )
     {
        fprintf( stderr, "Failed to get video format!\n" );
        exit( -1 );
     }
 
-    format.buffer_type = UNICAP_BUFFER_TYPE_USER;
+    m_Format.buffer_type = UNICAP_BUFFER_TYPE_USER;
 
-    if( !SUCCESS( unicap_set_format( handle, &format ) ) )
+    if( !SUCCESS( unicap_set_format( m_Handle, &m_Format ) ) )
     {
        fprintf( stderr, "Failed to set video format!\n" );
        exit( -1 );
     }
 
-     buffer.data = (unsigned char*)malloc( format.buffer_size );
-     buffer.buffer_size = format.buffer_size;
+     m_Buffer.data = (unsigned char*)malloc( m_Format.buffer_size );
+     m_Buffer.buffer_size = m_Format.buffer_size;
 
-     unicap_start_capture( handle );
-     unicap_queue_buffer( handle, &buffer );
+     unicap_start_capture( m_Handle );
+     unicap_queue_buffer( m_Handle, &m_Buffer );
 
      returned_buffer = new unicap_data_buffer_t;
-     returned_buffer->data = (unsigned char*)malloc( format.buffer_size );
-     returned_buffer->buffer_size = format.buffer_size;
+     returned_buffer->data = (unsigned char*)malloc( m_Format.buffer_size );
+     returned_buffer->buffer_size = m_Format.buffer_size;
 
   } while ( (times<maxTimes) && ( !deviceOpen ) );
 
@@ -289,12 +289,12 @@ ImagingSourceVideoImager::ResultType ImagingSourceVideoImager::InternalStopImagi
   /*
     Stop the device
   */
-  if( !SUCCESS( unicap_stop_capture( handle ) ) )
+  if( !SUCCESS( unicap_stop_capture( m_Handle ) ) )
   {
      fprintf( stderr, "Failed to stop capture device\n");
   }
 
-  free( buffer.data );
+  free( m_Buffer.data );
   delete returned_buffer;
 
   return SUCCESS;
@@ -420,12 +420,12 @@ ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
 //        return FAILURE;
 //      }
 
-      if( !SUCCESS( unicap_wait_buffer( handle, &returned_buffer ) ) )
+      if( !SUCCESS( unicap_wait_buffer( m_Handle, &returned_buffer ) ) )
       {
       fprintf( stderr, "Failed to wait for buffer!\n" );
       }
 
-      if( !SUCCESS( unicap_queue_buffer( handle, returned_buffer ) ) )
+      if( !SUCCESS( unicap_queue_buffer( m_Handle, returned_buffer ) ) )
       {
       fprintf( stderr, "Failed to queue buffer!\n" );
       }
@@ -436,8 +436,8 @@ ImagingSourceVideoImager::InternalThreadedUpdateStatus( void )
       uyvy2rgb24(
          (unsigned char*)frame->GetImagePtr(),//data pointer in frame, new buffer dest
          returned_buffer->data,//buffer with frame from device (UYVY)
-         format.size.width * format.size.height * 3, // size of frame in RGB
-         format.size.width * format.size.height * 2  // size of frame in UYVY
+         m_Format.size.width * m_Format.size.height * 3, // size of frame in RGB
+         m_Format.size.width * m_Format.size.height * 2  // size of frame in UYVY
          //width * height * 2 ( 1 Y, 1/2 Cr , 1/2 Cb )
          );
 
@@ -530,7 +530,7 @@ ImagingSourceVideoImager::open_device ()
   int dev_count;
   int status = STATUS_SUCCESS;
   unicap_device_t devices[MAX_DEVICES];
-  unicap_handle_t handle;
+  unicap_handle_t m_Handle;
   int d = -1;
 
   for (dev_count = 0; SUCCESS (status) && (dev_count < MAX_DEVICES);
@@ -562,13 +562,13 @@ ImagingSourceVideoImager::open_device ()
     d=0;
   }
 
-  unicap_open (&handle, &devices[d]);
+  unicap_open (&m_Handle, &devices[d]);
 
-  return handle;
+  return m_Handle;
 }
 
 void
-ImagingSourceVideoImager::set_format (unicap_handle_t handle)
+ImagingSourceVideoImager::set_format (unicap_handle_t m_Handle)
 {
   unicap_format_t formats[MAX_FORMATS];
   int format_count;
@@ -578,7 +578,7 @@ ImagingSourceVideoImager::set_format (unicap_handle_t handle)
   for (format_count = 0; SUCCESS (status) && (format_count < MAX_FORMATS);
        format_count++)
   {
-    status = unicap_enumerate_formats (handle, NULL, &formats[format_count],  // (1)
+    status = unicap_enumerate_formats (m_Handle, NULL, &formats[format_count],  // (1)
            format_count);
     if (SUCCESS (status))
   {
@@ -627,7 +627,7 @@ ImagingSourceVideoImager::set_format (unicap_handle_t handle)
     formats[f].size.height = formats[f].sizes[s].height;
   }
 
-  if (!SUCCESS (unicap_set_format (handle, &formats[f]))) // (3)
+  if (!SUCCESS (unicap_set_format (m_Handle, &formats[f]))) // (3)
   {
     fprintf (stderr, "Failed to set the format!\n");
     exit (-1);
@@ -700,7 +700,7 @@ size_t ImagingSourceVideoImager::uyvy2rgb24(
   dest_offset += 3;
   }
 
-// From SciLab : This is the good one.
+  // From SciLab : This is the good one.
   //r = 1 * y -  0.0009267*(u-128)  + 1.4016868*(v-128);^M
   //g = 1 * y -  0.3436954*(u-128)  - 0.7141690*(v-128);^M
   //b = 1 * y +  1.7721604*(u-128)  + 0.0009902*(v-128);^M
