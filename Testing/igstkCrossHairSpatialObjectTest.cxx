@@ -340,6 +340,12 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
     view2D->RequestResetCamera();
     }
 
+  view2D->RequestRemoveObject( crossHairObjectRepresentation );
+  view2D->RequestRemoveObject( NULL );
+
+  delete fltkWidget2D;
+  delete form;
+
   std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS;
