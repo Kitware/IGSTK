@@ -889,6 +889,17 @@ int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
     }
   invalidRequestErrorObserver->Reset();
 
+  std::cout<<"Next line should work:\n\t";
+  pivotCalibrationAlgorithm->RequestSetSingularValueThreshold(0.01);
+  if( invalidRequestErrorObserver->EventOccured() )
+  {
+    return EXIT_FAILURE;
+  }
+  invalidRequestErrorObserver->Reset();
+
+  // code coverage
+  pivotCalibrationAlgorithm->Print(std::cout);
+
              //step 2: use a valid data set and give it in one vector, check 
              //        that computation results in expected values
   for( unsigned int i=0; i<NUMBER_OF_VALID_TRANSFORMATIONS; i++ ) 
