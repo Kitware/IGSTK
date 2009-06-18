@@ -74,8 +74,8 @@ public:
 
   void * GetImagePtr();
 
-  /** Returns the time at which the validity of this information starts. The
-   * data in this frame should not be used for scenes to be rendered
+  /** Returns the time at which the validity of this information starts.
+   * The data in this frame should not be used for scenes to be rendered
    * before that validity time. The time is returned in milliseconds.
    *
    * \sa TimeStamp
@@ -115,9 +115,6 @@ public:
   /** Method for printing the member variables of this class to an ostream */
   void Print(std::ostream& os, itk::Indent indent) const;
 
-  /** Manually free allocated memory */
-  void Free();
-
 protected:
 
   void PrintHeader(std::ostream& os, itk::Indent indent) const;
@@ -132,7 +129,7 @@ private:
 
   void SetFrameDimensions( unsigned int, unsigned int, unsigned int);
   void SetImagePtr( void*, TimePeriodType millisecondsToExpiration);
-  
+
   std::vector< unsigned char > *m_Image;
   TimeStamp                     m_TimeStamp;
   void*                         m_ImagePtr;
