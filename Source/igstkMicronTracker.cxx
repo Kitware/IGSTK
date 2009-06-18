@@ -566,25 +566,11 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
 
   // Send the commands to the device that will get the transforms
   // for all of the tools.
-  // Lock the buffer that this method shares with InternalUpdateStatus
-  m_BufferLock->Lock();
-
-  //reset the status of all the tracker tools
-  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
-  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
-  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
-
-  while( inputItr != inputEnd )
-    {
-    this->m_ToolStatusContainer[inputItr->first] = 0;
-    ++inputItr;
-    }
-
+  //
   // Grab frame
   if ( ! this->m_Cameras->grabFrame( this->m_SelectedCamera ) )
     {
     igstkLogMacro( CRITICAL, "Error grabbing a frame");
-    m_BufferLock->Unlock();
     return FAILURE;
     }
 
@@ -596,25 +582,37 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     {
     igstkLogMacro( CRITICAL, "Error processing a frame: "
      << MicronTracker::GetErrorDescription( completionCode ));
-    m_BufferLock->Unlock();
     return FAILURE;
     }
 
-  // process identified markers
+  // Lock the buffer to update the tool transform 
+  m_BufferLock->Lock();
+ 
+  // First, reset the status of all the tracker tools
+  typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
+  InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
+  InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
+
+  while( inputItr != inputEnd )
+    {
+    this->m_ToolStatusContainer[inputItr->first] = 0;
+    ++inputItr;
+    }
+
   Collection* markersCollection =
     new Collection(this->m_Markers->identifiedMarkers(this->m_SelectedCamera));
-
-  if (markersCollection->count() == 0)
-    {
-    delete markersCollection;
-    m_BufferLock->Unlock();
-    return FAILURE;
-    }
 
   const unsigned int markersCollectionCount = 
       static_cast<unsigned int>( markersCollection->count() );
 
-  for(unsigned int markerNum = 1;
+  if (markersCollectionCount == 0)
+    {
+    delete markersCollection;
+    m_BufferLock->Unlock();
+    return SUCCESS;
+    }
+
+    for(unsigned int markerNum = 1;
       markerNum <= markersCollectionCount; markerNum++)
     {
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
@@ -673,7 +671,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
           this->m_ToolStatusContainer[ marker->getName() ] = 1;
           }
         }
-      }
+  
+     }
     // DO NOT delete marker. This is a possible bug in Marker class.
     // Invoking the marker class destructor causes misidentification of the
     // markers in the subsequent frames.
@@ -682,10 +681,10 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     //
     }
 
-  delete markersCollection;
-
   // unlock the buffer
   m_BufferLock->Unlock();
+ 
+  delete markersCollection;
 
   return SUCCESS;
 }
