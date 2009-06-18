@@ -127,9 +127,11 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
   igstkLogMacro( DEBUG,
     "igstk::VideoFrameRepresentation::VerifyTimeStamp called...\n");
 
-  if( this->GetRenderTimeStamp().GetExpirationTime() <
+  unsigned int jitter = 5000;
+
+  if( this->GetRenderTimeStamp().GetExpirationTime() + jitter <
     this->m_VideoFrameSpatialObject->GetFrameStartTime() ||
-    this->GetRenderTimeStamp().GetStartTime() >
+    (this->GetRenderTimeStamp().GetStartTime() - jitter) >
     this->m_VideoFrameSpatialObject->GetFrameExpirationTime() )
     {
     return false;
