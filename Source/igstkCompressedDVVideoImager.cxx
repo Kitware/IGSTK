@@ -338,7 +338,8 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
   igstkLogMacro( DEBUG,
    "igstk::CompressedDVVideoImager::InternalThreadedUpdateStatus called ...\n");
 
-  cout << " ";
+  cout << "                                                                  "
+  <<  "                                                                      ";
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
