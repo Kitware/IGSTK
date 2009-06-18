@@ -34,7 +34,6 @@
 
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
-
 namespace igstk
 {
 
@@ -117,10 +116,9 @@ public:
   /** The "RequestStopImaging" stops VideoImager from imaging the tools. */
   void RequestStopImaging( void );
 
-
   /** The "RequestSetFrequency" method defines the frequency at which a frame
    * will be queried from the VideoImager device. Note that
-   * VideoImager devices have their own internal frequency rate, and if you set 
+   * VideoImager devices have their own internal frequency rate, and if you set
    * here a frequency that is higher than what the VideoImager device is capable
    * to follow, then you will start receiving similar frames. */
   void RequestSetFrequency( double frequencyInHz );
@@ -195,8 +193,8 @@ protected:
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
   /** Verify if a VideoImager tool information is correct before attaching
-   *  it to the VideoImager. This method is used to verify the information 
-   *  supplied by the user about the VideoImager tool. The information depends 
+   *  it to the VideoImager. This method is used to verify the information
+   *  supplied by the user about the VideoImager tool. The information depends
    *  on the VideoImager type.
    */
   virtual ResultType
@@ -219,7 +217,7 @@ protected:
                               const VideoImagerToolType * videoImagerTool ) = 0;
 
   /** typedefs from VideoImagerTool class */
-  typedef std::map< std::string, VideoImagerToolType *>  
+  typedef std::map< std::string, VideoImagerToolType *>
                                                   VideoImagerToolsContainerType;
 
   /** Access method for the VideoImager tool container. This method
@@ -228,11 +226,11 @@ protected:
   const VideoImagerToolsContainerType & GetVideoImagerToolContainer() const;
 
   /** Report to VideoImager tool that it is not available for imaging */
-  void ReportImagingToolNotAvailable( 
+  void ReportImagingToolNotAvailable(
                                   VideoImagerToolType * VideoImagerTool ) const;
 
   /** Report to VideoImager tool that it is streaming */
-  void ReportImagingToolStreaming( 
+  void ReportImagingToolStreaming(
                                   VideoImagerToolType * videoImagerTool ) const;
 
   void SetVideoImagerToolFrame( VideoImagerToolType * videoImagerTool,
@@ -289,7 +287,6 @@ private:
   /** Imaging ThreadID */
   int                             m_ThreadID;
 
-  //TODO rename
   /** itk::ConditionVariable object pointer to signal for the next
    *  frame */
   itk::ConditionVariable::Pointer m_ConditionNextFrameReceived;
@@ -441,7 +438,7 @@ private:
 
   VideoImagerToolType   * m_VideoImagerToolToBeAttached;
 
-  double              m_FrequencyToBeSet;
+  double                  m_FrequencyToBeSet;
 };
 
 }
