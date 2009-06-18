@@ -45,12 +45,12 @@ namespace igstk
 {
 
 //Initialize static variables
-std::map< unsigned int, std::string> 
+std::map< unsigned int, std::string>
                                   CompressedDVVideoImager::m_ErrorCodeContainer;
 bool CompressedDVVideoImager::m_ErrorCodeListCreated = false;
 unsigned char* CompressedDVVideoImager::pixels[1] = {NULL};
 unsigned char* CompressedDVVideoImager::frameBuffer = NULL;
-itk::MutexLock::Pointer CompressedDVVideoImager::m_FrameBufferLock 
+itk::MutexLock::Pointer CompressedDVVideoImager::m_FrameBufferLock
                                                         = itk::MutexLock::New();
 
 /** Constructor: Initializes all internal variables. */
@@ -159,10 +159,10 @@ CompressedDVVideoImager::GetErrorDescription( unsigned int code )
     }
 }
 
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                                    CompressedDVVideoImager::InternalOpen( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                    "igstk::CompressedDVVideoImager::InternalOpen called ...\n");
 
   if( ! this->Initialize() )
@@ -177,7 +177,7 @@ CompressedDVVideoImager::ResultType
 /** Initialize socket */
 bool CompressedDVVideoImager::Initialize( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                      "igstk::CompressedDVVideoImager::Initialize called ...\n");
 
   m_File = NULL;
@@ -204,17 +204,17 @@ CompressedDVVideoImager::ResultType
 CompressedDVVideoImager
 ::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
 {
-  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager" 
+  igstkLogMacro( DEBUG, "igstk::CompressedDVVideoImager"
                           << "::VerifyVideoImagerToolInformation called ...\n");
 
   return SUCCESS;
 }
 
 /** Detach camera. */
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                                   CompressedDVVideoImager::InternalClose( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                   "igstk::CompressedDVVideoImager::InternalClose called ...\n");
 
   /*
@@ -230,7 +230,7 @@ CompressedDVVideoImager::ResultType
 }
 
 /** Put the imaging device into imaging mode. */
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                            CompressedDVVideoImager::InternalStartImaging( void )
 {
   igstkLogMacro( DEBUG,
@@ -247,7 +247,7 @@ CompressedDVVideoImager::ResultType
 }
 
 /** Take the imaging device out of imaging mode. */
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                             CompressedDVVideoImager::InternalStopImaging( void )
 {
   igstkLogMacro( DEBUG,
@@ -261,16 +261,16 @@ CompressedDVVideoImager::ResultType
 }
 
 /** Reset the imaging device to put it back to its original state. */
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                                   CompressedDVVideoImager::InternalReset( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                   "igstk::CompressedDVVideoImager::InternalReset called ...\n");
   return SUCCESS;
 }
 
 /** Update the status and the transforms for all VideoImagerTools. */
-CompressedDVVideoImager::ResultType 
+CompressedDVVideoImager::ResultType
                                  CompressedDVVideoImager::InternalUpdateStatus()
 {
   igstkLogMacro( DEBUG,
@@ -335,10 +335,10 @@ CompressedDVVideoImager::ResultType
 CompressedDVVideoImager::ResultType
 CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
    "igstk::CompressedDVVideoImager::InternalThreadedUpdateStatus called ...\n");
 
-  cout << "";
+  cout << " ";
 
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
@@ -367,9 +367,10 @@ CompressedDVVideoImager::InternalThreadedUpdateStatus( void )
     {
       // create the frame
       VideoImagerToolsContainerType imagerToolContainer =
-                                              this->GetVideoImagerToolContainer();
+                                           this->GetVideoImagerToolContainer();
       FrameType* frame = new FrameType();
-      frame = this->GetVideoImagerToolFrame( imagerToolContainer[deviceItr->first]);
+      frame = this->GetVideoImagerToolFrame(
+                                        imagerToolContainer[deviceItr->first]);
 
       unsigned int frameDims[3];
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
@@ -530,7 +531,7 @@ void CompressedDVVideoImager::dv_receive( raw1394handle_t handle, FILE *f, int c
 {
   iec61883_dv_fb_t dvFrame = iec61883_dv_fb_init (handle, write_frame, (void *)m_File );
 
-  if (dvFrame && iec61883_dv_fb_start (dvFrame, m_Channel) == 0)
+  if (dvFrame && iec61883_dv_fb_start (dvFrame, channel) == 0)
   {
     fprintf (stderr, "Starting to receive\n");
   }
