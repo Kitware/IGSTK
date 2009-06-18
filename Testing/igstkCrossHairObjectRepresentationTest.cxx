@@ -278,7 +278,7 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
   igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestStop();
 
-  delete widget2D;
+  delete fltkWidget2D;
   delete form;
   
   std::cout << "[SUCCESS]" << std::endl;
