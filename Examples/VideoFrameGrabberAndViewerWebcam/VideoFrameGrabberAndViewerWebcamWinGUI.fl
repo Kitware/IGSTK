@@ -1,0 +1,94 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0109 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class VideoFrameGrabberAndViewerWebcamWinGUI {open : {public igstk::Object}
+} {
+  Function {VideoFrameGrabberAndViewerWebcamWinGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {IGSTK - Videoframe Viewer}
+      callback {Quit();} open
+      xywh {-32000 -32000 762 400} type Double box PLASTIC_UP_BOX align 18 hide
+      code0 {\#include "igstkFLTKWidget.h"} modal size_range {0 0 750 400}
+    } {
+      Fl_Group m_ControlGroup {open
+        xywh {0 0 150 400} box FLAT_BOX color 7 selection_color 7 labeltype ENGRAVED_LABEL labelcolor 4 align 0
+      } {
+        Fl_Box m_InstitutionBox {
+          image {IGSTK.jpg} xywh {11 27 130 61} color 7 labelsize 23 labelcolor 15
+        }
+        Fl_Button {} {
+          label Quit
+          callback {Quit();}
+          tooltip {Load segmentation (.msh)} xywh {10 348 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
+        }
+      }
+      Fl_Group m_ViewerGroup {open selected
+        xywh {151 0 600 400} box PLASTIC_DOWN_BOX
+        code0 {\#include "VideoFrameGrabberAndViewerWebcamWinView.h"}
+        class {igstk::VideoFrameGrabberAndViewerWebcamWinView}
+      } {}
+    }
+    code {mainWindow->show();
+//mainWindow->fullscreen();
+hasQuitted = false;
+
+int x = m_ControlGroup->x();
+int y = m_ControlGroup->y();
+int width = m_ControlGroup->w();
+int height = m_ControlGroup->h();
+m_ControlGroup->resize(x,y,150,height);} {}
+    Fl_Window m_ConfirmToQuitWindow {
+      label {Shut down system}
+      xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Are you sure you want to quit?}
+        xywh {40 24 335 51} labelsize 22
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_ConfirmToQuitWindow->hide();
+
+this->RequestPrepareToQuit();
+
+this->hasQuitted = true;}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 255 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_ConfirmToQuitWindow->hide();
+
+this->hasQuitted = false;}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 255 selection_color 95
+      }
+    }
+  }
+  Function {~VideoFrameGrabberAndViewerWebcamWinGUI()} {return_type virtual
+  } {
+    code {delete m_ViewerGroup;} {}
+  }
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {m_ConfirmToQuitWindow->show();
+CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {RequestPrepareToQuit()} {return_type {virtual void}
+  } {}
+  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
+  } {
+    code {int px = mainWindow->x() + (mainWindow->w() - childWindow->w()) / 2;
+int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
+childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
+  }
+} 

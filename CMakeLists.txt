@@ -199,12 +199,31 @@ IF(IGSTK_USE_OpenIGTLink)
 ENDIF(IGSTK_USE_OpenIGTLink)
 
 #
+# Use OpenCV 
+#
+OPTION(IGSTK_USE_OpenCV "Use the OpenCV library" OFF)
+IF(IGSTK_USE_OpenCV)
+  #
+  #  FIND OpenCV 
+  FIND_PACKAGE( OpenCV REQUIRED )
+ENDIF(IGSTK_USE_OpenCV)
+
+
+#
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree
 #
 OPTION(IGSTK_USE_SceneGraphVisualization "Enable scene graph visualization by allowing the observer to listen to relevant events" ON)
 IF(IGSTK_USE_SceneGraphVisualization)
   INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/SceneGraphVisualization )
 ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+#-----------------------------------------------------------------------------
+# IGSTK build video imager classes
+OPTION(IGSTK_USE_VideoImager "Build video imager classes are under review and not fully tested yet" OFF)
+
+IF(IGSTK_USE_VideoImager)
+  MESSAGE("Warning: Video imager classes are under review and not fully tested yet") 
+ENDIF(IGSTK_USE_VideoImager)
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.

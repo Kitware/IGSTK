@@ -42,5 +42,18 @@ IF (IGSTK_USE_OpenIGTLink)
 ENDIF (IGSTK_USE_OpenIGTLink)
 
 
+IF(IGSTK_USE_VideoImager)
+ IF( WIN32 )
+   IF (IGSTKSandbox_USE_OpenCV)
+      SUBDIRS( VideoFrameGrabberAndViewerWebcam )
+   ENDIF (IGSTKSandbox_USE_OpenCV)
+ ENDIF( WIN32 )
+
+ IF(IGSTK_USE_OpenIGTLink)
+  SUBDIRS( VideoFrameGrabberAndViewerOpenIGTLink )
+ ENDIF(IGSTK_USE_OpenIGTLink)
+
+ENDIF(IGSTK_USE_VideoImager)
+ 
 
 

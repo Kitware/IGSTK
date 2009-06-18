@@ -146,6 +146,35 @@ IF(IGSTK_USE_OpenIGTLink)
       )
 ENDIF(IGSTK_USE_OpenIGTLink)
 
+IF(IGSTK_USE_VideoImager)
+    SET(IGSTK_HEADS
+        ${IGSTK_HEADS}
+        igstkVideoImager.h
+        igstkVideoImagerTool.h
+        igstkFrame.h
+        igstkVideoFrameSpatialObject.h
+        igstkVideoFrameRepresentation.h
+        )
+
+  IF(IGSTK_USE_OpenIGTLink)
+    SET(IGSTK_HEADS
+       ${IGSTK_HEADS}
+       igstkOpenIGTLinkVideoImager.h
+       igstkOpenIGTLinkVideoImagerTool.h
+       )
+  ENDIF(IGSTK_USE_OpenIGTLink)
+
+  IF(WIN32)
+    IF(IGSTK_USE_OpenCV)
+      SET(IGSTK_HEADS
+        ${IGSTK_HEADS}
+        igstkWebcamWinVideoImager.h
+        igstkWebcamWinVideoImagerTool.h
+        )
+    ENDIF(IGSTK_USE_OpenCV)
+  ENDIF(WIN32)
+
+ENDIF(IGSTK_USE_VideoImager)
 
 # The implementation files
 
@@ -287,6 +316,37 @@ IF(IGSTK_USE_OpenIGTLink)
       )
 ENDIF(IGSTK_USE_OpenIGTLink)
 
+IF(IGSTK_USE_VideoImager)
+    SET(IGSTK_SRCS
+        ${IGSTK_SRCS}
+        igstkVideoImager.cxx
+        igstkVideoImagerTool.cxx
+        igstkFrame.cxx
+        igstkVideoFrameSpatialObject.txx
+        igstkVideoFrameRepresentation.txx
+        )
+
+  IF(IGSTK_USE_OpenIGTLink)
+    SET(IGSTK_SRCS
+       ${IGSTK_SRCS}
+       igstkOpenIGTLinkVideoImager.cxx
+       igstkOpenIGTLinkVideoImagerTool.cxx
+       )
+  ENDIF(IGSTK_USE_OpenIGTLink)
+
+  IF(WIN32)
+    IF(IGSTK_USE_OpenCV)
+      SET(IGSTK_SRCS
+        ${IGSTK_SRCS}
+        igstkWebcamWinVideoImager.cxx
+        igstkWebcamWinVideoImagerTool.cxx
+        )
+    ENDIF(IGSTK_USE_OpenCV)    
+  ENDIF(WIN32)
+
+ENDIF(IGSTK_USE_VideoImager)
+
+
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
     igstkSerialCommunicationForWindows.h
@@ -331,6 +391,10 @@ ENDIF(IGSTK_USE_OpenIGTLink)
 IF(IGSTK_USE_SceneGraphVisualization)
   SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+IF(IGSTK_USE_OpenCV)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} cxcore110d cv110d highgui110d)
+ENDIF(IGSTK_USE_OpenCV)
 
 
 # Adding the IGSTK library
