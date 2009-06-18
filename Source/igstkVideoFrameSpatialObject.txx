@@ -19,9 +19,6 @@
 
 #include "igstkVideoFrameSpatialObject.h"
 
-#include "vtkImageData.h"
-
-
 namespace igstk
 {
 
@@ -80,7 +77,6 @@ VideoFrameSpatialObject< TPixelType, TChannels >
     m_ItkExporter = ITKExportFilterType::New();
     m_VtkImporter = VTKImportFilterType::New();
 
-    //1 Channel
     m_VtkImporter->SetUpdateInformationCallback(
                                  m_ItkExporter->GetUpdateInformationCallback());
     m_VtkImporter->SetPipelineModifiedCallback(
@@ -118,52 +114,28 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 ::~VideoFrameSpatialObject()
 {
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
-  /*
+
   if( m_NumberOfChannels == 3 )
-    {
+     {
+     if( m_VtkRGBImporter )
+       {
+       m_VtkRGBImporter->Delete();
+       m_VtkRGBImporter = NULL;
+       }
 
-    if( m_ItkRGBExporter )
-    {
-      m_ItkRGBExporter->Delete();
-      m_ItkRGBExporter = NULL;
-      }
-
-    if( m_VtkRGBImporter )
-      {
-      m_VtkRGBImporter->Delete();
-      m_VtkRGBImporter = NULL;
-      }
-
-    if( m_RGBPixelContainer )
-      {
-      delete m_RGBPixelContainer;
-      m_RGBPixelContainer = NULL;
-      }
-
-    if( m_RGBImportFilter )
-      {
-      m_RGBImportFilter->Delete();
-      m_RGBImportFilter = NULL;
-      }
-    }
-  else if( m_NumberOfChannels == 1 )
-    {
-    if( m_ItkExporter )
-      {
-      m_ItkExporter->Delete();
-      }
-
-    if( m_VtkImporter )
-      {
-      m_VtkImporter->SetInput( NULL );
-      m_VtkImporter->Delete();
-      }
-
-    if( m_ImportFilter )
-      {
-      m_ImportFilter->Delete();
-      }
-    }*/
+     if( m_RGBPixelContainer )
+       {
+       delete [] m_RGBPixelContainer;
+       m_RGBPixelContainer = NULL;
+       }
+     }
+   else if( m_NumberOfChannels == 1 )
+     {
+     if( m_VtkImporter )
+       {
+       m_VtkImporter->Delete();
+       }
+     }
 }
 
 template< class TPixelType, unsigned int TChannels >
@@ -191,7 +163,6 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 
   if( m_NumberOfChannels == 3 )
   {
-
     m_RGBPixelContainer = new RGBPixelType[m_Width * m_Height];//
 
     m_RawBuffer = (TPixelType*)malloc(m_Width * m_Height * 3);
