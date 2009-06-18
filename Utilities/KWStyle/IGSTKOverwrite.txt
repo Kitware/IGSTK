@@ -3,6 +3,7 @@ igstkMacros.h InternalVariables Disable
 igstkCoordinateSystemInterfaceMacros.h Indent Disable
 igstkCoordinateSystemInterfaceMacros.h LineLength Disable
 igstkCoordinateSystemInterfaceMacros.h Typedefs Disable
+igstkCoordinateSystemInterfaceMacros.h DeclarationOrder Disable
 igstkNDICommandInterpreter.h Indent Disable
 igstkNDICommandInterpreter.h InternalVariables Disable
 igstkDICOMImageReaderTest.cxx Namespace Disable
