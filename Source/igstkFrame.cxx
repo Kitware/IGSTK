@@ -51,15 +51,6 @@ Frame
 }
 
 void
-Frame
-::Free()
-{
-  if(m_ImagePtr != NULL)
-//  delete this->m_ImagePtr;
-  cout << "free" << endl;
-}
-
-void
 Frame::SetFrameDimensions(unsigned int width,
                           unsigned int height, unsigned int channels)
 {
@@ -67,13 +58,20 @@ Frame::SetFrameDimensions(unsigned int width,
   m_Height = height;
   m_NumberOfChannels = channels;
 
-  m_ImagePtr = new unsigned char[m_Width * m_Height * m_NumberOfChannels];
-
-  if (m_ImagePtr == NULL)
-  {
-    igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: "
+  try
+    {
+      m_ImagePtr = new unsigned char[m_Width * m_Height * m_NumberOfChannels];
+      if (m_ImagePtr == NULL)
+        {
+        igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: "
                         << "Memory could not be allocated (malloc failed)!\n" );
-  }
+        }
+    }
+  catch( std::exception& e )
+    {
+      igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: "
+             << "Memory could not be allocated (malloc failed)!\n" << e.what());
+    }
 }
 
 Frame::TimePeriodType
@@ -172,7 +170,7 @@ void Frame::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   os << indent << "RTTI typeinfo:   " << typeid( *this ).name() << std::endl;
 
-  this->m_TimeStamp.Print( os, indent ); 
+  this->m_TimeStamp.Print( os, indent );
   os << indent << this->m_ImagePtr << std::endl;
 }
 
