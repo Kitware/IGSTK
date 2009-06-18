@@ -111,7 +111,7 @@ CrossHairObjectRepresentation
     }
 }
 
-/** Set the actor´s visibility */
+/** Set the actor's visibility */
 void 
 CrossHairObjectRepresentation
 ::SetVisibility(bool visibility)
