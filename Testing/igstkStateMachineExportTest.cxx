@@ -91,6 +91,12 @@
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
+#include "igstkMouseTracker.h"
+#include "igstkAuroraTracker.h"
+#include "igstkPolarisTracker.h"
+#include "igstkAuroraTrackerTool.h"
+#include "igstkPolarisTrackerTool.h"
+
 namespace igstk
 {
 class DummyTrackerTool : public igstk::TrackerTool
@@ -498,12 +504,24 @@ int main( int argc, char * argv [] )
 #endif
 
 #if defined(IGSTK_USE_MicronTracker)
-igstkTestExportStateMachine1( igstk::MicronTracker, 
+  igstkTestExportStateMachine1( igstk::MicronTracker, 
                                 outputDirectory, skipLoops );
 
-igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
+  igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
                                 outputDirectory, skipLoops );
 #endif
+
+  igstkTestExportStateMachine1( igstk::MouseTracker, 
+                                outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTracker, 
+                                outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTracker, 
+                                outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTrackerTool, 
+                                outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::PolarisTrackerTool, 
+                                outputDirectory, skipLoops );
+
 
   return EXIT_SUCCESS;
 }

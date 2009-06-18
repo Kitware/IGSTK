@@ -274,6 +274,7 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
 
   //More code coverage calls. 
   crossHairObject->RequestSetToolSpatialObject( NULL );
+  point = crossHairObject->TransformToPoint(identity); 
   
   std::cout << "[SUCCESS]" << std::endl;
 

@@ -152,8 +152,11 @@ int igstkMouseTrackerTest( int, char * [] )
     }
   
   tracker->RequestStopTracking();
-
+  
   tracker->RequestClose();
+
+  //coverage
+  tracker->RequestReset();
 
   return EXIT_SUCCESS;
 }
