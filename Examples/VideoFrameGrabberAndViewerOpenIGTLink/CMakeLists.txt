@@ -13,10 +13,10 @@ SET(VideoFrameGrabberAndViewerOpenIGTLink_SRCS
   )
   
 INCLUDE_DIRECTORIES(
-  ${IGSTKSandbox_BINARY_DIR}
+  ${IGSTK_BINARY_DIR}
   ${VideoFrameGrabberAndViewerOpenIGTLink_SOURCE_DIR}
   ${VideoFrameGrabberAndViewerOpenIGTLink_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/VideoFrameGrabberAndViewerOpenIGTLink
+  ${IGSTK_SOURCE_DIR}/Examples/VideoFrameGrabberAndViewerOpenIGTLink
   )
 
 FLTK_WRAP_UI(VideoFrameGrabberAndViewerOpenIGTLink ${VideoFrameGrabberAndViewerOpenIGTLink_GUI_SRCS})

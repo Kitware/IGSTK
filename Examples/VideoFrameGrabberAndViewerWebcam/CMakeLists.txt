@@ -13,10 +13,10 @@ SET(VideoFrameGrabberAndViewerWebcamWin_SRCS
   )
   
 INCLUDE_DIRECTORIES(
-  ${IGSTKSandbox_BINARY_DIR}
+  ${IGSTK_BINARY_DIR}
   ${VideoFrameGrabberAndViewerWebcamWin_SOURCE_DIR}
   ${VideoFrameGrabberAndViewerWebcamWin_BINARY_DIR}
-  ${IGSTKSandbox_SOURCE_DIR}/Examples/VideoFrameGrabberAndViewerWebcamWin
+  ${IGSTK_SOURCE_DIR}/Examples/VideoFrameGrabberAndViewerWebcamWin
   )
 
 FLTK_WRAP_UI(VideoFrameGrabberAndViewerWebcamWin ${VideoFrameGrabberAndViewerWebcamWin_GUI_SRCS})
