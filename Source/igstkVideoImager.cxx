@@ -326,7 +326,6 @@ VideoImager::~VideoImager(void)
 {
 }
 
-
 /** The "RequestOpen" method attempts to open communication with the
  *  imaging device. */
 void VideoImager::RequestOpen( void )
@@ -335,7 +334,6 @@ void VideoImager::RequestOpen( void )
   igstkPushInputMacro( EstablishCommunication );
   this->m_StateMachine.ProcessInputs();
 }
-
 
 /** The "RequestClose" method closes communication with the device. */
 void VideoImager::RequestClose( void )
@@ -354,7 +352,6 @@ void VideoImager::RequestReset( void )
   m_StateMachine.ProcessInputs();
 }
 
-
 /** The "RequestStartImaging" method readies the VideoImager for imaging the
  *  tools connected to the VideoImager. */
 void VideoImager::RequestStartImaging( void )
@@ -364,7 +361,6 @@ void VideoImager::RequestStartImaging( void )
   m_StateMachine.ProcessInputs();
 }
 
-
 /** The "RequestStopImaging" stops VideoImager from imaging the tools. */
 void VideoImager::RequestStopImaging( void )
 {
@@ -372,7 +368,6 @@ void VideoImager::RequestStopImaging( void )
   igstkPushInputMacro( StopImaging );
   m_StateMachine.ProcessInputs();
 }
-
 
 /** The "UpdateStatus" method is used for updating the status of
  *  tools when the VideoImager is in imaging state. */
@@ -382,7 +377,6 @@ void VideoImager::UpdateStatus( void )
   igstkPushInputMacro( UpdateStatus );
   m_StateMachine.ProcessInputs();
 }
-
 
 /** The "RequestSetFrequency" method is used for defining the rate at which
  * Transforms are queried from the VideoImager device */
@@ -425,7 +419,6 @@ void VideoImager::AttemptToOpenProcessing( void )
                                    m_FailureInput );
 }
 
-
 /** Post-processing after communication setup has been successful. */
 void VideoImager::CommunicationEstablishmentSuccessProcessing( void )
 {
@@ -434,7 +427,6 @@ void VideoImager::CommunicationEstablishmentSuccessProcessing( void )
 
   this->InvokeEvent( VideoImagerOpenEvent() );
 }
-
 
 /** Post-processing after communication setup has failed. */
 void VideoImager::CommunicationEstablishmentFailureProcessing( void )
@@ -550,10 +542,10 @@ void VideoImager::StartImagingFailureProcessing( void )
  *  has been successful. */
 void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
   "igstk::VideoImager::AttachingVideoImagerToolSuccessProcessing called ...\n");
 
-  m_VideoImagerTools[ 
+  m_VideoImagerTools[
                  m_VideoImagerToolToBeAttached->GetVideoImagerToolIdentifier() ]
                                                 = m_VideoImagerToolToBeAttached;
 
@@ -563,7 +555,7 @@ void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
                            ->RequestReportSuccessfulVideoImagerToolAttachment();
 
   // Add the VideoImager tool to the internal data containers
-  this->AddVideoImagerToolToInternalDataContainers( 
+  this->AddVideoImagerToolToInternalDataContainers(
                                                 m_VideoImagerToolToBeAttached );
 
   //connect the VideoImager tool coordinate system to the VideoImager
@@ -582,7 +574,7 @@ void VideoImager::AttachingVideoImagerToolSuccessProcessing( void )
  *  has failed. */
 void VideoImager::AttachingVideoImagerToolFailureProcessing( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
   "igstk::VideoImager::AttachingVideoImagerToolFailureProcessing called ...\n");
 
   // report to the VideoImager tool that the attachment has failed
@@ -603,7 +595,6 @@ void VideoImager::AttemptToStopImagingProcessing( void )
                                    m_SuccessInput,
                                    m_FailureInput );
 }
-
 
 /** Post-processing after stop imaging has been successful. */
 void VideoImager::StopImagingSuccessProcessing( void )
@@ -675,7 +666,7 @@ void VideoImager::ExitImagingWithoutTerminatingImagingThread( void )
 /** Exit imaging by terminating imaging thread */
 void VideoImager::ExitImagingTerminatingImagingThread( void )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
         "igstk::VideoImager::ExitImagingTerminatingImagingThread called ...\n");
 
   m_PulseGenerator->RequestStop();
@@ -696,7 +687,6 @@ void VideoImager::AttemptToUpdateStatusProcessing( void )
                         "called ...\n");
 
   // Set all tools to "not updated"
-  //
   typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
   InputConstIterator inputItr = m_VideoImagerTools.begin();
@@ -768,7 +758,6 @@ void VideoImager::UpdateStatusFailureProcessing( void )
   this->InvokeEvent( VideoImagerUpdateStatusErrorEvent() );
 }
 
-
 /** The "CloseFromImagingStateProcessing" method closes VideoImager in
  *  use, when the VideoImager is in imaging state. */
 void VideoImager::CloseFromImagingStateProcessing( void )
@@ -791,7 +780,6 @@ void VideoImager::CloseFromImagingStateProcessing( void )
     m_ImagingThreadStarted = false;
     }
 
-
   if( result == SUCCESS )
     {
     result = this->InternalClose();
@@ -805,7 +793,6 @@ void VideoImager::CloseFromImagingStateProcessing( void )
 /** Detach all VideoImager tools from the VideoImager */
 void VideoImager::DetachAllVideoImagerToolsFromVideoImager()
 {
-
   typedef VideoImagerToolsContainerType::iterator  InputConstIterator;
 
   InputConstIterator inputItr = m_VideoImagerTools.begin();
@@ -837,14 +824,12 @@ void VideoImager::CloseFromCommunicatingStateProcessing( void )
     m_ImagingThreadStarted = false;
     }
 
-
   ResultType result = this->InternalClose();
 
   m_StateMachine.PushInputBoolean( (bool)result,
                                    m_SuccessInput,
                                    m_FailureInput );
 }
-
 
 /** Post-processing after close imaging has been successful. */
 void VideoImager::CloseCommunicationSuccessProcessing( void )
@@ -901,7 +886,6 @@ void VideoImager::SetFrequencyProcessing( void )
   this->m_ValidityTime = (1000/m_FrequencyToBeSet) + nonFlickeringConstant;
 }
 
-
 /** Request adding a tool to the VideoImager  */
 void
 VideoImager::
@@ -939,7 +923,7 @@ VideoImager::ResultType
 VideoImager::
 RequestRemoveTool( VideoImagerToolType * VideoImagerTool )
 {
-  this->m_VideoImagerTools.erase( 
+  this->m_VideoImagerTools.erase(
                               VideoImagerTool->GetVideoImagerToolIdentifier() );
   this->RemoveVideoImagerToolFromInternalDataContainers( VideoImagerTool );
   return SUCCESS;
@@ -1013,7 +997,7 @@ void
 VideoImager
 ::ReportImagingToolStreaming( VideoImagerToolType * videoImagerTool ) const
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                   "igstk::VideoImager::ReportImagingToolStreaming called...\n");
   videoImagerTool->RequestReportImagingToolStreaming();
 }
@@ -1036,7 +1020,6 @@ igstk::Frame* VideoImager::GetVideoImagerToolFrame(
     "igstk::VideoImager::GetVideoImagerToolFrame called...\n");
   return videoImagerTool->GetInternalFrame( );
 }
-
 
 /** Turn on/off update flag of the VideoImager tool */
 void
