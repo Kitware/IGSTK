@@ -30,18 +30,15 @@
 #include "igtlServerSocket.h"
 #include "igtlImageMessage.h"
 
-class vtkImageData;
-
-// OpenIGTLinkVideoImager utilitiy classes declarations.
-
 #include <map>
+
+class vtkImageData;
 
 namespace igstk {
 
 /** \class OpenIGTLinkVideoImager
  * \brief This imager provides support for socket communication (using the
  * Open IGTLink protocol) to the OpenIGTLink system
- *
  *
  * \ingroup VideoImager
  */
@@ -54,17 +51,10 @@ public:
 
   /** Communication type */
   typedef igtl::ServerSocket     CommunicationType;
-  //typedef igtl::ClientSocket     CommunicationType;
-
 
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */
   void SetCommunication( CommunicationType *communication );
-
-public:
-
-  /** Get the number of tools that have been detected. */
-  igstkGetMacro( NumberOfTools, unsigned int );
 
 protected:
 
@@ -98,7 +88,7 @@ protected:
   virtual ResultType InternalReset( void );
 
   /** Verify imager tool information */
-  virtual ResultType VerifyVideoImagerToolInformation( 
+  virtual ResultType VerifyVideoImagerToolInformation(
                                                   const VideoImagerToolType * );
 
   /** The "ValidateSpecifiedFrequency" method checks if the specified frequency
@@ -108,13 +98,6 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  /** Create an associative container that maps error code to error
-    * descritpion */
-  static void CreateErrorCodeList();
-
-  /** Get Error description given the error code */
-  static std::string GetErrorDescription( unsigned int );
-
   /** Remove imager tool entry from internal containers */
   virtual ResultType RemoveVideoImagerToolFromInternalDataContainers( const
                                      VideoImagerToolType * imagerTool );
@@ -122,7 +105,6 @@ protected:
   /** Add imager tool entry from internal containers */
   virtual ResultType AddVideoImagerToolToInternalDataContainers( const
                                      VideoImagerToolType * imagerTool );
-
 
 private:
 
@@ -136,26 +118,11 @@ private:
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;
 
-  /** Total number of tools detected. */
-  unsigned int   m_NumberOfTools;
-
-  bool m_FirstFrame;
-
   /** A buffer to hold frames */
-//  typedef std::map< std::string, igtl::ImageMessage::Pointer >
-//                                VideoImagerToolFrameContainerType;
-
   typedef std::map< std::string, igstk::Frame* >
-                                VideoImagerToolFrameContainerType;
+                                             VideoImagerToolFrameContainerType;
 
-  VideoImagerToolFrameContainerType           m_ToolFrameBuffer;
-
-  /** Error map container */
-  typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
-  static ErrorCodeContainerType   m_ErrorCodeContainer;
-
-  /** boolean to indicate if error code list is created */
-  static bool m_ErrorCodeListCreated;
+  VideoImagerToolFrameContainerType          m_ToolFrameBuffer;
 
   /** Container holding status of the tools */
   std::map< std::string, int >  m_ToolStatusContainer;
@@ -165,7 +132,6 @@ private:
   igtl::MessageHeader::Pointer   m_HeaderMsg;
   igtl::ImageMessage::Pointer    m_ImgMsg;
   igtl::Socket::Pointer          m_Socket;
-
 };
 
 }
