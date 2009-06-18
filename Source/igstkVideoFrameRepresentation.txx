@@ -205,7 +205,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     m_ImageData = m_VTKImageObserver->GetVTKImage();
     this->m_ImageActor->SetInput( this->m_ImageData  );
 
-    if(m_VideoFrameSpatialObject->GetNumberOfChannels()==1)
+    if( m_VideoFrameSpatialObject->GetNumberOfChannels() == 1 )
       {
       this->m_MapColors->SetInput( this->m_ImageData );
       this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );

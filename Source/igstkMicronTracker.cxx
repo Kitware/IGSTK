@@ -612,7 +612,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     return SUCCESS;
     }
 
-    for(unsigned int markerNum = 1;
+  for(unsigned int markerNum = 1;
       markerNum <= markersCollectionCount; markerNum++)
     {
     Marker * marker = new Marker(markersCollection->itemI(markerNum));
@@ -672,7 +672,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
           }
         }
   
-     }
+      }
     // DO NOT delete marker. This is a possible bug in Marker class.
     // Invoking the marker class destructor causes misidentification of the
     // markers in the subsequent frames.

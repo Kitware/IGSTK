@@ -106,10 +106,10 @@ public:
   bool IsValidAtTime( TimePeriodType timeToTestInMilliseconds ) const;
 
   /** Returns the validity status of the frame when it is called
-  *
-  * \sa TimeStamp
-  *
-  * */
+   *
+   * \sa TimeStamp
+   *
+   * */
   bool IsValidNow() const;
 
   /** Method for printing the member variables of this class to an ostream */

@@ -116,26 +116,26 @@ VideoFrameSpatialObject< TPixelType, TChannels>
   igstkLogMacro( DEBUG, "VideoFrameSpatialObject Destructor called ....\n" );
 
   if( m_NumberOfChannels == 3 )
-     {
-     if( m_VtkRGBImporter )
-       {
-       m_VtkRGBImporter->Delete();
-       m_VtkRGBImporter = NULL;
-       }
+    {
+    if( m_VtkRGBImporter )
+      {
+      m_VtkRGBImporter->Delete();
+      m_VtkRGBImporter = NULL;
+      }
 
-     if( m_RGBPixelContainer )
-       {
-       delete [] m_RGBPixelContainer;
-       m_RGBPixelContainer = NULL;
-       }
-     }
-   else if( m_NumberOfChannels == 1 )
-     {
-     if( m_VtkImporter )
-       {
-       m_VtkImporter->Delete();
-       }
-     }
+    if( m_RGBPixelContainer )
+      {
+      delete [] m_RGBPixelContainer;
+      m_RGBPixelContainer = NULL;
+      }
+    }
+  else if( m_NumberOfChannels == 1 )
+    {
+    if( m_VtkImporter )
+      {
+      m_VtkImporter->Delete();
+      }
+    }
 }
 
 template< class TPixelType, unsigned int TChannels >

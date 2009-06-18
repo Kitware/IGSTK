@@ -147,7 +147,7 @@ WebcamWinVideoImager::InternalStopImaging( void )
   igstkLogMacro( DEBUG,
     "igstk::WebcamWinVideoImager::InternalStopImaging called ...\n");
   /*
-    Stop the device
+  Stop the device
   */
   return SUCCESS;
 }
@@ -271,7 +271,7 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       m_Cvframe = cvQueryFrame( m_Capture );
 
       if( !m_Cvframe )
-        igstkLogMacro( DEBUG, 
+      igstkLogMacro( DEBUG, 
         "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus: "
         << "Frame failed");
 
@@ -287,29 +287,30 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       this->m_ToolStatusContainer[ deviceItr->first ] = 1;
       }
-     m_BufferLock->Unlock();
-     return SUCCESS;
-  }
+    m_BufferLock->Unlock();
+    return SUCCESS;
+    }
   catch(...)
-  {
+    {
     igstkLogMacro( CRITICAL, "Unknown error catched" );
     m_BufferLock->Unlock();
     return FAILURE;
-  }
+    }
 }
 
 WebcamWinVideoImager::ResultType
 WebcamWinVideoImager::
-AddVideoImagerToolToInternalDataContainers( const VideoImagerToolType * imagerTool )
+AddVideoImagerToolToInternalDataContainers( 
+                                       const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
     "igstk::WebcamWinVideoImager::AddVideoImagerToolToInternalDataContainers "
                  "called ...\n");
 
   if ( imagerTool == NULL )
-  {
+    {
     return FAILURE;
-  }
+    }
 
   const std::string imagerToolIdentifier =
                   imagerTool->GetVideoImagerToolIdentifier();
@@ -356,7 +357,8 @@ WebcamWinVideoImager::ValidateSpecifiedFrequency( double frequencyInHz )
 }
 
 /** Print Self function */
-void WebcamWinVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void WebcamWinVideoImager::PrintSelf( std::ostream& os, itk::Indent indent ) 
+const
 {
   Superclass::PrintSelf(os, indent);
 
