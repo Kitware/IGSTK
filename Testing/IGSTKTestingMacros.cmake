@@ -19,6 +19,7 @@
 # IGSTK_TEST_FLOCKOFBIRD_ATTACHED(boolean) : Option for ascension tracker 
 # IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER(int) : port number used for ascension tracker
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
+# IGSTK_USE_VideoImager : Run VideoImager Tests 
  
 
 
@@ -41,6 +42,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_FLOCKOFBIRD_ATTACHED
       IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER
       IGSTK_USE_OpenIGTLink
+      IGSTK_USE_VideoImager
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -708,6 +710,35 @@ IF(${IGSTK_USE_Qt})
 
 ENDIF(${IGSTK_USE_Qt})
 
+IF(IGSTK_USE_VideoImager)
+
+  ADD_TEST( igstkVideoImagerTest
+      ${IGSTK_TESTS}
+      igstkVideoImagerTest
+      )
+
+  ADD_TEST( igstkVideoImagerToolTest
+      ${IGSTK_TESTS}
+      igstkVideoImagerToolTest
+      )
+
+  ADD_TEST( igstkFrameTest
+      ${IGSTK_TESTS}
+      igstkFrameTest
+      )
+
+  ADD_TEST( igstkVideoFrameSpatialObjectTest
+      ${IGSTK_TESTS}
+      igstkVideoFrameSpatialObjectTest
+      )
+
+  ADD_TEST( igstkVideoFrameRepresentationTest
+      ${IGSTK_TESTS}
+      igstkVideoFrameRepresentationTest
+      )
+
+ENDIF(IGSTK_USE_VideoImager)
+ 
 
 #-----------------------------------------------------------------------------
 # Set the source file
@@ -928,6 +959,29 @@ IF(IGSTK_USE_OpenIGTLink)
 ENDIF(IGSTK_USE_OpenIGTLink)  
 
 
+IF(IGSTK_USE_VideoImager)
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkVideoImagerTest.cxx
+      )
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkVideoImagerToolTest.cxx
+      )
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkFrameTest.cxx
+      )
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkVideoFrameSpatialObjectTest.cxx
+      )
+    SET(BasicTests_SRCS
+      ${BasicTests_SRCS}
+      igstkVideoFrameRepresentationTest.cxx
+      )
+ENDIF(IGSTK_USE_VideoImager)
+ 
 IF(${SANDBOX_BUILD})
   FOREACH(SourceFile ${BasicTests_SRCS})
     IF(EXISTS ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Testing/${SourceFile})

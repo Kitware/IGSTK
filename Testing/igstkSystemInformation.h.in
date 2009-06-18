@@ -9,6 +9,10 @@
 
 #cmakedefine IGSTK_USE_OpenIGTLink
 
+#cmakedefine IGSTK_USE_VideoImager
+
+#cmakedefine IGSTK_USE_OpenCV
+
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT
 #  undef IGSTK_DATA_ROOT

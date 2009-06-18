@@ -46,5 +46,6 @@ IGSTKTesting(igstkTests
              IGSTK_TEST_FLOCKOFBIRD_ATTACHED
              ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
              IGSTK_USE_OpenIGTLink
+             IGSTK_USE_VideoImager
              )
 

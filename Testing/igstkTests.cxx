@@ -195,5 +195,12 @@ void RegisterTests()
 #endif  
 #endif
 
+#ifdef IGSTK_USE_VideoImager
+  REGISTER_TEST( igstkVideoImagerTest );
+  REGISTER_TEST( igstkVideoImagerToolTest );
+  REGISTER_TEST( igstkFrameTest );
+  REGISTER_TEST( igstkVideoFrameSpatialObjectTest );
+  REGISTER_TEST( igstkVideoFrameRepresentationTest );
+#endif IGSTK_USE_VideoImager
   
 }
