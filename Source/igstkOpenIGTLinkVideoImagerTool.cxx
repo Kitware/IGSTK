@@ -68,8 +68,6 @@ OpenIGTLinkVideoImagerTool::OpenIGTLinkVideoImagerTool():m_StateMachine(this)
   igstkSetInitialStateMacro( Idle );
 
   m_StateMachine.SetReadyToRun();
-
-
 }
 
 /** Destructor */
@@ -108,16 +106,13 @@ void OpenIGTLinkVideoImagerTool::SetVideoImagerToolNameProcessing( )
 
   // VideoImagerTool name is used as a unique identifier
   this->SetVideoImagerToolIdentifier( this->m_VideoImagerToolName );
-
-  std::cout << " SetVideoImagerToolIdentifier: " 
-                                    << this->m_VideoImagerToolName << std::endl;
 }
 
 /** Report Invalid VideoImagerTool name*/
 void OpenIGTLinkVideoImagerTool
 ::ReportInvalidVideoImagerToolNameSpecifiedProcessing( )
 {
-  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool" 
+  igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImagerTool"
        << "::ReportInvalidVideoImagerToolNameSpecifiedProcessing called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid VideoImagerTool name specified ");
