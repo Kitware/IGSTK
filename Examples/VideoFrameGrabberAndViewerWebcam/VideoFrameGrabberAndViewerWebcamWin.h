@@ -19,7 +19,7 @@
 
 #include "VideoFrameGrabberAndViewerWebcamWinGUI.h"
 
-#include "igstkSandboxConfigure.h"
+#include "igstkConfigure.h"
 
 #include "igstkMacros.h"
 #include "igstkObject.h"
