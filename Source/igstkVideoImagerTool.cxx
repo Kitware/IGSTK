@@ -31,10 +31,12 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
-  // set all transforms to identity
+  /** Set all transforms to identity */
   typedef double            TimePeriodType;
 
-  this->m_Updated = false; // not yet updated
+  this->m_Updated = false;
+
+  /** shownFrameIndex = currentlyCapturedFrameIndex - m_Delay */
   m_Delay = 6;
 
   // States
@@ -64,7 +66,6 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
   igstkAddInputMacro( GetFrame );
 
   // Programming the state machine transitions:
-
   // Transitions from the Idle
   igstkAddTransitionMacro( Idle,
                            ConfigureTool,
@@ -80,7 +81,6 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
                            DetachVideoImagerToolFromVideoImager,
                            Idle,
                            ReportInvalidRequestToDetachVideoImagerTool);
-
 
   // Transitions from the AttemptingToConfigure
   igstkAddTransitionMacro( AttemptingToConfigureVideoImagerTool,
@@ -188,21 +188,18 @@ VideoImagerTool::VideoImagerTool(void):m_StateMachine(this)
 
   m_FrameRingBuffer = new std::vector< igstk::Frame* >(MAX_FRAMES);
 
+  /*
   std::ofstream ofile;
   ofile.open("VideoImagerToolStateMachineDiagram.dot");
   const bool skipLoops = false;
   this->ExportStateMachineDescription( ofile, skipLoops );
   ofile.close();
+  */
 
 }
 
 VideoImagerTool::~VideoImagerTool(void)
 {
-  for(unsigned int i=0;i<MAX_FRAMES;i++)
-  {
-    //igstk::Frame frame;
-    m_FrameRingBuffer->at(i)->Free();
-    }
 }
 
 void
@@ -351,10 +348,8 @@ void VideoImagerTool
   igstkLogMacro( DEBUG, "igstk::VideoImagerTool::"
        << "ReportInvalidRequestToDetachVideoImagerToolProcessing called ...\n");
 
-
   this->InvokeEvent( InvalidRequestToDetachVideoImagerToolErrorEvent() );
 }
-
 
 /** Post-processing after a successful configuration attempt . */
 void VideoImagerTool::VideoImagerToolConfigurationSuccessProcessing( void )
@@ -365,7 +360,6 @@ void VideoImagerTool::VideoImagerToolConfigurationSuccessProcessing( void )
 
   this->InvokeEvent( VideoImagerToolConfigurationEvent() );
 }
-
 
 /** Post-processing after a failed configuration attempt . */
 void VideoImagerTool::VideoImagerToolConfigurationFailureProcessing( void )
@@ -507,7 +501,6 @@ void VideoImagerTool::ReportInvalidRequestProcessing( void )
 /** No Processing for this state machine transition. */
 void VideoImagerTool::NoProcessing( void )
 {
-
 }
 
 /** Method to get the internal frame of the VideoImager tool
@@ -534,7 +527,7 @@ VideoImagerTool::SetFrameDimensions(unsigned int *dims)
   this->m_FrameDimensions[2] = dims[2];
 
   for(unsigned int i=0;i<MAX_FRAMES;i++)
-  {
+    {
     igstk::Frame* frame = new igstk::Frame();
     frame->SetFrameDimensions(
     this->m_FrameDimensions[0],
@@ -592,6 +585,7 @@ void VideoImagerTool::AddFrameToBuffer(igstk::Frame* frame)
     igstkLogMacro( FATAL,
     "Exception in AddFrameToBuffer (igstkVideoImagerTool): " << e.what());
     }
+
   m_Index=(m_Index + 1) % m_MaxBufferSize;
 
   if (m_NumberOfFramesInBuffer < m_MaxBufferSize)
@@ -611,6 +605,5 @@ std::ostream& operator<<(std::ostream& os, const VideoImagerTool& o)
   o.Print(os, 0);
   return os;
 }
-
 
 }
