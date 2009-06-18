@@ -393,7 +393,7 @@ IF(IGSTK_USE_SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
 
 IF(IGSTK_USE_OpenCV)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} cxcore110d cv110d highgui110d)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} cxcore110 cv110 highgui110)
 ENDIF(IGSTK_USE_OpenCV)
 
 
