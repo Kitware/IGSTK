@@ -29,10 +29,6 @@
 #include <vtkLookupTable.h>
 #include <vtkImageMapToColors.h>
 
-//TODO
-#include "itkImageFileWriter.h"
-
-
 namespace igstk
 {
 
@@ -61,7 +57,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
 
   //window level
   m_LookupTable = vtkLookupTable::New();
-  m_MapColors  = vtkImageMapToColors::New();
+  m_MapColors   = vtkImageMapToColors::New();
 
   // Create the observer to VTK image events
   m_VTKImageObserver = VTKImageObserver::New();
@@ -74,26 +70,26 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
   igstkAddStateMacro( NullVideoFrameSpatialObject );
   igstkAddStateMacro( ValidVideoFrameSpatialObject );
 
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject, No );
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject,
                            EmptyVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject, No );
-  igstkAddTransitionMacro( NullVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( NullVideoFrameSpatialObject,
                            ValidVideoFrameSpatialObject,
                            ValidVideoFrameSpatialObject,
                            SetVideoFrameSpatialObject );
   igstkAddTransitionMacro( NullVideoFrameSpatialObject, ConnectVTKPipeline,
                            NullVideoFrameSpatialObject, No );
 
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,  No );
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject,
                            EmptyVideoFrameSpatialObject,
                            NullVideoFrameSpatialObject,  No );
-  igstkAddTransitionMacro( ValidVideoFrameSpatialObject, 
+  igstkAddTransitionMacro( ValidVideoFrameSpatialObject,
                            ValidVideoFrameSpatialObject,
                            ValidVideoFrameSpatialObject, No );
   igstkAddTransitionMacro( ValidVideoFrameSpatialObject, ConnectVTKPipeline,
@@ -109,24 +105,6 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::~VideoFrameRepresentation(void)
 {
   igstkLogMacro( DEBUG, "VideoFrameRepresentation destructor called ...\n");
-/*
-  if( m_VTKImageObserver.IsNotNull())
-    {
-    m_VTKImageObserver->Delete();
-    }
-
-  if( m_LookupTable != NULL )
-    {
-    m_LookupTable->Delete();
-    m_LookupTable = NULL;
-    }
-
-  if( m_MapColors != NULL )
-    {
-    m_MapColors->SetLookupTable( NULL );
-    m_MapColors->SetInput( NULL );
-    m_MapColors->Delete();
-    }*/
 }
 
 /** Overloaded DeleteActors function */
@@ -148,8 +126,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 {
   igstkLogMacro( DEBUG,
     "igstk::VideoFrameRepresentation::VerifyTimeStamp called...\n");
-  //TODO
-  /*
+
   if( this->GetRenderTimeStamp().GetExpirationTime() <
     this->m_VideoFrameSpatialObject->GetFrameStartTime() ||
     this->GetRenderTimeStamp().GetStartTime() >
@@ -157,7 +134,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
     {
     return false;
     }
-  else */
+  else
     {
     return true;
     }
@@ -199,7 +176,6 @@ VideoFrameRepresentation< TVideoFrameSpatialObject >
     }
   m_StateMachine.ProcessInputs();
 }
-
 
 /** Set the Ultrasound Spatial Object */
 template< class TVideoFrameSpatialObject >
@@ -246,12 +222,10 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::SetWindowLevel( double window, double level )
 {
   igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation\
-                        ::SetWindowLevel called...\n");
-
+                                                 ::SetWindowLevel called...\n");
   m_Window = window;
   m_Level = level;
-
-  m_LookupTable->SetTableRange( (m_Level - m_Window/2.0), 
+  m_LookupTable->SetTableRange( (m_Level - m_Window/2.0),
                                 (m_Level + m_Window/2.0) );
   m_LookupTable->Build();
 }
@@ -262,7 +236,7 @@ void
 VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::SaveScreenShot( const std::string & filename )
 {
-  igstkLogMacro( DEBUG, 
+  igstkLogMacro( DEBUG,
                      "VideoFrameRepresentation::SaveScreenShot() called ...\n");
 
   vtkPNGWriter * writer = vtkPNGWriter::New();
@@ -279,7 +253,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
 ::CreateActors()
 {
   igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
-                 "::CreateActors called...\n");
+                                                  "::CreateActors called...\n");
 
   double hue = 0.0;
   double saturation = 0.0;
@@ -335,7 +309,7 @@ VideoFrameRepresentation< TVideoFrameSpatialObject>
       else
         {
         igstkLogMacro( DEBUG, "igstk::VideoFrameRepresentation"
-                 << "::UpdateRepresentationProcessing: Number of channel is not" 
+                 << "::UpdateRepresentationProcessing: Number of channel is not"
                                            << "supported. Should be 1 or 3!\n");
         }
       }
