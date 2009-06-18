@@ -135,7 +135,7 @@ WebcamWinVideoImager::InternalStartImaging( void )
   igstk::DoubleTypeEvent evt;
   evt.Set( 1.0 );
   this->InvokeEvent( evt );
-  std::cout << "Start capture on device!" << std::endl;
+  igstkLogMacro( DEBUG, "Start capture on device!");
 
   return SUCCESS;
 }
@@ -251,12 +251,10 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
     // Check if an imager tool was added with this device name
     typedef VideoImagerToolFrameContainerType::iterator InputIterator;
 
-    //TODO toolname hard coded
     InputIterator deviceItr = this->m_ToolFrameBuffer.find( "Camera" );
 
     if( deviceItr != this->m_ToolFrameBuffer.end() )
       {
-
       // create the frame
       VideoImagerToolsContainerType imagerToolContainer =
                                             this->GetVideoImagerToolContainer();
@@ -273,7 +271,9 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       m_Cvframe = cvQueryFrame( m_Capture );
 
       if( !m_Cvframe )
-        cout << "frame failed ";
+        igstkLogMacro( DEBUG, 
+        "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus: "
+        << "Frame failed");
 
       memcpy(frame->GetImagePtr(),
              (unsigned char*)m_Cvframe->imageData,
@@ -329,8 +329,8 @@ RemoveVideoImagerToolFromInternalDataContainers
 ( const VideoImagerToolType * imagerTool )
 {
   igstkLogMacro( DEBUG,
-    "igstk::WebcamWinVideoImager::RemoveVideoImagerToolFromInternalDataContainers "
-                 "called ...\n");
+  "igstk::WebcamWinVideoImager::RemoveVideoImagerToolFromInternalDataContainers"
+                                                             << "called ...\n");
 
   const std::string imagerToolIdentifier =
                       imagerTool->GetVideoImagerToolIdentifier();
