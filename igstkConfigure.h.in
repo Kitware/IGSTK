@@ -33,3 +33,5 @@
 #cmakedefine IGSTK_USE_Qt
 #cmakedefine IGSTK_USE_OpenIGTLink
 #cmakedefine IGSTK_USE_SceneGraphVisualization
+#cmakedefine IGSTK_USE_OpenCV
+#cmakedefine IGSTK_USE_VideoImager

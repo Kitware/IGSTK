@@ -24,7 +24,7 @@
 //information (MVC6.0 Debug)
 #pragma warning( disable : 4284 )
 #endif
-#include "igstkSandboxConfigure.h"
+#include "igstkConfigure.h"
 
 #include "igstkVideoImager.h"
 #include "igstkWebcamWinVideoImagerTool.h"
@@ -137,7 +137,7 @@ public:
   /** A mutex for multithreaded access to frameBuffer */
   static itk::MutexLock::Pointer  m_FrameBufferLock;
 
-#ifdef IGSTKSandbox_USE_OpenCV
+#ifdef IGSTK_USE_OpenCV
   CvCapture *m_Capture;
   IplImage  *m_Cvframe;
 #endif
