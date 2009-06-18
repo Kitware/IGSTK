@@ -46,7 +46,7 @@ public:
 
   /** Connect this representation class to the spatial object */
   void RequestSetVideoFrameSpatialObject(const VideoFrameSpatialObjectType*
-                       spatialObject);
+                                                                spatialObject);
 
   /** Observer macro that will received a event with an image as payload and
    * will store it internally. This will be the receptor of the event sent by
@@ -123,7 +123,6 @@ private:
   /** States for the State Machine */
   igstkDeclareStateMacro( NullVideoFrameSpatialObject );
   igstkDeclareStateMacro( ValidVideoFrameSpatialObject );
-
 };
 
 } // end namespace igstk
