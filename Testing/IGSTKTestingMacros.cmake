@@ -154,7 +154,8 @@ IF (IGSTK_DATA_ROOT)
           ${IGSTK_DATA_ROOT}/Input/E000192 )
 
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/USLiver)
+       ${IGSTK_DATA_ROOT}/Input/USLiver
+       ${IGSTK_DATA_ROOT}/Input/MRLiver)
 
   ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
@@ -190,9 +191,11 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
   ADD_TEST( igstkDICOMImageReaderTest ${IGSTK_TESTS} igstkDICOMImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkCTImageReaderTest ${IGSTK_TESTS} igstkCTImageReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/E000192 )
+       ${IGSTK_DATA_ROOT}/Input/E000192
+       ${IGSTK_DATA_ROOT}/Input/MRLiver)
   ADD_TEST( igstkMRImageReaderTest ${IGSTK_TESTS} igstkMRImageReaderTest 
-       ${IGSTK_DATA_ROOT}/Input/MRLiver )
+       ${IGSTK_DATA_ROOT}/Input/MRLiver
+       ${IGSTK_DATA_ROOT}/Input/E000192 )
   ADD_TEST( igstkMeshReaderTest ${IGSTK_TESTS} igstkMeshReaderTest 
        ${IGSTK_DATA_ROOT}/Input/liver.msh  
        ${IGSTK_DATA_ROOT}/Input/liverCorruptedOnPurpose.msh )
