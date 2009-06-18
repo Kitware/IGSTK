@@ -47,6 +47,10 @@ int igstkCoordinateSystemDelegatorTest(int argc, char* argv[])
   CoordinateSystemDelegatorPointer root = CoordinateSystemDelegator::New();
   root->SetLogger( logger );
 
+  std::string typeName = "Tracker";
+  root->SetType( typeName );
+  typeName = root->GetType();
+
   igstk::Transform identity;
   identity.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
 
