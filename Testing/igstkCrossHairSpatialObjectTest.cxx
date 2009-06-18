@@ -39,6 +39,10 @@
 #include "igstkTransform.h"
 #include "igstkVTKLoggerOutput.h"
 
+#include "igstkMouseTracker.h"
+#include "igstkMouseTrackerTool.h"
+#include "igstkCylinderObject.h"
+
 namespace CrossHairSpatialObjectTest
 {
 igstkObserverObjectMacro(CTImage,
@@ -254,10 +258,9 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
   
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-
   data = point.GetVnlVector().data_block();
-  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
   
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
   crossHairObject->RequestSetCursorPosition( data );
   
   view2D->RequestStart();
@@ -272,10 +275,71 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
   igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestStop();
 
+  // Moving the cursor
+  IndexType index2 = index;
+  view2D->RequestStart();
+  for (unsigned int i=0; i<200; i++)
+  {
+    index2[0] += i;
+    index2[1] += i;
+    imageSpatialObject->TransformIndexToPhysicalPoint( index2, point );
+    data = point.GetVnlVector().data_block();
+    reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+    crossHairObject->RequestSetCursorPosition( data );
+    view2D->RequestResetCamera();
+
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws   
+    }
+
+
   //More code coverage calls. 
   crossHairObject->RequestSetToolSpatialObject( NULL );
   point = crossHairObject->TransformToPoint(identity); 
+
+  imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
+  data = point.GetVnlVector().data_block();
+  reslicerPlaneSpatialObject->RequestSetCursorPosition( data );
+  crossHairObject->RequestSetCursorPosition( data );
+  view2D->RequestResetCamera();
+  Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
   
+  typedef igstk::MouseTracker         MouseTrackerType;
+  MouseTrackerType::Pointer tracker = MouseTrackerType::New();
+  tracker->SetLogger( logger );
+  tracker->RequestSetTransformAndParent( identity, worldReference );
+  tracker->RequestOpen();
+
+  typedef igstk::MouseTrackerTool           TrackerToolType;
+  typedef TrackerToolType::TransformType    TransformType;
+
+  // instantiate and attach wired tracker tool  
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+  trackerTool->SetLogger( logger );
+  std::string mouseName = "PS/s";
+  trackerTool->RequestSetMouseName( mouseName );
+  //Configure
+  trackerTool->RequestConfigure();
+  //Attach to the tracker
+  trackerTool->RequestAttachToTracker( tracker );
+  //Add observer to listen to events throw by the tracker tool
+  
+  igstk::CylinderObject::Pointer toolObject = igstk::CylinderObject::New();
+  toolObject->RequestSetTransformAndParent(identity, trackerTool);
+  
+  crossHairObject->RequestSetToolSpatialObject( toolObject );
+  tracker->RequestStartTracking();
+  
+  for (unsigned int i=0; i<200; i++)
+    {
+    Fl::wait( 0.01 );
+    igstk::PulseGenerator::CheckTimeouts();
+    Fl::check();   // trigger FLTK redraws
+    view2D->RequestResetCamera();
+    }
+
   std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS;
