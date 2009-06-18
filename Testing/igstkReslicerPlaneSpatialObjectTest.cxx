@@ -214,9 +214,45 @@ int igstkReslicerPlaneSpatialObjectTest( int argc , char * argv [] )
   reslicerPlaneSpatialObject->RemoveObserver( planeNormalObserverID );
 
   // code coverage
-  reslicerPlaneSpatialObject->RequestSetReslicingMode( static_cast<ReslicerPlaneType::ReslicingMode> (-1) ); //should be invalid
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffCoronal );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( static_cast<ReslicerPlaneType::ReslicingMode> (-1) ); //should be invalid
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffCoronal );
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Orthogonal );
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::OffOrthogonal );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffCoronal );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffAxial );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::OffSagittal );
+  reslicerPlaneSpatialObject->RequestComputeReslicingPlane();
+  reslicerPlaneSpatialObject->Print(std::cout);
+  reslicerPlaneSpatialObject->GetOrientationType();
   reslicerPlaneSpatialObject->RequestGetToolPosition();
+  reslicerPlaneSpatialObject->GetReslicingMode();
+  const double crazyVector[3]= {1000000,1000000,1000000};
+  reslicerPlaneSpatialObject->RequestSetCursorPosition(crazyVector);
+  reslicerPlaneSpatialObject->RequestSetBoundingBoxProviderSpatialObject( NULL );
+  reslicerPlaneSpatialObject->RequestSetToolSpatialObject( NULL );
+
 
   if( vtkLoggerOutput->GetNumberOfErrorMessages()  > 0 )
     {
