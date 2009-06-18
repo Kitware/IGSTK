@@ -26,6 +26,7 @@
 #include "igstkCoordinateSystem.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 #include "igstkCoordinateSystemTransformToErrorResult.h"
+#include "igstkCoordinateSystemSetTransformResult.h"
 
 
 int igstkCoordinateSystemEventTest( int, char * [] )
@@ -35,6 +36,7 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 
   typedef igstk::CoordinateSystemTransformToResult         TransformToResult;
   typedef igstk::CoordinateSystemTransformToErrorResult    ErrorResult;
+  typedef igstk::CoordinateSystemSetTransformResult        SetTransformResult;
   typedef igstk::Transform                                 TransformType;
 
   CoordinateSystemType::Pointer cs1 = CoordinateSystemType::New();
@@ -85,6 +87,37 @@ int igstkCoordinateSystemEventTest( int, char * [] )
 
   // Clear
   errorResult.Clear();
+
+  // Set transform result
+  SetTransformResult stResult;
+  bool attaching = true;
+
+  // Test Initialize
+  stResult.Initialize( transform, cs1, cs2, attaching );
+
+  // Copy ctor
+  SetTransformResult stResult2 = stResult;
+
+  // Assignment operator
+  stResult = stResult2;
+
+  // GetTransform
+  stResult.GetTransform();
+
+  // GetSource
+  stResult.GetSource();
+
+  // GetDestination
+  stResult.GetDestination();
+
+  // Is attaching?
+  if (! stResult.IsAttach())
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Clear
+  stResult.Clear();
 
   return EXIT_SUCCESS;
 }
