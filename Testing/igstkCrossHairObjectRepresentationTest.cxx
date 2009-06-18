@@ -269,7 +269,6 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
   
   view2D->RequestStart();
   view2D->RequestResetCamera();
-  form->show();
 
   view2D->RequestStop();
   Fl::wait( 0.2 );
@@ -279,6 +278,9 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
   igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestStop();
 
+  delete widget2D;
+  delete form;
+  
   std::cout << "[SUCCESS]" << std::endl;
 
   return EXIT_SUCCESS;

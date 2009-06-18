@@ -163,6 +163,8 @@ int igstkPulseGeneratorTest( int, char * [] )
 
   std::cout << "End of the pulses" << std::endl;
   std::cout << "Test PASSED !" << std::endl;
-
+  
+  delete form;
+  
   return EXIT_SUCCESS;
 }
