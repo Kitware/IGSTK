@@ -34,14 +34,11 @@ igstkEventMacro( VideoImagerToolEvent, StringEvent);
 igstkEventMacro( VideoImagerToolErrorEvent, IGSTKErrorWithStringEvent);
 igstkEventMacro( VideoImagerToolConfigurationEvent,VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolConfigurationErrorEvent,
-                                              VideoImagerToolErrorEvent);
-
+                                                     VideoImagerToolErrorEvent);
 igstkEventMacro( InvalidRequestToAttachVideoImagerToolErrorEvent,
-               VideoImagerToolErrorEvent);
-
+                                                     VideoImagerToolErrorEvent);
 igstkEventMacro( InvalidRequestToDetachVideoImagerToolErrorEvent,
-               VideoImagerToolErrorEvent);
-
+                                                     VideoImagerToolErrorEvent);
 igstkEventMacro( VideoImagerToolAttachmentToVideoImagerEvent,
                                                           VideoImagerToolEvent);
 igstkEventMacro( VideoImagerToolAttachmentToVideoImagerErrorEvent,
@@ -55,7 +52,6 @@ igstkEventMacro( VideoImagerToolMadeTransitionToStreamingStateEvent,
 igstkEventMacro( VideoImagerToolNotAvailableEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStartedEvent,VideoImagerToolEvent);
 igstkEventMacro( ToolImagingStoppedEvent,VideoImagerToolEvent);
-
 igstkLoadedEventMacro( FrameModifiedEvent, IGSTKEvent, igstk::Frame);
 
 class VideoImager;
@@ -63,7 +59,7 @@ class VideoImager;
 /**  \class VideoImagerTool
   *  \brief Abstract superclass for concrete IGSTK VideoImagerTool classes.
   *
-  *  This class provides a generic implementation of an VideoImager. 
+  *  This class provides a generic implementation of an VideoImager.
   *  This may contain hardware specific details of
   *  the video-device.
   *
@@ -124,7 +120,6 @@ public:
   igstkSetMacro( Delay, unsigned int );
   igstkGetMacro( Delay, unsigned int );
 
-
   igstk::Frame* GetFrameFromBuffer(const unsigned int index);
   igstk::Frame* GetTemporalCalibratedFrame();
 
@@ -138,7 +133,6 @@ protected:
 
   /** Set a unique identifier to the VideoImager tool */
   void SetVideoImagerToolIdentifier( const std::string identifier );
-
 
 private:
 
@@ -255,10 +249,11 @@ private:
   /** Ring buffer for the tool */
   void AddFrameToBuffer( igstk::Frame* frame);
 
-  std::vector< igstk::Frame* > *m_FrameRingBuffer; // ring buffer with frames
-  
-  // next frame will be stored at frameRingBuffer[m_Index]
-  int                           m_Index; 
+  /** Ring buffer with frames */
+  std::vector< igstk::Frame* > *m_FrameRingBuffer;
+
+  /** next frame will be stored at frameRingBuffer[m_Index] */
+  int                           m_Index;
   unsigned int                  m_NumberOfFramesInBuffer;
   unsigned int                  m_MaxBufferSize;
   unsigned int                  m_Delay;
@@ -274,8 +269,7 @@ private:
   /** VideoImager to which the tool will be attached to */
   VideoImager        * m_VideoImagerToAttachTo;
 
-  /** Define the coordinate system interface
-   */
+  /** Define the coordinate system interface  */
   igstkCoordinateSystemClassInterfaceMacro();
 
   /** Helper coordinate system used point of reference
