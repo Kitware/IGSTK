@@ -29,7 +29,7 @@
 
 // BeginCodeSnippet
 #define VIEW_2D_REFRESH_RATE 15
-#define VideoImager_DEFAULT_REFRESH_RATE 15
+#define VideoImager_DEFAULT_REFRESH_RATE 10
 // EndCodeSnippet
 
 namespace igstk{
