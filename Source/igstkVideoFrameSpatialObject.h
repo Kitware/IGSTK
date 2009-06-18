@@ -34,7 +34,6 @@
 #include "vtkImageData.h"
 #include "vtkImageImport.h"
 
-
 #define DIMENSION 2
 
 namespace igstk
@@ -70,10 +69,10 @@ public:
   void Initialize();
 
   igstkLoadedTemplatedConstObjectEventMacro( ITKImageModifiedEvent,
-                                               IGSTKEvent, ImageType);
+                                                         IGSTKEvent, ImageType);
 
   igstkLoadedTemplatedConstObjectEventMacro( ITKRGBImageModifiedEvent,
-                                                 IGSTKEvent, RGBImageType);
+                                                      IGSTKEvent, RGBImageType);
 
   /** Returns wheter the image has any pixels allocated or not */
   virtual bool IsEmpty() const;
@@ -129,7 +128,7 @@ private:
 
   VTKImageModifiedEvent  m_VtkImageLoadedEvent;
 
-  igstk::VideoImagerTool::Pointer                     m_VideoImagerTool;
+  igstk::VideoImagerTool::Pointer m_VideoImagerTool;
   /** raw frame for the spatial object */
   FrameType                       m_Frame;
 
@@ -157,7 +156,6 @@ private:
 
   VTKImportFilterPointer             m_VtkRGBImporter;
   VTKImportFilterPointer             m_VtkImporter;
-
 };
 
 } // end namespace igstk
