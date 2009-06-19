@@ -21,6 +21,13 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#ifdef ConnectObjectToRepresentationMacro
+#undef ConnectObjectToRepresentationMacro
+#endif
+
+#define ConnectObjectToRepresentationMacro( object, representation ) \
+  representation->RequestSetVideoFrameSpatialObject( object );
+
 #include <iostream>
 #include "igstkLandmark3DRegistration.h"
 #include "igstkLogger.h"
@@ -30,8 +37,39 @@
 #include "itkMacro.h"
 #include "igstkEvents.h"
 #include "igstkVideoFrameSpatialObject.h"
+#include "igstkVideoFrameRepresentation.h"
+#include "igstkSpatialObjectTestHelper.h"
 
 int igstkVideoFrameSpatialObjectTest( int argv, char * argc[] )
 {
+  typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >      VideoFrameObjectType;
+  typedef igstk::VideoFrameRepresentation<VideoFrameObjectType>  VideoFrameRepresentationType;
+
+  typedef igstk::SpatialObjectTestHelper<
+    VideoFrameObjectType, VideoFrameRepresentationType > TestHelperType;
+
+  //
+  // The helper constructor intializes all the elements needed for the test.
+  //
+  TestHelperType  testHelper;
+
+  //
+  //  Tests that are specific to this type of SpatialObject
+  //
+  //
+  //  None.
+  //
+
+  testHelper.TestRepresentationProperties();
+  testHelper.ExercisePrintSelf();
+  testHelper.TestTransform();
+  testHelper.ExerciseDisplay();
+
+ 
+  //testHelper.TestRepresentationCopy();
+  testHelper.ExerciseScreenShot();
+
+  return testHelper.GetFinalTestStatus();
+
   return EXIT_SUCCESS;
 }
