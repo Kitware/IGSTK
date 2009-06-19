@@ -511,17 +511,5 @@ int main( int argc, char * argv [] )
                                 outputDirectory, skipLoops );
 #endif
 
-  igstkTestExportStateMachine1( igstk::MouseTracker, 
-                                outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::AuroraTracker, 
-                                outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::PolarisTracker, 
-                                outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::AuroraTrackerTool, 
-                                outputDirectory, skipLoops );
-  igstkTestExportStateMachine1( igstk::PolarisTrackerTool, 
-                                outputDirectory, skipLoops );
-
-
   return EXIT_SUCCESS;
 }
