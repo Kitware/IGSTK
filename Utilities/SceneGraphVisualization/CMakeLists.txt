@@ -22,4 +22,10 @@ INCLUDE_DIRECTORIES(
   )
   
 ADD_LIBRARY(SceneGraphVisualization ${SceneGraphVisualization_SRC} )
-TARGET_LINK_LIBRARIES(SceneGraphVisualization IGSTK)
+
+# Apply user-defined properties to the library target.
+IF(IGSTK_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(SceneGraphVisualization PROPERTIES
+     ${IGSTK_LIBRARY_PROPERTIES}
+  )
+ENDIF(IGSTK_LIBRARY_PROPERTIES)
