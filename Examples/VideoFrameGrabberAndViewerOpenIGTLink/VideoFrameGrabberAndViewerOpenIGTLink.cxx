@@ -19,7 +19,7 @@
 
 #include "itksys/SystemTools.hxx"
 
-#include "FL/fl_message.h"
+#include "FL/fl_message.H"
 
 // BeginLatex
 //
