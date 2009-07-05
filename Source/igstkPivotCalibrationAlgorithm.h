@@ -63,7 +63,7 @@ namespace igstk
  *         \vdots\\
  *         \bf{-t_n}
  *       \end{array}
- *     \right]\f$$ 
+ *     \right] $$\f 
  * Which is solved using the pseudoinverse (singular value decomposition).
  */
 class PivotCalibrationAlgorithm : public Object
