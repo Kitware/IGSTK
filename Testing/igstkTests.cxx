@@ -201,6 +201,6 @@ void RegisterTests()
   REGISTER_TEST( igstkFrameTest );
   REGISTER_TEST( igstkVideoFrameSpatialObjectTest );
   REGISTER_TEST( igstkVideoFrameRepresentationTest );
-#endif IGSTK_USE_VideoImager
+#endif
   
 }
