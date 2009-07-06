@@ -207,7 +207,7 @@ igstk::TrackerDataLoggerConfigurationFileReader::
   TrackerConfigurationObserver::Pointer tco = 
     TrackerConfigurationObserver::New();
 
-  for( unsigned int i=0; i<NUM_TRACKER_TYPES; i++ )
+  for( unsigned int i=2; i<3 /*NUM_TRACKER_TYPES*/; i++ )
     {
     //setting the xml reader always succeeds so I don't
     //observe the success event

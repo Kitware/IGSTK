@@ -16,6 +16,8 @@
 =========================================================================*/
 #include "igstkTrackerDataLoggerGUI.h"
 
+#include "igstkEvents.h"
+
 int main(int argc, char *argv[])
 {
   TrackerDataLoggerGUI app;
