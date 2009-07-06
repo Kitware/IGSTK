@@ -13,6 +13,7 @@ SUBDIRS(
   ApplicationsCommon
   AscensionTracker  
   PolarisTracker
+  TrackerDataLogger
   )
 
 IF( IGSTKSandbox_USE_MicronTracker )

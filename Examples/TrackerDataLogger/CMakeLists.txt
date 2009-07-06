@@ -9,16 +9,17 @@ SET(TRACKINGDATALOGGER_DIR
 )
 
 SET(PRECOMPUTED_TRANSFORM_READER_DIR
-   ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
+    ../ApplicationsCommon/CalibrationRegistrationLoading
 )
 
 SET(TRACKER_CONFIGURATION_DIR
-   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration
+    ../ApplicationsCommon/TrackerConfiguration
 )
 
-SET(TRACKER_CONFIGURATION_READER_DIR
-   ${IGSTK_SOURCE_DIR}/Examples/TrackerConfiguration/configurationFileReaders
+SET(TRACKER_CONFIGURATION_READERS_DIR
+    ../ApplicationsCommon/ConfigurationFileReaders
 )
+
 
  INCLUDE_DIRECTORIES (
   ${IGSTKSandbox_SOURCE_DIR}
@@ -70,11 +71,11 @@ IF(IGSTK_USE_FLTK)
 
   FLTK_WRAP_UI(igstkTrackerDataLoggerUI ${igstkTrackerDataLogger_GUI_SRCS})
   ADD_EXECUTABLE(igstkTrackerDataLoggerUI igstkTrackerDataLoggerMainFLTK.cxx ${SRCS} ${HDRS} ${igstkTrackerDataLoggerUI_FLTK_UI_SRCS})  
-  TARGET_LINK_LIBRARIES(igstkTrackerDataLoggerUI TrackerConfiguration TransformReaders IGSTK)
+  TARGET_LINK_LIBRARIES(igstkTrackerDataLoggerUI TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
   
 ENDIF(IGSTK_USE_FLTK)
 
 ADD_EXECUTABLE(TrackerDataLogger igstkTrackerDataLoggerMainCommandLine.cxx ${SRCS} ${HDRS})
-TARGET_LINK_LIBRARIES(TrackerDataLogger TrackerConfiguration TransformReaders IGSTK)
+TARGET_LINK_LIBRARIES(TrackerDataLogger TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
 
 
