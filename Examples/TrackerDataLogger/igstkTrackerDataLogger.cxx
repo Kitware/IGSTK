@@ -108,13 +108,23 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
         ToolUpdatedObserver::Pointer updateObserver = ToolUpdatedObserver::New();
         //this method can throw an exception,
         //the user is responsible for dealing with this
+
+        //std::cout << " before Initialize  toolNamesAndOutputFileNamesIt->first "
+        //        << toolNamesAndOutputFileNamesIt->first
+        //        << "  toolNamesAndToolsIt->second " <<  toolNamesAndToolsIt->second
+        //        << "  world " << world <<  "  toolNamesAndOutputFileNamesIt->second "
+        //        << toolNamesAndOutputFileNamesIt->second << "\n";
+        
         updateObserver->Initialize( toolNamesAndOutputFileNamesIt->first, 
           toolNamesAndToolsIt->second, 
           world, 
           toolNamesAndOutputFileNamesIt->second );
 
         toolNamesAndToolsIt->second->AddObserver(
-          igstk::TrackerToolTransformUpdateEvent(), 
+           //igstk::CoordinateSystemTransformToEvent(),  
+           //itk::AnyEvent(),
+           //igstk::TrackerEvent(),
+           igstk::TrackerToolTransformUpdateEvent(), 
           updateObserver );
         } 
       }

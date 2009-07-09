@@ -65,7 +65,7 @@ ${PRECOMPUTED_TRANSFORM_READER_DIR}
 ${IGSTK_INCLUDE_DIR}
 )
 
-IF(IGSTK_USE_FLTK)
+IF(IGSTKSandbox_USE_FLTK)
 
   #
   # FLTK fluid GUI files for project
@@ -75,13 +75,13 @@ IF(IGSTK_USE_FLTK)
     )
 
   FLTK_WRAP_UI(igstkTrackerDataLoggerGUI ${igstkTrackerDataLogger_GUI_SRCS})
-  ADD_EXECUTABLE(igstkTrackerDataLoggerGUI ${SRCS} ${HDRS} ${igstkTrackerDataLoggerGUI_FLTK_UI_SRCS})  
+  ADD_EXECUTABLE(igstkTrackerDataLoggerGUI igstkTrackerDataLoggerMainFLTK ${SRCS} ${HDRS} ${igstkTrackerDataLoggerGUI_FLTK_UI_SRCS})  
   TARGET_LINK_LIBRARIES(igstkTrackerDataLoggerGUI TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
   
-ELSEIF(IGSTK_USE_FLTK)
+ELSEIF(IGSTKSandbox_USE_FLTK)
 
 ADD_EXECUTABLE(TrackerDataLogger igstkTrackerDataLoggerMainCommand.cxx ${SRCS} ${HDRS})
 TARGET_LINK_LIBRARIES(TrackerDataLogger TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
-ENDIF(IGSTK_USE_FLTK)
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 

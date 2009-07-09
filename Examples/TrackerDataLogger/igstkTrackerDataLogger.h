@@ -28,6 +28,7 @@
 #include "igstkTransformObserver.h"
 #include "igstkTrackerDataLoggerConfigurationFileReader.h" 
 #include "igstkTrackerDataLoggerConfigurationXMLFileReader.h"
+#include <fstream>
 
 /**
  * \class TrackerDataLogger
@@ -190,7 +191,7 @@ private:
         (*it)->close();
         delete (*it);
         }
-      this->m_Ofstreams.clear();
+        this->m_Ofstreams.clear();
 
       // BeginLatex
       // We create a list of output files to write to.
@@ -201,21 +202,23 @@ private:
       for ( outputFileNamesIt = outputFileNames.begin();
             outputFileNamesIt != outputFileNames.end(); ++outputFileNamesIt)
         {
-        ofstream *outputFile = new ofstream; 
-        outputFile->open( outputFileNamesIt->c_str() , ios::out ); 
+        ofstream *outputFile = new ofstream ( outputFileNamesIt->c_str() , ios::out );
+        //outputFile.open();
+        
         if ( !outputFile->is_open() )
           {
           for (it = this->m_Ofstreams.begin(); it != this->m_Ofstreams.end(); ++it)
-            {
-            (*it)->close();
-            delete (*it);
-            }
-          this->m_Ofstreams.clear();
-          std::ostringstream msg;
-          msg<<"Failed to open file  " <<  (*outputFileNamesIt);
-          throw ExceptionWithMessage( msg.str() );
+          {
+          (*it)->close();
+          delete (*it);
           }
-          this->m_Ofstreams.push_back(outputFile);
+        this->m_Ofstreams.clear();
+        std::ostringstream msg;
+        msg<<" Failed to open file  " <<  (*outputFileNamesIt);
+        throw ExceptionWithMessage( msg.str() );
+        }
+
+        this->m_Ofstreams.push_back(outputFile);
         }
       // EndCodeSnippet
       }
@@ -253,11 +256,12 @@ private:
             {
             // BeginCodeSnippet
             char buffer[100];
+            
             igstk::Transform transform =
               this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
-            sprintf(buffer, "%f  %f %f %f  %f %f %f %f ", igstk::RealTimeClock::GetTimeStamp(), t[0], t[1], t[2],
+            sprintf(buffer, "%f  %f %f %f  %f %f %f %f \n", igstk::RealTimeClock::GetTimeStamp(), t[0], t[1], t[2],
                     r.GetX(), r.GetY(), r.GetZ(), r.GetW());
             this->m_PositionMessage.assign(buffer); 
 

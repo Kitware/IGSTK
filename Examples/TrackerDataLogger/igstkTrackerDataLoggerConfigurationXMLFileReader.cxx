@@ -154,13 +154,13 @@ TrackerDataLoggerConfigurationXMLFileReader::ProcessToolName()
 throw ( FileFormatException )
 {
   //see DEVICE_NAME http://www.na-mic.org/Wiki/index.php//Protocol
-  const unsigned int OpenIGTLINK_DEVICE_NAME_MAX_LENGTH = 20;
+  const unsigned int DEVICE_NAME_MAX_LENGTH = 20;
 
-  if( this->m_CurrentTagData.size() > OpenIGTLINK_DEVICE_NAME_MAX_LENGTH )
+  if( this->m_CurrentTagData.size() > DEVICE_NAME_MAX_LENGTH )
     {
     std::ostringstream outStr; 
     outStr<<"Device name ("<<this->m_CurrentTagData<<") too long, ";
-    outStr<<" maximal length is "<<OpenIGTLINK_DEVICE_NAME_MAX_LENGTH;
+    outStr<<" maximal length is "<<DEVICE_NAME_MAX_LENGTH;
     throw FileFormatException( outStr.str() );
     }
   this->m_CurrentToolName = this->m_CurrentTagData;
