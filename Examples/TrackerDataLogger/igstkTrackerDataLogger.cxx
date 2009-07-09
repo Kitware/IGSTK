@@ -109,10 +109,12 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
         //this method can throw an exception,
         //the user is responsible for dealing with this
 
-        updateObserver->Initialize( toolNamesAndOutputFileNamesIt->first, 
-          toolNamesAndToolsIt->second, 
-          world, 
-          toolNamesAndOutputFileNamesIt->second );
+        updateObserver->Initialize(
+           this,
+           toolNamesAndOutputFileNamesIt->first, 
+           toolNamesAndToolsIt->second, 
+           world, 
+           toolNamesAndOutputFileNamesIt->second );
 
         toolNamesAndToolsIt->second->AddObserver(
            igstk::TrackerToolTransformUpdateEvent(), 
@@ -120,6 +122,9 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
         } 
       }
     }
+  //Michel Temp
+  m_InitialTimeStamp = -1.0; 
+  m_TimeLimit = -1.0; 
 }
 
 
@@ -139,12 +144,15 @@ TrackerDataLogger::StartTracking()
     {
     throw ExceptionWithMessage( std::string( "Failed to start tracking." ) );
     }
+  //Michel Temp
+  m_TimeLimit = 300000.0; 
 }
   
 
 void 
 TrackerDataLogger::StopTracking()
 {
+   //std::cerr << " stop tracking ...\n"; 
   StopTrackingErrorObserver::Pointer steo= 
     StopTrackingErrorObserver::New();
 

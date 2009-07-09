@@ -73,6 +73,15 @@ public:
 
   void StopTracking();
 
+  void ExitSuccessfully()
+    {
+    exit( EXIT_SUCCESS ); 
+    }      
+    igstkGetMacro( InitialTimeStamp, double );
+    igstkGetMacro( TimeLimit, double );
+    igstkSetMacro( InitialTimeStamp, double );
+    igstkSetMacro( TimeLimit, double );
+
 private:
 
   /**
@@ -173,12 +182,14 @@ private:
 
     public:
 
-      void Initialize( 
+      void Initialize(
+        TrackerDataLogger *logger, 
         const std::string toolName, 
         igstk::TrackerTool::Pointer trackerTool,
         igstk::SpatialObject::Pointer world,
         std::vector< std::string > & outputFileNames)
       {
+      this->m_Logger = logger;
       this->m_Tool = trackerTool;
       this->m_World = world;
       this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
@@ -257,12 +268,33 @@ private:
             // BeginCodeSnippet
             char buffer[100];
             
+            double timeStamp = igstk::RealTimeClock::GetTimeStamp();
+            if (this->m_Logger->GetInitialTimeStamp() < 0.0)
+              {
+              this->m_Logger->SetInitialTimeStamp( timeStamp );
+              }
+            
+            double timeDifference = timeStamp - this->m_Logger->GetInitialTimeStamp();            
+            if (this->m_Logger->GetTimeLimit() > 0.0)
+              {
+              //std::cerr << " timeDifference " << timeDifference << "\n"; 
+              if (timeDifference > this->m_Logger->GetTimeLimit() )
+                {
+                //std::cerr << " want to stop tracking  \n"; 
+                this->m_Logger->StopTracking();
+                this->m_Logger->ExitSuccessfully();
+                }
+              }
+                
             igstk::Transform transform =
               this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
-            sprintf(buffer, "%f  %f %f %f  %f %f %f %f \n", igstk::RealTimeClock::GetTimeStamp(), t[0], t[1], t[2],
+            sprintf(buffer, "%f  %f %f %f  %f %f %f %f \n", timeDifference , t[0], t[1], t[2],
                     r.GetX(), r.GetY(), r.GetZ(), r.GetW());
+
+            //std::cerr << buffer;
+            
             this->m_PositionMessage.assign(buffer); 
 
             std::vector< ofstream * >::iterator it; 
@@ -277,6 +309,7 @@ private:
         }
     }
 
+
     private:
     std::string m_HostName;
     unsigned int m_PortNumber;  
@@ -285,18 +318,23 @@ private:
     igstk::SpatialObject::Pointer m_World;
     igstk::TransformObserver::Pointer m_TransformObserver; 
     igstk::TrackerTool::Pointer  m_Tool;
+    TrackerDataLogger *m_Logger;
 
     //send data to these ofstreams 
     std::vector< ofstream* > m_Ofstreams;
     std::string m_PositionMessage; 
     };
 
+  private:
 
   igstk::TrackerDataLoggerConfigurationFileReader::ConfigurationDataType *
     GetTrackerConfiguration( std::string &configurationFileName) 
     throw ( ExceptionWithMessage );
 
   igstk::TrackerController::Pointer m_TrackerController;
+  double m_InitialTimeStamp;
+  double m_TimeLimit; 
+      
 };
    
 
