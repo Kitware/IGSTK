@@ -188,22 +188,7 @@ void
 TrackerDataLoggerConfigurationXMLFileReader::ProcessToolOutputFile() 
 throw ( FileFormatException )
 {
-  std::string outputFileName;
-  std::replace( this->m_CurrentTagData.begin(), this->m_CurrentTagData.end(), 
-                ':', ' ' );
-  std::istringstream instr;  
-  instr.str( this->m_CurrentTagData );
-
-  instr>>outputFileName; 
-  //check that we got to the end of the stream, (the string 
-  //m_CurrentTagData has no trailing white spaces, trimmed in the 
-  //EndElement method)
-  if( !instr.eof() )
-    {
-    throw FileFormatException( 
-      "Error in tool's outputFileName. " );
-    }
-  FileNameDataType outputFileData = outputFileName;
+  FileNameDataType outputFileData = this->m_CurrentTagData;
   //only add if not a duplicate outputFile, this is a naive test that can be
   //bypassed easily by the user. It is here to prevent copy paste errors in the
   //xml file.
@@ -218,7 +203,6 @@ throw ( FileFormatException )
       }
     }
   this->m_CurrentOutputFileNames.push_back( outputFileData ); 
-
 }
 
 
