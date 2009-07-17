@@ -144,8 +144,6 @@ TrackerDataLogger::StartTracking()
     {
     throw ExceptionWithMessage( std::string( "Failed to start tracking." ) );
     }
-  //Michel Temp
-  m_TimeLimit = 300000.0; 
 }
   
 
