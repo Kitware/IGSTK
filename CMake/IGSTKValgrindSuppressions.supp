@@ -26,13 +26,6 @@
    obj:/lib/libc-2.3.3.so
    fun:__sysconf
 }
-{
-   <insert a suppression name here>
-   core:PThread
-   fun:pthread_error
-   fun:pthread_attr_setscope
-   fun:_ZN16vtkMultiThreader19SingleMethodExecuteEv
-}
 {  
    <insert a suppression name here>
    Memcheck:Cond
@@ -55,6 +48,17 @@
    obj:/lib/libc-2.3.3.so
    fun:__pthread_once
 }
+<<<<<<< IGSTKValgrindSuppressions.supp
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_nv000139gl
+   obj:/usr/lib/libGLcore.so
+   fun:glXSwapBuffers
+}
+
+
+=======
 {
    <insert a suppression name here>
    Memcheck:Cond
@@ -69,6 +73,7 @@
    fun:XOpenDisplay
    fun:TkpOpenDisplay
 }
+>>>>>>> 1.3
 {  
    <insert a suppression name here>
    Memcheck:Leak
