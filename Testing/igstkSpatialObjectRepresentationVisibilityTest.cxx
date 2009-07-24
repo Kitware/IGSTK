@@ -297,8 +297,8 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   double validityTimeInMilliseconds = 1000; // 1 second
   igstk::Transform transform1;
   igstk::Transform::VectorType translation1;
-  translation1[0] =  0.5;
-  translation1[1] =- 0.5;
+  translation1[0] =  1.0;
+  translation1[1] =- 1.0;
   translation1[2] =  0.0;
   igstk::Transform::VersorType rotation;
   rotation.Set( 0.707, 0.0, 0.707, 0.0 );
@@ -314,7 +314,7 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   igstk::Transform transform2;
   igstk::Transform::VectorType translation2;
   translation2[0] = 0.0;
-  translation2[1] = 1.0;
+  translation2[1] = 2.0;
   translation2[2] = 0.0;
 
   transform2.SetTranslationAndRotation( 
@@ -327,8 +327,8 @@ int igstkSpatialObjectRepresentationVisibilityTest( int argc, char * argv [] )
   // This is the transform for the permanent object.
   igstk::Transform transform3;
   igstk::Transform::VectorType translation3;
-  translation3[0] = -0.5;
-  translation3[1] = -0.5;
+  translation3[0] = -1.0;
+  translation3[1] = -1.0;
   translation3[2] =  0.0;
 
   transform3.SetTranslationAndRotation( 
