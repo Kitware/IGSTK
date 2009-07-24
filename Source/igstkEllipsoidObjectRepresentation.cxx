@@ -110,6 +110,7 @@ void EllipsoidObjectRepresentation::SetEllipsoidObjectProcessing()
     m_EllipsoidSource->SetCenter(0, 0, 0);
 
     EllipsoidObjectType::ArrayType radius = m_EllipsoidObject->GetRadius();
+    m_EllipsoidSource->SetSize( 1.0 );
     m_EllipsoidSource->SetScale( radius[0], radius[1], radius[2] );
     m_EllipsoidSource->SetThetaResolution( 10 );
     m_EllipsoidSource->SetPhiResolution( 10 );
