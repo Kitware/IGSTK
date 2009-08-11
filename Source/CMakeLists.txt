@@ -567,7 +567,7 @@ IF (IGSTKSandbox_USE_CompressedDV)
 ENDIF (IGSTKSandbox_USE_CompressedDV)
 
 IF(IGSTKSandbox_USE_OpenCV)
-SET(EXTRA_LIBS ${EXTRA_LIBS} cxcore110d cv110d highgui110d)
+SET(EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
 ENDIF(IGSTKSandbox_USE_OpenCV)
 
 IF(IGSTKSandbox_USE_vtkKWImage)
