@@ -20,6 +20,7 @@
 # IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER(int) : port number used for ascension tracker
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
+# IGSTK_USE_InfiniTrack : Us InfiniTrack tests
  
 
 
@@ -43,6 +44,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER
       IGSTK_USE_OpenIGTLink
       IGSTK_USE_VideoImager
+      IGSTK_USE_InfiniTrack
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -577,6 +579,16 @@ IF(${IGSTK_USE_MicronTracker})
               ${IGSTK_TESTS} igstkMicronTrackerToolTest )
 ENDIF(${IGSTK_USE_MicronTracker})
 
+IF(${IGSTK_USE_InfiniTrack})
+    ADD_TEST( igstkInfiniTrackTrackerTest
+              ${IGSTK_TESTS}
+              igstkInfiniTrackTrackerTest
+              ${IGSTK_DATA_ROOT}/Input/InfiniMarkers
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkInfiniTrackTrackerTestLogOutput.txt)
+    ADD_TEST( igstkInfiniTrackTrackerToolTest
+              ${IGSTK_TESTS} igstkInfiniTrackTrackerToolTest )
+ENDIF(${IGSTK_USE_InfiniTrack})
+
 IF(IGSTK_USE_OpenIGTLink)
 
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
@@ -909,6 +921,13 @@ IF(${IGSTK_USE_MicronTracker})
     igstkMicronTrackerTest.cxx
     igstkMicronTrackerToolTest.cxx)
 ENDIF(${IGSTK_USE_MicronTracker})  
+
+IF(${IGSTK_USE_InfiniTrack})  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkInfiniTrackTrackerTest.cxx
+    igstkInfiniTrackTrackerToolTest.cxx)
+ENDIF(${IGSTK_USE_InfiniTrack})  
 
 IF(${IGSTK_USE_Qt})  
   SET(BasicTests_SRCS
