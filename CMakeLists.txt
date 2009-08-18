@@ -197,21 +197,26 @@ ENDIF(IGSTK_USE_MicronTracker)
 OPTION(IGSTK_USE_InfiniTrack "Connect InfiniTrack " OFF)
 
 IF(IGSTK_USE_InfiniTrack)
-  FIND_PATH(InfiniTrack_INCLUDE_DIRECTORY itkInterface.h
-  "C:/Program Files/Atracsys/infiniTrack/include"
-  DOC "Directory where the itkInterface.h file is located")
-  INCLUDE_DIRECTORIES( ${InfiniTrack_INCLUDE_DIRECTORY} )
+  IF(WIN32)
+    FIND_PATH(InfiniTrack_INCLUDE_DIRECTORY itkInterface.h
+    "C:/Program Files/Atracsys/infiniTrack/include"
+    DOC "Directory where the itkInterface.h file is located")
+    INCLUDE_DIRECTORIES( ${InfiniTrack_INCLUDE_DIRECTORY} )
 
-  FIND_LIBRARY( InfiniTrack_LIBRARY 
-    NAMES v9ITK.dll v9ITK 
-    PATHS "C:/Program Files/Atracsys/infiniTrack/lib"
-    DOC "Full path to the InfiniTrack library file"
-    )
+    FIND_LIBRARY( InfiniTrack_LIBRARY 
+      NAMES v9ITK.dll v9ITK 
+      PATHS "C:/Program Files/Atracsys/infiniTrack/lib"
+      DOC "Full path to the InfiniTrack library file"
+      )
  
-  IF(InfiniTrack_INCLUDE_DIRECTORY)
-    GET_FILENAME_COMPONENT( InfiniTrack_LIBRARY_DIRS ${InfiniTrack_LIBRARY} PATH )
-    LINK_DIRECTORIES( ${InfiniTrack_LIBRARY_DIRS} )
-  ENDIF(InfiniTrack_INCLUDE_DIRECTORY)
+    IF(InfiniTrack_INCLUDE_DIRECTORY)
+      GET_FILENAME_COMPONENT( InfiniTrack_LIBRARY_DIRS ${InfiniTrack_LIBRARY} PATH )
+      LINK_DIRECTORIES( ${InfiniTrack_LIBRARY_DIRS} )
+    ENDIF(InfiniTrack_INCLUDE_DIRECTORY)
+
+  ELSE(WIN32)
+    MESSAGE(FATAL_ERROR " Please turn off InfiniTrack option. Only windows operating system is currently supported for InfiniTrack") 
+  ENDIF(WIN32)
  
 ENDIF(IGSTK_USE_InfiniTrack)
 
