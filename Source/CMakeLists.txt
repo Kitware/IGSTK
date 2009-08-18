@@ -138,6 +138,14 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF(IGSTK_USE_InfiniTrack)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkInfiniTrackTracker.h
+      igstkInfiniTrackTrackerTool.h
+     )
+ENDIF(IGSTK_USE_InfiniTrack)
+
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -309,6 +317,15 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF(IGSTK_USE_InfiniTrack)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkInfiniTrackTracker.cxx
+      igstkInfiniTrackTrackerTool.cxx
+ 
+     )
+ENDIF(IGSTK_USE_InfiniTrack)
+
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS
       ${IGSTK_SRCS}
@@ -383,6 +400,10 @@ IF(IGSTK_USE_MicronTracker)
   ENDIF(WIN32)
   
 ENDIF(IGSTK_USE_MicronTracker)
+
+IF(IGSTK_USE_InfiniTrack)
+  SET(EXTRA_LIBS ${EXTRA_LIBS}  v9ITK )
+ENDIF(IGSTK_USE_InfiniTrack)
 
 IF(IGSTK_USE_OpenIGTLink)
   SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
