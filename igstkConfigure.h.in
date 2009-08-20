@@ -35,3 +35,4 @@
 #cmakedefine IGSTK_USE_SceneGraphVisualization
 #cmakedefine IGSTK_USE_OpenCV
 #cmakedefine IGSTK_USE_VideoImager
+#cmakedefine IGSTK_USE_InfiniTrack

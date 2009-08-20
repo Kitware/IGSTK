@@ -53,12 +53,4 @@ SET(IGSTK_INCLUDE_DIRS_INSTALL_TREE ${IGSTK_INCLUDE_DIRS_INSTALL_TREE}
   ${VTK_INCLUDE_DIRS}
 )
 
-# Patended include directories added only if the user explicitly enabled the
-# IGSTK_USE_PATENTED option. Users are responsible for getting a license from the
-# patent holders in order to use any of those methods.
-IF(IGSTK_USE_PATENTED)
-  SET(IGSTK_INCLUDE_DIRS_INSTALL_TREE ${IGSTK_INCLUDE_DIRS_INSTALL_TREE}
-    ${IGSTK_INSTALL_INCLUDE_DIR}/Code/Patented
-    )
-ENDIF(IGSTK_USE_PATENTED)
 

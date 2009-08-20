@@ -5,6 +5,8 @@
 
 #cmakedefine IGSTK_USE_MicronTracker
 
+#cmakedefine IGSTK_USE_InfiniTrack
+
 #cmakedefine IGSTK_USE_Qt
 
 #cmakedefine IGSTK_USE_OpenIGTLink

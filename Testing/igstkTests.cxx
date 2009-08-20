@@ -109,6 +109,11 @@ void RegisterTests()
   REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif
 
+#ifdef IGSTK_USE_InfiniTrack
+  REGISTER_TEST(igstkInfiniTrackTrackerTest);
+  REGISTER_TEST(igstkInfiniTrackTrackerToolTest);
+#endif
+
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);

@@ -62,4 +62,7 @@ SET(IGSTK_USE_FLTK "@IGSTK_USE_FLTK@")
 # MicronTracker option
 SET(IGSTK_USE_MicronTracker "@IGSTK_USE_MicronTracker@")
 
+# InfinitTrack option
+SET(IGSTK_USE_InfiniTrack "@IGSTK_USE_MicronTracker@")
+
 
