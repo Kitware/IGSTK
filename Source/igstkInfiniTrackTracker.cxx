@@ -28,7 +28,7 @@
 #include "itkLoggerBase.h"
 
 #include "itkInterface.h"
-#include "itkIGSTKHelper.h"
+#include "itkHelper.h"
 
 #include "itkMatrix.h"
 #include "iostream"
@@ -381,7 +381,7 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::VerifyTrackerToolInformation 
 
   itkMarker marker;
     
-  if (ITK_OK != itkIGSTKLoadGeometry (strMarkerFileName.c_str (), &marker))
+  if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
   {
     igstkLogMacro(CRITICAL, "File is not a InfiniTrack marker")
     return FAILURE;
@@ -409,7 +409,7 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::RemoveTrackerToolFromInternal
 
   itkMarker marker;
     
-  if (ITK_OK != itkIGSTKLoadGeometry (strMarkerFileName.c_str (), &marker))
+  if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
   {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
@@ -444,7 +444,7 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::AddTrackerToolToInternalDataC
 
   itkMarker marker;
 
-  if (ITK_OK != itkIGSTKLoadGeometry (strMarkerFileName.c_str (), &marker))
+  if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
   {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
