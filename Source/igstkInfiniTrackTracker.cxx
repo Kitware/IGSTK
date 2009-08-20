@@ -68,19 +68,19 @@ InfiniTrackTracker::InfiniTrackTracker (void)
 InfiniTrackTracker::~InfiniTrackTracker(void)
 {
   for (size_t t = 0; t < this->m_pvecMarkerPos [0].size (); t++)
-  {
+    {
     delete this->m_pvecMarkerPos [0][t];
-  }
+    }
 
   for (size_t t = 0; t < this->m_pvecMarkerPos [1].size (); t++)
-  {
+    {
     delete this->m_pvecMarkerPos [1][t];
-  }
+    }
 
   for (size_t t = 0; t < this->m_pvecMarkerPos [2].size (); t++)
-  {
+    {
     delete this->m_pvecMarkerPos [2][t];
-  }
+    }
 
   delete this->m_pvecMarkerPos;
 
@@ -95,28 +95,32 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalOpen (void)
   this->m_Handle = itkInitializeDriver ();
 
   if(!this->m_Handle)
-  {
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
-  if (itkScanDevices((itkHandle)this->m_Handle, deviceEnumerator, &this->m_u64DeviceSerialNumber))
-  {
+  if (itkScanDevices((itkHandle)this->m_Handle, 
+      deviceEnumerator,
+      &this->m_u64DeviceSerialNumber))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   if (this->m_u64DeviceSerialNumber == 0)
-  {
+    {
     igstkLogMacro(CRITICAL, "No device detected")
     return FAILURE;
-  }
+    }
 
-  if (itkSetTrackingMode((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, ITK_GEOMETRY_CONSTRAINT_MODE))
-  {
+  if (itkSetTrackingMode((itkHandle)this->m_Handle,
+                          this->m_u64DeviceSerialNumber,
+                          ITK_GEOMETRY_CONSTRAINT_MODE))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   return SUCCESS;
 }
@@ -127,10 +131,10 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalClose( void )
   igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::InternalClose called ...\n")
 
   if (this->m_Handle)
-  {
+    {
     itkCloseDriver ((itkHandle)this->m_Handle);
     m_Handle = NULL;
-  }
+    }
 
   return SUCCESS;
 }
@@ -142,11 +146,13 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalReset( void )
 
   itkOption option;
 
-  if (itkSetOption ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, "RESET", &option))
-  {
+  if (itkSetOption ((itkHandle)this->m_Handle,
+                   this->m_u64DeviceSerialNumber,
+                   "RESET", &option))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   return SUCCESS;
 }
@@ -154,12 +160,15 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalReset( void )
 /** The "InternalStartTracking" method starts tracking. */
 InfiniTrackTracker::ResultType InfiniTrackTracker::InternalStartTracking( void )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::InternalStartTracking called ...\n")
-  if (itkStartAcquisition ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber))
-  {
+  igstkLogMacro(DEBUG, 
+         "igstk::InfiniTrackTracker::InternalStartTracking called ...\n")
+
+  if (itkStartAcquisition ((itkHandle)this->m_Handle,
+                            this->m_u64DeviceSerialNumber))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   return SUCCESS;
 }
@@ -167,12 +176,15 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalStartTracking( void )
 /** The "InternalStopTracking" method stops tracking. */
 InfiniTrackTracker::ResultType InfiniTrackTracker::InternalStopTracking( void )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::InternalStopTracking called ...\n")
-  if (itkStopAcquisition ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber))
-  {
+  igstkLogMacro(DEBUG, 
+      "igstk::InfiniTrackTracker::InternalStopTracking called ...\n")
+
+  if (itkStopAcquisition ((itkHandle)this->m_Handle, 
+              this->m_u64DeviceSerialNumber))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   return SUCCESS;
 }
@@ -180,7 +192,8 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalStopTracking( void )
 /** The "InternalUpdateStatus" method updates tracker status. */
 InfiniTrackTracker::ResultType InfiniTrackTracker::InternalUpdateStatus( void )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::InternalUpdateStatus called ...\n")
+  igstkLogMacro(DEBUG, 
+               "igstk::InfiniTrackTracker::InternalUpdateStatus called ...\n")
 
   this->m_BufferLock->Lock ();
   setNextArrayForUser ();
@@ -189,23 +202,24 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalUpdateStatus( void )
   TrackerToolsContainerType trackerToolContainer = GetTrackerToolContainer();
 
   for (size_t t = 0; t < this->m_pvecMarkerPos [m_iProcessed].size (); t++)
-  {
+    {
     itkMarkerPos* pMarker = this->m_pvecMarkerPos [m_iProcessed] [t];
 
     std::string tool = "";
 
     for (size_t u = 0; u < this->m_vecTrackerToolID.size (); u++)
-    {
-      if (this->m_vecTrackerToolID [u].m_u32GeometryID == pMarker->mu32GeometryID)
       {
+      if (this->m_vecTrackerToolID [u].m_u32GeometryID == 
+              pMarker->mu32GeometryID)
+        {
         tool = this->m_vecTrackerToolID [u].m_TrackerToolName;
+        }
       }
-    }
 
     if (tool == "")
-    {
+      {
       continue;
-    }
+      }
 
     // report to the tracker tool that the tracker is Visible
     this->ReportTrackingToolVisible(trackerToolContainer[tool]);
@@ -245,66 +259,75 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalUpdateStatus( void )
     long lTime = this->GetValidityTime ();
 
     transform.SetToIdentity(this->GetValidityTime());
-    transform.SetTranslationAndRotation(translation, rotation, errorValue, this->GetValidityTime());
+    transform.SetTranslationAndRotation(translation, 
+                                        rotation, 
+                                        errorValue,
+                                        this->GetValidityTime());
 
     // set the raw transform
     this->SetTrackerToolRawTransform(trackerToolContainer [tool], transform );
 
     this->SetTrackerToolTransformUpdate(trackerToolContainer [tool], true );
-  }
+    }
 
   return SUCCESS;
 }
 
 
 /** The "InternalThreadedUpdateStatus" method updates tracker status. */
-InfiniTrackTracker::ResultType InfiniTrackTracker::InternalThreadedUpdateStatus( void )
+InfiniTrackTracker::ResultType 
+InfiniTrackTracker::InternalThreadedUpdateStatus( void )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::InternalThreadedUpdateStatus called ...\n")
+  igstkLogMacro(DEBUG, 
+    "igstk::InfiniTrackTracker::InternalThreadedUpdateStatus called ...\n")
 
   this->m_BufferLock->Lock ();
   setNextArrayForAcquisition ();
   this->m_BufferLock->Unlock ();
 
   for (size_t t = 0; t < this->m_pvecMarkerPos [m_iInAcquisition].size (); t++)
-  {
+    {
     delete this->m_pvecMarkerPos [m_iInAcquisition][t];
-  }
+    }
 
   this->m_pvecMarkerPos [m_iInAcquisition].clear ();
 
   uint32 uNoFrame;
 
   // Declaration of the image structure
-  if (itkProcess ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber,&uNoFrame))
-  {
+  if (itkProcess ((itkHandle)this->m_Handle, 
+                 this->m_u64DeviceSerialNumber,
+                 &uNoFrame))
+    {
     if (itkLastError () > 0)
-    {
+      {
       igstkLogMacro(CRITICAL, itkLastErrorStr ())
-    }
+      }
     else
-    {
+      {
       igstkLogMacro(DEBUG, itkLastErrorStr ())
-    }
+      }
 
     return FAILURE;
-  }
+    } 
 
   for (size_t t = 0; t < this->m_vecTrackerToolID.size (); t++)
-  {
+    {
     uint32 u32ID = this->m_vecTrackerToolID [t].m_u32GeometryID;
 
     itkMarkerPos* pMarkerPosition = new itkMarkerPos;
 
-    if (!itkGetMarkerPos((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, u32ID, ITK_FILTERED_PROCESS_DATA, pMarkerPosition))
-    {
+    if (!itkGetMarkerPos((itkHandle)this->m_Handle, 
+        this->m_u64DeviceSerialNumber, u32ID, ITK_FILTERED_PROCESS_DATA, 
+        pMarkerPosition))
+      {
       this->m_pvecMarkerPos [m_iInAcquisition].push_back (pMarkerPosition);
-    }
+      }
     else
-    {
+      {
       delete pMarkerPosition;
+      }
     }
-  }
 
   this->m_BufferLock->Lock ();
   acquisitionFinished ();
@@ -319,18 +342,20 @@ void InfiniTrackTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
   Superclass::PrintSelf(os, indent);
 
   if(!this->m_Handle || !this->m_u64DeviceSerialNumber)
-  {
+    {
     return;
-  }
+    }
 
   // Declaration of the device structure
   itkDevice device;
 
   // Retrieve information about the device
-  if (itkGetDevice ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, &device))
-  {
+  if (itkGetDevice ((itkHandle)this->m_Handle, 
+                   this->m_u64DeviceSerialNumber, 
+                   &device))
+    {
     return;
-  }
+    }
 
   uint32 uLeft  = ((uint32)(device.mu64SerialNumber)),
          uRight = ((uint32)((device.mu64SerialNumber)>>32));
@@ -345,116 +370,147 @@ void InfiniTrackTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
 }
 
 /** Verify if a tracker tool information is correct before attaching */
-InfiniTrackTracker::ResultType InfiniTrackTracker::VerifyTrackerToolInformation (const TrackerToolType* trackerTool)
+InfiniTrackTracker::ResultType 
+InfiniTrackTracker::VerifyTrackerToolInformation (
+     const TrackerToolType* trackerTool)
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::VerifyTrackerToolInformation called ...\n")
+  igstkLogMacro(DEBUG, 
+     "igstk::InfiniTrackTracker::VerifyTrackerToolInformation called ...\n")
 
   if ( trackerTool == NULL )
-  {
+    {
     igstkLogMacro(CRITICAL, "TrackerTool is not defined")
     return FAILURE;
-  }
+    }
 
-  if(this->m_MarkerTemplatesDirectory == "" || !itksys::SystemTools::FileExists(this->m_MarkerTemplatesDirectory.c_str()))
-  {
+  if(this->m_MarkerTemplatesDirectory == "" || 
+   !itksys::SystemTools::FileExists(this->m_MarkerTemplatesDirectory.c_str()))
+    {
     igstkLogMacro(CRITICAL, "Marker templates directory is not properly set")
     return FAILURE;
-  }
+    }
 
-  TrackerToolType* pTrackerToolNonConst = const_cast<TrackerToolType *>(trackerTool);
+  TrackerToolType* pTrackerToolNonConst = 
+             const_cast<TrackerToolType *>(trackerTool);
 
-  InfiniTrackTrackerTool* pInfiniTrackTrackerTool = dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
+  InfiniTrackTrackerTool* pInfiniTrackTrackerTool 
+           = dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
 
   if(!pInfiniTrackTrackerTool)
-  {
+    {
     igstkLogMacro(CRITICAL, "Tracker tool is not a InfiniTrack tool")
     return FAILURE;
-  }
+    }
 
-  std::string strMarkerFileName = this->m_MarkerTemplatesDirectory + "\\" + pInfiniTrackTrackerTool->GetMarkerName () + ".xml";
+  std::string strMarkerFileName = 
+     this->m_MarkerTemplatesDirectory + "\\" + 
+     pInfiniTrackTrackerTool->GetMarkerName () + 
+     ".xml";
 
   if(!itksys::SystemTools::FileExists(strMarkerFileName.c_str()))
-  {
+    {
     igstkLogMacro(CRITICAL, "Marker does not exist")
     return FAILURE;
-  }
+    }
 
   itkMarker marker;
     
   if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
-  {
+    {
     igstkLogMacro(CRITICAL, "File is not a InfiniTrack marker")
     return FAILURE;
-  }
+    }
     
   return SUCCESS;
 }
 
 /** The "ValidateSpecifiedFrequency" method checks if the specified  */
-InfiniTrackTracker::ResultType InfiniTrackTracker::ValidateSpecifiedFrequency( double frequencyInHz )
+InfiniTrackTracker::ResultType 
+InfiniTrackTracker::ValidateSpecifiedFrequency( double frequencyInHz )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::ValidateSpecifiedFrequency called ...\n")
+  igstkLogMacro(DEBUG, 
+   "igstk::InfiniTrackTracker::ValidateSpecifiedFrequency called ...\n")
 
   return SUCCESS;
 }
 
-/** This method will remove entries of the traceker tool from internal data containers */
-InfiniTrackTracker::ResultType InfiniTrackTracker::RemoveTrackerToolFromInternalDataContainers(const TrackerToolType * trackerTool )
+/** This method will remove entries of the traceker tool 
+ * from internal data containers */
+InfiniTrackTracker::ResultType 
+InfiniTrackTracker::RemoveTrackerToolFromInternalDataContainers(
+ const TrackerToolType * trackerTool )
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::RemoveTrackerToolFromInternalDataContainers called ...\n")
+  igstkLogMacro(DEBUG, 
+   "igstk::InfiniTrackTracker::RemoveTrackerToolFromInternalDataContainers \
+   called ...\n")
 
-  TrackerToolType* pTrackerToolNonConst = const_cast<TrackerToolType *>(trackerTool);
-  InfiniTrackTrackerTool* pInfiniTrackTrackerTool = dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
-  std::string strMarkerFileName = this->m_MarkerTemplatesDirectory + "\\" + pInfiniTrackTrackerTool->GetMarkerName () + ".xml";
+  TrackerToolType* pTrackerToolNonConst = 
+     const_cast<TrackerToolType *>(trackerTool);
+  InfiniTrackTrackerTool* pInfiniTrackTrackerTool = 
+     dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
+  std::string strMarkerFileName = this->m_MarkerTemplatesDirectory + "\\" + 
+             pInfiniTrackTrackerTool->GetMarkerName () + ".xml";
 
   itkMarker marker;
     
   if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
-  {
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
     
-  if (itkRemoveGeometry ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, marker.mu32GeometryID))
-  {
+  if (itkRemoveGeometry ((itkHandle)this->m_Handle, 
+     this->m_u64DeviceSerialNumber, 
+     marker.mu32GeometryID))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   for (size_t t = 0; t < m_vecTrackerToolID.size (); t++)
-  {
-    if (this->m_vecTrackerToolID [t].m_TrackerToolName == pInfiniTrackTrackerTool->GetMarkerName ())
     {
+    if (this->m_vecTrackerToolID [t].m_TrackerToolName == 
+       pInfiniTrackTrackerTool->GetMarkerName ())
+      {
       this->m_vecTrackerToolID.erase (this->m_vecTrackerToolID.begin () + t);
       break;
+      }
     }
-  }
 
   return SUCCESS;
 }
 
 /** Add tracker tool entry to internal containers */
-InfiniTrackTracker::ResultType InfiniTrackTracker::AddTrackerToolToInternalDataContainers (const TrackerToolType * trackerTool)
+InfiniTrackTracker::ResultType 
+InfiniTrackTracker::AddTrackerToolToInternalDataContainers (
+   const TrackerToolType * trackerTool)
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTracker::AddTrackerToolToInternalDataContainers called ...\n")
+  igstkLogMacro(DEBUG, 
+  "igstk::InfiniTrackTracker::AddTrackerToolToInternalDataContainers \
+   called ...\n")
 
-  TrackerToolType* pTrackerToolNonConst = const_cast<TrackerToolType *>(trackerTool);
-  InfiniTrackTrackerTool* pInfiniTrackTrackerTool = dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
-  std::string strMarkerFileName = this->m_MarkerTemplatesDirectory + "\\" + pInfiniTrackTrackerTool->GetMarkerName () + ".xml";
+  TrackerToolType* pTrackerToolNonConst = 
+                 const_cast<TrackerToolType *>(trackerTool);
+  InfiniTrackTrackerTool* pInfiniTrackTrackerTool = 
+                 dynamic_cast<InfiniTrackTrackerTool *> (pTrackerToolNonConst);
+  std::string strMarkerFileName = this->m_MarkerTemplatesDirectory + "\\" + 
+             pInfiniTrackTrackerTool->GetMarkerName () + 
+             ".xml";
 
   itkMarker marker;
 
   if (ITK_OK != itkHelperLoadGeometry (strMarkerFileName.c_str (), &marker))
-  {
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
     
-  if (itkSetGeometry ((itkHandle)this->m_Handle, this->m_u64DeviceSerialNumber, &marker))
-  {
+  if (itkSetGeometry ((itkHandle)this->m_Handle, 
+       this->m_u64DeviceSerialNumber, &marker))
+    {
     igstkLogMacro(CRITICAL, itkLastErrorStr ())
     return FAILURE;
-  }
+    }
 
   TrackerToolIdentification TrackerID;
 
@@ -470,17 +526,17 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::AddTrackerToolToInternalDataC
 void InfiniTrackTracker::setNextArrayForAcquisition ()
 {
   if (this->m_iAvailable != 0 && this->m_iProcessed != 0)
-  {
+    {
     this->m_iInAcquisition = 0;
-  }
+    }
   else if (this->m_iAvailable != 1 && this->m_iProcessed != 1)
-  {
+    {
     this->m_iInAcquisition = 1;
-  }
+    }
   else
-  {
+    {
     this->m_iInAcquisition = 2;
-  }
+    }
 }
 
 /** Set the next object array for the user. True if a new array is available */
@@ -490,13 +546,13 @@ bool InfiniTrackTracker::setNextArrayForUser ()
   this->m_iAvailable = -1;
 
   if(this->m_iProcessed > -1)
-  {
+    {
     return true;
-  }
+    }
   else
-  {
+    {
     return false;
-  }
+    }
 }
 
 /** Called when the acquisition is finished */
@@ -505,7 +561,5 @@ void InfiniTrackTracker::acquisitionFinished ()
   this->m_iAvailable     = this->m_iInAcquisition;
   this->m_iInAcquisition = -1;
 }
-
-
 
 } // end of namespace igstk

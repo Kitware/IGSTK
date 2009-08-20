@@ -32,78 +32,78 @@
 namespace igstk
 {
 
-  class igstkInfiniTrackTracker;
+class igstkInfiniTrackTracker;
 
 /** \class InfiniTrackTrackerTool
-  * \brief A InfiniTrack-specific TrackerTool class.
-  *
-  * This class is a for providing InfiniTrack-specific functionality
-  * for TrackerTools, and also to allow compile-time type enforcement
-  * for other classes and functions that specifically require
-  * an InfiniTrackTrackertool.
-  *
-  * \sa http://www.atracsys.com/
-  *
-  * \ingroup Tracker
-  *
-  */
-  
-  class InfiniTrackTrackerTool : public TrackerTool
-  {
-  
-    public:
+* \brief A InfiniTrack-specific TrackerTool class.
+*
+* This class is a for providing InfiniTrack-specific functionality
+* for TrackerTools, and also to allow compile-time type enforcement
+* for other classes and functions that specifically require
+* an InfiniTrackTrackertool.
+*
+* \sa http://www.atracsys.com/
+*
+* \ingroup Tracker
+*
+*/
 
-      /** Macro with standard traits declarations. */
-      igstkStandardClassTraitsMacro (InfiniTrackTrackerTool, TrackerTool )
+class InfiniTrackTrackerTool : public TrackerTool
+{
 
-      /** Get Tracker tool marker name */
-      igstkGetStringMacro (MarkerName);
+public:
 
-      /** Set tracker tool marker name */
-      void RequestSetMarkerName (const std::string & markerName); 
+  /** Macro with standard traits declarations. */
+  igstkStandardClassTraitsMacro (InfiniTrackTrackerTool, TrackerTool )
 
-    protected:
+  /** Get Tracker tool marker name */
+  igstkGetStringMacro (MarkerName);
 
-      /** Constructor (configures InfiniTrack-specific tool values)  */
-      InfiniTrackTrackerTool();
+  /** Set tracker tool marker name */
+  void RequestSetMarkerName (const std::string & markerName); 
 
-      /** Destructor */
-      virtual ~InfiniTrackTrackerTool();
+protected:
 
-      /** Print object information */
-      virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
+  /** Constructor (configures InfiniTrack-specific tool values)  */
+  InfiniTrackTrackerTool();
 
-    private:
-      InfiniTrackTrackerTool(const Self&);   //purposely not implemented
-      void operator=(const Self&);       //purposely not implemented
+  /** Destructor */
+  virtual ~InfiniTrackTrackerTool();
 
-      /** Get boolean variable to check if the tracker tool is 
-          configured or not */
-      virtual bool CheckIfTrackerToolIsConfigured () const;
+  /** Print object information */
+  virtual void PrintSelf( std::ostream& os, ::itk::Indent indent ) const;
 
-      /** Report invalid marker specified */
-      void ReportInvalidMarkerNameSpecifiedProcessing ();
+private:
+  InfiniTrackTrackerTool(const Self&);   //purposely not implemented
+  void operator=(const Self&);       //purposely not implemented
 
-      /** Report any invalid request to the tool */
-      void ReportInvalidRequestProcessing ();
+  /** Get boolean variable to check if the tracker tool is 
+      configured or not */
+  virtual bool CheckIfTrackerToolIsConfigured () const;
 
-      /** Set the marker processing */
-      void SetMarkerNameProcessing ();
+  /** Report invalid marker specified */
+  void ReportInvalidMarkerNameSpecifiedProcessing ();
 
-      /** States for the State Machine */
-      igstkDeclareStateMacro (Idle);
-      igstkDeclareStateMacro (MarkerNameSpecified);
+  /** Report any invalid request to the tool */
+  void ReportInvalidRequestProcessing ();
 
-      /** Inputs to the State Machine */
-      igstkDeclareInputMacro (ValidMarkerName);
-      igstkDeclareInputMacro (InValidMarkerName);
+  /** Set the marker processing */
+  void SetMarkerNameProcessing ();
 
-      /** The marker */
-      std::string m_MarkerName;
-      std::string m_MarkerNameToBeSet;
+  /** States for the State Machine */
+  igstkDeclareStateMacro (Idle);
+  igstkDeclareStateMacro (MarkerNameSpecified);
 
-      /** boolean to indicate if the tracker tool is configured */
-      bool m_bTrackerToolConfigured;
+  /** Inputs to the State Machine */
+  igstkDeclareInputMacro (ValidMarkerName);
+  igstkDeclareInputMacro (InValidMarkerName);
+
+  /** The marker */
+  std::string m_MarkerName;
+  std::string m_MarkerNameToBeSet;
+
+  /** boolean to indicate if the tracker tool is configured */
+  bool m_TrackerToolConfigured;
 
 };  
 

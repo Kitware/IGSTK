@@ -31,7 +31,7 @@ namespace igstk
 /** Constructor (configures InfiniTrack-specific tool values)  */
 InfiniTrackTrackerTool::InfiniTrackTrackerTool()
                       : m_StateMachine(this)
-                      , m_bTrackerToolConfigured (false)
+                      , m_TrackerToolConfigured (false)
 {
 
   // States
@@ -79,35 +79,42 @@ InfiniTrackTrackerTool::~InfiniTrackTrackerTool()
 
 
 /** Set tracker tool marker name */
-void InfiniTrackTrackerTool::RequestSetMarkerName (const std::string & markerName)
+void InfiniTrackTrackerTool::RequestSetMarkerName (
+   const std::string & markerName)
 {
-  igstkLogMacro(DEBUG, "igstk::InfiniTrackTrackerTool::RequestSetMarkerName called ...\n");
+  igstkLogMacro(DEBUG, 
+   "igstk::InfiniTrackTrackerTool::RequestSetMarkerName called ...\n");
 
   if (markerName == "")
-  {
+    {
     this->m_StateMachine.PushInput( this->m_InValidMarkerNameInput );
     this->m_StateMachine.ProcessInputs();
-  } else 
-  {
+    } 
+  else 
+    {
     this->m_MarkerNameToBeSet = markerName;
     this->m_StateMachine.PushInput( this->m_ValidMarkerNameInput );
     this->m_StateMachine.ProcessInputs();
-  }
+    }
 }
 
 /** Print Self function */
-void InfiniTrackTrackerTool::PrintSelf( std::ostream& os, itk::Indent indent ) const
+void InfiniTrackTrackerTool::PrintSelf( 
+   std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Marker name : "         << this->m_MarkerName << std::endl;
-  os << indent << "TrackerToolConfigured:" << this->m_bTrackerToolConfigured << std::endl;
+  os << indent << "TrackerToolConfigured:" 
+     << this->m_TrackerToolConfigured << std::endl;
 }
 
 /** Report invalid marker specified */
 void InfiniTrackTrackerTool::ReportInvalidMarkerNameSpecifiedProcessing ()
 {
-  igstkLogMacro( DEBUG, "igstk::InfiniTrackTrackerTool::ReportInvalidMarkerNameSpecifiedProcessing called ...\n");
+  igstkLogMacro( DEBUG, 
+    "igstk::InfiniTrackTrackerTool::ReportInvalidMarkerNameSpecifiedProcessing \
+    called ...\n");
 
   igstkLogMacro( CRITICAL, "Invalid marker specified ");
 }
@@ -121,20 +128,23 @@ void InfiniTrackTrackerTool::ReportInvalidRequestProcessing ()
 /** Set the marker processing */
 void InfiniTrackTrackerTool::SetMarkerNameProcessing ()
 {
-  igstkLogMacro (DEBUG, "igstk::InfiniTrackTrackerTool::SetMarkerNameProcessing called ...\n");
+  igstkLogMacro (DEBUG, 
+     "igstk::InfiniTrackTrackerTool::SetMarkerNameProcessing called ...\n");
 
   this->m_MarkerName = this->m_MarkerNameToBeSet;
-  this->m_bTrackerToolConfigured = true;
+  this->m_TrackerToolConfigured = true;
 
   // For InfiniTrackTracker, marker name is used as a unique identifier
   SetTrackerToolIdentifier (this->m_MarkerName); 
 }
 
-/** The "CheckIfTrackerToolIsConfigured" method returns true if the tracker tool is configured */
+/** The "CheckIfTrackerToolIsConfigured" method returns true if 
+ * the tracker tool is configured */
 bool InfiniTrackTrackerTool::CheckIfTrackerToolIsConfigured () const
 {
-  igstkLogMacro (DEBUG, "igstk::InfiniTrackTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
-  return this->m_bTrackerToolConfigured;
+  igstkLogMacro (DEBUG, 
+   "igstk::InfiniTrackTrackerTool::CheckIfTrackerToolIsConfigured called...\n");
+  return this->m_TrackerToolConfigured;
 }
 
 }
