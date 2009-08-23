@@ -177,6 +177,9 @@ IF(IGSTKSandbox_USE_MicronTracker)
   ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+# Set InfiniTrack support to OFF. No InfiniTrack support in the sandbox
+SET(IGSTKSandbox_USE_InfiniTrack OFF)
+
 # Enable the option for building classes for sending transform data through sockets
 OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracker data through sockets" OFF)
 

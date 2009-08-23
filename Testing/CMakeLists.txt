@@ -254,5 +254,6 @@ IGSTKTesting(igstkLatestTests
              ${IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER}
              IGSTKSandbox_USE_OpenIGTLink
              IGSTKSandbox_USE_VideoImager
+             IGSTKSandbox_USE_InfiniTrack
              )
 
