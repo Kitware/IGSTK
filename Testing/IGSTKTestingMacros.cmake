@@ -1023,7 +1023,7 @@ ELSE(${SANDBOX_BUILD})
   ADD_EXECUTABLE(${EXECUTABLE_NAME} igstkTests.cxx ${BasicTests_SRCS})
   ADD_EXECUTABLE(igstkSystemInformation igstkSystemInformation.cxx)
   ADD_TEST(igstkSystemInformation ${EXECUTABLE_OUTPUT_PATH}/igstkSystemInformation)
-  TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon)
+  TARGET_LINK_LIBRARIES(igstkSystemInformation vtkCommon itkCommon)
 
   ADD_EXECUTABLE(igstkVersionTest igstkVersionTest.cxx)
   ADD_TEST(igstkVersionTest ${EXECUTABLE_OUTPUT_PATH}/igstkVersionTest)
