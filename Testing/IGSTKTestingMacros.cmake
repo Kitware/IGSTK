@@ -1027,7 +1027,7 @@ ELSE(${SANDBOX_BUILD})
 
   ADD_EXECUTABLE(igstkVersionTest igstkVersionTest.cxx)
   ADD_TEST(igstkVersionTest ${EXECUTABLE_OUTPUT_PATH}/igstkVersionTest)
-  TARGET_LINK_LIBRARIES(igstkVersionTest vtkCommon)
+  TARGET_LINK_LIBRARIES(igstkVersionTest vtkCommon ITKCommon)
   ADD_EXECUTABLE(igstkStateMachineExportTest igstkStateMachineExportTest.cxx)
   ADD_TEST(igstkStateMachineExportTest ${EXECUTABLE_OUTPUT_PATH}/igstkStateMachineExportTest ${IGSTK_STATE_MACHINE_DIAGRAMS_OUTPUT_DIR})
   TARGET_LINK_LIBRARIES(igstkStateMachineExportTest ${LIBRARY_NAME})
