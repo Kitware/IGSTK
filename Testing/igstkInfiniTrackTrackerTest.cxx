@@ -66,7 +66,6 @@ if (!igstk::CompletedEvent().CheckEvent(&event) &&
 
 int igstkInfiniTrackTrackerTest( int argc, char * argv[] )
 {
-
   igstk::RealTimeClock::Initialize();
 
   typedef igstk::Object::LoggerType   LoggerType;
@@ -75,7 +74,7 @@ int igstkInfiniTrackTrackerTest( int argc, char * argv[] )
   InfiniTrackTrackerTrackerTestCommand::Pointer 
                      my_command = InfiniTrackTrackerTrackerTestCommand::New();
 
-  if( argc < 3 )
+  if( argc < 2 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Marker_template_directory " << "\t"
