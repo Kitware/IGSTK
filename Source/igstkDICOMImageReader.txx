@@ -426,7 +426,10 @@ DICOMImageReader<TPixelType>::DICOMImageReader() : m_StateMachine(this)
   m_FileNames->SetUseSeriesDetails( true );
 
   // add acquisition number
-  m_FileNames->AddSeriesRestriction( "0020|0012" );
+  // Commented out by Patrick Cheng,
+  // Note: This is too restrictive, it fails to load a full 
+  // series in some cases.
+  // m_FileNames->AddSeriesRestriction( "0020|0012" );
 
   m_ImageIO = itk::GDCMImageIO::New();
   m_ImageIO->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
