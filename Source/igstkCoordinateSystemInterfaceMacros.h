@@ -63,11 +63,6 @@ public: \
   void RequestSetTransformAndParent( const ::igstk::Transform & transformToParent,\
                                      TParentPointer parent ) \
     { \
-      std::stringstream tempStream; \
-    tempStream << this->GetNameOfClass() << " 0x"; \
-    tempStream << static_cast<void*>(this); \
-    std::string name = tempStream.str(); \
-    m_CoordinateSystemDelegator->SetName( name.c_str() );\
     if ( this->IsInternalTransformRequired() == false ) \
       { \
       m_CoordinateSystemDelegator->RequestSetTransformAndParent( \
@@ -105,6 +100,14 @@ public: \
     { \
     return m_CoordinateSystemDelegator-> \
       IsCoordinateSystem( inCS ); \
+    } \
+  void RequestSetCoordinateSystemName(const char * name) \
+    { \
+    m_CoordinateSystemDelegator->SetName( name ); \
+    } \
+  const char * RequestGetCoordinateSystemName() const \
+    { \
+    return m_CoordinateSystemDelegator->GetName(); \
     } \
 protected: \
   virtual bool IsInternalTransformRequired() \
