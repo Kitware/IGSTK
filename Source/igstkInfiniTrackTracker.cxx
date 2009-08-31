@@ -82,7 +82,8 @@ InfiniTrackTracker::~InfiniTrackTracker(void)
     delete this->m_pvecMarkerPos [2][t];
     }
 
-  delete this->m_pvecMarkerPos;
+  if (this->m_pvecMarkerPos)
+    delete [] this->m_pvecMarkerPos;
 
   this->m_vecTrackerToolID.clear ();
 }
@@ -198,6 +199,12 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalUpdateStatus( void )
   this->m_BufferLock->Lock ();
   setNextArrayForUser ();
   this->m_BufferLock->Unlock ();
+
+  if (m_iProcessed < 0)
+  {
+    igstkLogMacro(WARNING, "No frame available")
+    return FAILURE;
+  }
 
   TrackerToolsContainerType trackerToolContainer = GetTrackerToolContainer();
 
