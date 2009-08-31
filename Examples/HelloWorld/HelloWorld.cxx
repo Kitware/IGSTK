@@ -150,6 +150,7 @@ int main(int , char** )
   // Create the ellipsoid 
   // BeginCodeSnippet
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
+  ellipsoid->RequestSetCoordinateSystemName("MouseCursor"); 
   // EndCodeSnippet
   // 
   // BeginLatex
@@ -188,7 +189,7 @@ int main(int , char** )
 
   // Add the position of the cylinder with respect to the View.
   igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );  
   cylinder->RequestSetTransformAndParent( transform, m_GUI->View );
 
   igstk::CylinderObjectRepresentation::Pointer 
@@ -258,10 +259,10 @@ int main(int , char** )
   TransformType identityTransform;
   identityTransform.SetToIdentity( 
                       igstk::TimeStamp::GetLongestPossibleTime() );
-   
   ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool );
 
   // Attach a viewer to the tracker 
+  m_GUI->View->RequestSetCoordinateSystemName("View");
   m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker );
 
   m_GUI->SetTracker( tracker );
