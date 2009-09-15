@@ -18,12 +18,27 @@ SET(IGSTKSandbox_BUILD_SETTINGS_FILE ${IGSTKSandbox_BINARY_DIR}/IGSTKSandboxBuil
 # Library directory.
 SET(IGSTKSandbox_LIBRARY_DIRS_CONFIG ${IGSTKSandbox_LIBRARY_PATH})
 
+IF(IGSTKSandbox_USE_MicronTracker)
+   GET_FILENAME_COMPONENT(MTC_LIBRARY_DIR ${MTC_LIBRARY} PATH)
+   SET(IGSTKSandbox_LIBRARY_DIRS_CONFIG
+      ${IGSTKSandbox_LIBRARY_DIRS_CONFIG}
+      ${MTC_LIBRARY_DIR}
+   )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
+
 # Determine the include directories needed.
 SET(IGSTKSandbox_INCLUDE_DIRS_CONFIG
   ${IGSTKSandbox_INCLUDE_DIRS_BUILD_TREE}
   ${IGSTKSandbox_INCLUDE_DIRS_SOURCE_TREE}
   ${IGSTKSandbox_INCLUDE_DIRS_SYSTEM}
 )
+
+IF(IGSTKSandbox_USE_MicronTracker)
+   SET(IGSTKSandbox_INCLUDE_DIRS_SOURCE_TREE
+      ${IGSTKSandbox_INCLUDE_DIRS_SOURCE_TREE}
+      ${MTC_INCLUDE_DIRECTORY}
+   )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 #-----------------------------------------------------------------------------
 # Configure IGSTKSandboxConfig.cmake for the build tree.
