@@ -44,6 +44,7 @@ IF (IGSTKSandbox_USE_FLTK)
     )
   IF (IGSTKSandbox_USE_MicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
+    SUBDIRS( VideoFrameGrabberAndViewerMicron )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
   
   IF ( WIN32 )

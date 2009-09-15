@@ -457,6 +457,13 @@ IF(IGSTKSandbox_USE_vtkKWImage)
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
 
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkMicronVideoImager.h
+      igstkMicronVideoImagerTool.h
+     )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # The implementation files
 SET(IGSTKSandbox_SRCS
@@ -523,6 +530,14 @@ IF(IGSTKSandbox_USE_vtkKWImage)
 #      igstkGenericImageSpatialObjectNew.cxx
      )
 ENDIF(IGSTKSandbox_USE_vtkKWImage)
+
+IF(IGSTKSandbox_USE_MicronTracker)
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkMicronVideoImager.cxx
+      igstkMicronVideoImagerTool.cxx
+     )
+ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
