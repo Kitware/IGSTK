@@ -1,9 +1,5 @@
 PROJECT(TrackerDataLogger)
 
-SET( IGSTK_SOURCE_DIR
-   ${IGSTKSandbox_SOURCE_DIR}/../IGSTK
-)  
-  
 SET(TRACKINGDATALOGGER_SOURCE_DIR
    ${IGSTKSandbox_SOURCE_DIR}/Examples/TrackerDataLogger
 )
@@ -66,7 +62,7 @@ ${IGSTK_INCLUDE_DIR}
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-
+MESSAGE("FLTK version")
   #
   # FLTK fluid GUI files for project
   #
@@ -79,7 +75,7 @@ IF(IGSTKSandbox_USE_FLTK)
   TARGET_LINK_LIBRARIES(igstkTrackerDataLoggerGUI TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
   
 ELSEIF(IGSTKSandbox_USE_FLTK)
-
+MESSAGE("Commandline version")
 ADD_EXECUTABLE(TrackerDataLogger igstkTrackerDataLoggerMainCommand.cxx ${SRCS} ${HDRS})
 TARGET_LINK_LIBRARIES(TrackerDataLogger TrackerConfiguration ConfigurationFileReaders IGSTKSandbox)
 ENDIF(IGSTKSandbox_USE_FLTK)
