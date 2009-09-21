@@ -1,4 +1,4 @@
-ROJECT(VideoFrameGrabberAndViewerMicron)
+PROJECT(VideoFrameGrabberAndViewerMicron)
  
 SET(VideoFrameGrabberAndViewerMicron_GUI_SRCS
     VideoFrameGrabberAndViewerMicronGUI.fl
