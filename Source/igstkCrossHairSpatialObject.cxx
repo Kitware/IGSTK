@@ -229,10 +229,9 @@ CrossHairSpatialObject
   igstkLogMacro( DEBUG, "igstk::CrossHairSpatialObject\
                         ::AttemptSetCursorPositionProcessing called...\n");
 
-  bool validPosition = false; 
+  bool validPosition = true; 
 
   const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
-
 
   if( m_CursorPositionToBeSet[0] < bounds[0] || 
       m_CursorPositionToBeSet[1] > bounds[1] ||
@@ -241,7 +240,7 @@ CrossHairSpatialObject
       m_CursorPositionToBeSet[4] < bounds[4] || 
       m_CursorPositionToBeSet[5] > bounds[5] )
     {
-    validPosition = true;
+    validPosition = false;
     }
 
   if( validPosition )
