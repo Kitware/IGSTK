@@ -240,7 +240,7 @@ CrossHairSpatialObject
       m_CursorPositionToBeSet[2] < bounds[4] || 
       m_CursorPositionToBeSet[2] > bounds[5] )
     {
-       validPosition = false; 
+    validPosition = false; 
     }
 
   if( validPosition )

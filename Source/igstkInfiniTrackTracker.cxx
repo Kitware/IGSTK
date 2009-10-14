@@ -83,8 +83,10 @@ InfiniTrackTracker::~InfiniTrackTracker(void)
     }
 
   if (this->m_pvecMarkerPos)
+    {
     delete [] this->m_pvecMarkerPos;
-
+    }
+  
   this->m_vecTrackerToolID.clear ();
 }
 
