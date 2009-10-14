@@ -233,12 +233,13 @@ CrossHairSpatialObject
 
   const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
 
+  cout << " m_CursorPositionToBeSet 
   if( m_CursorPositionToBeSet[0] < bounds[0] || 
-      m_CursorPositionToBeSet[1] > bounds[1] ||
-      m_CursorPositionToBeSet[2] < bounds[2] || 
-      m_CursorPositionToBeSet[3] > bounds[3] ||
-      m_CursorPositionToBeSet[4] < bounds[4] || 
-      m_CursorPositionToBeSet[5] > bounds[5] )
+      m_CursorPositionToBeSet[0] > bounds[1] ||
+      m_CursorPositionToBeSet[1] < bounds[2] || 
+      m_CursorPositionToBeSet[1] > bounds[3] ||
+      m_CursorPositionToBeSet[2] < bounds[4] || 
+      m_CursorPositionToBeSet[2] > bounds[5] )
     {
     validPosition = false;
     }
