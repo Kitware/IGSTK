@@ -83,10 +83,8 @@ InfiniTrackTracker::~InfiniTrackTracker(void)
     }
 
   if (this->m_pvecMarkerPos)
-    {
     delete [] this->m_pvecMarkerPos;
-    }
-  
+
   this->m_vecTrackerToolID.clear ();
 }
 
@@ -117,13 +115,6 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalOpen (void)
     return FAILURE;
     }
 
-  if (itkSetTrackingMode((itkHandle)this->m_Handle,
-                          this->m_u64DeviceSerialNumber,
-                          ITK_GEOMETRY_CONSTRAINT_MODE))
-    {
-    igstkLogMacro(CRITICAL, itkLastErrorStr ())
-    return FAILURE;
-    }
 
   return SUCCESS;
 }
@@ -327,7 +318,7 @@ InfiniTrackTracker::InternalThreadedUpdateStatus( void )
     itkMarkerPos* pMarkerPosition = new itkMarkerPos;
 
     if (!itkGetMarkerPos((itkHandle)this->m_Handle, 
-        this->m_u64DeviceSerialNumber, u32ID, ITK_FILTERED_PROCESS_DATA, 
+        this->m_u64DeviceSerialNumber, u32ID, 
         pMarkerPosition))
       {
       this->m_pvecMarkerPos [m_iInAcquisition].push_back (pMarkerPosition);
