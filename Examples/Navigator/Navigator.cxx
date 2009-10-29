@@ -2920,6 +2920,7 @@ void Navigator::ConnectImageRepresentation()
 
   m_ImageSpatialObject->RequestGetImageExtent();
 
+  unsigned int xslice, yslice, zslice;
   if( extentObserver->GotImageExtent() )
   {
     const igstk::EventHelperType::ImageExtentType& extent = 
@@ -2927,7 +2928,7 @@ void Navigator::ConnectImageRepresentation()
 
     const unsigned int zmin = extent.zmin;
     const unsigned int zmax = extent.zmax;
-    const unsigned int zslice = static_cast< unsigned int > ( (zmin + zmax)/2 );
+    zslice = static_cast< unsigned int > ( (zmin + zmax)/2 );
     m_ViewerGroup->m_Sliders[0]->minimum( zmin );
     m_ViewerGroup->m_Sliders[0]->maximum( zmax );
     m_ViewerGroup->m_Sliders[0]->value( zslice );
@@ -2935,7 +2936,7 @@ void Navigator::ConnectImageRepresentation()
 
     const unsigned int ymin = extent.ymin;
     const unsigned int ymax = extent.ymax;
-    const unsigned int yslice = static_cast< unsigned int > ( (ymin + ymax)/2 );
+    yslice = static_cast< unsigned int > ( (ymin + ymax)/2 );
     m_ViewerGroup->m_Sliders[1]->minimum( ymin );
     m_ViewerGroup->m_Sliders[1]->maximum( ymax );
     m_ViewerGroup->m_Sliders[1]->value( yslice );
@@ -2943,7 +2944,7 @@ void Navigator::ConnectImageRepresentation()
 
     const unsigned int xmin = extent.xmin;
     const unsigned int xmax = extent.xmax;
-    const unsigned int xslice = static_cast< unsigned int > ( (xmin + xmax)/2 );
+    xslice = static_cast< unsigned int > ( (xmin + xmax)/2 );
     m_ViewerGroup->m_Sliders[2]->minimum( xmin );
     m_ViewerGroup->m_Sliders[2]->maximum( xmax );
     m_ViewerGroup->m_Sliders[2]->value( xslice );
@@ -2955,6 +2956,19 @@ void Navigator::ConnectImageRepresentation()
   // Set up cross hairs
   m_CrossHair = CrossHairType::New();
   m_CrossHair->RequestSetBoundingBoxProviderSpatialObject(m_ImageSpatialObject);
+
+  // Set initial crosshair possition
+  // This initialization is important, otherwise, images will not load properly
+  // under debug mode
+  ImageSpatialObjectType::IndexType index;
+  index[0] = xslice;
+  index[1] = yslice;
+  index[2] = zslice;
+
+  PointType point;
+  m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point);
+  const double *data = point.Get_vnl_vector().data_block();
+  m_CrossHair->RequestSetCursorPosition(data);
 
   // buid the cross hair representations
   m_AxialCrossHairRepresentation = CrossHairRepresentationType::New();
