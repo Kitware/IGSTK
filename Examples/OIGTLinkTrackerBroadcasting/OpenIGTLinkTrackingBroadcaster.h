@@ -31,6 +31,7 @@
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkAuroraConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
+#include "igstkAscensionConfigurationXMLFileReader.h"
 #include "igstkOpenIGTLinkTrackerConfigurationFileReader.h"
 #include "igstkTransformObserver.h"
 
