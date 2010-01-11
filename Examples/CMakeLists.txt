@@ -24,6 +24,7 @@ ENDIF( IGSTKSandbox_USE_MicronTracker)
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
+    LaparoscopyDemo
     CoordinateSystems
     OneViewAndTrackingNewUsingFLTKWidget
     TwoViews
