@@ -24,7 +24,6 @@ ENDIF( IGSTKSandbox_USE_MicronTracker)
 
 IF (IGSTKSandbox_USE_FLTK)
   SUBDIRS(
-    LaparoscopyDemo
     CoordinateSystems
     OneViewAndTrackingNewUsingFLTKWidget
     TwoViews
@@ -51,7 +50,9 @@ IF (IGSTKSandbox_USE_FLTK)
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
     IF (IGSTKSandbox_USE_OpenCV)
-      SUBDIRS( VideoFrameGrabberAndViewerWebcam )
+      SUBDIRS( VideoFrameGrabberAndViewerWebcam 
+               LaparoscopyDemo
+             )
     ENDIF (IGSTKSandbox_USE_OpenCV)
   ENDIF ( WIN32 )
   
