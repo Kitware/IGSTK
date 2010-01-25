@@ -423,8 +423,6 @@ Landmark3DRegistration::ResetRegistrationProcessing()
   parameters[5] = 0.0;
 
   m_Transform->SetParameters( parameters );
-  
-  m_StateMachine.SelectInitialState( m_IdleState );
 }
 
 /* The "CheckCollinearity" method checks whether the landmark points 
