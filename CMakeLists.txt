@@ -180,6 +180,12 @@ ENDIF(IGSTKSandbox_USE_MicronTracker)
 # Set InfiniTrack support to OFF. No InfiniTrack support in the sandbox
 SET(IGSTKSandbox_USE_InfiniTrack OFF)
 
+# Connect NDI Certus Tracker
+OPTION(IGSTKSandbox_USE_NDICertus "Connect NDI Certus Tracker" OFF)
+IF(IGSTKSandbox_USE_NDICertus)
+  INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/NDICertus )
+ENDIF(IGSTKSandbox_USE_NDICertus)
+
 # Enable the option for building classes for sending transform data through sockets
 OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracker data through sockets" OFF)
 
