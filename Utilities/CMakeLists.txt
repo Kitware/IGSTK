@@ -18,3 +18,7 @@ ENDIF( IGSTKSandbox_USE_vtkKWImage )
 IF(IGSTK_USE_SceneGraphVisualization )
     SUBDIRS( SceneGraphVisualization )
 ENDIF( IGSTK_USE_SceneGraphVisualization )
+
+IF(IGSTKSandbox_USE_NDICertus )
+    SUBDIRS( NDICertus )
+ENDIF( IGSTKSandbox_USE_NDICertus )
