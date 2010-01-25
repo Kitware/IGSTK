@@ -151,6 +151,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTK_HEADS
       ${IGSTK_HEADS}
@@ -465,6 +466,14 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_NDICertus)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkNDICertusTracker.h
+      igstkNDICertusTrackerTool.h
+     )
+ENDIF(IGSTKSandbox_USE_NDICertus)
+
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
@@ -539,6 +548,15 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_NDICertus)
+  SET(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkNDICertusTracker.cxx
+      igstkNDICertusTrackerTool.cxx
+     )
+ENDIF(IGSTKSandbox_USE_NDICertus)
+
+
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
 
@@ -564,6 +582,10 @@ IF(IGSTKSandbox_USE_MicronTracker)
   ENDIF(WIN32)
 
 ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+IF(IGSTKSandbox_USE_NDICertus)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} igstkNDICertus)
+ENDIF(IGSTKSandbox_USE_NDICertus)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
   SET(EXTRA_LIBS ${EXTRA_LIBS} OpenIGTLink)
