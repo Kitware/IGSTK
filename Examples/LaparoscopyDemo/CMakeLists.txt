@@ -25,6 +25,8 @@ SET(LaparoscopyDemo_SRCS
   igstkTreatmentPlanIO.cxx
   igstkMicronTrackerConfigurationIO.h
   igstkMicronTrackerConfigurationIO.cxx
+  igstkImageSliceRepresentation.h
+  igstkImageSliceRepresentation.txx
   )
   
 IF(IGSTKSandbox_USE_MicronTracker)

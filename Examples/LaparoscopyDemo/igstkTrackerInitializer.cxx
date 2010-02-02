@@ -105,6 +105,7 @@ int TrackerInitializer::InitializePolarisTracker()
   m_PolarisTracker->RequestOpen();
 
   m_TrackerToolList.clear();
+  m_ToolNames.clear();
   for( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++ )
     {
     PolarisTrackerTool::Pointer tool = PolarisTrackerTool::New();
@@ -142,6 +143,7 @@ int TrackerInitializer::InitializePolarisTracker()
       {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      m_ToolNames.push_back( toolConfig->m_ToolName );
       }
     }
 
@@ -178,6 +180,7 @@ int TrackerInitializer::InitializeAuroraTracker()
   m_AuroraTracker->RequestOpen();
 
   m_TrackerToolList.clear();
+  m_ToolNames.clear();
   for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
     {
     AuroraTrackerTool::Pointer tool = AuroraTrackerTool::New();
@@ -220,6 +223,7 @@ int TrackerInitializer::InitializeAuroraTracker()
       {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      m_ToolNames.push_back( toolConfig->m_ToolName );
       }
     }
 
@@ -251,6 +255,7 @@ int TrackerInitializer::InitializeMicronTracker()
   m_MicronTracker->RequestOpen();
 
   m_TrackerToolList.clear();
+  m_ToolNames.clear();
   for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
     {
     MicronTrackerTool::Pointer tool = MicronTrackerTool::New();
@@ -273,6 +278,7 @@ int TrackerInitializer::InitializeMicronTracker()
       {
       TrackerTool::Pointer t = tool.GetPointer();
       m_TrackerToolList.push_back( t );
+      m_ToolNames.push_back( toolConfig->m_ToolName );
       }
     }
 

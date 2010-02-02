@@ -21,6 +21,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkImageSliceRepresentation.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkLandmark3DRegistration.h"
@@ -69,6 +70,8 @@ public:
 
   /** typedef for ImageRepresentationType */
   typedef igstk::CTImageSpatialObjectRepresentation   ImageRepresentationType;
+  typedef igstk::ImageSliceRepresentation<ImageSpatialObjectType>   
+                                                    ObliqueRepresentationType;
 
   /** typedef for RegistrationType */
   typedef igstk::Landmark3DRegistration               RegistrationType;
@@ -119,6 +122,7 @@ private:
 
   /** Slice representations of the image in View2D and View3D */
   std::vector< ImageRepresentationType::Pointer >       m_ImageRepresentation;
+  std::vector<ObliqueRepresentationType::Pointer>       m_ObliqueRepresentation;
 
   /** Landmark registration and its landmark points container */
   RegistrationType::Pointer                       m_LandmarkRegistration;
@@ -151,17 +155,17 @@ private:
   /** Objects for path planning and fiducial selection */
   EllipsoidType::Pointer                          m_TargetPoint;
   EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  EllipsoidType::Pointer                          m_EntryPoint;
-  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
+  //EllipsoidType::Pointer                          m_EntryPoint;
+  //EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
   EllipsoidType::Pointer                          m_FiducialPoint;
   EllipsoidRepresentationType::Pointer            m_FiducialRepresentation;  
   
   /** Tube object represents the planned path */
-  typedef igstk::TubeObject                       PathType;
-  typedef igstk::TubeObjectRepresentation         PathRepresentationType;
-  typedef igstk::TubeObject::PointType            TubePointType;
-  PathType::Pointer                               m_Path;
-  std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
+  //typedef igstk::TubeObject                       PathType;
+  //typedef igstk::TubeObjectRepresentation         PathRepresentationType;
+  //typedef igstk::TubeObject::PointType            TubePointType;
+  //PathType::Pointer                               m_Path;
+  //std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
 
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;
@@ -224,6 +228,9 @@ private:
   void UpdateFiducialPoint();
   void UpdatePath();  
   void ResliceImage( IndexType index ); 
+  void ObliqueResliceImage( igstk::Transform transform, double virtualTip ); 
+  void InitializeCamera();
+  void ResetSliders();
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
