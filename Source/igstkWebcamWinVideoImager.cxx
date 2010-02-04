@@ -278,7 +278,9 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       memcpy(frame->GetImagePtr(),
              (unsigned char*)m_Cvframe->imageData,
              frameDims[0]*frameDims[1]*frameDims[2]);
-
+      
+      delete frame;
+      
       WebcamWinVideoImager::m_FrameBufferLock->Unlock();
 
       //update frame validity time
