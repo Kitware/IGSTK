@@ -315,6 +315,7 @@ else if ( m_SliceOrientation == Perpendicular)
       vy[i] = - t->GetElement(i, 0); // -X
       vn[i] = - t->GetElement(i, 2); // -Z
       }
+    t->Delete();
 
     vx.Normalize();
     vy.Normalize();
@@ -459,6 +460,7 @@ else if ( m_SliceOrientation == Perpendicular)
     }
    
   m_Actor->SetUserMatrix(t);
+  t->Delete();
 
   //Setting up the camera position
   double focalPoint[3];
