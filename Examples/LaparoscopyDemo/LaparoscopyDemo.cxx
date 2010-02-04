@@ -191,6 +191,10 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   // Initialize camera
   this->InitializeCamera();
 
+  itksys::SystemTools::Delay( 1000 );  
+  ViewerGroup->m_Display3D->RequestResetCamera();
+  ViewerGroup->m_Display3D->SetCameraZoomFactor(1.5);
+
 }
 
 void LaparoscopyDemo::InitializeCamera()
@@ -281,10 +285,6 @@ void LaparoscopyDemo::InitializeCamera()
 
   m_VideoImager->RequestStartImaging();
 
-  itksys::SystemTools::Delay( 1000 );  
-  ViewerGroup->m_Display3D->RequestResetCamera();
-  ViewerGroup->m_Display3D->SetCameraZoomFactor(1.5);
- 
   /*
 
   if( this->m_ErrorObserver->ErrorOccured() )
@@ -567,7 +567,7 @@ void LaparoscopyDemo::ReadTreatmentPlan()
 
   m_PlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
 
-  m_Plan = new igstk::TreatmentPlan;
+  //m_Plan = new igstk::TreatmentPlan;
 
   if (itksys::SystemTools::FileExists( m_PlanFilename.c_str()))
     {
@@ -606,7 +606,6 @@ void LaparoscopyDemo::ReadTreatmentPlan()
   ChangeSelectedTPlanPoint();
   
   delete reader;
-  delete m_Plan;
 }
 
 /** -----------------------------------------------------------------
