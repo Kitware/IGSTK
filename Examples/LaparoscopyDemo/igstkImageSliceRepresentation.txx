@@ -459,8 +459,7 @@ else if ( m_SliceOrientation == Perpendicular)
     t->SetElement(i, 3, m_ProbePosition[i]);
     }
    
-  m_Actor->SetUserMatrix(t);
-  t->Delete();
+  m_Actor->SetUserMatrix(t);  
 
   //Setting up the camera position
   double focalPoint[3];
