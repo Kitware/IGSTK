@@ -259,8 +259,7 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       VideoImagerToolsContainerType imagerToolContainer =
                                             this->GetVideoImagerToolContainer();
 
-      FrameType* frame = new FrameType();
-      frame = this->GetVideoImagerToolFrame( 
+      FrameType* frame = this->GetVideoImagerToolFrame( 
                                          imagerToolContainer[deviceItr->first]);
 
       unsigned int frameDims[3];
@@ -286,7 +285,7 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
 
       this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       this->m_ToolStatusContainer[ deviceItr->first ] = 1;
-      delete frame;
+
       }
      m_BufferLock->Unlock();
 
