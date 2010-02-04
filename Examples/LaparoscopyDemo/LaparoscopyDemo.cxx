@@ -188,7 +188,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   }
   //m_ObliqueRepresentation[0]->SetLogger(this->GetLogger());
 
- // Initialize camera
+  // Initialize camera
   this->InitializeCamera();
 
 }
@@ -313,7 +313,11 @@ LaparoscopyDemo::~LaparoscopyDemo()
   this->m_VideoImager->RequestClose();
   m_TrackerInitializerList.clear();
   m_TrackerToolList.clear();
-
+  if (m_Plan)
+    {
+     delete m_Plan;
+    }
+    
 }
 
 
@@ -491,9 +495,6 @@ void LaparoscopyDemo::ConnectImageRepresentation()
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
 
-  ViewerGroup->m_Display3D->RequestResetCamera();
-  ViewerGroup->m_Display3D->SetCameraZoomFactor(1.5);
-
   /** Reset sliders */
   this->ResetSliders();
 
@@ -603,6 +604,9 @@ void LaparoscopyDemo::ReadTreatmentPlan()
 
   TPlanPointList->value(0);
   ChangeSelectedTPlanPoint();
+  
+  delete reader;
+  delete m_Plan;
 }
 
 /** -----------------------------------------------------------------
