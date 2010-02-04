@@ -229,8 +229,6 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
   igstkLogMacro( DEBUG, 
       "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus called ...\n");
 
-  cout << " ";
-
   // Lock the buffer that this method shares with InternalUpdateStatus
   m_BufferLock->Lock();
 
@@ -266,7 +264,7 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
       imagerToolContainer[deviceItr->first]->GetFrameDimensions(frameDims);
 
       WebcamWinVideoImager::m_FrameBufferLock->Lock();
-
+      
       m_Cvframe = cvQueryFrame( m_Capture );
 
       if( !m_Cvframe )
