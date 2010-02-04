@@ -279,8 +279,6 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
              (unsigned char*)m_Cvframe->imageData,
              frameDims[0]*frameDims[1]*frameDims[2]);
       
-      delete frame;
-      
       WebcamWinVideoImager::m_FrameBufferLock->Unlock();
 
       //update frame validity time
@@ -288,8 +286,10 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
 
       this->m_ToolFrameBuffer[ deviceItr->first ] = frame;
       this->m_ToolStatusContainer[ deviceItr->first ] = 1;
+      delete frame;
       }
      m_BufferLock->Unlock();
+
      return SUCCESS;
   }
   catch(...)
