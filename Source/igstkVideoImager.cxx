@@ -735,11 +735,11 @@ void VideoImager::UpdateStatusSuccessProcessing( void )
 
       const double timeToExpiration = frame->GetExpirationTime() -
                                       frame->GetStartTime();
+      frame->SetTimeToExpiration( timeToExpiration );
 
-      FrameType* updatedFrame = new FrameType();
-      updatedFrame->SetImagePtr(frame->GetImagePtr(), timeToExpiration);
-
-      (inputItr->second)->SetInternalFrame( updatedFrame );
+      //FrameType* updatedFrame = new FrameType();
+      //updatedFrame->SetImagePtr(frame->GetImagePtr(), timeToExpiration);
+      //(inputItr->second)->SetInternalFrame( updatedFrame );
 
       (inputItr->second)->InvokeEvent( FrameModifiedEvent() );
       }
