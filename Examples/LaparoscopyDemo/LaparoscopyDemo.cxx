@@ -97,8 +97,14 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   m_Needle                    = CylinderType::New();  
   m_Needle->SetRadius( 3 ); 
-  m_Needle->SetHeight( 50 );
+  m_Needle->SetHeight( 200 );
+
+  m_VirtualTip                = CylinderType::New();
+  m_VirtualTip->SetRadius(0.75);
+  m_VirtualTip->SetHeight( 200 );
+
   m_NeedleRepresentation.clear();
+  m_VirtualTipRepresentation.clear();
   for (int i=0; i<3; i++)
   {
     CylinderRepresentationType::Pointer  needleRepresentation      = CylinderRepresentationType::New();
@@ -106,6 +112,13 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
     needleRepresentation->SetColor(0.0,1.0,0.0);
     needleRepresentation->SetOpacity(1.0);
     m_NeedleRepresentation.push_back(needleRepresentation);
+
+    CylinderRepresentationType::Pointer  vTipRepresentation        = CylinderRepresentationType::New();
+    vTipRepresentation->RequestSetCylinderObject( m_VirtualTip );
+    vTipRepresentation->SetColor(1.0,1.0,0.0);
+    vTipRepresentation->SetOpacity(0.5);
+    m_VirtualTipRepresentation.push_back(vTipRepresentation);
+
   }
 
   m_TargetPoint                 = EllipsoidType::New();
@@ -211,6 +224,9 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   m_VideoImager = igstk::WebcamWinVideoImager::New();
   m_VideoWith   = 320;
   m_VideoHeight = 240;
+  m_ImageCenter[0] = 0;
+  m_ImageCenter[1] = 0;
+  m_ImageCenter[2] = 0;
 
 }
 
@@ -436,7 +452,7 @@ void LaparoscopyDemo::ConnectImageRepresentation()
 {
   /** Setting up annotation and added to four views  */
   m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
-  for( int i=0; i<4; i++)
+  for( int i=0; i<3; i++)
     {
     ViewerGroup->m_Views[i]->RequestAddAnnotation2D( m_Annotation );
     }
@@ -484,13 +500,8 @@ void LaparoscopyDemo::ConnectImageRepresentation()
   */
   for ( int i=0; i<3; i++)
     {
-    igstk::View::Pointer view =  ViewerGroup->m_Views[i];
-    //view->RequestAddObject( m_NeedleTipRepresentation[i] );
-    //view->RequestAddObject( m_NeedleRepresentation[i] );
-    view->RequestAddObject( m_TargetRepresentation[i] );
-    //view->RequestAddObject( m_EntryRepresentation->Copy() );
-    view->RequestAddObject( m_FiducialRepresentation[i] );
-    //view->RequestAddObject( m_PathRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_TargetRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
     }
 
   /** 
@@ -526,18 +537,22 @@ void LaparoscopyDemo::ConnectImageRepresentation()
 
   m_Needle->RequestSetTransformAndParent( transform, m_WorldReference );
   m_NeedleTip->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_VirtualTip->RequestSetTransformAndParent( transform, m_Needle);
+
+  /** Reset sliders */
+  this->ResetSliders();
 
   /** Reset and enable the view */
   for( int i=0; i<3; i++)
     {
     ViewerGroup->m_Views[i]->RequestResetCamera();
+    ViewerGroup->m_Views[i]->SetCameraFocalPoint(m_ImageCenter[0],m_ImageCenter[1],m_ImageCenter[2]);
+    ViewerGroup->m_Views[i]->SetCameraZoomFactor(2.0);
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
     ViewerGroup->m_Views[i]->RequestStart();
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
 
-  /** Reset sliders */
-  this->ResetSliders();
 
   /** Adding observer for picking event */
   for ( int i=0; i<3; i++)
@@ -562,6 +577,9 @@ void LaparoscopyDemo::ResetSliders()
   *  received in the form of events. This will be used to initialize
   *  the reslicing sliders and initial slice position
   */
+
+  // Center of the image
+  ImageSpatialObjectType::IndexType index;
   SliceBoundsObserver::Pointer boundsObs = SliceBoundsObserver::New();
   for ( int i=0; i<3; i++)
   {
@@ -585,6 +603,11 @@ void LaparoscopyDemo::ResetSliders()
       boundsObs->Reset();
     }
   }
+  index[0] = ViewerGroup->m_Sliders[1]->value();
+  index[1] = ViewerGroup->m_Sliders[2]->value();
+  index[2] = ViewerGroup->m_Sliders[0]->value();
+  
+  m_ImageSpatialObject->TransformIndexToPhysicalPoint(index,m_ImageCenter);
 }
 /** -----------------------------------------------------------------
 *  Here we read the treatment plan. In this simple example
@@ -646,7 +669,7 @@ void LaparoscopyDemo::ReadTreatmentPlan()
 
   //this->UpdatePath();
 
-  TPlanPointList->value(0);
+  TPlanPointList->value(1);
   ChangeSelectedTPlanPoint();
   
   delete reader;
@@ -1283,6 +1306,13 @@ void LaparoscopyDemo::RequestStartTracking()
   ViewerGroup->m_Sliders[0]->value( 0 );
   ViewerGroup->m_Sliders[1]->deactivate();
   ViewerGroup->m_Sliders[2]->deactivate();
+  
+  igstk::Transform t;
+  t.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+  m_VirtualTip->RequestUpdateTransformToParent(t);
+
+  m_Annotation->RequestSetAnnotationText(0, ".");
+  m_Annotation->RequestSetAnnotationText(2, ".");
 
   for (unsigned int i=0; i<3; i++)
   {
@@ -1292,6 +1322,7 @@ void LaparoscopyDemo::RequestStartTracking()
     ViewerGroup->m_Views[i]->RequestAddObject( m_ObliqueRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_VirtualTipRepresentation[i] );
     vtkCamera * camera = m_ObliqueRepresentation[i]->RequestGetCamera();
     ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
     ViewerGroup->m_Views[i]->RequestResetCamera();
@@ -1318,6 +1349,8 @@ void LaparoscopyDemo::RequestStartTracking()
   }
 
   m_ViewPickerObserver->SetCallbackFunction( this, NULL);
+  m_ViewResliceObserver->SetCallbackFunction( this,
+                                            &LaparoscopyDemo::UpdateVirtualTip);  
 
   TrackingBtn->label("Stop");
   TrackingBtn->value(1);
@@ -1336,21 +1369,23 @@ void LaparoscopyDemo::RequestStopTracking()
     m_ObliqueRepresentation[i]->RequestSetImageSpatialObject( NULL );
   }
   //To do: add fiducial representation
-
-
   for (int i=0; i<m_TrackerInitializerList.size(); i++)
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStopTracking();
   }
+
+  m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
 
   for (unsigned int i=0; i<3; i++)
   {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_ObliqueRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_VirtualTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_ImageRepresentation[i] );
     //ViewerGroup->m_Views[i]->RequestAddObject( m_TargetRepresentation[i] );
-    ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
+    //ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
+    
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
   }
@@ -1362,19 +1397,19 @@ void LaparoscopyDemo::RequestStopTracking()
   itksys::SystemTools::Delay( 500 );
 
   ViewerGroup->m_DisplayAxial->RequestSetOrientation( igstk::View2D::Axial);
-  ViewerGroup->m_DisplayAxial->RequestResetCamera();
-
   ViewerGroup->m_DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal);
-  ViewerGroup->m_DisplayCoronal->RequestResetCamera();
-
   ViewerGroup->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal);
-  ViewerGroup->m_DisplaySagittal->RequestResetCamera();
 
-  ViewerGroup->m_DisplayAxial->SetCameraZoomFactor(1.5);
-  ViewerGroup->m_DisplayCoronal->SetCameraZoomFactor(1.5);
-  ViewerGroup->m_DisplaySagittal->SetCameraZoomFactor(1.5);
+  for (unsigned int i=0; i<3; i++)
+  {
+  ViewerGroup->m_Views[i]->RequestResetCamera();
+  ViewerGroup->m_Views[i]->SetCameraFocalPoint(m_ImageCenter[0],m_ImageCenter[1],m_ImageCenter[2]);
+  ViewerGroup->m_Views[i]->SetCameraZoomFactor(2.0);
+  }
 
   m_ViewPickerObserver->SetCallbackFunction( this, &LaparoscopyDemo::Picking );
+  m_ViewResliceObserver->SetCallbackFunction( this,
+                                               &LaparoscopyDemo::ResliceImage);
 
   TrackingBtn->label("Tracking");
   TrackingBtn->value(0);
@@ -1388,7 +1423,6 @@ void LaparoscopyDemo::RequestStopTracking()
 
 void LaparoscopyDemo::ObliqueResliceImage(igstk::Transform transform, double virtualTip)
 {
-        
   // Updating the Axial reslice display
   for (unsigned int i = 0; i<3; i++)
   {
@@ -1404,4 +1438,23 @@ void LaparoscopyDemo::ObliqueResliceImage(igstk::Transform transform, double vir
 
   this->ViewerGroup->redraw();
   Fl::check();
+}
+
+void LaparoscopyDemo::UpdateVirtualTip( const itk::EventObject & event )
+{
+
+  if ( igstk::QuadrantViews::ReslicingEvent().CheckEvent( &event ) )
+  {
+    igstk::QuadrantViews::ReslicingEvent *resliceEvent =
+      ( igstk::QuadrantViews::ReslicingEvent *) & event;
+
+    igstk::Transform::VectorType offset;
+    offset.Fill(0.0);
+    offset[2] = -resliceEvent->Get()[2];
+
+    igstk::Transform t;
+    t.SetTranslation( offset, 0.0, igstk::TimeStamp::GetLongestPossibleTime());
+    m_VirtualTip->RequestUpdateTransformToParent(t);
+
+  }
 }

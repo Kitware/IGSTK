@@ -116,6 +116,7 @@ private:
   igstk::TreatmentPlan                                * m_Plan;
   int                                                   m_VideoWith;
   int                                                   m_VideoHeight;
+  ImageSpatialObjectType::PointType                     m_ImageCenter;
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
@@ -176,6 +177,8 @@ private:
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
   CylinderType::Pointer                           m_Needle;
   std::vector<CylinderRepresentationType::Pointer>      m_NeedleRepresentation;
+  CylinderType::Pointer                           m_VirtualTip;
+  std::vector<CylinderRepresentationType::Pointer>      m_VirtualTipRepresentation;
 
   /** Annotation is used for displaying 2D texts on View */
   igstk::Annotation2D::Pointer                    m_Annotation;
@@ -239,6 +242,7 @@ private:
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
   void ResliceImage( const itk::EventObject & event );
+  void UpdateVirtualTip( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
   void Tracking( const itk::EventObject & event ); 
   void NullAction(const itk::EventObject & event ){};
