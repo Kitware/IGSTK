@@ -272,9 +272,19 @@ WebcamWinVideoImager::InternalThreadedUpdateStatus( void )
         "igstk::WebcamWinVideoImager::InternalThreadedUpdateStatus: "
         << "Frame failed");
 
-      memcpy(frame->GetImagePtr(),
-             (unsigned char*)m_Cvframe->imageData,
-             frameDims[0]*frameDims[1]*frameDims[2]);
+      unsigned char * to = (unsigned char*) frame->GetImagePtr();
+      unsigned char * from = (unsigned char*)m_Cvframe->imageData;
+
+      // Rearrange RGB pixels
+      for (unsigned int i=0; i<frameDims[0]*frameDims[1]*frameDims[2]; i+=3)
+        {
+        to[i]=from[i+2];
+        to[i+1]=from[i+1];
+        to[i+2]=from[i];
+        }
+//       memcpy(frame->GetImagePtr(),
+//              (unsigned char*)m_Cvframe->imageData,
+//              frameDims[0]*frameDims[1]*frameDims[2]);
       
       WebcamWinVideoImager::m_FrameBufferLock->Unlock();
 
