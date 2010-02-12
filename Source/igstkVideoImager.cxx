@@ -312,13 +312,6 @@ VideoImager::VideoImager(void) :  m_StateMachine( this )
   m_Threader = itk::MultiThreader::New();
   m_ThreadingEnabled = false;
   m_ImagingThreadStarted = false;
-
-  std::ofstream ofile;
-  ofile.open("VideoImagerStateMachineDiagram.dot");
-  const bool skipLoops = false;
-  this->ExportStateMachineDescription( ofile, skipLoops );
-  ofile.close();
-
 }
 
 /** Destructor */
