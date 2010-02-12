@@ -71,6 +71,7 @@ ImageSliceRepresentation < TImageSpatialObject >
   m_ImageReslice->SetOutputDimensionality( 2 );
 
   m_ResliceAxes = vtkMatrix4x4::New();
+  m_Camera      = vtkCamera::New();
 
   // Observer for vtkImageData
   m_VTKImageObserver = VTKImageObserver::New();
@@ -442,7 +443,17 @@ else if ( m_SliceOrientation == Perpendicular)
     m_ResliceAxes->SetElement(i, 2, vn[i] );
     m_ResliceAxes->SetElement(i, 3, m_ProbePosition[i]);
     }
-   
+  
+//   m_MapColors->SetInput( NULL );
+//   m_ImageReslice->Delete();
+//   m_ImageReslice = vtkImageReslice::New();
+//   m_ImageReslice->SetBackgroundColor( 128.0, 128.0, 128.0, 0 );
+//   m_ImageReslice->AutoCropOutputOn();
+//   m_ImageReslice->SetOptimization( 1 );
+//   //m_ImageReslice->SetOutputSpacing( 1, 1, 1 );
+//   m_ImageReslice->SetOutputDimensionality( 2 );
+//  m_ImageReslice->SetInput ( m_ImageData );
+
   m_ImageReslice->SetResliceAxes( m_ResliceAxes );
   m_ImageReslice->SetOutputSpacing( 1,1,1 );
   m_ImageReslice->SetOutputOrigin( -m_SliceSize/2, -m_SliceSize/2, 0 );
@@ -450,16 +461,18 @@ else if ( m_SliceOrientation == Perpendicular)
                                    1, int(m_SliceSize+0.5),
                                    0, 0 );
 
-  vtkMatrix4x4 * t = vtkMatrix4x4::New();;
-  t = m_ResliceAxes;
+//  m_MapColors->SetInput( m_ImageReslice->GetOutput() );
 
-  for ( int i = 0; i < 3; i++ )
-    {
-    m_ProbePosition[i] += 5*vn[i];
-    t->SetElement(i, 3, m_ProbePosition[i]);
-    }
+//   vtkMatrix4x4 * t = vtkMatrix4x4::New();;
+//   t = m_ResliceAxes;
+// 
+//   for ( int i = 0; i < 3; i++ )
+//     {
+//     m_ProbePosition[i] += 5*vn[i];
+//     t->SetElement(i, 3, m_ProbePosition[i]);
+//     }
    
-  m_Actor->SetUserMatrix(t);  
+  m_Actor->SetUserMatrix(m_ResliceAxes);  
 
   //Setting up the camera position
   double focalPoint[3];
@@ -475,14 +488,14 @@ else if ( m_SliceOrientation == Perpendicular)
     position[i] -= m_CameraDistance * vn[i];
     }
 
-  vtkCamera   * camera = vtkCamera::New();
-  camera->SetViewUp( -vy[0], -vy[1], -vy[2] );
-  camera->SetFocalPoint( focalPoint );
-  camera->SetParallelScale( 0.8 );
-  camera->Zoom( 2 );
-  camera->SetPosition( position );
+  //vtkCamera   * camera = vtkCamera::New();
+  m_Camera->SetViewUp( -vy[0], -vy[1], -vy[2] );
+  m_Camera->SetFocalPoint( focalPoint );
+  //m_Camera->SetParallelScale( 0.8 );
+  //m_Camera->SetZoomFactor( 2 );
+  m_Camera->SetPosition( position );
 
-  return camera;
+  return m_Camera;
 
   //m_ImageReslice->Print( std::cout );
   //m_ImageReslice->GetOutput()->Print( std::cout );
@@ -529,11 +542,11 @@ ImageSliceRepresentation < TImageSpatialObject >
 {
   igstkLogMacro( DEBUG, "igstk::ImageSliceRepresentation::\
                          UpdateRepresentationProcessing called...\n");
-  if( m_ImageReslice->GetOutput() )
-    {
+  //if( m_ImageReslice->GetOutput() )
+  //  {
     //ADDCODE
-    m_MapColors->SetInput( m_ImageReslice->GetOutput() );
-    }
+  //  m_MapColors->SetInput( m_ImageReslice->GetOutput() );
+  //  }
 }
 
 

@@ -31,10 +31,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkSceneGraph.h"
 #include "igstkSceneGraphUI.h"
 
-#define VIEW_3D_REFRESH_RATE 25
-#define VIDEOIMAGER_DEFAULT_REFRESH_RATE 25
-#define VIDEO_WIDTH 320
-#define VIDEO_HEIGHT 240
+#define VIEW_3D_REFRESH_RATE 15
+#define VIEW_STATIC_REFRESH_RATE 10
+#define VIDEOIMAGER_DEFAULT_REFRESH_RATE 15
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -77,7 +76,6 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   /** Initialize all member variables  */
   
-  m_ImageReader           = ImageReaderType::New();
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
@@ -86,26 +84,41 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   /** Setting up spatial objects and their representations */
   m_NeedleTip                   = EllipsoidType::New();
-  m_NeedleTipRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
-  m_NeedleTipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
-  m_NeedleTipRepresentation->SetColor(1.0,1.0,0.0);
-  m_NeedleTipRepresentation->SetOpacity(1.0);
+  m_NeedleTipRepresentation.clear();
+  for (int i=0; i<3; i++)
+    {
+    EllipsoidRepresentationType::Pointer  tipRepresentation     = EllipsoidRepresentationType::New();
+    tipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
+    tipRepresentation->SetColor(1.0,1.0,0.0);
+    tipRepresentation->SetOpacity(1.0);
+    m_NeedleTipRepresentation.push_back(tipRepresentation);
+    }
 
-  m_Needle                    = CylinderType::New();
-  m_NeedleRepresentation      = CylinderRepresentationType::New();
+  m_Needle                    = CylinderType::New();  
   m_Needle->SetRadius( 3 ); 
   m_Needle->SetHeight( 50 );
-  m_NeedleRepresentation->RequestSetCylinderObject( m_Needle );
-  m_NeedleRepresentation->SetColor(0.0,1.0,0.0);
-  m_NeedleRepresentation->SetOpacity(1.0);
+  m_NeedleRepresentation.clear();
+  for (int i=0; i<3; i++)
+  {
+    CylinderRepresentationType::Pointer  needleRepresentation      = CylinderRepresentationType::New();
+    needleRepresentation->RequestSetCylinderObject( m_Needle );
+    needleRepresentation->SetColor(0.0,1.0,0.0);
+    needleRepresentation->SetOpacity(1.0);
+    m_NeedleRepresentation.push_back(needleRepresentation);
+  }
 
   m_TargetPoint                 = EllipsoidType::New();
-  m_TargetRepresentation        = EllipsoidRepresentationType::New();
-  m_TargetPoint->SetRadius( 6, 6, 6 );
-  m_TargetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
-  m_TargetRepresentation->SetColor( 1.0, 0.0, 0.0);
-  m_TargetRepresentation->SetOpacity( 1 );
+  m_TargetPoint->SetRadius( 6, 6, 6 ); 
+  m_TargetRepresentation.clear();
+  for (int i=0; i<3; i++)
+  {
+    EllipsoidRepresentationType::Pointer  targetRepresentation        = EllipsoidRepresentationType::New();
+    targetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
+    targetRepresentation->SetColor( 1.0, 0.0, 0.0);
+    targetRepresentation->SetOpacity( 1 );
+    m_TargetRepresentation.push_back(targetRepresentation);
+  }
 
   //m_EntryPoint                  = EllipsoidType::New();
   //m_EntryRepresentation         = EllipsoidRepresentationType::New();
@@ -115,11 +128,18 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   //m_EntryRepresentation->SetOpacity( 0.6 );
 
   m_FiducialPoint                 = EllipsoidType::New();
-  m_FiducialRepresentation        = EllipsoidRepresentationType::New();
   m_FiducialPoint->SetRadius( 6, 6, 6 );
-  m_FiducialRepresentation->RequestSetEllipsoidObject( m_FiducialPoint );
-  m_FiducialRepresentation->SetColor( 0.0, 1.0, 0.0);
-  m_FiducialRepresentation->SetOpacity( 1 );
+  m_FiducialRepresentation.clear();
+  for (int i=0; i<3; i++)
+  {
+    EllipsoidRepresentationType::Pointer  fiducialRepresentation        = EllipsoidRepresentationType::New();
+    fiducialRepresentation->RequestSetEllipsoidObject( m_FiducialPoint );
+    fiducialRepresentation->SetColor( 0.0, 1.0, 0.0);
+    fiducialRepresentation->SetOpacity( 1 );
+    m_FiducialRepresentation.push_back(fiducialRepresentation);
+  }
+
+
 
 
   //m_Path                       = PathType::New();
@@ -183,18 +203,41 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   for (int i=0; i<3; i++)
   {
     ObliqueRepresentationType::Pointer rep = ObliqueRepresentationType::New();
-    rep->RequestSetOpacity(0.6);
+    rep->RequestSetOpacity(1);
     m_ObliqueRepresentation.push_back( rep );
   }
   //m_ObliqueRepresentation[0]->SetLogger(this->GetLogger());
+  
+  m_VideoImager = igstk::WebcamWinVideoImager::New();
+  m_VideoWith   = 320;
+  m_VideoHeight = 240;
 
+}
+
+void LaparoscopyDemo::RequestInitializeCamera(int mode)
+{
+
+  this->m_VideoImager->RequestStopImaging();
+  this->m_VideoImager->RequestClose();
   // Initialize camera
+  if (mode == 0 )
+  {
+    m_VideoWith    = 320;
+    m_VideoHeight  = 240;
+  }
+  else if (mode == 1)
+  {
+    m_VideoWith    = 640;
+    m_VideoHeight  = 480;
+  }
+
   this->InitializeCamera();
 
   itksys::SystemTools::Delay( 1000 );  
   ViewerGroup->m_Display3D->RequestResetCamera();
   ViewerGroup->m_Display3D->SetCameraZoomFactor(1.5);
 
+  LoadCTBtn->activate();
 }
 
 void LaparoscopyDemo::InitializeCamera()
@@ -212,11 +255,11 @@ void LaparoscopyDemo::InitializeCamera()
   // Start the View
   ViewerGroup->m_Views[3]->RequestStart();
   // Enable user interactions with the window
-  ViewerGroup->m_Displays[3]->RequestEnableInteractions();
+  ViewerGroup->m_Displays[3]->RequestDisableInteractions();
 
   m_VideoFrame = VideoFrameSpatialObjectType::New();
-  m_VideoFrame->SetWidth(VIDEO_WIDTH);
-  m_VideoFrame->SetHeight(VIDEO_HEIGHT);
+  m_VideoFrame->SetWidth(m_VideoWith);
+  m_VideoFrame->SetHeight(m_VideoHeight);
   m_VideoFrame->SetPixelSizeX(1);
   m_VideoFrame->SetPixelSizeY(1);
   m_VideoFrame->SetNumberOfScalarComponents(3);
@@ -226,12 +269,9 @@ void LaparoscopyDemo::InitializeCamera()
   m_VideoFrameRepresentationForVideoView->
     RequestSetVideoFrameSpatialObject( m_VideoFrame );
 
-  ViewerGroup->m_Views[3]->RequestAddObject( 
-    m_VideoFrameRepresentationForVideoView );
+  ViewerGroup->m_Views[3]->RequestAddObject( m_VideoFrameRepresentationForVideoView );
 
   //this->m_ErrorObserver = ErrorObserver::New();
-
-  m_VideoImager = igstk::WebcamWinVideoImager::New();
 
   m_VideoImager->RequestSetFrequency( VIDEOIMAGER_DEFAULT_REFRESH_RATE );
 
@@ -256,8 +296,8 @@ void LaparoscopyDemo::InitializeCamera()
     igstk::WebcamWinVideoImagerTool::Pointer videoImagerToolWebcam = 
       igstk::WebcamWinVideoImagerTool::New();
     unsigned int dims[3];
-    dims[0] = VIDEO_WIDTH;
-    dims[1] = VIDEO_HEIGHT;
+    dims[0] = m_VideoWith;
+    dims[1] = m_VideoHeight;
     dims[2] = 3;
     videoImagerToolWebcam->SetFrameDimensions(dims);
     videoImagerToolWebcam->SetPixelDepth(8);
@@ -338,6 +378,7 @@ LaparoscopyDemo::~LaparoscopyDemo()
 */
 int LaparoscopyDemo::RequestLoadImage()
 {
+  m_ImageReader           = ImageReaderType::New();
   const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
   if ( directoryname != NULL )
     {
@@ -444,11 +485,11 @@ void LaparoscopyDemo::ConnectImageRepresentation()
   for ( int i=0; i<3; i++)
     {
     igstk::View::Pointer view =  ViewerGroup->m_Views[i];
-    view->RequestAddObject( m_NeedleTipRepresentation->Copy() );
-    view->RequestAddObject( m_NeedleRepresentation->Copy() );
-    view->RequestAddObject( m_TargetRepresentation->Copy() );
+    //view->RequestAddObject( m_NeedleTipRepresentation[i] );
+    //view->RequestAddObject( m_NeedleRepresentation[i] );
+    view->RequestAddObject( m_TargetRepresentation[i] );
     //view->RequestAddObject( m_EntryRepresentation->Copy() );
-    //view->RequestAddObject( m_FiducialRepresentation->Copy() );
+    view->RequestAddObject( m_FiducialRepresentation[i] );
     //view->RequestAddObject( m_PathRepresentation[i] );
     }
 
@@ -490,7 +531,7 @@ void LaparoscopyDemo::ConnectImageRepresentation()
   for( int i=0; i<3; i++)
     {
     ViewerGroup->m_Views[i]->RequestResetCamera();
-    ViewerGroup->m_Views[i]->SetRefreshRate( 30 );
+    ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
     ViewerGroup->m_Views[i]->RequestStart();
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
@@ -509,6 +550,9 @@ void LaparoscopyDemo::ConnectImageRepresentation()
   /** Adding observer for slider bar reslicing event*/
   ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(),
     m_ViewResliceObserver );
+
+  InitializeCameraBtn->deactivate();
+  ConnectToTrackerBtn->activate();
 }
 
 void LaparoscopyDemo::ResetSliders()
@@ -594,8 +638,8 @@ void LaparoscopyDemo::ReadTreatmentPlan()
     }
 
   // Setting object position according to treatment plan
-  //m_EntryPoint->RequestSetTransformAndParent( 
-  //PointToTransform( m_Plan->m_EntryPoint ), m_WorldReference);
+  m_FiducialPoint->RequestSetTransformAndParent( 
+  PointToTransform( m_Plan->m_EntryPoint ), m_WorldReference);
 
   m_TargetPoint->RequestSetTransformAndParent( 
   PointToTransform( m_Plan->m_TargetPoint ), m_WorldReference);
@@ -672,7 +716,7 @@ void LaparoscopyDemo::ChangeSelectedTPlanPoint()
     {
     ImageSpatialObjectType::IndexType index;
     m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-    igstkLogMacro( DEBUG, index <<"\n");
+    //igstkLogMacro( DEBUG, index <<"\n");
     ResliceImage( index );
     }
   else
@@ -1009,6 +1053,11 @@ void LaparoscopyDemo::RequestRegistration()
     TrackerToolList->value(m_TrackerToolList.size()-1);
     ChangeActiveTrackerTool();
     RequestStartTracking();
+    LoadCTBtn->deactivate();
+    TPlanPointList->value(1);
+    TPlanPointList->deactivate();
+    ConnectToTrackerBtn->deactivate();
+    TrackingBtn->activate();
     }
   else
   {
@@ -1084,16 +1133,16 @@ void LaparoscopyDemo::Picking( const itk::EventObject & event)
 
       if( choice == 0 )
         {
-        //m_EntryPoint->RequestSetTransformAndParent( 
-        //  transform , m_WorldReference );
-        //m_Plan->m_EntryPoint = point;
+        m_FiducialPoint->RequestSetTransformAndParent( 
+          transform , m_WorldReference );
+        m_Plan->m_EntryPoint = point;
         //this->UpdatePath();
         }
       else if ( choice == 1 )
         {
         m_TargetPoint->RequestSetTransformAndParent( 
           transform, m_WorldReference );
-        //m_Plan->m_TargetPoint = point;
+        m_Plan->m_TargetPoint = point;
         //this->UpdatePath();
         }
       else
@@ -1230,16 +1279,26 @@ void LaparoscopyDemo::RequestStartTracking()
   // Switch to oblique reslicing
   // change the slider bar from index to offset
   ViewerGroup->m_Sliders[0]->minimum( 0 );
-  ViewerGroup->m_Sliders[0]->maximum( 100 );
+  ViewerGroup->m_Sliders[0]->maximum( 200 );
   ViewerGroup->m_Sliders[0]->value( 0 );
   ViewerGroup->m_Sliders[1]->deactivate();
   ViewerGroup->m_Sliders[2]->deactivate();
 
-
   for (unsigned int i=0; i<3; i++)
   {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_ImageRepresentation[i] );
+    //ViewerGroup->m_Views[i]->RequestRemoveObject( m_TargetRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_FiducialRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_ObliqueRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleTipRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleRepresentation[i] );
+    vtkCamera * camera = m_ObliqueRepresentation[i]->RequestGetCamera();
+    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    ViewerGroup->m_Views[i]->RequestResetCamera();
+    ViewerGroup->m_Views[i]->SetCameraZoomFactor(1.5);
+    ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_3D_REFRESH_RATE );
+    //ViewerGroup->m_Views[i]->RequestStart();
+    ViewerGroup->m_Displays[i]->RequestDisableInteractions();
   }
 
 //   // Output to file
@@ -1257,6 +1316,8 @@ void LaparoscopyDemo::RequestStartTracking()
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStartTracking();
   }
+
+  m_ViewPickerObserver->SetCallbackFunction( this, NULL);
 
   TrackingBtn->label("Stop");
   TrackingBtn->value(1);
@@ -1285,7 +1346,13 @@ void LaparoscopyDemo::RequestStopTracking()
   for (unsigned int i=0; i<3; i++)
   {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_ObliqueRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleTipRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_ImageRepresentation[i] );
+    //ViewerGroup->m_Views[i]->RequestAddObject( m_TargetRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
+    ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
+    ViewerGroup->m_Displays[i]->RequestEnableInteractions();
   }
 
   // Switch to orthogonal reslicing
@@ -1303,9 +1370,11 @@ void LaparoscopyDemo::RequestStopTracking()
   ViewerGroup->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal);
   ViewerGroup->m_DisplaySagittal->RequestResetCamera();
 
-  //   ViewerGroup->m_DisplayAxial->RequestGetActiveCamera()->Zoom(1.5);
-  //   ViewerGroup->m_DisplayCoronal->RequestGetActiveCamera()->Zoom(1.5);
-  //   ViewerGroup->m_DisplaySagittal->RequestGetActiveCamera()->Zoom(1.5);
+  ViewerGroup->m_DisplayAxial->SetCameraZoomFactor(1.5);
+  ViewerGroup->m_DisplayCoronal->SetCameraZoomFactor(1.5);
+  ViewerGroup->m_DisplaySagittal->SetCameraZoomFactor(1.5);
+
+  m_ViewPickerObserver->SetCallbackFunction( this, &LaparoscopyDemo::Picking );
 
   TrackingBtn->label("Tracking");
   TrackingBtn->value(0);
@@ -1325,10 +1394,11 @@ void LaparoscopyDemo::ObliqueResliceImage(igstk::Transform transform, double vir
   {
     m_ObliqueRepresentation[i]->RequestSetProbeTransform( transform );
     m_ObliqueRepresentation[i]->RequestSetVirtualTip( virtualTip );
-    vtkCamera * camera;
-    camera = m_ObliqueRepresentation[i]->RequestReslice();
+    m_ObliqueRepresentation[i]->RequestReslice();
+    //vtkCamera * camera;
+    //camera = m_ObliqueRepresentation[i]->RequestReslice();
     //camera->Zoom( this->CameraZoom->value() );
-    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
     //ViewerGroup->m_Views[i]->RequestResetCamera();
   }
 

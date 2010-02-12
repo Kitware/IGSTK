@@ -120,6 +120,13 @@ public:
     {
     m_VirtualTip = vTip;
     }
+
+  /** Request get camera */
+  vtkCamera * RequestGetCamera()
+  {
+    return m_Camera;
+  }
+
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
@@ -165,6 +172,7 @@ private:
   vtkMatrix4x4                           * m_ResliceAxes;
   vtkImageMapToWindowLevelColors         * m_MapColors;
   vtkImageActor                          * m_Actor;
+  vtkCamera                              * m_Camera;
 
   
   double                                 m_AxisX[3];

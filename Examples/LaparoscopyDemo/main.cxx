@@ -20,10 +20,17 @@
 #pragma warning( disable : 4284 )
 #endif
 
+//#include <stdlib.h>
+//#include <crtdbg.h>
+//#define _CRTDBG_MAP_ALLOC
+
 #include "LaparoscopyDemo.h"
 
 int main(int , char** )
 { 
+  //_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF ); 
+  //char *s =  new char[20];
+
   igstk::RealTimeClock::Initialize();
 
   LaparoscopyDemo * application = new LaparoscopyDemo;
@@ -33,6 +40,8 @@ int main(int , char** )
     Fl::wait(0.001);
     igstk::PulseGenerator::CheckTimeouts();
     }
+
+  //_CrtDumpMemoryLeaks();
 
   delete application;
 

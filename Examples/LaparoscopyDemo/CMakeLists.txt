@@ -25,6 +25,8 @@ SET(LaparoscopyDemo_SRCS
   igstkTreatmentPlanIO.cxx
   igstkMicronTrackerConfigurationIO.h
   igstkMicronTrackerConfigurationIO.cxx
+  igstkPolarisTrackerConfigurationIO.h
+  igstkPolarisTrackerConfigurationIO.cxx
   igstkImageSliceRepresentation.h
   igstkImageSliceRepresentation.txx
   )

@@ -80,6 +80,7 @@ public:
 
   /** Public request methods from the GUI */
   int  RequestLoadImage();
+  void RequestInitializeCamera( int mode );
   void ChangeSelectedTPlanPoint();
   void RequestConnectToTracker();
   void RequestDisconnetTracker();
@@ -113,6 +114,8 @@ private:
   std::string                                           m_ImageDir;
   std::string                                           m_PlanFilename;
   igstk::TreatmentPlan                                * m_Plan;
+  int                                                   m_VideoWith;
+  int                                                   m_VideoHeight;
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
@@ -150,15 +153,16 @@ private:
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
   EllipsoidType::Pointer                          m_NeedleTip;
-  EllipsoidRepresentationType::Pointer            m_NeedleTipRepresentation;
+  std::vector<EllipsoidRepresentationType::Pointer>  m_NeedleTipRepresentation;
 
   /** Objects for path planning and fiducial selection */
   EllipsoidType::Pointer                          m_TargetPoint;
-  EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
+  std::vector<EllipsoidRepresentationType::Pointer>     m_TargetRepresentation;
+
   //EllipsoidType::Pointer                          m_EntryPoint;
   //EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
   EllipsoidType::Pointer                          m_FiducialPoint;
-  EllipsoidRepresentationType::Pointer            m_FiducialRepresentation;  
+  std::vector<EllipsoidRepresentationType::Pointer>    m_FiducialRepresentation;  
   
   /** Tube object represents the planned path */
   //typedef igstk::TubeObject                       PathType;
@@ -171,7 +175,7 @@ private:
   typedef igstk::CylinderObject                   CylinderType;
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
   CylinderType::Pointer                           m_Needle;
-  CylinderRepresentationType::Pointer             m_NeedleRepresentation;
+  std::vector<CylinderRepresentationType::Pointer>      m_NeedleRepresentation;
 
   /** Annotation is used for displaying 2D texts on View */
   igstk::Annotation2D::Pointer                    m_Annotation;
