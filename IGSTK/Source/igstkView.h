@@ -119,7 +119,7 @@ public:
   void SetCameraPosition( double x, double y, double z);
   
   /** Set camera focal point */
-  void SetCameraFocalPoint( double x, double y, double z);
+  virtual void SetCameraFocalPoint( double x, double y, double z);
 
   /** Set Camera View Up vector */
   void SetCameraViewUp( double vx, double vy, double vz);
@@ -146,6 +146,8 @@ protected:
 
   View( );
   virtual ~View( void );
+
+  vtkCamera             * m_Camera;
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -237,7 +239,6 @@ private:
  
   vtkRenderWindow       * m_RenderWindow;
   vtkRenderer           * m_Renderer;
-  vtkCamera             * m_Camera;
   vtkWorldPointPicker   * m_PointPicker;
 
   /** Render Window Interactor */
