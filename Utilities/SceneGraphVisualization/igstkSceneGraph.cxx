@@ -164,12 +164,17 @@ void SceneGraph
     SceneGraphNode* child = new SceneGraphNode();
     child->SetCoordinateSystem(const_cast<CoordinateSystem *> 
                                (setTransformEvent->Get().GetDestination()));
-    child->SetType(const_cast<char*> 
-                   (setTransformEvent->Get().GetDestination()->GetType()));
-    child->SetName(const_cast<char*> 
-                   (setTransformEvent->Get().GetDestination()->GetName()));
-    child->SetParent(rootNode);
 
+    std::string str_name = setTransformEvent->Get().GetDestination()->GetName();
+    char* c_name = new char[str_name.length() + 1];
+    strcpy(c_name, str_name.c_str());
+    child->SetName( c_name );
+    std::string str_type = setTransformEvent->Get().GetDestination()->GetType();
+    char* c_type = new char[str_type.length() + 1];
+    strcpy(c_type, str_type.c_str());
+    child->SetType( c_type );
+
+    child->SetParent(rootNode);
     rootNode->GetChildren()->push_back(child);
     return;
   }
@@ -191,10 +196,16 @@ void SceneGraph
       SceneGraphNode* child = new  SceneGraphNode();
       child->SetCoordinateSystem(const_cast<CoordinateSystem *> 
                                  (setTransformEvent->Get().GetDestination()));
-      child->SetType(const_cast<char*> 
-                     (setTransformEvent->Get().GetDestination()->GetType()));
-      child->SetName(const_cast<char*> 
-                     (setTransformEvent->Get().GetDestination()->GetName()));
+      
+      std::string str_name = setTransformEvent->Get().GetDestination()->GetName();
+      char* c_name = new char[str_name.length() + 1];
+      strcpy(c_name, str_name.c_str());
+      child->SetName( c_name );
+      std::string str_type = setTransformEvent->Get().GetDestination()->GetType();
+      char* c_type = new char[str_type.length() + 1];
+      strcpy(c_type, str_type.c_str());
+      child->SetType( c_type );
+
       child->SetParent((*j));
       
       (*j)->GetChildren()->push_back(child);
@@ -213,10 +224,16 @@ void SceneGraph
                     *setTransformEvent)
 {
   SceneGraphNode* parent = new SceneGraphNode();
-  parent->SetType( const_cast<char *> 
-                  (setTransformEvent->Get().GetSource()->GetType()) );
-  parent->SetName( const_cast<char *> 
-                  (setTransformEvent->Get().GetSource()->GetName()) );
+  {
+  std::string str_name = setTransformEvent->Get().GetSource()->GetName();
+  char* c_name = new char[str_name.length() + 1];
+  strcpy(c_name, str_name.c_str());
+  parent->SetName( c_name );
+  std::string str_type = setTransformEvent->Get().GetSource()->GetType();
+  char* c_type = new char[str_type.length() + 1];
+  strcpy(c_type, str_type.c_str());
+  parent->SetType( c_type );
+  }
   parent->SetCoordinateSystem( const_cast<CoordinateSystem *> 
                                ( setTransformEvent->Get().GetSource()) );
   parent->SetParent(NULL);
@@ -224,10 +241,17 @@ void SceneGraph
   SceneGraphNode* child = new SceneGraphNode();
   child->SetCoordinateSystem( const_cast<CoordinateSystem *> 
                               (setTransformEvent->Get().GetDestination()) );
-  child->SetType( const_cast<char *> 
-                 (setTransformEvent->Get().GetDestination()->GetType()) );
-  child->SetName( const_cast<char *> 
-                  (setTransformEvent->Get().GetDestination()->GetName()));
+  {
+  std::string str_name = setTransformEvent->Get().GetDestination()->GetName();
+  char* c_name = new char[str_name.length() + 1];
+  strcpy(c_name, str_name.c_str());
+  child->SetName( c_name );
+  std::string str_type = setTransformEvent->Get().GetDestination()->GetType();
+  char* c_type = new char[str_type.length() + 1];
+  strcpy(c_type, str_type.c_str());
+  child->SetType( c_type );
+  }
+
   child->SetParent(parent);
   child->SetParentTransform(setTransformEvent->Get().GetTransform());
   parent->GetChildren()->push_back(child);
