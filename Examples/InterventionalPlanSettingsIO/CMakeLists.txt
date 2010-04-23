@@ -30,7 +30,7 @@ ADD_LIBRARY( InterventionalPlanSettingsIO ${SRCS} ${HDRS})
 # Link to the following libraries
 #
 LINK_LIBRARIES (
-  IGSTK_Sandbox
+  IGSTKSandbox
   InterventionalPlanSettings
   InterventionalPlanSettingsIO
 )
