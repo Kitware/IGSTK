@@ -11,15 +11,17 @@ SUBDIRS(
   DICOMImageReader
   SpatialObjects
   ApplicationsCommon
-  AscensionTracker  
+  AscensionTracker
   PolarisTracker
   TrackerDataLogger
+  InterventionalPlanSettings
+  InterventionalPlanSettingsIO
   )
 
 IF( IGSTKSandbox_USE_MicronTracker )
   SUBDIRS(
     MicronTracker
-   ) 
+   )
 ENDIF( IGSTKSandbox_USE_MicronTracker)
 
 IF (IGSTKSandbox_USE_FLTK)
@@ -46,26 +48,26 @@ IF (IGSTKSandbox_USE_FLTK)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
     SUBDIRS( VideoFrameGrabberAndViewerMicron )
   ENDIF(IGSTKSandbox_USE_MicronTracker)
-  
+
   IF ( WIN32 )
     SUBDIRS( OneViewAndTrackingWebCameraUsingFLTKWidget )
     IF (IGSTKSandbox_USE_OpenCV)
-      SUBDIRS( VideoFrameGrabberAndViewerWebcam 
+      SUBDIRS( VideoFrameGrabberAndViewerWebcam
                LaparoscopyDemo
              )
     ENDIF (IGSTKSandbox_USE_OpenCV)
   ENDIF ( WIN32 )
-  
+
   IF (IGSTKSandbox_USE_CompressedDV)
     SUBDIRS( VideoFrameGrabberAndViewerCompressedDV )
   ENDIF (IGSTKSandbox_USE_CompressedDV)
-  
+
   IF (IGSTKSandbox_USE_unicap)
     INCLUDE_DIRECTORIES(
     /usr/local/include/unicap
     )
     #SUBDIRS( VideoTemporalCalibrationWizard )
-  ENDIF (IGSTKSandbox_USE_unicap) 
+  ENDIF (IGSTKSandbox_USE_unicap)
 
 ENDIF (IGSTKSandbox_USE_FLTK)
 
