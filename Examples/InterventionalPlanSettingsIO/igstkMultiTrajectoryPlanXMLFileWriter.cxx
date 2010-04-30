@@ -15,7 +15,7 @@ MultiTrajectoryPlanXMLFileWriter::WritePlan( std::ofstream &out )
    std::vector<Trajectory> trajectories;
    plan->GetTrajectories( trajectories );
    out<<"<trajectory_list>\n";
-   for( int i=0; i<trajectories.size(); i++ )
+   for( unsigned int i=0; i<trajectories.size(); i++ )
     WriteTrajectory( trajectories[i], out );
    out<<"</trajectory_list>\n";
   return 1;
@@ -39,7 +39,7 @@ MultiTrajectoryPlanXMLFileWriter::WriteTrajectory( Trajectory &trajectory,
   out<<"</direction>\n";
 
   trajectory.GetTargets( targets );
-  for( int i=0; i<targets.size(); i++ )
+  for( unsigned int i=0; i<targets.size(); i++ )
     {
     out<<"<target>"<<(targets[i])[0]<<"\t"<<(targets[i])[1]<<"\t"<<(targets[i])[2];        
     out<<"</target>\n";

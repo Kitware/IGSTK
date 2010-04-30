@@ -106,7 +106,11 @@ public:
 protected:
           //this is the constructor that is called by the factory to 
          //create a new object
-  InterventionalPlanXMLFileReaderBase() : m_HavePlan(false), m_ReadingPlan(false) {}
+  InterventionalPlanXMLFileReaderBase() 
+    {
+    this->m_HavePlan = false;
+    this->m_ReadingPlan = false;
+    }
   virtual ~InterventionalPlanXMLFileReaderBase() {}
 
   void ProcessPlanAttributes( const char ** atts )
