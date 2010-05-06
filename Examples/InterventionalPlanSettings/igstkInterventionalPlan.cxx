@@ -1,5 +1,5 @@
 #include "igstkInterventionalPlan.h"
-
+#include <typeinfo>
 
 namespace igstk
 {
