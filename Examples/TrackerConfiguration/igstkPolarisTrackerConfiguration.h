@@ -203,6 +203,9 @@ public:
    */
   virtual double GetMaximalRefreshRate();
 
+  //maximal number of physical ports for attaching wired tools
+  static const unsigned MAXIMAL_PORT_NUMBER;
+
 protected:
   PolarisHybridTrackerConfiguration();
   virtual ~PolarisHybridTrackerConfiguration();
@@ -213,8 +216,6 @@ protected:
 private:
   //manufacturer specified maximal refresh rate [Hz]
   static const double MAXIMAL_REFERESH_RATE;
-  //maximal number of physical ports for attaching wired tools
-  static const unsigned MAXIMAL_PORT_NUMBER;
 };
 
 

@@ -22,7 +22,7 @@ namespace igstk
 const double PolarisVicraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 20;
 const double PolarisSpectraTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
 const double PolarisHybridTrackerConfiguration::MAXIMAL_REFERESH_RATE = 60;
-const unsigned PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER = 12;
+const unsigned PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER = 11; 
 
 
 void 
@@ -147,8 +147,7 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
   else   //we have a wired tool
     {
     unsigned int newPortNumber = wiredTool->GetPortNumber();
-    if( newPortNumber==0 ||
-        newPortNumber > this->MAXIMAL_PORT_NUMBER )
+    if( newPortNumber > this->MAXIMAL_PORT_NUMBER )
       {
       fe.Set( "Specified physical port number is invalid." );
       this->InvokeEvent( fe );
