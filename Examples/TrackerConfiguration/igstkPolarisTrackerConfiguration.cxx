@@ -156,11 +156,16 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
     std::map<std::string, TrackerToolConfiguration *>::const_iterator it, end;
     it = this->m_TrackerToolList.begin();
     end = this->m_TrackerToolList.end();
+
+    z = this->m_TrackerToolList.size();
+
     for(; it!=end; it++ )
       {
       const PolarisWiredToolConfiguration *currentTool = 
-        static_cast<const PolarisWiredToolConfiguration *>( it->second );
-      if( currentTool->GetPortNumber() == newPortNumber )
+        dynamic_cast<const PolarisWiredToolConfiguration *>( it->second );
+                   //rely on short circuit evaluation so that the second term
+                   //is not evaluated if currentTool==NULL
+      if( currentTool != NULL && currentTool->GetPortNumber() == newPortNumber )
         {
         fe.Set( "Multiple tools with same port are not allowed.");
         this->InvokeEvent( fe );
