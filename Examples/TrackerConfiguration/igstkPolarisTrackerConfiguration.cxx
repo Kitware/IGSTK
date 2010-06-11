@@ -157,8 +157,6 @@ PolarisHybridTrackerConfiguration::InternalAddTool( const
     it = this->m_TrackerToolList.begin();
     end = this->m_TrackerToolList.end();
 
-    z = this->m_TrackerToolList.size();
-
     for(; it!=end; it++ )
       {
       const PolarisWiredToolConfiguration *currentTool = 
