@@ -85,7 +85,8 @@ protected:
   //this is the constructor that is called by the factory to 
   //create a new object
   PolarisHybridConfigurationXMLFileReader() : 
-    SerialCommunicatingTrackerConfigurationXMLFileReader() { }
+    SerialCommunicatingTrackerConfigurationXMLFileReader() 
+    {m_HaveCurrentControlBoxPort = false;}
 
   virtual ~PolarisHybridConfigurationXMLFileReader() { }
 
