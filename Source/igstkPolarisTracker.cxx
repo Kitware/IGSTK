@@ -365,7 +365,7 @@ PolarisTracker::ResultType PolarisTracker
 PolarisTracker::ResultType
 PolarisTracker::ValidateSpecifiedFrequency( double frequencyInHz )
 {
-  const double MAXIMUM_FREQUENCY = 50;
+  const double MAXIMUM_FREQUENCY = 60;
   if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
     {
     return FAILURE;
