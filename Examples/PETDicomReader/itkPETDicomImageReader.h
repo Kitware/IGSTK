@@ -92,7 +92,10 @@ public:
   
   itkGetStringMacro (CalibrationFactor );
   itkSetStringMacro (CalibrationFactor );
-  
+
+  itkGetStringMacro (VolumeUnits );
+  itkSetStringMacro (VolumeUnits );
+
   itkGetMacro ( PETMin, double );
   itkSetMacro ( PETMin, double );
 
@@ -101,6 +104,23 @@ public:
 
   itkGetMacro ( PETSUVmax, double );
   itkSetMacro ( PETSUVmax, double );
+
+  itkGetMacro ( InjectedDose, double );
+  itkSetMacro ( InjectedDose, double );
+
+  itkGetMacro ( PatientWeight, double );
+  itkSetMacro ( PatientWeight, double );
+
+  itkGetMacro( StudyDateYear, int );
+  itkSetMacro( StudyDateYear, int );
+
+  itkGetMacro( StudyDateMonth, int );
+  itkSetMacro( StudyDateMonth, int );
+
+  itkGetMacro( StudyDateDay, int );
+  itkSetMacro( StudyDateDay, int );
+
+  void ClearStudyDate();
   
   /** Type for representing the string of the directory 
    *  from which the DICOM files will be read. */
@@ -152,11 +172,21 @@ private:
   std::string m_SeriesTime;
   std::string m_PhilipsSUVFactor;
   std::string m_CalibrationFactor;
+  std::string m_VolumeUnits;
   
   double m_PETMin;
   double m_PETMax;
   double m_PETSUVmax;
   double m_PETSUVmin;
+  double m_InjectedDose;
+  double m_PatientWeight;
+
+  int m_StudyDateDay;
+  int m_StudyDateMonth;
+  int m_StudyDateYear;
+    
+
+  bool m_ValidDicomDirectory;
 };
 
 } // end namespace igstk

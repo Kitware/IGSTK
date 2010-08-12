@@ -60,6 +60,7 @@ PETDicomImageReader<TImageType>::PETDicomImageReader()
   m_ImageFileReader = ImageReaderType::New();
   m_ImageFileReader->SetImageIO( m_ImageIO );
 
+  m_ValidDicomDirectory = false;
 } 
 
 /** Destructor */
@@ -100,41 +101,54 @@ void PETDicomImageReader<TImageType>
   // To count for  "." and ".." and at least two dicom slices 
   if( directoryClass.GetNumberOfFiles() < 4 ) 
     {
+    std::cerr << "directory needs to contain more than 2 dicom slices \t" << std::endl;
     return;
     }
+
+  m_ValidDicomDirectory = true; 
 }
 
 template < class TImageType >
 void PETDicomImageReader<TImageType>::ReadImage()
 {
-  m_FileNames->SetInputDirectory( m_ImageDirectoryName );
- 
-  const std::vector< std::string > & seriesUID = 
-                                               m_FileNames -> GetSeriesUIDs();
+  if( m_ValidDicomDirectory )
+    {
+    m_FileNames->SetInputDirectory( m_ImageDirectoryName );
    
-  std::vector< std::string >::const_iterator iter = seriesUID.begin();
+    const std::vector< std::string > & seriesUID = 
+                                                 m_FileNames -> GetSeriesUIDs();
+     
+    std::vector< std::string >::const_iterator iter = seriesUID.begin();
+   
+    std::cout << "The directory contains the following series... " << std::endl; 
+    for (; iter != seriesUID.end(); iter++)
+      {
+      std::cout<< "\t" << (*iter) << "\n";
+      }
+                
+    if ( seriesUID.empty() ) 
+      {
+      std::cerr << "No valid series in this directory" << std::endl;
+      return;
+      } 
   
-  for (; iter != seriesUID.end(); iter++)
-    {
-    std::cout<< "SeriesUID" << (*iter) << "\n";
+    std::cout << "Reading series \t " << seriesUID.front().c_str() << std::endl; 
+    m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( 
+                                                   seriesUID.front().c_str() )  );
+    
+    try
+      {
+      m_ImageSeriesReader->Update();
+      }
+    catch( itk::ExceptionObject & excp )
+      {
+      std::cerr << "Exception thrown  " << excp.GetDescription() << std::endl;
+      return;
+      }
     }
-              
-  if ( seriesUID.empty() ) 
+  else
     {
-    return;
-    } 
- 
-  m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( 
-                                                 seriesUID.front().c_str() )  );
-  
-  try
-    {
-    m_ImageSeriesReader->Update();
-    }
-  catch( itk::ExceptionObject & excp )
-    {
-    std::cerr << "Exception thrown  " << excp.GetDescription() << std::endl;
-    return;
+    std::cerr << "Set valid DICOM directory first: " << std::endl;
     }
 }
 
@@ -152,8 +166,6 @@ Instead of body weight, the injected dose may also be corrected by the lean body
 SUVbsa= CPET(T) / (Injected dose / BSA)
 
 If the above mentioned units are used, the unit of SUV will be g/ml.
-
-===
 
 Later, we can try a more careful computation that includes decay correction:
 
@@ -191,7 +203,8 @@ GetParametersFromDicomHeader( )
  
  
   const typename ImageSeriesReaderType::FileNamesContainer & 
-    filenames = m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( seriesUID.front().c_str() ));
+    filenames = m_FileNames->GetFileNames( seriesUID.front().c_str());
+
     std::string tag;
     std::string yearstr;
     std::string monthstr;
@@ -466,32 +479,32 @@ GetParametersFromDicomHeader( )
           if ( len >= 4 )
             {
             yearstr = tag.substr(0, 4);
-            this->Year = atoi(yearstr.c_str() );
+            this->SetStudyDateYear(atoi(yearstr.c_str() ));
             }
           else
             {
             yearstr = "????";
-            this->Year = 0;
+            this->SetStudyDateYear(0);
             }
           if ( len >= 6 )
             {
             monthstr = tag.substr(4, 2);
-            this->Month = atoi ( monthstr.c_str() );
+            this->SetStudyDateMonth( atoi ( monthstr.c_str() ) );
             }
           else
             {
             monthstr = "??";
-            this->Month = 0;
+            this->SetStudyDateMonth( 0 );
             }
           if ( len >= 8 )
             {
             daystr = tag.substr (6, 2);
-            this->Day = atoi ( daystr.c_str() );
+            this->SetStudyDateDay( atoi ( daystr.c_str() ));
             }
           else
             {
             daystr = "??";
-            this->Day = 0;
+            this->SetStudyDateDay(0);
             }
           tag.clear();
           tag = yearstr.c_str();
@@ -674,6 +687,17 @@ GetParametersFromDicomHeader( )
       return 0;
       }
 }
+
+/** Print Self function */
+template <class TImageType>
+void PETDicomImageReader<TImageType>
+::ClearStudyDate( ) 
+{
+  this->SetStudyDateDay( 0 );
+  this->SetStudyDateMonth( 0 );
+  this->SetStudyDateYear( 0 );
+}
+
 
 /** Print Self function */
 template <class TImageType>

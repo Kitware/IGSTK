@@ -40,6 +40,22 @@ int main( int argc, char* argv[] )
   
   reader->SetDirectory( directoryName );
   reader->ReadImage();
+  reader->GetParametersFromDicomHeader();
+
+  /** Print out various dicom parameters */
+  std::cout << "Weight Units:\t" << reader->GetWeightUnits() << std::endl;
+  std::cout << "DoseRadioactivityUnits:\t" << reader->GetDoseRadioactivityUnits() << std::endl;   
+  std::cout << "Patient name \t" << reader->GetPatientName() << std::endl;
+  std::cout << "Study date \t" << reader->GetStudyDate() << std::endl;
+  std::cout << "RadiopharmaceuticalStartTime \t" << reader->GetRadiopharmaceuticalStartTime() << std::endl;
+  std::cout << "DecayCorrection:\t" << reader->GetDecayCorrection() << std::endl;
+  std::cout << "DecayFactor :\t" << reader->GetDecayFactor() << std::endl;
+  std::cout << "FrameReferenceTime :\t" << reader->GetFrameReferenceTime() << std::endl;
+  std::cout << "RadioNuclide Half time:\t" << reader->GetRadionuclideHalfLife() << std::endl;
+  std::cout << "Series time \t" << reader->GetSeriesTime() << std::endl;
+  std::cout << "Philips SUV factor \t" << reader->GetPhilipsSUVFactor() << std::endl;
+  std::cout << "Calibration factor \t" << reader->GetCalibrationFactor() << std::endl;
+
 
   return EXIT_SUCCESS;
 }
