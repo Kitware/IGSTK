@@ -186,16 +186,12 @@ int
 PETDicomImageReader<TImageType>::
 GetParametersFromDicomHeader( )
 {
-  InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
-  inputNames->SetUseSeriesDetails(true);
-  inputNames->SetDirectory(path);
-  itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
-  
   const std::vector< std::string > & seriesUID = 
                                                m_FileNames -> GetSeriesUIDs();
-  
-  const ReaderType::FileNamesContainer & filenames = m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( 
-                                                 seriesUID.front().c_str() ));
+ 
+ 
+  const typename ImageSeriesReaderType::FileNamesContainer & 
+    filenames = m_ImageSeriesReader->SetFileNames( m_FileNames->GetFileNames( seriesUID.front().c_str() ));
     std::string tag;
     std::string yearstr;
     std::string monthstr;
@@ -252,7 +248,7 @@ GetParametersFromDicomHeader( )
           //---3. "021" is an invalid value. 
           if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
             {
-             RadiopharmaceuticalStartTimeSetRadiopharmaceuticalStartTime ("no value found");
+             this->SetRadiopharmaceuticalStartTime ("no value found");
             }
           else
             {
@@ -687,6 +683,6 @@ void PETDicomImageReader<TImageType>
   Superclass::PrintSelf( os, indent );
 }
 
-} // end namespace igstk
+} // end namespace igstA
 
 #endif
