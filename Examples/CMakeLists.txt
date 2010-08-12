@@ -16,6 +16,7 @@ SUBDIRS(
   TrackerDataLogger
   InterventionalPlanSettings
   InterventionalPlanSettingsIO
+  PETDicomReader
   )
 
 IF( IGSTKSandbox_USE_MicronTracker )
