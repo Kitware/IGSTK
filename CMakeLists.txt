@@ -177,6 +177,25 @@ IF(IGSTKSandbox_USE_MicronTracker)
   ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+# Connect Ascension 3DG tracker
+OPTION(IGSTKSandbox_USE_Ascension3DGTracker "Connect Ascension 3D Guidance Tracker" OFF)
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  FIND_PATH(ATC_INCLUDE_DIRECTORY ATC3DG.h
+  "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
+  DOC "Directory where the ATC3DG.h file is located")
+  INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
+
+  FIND_LIBRARY( ATC_LIBRARY 
+    NAMES ATC3DG ATC3DG.dll 
+    PATHS "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
+    DOC "Full path to the ATC3DG.dll file"
+    )
+    
+    GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
+    LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
+  ENDIF(ATC_INCLUDE_DIRECTORY)
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
+
 # Set InfiniTrack support to OFF. No InfiniTrack support in the sandbox
 SET(IGSTKSandbox_USE_InfiniTrack OFF)
 
