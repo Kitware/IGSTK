@@ -151,6 +151,14 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkAscension3DGTracker.h
+      igstkAscension3DGTrackerTool.h
+     )
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
+
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -292,6 +300,14 @@ IF(IGSTKSandbox_USE_MicronTracker)
 
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  Set(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkAscension3DGTracker.cxx
+      igstkAscension3DGTrackerTool.cxx
+     )
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTK_SRCS
@@ -582,6 +598,10 @@ IF(IGSTKSandbox_USE_MicronTracker)
   ENDIF(WIN32)
 
 ENDIF(IGSTKSandbox_USE_MicronTracker)
+
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} ATC3DG)
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 IF(IGSTKSandbox_USE_NDICertus)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkNDICertus)
