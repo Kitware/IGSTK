@@ -129,7 +129,6 @@ IF(IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_USE_FLTK)
 
 
-
 ADD_TEST( igstkReslicerPlaneSpatialObjectTest ${IGSTKSandbox_TESTS} 
           igstkReslicerPlaneSpatialObjectTest
           ${IGSTK_DATA_ROOT}/Input/E000192
@@ -173,6 +172,10 @@ IF(IGSTKSandbox_DATA_ROOT)
 
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
+
+IF( IGSTKSandbox_USE_Ascension3DGTracker )
+  ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest )
+ENDIF (IGSTKSandbox_USE_Ascension3DGTracker)
 
 IF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
 
