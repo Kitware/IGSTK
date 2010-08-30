@@ -18,6 +18,7 @@
 #define __itkPETDicomImageReader_h
 
 #include "itkImageSeriesReader.h"
+#include "itkImageFileWriter.h"
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 
@@ -49,8 +50,9 @@ public:
   /** Some convenient typedefs for input image */
   typedef TImageType  ImageType;
   typedef itk::ImageSeriesReader< ImageType >    ImageSeriesReaderType;
-  typedef itk::ImageFileReader< ImageType >      ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType >      ImageWriterType;
 
+ 
 
 public:
 
@@ -122,6 +124,10 @@ public:
 
   void ClearStudyDate();
   
+  itkGetStringMacro (MetaImageFilename );
+  itkSetStringMacro (MetaImageFilename );
+
+
   /** Type for representing the string of the directory 
    *  from which the DICOM files will be read. */
   typedef std::string    DirectoryNameType;
@@ -134,6 +140,9 @@ public:
 
   /** Retrieve parameters from the PET DICOM header */
   int GetParametersFromDicomHeader();
+
+  /** Write out the PET dicom image in a meta image format */
+  void ConvertDICOMDataToMetaImage();
 
 protected:
 
@@ -154,7 +163,7 @@ private:
   itk::GDCMImageIO::Pointer             m_ImageIO;
 
   typename ImageSeriesReaderType::Pointer        m_ImageSeriesReader;
-  typename ImageReaderType::Pointer              m_ImageFileReader;
+  typename ImageWriterType::Pointer              m_ImageFileWriter;
 
 
   DirectoryNameType            m_ImageDirectoryName;
@@ -187,6 +196,9 @@ private:
     
 
   bool m_ValidDicomDirectory;
+  bool m_DicomDataRead;
+
+  std::string  m_MetaImageFilename;
 };
 
 } // end namespace igstk

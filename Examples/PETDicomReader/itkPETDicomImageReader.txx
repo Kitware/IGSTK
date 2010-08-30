@@ -45,22 +45,13 @@ PETDicomImageReader<TImageType>::PETDicomImageReader()
   // add more criteria to distinguish between different series
   m_FileNames->SetUseSeriesDetails( true );
 
-  // add acquisition number
-  // Commented out by Patrick Cheng,
-  // Note: This is too restrictive, it fails to load a full 
-  // series in some cases.
-  // m_FileNames->AddSeriesRestriction( "0020|0012" );
-
   m_ImageIO = itk::GDCMImageIO::New();
   m_ImageIO->SetGlobalWarningDisplay(this->GetGlobalWarningDisplay());
   m_ImageSeriesReader = ImageSeriesReaderType::New();
   m_ImageSeriesReader->SetImageIO( m_ImageIO );
 
-  // In the case we only have one file we create a standard file writer
-  m_ImageFileReader = ImageReaderType::New();
-  m_ImageFileReader->SetImageIO( m_ImageIO );
-
   m_ValidDicomDirectory = false;
+  m_DicomDataRead = false;
 } 
 
 /** Destructor */
@@ -139,6 +130,7 @@ void PETDicomImageReader<TImageType>::ReadImage()
     try
       {
       m_ImageSeriesReader->Update();
+      m_DicomDataRead = true;
       }
     catch( itk::ExceptionObject & excp )
       {
@@ -149,6 +141,23 @@ void PETDicomImageReader<TImageType>::ReadImage()
   else
     {
     std::cerr << "Set valid DICOM directory first: " << std::endl;
+    }
+}
+
+template < class TImageType >
+void PETDicomImageReader<TImageType>::ConvertDICOMDataToMetaImage()
+{
+  m_ImageFileWriter = ImageWriterType::New();
+  m_ImageFileWriter->SetFileName( m_MetaImageFilename );
+  m_ImageFileWriter->SetInput( m_ImageSeriesReader->GetOutput());
+  try
+    {
+    m_ImageFileWriter->Update();
+    }
+  catch( itk::ExceptionObject & excp )
+    {
+    std::cerr << "Exception thrown  " << excp.GetDescription() << std::endl;
+    return;
     }
 }
 

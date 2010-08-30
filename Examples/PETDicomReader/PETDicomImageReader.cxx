@@ -24,9 +24,9 @@
 int main( int argc, char* argv[] )
 {
   
-  if(argc < 2)
+  if(argc < 3)
     {
-    std::cerr<<"Usage: "<<argv[0]<<"  DICOMSeries "<<std::endl;
+    std::cerr<<"Usage: "<<argv[0] <<"  DICOMSeries ConvertedMetaImageFileName"<<std::endl;
     return EXIT_FAILURE;
     }
   
@@ -56,6 +56,10 @@ int main( int argc, char* argv[] )
   std::cout << "Philips SUV factor \t" << reader->GetPhilipsSUVFactor() << std::endl;
   std::cout << "Calibration factor \t" << reader->GetCalibrationFactor() << std::endl;
 
+  
+  std::cout << "Convert the dicom series to a meta image format...." << std::endl;
+  reader->SetMetaImageFilename( argv[2] );
+  reader->ConvertDICOMDataToMetaImage();
 
   return EXIT_SUCCESS;
 }
