@@ -62,7 +62,6 @@ ${IGSTK_INCLUDE_DIR}
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-MESSAGE("FLTK version")
   #
   # FLTK fluid GUI files for project
   #

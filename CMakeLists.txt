@@ -193,7 +193,7 @@ IF(IGSTKSandbox_USE_Ascension3DGTracker)
     
     GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
     LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
-  ENDIF(ATC_INCLUDE_DIRECTORY)
+
 ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 # Set InfiniTrack support to OFF. No InfiniTrack support in the sandbox
