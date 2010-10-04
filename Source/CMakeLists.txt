@@ -151,15 +151,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
-IF(IGSTKSandbox_USE_Ascension3DGTracker)
-  SET(IGSTK_HEADS
-      ${IGSTK_HEADS}
-      igstkAscension3DGTracker.h
-      igstkAscension3DGTrackerTool.h
-     )
-ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
-
-
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTK_HEADS
       ${IGSTK_HEADS}
@@ -300,14 +291,6 @@ IF(IGSTKSandbox_USE_MicronTracker)
 
      )
 ENDIF(IGSTKSandbox_USE_MicronTracker)
-
-IF(IGSTKSandbox_USE_Ascension3DGTracker)
-  Set(IGSTK_SRCS
-      ${IGSTK_SRCS}
-      igstkAscension3DGTracker.cxx
-      igstkAscension3DGTrackerTool.cxx
-     )
-ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 IF(IGSTKSandbox_USE_OpenIGTLink)
     SET(IGSTK_SRCS
@@ -490,6 +473,14 @@ IF(IGSTKSandbox_USE_NDICertus)
      )
 ENDIF(IGSTKSandbox_USE_NDICertus)
 
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  SET(IGSTKSandbox_HEADS
+      ${IGSTKSandbox_HEADS}
+      igstkAscension3DGTracker.h
+      igstkAscension3DGTrackerTool.h
+     )
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
+
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
@@ -572,6 +563,13 @@ IF(IGSTKSandbox_USE_NDICertus)
      )
 ENDIF(IGSTKSandbox_USE_NDICertus)
 
+IF(IGSTKSandbox_USE_Ascension3DGTracker)
+  Set(IGSTKSandbox_SRCS
+      ${IGSTKSandbox_SRCS}
+      igstkAscension3DGTracker.cxx
+      igstkAscension3DGTrackerTool.cxx
+     )
+ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 # Variable for holding extra libraries
 SET(EXTRA_LIBS)
