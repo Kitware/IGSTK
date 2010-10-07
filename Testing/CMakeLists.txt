@@ -174,7 +174,8 @@ IF(IGSTKSandbox_DATA_ROOT)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
 IF( IGSTKSandbox_USE_Ascension3DGTracker )
-  ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest )
+  ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest
+            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAscension3DGTrackerTest.cxx)
 ENDIF (IGSTKSandbox_USE_Ascension3DGTracker)

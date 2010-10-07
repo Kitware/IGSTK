@@ -40,4 +40,8 @@ void RegisterTests()
   REGISTER_TEST(igstkVascularNetworkReaderTest);
 #endif /* IGSTKSandbox_USE_FLTK */
 
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+  REGISTER_TEST(igstkAscension3DGTrackerTest);
+#endif /* IGSTKSandbox_USE_Ascension3DGTracker */
+
 }
