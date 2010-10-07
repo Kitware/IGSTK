@@ -78,7 +78,7 @@ void
 Ascension3DGConfigurationXMLFileReader::ProcessPortNumber() 
 throw ( FileFormatException )
 {
-  unsigned controlBoxPort;
+  int controlBoxPort;
   std::istringstream instr;  
   instr.str( this->m_CurrentTagData );
   instr>>controlBoxPort;
@@ -95,11 +95,7 @@ throw ( FileFormatException )
     {
     throw FileFormatException( "\"name\" missing for one of the tools." );
     }
-  if( this->m_CurrentPortNumber < 0 )
-    {
-    throw FileFormatException( "\"control_box_port\" missing for one of the tools." );
-    }
-
+  
   //if the tool section does not have a "calibration_file" tag 
   //we assume the calibration is identity
   igstk::Ascension3DGToolConfiguration *toolConfig = 
