@@ -39,7 +39,6 @@ class Ascension3DGToolConfiguration : public TrackerToolConfiguration
 {
 public:
   Ascension3DGToolConfiguration();
-  Ascension3DGToolConfiguration(const Ascension3DGToolConfiguration &other);
   virtual ~Ascension3DGToolConfiguration();
 
   igstkSetMacro( PortNumber, unsigned int );

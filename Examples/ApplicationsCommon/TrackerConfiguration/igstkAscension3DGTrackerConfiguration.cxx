@@ -72,7 +72,10 @@ Ascension3DGTrackerConfiguration::InternalAddTool(
   this->InvokeEvent( AddToolSuccessEvent() );
 }
 
-
+Ascension3DGToolConfiguration::Ascension3DGToolConfiguration() 
+{
+  this->m_PortNumber = -1;
+}
 
 Ascension3DGToolConfiguration::~Ascension3DGToolConfiguration() 
 {
