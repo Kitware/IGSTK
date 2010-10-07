@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<tracking_system type = "ascension3DG">
+
+    <refresh_rate> 60 </refresh_rate>
+    
+    <tool usage="reference">
+      <name> sensor0 </name> 
+      <control_box_port>0</control_box_port>
+    </tool>
+
+    <tool >
+      <name> sensor1 </name> 
+      <control_box_port>1</control_box_port>
+      <send_to> 255.255.255.0:1000</send_to> 
+    </tool>
+    
+</tracking_system>
