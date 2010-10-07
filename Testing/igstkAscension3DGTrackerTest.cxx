@@ -149,7 +149,7 @@ private:
 };
 
 //int igstkAscension3DGTrackerTest( int argc, char * argv[] )
-int main( int argc, char * argv[] )
+int igstkAscension3DGTrackerTest( int argc, char * argv[] )
 {
 
   igstk::RealTimeClock::Initialize();
