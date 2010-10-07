@@ -30,6 +30,9 @@
 #include "igstkMicronTracker.h"
 #endif
 
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+#include "igstkAscension3DGTracker.h"
+#endif
 
 namespace igstk
 { 
@@ -52,6 +55,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializePolarisHybrid );
   igstkAddStateMacro( AttemptingToInitializeAurora );
   igstkAddStateMacro( AttemptingToInitializeMicron );
+  igstkAddStateMacro( AttemptingToInitializeAscension3DG );
   igstkAddStateMacro( AttemptingToInitializeAscension );  
   igstkAddStateMacro( Initialized );
   igstkAddStateMacro( AttemptingToStartTracking );
@@ -66,6 +70,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( AuroraInitialize );
   igstkAddInputMacro( AscensionInitialize );
   igstkAddInputMacro( MicronInitialize );
+  igstkAddInputMacro( Ascension3DGInitialize );
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
   igstkAddInputMacro( Failed  );
@@ -109,7 +114,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-    
+
+  igstkAddTransitionMacro( Idle,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( Idle,
                            StartTracking,
                            Idle,
@@ -190,6 +200,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            AttemptingToInitializeMicron,
                            MicronInitialize );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Ascension3DGInitialize,
+                           AttemptingToInitializeAscension3DG,
+                           Ascension3DGInitialize );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            TrackerInitialize,
@@ -281,7 +296,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-    
+                           
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            StartTracking,
                            Idle,
@@ -362,7 +382,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-    
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            StartTracking,
                            Idle,
@@ -443,7 +468,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-    
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            StartTracking,
                            Idle,
@@ -524,7 +554,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            Idle,
                            ReportInvalidRequest );
-    
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToInitializeAscension,
                            StartTracking,
                            Idle,
@@ -646,6 +681,91 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest);
 
+//transitions from AttemptingToInitializeAscension3DG state
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+                           
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
   //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
                            GetTools,
@@ -718,6 +838,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( Initialized,
+                           Ascension3DGInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
+                           
+  igstkAddTransitionMacro( Initialized,
                            Failed,
                            Initialized,
                            ReportInvalidRequest );
@@ -767,7 +892,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
-  
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           Ascension3DGInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            StartTracking,
                            AttemptingToStartTracking,
@@ -844,6 +974,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Tracking,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( Tracking,
+                           Ascension3DGInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( Tracking,
                            StartTracking,
                            Tracking,
@@ -931,6 +1066,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
+                           Ascension3DGInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+                           
+  igstkAddTransitionMacro( AttemptingToStopTracking,
                            StartTracking,
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
@@ -1012,6 +1152,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           Ascension3DGInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+                           
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            StartTracking,
                            AttemptingToCloseCommunication,
@@ -1211,6 +1356,14 @@ TrackerController::TrackerInitializeProcessing()
       {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( MicronInitialize );
+      }
+   #endif
+   #ifdef IGSTKSandbox_USE_Ascension3DGTracker
+    else if( dynamic_cast<Ascension3DGTrackerConfiguration *>
+      ( this->m_TmpTrackerConfiguration ) )
+      {
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( Ascension3DGInitialize );
       }
    #endif
     else
@@ -1869,6 +2022,20 @@ MicronTrackerTool::Pointer TrackerController::InitializeMicronTool(
 
 #endif
 
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+
+Ascension3DGTrackerTool::Pointer TrackerController::InitializeAscension3DGTool(
+    const Ascension3DGToolConfiguration *toolConfiguration )
+{
+  Ascension3DGTrackerTool::Pointer trackerTool = Ascension3DGTrackerTool::New();
+ 
+  trackerTool->SetCalibrationTransform( 
+    toolConfiguration->GetCalibrationTransform() );
+  trackerTool->RequestConfigure();
+  return trackerTool;
+}
+
+#endif
 
 void TrackerController::MicronInitializeProcessing()
 {
@@ -1946,6 +2113,96 @@ void TrackerController::MicronInitializeProcessing()
         static_cast<MicronToolConfiguration *>( referenceToolConfiguration );
 
       trackerTool = InitializeMicronTool( currentToolConfig );   
+      this->m_ReferenceTool = trackerTool;
+
+      trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );      
+      trackerTool->RequestAttachToTracker( tracker );
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      tracker->RequestSetReferenceTool( trackerTool );
+      }
+    igstkPushInputMacro( Succeeded );
+    }
+  this->m_StateMachine.ProcessInputs();
+#else
+  igstkPushInputMacro( Failed );
+  this->m_StateMachine.ProcessInputs();
+#endif
+}
+
+void TrackerController::Ascension3DGInitializeProcessing()
+{
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+                  //create tracker
+  igstk::Ascension3DGTracker::Pointer tracker = igstk::Ascension3DGTracker::New();
+  this->m_Tracker = tracker; 
+                 //don't need to observe this for errors because the 
+                 //configuration class ensures that the frequency is valid
+  tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
+
+  Ascension3DGTrackerConfiguration *trackerConfiguration =
+    dynamic_cast<Ascension3DGTrackerConfiguration *>( this->m_TrackerConfiguration );
+
+  unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+  tracker->RequestOpen();
+  tracker->RemoveObserver(observerID);
+  
+  if( this->m_ErrorObserver->ErrorOccured() )
+    {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    igstkPushInputMacro( Failed );
+    }
+  else   //attach the tools and start communication 
+    {
+    ToolAttachErrorObserver::Pointer attachErrorObserver = 
+      ToolAttachErrorObserver::New();
+    std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+                          //attach tools
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+      toolConfigEnd = toolConfigurations.end();
+    TrackerTool::Pointer trackerTool;
+    Ascension3DGToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<Ascension3DGToolConfiguration *>(it->second);
+
+      trackerTool = InitializeAscension3DGTool( currentToolConfig );
+      this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        trackerTool ) );
+
+      unsigned long observerID = trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );
+      trackerTool->RequestAttachToTracker( tracker );
+      trackerTool->RemoveObserver( observerID ); 
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      }
+                      //add the reference if we have one
+    TrackerToolConfiguration* referenceToolConfiguration = 
+      this->m_TrackerConfiguration->m_ReferenceTool;
+    if( referenceToolConfiguration )
+      {
+      currentToolConfig = 
+        static_cast<Ascension3DGToolConfiguration *>( referenceToolConfiguration );
+
+      trackerTool = InitializeAscension3DGTool( currentToolConfig );   
       this->m_ReferenceTool = trackerTool;
 
       trackerTool->AddObserver( 

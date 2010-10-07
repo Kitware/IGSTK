@@ -44,6 +44,11 @@
 #include "igstkMicronTrackerTool.h"
 #endif
 
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+#include "igstkAscension3DGTrackerConfiguration.h"
+#include "igstkAscension3DGTrackerTool.h"
+#endif
+
 
 namespace igstk
 {
@@ -198,6 +203,7 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializeAurora );
   igstkDeclareStateMacro( AttemptingToInitializeAscension );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
+  igstkDeclareStateMacro( AttemptingToInitializeAscension3DG );
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( AttemptingToStartTracking );
   igstkDeclareStateMacro( Tracking );
@@ -211,6 +217,7 @@ private:
   igstkDeclareInputMacro( AuroraInitialize );
   igstkDeclareInputMacro( AscensionInitialize );
   igstkDeclareInputMacro( MicronInitialize );  
+  igstkDeclareInputMacro( Ascension3DGInitialize );  
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Failed  );
@@ -230,6 +237,7 @@ private:
   void AuroraInitializeProcessing();
   void AscensionInitializeProcessing();
   void MicronInitializeProcessing();
+  void Ascension3DGInitializeProcessing();
   void StartTrackingProcessing();
   void StopTrackingProcessing();
   void CloseCommunicationProcessing();
@@ -267,6 +275,14 @@ private:
     const MicronToolConfiguration *toolConfiguration );
 
 #endif
+
+#ifdef IGSTKSandbox_USE_Ascension3DGTracker
+
+  Ascension3DGTrackerTool::Pointer InitializeAscension3DGTool(
+    const Ascension3DGToolConfiguration *toolConfiguration );
+
+#endif
+
   AscensionTrackerTool::Pointer InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration );
 

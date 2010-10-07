@@ -4,6 +4,7 @@ SET(TrackerConfiguration_SRCS
   igstkTrackerConfiguration.cxx
   igstkTrackerController.cxx
   igstkAscensionTrackerConfiguration.cxx
+  igstkAscension3DGTrackerConfiguration.cxx
   igstkAuroraTrackerConfiguration.cxx
   igstkMicronTrackerConfiguration.cxx
   igstkPolarisTrackerConfiguration.cxx
