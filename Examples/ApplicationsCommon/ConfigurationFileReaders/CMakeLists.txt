@@ -3,6 +3,7 @@ PROJECT(ConfigurationFileReaders)
   
 SET(ConfigurationFileReaders_SRCS
   igstkAscensionConfigurationXMLFileReader.cxx
+  igstkAscension3DGConfigurationXMLFileReader.cxx
   igstkAuroraConfigurationXMLFileReader.cxx
   igstkMicronConfigurationXMLFileReader.cxx
   igstkPolarisHybridConfigurationXMLFileReader.cxx
