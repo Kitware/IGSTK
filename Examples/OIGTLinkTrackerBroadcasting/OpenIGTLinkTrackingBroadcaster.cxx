@@ -161,7 +161,7 @@ igstk::OpenIGTLinkTrackerConfigurationFileReader::
 * OpenIGTLinkTrackingBroadcaster::GetTrackerConfiguration( 
   std::string &configurationFileName) throw ( ExceptionWithMessage )
 {
-  const unsigned int NUM_TRACKER_TYPES = 6;
+  const unsigned int NUM_TRACKER_TYPES = 7;
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
     trackerCofigurationXMLReaders[NUM_TRACKER_TYPES];
   trackerCofigurationXMLReaders[0] = 
@@ -176,6 +176,8 @@ igstk::OpenIGTLinkTrackerConfigurationFileReader::
     igstk::MicronConfigurationXMLFileReader::New();
   trackerCofigurationXMLReaders[5] = 
     igstk::AscensionConfigurationXMLFileReader::New();
+  trackerCofigurationXMLReaders[5] = 
+    igstk::Ascension3DGConfigurationXMLFileReader::New();
 
 
   igstk::OpenIGTLinkTrackerConfigurationFileReader::Pointer trackerConfigReader =
