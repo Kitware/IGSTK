@@ -26,7 +26,7 @@ IF(IGSTK_WITH_LIBRARY_VERSION)
 ENDIF(IGSTK_WITH_LIBRARY_VERSION)
 
 # Build with shared libraries
-OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF) 
+OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF)
 
 # Add the testing directories
 OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
@@ -65,21 +65,18 @@ ENDIF (USE_VTK_FILE)
 #
 #
 #
-#  Use the correct ITK & VTK version 
+#  Use the correct ITK & VTK version
 IF( IGSTK_DEVELOPMENT_VERSION )
 # development version
-   IF( ${ITK_VERSION_MAJOR} LESS 3)
-      MESSAGE(FATAL_ERROR "You are using ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
-   ENDIF(${ITK_VERSION_MAJOR} LESS 3 )
+   IF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 3.4 )
+      MESSAGE(FATAL_ERROR "You are using ITK version ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
+   ENDIF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 3.4 )
 
-   IF( ${ITK_VERSION_MINOR} LESS 4)
-      MESSAGE(FATAL_ERROR "You are using ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}. Use ITK version 3.4 or later")
-   ENDIF(${ITK_VERSION_MINOR} LESS 4 )
 
    IF( ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} LESS 5.0 )
      MESSAGE(FATAL_ERROR "You are using VTK ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}. Use VTK version 5.0 or later")
    ENDIF(${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} LESS 5.0 )
-ELSE( IGSTK_DEVELOPMENT_VERSION ) 
+ELSE( IGSTK_DEVELOPMENT_VERSION )
 # stable version
    IF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} EQUAL 3.8 )
       # correct version
@@ -91,7 +88,7 @@ ELSE( IGSTK_DEVELOPMENT_VERSION )
    ELSE( ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} EQUAL 5.2 )
      MESSAGE(FATAL_ERROR "You are using VTK ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}. Use VTK version 5.2")
    ENDIF( ${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} EQUAL 5.2 )
-ENDIF( IGSTK_DEVELOPMENT_VERSION ) 
+ENDIF( IGSTK_DEVELOPMENT_VERSION )
 
 #
 # FIND FLTK
@@ -129,7 +126,7 @@ build with GUI support i.e VTK_USE_GUISUPPORT turned on in VTK configuration")
   MESSAGE(FATAL_ERROR "To build IGSTK with Qt support, you will need to use a VTK
 build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
  ENDIF( NOT VTK_USE_QVTK )
-  
+
  # use what QVTK built with
  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
@@ -176,8 +173,8 @@ IF(IGSTK_USE_MicronTracker)
   INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
   INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/MicronTracker/src )
 
-  FIND_LIBRARY( MTC_LIBRARY 
-    NAMES MTC MTC.dll 
+  FIND_LIBRARY( MTC_LIBRARY
+    NAMES MTC MTC.dll
     PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
     DOC "Full path to the MTC.dll file"
     )
@@ -188,7 +185,7 @@ IF(IGSTK_USE_MicronTracker)
       MESSAGE( FATAL_ERROR " Your MTC version is
   ${MTCMajorVersion}.${MTCMinorVersion}. Version 2.6 or later should be used")
     ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 2.6 )
-    
+
     GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
     LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
   ENDIF(MTC_INCLUDE_DIRECTORY)
@@ -203,30 +200,30 @@ IF(IGSTK_USE_InfiniTrack)
     DOC "Directory where the itkInterface.h file is located")
     INCLUDE_DIRECTORIES( ${InfiniTrack_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( InfiniTrack_LIBRARY 
-      NAMES v9ITK.dll v9ITK 
+    FIND_LIBRARY( InfiniTrack_LIBRARY
+      NAMES v9ITK.dll v9ITK
       PATHS "C:/Program Files/Atracsys/infiniTrack/lib"
       DOC "Full path to the InfiniTrack library file"
       )
- 
+
     IF(InfiniTrack_INCLUDE_DIRECTORY)
       GET_FILENAME_COMPONENT( InfiniTrack_LIBRARY_DIRS ${InfiniTrack_LIBRARY} PATH )
       LINK_DIRECTORIES( ${InfiniTrack_LIBRARY_DIRS} )
     ENDIF(InfiniTrack_INCLUDE_DIRECTORY)
 
   ELSE(WIN32)
-    MESSAGE(FATAL_ERROR " Please turn off InfiniTrack option. Only windows operating system is currently supported for InfiniTrack") 
+    MESSAGE(FATAL_ERROR " Please turn off InfiniTrack option. Only windows operating system is currently supported for InfiniTrack")
   ENDIF(WIN32)
- 
+
 ENDIF(IGSTK_USE_InfiniTrack)
 
 #
-# Use OpenIGTLink protocol 
+# Use OpenIGTLink protocol
 #
 OPTION(IGSTK_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)
 IF(IGSTK_USE_OpenIGTLink)
   #
-  #  FIND OpenIGTLink 
+  #  FIND OpenIGTLink
   #
   FIND_PACKAGE(OpenIGTLink)
   IF (OpenIGTLink_USE_FILE)
@@ -237,12 +234,12 @@ IF(IGSTK_USE_OpenIGTLink)
 ENDIF(IGSTK_USE_OpenIGTLink)
 
 #
-# Use OpenCV 
+# Use OpenCV
 #
 OPTION(IGSTK_USE_OpenCV "Use the OpenCV library" OFF)
 IF(IGSTK_USE_OpenCV)
   #
-  #  FIND OpenCV 
+  #  FIND OpenCV
   FIND_PACKAGE( OpenCV REQUIRED )
 ENDIF(IGSTK_USE_OpenCV)
 
@@ -260,7 +257,7 @@ ENDIF(IGSTK_USE_SceneGraphVisualization)
 OPTION(IGSTK_USE_VideoImager "Build video imager classes are under review and not fully tested yet" OFF)
 
 IF(IGSTK_USE_VideoImager)
-  MESSAGE("Warning: Video imager classes are under review and not fully tested yet") 
+  MESSAGE("Warning: Video imager classes are under review and not fully tested yet")
 ENDIF(IGSTK_USE_VideoImager)
 
 #-----------------------------------------------------------------------------
@@ -357,7 +354,7 @@ INCLUDE (${IGSTK_SOURCE_DIR}/igstkGenerateIGSTKConfig.cmake)
 
 # Install some files.
 INSTALL(FILES
-   ${IGSTK_BINARY_DIR}/igstkConfigure.h 
+   ${IGSTK_BINARY_DIR}/igstkConfigure.h
    DESTINATION ${IGSTK_INSTALL_INCLUDE_DIR}
 )
 
@@ -369,7 +366,7 @@ INSTALL(FILES
 )
 
 #-----------------------------------------------------------------------------
-# Set up CPack support, to be able to distribute IGSTK 
+# Set up CPack support, to be able to distribute IGSTK
 #
 INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "IGSTK ")
@@ -411,7 +408,7 @@ MARK_AS_ADVANCED(IGSTK_USE_KWSTYLE)
 
 IF(IGSTK_USE_KWSTYLE)
   FIND_PROGRAM(KWSTYLE_EXECUTABLE
-  NAMES KWStyle 
+  NAMES KWStyle
   PATHS
   /usr/local/bin
   )
@@ -426,10 +423,10 @@ IF(IGSTK_USE_KWSTYLE)
   CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKFiles.txt.in
                ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt)
 
-  SET(KWSTYLE_ARGUMENTS -xml ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml 
-                        -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt 
-                        -v 
-                        -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+  SET(KWSTYLE_ARGUMENTS -xml ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml
+                        -o ${IGSTK_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt
+                        -v
+                        -D ${IGSTK_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt
   )
 
   IF(KWSTYLE_USE_VIM_FORMAT)
