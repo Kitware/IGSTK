@@ -78,6 +78,11 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestSetHostName(const char * hostname)
   this->m_HostName = hostname;
 }
 
+void
+TrackerToolObserverToOpenIGTLinkRelay::RequestSetDeviceName(const char * devicename)
+{
+  this->m_TransformMessage->SetDeviceName(devicename);
+}
 
 void
 TrackerToolObserverToOpenIGTLinkRelay::RequestSetTrackerTool( 

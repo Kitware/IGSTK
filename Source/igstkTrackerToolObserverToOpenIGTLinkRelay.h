@@ -50,6 +50,8 @@ public:
   void RequestSetPort( int port );
 
   void RequestSetHostName( const char * hostname );
+  
+  void RequestSetDeviceName( const char * devicename );
 
   void RequestSetTrackerTool( const TrackerTool * tracker );
 
