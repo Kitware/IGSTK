@@ -3,9 +3,9 @@
 *     Micron Tracker: Example C++ wrapper and Multi-platform demo
 *   
 *     Written by: 
-*     Shi Sherebrin , Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
+*      Shi Sherebrin , Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Claudio Gatti, Ahmad Kolahi, Claron Technology - Toronto -Ontario, www.clarontech.com
 *
 *     Copyright Claron Technology 2000-2003
 *
@@ -14,10 +14,12 @@
 
 #ifndef __CAMERAS_H__
 #define __CAMERAS_H__
-
 #include <vector>
-#include <string>
 #include "MCamera.h"
+
+//#define MaxCameras 5
+
+using namespace std;
 
 class Cameras
 {
@@ -39,15 +41,10 @@ public:
   int AttachAvailableCameras();
   void Detach();
 
-  void SetCameraCalibrationFilesDirectory( std::string directory ); 
-
   inline void setMarkersHandle(int markersHandle){m_markersHandle = markersHandle;};
 
   bool grabFrame(MCamera *cam = NULL); // returns true for success
 
-  void getLeftRightImageArray(unsigned char* &lImageArray, unsigned char* &rImageArray, int camIndex);
-//  void getIdentifiedMarkersXPoints( double* &xp, int mIndex, int fIndex);
-  
   // need to lear how to hide it, and keep same access syntax
   vector<MCamera *> m_vCameras;
 
@@ -58,7 +55,6 @@ private:
   bool ownedByMe;
   MCamera* mCurrCam;
   MCamera*  mFailedCam;
-  std::string CalibrationDir;
 
 
   int m_attachedCamNums;

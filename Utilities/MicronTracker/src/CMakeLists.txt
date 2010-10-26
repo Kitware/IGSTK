@@ -13,6 +13,9 @@ SET( SOURCES
   Persistence.cpp
   Vector.cpp
   Xform3D.cpp
+  XPoints.cpp
+  MTXPoint.cpp
+  UtilityFunctions.cpp
   )
 
 ADD_LIBRARY(igstkMTCu ${SOURCES})

@@ -8,16 +8,16 @@
  *
  * Description of available macros:
  *
- * ASSERT     : Identical to the MFC macro of the same name.
- * VERIFY     : Identical to the MFC macro of the same name.
+ * ASSERT      : Identical to the MFC macro of the same name.
+ * VERIFY      : Identical to the MFC macro of the same name.
  * TRACE      : Identical to the MFC macro of the same name.
- * INFO       : Similar to TRACE but includes a preamble specifying the
+ * INFO        : Similar to TRACE but includes a preamble specifying the
  *            file name and line number where the INFO is called as
  *            well as forces a line break at the end.
  * DBG        : Code contained within this macro is included only in
  *            _DEBUG builds.
  * BREAK      : Forces a break in _DEBUG builds via DebugBreak.
- * DECL_DOG_TAG   : Declares a "dog tag" within a class definition (see the
+ * DECL_DOG_TAG    : Declares a "dog tag" within a class definition (see the
  *            discussion on dog tags below) in _DEBUG builds.
  * CHECK_DOG_TAG  : Checks the validity of a "dog tag" in _DEBUG builds.
  *
@@ -56,15 +56,15 @@
 #pragma once
 #endif  // _MSC_VER >= 1000
 
-#ifndef _MFC_VER
+#ifndef  _MFC_VER
 
 #include <stdio.h>
 #include <crtdbg.h>
 
-#define ASSERT  _ASSERT
+#define  ASSERT  _ASSERT
 
 #ifdef  _DEBUG
-#define VERIFY(f) ASSERT(f)
+#define  VERIFY(f)  ASSERT(f)
 
 inline void _cdecl Trace0DBFB266_B244_11D3_A459_000629B2F85(char* lpszFormat, ...)
 {
@@ -81,12 +81,12 @@ inline void _cdecl Trace0DBFB266_B244_11D3_A459_000629B2F85(char* lpszFormat, ..
   va_end(args);
 }
 
-#define TRACE Trace0DBFB266_B244_11D3_A459_000629B2F85
+#define  TRACE  Trace0DBFB266_B244_11D3_A459_000629B2F85
 
-#else // !_DEBUG
+#else  // !_DEBUG
 
-#define VERIFY(f) ((void)(f))
-#define TRACE   1 ? (void)0 : Trace0DBFB266_B244_11D3_A459_000629B2F85
+#define  VERIFY(f)  ((void)(f))
+#define TRACE    1 ? (void)0 : Trace0DBFB266_B244_11D3_A459_000629B2F85
 
 #endif  // _DEBUG
 
@@ -94,9 +94,9 @@ inline void _cdecl Trace0DBFB266_B244_11D3_A459_000629B2F85(char* lpszFormat, ..
 
 #ifdef  _DEBUG
 
-#define DBG(f)  (f)
-#define BREAK() DebugBreak()
-#define INFO(f) TRACE("%s (%d): ", __FILE__, __LINE__); TRACE(f); TRACE("\n")
+#define  DBG(f)  (f)
+#define  BREAK()  DebugBreak()
+#define INFO(f)  TRACE("%s (%d): ", __FILE__, __LINE__); TRACE(f); TRACE("\n")
 
 class CDogTag
 {
@@ -117,10 +117,10 @@ private:
 #define DECL_DOG_TAG(dogTag) CDogTag dogTag;
 #define CHECK_DOG_TAG(dogTag) ASSERT((dogTag).IsValid());
 
-#else // !_DEBUG
+#else  // !_DEBUG
 
-#define DBG(f)
-#define BREAK()
+#define  DBG(f)
+#define  BREAK()
 #define INFO(f)
 
 #define DECL_DOG_TAG(dogTag)
@@ -128,13 +128,13 @@ private:
 
 #endif  // _DEBUG
 #else // WIN32
-#define DBG(f)
-#define BREAK()
+#define  DBG(f)
+#define  BREAK()
 #define INFO(f)
 
 #define DECL_DOG_TAG(dogTag)
 #define CHECK_DOG_TAG(dogTag) ((void)0)
-#define VERIFY(f) ((void)(f))
+#define  VERIFY(f)  ((void)(f))
 #define TRACE(f) (void)0
 
 #endif

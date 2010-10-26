@@ -3,9 +3,9 @@
 *     Micron Tracker: Example C++ wrapper and Multi-platform demo
 *   
 *     Written by: 
-*     Shi Sherebrin , Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
+*      Shi Sherebrin , Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Claudio Gatti, Ahmad Kolahi, Claron Technology - Toronto -Ontario, www.clarontech.com
 *
 *     Copyright Claron Technology 2000-2003
 *
@@ -57,6 +57,8 @@ public:
   double getMinExposure();
   double getMaxExposure();
 
+  int getSensorsNum();
+
   int getAutoExposure();
   int setAutoExposure(int ae);
 
@@ -66,6 +68,8 @@ public:
 
   bool getImages( unsigned char ***li, unsigned char ***ri);
   bool getHalfSizeImages(unsigned char ***li, unsigned char ***ri, int xRes, int yRes);
+  bool getImages3( unsigned char ***li, unsigned char ***ri, unsigned char ***mi);
+  bool getHalfSizeImages3(unsigned char ***li, unsigned char ***ri, unsigned char ***mi, int xRes, int yRes);
 
   bool getProjectionOnImage( int image, double XYZ[], double *x, double *y );
 
@@ -77,6 +81,7 @@ private:
   bool ownedByMe;
   unsigned char *limage;
   unsigned char *rimage ;
+  unsigned char *mimage ;
 
 };
 

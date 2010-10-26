@@ -3,11 +3,11 @@
 *     Micron Tracker: Example C++ wrapper and Multi-platform demo
 *   
 *     Written by: 
-*     Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
+*      Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
 *
-*   Modified by:
-*     Gregory Bootsma, Princess Margaret Hospital - Toronto - Ontario
+*    Modified by:
+*      Gregory Bootsma, Princess Margaret Hospital - Toronto - Ontario
 *
 *     Copyright Claron Technology 2000-2003
 *
@@ -34,7 +34,7 @@ public:
   void getRotateVector(double* resultVector, double* inVector, bool scaleIt = false);
   double  getQuaternion( int index );
   void  getQuaternionVector(double *q);
-  mtMeasurementHazardCode   getHazardState();
+  mtMeasurementHazardCode    getHazardState();
 private:
   int m_handle;
   bool ownedByMe;

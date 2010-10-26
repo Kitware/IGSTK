@@ -352,8 +352,8 @@ bool MicronTracker::SetUpCameras( void )
     return FAILURE;
     }
 
-  this->m_Cameras->SetCameraCalibrationFilesDirectory(
-    this->m_CameraCalibrationFilesDirectory );
+  //this->m_Cameras->SetCameraCalibrationFilesDirectory(
+  //  this->m_CameraCalibrationFilesDirectory );
 
   int success = this->m_Cameras->AttachAvailableCameras();
 
@@ -615,7 +615,7 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   for(unsigned int markerNum = 1;
       markerNum <= markersCollectionCount; markerNum++)
     {
-    Marker * marker = new Marker(markersCollection->itemI(markerNum));
+    MTMarker::Marker * marker = new MTMarker::Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
       //Get postion and pose information
