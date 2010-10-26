@@ -3,8 +3,8 @@
 *     Micron Tracker: Example C++ wrapper and Multi-platform demo
 *   
 *     Written by: 
-*     Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
-*     Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
+*      Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
+*      Claudio Gatti, Claron Technology - Toronto -Ontario, www.clarontech.com
 *
 *     Copyright Claron Technology 2000-2003
 *
@@ -33,4 +33,3 @@ private:
 };
 
 #endif
-
