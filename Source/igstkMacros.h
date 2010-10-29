@@ -47,7 +47,7 @@ namespace igstk
     {  \
     if (this->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
       { \
-      ::itk::OStringStream message; \
+      std::ostringstream message; \
       message << y; \
       this->GetLogger()->Write(::itk::Logger::x, message.str()); \
       } \
@@ -64,7 +64,7 @@ namespace igstk
     {  \
     if (obj->GetLogger()->ShouldBuildMessage( ::igstk::Logger::x ) ) \
       { \
-      ::itk::OStringStream message; \
+      std::ostringstream message; \
       message << y; \
       obj->GetLogger()->Write(::itk::Logger::x, message.str()); \
       } \
@@ -81,7 +81,7 @@ namespace igstk
     {  \
     if (logger->ShouldBuildMessage( ::igstk::Logger::x )) \
       { \
-      ::itk::OStringStream message; \
+      std::ostringstream message; \
       message << y; \
       logger->Write(::itk::Logger::x, message.str()); \
       } \

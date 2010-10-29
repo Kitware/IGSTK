@@ -8,6 +8,9 @@
 #define IGSTK_VERSION_PATCH @IGSTK_VERSION_PATCH@
 #define IGSTK_VERSION_STRING "@IGSTK_VERSION_STRING@"
 
+/* define ITK version */
+#cmakedefine ITK_PRE4_VERSION
+
 /* define any platform-specific macros */
 #cmakedefine HAVE_TERMIOS_H
 #cmakedefine HAVE_TERMIO_H

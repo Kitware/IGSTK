@@ -47,7 +47,7 @@ int igstkMultipleOutputTest( int, char * [] )
   multipleOutput.AddOutputStream( file1 );
   multipleOutput.AddOutputStream( file2 );
 
-  ::itk::OStringStream messageStream; 
+  std::ostringstream messageStream; 
 
   multipleOutput << 12.4;
   multipleOutput << " text ";

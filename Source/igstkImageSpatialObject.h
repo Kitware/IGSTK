@@ -20,7 +20,13 @@
 #include "igstkSpatialObject.h"
 
 #include "itkImageSpatialObject.h"
+
+// itkOrientedImage was remove and consolidated into itkImage since itk V4.0
+#ifdef ITK_PRE4_VERSION
 #include "itkOrientedImage.h"
+#else
+#include "itkImage.h"
+#endif
 
 #include "itkVTKImageExport.h"
 #include "vtkImageImport.h"
@@ -63,7 +69,12 @@ public:
   typedef itk::ImageSpatialObject< TDimension, TPixelType > 
                                                        ImageSpatialObjectType;
 
+#ifdef ITK_PRE4_VERSION
   typedef typename itk::OrientedImage< TPixelType, TDimension >       ImageType;
+#else
+  typedef typename itk::Image< TPixelType, TDimension >               ImageType;
+#endif
+
   typedef typename ImageType::ConstPointer                  ImageConstPointer;
   typedef typename ImageSpatialObjectType::PointType        PointType;
   typedef typename ImageType::IndexType                     IndexType;

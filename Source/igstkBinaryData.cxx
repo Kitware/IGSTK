@@ -192,7 +192,7 @@ void BinaryData::Encode( std::string& output, const unsigned char *data,
                          unsigned int size )
 {
   unsigned int i;
-  itk::OStringStream os;
+  std::ostringstream os;
   
   for( i = 0; i < size; ++i )
     {

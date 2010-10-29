@@ -65,7 +65,7 @@ void FLTKTextBufferLogOutput::Write(double timestamp)
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
     {
-    itk::OStringStream ostr;
+    std::ostringstream ostr;
     ostr.precision(30);
     ostr << timestamp;
     this->m_Stream->append( ostr.str().c_str() );
@@ -93,7 +93,7 @@ void FLTKTextBufferLogOutput
   FLTKTextBufferLogOutput::m_Mutex.Lock();
   if( this->m_Stream )
     {
-    itk::OStringStream ostr;
+    std::ostringstream ostr;
     ostr.precision(30);
     ostr << timestamp << "  :  " << content;
     this->m_Stream->append( ostr.str().c_str() );
