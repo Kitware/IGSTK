@@ -23,6 +23,9 @@ Configure file for IGSTKSandbox
 # define @PROJECT_NAME@_EXPORT
 #endif
 
+/* define ITK version */
+#cmakedefine ITK_PRE4_VERSION
+
 /* options defined by cmake */
 #cmakedefine IGSTK_USE_ATAMAI
 #cmakedefine IGSTKSandbox_USE_FLTK

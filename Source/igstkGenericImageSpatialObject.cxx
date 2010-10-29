@@ -17,7 +17,7 @@
 #include "igstkGenericImageSpatialObject.h"
 #include "igstkImageSpatialObject.h"
 
-#include "itkOrientedImage.h"
+//#include "itkOrientedImage.h"
 #include "itkVTKImageExport.h"
 
 #include "vtkImageImport.h"

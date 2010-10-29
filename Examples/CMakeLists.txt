@@ -16,9 +16,13 @@ SUBDIRS(
   TrackerDataLogger
   InterventionalPlanSettings
   InterventionalPlanSettingsIO
-  PETDicomReader
   )
 
+# gdcm is removed from ITK since v4.0
+IF (ITK_PRE4_VERSION)  
+SUBDIRS( PETDicomReader )
+ENDIF (ITK_PRE4_VERSION)  
+  
 IF( IGSTKSandbox_USE_MicronTracker )
   SUBDIRS(
     MicronTracker

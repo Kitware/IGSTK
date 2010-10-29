@@ -28,7 +28,7 @@
 
 #include <fstream>
 #include <iostream>
-#include "itkExceptionObject.h"
+#include "itkMacro.h"
 
 #include "igstkLandmarkUltrasoundCalibration.h"
 #include "igstkImageResliceObjectRepresentation.h"
