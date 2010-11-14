@@ -352,8 +352,8 @@ bool MicronTracker::SetUpCameras( void )
     return FAILURE;
     }
 
-  //this->m_Cameras->SetCameraCalibrationFilesDirectory(
-  //  this->m_CameraCalibrationFilesDirectory );
+  this->m_Cameras->SetCameraCalibrationFilesDirectory(
+    this->m_CameraCalibrationFilesDirectory );
 
   int success = this->m_Cameras->AttachAvailableCameras();
 
