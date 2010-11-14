@@ -18,6 +18,11 @@
 #ifndef __igstkSceneGraph_h
 #define __igstkSceneGraph_h
 
+#if defined(_MSC_VER)
+// _CRT_SECURE_NO_WARNINGS
+#pragma warning( disable : 4996 )
+#endif
+
 #include "igstkCoordinateSystemSetTransformResult.h"
 #include "igstkSceneGraphNode.h"
 #include "igstkCoordinateSystem.h"
