@@ -15,11 +15,12 @@
 #ifndef __CAMERAS_H__
 #define __CAMERAS_H__
 #include <vector>
+#include <string>
 #include "MCamera.h"
 
 //#define MaxCameras 5
 
-using namespace std;
+//using namespace std;
 
 class Cameras
 {
