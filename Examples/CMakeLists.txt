@@ -18,7 +18,7 @@ SUBDIRS(
   InterventionalPlanSettingsIO
   )
 
-# gdcm is removed from ITK since v4.0
+# ITK v4.0 uses gdcm 2.x, this piece of code will not compile with the new ITK
 IF (ITK_PRE4_VERSION)  
 SUBDIRS( PETDicomReader )
 ENDIF (ITK_PRE4_VERSION)  
