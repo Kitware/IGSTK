@@ -71,7 +71,7 @@ public:
     {
     static std::string m_LevelString[] = { "MUSTFLUSH", "FATAL", 
       "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET" };
-    itk::OStringStream s;
+    std::ostringstream s;
     s.precision(30);
     if( content.at(0) == '<' )
       {
