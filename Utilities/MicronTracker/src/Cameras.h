@@ -15,11 +15,12 @@
 #ifndef __CAMERAS_H__
 #define __CAMERAS_H__
 #include <vector>
+#include <string>
 #include "MCamera.h"
 
 //#define MaxCameras 5
 
-using namespace std;
+//using namespace std;
 
 class Cameras
 {
@@ -40,7 +41,9 @@ public:
 
   int AttachAvailableCameras();
   void Detach();
-
+  
+  void SetCameraCalibrationFilesDirectory( std::string directory );
+  
   inline void setMarkersHandle(int markersHandle){m_markersHandle = markersHandle;};
 
   bool grabFrame(MCamera *cam = NULL); // returns true for success
@@ -55,7 +58,7 @@ private:
   bool ownedByMe;
   MCamera* mCurrCam;
   MCamera*  mFailedCam;
-
+  std::string CalibrationDir;
 
   int m_attachedCamNums;
   int m_markersHandle;

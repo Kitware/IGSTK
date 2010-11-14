@@ -1,8 +1,8 @@
 /**************************************************************
 *
 *     Micron Tracker: Example C++ wrapper and Multi-platform demo
-*   
-*     Written by: 
+*
+*     Written by:
 *      Shi Sherebrin , Robarts Research Institute - London- Ontario , www.robarts.ca
 *      Shahram Izadyar, Robarts Research Institute - London- Ontario , www.robarts.ca
 *      Claudio Gatti, Ahmad Kolahi, Claron Technology - Toronto- Ontario, www.clarontech.com
@@ -43,12 +43,12 @@ Cameras::~Cameras()
   }
   if (mCurrCam != NULL) free(mCurrCam);
   if (mFailedCam != NULL) free(mFailedCam);
-  
+
 
 }
 
 /****************************/
-/** */ 
+/** */
 bool Cameras::getHistogramEqualizeImages()
 {
   bool R;
@@ -139,19 +139,27 @@ int Cameras::getMTHome (  char *sMTHome, int size )
     //sprintf(sMTHome,"/Developer/MicronTracker");
     return(-1);
   }
-  
+
 
 #endif
     return(0);
     }
 
+ void Cameras::SetCameraCalibrationFilesDirectory( std::string directory )
+ {
+   this->CalibrationDir = directory;
+ }
+
 
 int Cameras::AttachAvailableCameras()
 {
-  char calibrationDir[512];
+//  char calibrationDir[512];
   int result = 0;
 
-      if ( getMTHome (calibrationDir, sizeof(calibrationDir)) < 0 ) {
+  char * calibrationDir = const_cast< char * >(this->CalibrationDir.c_str());
+// This is commented out, using SetCameraCalibrationFilesDirectory() to set calibration file directory
+
+/*       if ( getMTHome (calibrationDir, sizeof(calibrationDir)) < 0 ) {
     // No Environment
     return result;
   } else {
@@ -167,15 +175,16 @@ int Cameras::AttachAvailableCameras()
   }
   if (mCurrCam != NULL) free(mCurrCam);
   if (mFailedCam != NULL) free(mFailedCam);
-#endif
+#endif */
+
   result = Cameras_AttachAvailableCameras( calibrationDir);
 
   if ( result != mtOK) return result;
   // Number of the attached cameras
   this->m_attachedCamNums = Cameras_Count();
-  
+
   if (this->m_attachedCamNums <=0) return -1;
-  
+
   int camHandle;
   // Populate the array of camera that are already attached
   for (int c=0; c < this->m_attachedCamNums; c++)
