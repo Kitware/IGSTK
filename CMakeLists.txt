@@ -170,10 +170,10 @@ IF(IGSTKSandbox_USE_MicronTracker)
 
   IF(MTC_INCLUDE_DIRECTORY)
    INCLUDE(${IGSTK_SOURCE_DIR}/CMake/ExtractMTCVersion.cmake)
-    IF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 2.6 )
+    IF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
       MESSAGE( FATAL_ERROR " Your MTC version is
-  ${MTCMajorVersion}.${MTCMinorVersion}. Version 2.6 or later should be used")
-    ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 2.6 )
+  ${MTCMajorVersion}.${MTCMinorVersion}. Version 3.6.1 or later should be used")
+    ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
     
     GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
     LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
