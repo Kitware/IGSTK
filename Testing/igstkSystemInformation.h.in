@@ -31,5 +31,7 @@
 #cmakedefine IGSTKSandbox_TEST_LOOPBACK_ATTACHED
 #define IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER \
     igstk::SerialCommunication::PortNumber@IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER@
+    
+#cmakedefine IGSTKSandbox_TEST_Ascension3DG_ATTACHED
 
 #endif

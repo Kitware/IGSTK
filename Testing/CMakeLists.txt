@@ -29,6 +29,8 @@ SET( IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 SET(IGSTK_DATA_ROOT ${IGSTK_SOURCE_DIR}/Testing/Data)
 
+OPTION(IGSTKSandbox_TEST_Ascension3DG_ATTACHED "Ascension3DG is attached to computer" OFF)
+
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
 FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
@@ -173,12 +175,12 @@ IF(IGSTKSandbox_DATA_ROOT)
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-IF( IGSTKSandbox_USE_Ascension3DGTracker )
+IF( ${IGSTKSandbox_TEST_Ascension3DG_ATTACHED} )
   ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAscension3DGTrackerTest.cxx)
-ENDIF (IGSTKSandbox_USE_Ascension3DGTracker)
+ENDIF (${IGSTKSandbox_TEST_Ascension3DG_ATTACHED})
 
 IF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
 
