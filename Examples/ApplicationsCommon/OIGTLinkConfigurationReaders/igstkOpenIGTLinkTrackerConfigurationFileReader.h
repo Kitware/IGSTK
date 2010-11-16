@@ -150,8 +150,8 @@ public:
     itkNewMacro( Self );
   protected:
     ReadFailSuccessObserver() : 
-      m_GotFailure( false ), 
       m_GotSuccess( false ),
+      m_GotFailure( false ),
       m_GotUnexpectedTrackerType( false ) 
       { }
     ~ReadFailSuccessObserver() {}
