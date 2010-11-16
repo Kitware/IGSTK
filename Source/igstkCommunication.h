@@ -77,13 +77,13 @@ public:
   igstkGetMacro( UseReadTerminationCharacter, bool );
 
   /** Write method sends the string via communication link. */
-  virtual ResultType Write( const char *data,
-                            unsigned int numberOfBytes ) { return SUCCESS; }
+  virtual ResultType Write( const char * /* data */,
+                            unsigned int /* numberOfBytes */ ) { return SUCCESS; }
 
   /** Read method receives string via communication link. */
-  virtual ResultType Read( char *data,
-                           unsigned int numberOfBytes,
-                           unsigned int &bytesRead ) { return SUCCESS; } 
+  virtual ResultType Read( char * /* data */,
+                           unsigned int /* numberOfBytes */,
+                           unsigned int & /* bytesRead */ ) { return SUCCESS; } 
 
 protected:
 
