@@ -545,7 +545,7 @@ private:
   {
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
-    for (int i=0; i<3; i++)
+    for (unsigned int i=0; i<3; i++)
       {
       translation[i] = point[i];
       }
@@ -559,7 +559,7 @@ private:
   TransformToPoint( igstk::Transform transform)
   {
     ImageSpatialObjectType::PointType point;
-    for (int i=0; i<3; i++)
+    for (unsigned int i=0; i<3; i++)
       {
       point[i] = transform.GetTranslation()[i];
       }

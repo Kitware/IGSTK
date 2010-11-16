@@ -90,7 +90,7 @@ int TrackerConfiguration::CheckAuroraValidity()
   }
 
   int n = m_NDITrackerConfiguration->m_TrackerToolList.size();
-  for (int i=0; i<n; i++)
+  for (unsigned int i=0; i<n; i++)
   {
     //NDITrackerToolConfiguration * conf = 
     //                       m_NDITrackerConfiguration->m_TrackerToolList[i];

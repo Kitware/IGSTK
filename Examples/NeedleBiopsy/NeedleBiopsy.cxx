@@ -164,7 +164,7 @@ NeedleBiopsy::NeedleBiopsy() : m_LogFile()
 
   /** Create image slice representations  */
   m_ImageRepresentation.clear();
-  for (int i=0; i<6; i++)
+  for (unsigned int i=0; i<6; i++)
     {
     ImageRepresentationType::Pointer rep = ImageRepresentationType::New();
     m_ImageRepresentation.push_back( rep );
@@ -1023,7 +1023,7 @@ void NeedleBiopsy::UpdatePath()
   m_Path->AddPoint( point );
 
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
     {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
     m_PathRepresentation[i]->RequestSetTubeObject( NULL );

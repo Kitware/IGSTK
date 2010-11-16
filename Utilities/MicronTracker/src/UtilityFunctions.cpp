@@ -50,9 +50,9 @@ void mtUtils::getFileNamesFromDirectory(vector<string> &fileNames, const char* d
 #endif
   }
 
-  int num = fl_filename_list(currentFolderPath, &list);
+  unsigned int num = fl_filename_list(currentFolderPath, &list);
   
-  for (int i=0; i<num; i++)
+  for (unsigned int i=0; i<num; i++)
   {
     string fileName = currentFolderPath;
     // Don't add the subdirectories to the vector

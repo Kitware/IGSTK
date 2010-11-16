@@ -27,7 +27,7 @@ TreatmentPlan::TreatmentPlan()
   m_TargetPoint.Fill( 10.0 );
   PointType p;
   p.Fill( 0.0 );
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     m_FiducialPoints.push_back( p );
     }

@@ -25,7 +25,7 @@ namespace igstk
   {
     PointType p;
     p.Fill( 0.0 );
-    for (int i=0; i<4; i++)
+    for (unsigned int i=0; i<4; i++)
       {
       m_FiducialPoints.push_back( p );
       }
