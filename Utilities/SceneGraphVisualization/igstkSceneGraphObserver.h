@@ -120,6 +120,7 @@ public:
         m_GotTransformNotAvailableMessage = true;
         }
       }
+      (void) caller; //Get rid of unused parameter warning
     }
 
   bool GotTransform() const

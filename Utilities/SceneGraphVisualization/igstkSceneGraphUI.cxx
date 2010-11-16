@@ -295,5 +295,6 @@ void SceneGraphUI
 ::cb_NodeBt(Fl_Light_Button* o, void* v) {
   SceneGraph::getInstance()->SetNodeDetails(o->label(),o->value());
   SceneGraphUI::getInstance()->DrawSceneGraph(igstk::SceneGraph::getInstance());
+  (void) v; //Get rid of unused parameter warning
 }
 }
