@@ -91,7 +91,7 @@ void
 PolarisHybridConfigurationXMLFileReader::ProcessControlBoxPort() 
   throw ( FileFormatException )
 {
-  int controlBoxPort;
+  unsigned int controlBoxPort;
   std::istringstream instr;  
   instr.str( this->m_CurrentTagData );
   instr>>controlBoxPort;
@@ -101,7 +101,7 @@ PolarisHybridConfigurationXMLFileReader::ProcessControlBoxPort()
     throw FileFormatException( 
            "Error in control box port tag data, possibly non numeric values." );
     }
-  controlBoxPort--; 
+  controlBoxPort--;
   if( controlBoxPort<0 || controlBoxPort> PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER )
     {
     throw FileFormatException("Invalid value given for control box port."); 
