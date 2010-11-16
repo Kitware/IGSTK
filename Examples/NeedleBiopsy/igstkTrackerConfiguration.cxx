@@ -89,7 +89,7 @@ int TrackerConfiguration::CheckAuroraValidity()
     return 0;
   }
 
-  int n = m_NDITrackerConfiguration->m_TrackerToolList.size();
+  unsigned int n = m_NDITrackerConfiguration->m_TrackerToolList.size();
   for (unsigned int i=0; i<n; i++)
   {
     //NDITrackerToolConfiguration * conf = 
