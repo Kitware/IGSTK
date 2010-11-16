@@ -42,7 +42,7 @@ public:
 
    /**  Destructor.
   */
-  ~SceneGraphNode(void);
+  virtual ~SceneGraphNode(void);
       
   /**  Get/Set value of x coordinate of the node in FLTK window. */
   igstkGetMacro(XC1, int); 
