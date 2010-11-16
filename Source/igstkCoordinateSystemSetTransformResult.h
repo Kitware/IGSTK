@@ -90,7 +90,7 @@ public:
   const CoordinateSystem * GetDestination() const;
 
   /**Returns whether this result is being used for attach or detach**/
-  const bool IsAttach() const;
+  bool IsAttach() const;
 
 private:
 

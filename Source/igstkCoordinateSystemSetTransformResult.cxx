@@ -95,7 +95,7 @@ CoordinateSystemSetTransformResult
   return this->m_Destination;
 }
 
-const bool CoordinateSystemSetTransformResult::IsAttach() const
+bool CoordinateSystemSetTransformResult::IsAttach() const
 {
   return this->m_IsAttach;
 }
