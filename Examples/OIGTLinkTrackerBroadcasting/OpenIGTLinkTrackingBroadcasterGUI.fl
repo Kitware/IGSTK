@@ -121,7 +121,7 @@ else
   }
   Function {ReportError(const std::string &errorMessage)} {private return_type void
   } {
-    code {fl_alert("%s\n",errorMessage.c_str());
+    code {fl_alert("%s", errorMessage.c_str());
 fl_beep(FL_BEEP_ERROR);} {}
   }
   decl {OpenIGTLinkTrackingBroadcaster *m_Broadcaster;} {public
