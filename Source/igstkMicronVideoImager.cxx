@@ -360,7 +360,7 @@ namespace igstk
     const std::string imagerToolIdentifier =
       imagerTool->GetVideoImagerToolIdentifier();
 
-    igstk::Frame* frame;
+    igstk::Frame* frame = new igstk::Frame;
 
     this->m_ToolFrameBuffer[ imagerToolIdentifier ] = frame;
     this->m_ToolStatusContainer[ imagerToolIdentifier ] = 0;
