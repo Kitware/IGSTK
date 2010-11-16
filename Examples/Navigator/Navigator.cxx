@@ -2474,7 +2474,7 @@ void Navigator::InitializeTrackerProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2712,7 +2712,7 @@ void Navigator::StartTrackingProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2729,7 +2729,7 @@ void Navigator::StartTrackingProcessing()
   //  std::string errorMessage;
   //  m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
   //  m_TrackerControllerObserver->ClearError();
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG, 
   //    "Tracker start error\n" )

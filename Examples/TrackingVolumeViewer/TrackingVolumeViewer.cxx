@@ -1292,6 +1292,6 @@ TrackingVolumeViewer::ReportError( const std::string &message )
 void
 TrackingVolumeViewer::ReportError( const char *message )
 {
-  fl_alert( message );
+  fl_alert("%s\n", message );
   fl_beep( FL_BEEP_ERROR );
 }

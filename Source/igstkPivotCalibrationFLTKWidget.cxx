@@ -247,7 +247,7 @@ PivotCalibrationFLTKWidget::OnInitializationEvent( itk::Object *caller,
   else if( dynamic_cast< 
         const igstk::PivotCalibration::InitializationFailureEvent * > (&event) )
     {
-    fl_alert("Failed to initialize pivot calibration.\n\
+    fl_alert("%s\n", "Failed to initialize pivot calibration.\n\
                                                     Check that tool is valid.");
     fl_beep(FL_BEEP_ERROR);
     }
@@ -279,7 +279,7 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
     this->m_progress->value(0.0);
     msg.str("");
     msg<<"Calibration failed:\n\t"<<evt->Get();
-    fl_alert(msg.str().c_str());
+    fl_alert("%s\n", msg.str().c_str());
     fl_beep(FL_BEEP_ERROR);
    }
   //calibration succeeded, get all the information 
