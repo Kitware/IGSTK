@@ -93,7 +93,7 @@ void Xform3D::getShiftVector(double* s)
 {
   double ss[3] = {0};
   Xform3D_ShiftGet(this->m_handle, ss);
-  for(int i=0; i<3; i++)
+  for(unsigned int i=0; i<3; i++)
     s[i] = ss[i];
 }
 
@@ -103,6 +103,6 @@ void Xform3D::getRotateVector(double* resultVector, double* inVector, bool scale
 {
   double v[3];
   Xform3D_RotateLocation(this->m_handle, inVector, v, scaleIt);
-  for(int i=0; i<3; i++)
+  for(unsigned int i=0; i<3; i++)
     resultVector[i] = v[i];
 }

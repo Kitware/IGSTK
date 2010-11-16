@@ -159,7 +159,7 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   TransformType             transitions;
   VectorType                position;
 
-  for(int i=0; i<10; i++)
+  for(unsigned int i=0; i<10; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();
 
