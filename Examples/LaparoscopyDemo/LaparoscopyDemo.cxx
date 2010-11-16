@@ -86,7 +86,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
   m_NeedleTipRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     EllipsoidRepresentationType::Pointer  tipRepresentation     = EllipsoidRepresentationType::New();
     tipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
@@ -105,7 +105,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   m_NeedleRepresentation.clear();
   m_VirtualTipRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
     CylinderRepresentationType::Pointer  needleRepresentation      = CylinderRepresentationType::New();
     needleRepresentation->RequestSetCylinderObject( m_Needle );
@@ -124,7 +124,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->SetRadius( 6, 6, 6 ); 
   m_TargetRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
     EllipsoidRepresentationType::Pointer  targetRepresentation        = EllipsoidRepresentationType::New();
     targetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
@@ -143,7 +143,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
   m_FiducialPoint                 = EllipsoidType::New();
   m_FiducialPoint->SetRadius( 6, 6, 6 );
   m_FiducialRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
     EllipsoidRepresentationType::Pointer  fiducialRepresentation        = EllipsoidRepresentationType::New();
     fiducialRepresentation->RequestSetEllipsoidObject( m_FiducialPoint );
@@ -205,7 +205,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   /** Create image slice representations  */
   m_ImageRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     ImageRepresentationType::Pointer rep = ImageRepresentationType::New();
     m_ImageRepresentation.push_back( rep );
@@ -213,7 +213,7 @@ LaparoscopyDemo::LaparoscopyDemo() : m_LogFile()
 
   /** Create image oblique slice representations  */
   m_ObliqueRepresentation.clear();
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
     ObliqueRepresentationType::Pointer rep = ObliqueRepresentationType::New();
     rep->RequestSetOpacity(1);
@@ -948,7 +948,7 @@ void LaparoscopyDemo::ChangeActiveTrackerTool()
 
   if (m_TrackerToolList.size() != 0)
     {
-      for (int i=0; i<m_TrackerToolList.size(); i++)
+      for (unsigned int i=0; i<m_TrackerToolList.size(); i++)
       {
         m_TrackerToolList[i]->RemoveAllObservers();
       }
@@ -1221,7 +1221,7 @@ void LaparoscopyDemo::UpdatePath()
 //   m_Path->AddPoint( point );
 // 
 // 
-//   for (int i=0; i<4; i++)
+//   for (unsigned int i=0; i<4; i++)
 //     {
 //     ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
 //     m_PathRepresentation[i]->RequestSetTubeObject( NULL );
@@ -1343,7 +1343,7 @@ void LaparoscopyDemo::RequestStartTracking()
 
 
 
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStartTracking();
   }
@@ -1369,7 +1369,7 @@ void LaparoscopyDemo::RequestStopTracking()
     m_ObliqueRepresentation[i]->RequestSetImageSpatialObject( NULL );
   }
   //To do: add fiducial representation
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStopTracking();
   }

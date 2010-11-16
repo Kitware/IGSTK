@@ -97,7 +97,7 @@ bool FiducialSegmentation::Execute()
 
   // Collecting indices for each label  
   std::vector< itk::ContinuousIndex< double, 3 > > indices;
-  for (int i=0; i<=N; i++)
+  for (unsigned int i=0; i<=N; i++)
     {
     itk::ContinuousIndex< double, 3 > index;
     index.Fill( 0.0 );
@@ -128,7 +128,7 @@ bool FiducialSegmentation::Execute()
 
   PointType p; 
   m_FiducialPoints.clear();
-  for (int i=0; i<N; i++)
+  for (unsigned int i=0; i<N; i++)
     {
     // Filter out abnormal size labels
     if ( (size[i]<=m_MaxSize) & (size[i]>=m_MinSize) )

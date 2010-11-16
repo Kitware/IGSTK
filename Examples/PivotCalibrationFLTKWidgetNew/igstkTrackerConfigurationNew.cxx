@@ -99,7 +99,7 @@ int TrackerConfigurationNew::CheckAuroraValidity()
 
   int n = m_NDITrackerConfiguration->m_TrackerToolList.size();
   int ReferenceToolcount = 0;
-  for (int i=0; i<n; i++)
+  for (unsigned int i=0; i<n; i++)
   {
     NDITrackerToolConfiguration * conf = 
                            m_NDITrackerConfiguration->m_TrackerToolList[i];
@@ -122,7 +122,7 @@ int TrackerConfigurationNew::CheckFlockOfBirdsValidity()
     }
     int n = m_AscensionTrackerConfiguration->m_TrackerToolList.size();
     int ReferenceToolcount = 0;
-    for (int i=0; i<n; i++)
+    for (unsigned int i=0; i<n; i++)
     {
          AscensionTrackerToolConfiguration * conf = 
             m_AscensionTrackerConfiguration->m_TrackerToolList[i];

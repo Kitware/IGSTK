@@ -211,7 +211,7 @@ void SceneGraphUI
 int SceneGraphUI::FindMaxInArray(int array1[10])
 {
   int max = array1[0];
-  for(int i=0; i< 10; i++)
+  for(unsigned int i=0; i< 10; i++)
   {
     if(array1[i] > max)
     {
@@ -225,7 +225,7 @@ int SceneGraphUI::FindMaxInArray(int array1[10])
 int SceneGraphUI::FindYDepth(int xDepthIndividual[2][10])
 {
   int maxYDepth = 0;
-  for(int i=0; i<2;i++)
+  for(unsigned int i=0; i<2;i++)
   {
     for(int j=0; j<10 ; j++)
     {
@@ -246,7 +246,7 @@ int SceneGraphUI::FindYDepth(int xDepthIndividual[2][10])
 int SceneGraphUI::FindMaxInXDepth(int yDepth[2][10])
 {
   int maxValue = yDepth[0][0];
-  for(int i=0;i<2;i++)
+  for(unsigned int i=0;i<2;i++)
   {
     for(int j=0;j<10;j++)
     {

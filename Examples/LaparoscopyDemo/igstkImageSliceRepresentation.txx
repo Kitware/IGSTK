@@ -214,7 +214,7 @@ ImageSliceRepresentation < TImageSpatialObject >
   probeVector = m_ProbeTransform.GetRotation().Transform(probeVector); 
   translation = m_ProbeTransform.GetTranslation();
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     m_ProbeVector[i]   = probeVector[i];
     m_ProbePosition[i] = translation[i];
@@ -227,7 +227,7 @@ ImageSliceRepresentation < TImageSpatialObject >
 ::RequestSetProbeVectorAndPosition(double * probeVector, 
                                    double * probePosition )
 {
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     m_ProbeVector[i]   = probeVector[i];
     m_ProbePosition[i] = probePosition[i];
@@ -302,7 +302,7 @@ else if ( m_SliceOrientation == Perpendicular)
     vTip = m_ProbeTransform.GetRotation().Transform(vTip); 
     vTip += m_ProbeTransform.GetTranslation();
     
-    for (int i=0; i<3; i++)
+    for (unsigned int i=0; i<3; i++)
       {    
       m_ProbePosition[i] = vTip[i];
       }

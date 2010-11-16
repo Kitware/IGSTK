@@ -148,7 +148,7 @@ Trajectory
   os << indent << "Direction: "<<this->m_Direction<< std::endl;
   os << indent << "Targets:"<< std::endl;
   int n = this->m_Targets.size();
-  for(int i=0; i<n; i++)
+  for(unsigned int i=0; i<n; i++)
     os << indent << this->m_Targets[i] << std::endl;
 }
 

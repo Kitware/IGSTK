@@ -167,7 +167,7 @@ int igstkObliqueImageSpatialObjectRepresentationTest(
   view2D->SetRefreshRate( 30 );
   view2D->RequestStart();
 
-  for(int i=0; i<10; i++) 
+  for(unsigned int i=0; i<10; i++) 
     {
     std::cout << "Refresh=" << i << std::endl;
     Fl::wait( 0.01 );

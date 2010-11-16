@@ -1368,7 +1368,7 @@ Navigator::ReportSuccessImageLoadedProcessing()
 
 //  m_ViewerGroup->RequestUpdateOverlays();
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
@@ -1492,7 +1492,7 @@ Navigator::ReportSuccessEndSetTrackerFiducialsProcessing()
   igstkLogMacro2( m_Logger, DEBUG, "igstk::Navigator::"
                  "ReportSuccessEndSetTrackerFiducialsProcessing called...\n");
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );
@@ -2763,7 +2763,7 @@ void Navigator::ConnectImageRepresentation()
   m_CoronalFiducialRepresentationVector.resize(4);
   m_3DViewFiducialRepresentationVector.resize(4);
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     m_FiducialPointVector[i] = EllipsoidType::New();
     m_FiducialPointVector[i]->SetRadius( 6, 6, 6 );
@@ -3214,7 +3214,7 @@ void Navigator::RequestChangeSelectedFiducial()
   m_FiducialPointVector[choice]->RequestSetTransformAndParent(
       PointToTransform(point), m_WorldReference );
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     m_ViewerGroup->m_AxialView->RequestRemoveObject( m_AxialFiducialRepresentationVector[i] );
     m_ViewerGroup->m_SagittalView->RequestRemoveObject( m_SagittalFiducialRepresentationVector[i] );

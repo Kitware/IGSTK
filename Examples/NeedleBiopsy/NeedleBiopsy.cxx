@@ -164,7 +164,7 @@ NeedleBiopsy::NeedleBiopsy() : m_LogFile()
 
   /** Create image slice representations  */
   m_ImageRepresentation.clear();
-  for (int i=0; i<6; i++)
+  for (unsigned int i=0; i<6; i++)
     {
     ImageRepresentationType::Pointer rep = ImageRepresentationType::New();
     m_ImageRepresentation.push_back( rep );
@@ -733,7 +733,7 @@ void NeedleBiopsy::ChangeActiveTrackerTool()
 
   if (m_TrackerToolList.size() != 0)
     {
-      for (int i=0; i<m_TrackerToolList.size(); i++)
+      for (unsigned int i=0; i<m_TrackerToolList.size(); i++)
       {
         m_TrackerToolList[i]->RemoveAllObservers();
       }
@@ -863,7 +863,7 @@ void NeedleBiopsy::RequestRegistration()
 */
 void NeedleBiopsy::RequestStartTracking()
 {
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
     m_TrackerInitializerList[i]->GetTracker()->RequestStartTracking();
     }
@@ -879,7 +879,7 @@ void NeedleBiopsy::RequestStartTracking()
 */
 void NeedleBiopsy::RequestStopTracking()
 {
-  for (int i=0; i<m_TrackerInitializerList.size(); i++)
+  for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
   {
     m_TrackerInitializerList[i]->GetTracker()->RequestStopTracking();
   }
@@ -1020,7 +1020,7 @@ void NeedleBiopsy::UpdatePath()
   m_Path->AddPoint( point );
 
 
-  for (int i=0; i<4; i++)
+  for (unsigned int i=0; i<4; i++)
     {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
     m_PathRepresentation[i]->RequestSetTubeObject( NULL );

@@ -94,7 +94,7 @@ MultiTrajectoryInterventionalPlan
     {
     os << indent << "Trajectories:\n";
     int n = this->m_Trajectories.size();
-    for(int i=0; i<n; i++)
+    for(unsigned int i=0; i<n; i++)
       this->m_Trajectories[i].Print( os, indent );
     }
   Superclass::PrintSelf( os, indent.GetNextIndent() );

@@ -36,7 +36,7 @@
 
 //#include "tisudshl.h" included in header
 
-vtkCxxRevisionMacro(vtkImagingControlVideoSource, "1.1");
+vtkCxxRevisionMacro(vtkImagingControlVideoSource, "1.2");
 //Using our own version of new because we are using the singelton design pattern.
 //vtkStandardNewMacro(vtkImagingControlVideoSource);
 //Needed when we don't use the vtkStandardNewMacro.
@@ -350,7 +350,7 @@ void vtkImagingControlVideoSource::Save(std::string filename, vtkImagingControlV
   //Number of frames, also specifies that the number should be written as fixed
   timestamps << std::fixed << filesToWrite << " ";
 
-  for(int i=0; i<filesToWrite; i++)
+  for(unsigned int i=0; i<filesToWrite; i++)
   {
     //Calculate what frame to append
     int offset = ((int)(this->FrameBufferIndex-(i*lagFactor)));
@@ -631,7 +631,7 @@ void vtkImagingControlVideoSource::UnpackRasterLine(unsigned char *outptr, unsig
 }
 void vtkImagingControlVideoSource::BYTEToVTKLuminance(BYTE *outPtr, BYTE *rowPtr,  int start, int count)
 {
-    for(int i=0; i<count; i++)
+    for(unsigned int i=0; i<count; i++)
     {
       outPtr[i] = rowPtr[start+i];
     }
@@ -639,7 +639,7 @@ void vtkImagingControlVideoSource::BYTEToVTKLuminance(BYTE *outPtr, BYTE *rowPtr
 //----------------------------------------------------------------------------
 void vtkImagingControlVideoSource::RGB24ToVTKRGB(RGB24Pixel *outPtr, RGB24Pixel *rowPtr, int start, int count)
 {
-    for(int i=0; i<count; i++)
+    for(unsigned int i=0; i<count; i++)
     {
       outPtr[i].r = rowPtr[start+i].b;
       outPtr[i].g = rowPtr[start+i].g;
@@ -649,7 +649,7 @@ void vtkImagingControlVideoSource::RGB24ToVTKRGB(RGB24Pixel *outPtr, RGB24Pixel 
 //----------------------------------------------------------------------------
 void vtkImagingControlVideoSource::RGB32ToVTKRGBA(vtkImagingControlVideoSource::RGB32Pixel *outPtr, vtkImagingControlVideoSource::RGB32Pixel *rowPtr, int start, int count)
 {
-  for(int i=0; i<count; i++)
+  for(unsigned int i=0; i<count; i++)
   {
     outPtr[i].r = rowPtr[start+i].b;
     outPtr[i].g = rowPtr[start+i].g;
@@ -660,7 +660,7 @@ void vtkImagingControlVideoSource::RGB32ToVTKRGBA(vtkImagingControlVideoSource::
 //----------------------------------------------------------------------------
 void vtkImagingControlVideoSource::RGB32ToVTKLuminance(BYTE *outPtr, vtkImagingControlVideoSource::RGB32Pixel *rowPtr, int start, int count)
 {
-  for(int i=0; i<count; i++)
+  for(unsigned int i=0; i<count; i++)
   {
     outPtr[i] = rowPtr[start+i].b;
   }
@@ -668,7 +668,7 @@ void vtkImagingControlVideoSource::RGB32ToVTKLuminance(BYTE *outPtr, vtkImagingC
 //----------------------------------------------------------------------------
 void vtkImagingControlVideoSource::UYVYToVTKRGB(vtkImagingControlVideoSource::RGB24Pixel *outPtr, vtkImagingControlVideoSource::UYVY *rowPtr, int start, int count)
 {
-  for(int i=0; i<count; i++)
+  for(unsigned int i=0; i<count; i++)
   {
     /**
     B = 1.164(Y - 16) + 2.018(U - 128)

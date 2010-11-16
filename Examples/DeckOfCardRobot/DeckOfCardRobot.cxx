@@ -87,7 +87,7 @@ DeckOfCardRobot::DeckOfCardRobot():m_StateMachine(this)
   m_P1.Fill( 0 );
   m_P2.Fill( 0 );
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     m_Translation[i] = 0.0;
     m_Rotation[i] = 0.0;
@@ -1033,7 +1033,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   double                  angle;
   itk::VersorRigid3DTransform<double>::InputPointType rPE, rPT, pIntersect;
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     rPE[i] = m_EntryTransform.GetTranslation()[i];
     rPT[i] = m_TargetTransform.GetTranslation()[i];
@@ -1065,7 +1065,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
   axis.Normalize();
 
   // Compose the new robot transform
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     translation[i] = pIntersect[i];  // Translation in robot space
     }
@@ -1144,7 +1144,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
       m_Rotation[1] = - atan2( t*x*z - y*s,  t*x*x + c );
     }
   
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     m_Rotation[i] = m_Rotation[i] * 180.0 / PI;  // To degree
     if ( m_Rotation[i] > 90)
@@ -1164,7 +1164,7 @@ bool DeckOfCardRobot::CalculateRobotMovement()
 
   // Test if the move is reachable
   m_Reachable = true;
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     if ( ( fabs (m_Translation[i]) > 19 ) || ( fabs (m_Rotation[i]) > 30 ) )
       {
@@ -1322,7 +1322,7 @@ void DeckOfCardRobot::AnimateRobotMove( igstk::Transform TCurrent,
   axis = versor.GetAxis();
   axis.Normalize();
 
-  for (int i=0; i<=steps; i++)
+  for (unsigned int i=0; i<=steps; i++)
     {
     // Interpolate quaternions
     rotation.Set( axis, angle * i/steps );

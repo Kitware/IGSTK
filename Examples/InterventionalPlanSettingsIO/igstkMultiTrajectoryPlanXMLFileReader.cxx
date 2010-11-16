@@ -114,7 +114,7 @@ MultiTrajectoryPlanXMLFileReader::GetPlan()
                                                   this->m_studyUID, 
                                                   this->m_seriesUID ); 
     int n = this->m_Trajectories.size();
-    for(int i=0; i<n ; i++)
+    for(unsigned int i=0; i<n ; i++)
       plan->AddTrajectory( this->m_Trajectories[i] );
     }
   return plan;

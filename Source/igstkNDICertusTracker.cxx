@@ -246,7 +246,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
   // 7. Load rigid bodies
   if (rigidBodyStatus.lnRigidBodies>0)
   {
-   for (int i=0;i<rigidBodyStatus.lnRigidBodies;i++)
+   for (unsigned int i=0;i<rigidBodyStatus.lnRigidBodies;i++)
   {
     if( RigidBodyAddFromFile(rigidBodyDescrArray[i].lnRigidId,    /* ID associated with this rigid body.*/
                 rigidBodyDescrArray[i].lnStartMarker,  /* First marker in the rigid body.*/

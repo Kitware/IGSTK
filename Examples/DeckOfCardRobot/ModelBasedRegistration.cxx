@@ -156,7 +156,7 @@ bool ModelBasedRegistration::Execute()
   igstk::Transform::VectorType   translation, fAxis, mAxis, axis;
   double                         angle;
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     fAxis[i] = fiducialAxis[i];
     mAxis[i] = modelAxis[i];
@@ -167,7 +167,7 @@ bool ModelBasedRegistration::Execute()
   axis.Normalize();
 
   // Calculate the initial translation
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     {
     translation[i] = fiducialCenter[i] - modelCenter[i];
     }

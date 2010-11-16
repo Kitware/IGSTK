@@ -461,7 +461,7 @@ private:
   TransformToPoint( igstk::Transform transform)
   {
     PointType point;
-    for (int i=0; i<3; i++)
+    for (unsigned int i=0; i<3; i++)
       {
       point[i] = transform.GetTranslation()[i];
       }
