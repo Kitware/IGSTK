@@ -1735,7 +1735,7 @@ void UltrasoundNavigator::ConfigureTrackerProcessing()
    {
     //throw ExceptionWithMessage( rfso->GetFailureMessage() );
     std::string errorMessage = rfso->GetFailureMessage();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
 
@@ -2316,7 +2316,7 @@ UltrasoundNavigator::ReportFailureTrackerConfigurationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not configure tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -2329,7 +2329,7 @@ UltrasoundNavigator::ReportFailureTrackerInitializationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not initialize tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -2357,7 +2357,7 @@ UltrasoundNavigator::ReportFailureImagerInitializationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not initialize imager device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -2664,7 +2664,7 @@ void UltrasoundNavigator::LoadImageProcessing()
    {
      std::string errorMessage;
      errorMessage = "Could not open image";
-     fl_alert( errorMessage.c_str() );
+     fl_alert("%s\n", errorMessage.c_str() );
      fl_beep( FL_BEEP_ERROR );
 
      m_ImageObserver->RemoveAllObservers();
@@ -3151,7 +3151,7 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
   if (!m_TrackerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -3201,7 +3201,7 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -3240,7 +3240,7 @@ void UltrasoundNavigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker start error\n" )
@@ -3286,7 +3286,7 @@ void UltrasoundNavigator::InitializeImagerProcessing()
   if (!m_ImagerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -3334,7 +3334,7 @@ void UltrasoundNavigator::InitializeImagerProcessing()
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage );
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -3554,7 +3554,7 @@ void UltrasoundNavigator::StartTrackingProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -3571,7 +3571,7 @@ void UltrasoundNavigator::StartTrackingProcessing()
   //  std::string errorMessage;
   //  m_TrackerControllerObserver->GetErrorMessage( errorMessage );
   //  m_TrackerControllerObserver->ClearError();
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker start error\n" )
@@ -3601,7 +3601,7 @@ void UltrasoundNavigator::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker stop error\n" )
@@ -3631,7 +3631,7 @@ void UltrasoundNavigator::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker disconnect error\n" )
@@ -4597,7 +4597,7 @@ void UltrasoundNavigator::StartImagingProcessing()
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage );
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -4628,7 +4628,7 @@ void UltrasoundNavigator::StopImagingProcessing()
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage );
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Imager stop error\n" )
@@ -4660,7 +4660,7 @@ void UltrasoundNavigator::DisconnectImagerProcessing()
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage );
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Imager disconnect error\n" )

@@ -540,7 +540,7 @@ void WorkingVolumeTester::ConfigureTrackerProcessing()
    {
     //throw ExceptionWithMessage( rfso->GetFailureMessage() );
     std::string errorMessage = rfso->GetFailureMessage();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
 
@@ -1017,7 +1017,7 @@ void WorkingVolumeTester::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1065,7 +1065,7 @@ void WorkingVolumeTester::StartTrackingProcessing()
       std::string errorMessage;
       m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
       m_TrackerControllerObserver->ClearError();
-      fl_alert( errorMessage.c_str() );
+      fl_alert("%s\n", errorMessage.c_str() );
       fl_beep( FL_BEEP_ERROR );
       igstkLogMacro2( m_Logger, DEBUG, "Tracker start error\n" )
       m_StateMachine.PushInput( m_FailureInput );
@@ -1177,7 +1177,7 @@ void WorkingVolumeTester::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker stop error\n" )
@@ -1205,7 +1205,7 @@ void WorkingVolumeTester::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker disconnect error\n" )

@@ -152,7 +152,7 @@ void Tracking::InitializeTracking()
   if (!this->m_TrackerConfiguration)
   {
     std::string errorMessage;
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker Initialization error\n" )
     return;
@@ -165,7 +165,7 @@ void Tracking::InitializeTracking()
     std::string errorMessage;
     this->m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     this->m_TrackerControllerObserver->ClearError();
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker Initialization error\n" )
     return;
@@ -228,7 +228,7 @@ void Tracking::StartTracking()
   if (!this->m_TrackerConfiguration)
   {
     std::string errorMessage;
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker Starting error\n" )
     return;
@@ -241,7 +241,7 @@ void Tracking::StartTracking()
     std::string errorMessage;
     this->m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     this->m_TrackerControllerObserver->ClearError();
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker start error\n" )
     return;
@@ -269,7 +269,7 @@ void Tracking::StopTracking()
     std::string errorMessage;
     this->m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     this->m_TrackerControllerObserver->ClearError();
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker stop error\n" )
     return;
@@ -295,7 +295,7 @@ void Tracking::DisconnectTracker()
     std::string errorMessage;
     this->m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     this->m_TrackerControllerObserver->ClearError();
-    //fl_alert( errorMessage.c_str() );
+    //fl_alert("%s\n", errorMessage.c_str() );
     //fl_beep( FL_BEEP_ERROR );
     igstkLogMacro( DEBUG, "Tracker disconnect error\n" )
 
@@ -467,7 +467,7 @@ void Tracking::TrackerControllerObserver::Execute( itk::Object *caller, const it
   }
   else if( dynamic_cast< const igstk::PivotCalibrationNew::InitializationFailureEvent * > (&event) ) 
   {
-    fl_alert("Failed to initialize pivot calibration.\n Check that tracker is in tracking state.");
+    fl_alert("%s\n","Failed to initialize pivot calibration.\n Check that tracker is in tracking state.");
     fl_beep(FL_BEEP_ERROR);;
   }
   */

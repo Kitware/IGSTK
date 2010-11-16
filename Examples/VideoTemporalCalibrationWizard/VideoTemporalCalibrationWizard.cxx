@@ -1189,7 +1189,7 @@ VideoTemporalCalibrationWizard::DisconnectVideoImagerProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1231,7 +1231,7 @@ VideoTemporalCalibrationWizard::InitializeVideoImagerProcessing()
   if (!m_VideoImagerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1279,7 +1279,7 @@ VideoTemporalCalibrationWizard::InitializeVideoImagerProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1368,7 +1368,7 @@ VideoTemporalCalibrationWizard::StartImagingProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1459,7 +1459,7 @@ VideoTemporalCalibrationWizard::ReportFailureVideoImagerInitializationProcessing
 
   std::string errorMessage;
   errorMessage = "Could not initialize VideoImager device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 
   m_VideoImagerInitialized = false;
@@ -1632,7 +1632,7 @@ VideoTemporalCalibrationWizard::StopImagingProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1964,7 +1964,7 @@ void VideoTemporalCalibrationWizard::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2012,7 +2012,7 @@ void VideoTemporalCalibrationWizard::StartTrackingProcessing()
       std::string errorMessage;
       m_TrackerControllerObserver->GetErrorMessage( errorMessage );
       m_TrackerControllerObserver->ClearError();
-      fl_alert( errorMessage.c_str() );
+      fl_alert("%s\n", errorMessage.c_str() );
       fl_beep( FL_BEEP_ERROR );
       igstkLogMacro2( m_Logger, DEBUG, "Tracker start error\n" )
       m_StateMachine.PushInput( m_FailureInput );
@@ -2105,7 +2105,7 @@ void VideoTemporalCalibrationWizard::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2135,7 +2135,7 @@ VideoTemporalCalibrationWizard::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );

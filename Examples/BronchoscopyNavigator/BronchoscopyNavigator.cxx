@@ -1256,7 +1256,7 @@ void BronchoscopyNavigator::ConfigureTrackerProcessing()
    {
     //throw ExceptionWithMessage( rfso->GetFailureMessage() );
     std::string errorMessage = rfso->GetFailureMessage();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
 
@@ -1694,7 +1694,7 @@ BronchoscopyNavigator::ReportFailureTrackerConfigurationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not configure tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -1707,7 +1707,7 @@ BronchoscopyNavigator::ReportFailureTrackerInitializationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not initialize tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -1976,7 +1976,7 @@ void BronchoscopyNavigator::LoadImageProcessing()
    {
      std::string errorMessage;
      errorMessage = "Could not open image";
-     fl_alert( errorMessage.c_str() );
+     fl_alert("%s\n", errorMessage.c_str() );
      fl_beep( FL_BEEP_ERROR );
 
      m_ImageObserver->RemoveAllObservers();
@@ -2337,7 +2337,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   if (!m_TrackerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2353,7 +2353,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2395,7 +2395,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2412,7 +2412,7 @@ void BronchoscopyNavigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker start error\n" )
@@ -2628,7 +2628,7 @@ void BronchoscopyNavigator::StartTrackingProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2645,7 +2645,7 @@ void BronchoscopyNavigator::StartTrackingProcessing()
   //  std::string errorMessage;
   //  m_TrackerControllerObserver->GetErrorMessage( errorMessage );
   //  m_TrackerControllerObserver->ClearError();
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker start error\n" )
@@ -2677,7 +2677,7 @@ void BronchoscopyNavigator::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker stop error\n" )
@@ -2707,7 +2707,7 @@ void BronchoscopyNavigator::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage );
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG,
       "Tracker disconnect error\n" )

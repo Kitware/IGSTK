@@ -1121,7 +1121,7 @@ UltrasoundCalibrationWizard
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );   
@@ -1165,7 +1165,7 @@ UltrasoundCalibrationWizard
   if (!m_ImagerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1213,7 +1213,7 @@ UltrasoundCalibrationWizard
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1309,7 +1309,7 @@ UltrasoundCalibrationWizard
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1408,7 +1408,7 @@ UltrasoundCalibrationWizard
 
   std::string errorMessage;
   errorMessage = "Could not initialize imager device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 
   m_ImagerInitialized = false;
@@ -1592,7 +1592,7 @@ UltrasoundCalibrationWizard
     std::string errorMessage;
     m_ImagerControllerObserver->GetErrorMessage( errorMessage ); 
     m_ImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Imager stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1948,7 +1948,7 @@ void UltrasoundCalibrationWizard::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -1996,7 +1996,7 @@ void UltrasoundCalibrationWizard::StartTrackingProcessing()
       std::string errorMessage;
       m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
       m_TrackerControllerObserver->ClearError();
-      fl_alert( errorMessage.c_str() );
+      fl_alert("%s\n", errorMessage.c_str() );
       fl_beep( FL_BEEP_ERROR );
       igstkLogMacro2( m_Logger, DEBUG, "Tracker start error\n" )
       m_StateMachine.PushInput( m_FailureInput );
@@ -2079,7 +2079,7 @@ void UltrasoundCalibrationWizard::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2110,7 +2110,7 @@ UltrasoundCalibrationWizard
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );

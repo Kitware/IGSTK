@@ -235,7 +235,7 @@ VideoFrameGrabberAndViewer::DisconnectVideoImagerProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager disconnect error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -278,7 +278,7 @@ VideoFrameGrabberAndViewer::InitializeVideoImagerProcessing()
   if (!m_VideoImagerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -319,7 +319,7 @@ VideoFrameGrabberAndViewer::InitializeVideoImagerProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -384,7 +384,7 @@ VideoFrameGrabberAndViewer::StartImagingProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager start error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -444,7 +444,7 @@ VideoFrameGrabberAndViewer::ReportFailureVideoImagerInitializationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not initialize VideoImager device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 
   m_VideoImagerInitialized = false;
@@ -498,7 +498,7 @@ VideoFrameGrabberAndViewer::StopImagingProcessing()
     std::string errorMessage;
     m_VideoImagerControllerObserver->GetErrorMessage( errorMessage );
     m_VideoImagerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "VideoImager stop error\n" )
     m_StateMachine.PushInput( m_FailureInput );

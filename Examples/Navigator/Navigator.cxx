@@ -1147,7 +1147,7 @@ void Navigator::ConfigureTrackerProcessing()
    {
     //throw ExceptionWithMessage( rfso->GetFailureMessage() );
     std::string errorMessage = rfso->GetFailureMessage();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Configuration error\n" )
 
@@ -1585,7 +1585,7 @@ Navigator::ReportFailureTrackerConfigurationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not configure tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -1598,7 +1598,7 @@ Navigator::ReportFailureTrackerInitializationProcessing()
 
   std::string errorMessage;
   errorMessage = "Could not initialize tracker device";
-  fl_alert( errorMessage.c_str() );
+  fl_alert("%s\n", errorMessage.c_str() );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -1959,7 +1959,7 @@ void Navigator::LoadImageProcessing()
    { 
      std::string errorMessage;
      errorMessage = "Could not open image";
-     fl_alert( errorMessage.c_str() );
+     fl_alert("%s\n", errorMessage.c_str() );
      fl_beep( FL_BEEP_ERROR );
 
      m_ImageObserver->RemoveAllObservers();
@@ -2335,7 +2335,7 @@ void Navigator::InitializeTrackerProcessing()
   if (!m_TrackerConfiguration)
   {
     std::string errorMessage;
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2386,7 +2386,7 @@ void Navigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, "Tracker Initialization error\n" )
     m_StateMachine.PushInput( m_FailureInput );
@@ -2420,7 +2420,7 @@ void Navigator::InitializeTrackerProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2437,7 +2437,7 @@ void Navigator::InitializeTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker start error\n" )
@@ -2653,7 +2653,7 @@ void Navigator::StartTrackingProcessing()
   //if (!m_TrackerConfiguration)
   //{
   //  std::string errorMessage;
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG,
   //    "Tracker Starting error\n" )
@@ -2670,7 +2670,7 @@ void Navigator::StartTrackingProcessing()
   //  std::string errorMessage;
   //  m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
   //  m_TrackerControllerObserver->ClearError();
-  //  fl_alert( errorMessage.c_str() );
+  //  fl_alert("%s\n", errorMessage.c_str() );
   //  fl_beep( FL_BEEP_ERROR );
   //  igstkLogMacro2( m_Logger, DEBUG, 
   //    "Tracker start error\n" )
@@ -2700,7 +2700,7 @@ void Navigator::StopTrackingProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker stop error\n" )
@@ -2730,7 +2730,7 @@ void Navigator::DisconnectTrackerProcessing()
     std::string errorMessage;
     m_TrackerControllerObserver->GetErrorMessage( errorMessage ); 
     m_TrackerControllerObserver->ClearError();
-    fl_alert( errorMessage.c_str() );
+    fl_alert("%s\n", errorMessage.c_str() );
     fl_beep( FL_BEEP_ERROR );
     igstkLogMacro2( m_Logger, DEBUG, 
       "Tracker disconnect error\n" )

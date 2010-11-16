@@ -123,7 +123,7 @@ PivotCalibrationFLTKWidgetExample::InitializeTrackingAndCalibration()
       //SROM file
   if( sromFileName.empty() && toolPort == 0 )
   {
-    fl_alert( "Missing SROM file for wireless tool." );
+    fl_alert("%s\n", "Missing SROM file for wireless tool." );
     fl_beep( FL_BEEP_ERROR );
     return;
   }
@@ -304,7 +304,7 @@ void
 PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent( itk::Object *caller, 
                                                         const itk::EventObject & event )
 {
-  fl_alert( "Failed writing calibration data to file." );
+  fl_alert("%s\n", "Failed writing calibration data to file." );
   fl_beep( FL_BEEP_ERROR );
 }
 
@@ -320,7 +320,7 @@ PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
   if( it != this->m_ErrorEvent2ErrorMessage.end() )
     {
     this->m_ErrorOccured = true;
-    fl_alert( "%s\n", (*it).second.c_str() );
+    fl_alert("%s\n", (*it).second.c_str() );
     fl_beep( FL_BEEP_ERROR );
     }
 }

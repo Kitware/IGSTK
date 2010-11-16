@@ -81,7 +81,7 @@ TrackerConfigurationGUIBase::Execute( itk::Object *caller,
   if( !msg.empty() )
   {
     m_ConfigurationErrorOccured = true;
-    fl_alert( msg.c_str() );
+    fl_alert("%s\n", msg.c_str() );
     fl_beep( FL_BEEP_ERROR );
   }
 }
