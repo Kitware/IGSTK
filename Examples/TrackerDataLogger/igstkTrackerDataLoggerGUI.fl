@@ -15,7 +15,7 @@ class TrackerDataLoggerGUI {open
   } {
     Fl_Window m_Window1 {
       label {TimeStamp and Transform Logger}
-      callback {this->Quit();} open
+      callback {this->Quit();}
       private xywh {164 198 514 89} type Double visible
     } {
       Fl_Output configurationFileTextField {
@@ -31,7 +31,7 @@ if(fileName!=NULL) //file name is copied to the text field
       }
       Fl_Button {} {
         label Next
-        callback{std::string configurationFileName(this->configurationFileTextField->value());
+        callback {std::string configurationFileName(this->configurationFileTextField->value());
 if( configurationFileName.empty() )
 {
  ReportError( std::string( "Please select XML configuration file." ) ); 
@@ -60,7 +60,7 @@ else {
     }
     Fl_Window m_Window2 {
       label {OpenIGTLink Transform Broadcasting}
-      callback {this->Quit();} open
+      callback {this->Quit();}
       private xywh {341 38 549 111} type Double box PLASTIC_UP_BOX color 7 selection_color 7 visible
     } {
       Fl_Button m_StopTrackingButton {
@@ -87,14 +87,13 @@ this->m_StartTrackingButton->deactivate();}
       }
     }
     code {this->m_Logger = NULL;
-this->hasQuitted = false;} {selected
-    }
+this->hasQuitted = false;} {}
   }
-  Function {Show()} {open return_type {virtual void}
+  Function {Show()} {return_type {virtual void}
   } {
     code {this->m_Window1->show();} {}
   }
-  Function {Quit()} {open return_type void
+  Function {Quit()} {return_type void
   } {
     code {int i = fl_choice("Are you sure you want to quit?", NULL,"Yes","No"); 
 if ( i == 1 )
@@ -126,8 +125,10 @@ fl_beep(FL_BEEP_ERROR);} {}
   decl {TrackerDataLogger *m_Logger;} {public
   }
   decl {bool hasQuitted;} {}
-  Function {HasQuitted()} {open return_type bool
+  Function {HasQuitted()} {return_type bool
   } {
     code {return this->hasQuitted;} {}
   }
+  Function {~TrackerDataLoggerGUI()} {open selected return_type virtual
+  } {}
 } 

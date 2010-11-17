@@ -67,7 +67,7 @@ public:
   TrackerDataLogger( std::string &trackerXMLConfigurationFileName ) 
     throw ( ExceptionWithMessage );
 
-  ~TrackerDataLogger(){ }
+  virtual ~TrackerDataLogger(){ }
 
   void StartTracking();
 
