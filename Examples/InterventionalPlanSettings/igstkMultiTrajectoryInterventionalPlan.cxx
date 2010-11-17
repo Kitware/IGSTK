@@ -93,7 +93,7 @@ MultiTrajectoryInterventionalPlan
   if( !this->m_Trajectories.empty() )
     {
     os << indent << "Trajectories:\n";
-    int n = this->m_Trajectories.size();
+    unsigned int n = this->m_Trajectories.size();
     for(unsigned int i=0; i<n; i++)
       this->m_Trajectories[i].Print( os, indent );
     }

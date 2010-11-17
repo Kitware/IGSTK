@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
       igstk::Trajectory::DirectionType direction;
       std::vector<igstk::Trajectory::PointType> targets;
        
-       for( int i=0; i<trajectories.size(); i++ )
+       for( unsigned int i=0; i<trajectories.size(); i++ )
          {
            entryPoint = trajectories[i].GetEntryPoint();
            direction = trajectories[i].GetDirection();
@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
            std::cout<<"\tEntry point: "<<entryPoint<<"\n";
            std::cout<<"\tDirection: "<<direction<<"\n";
            std::cout<<"\tTargets:\n";
-           for( int j=0; j<targets.size(); j++ ) 
+           for( unsigned int j=0; j<targets.size(); j++ ) 
             std::cout<<"\t\t"<<targets[j]<<"\n";
          }
 

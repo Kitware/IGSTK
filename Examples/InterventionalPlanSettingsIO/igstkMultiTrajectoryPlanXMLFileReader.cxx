@@ -113,7 +113,7 @@ MultiTrajectoryPlanXMLFileReader::GetPlan()
     plan = new MultiTrajectoryInterventionalPlan( this->m_PatientName, 
                                                   this->m_studyUID, 
                                                   this->m_seriesUID ); 
-    int n = this->m_Trajectories.size();
+    unsigned int n = this->m_Trajectories.size();
     for(unsigned int i=0; i<n ; i++)
       plan->AddTrajectory( this->m_Trajectories[i] );
     }
