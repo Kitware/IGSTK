@@ -453,6 +453,7 @@ public:\
         m_GotObject = true;\
         }\
       }\
+    (void) caller;\
     }\
   bool Got##name() const\
     {\
@@ -506,6 +507,7 @@ public:\
         m_GotObject = true;\
         }\
       }\
+    (void) caller;\
     }\
   bool Got##name() const\
     {\
