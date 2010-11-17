@@ -147,9 +147,9 @@ public:
     typedef  ::itk::SmartPointer<Self>  Pointer;
     itkNewMacro( Self );
   protected:
-    ReadFailSuccessObserver() : 
-      m_GotFailure( false ), 
+    ReadFailSuccessObserver() :
       m_GotSuccess( false ),
+      m_GotFailure( false ),       
       m_GotUnexpectedTrackerType( false ) 
       { }
     ~ReadFailSuccessObserver() {}
