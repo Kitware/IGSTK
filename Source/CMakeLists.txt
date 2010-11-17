@@ -381,9 +381,9 @@ SET(IGSTKSandbox_HEADS
 #  igstkObliqueContourMeshObjectRepresentation.h
 #  igstkObliqueImageSpatialObjectRepresentation.h
   igstkPoint3D.h
-  igstkQuickTimeGrabber.h
+#  igstkQuickTimeGrabber.h
   igstkSocketCommunication.h
-  igstkVideoGrabber.h
+#  igstkVideoGrabber.h
 #  igstkImageSliceRepresentation.h
 
   igstkTubeGroupObject.h
@@ -503,9 +503,9 @@ SET(IGSTKSandbox_SRCS
  # igstkObliqueContourMeshObjectRepresentation.cxx
  # igstkObliqueImageSpatialObjectRepresentation.txx
   igstkPoint3D.cxx
-  igstkQuickTimeGrabber.cxx
+#  igstkQuickTimeGrabber.cxx
   igstkSocketCommunication.cxx
-  igstkVideoGrabber.cxx
+#  igstkVideoGrabber.cxx
 #  igstkImageSliceRepresentation.txx
 
   igstkTubeGroupObject.cxx
