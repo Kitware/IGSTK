@@ -106,7 +106,7 @@ void RegisterTests()
   REGISTER_TEST(igstkAscensionTrackerTest);
 #endif
  
-#ifdef IGSTKSandbox_USE_MicronTracker
+#ifdef IGSTKSandbox_TEST_MicronTracker_ATTACHED
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif

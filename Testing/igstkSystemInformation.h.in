@@ -34,4 +34,6 @@
     
 #cmakedefine IGSTKSandbox_TEST_Ascension3DG_ATTACHED
 
+#cmakedefine IGSTKSandbox_TEST_MicronTracker_ATTACHED
+
 #endif

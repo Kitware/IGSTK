@@ -30,6 +30,7 @@ SET( IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER 1 CACHE STRING
 SET(IGSTK_DATA_ROOT ${IGSTK_SOURCE_DIR}/Testing/Data)
 
 OPTION(IGSTKSandbox_TEST_Ascension3DG_ATTACHED "Ascension3DG is attached to computer" OFF)
+OPTION(IGSTKSandbox_TEST_MicronTracker_ATTACHED "Ascension3DG is attached to computer" OFF)
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
@@ -254,6 +255,7 @@ IGSTKTesting(igstkLatestTests
              ${IGSTKSandbox_TEST_POLARIS_PORT_NUMBER}
              IGSTKSandbox_TEST_LOOPBACK_ATTACHED
              ${IGSTKSandbox_TEST_LOOPBACK_PORT_NUMBER}
+             IGSTKSandbox_TEST_MicronTracker_ATTACHED
              IGSTKSandbox_USE_FLTK
              IGSTKSandbox_USE_Qt
              IGSTKSandbox_USE_MicronTracker
