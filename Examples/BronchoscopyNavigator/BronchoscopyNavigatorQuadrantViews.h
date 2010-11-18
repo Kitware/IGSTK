@@ -99,7 +99,7 @@ public:
 
   igstkLoadedEventMacro( ManualReslicingEvent, IGSTKEvent, IndexType );
 
-  typedef struct WindowLevelStructType
+  struct WindowLevelStructType
   {
     int current_x;
     int current_y;
@@ -107,13 +107,13 @@ public:
     int prev_y;
   };
 
-  typedef struct KeyboardCommandType 
+  struct KeyboardCommandType 
   {
     int key;
     int state;
   };
 
-  typedef struct MouseCommandType 
+  struct MouseCommandType 
   {
     int button;
     int dx;
