@@ -28,7 +28,7 @@ class VideoFrameGrabberAndViewerOpenIGTLinkGUI {open : {public igstk::Object}
           tooltip {Load segmentation (.msh)} xywh {10 348 130 35} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 16
         }
       }
-      Fl_Group m_ViewerGroup {open selected
+      Fl_Group m_ViewerGroup {open
         xywh {151 0 600 400} box PLASTIC_DOWN_BOX
         code0 {\#include "VideoFrameGrabberAndViewerOpenIGTLinkView.h"}
         class {igstk::VideoFrameGrabberAndViewerOpenIGTLinkView}
@@ -40,9 +40,10 @@ hasQuitted = false;
 
 int x = m_ControlGroup->x();
 int y = m_ControlGroup->y();
-int width = m_ControlGroup->w();
+//int width = m_ControlGroup->w();
 int height = m_ControlGroup->h();
-m_ControlGroup->resize(x,y,150,height);} {}
+m_ControlGroup->resize(x,y,150,height);} {selected
+    }
     Fl_Window m_ConfirmToQuitWindow {
       label {Shut down system}
       xywh {409 361 422 150} type Double box PLASTIC_DOWN_BOX color 255 selection_color 55 align 16 modal noborder visible
