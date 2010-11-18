@@ -588,13 +588,6 @@ ENDIF(IGSTKSandbox_USE_Qt)
 
 IF(IGSTKSandbox_USE_MicronTracker)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
-
-  IF(WIN32)
-    SET(EXTRA_LIBS ${EXTRA_LIBS}  comctl32 wsock32 odbc32 odbccp32 )
-  ELSE(WIN32)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dc1394 )
-  ENDIF(WIN32)
-
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_USE_Ascension3DGTracker)
