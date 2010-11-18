@@ -392,13 +392,6 @@ ENDIF(IGSTK_USE_Qt)
 
 IF(IGSTK_USE_MicronTracker)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
-   
-  IF(WIN32)
-    SET(EXTRA_LIBS ${EXTRA_LIBS}  comctl32 wsock32 odbc32 odbccp32 )
-  ELSE(WIN32)
-    SET(EXTRA_LIBS ${EXTRA_LIBS} raw1394 dc1394 )
-  ENDIF(WIN32)
-  
 ENDIF(IGSTK_USE_MicronTracker)
 
 IF(IGSTK_USE_InfiniTrack)
