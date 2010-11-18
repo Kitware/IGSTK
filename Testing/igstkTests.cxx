@@ -104,12 +104,12 @@ void RegisterTests()
   REGISTER_TEST(igstkAscensionTrackerTest);
 #endif
  
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTK_TEST_MicronTracker_ATTACHED
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif
 
-#ifdef IGSTK_USE_InfiniTrack
+#ifdef IGSTK_TEST_InfiniTrack_ATTACHED
   REGISTER_TEST(igstkInfiniTrackTrackerTest);
   REGISTER_TEST(igstkInfiniTrackTrackerToolTest);
 #endif

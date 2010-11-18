@@ -13,6 +13,8 @@ OPTION(IGSTK_TEST_FLOCKOFBIRD_ATTACHED "Flock of birds is attached to computer" 
 SET( IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER 0 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 
+OPTION(IGSTK_TEST_MicronTracker_ATTACHED "MicronTracker is attached to computer" OFF)
+
 INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}
   ${IGSTK_BINARY_DIR}
@@ -39,6 +41,7 @@ IGSTKTesting(igstkTests
              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
              IGSTK_TEST_LOOPBACK_ATTACHED
              ${IGSTK_TEST_LOOPBACK_PORT_NUMBER}
+             IGSTK_TEST_MicronTracker_ATTACHED
              IGSTK_USE_FLTK
              IGSTK_USE_Qt
              IGSTK_USE_MicronTracker
@@ -47,6 +50,6 @@ IGSTKTesting(igstkTests
              ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
              IGSTK_USE_OpenIGTLink
              IGSTK_USE_VideoImager
-             IGSTK_USE_InfiniTrack
+             IGSTK_TEST_InfiniTrack_ATTACHED
              )
 

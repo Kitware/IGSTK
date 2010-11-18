@@ -4,8 +4,10 @@
 #cmakedefine IGSTK_USE_FLTK
 
 #cmakedefine IGSTK_USE_MicronTracker
+#cmakedefine IGSTK_TEST_MicronTracker_ATTACHED
 
 #cmakedefine IGSTK_USE_InfiniTrack
+#cmakedefine IGSTK_TEST_InfiniTrack_ATTACHED
 
 #cmakedefine IGSTK_USE_Qt
 

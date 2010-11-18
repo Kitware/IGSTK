@@ -12,15 +12,16 @@
 # BINARY_BUILD_DIRECTORY(STRING) : binary build directory
 # IGSTK_TEST_POLARIS_ATTACHED(boolean) : Option for polaris tracker 
 # IGSTK_TEST_POLARIS_PORT_NUMBER(int) : port number used by the polaris tracker
-# IGSTK_TEST_AURORA_ATTACHED(boolean) : Option for polaris tracker 
+# IGSTK_TEST_AURORA_ATTACHED(boolean) : Option for aurora tracker 
 # IGSTK_TEST_AURORA_PORT_NUMBER(int) : port number used by the aurora tracker
 # IGSTK_TEST_LOOPBACK_ATTACHED(boolean) : Option to turn on/off loopback attachment
 # IGSTK_TEST_LOOPBACK_PORT_NUMBER(int) : port number used by the loopback
 # IGSTK_TEST_FLOCKOFBIRD_ATTACHED(boolean) : Option for ascension tracker 
 # IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER(int) : port number used for ascension tracker
+# IGSTK_TEST_MicronTracker_ATTACHED(boolean) : Option for MicronTracker 
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
-# IGSTK_USE_InfiniTrack : Us InfiniTrack tests
+# IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
  
 
 
@@ -36,6 +37,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_POLARIS_PORT_NUMBER
       IGSTK_TEST_LOOPBACK_ATTACHED
       IGSTK_TEST_LOOPBACK_PORT_NUMBER
+      IGSTK_TEST_MicronTracker_ATTACHED
       IGSTK_USE_FLTK
       IGSTK_USE_Qt
       IGSTK_USE_MicronTracker
@@ -44,7 +46,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER
       IGSTK_USE_OpenIGTLink
       IGSTK_USE_VideoImager
-      IGSTK_USE_InfiniTrack
+      IGSTK_TEST_InfiniTrack_ATTACHED
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -567,7 +569,7 @@ ADD_TEST( igstkImageResliceObjectRepresentationFltkTest2
    
 ENDIF(${IGSTK_USE_FLTK})
 
-IF(${IGSTK_USE_MicronTracker})
+IF(${IGSTK_TEST_MicronTracker_ATTACHED})
     ADD_TEST( igstkMicronTrackerTest
               ${IGSTK_TESTS}
               igstkMicronTrackerTest
@@ -577,9 +579,9 @@ IF(${IGSTK_USE_MicronTracker})
               ${IGSTK_TEST_OUTPUT_DIR}/igstkMicronTrackerTestLogOutput.txt)
     ADD_TEST( igstkMicronTrackerToolTest
               ${IGSTK_TESTS} igstkMicronTrackerToolTest )
-ENDIF(${IGSTK_USE_MicronTracker})
+ENDIF(${IGSTK_TEST_MicronTracker_ATTACHED})
 
-IF(${IGSTK_USE_InfiniTrack})
+IF(${IGSTK_TEST_InfiniTrack_ATTACHED})
     ADD_TEST( igstkInfiniTrackTrackerTest
               ${IGSTK_TESTS}
               igstkInfiniTrackTrackerTest
@@ -587,7 +589,7 @@ IF(${IGSTK_USE_InfiniTrack})
               ${IGSTK_TEST_OUTPUT_DIR}/igstkInfiniTrackTrackerTestLogOutput.txt)
     ADD_TEST( igstkInfiniTrackTrackerToolTest
               ${IGSTK_TESTS} igstkInfiniTrackTrackerToolTest )
-ENDIF(${IGSTK_USE_InfiniTrack})
+ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})
 
 IF(IGSTK_USE_OpenIGTLink)
 
@@ -611,7 +613,7 @@ IF(IGSTK_USE_OpenIGTLink)
       )
   ENDIF (IGSTK_TEST_AURORA_ATTACHED)
   
-  IF(IGSTK_USE_MicronTracker)
+  IF(IGSTK_TEST_MicronTracker_ATTACHED)
     ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
       igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
@@ -619,7 +621,7 @@ IF(IGSTK_USE_OpenIGTLink)
       ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
       ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
       ${IGSTK_DATA_ROOT}/Input/Markers )
-  ENDIF(IGSTK_USE_MicronTracker)
+  ENDIF(IGSTK_TEST_MicronTracker_ATTACHED)
 
 ENDIF(IGSTK_USE_OpenIGTLink)  
 
@@ -922,12 +924,12 @@ IF(${IGSTK_USE_MicronTracker})
     igstkMicronTrackerToolTest.cxx)
 ENDIF(${IGSTK_USE_MicronTracker})  
 
-IF(${IGSTK_USE_InfiniTrack})  
+IF(${IGSTK_TEST_InfiniTrack_ATTACHED})  
   SET(BasicTests_SRCS
     ${BasicTests_SRCS}
     igstkInfiniTrackTrackerTest.cxx
     igstkInfiniTrackTrackerToolTest.cxx)
-ENDIF(${IGSTK_USE_InfiniTrack})  
+ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})  
 
 IF(${IGSTK_USE_Qt})  
   SET(BasicTests_SRCS
