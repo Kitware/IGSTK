@@ -273,6 +273,7 @@ int MCamera::getSensorsNum()
 {
   int NumofSensors = 0;
   int result = Camera_NumofSensorsGet(this->m_handle, &NumofSensors);
+  (void) result;
   return NumofSensors;
 }
 
@@ -282,6 +283,7 @@ int MCamera::getAutoExposure()
 {
   int autoExposure = 0;
   int result = Camera_AutoExposureGet(this->m_handle, &autoExposure);
+  (void) result;
   return autoExposure;
 }
 
