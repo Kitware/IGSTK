@@ -54,6 +54,7 @@ int Vector::setEndPos2x3(double* newPos2x3)
 {
   int result = mtOK;
   //result = Vector_EndPosSet(this->m_handle, newPos2x3);
+  (void) newPos2x3; // Get rid of unused variable warnings
   return result;
 }
 

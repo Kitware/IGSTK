@@ -76,7 +76,7 @@ bool Facet::setVectorsFromSample(vector<Collection*> &sampledVectorSets, string 
 {
   long mtCode;
   Collection* handlesCollection = new Collection();
-  for(unsigned int i=0; i<sampledVectorSets.size(); i++)
+  for (unsigned int i=0; i<sampledVectorSets.size(); i++)
   {
     if(sampledVectorSets[i]->count() == 2)
     {
@@ -93,6 +93,7 @@ bool Facet::setVectorsFromSample(vector<Collection*> &sampledVectorSets, string 
   else
   {
 //    outCompletionExplanation = MTErrorString(mtCode);
+    (void) outCompletionExplanation; // Get rid of unused variable warning
     return false;
   }
 
@@ -120,6 +121,8 @@ bool Facet::identify(MCamera* cam, vector<Vector*> vectorSet, double positionTol
 
   Facet_Identify(this->m_handle, cam->Handle(), vectorHandles, vectorSet.size(),  &result);
   free(vectorHandles);
+  
+  (void) positionToleranceMM; //Get rid of unused variable warning
   return result;
 }
 
@@ -129,7 +132,8 @@ bool Facet::validateTemplate(double positionToleranceMM, string outCompletionStr
 {
   int mtCode;
   mtCode = Facet_ValidateTemplateVectors(this->m_handle);
-
+  (void) positionToleranceMM; //Get rid of unused variable warning
+  
   if (mtCode == mtOK)
     return true;
   else

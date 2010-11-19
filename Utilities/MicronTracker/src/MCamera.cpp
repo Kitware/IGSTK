@@ -384,7 +384,9 @@ bool MCamera::getImages3( unsigned char ***li, unsigned char ***ri, unsigned cha
 bool MCamera::getHalfSizeImages(unsigned char ***li, unsigned char ***ri, int xRes, int yRes)
 {
   int r;
-
+  (void) xRes; //Get rid of unused variable warnings
+  (void) yRes; //Get rid of unused variable warnings
+  
   if (limage == NULL)
     limage = (unsigned char *)calloc (sizeof(unsigned char), getXRes() * getYRes()/2);
   if (rimage == NULL)
@@ -408,7 +410,9 @@ bool MCamera::getHalfSizeImages(unsigned char ***li, unsigned char ***ri, int xR
 bool MCamera::getHalfSizeImages3(unsigned char ***li, unsigned char ***ri, unsigned char ***mi, int xRes, int yRes)
 {
   int r;
-
+  (void) xRes; //Get rid of unused variable warnings
+  (void) yRes; //Get rid of unused variable warnings
+  
   if (limage == NULL)
     limage = (unsigned char *)calloc (sizeof(unsigned char), getXRes() * getYRes()/2);
   if (rimage == NULL)
