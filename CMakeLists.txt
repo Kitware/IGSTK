@@ -389,6 +389,17 @@ INCLUDE(CPack)
 #-----------------------------------------------------------------------------
 # Add compiler flags IGSTK needs to work on this platform.  This must be
 # done AFTER the call to CMAKE_EXPORT_BUILD_SETTINGS.
+#-----------------------------------------------------------------------------
+# ITK requires special compiler flags on some platforms.
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(IGSTK_REQUIRED_C_FLAGS "${IGSTK_REQUIRED_C_FLAGS} -Wall -Wno-uninitialized -Wno-unused-parameter")
+  set(IGSTK_REQUIRED_CXX_FLAGS "${IGSTK_REQUIRED_CXX_FLAGS} -ftemplate-depth-50 -Wall")
+  include(${IGSTK_SOURCE_DIR}/CMake/itkCheckCXXAcceptsFlags.cmake)
+  itkCHECK_CXX_ACCEPTS_FLAGS("-Wno-deprecated" CXX_HAS_DEPRECATED_FLAG)
+  if(CXX_HAS_DEPRECATED_FLAG)
+    set(IGSTK_REQUIRED_CXX_FLAGS "${IGSTK_REQUIRED_CXX_FLAGS} -Wno-deprecated")
+  endif(CXX_HAS_DEPRECATED_FLAG)
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${IGSTK_REQUIRED_C_FLAGS}")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGSTK_REQUIRED_CXX_FLAGS}")
