@@ -48,6 +48,7 @@ IF (IGSTKSandbox_USE_FLTK)
     TrackingVolumeViewer
     ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Examples/HelloWorld
     PivotCalibrationFLTKWidget
+    PETCTNeedleBiopsy
     )
   IF (IGSTKSandbox_USE_MicronTracker)
     SUBDIRS( OneViewAndTrackingNewUsingMicronTracker)
