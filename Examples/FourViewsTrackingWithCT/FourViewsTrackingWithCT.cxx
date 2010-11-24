@@ -482,7 +482,7 @@ void FourViewsTrackingWithCT::VerifyPatientNameProcessing()
     msg += "Name mismatch!!!!\n";
     msg += "Do you want to load another image? \
                                        choose \'no\' will overwrite the name\n";
-    int i = fl_choice( msg.c_str(), "Yes", "No", "Cancel");
+    int i = fl_choice( "%s", msg.c_str(), "Yes", "No", "Cancel");
     if ( i )
       {
       igstkLogMacro (         DEBUG, "Load another image\n" )
