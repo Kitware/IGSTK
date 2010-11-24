@@ -30,7 +30,7 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
   
-  typedef signed int PixelType;
+  typedef float PixelType;
   typedef itk::Image< PixelType, 3>                  ImageType;  
   typedef itk::PETDicomImageReader<ImageType>        ReaderType;
   ReaderType::Pointer   reader = ReaderType::New();
