@@ -302,6 +302,14 @@ ${IGSTKSandbox_SOURCE_DIR}/Source
 )
 
 #-----------------------------------------------------------------------------
+# Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
+FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
+MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
+
+SET(IGSTK_DATA_ROOT ${IGSTK_SOURCE_DIR}/Testing/Data)
+MARK_AS_ADVANCED(IGSTK_DATA_ROOT)
+
+#-----------------------------------------------------------------------------
 # Help other projects use IGSTKSandbox.
 SET(IGSTKSandbox_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
 
@@ -330,11 +338,6 @@ INSTALL_FILES(/include/InsightToolkit .h igstkConfigure)
 INSTALL_FILES(/lib/InsightToolkit .cmake UseIGSTKSandbox IGSTKSandboxLibraryDepends)
 
 
-
-#-----------------------------------------------------------------------------
-# Configure the default IGSTKSandbox_DATA_ROOT for the location of IGSTKSandbox Data.
-#FIND_PATH(IGSTKSandbox_DATA_ROOT IGSTKSandboxData.readme ${IGSTKSandbox_SOURCE_DIR}/Testing/Data $ENV{IGSTKSandbox_DATA_ROOT})
-#MARK_AS_ADVANCED(IGSTKSandbox_DATA_ROOT)
 
 ENDIF(NOT IGSTKSandbox_SETUP_DASHBOARD)
 
