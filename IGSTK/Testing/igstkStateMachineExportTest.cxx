@@ -28,7 +28,8 @@
 
 #include <fstream>
 
-#include "igstkSandboxConfigure.h"
+#include "igstkSystemInformation.h"
+#include "igstkConfigure.h"
 #include "igstkObjectRepresentation.h"
 #include "igstkCylinderObjectRepresentation.h"
 #include "igstkEllipsoidObjectRepresentation.h"
@@ -64,16 +65,21 @@
 #include "igstkConeObjectRepresentation.h"
 #include "igstkTubeObjectRepresentation.h"
 #include "igstkMeshObjectRepresentation.h"
-#include "igstkPivotCalibration.h"
-#include "igstkPrincipalAxisCalibration.h"
-#include "igstkToolCalibration.h"
-#include "igstkToolCalibrationReader.h"
 #include "igstkRealTimeClock.h"
 #include "igstkMR3DImageToUS3DImageRegistration.h"
 #include "igstkView.h"
 #include "igstkView2D.h"
 #include "igstkView3D.h"
 #include "igstkCoordinateSystemDelegator.h"
+
+#include "igstkReslicerPlaneSpatialObject.h"
+#include "igstkImageResliceObjectRepresentation.h"
+#include "igstkMeshResliceObjectRepresentation.h"
+
+#if defined(IGSTK_USE_MicronTracker)
+#include "igstkMicronTracker.h"
+#include "igstkMicronTrackerTool.h"
+#endif
 
 #if defined(IGSTK_USE_FLTK)
 #include "igstkFLTKWidget.h"
@@ -85,14 +91,47 @@
 #include "igstkSerialCommunicationForPosix.h"
 #endif
 
+#include "igstkMouseTracker.h"
+#include "igstkAuroraTracker.h"
+#include "igstkPolarisTracker.h"
+#include "igstkAuroraTrackerTool.h"
+#include "igstkPolarisTrackerTool.h"
+
 namespace igstk
 {
 class DummyTrackerTool : public igstk::TrackerTool
 {
 public:
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( DummyTrackerTool, TrackerTool )
+  igstkStandardClassBasicTraitsMacro( DummyTrackerTool, TrackerTool ) 
+  igstkNewMacro( DummyTrackerTool )
 
+private:
+  typedef ::igstk::StateMachine< Self > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType; 
+  typedef StateMachineType::StateType                StateType; 
+  typedef StateMachineType::InputType                InputType;
+  typedef StateMachineType::OutputStreamType OutputStreamType;
+  igstkFriendClassMacro( ::igstk::StateMachine< Self > );
+  StateMachineType     m_StateMachine; 
+  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
+  typedef ReceptorObserverType::Pointer          ReceptorObserverPointer;
+
+public:
+  void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->TrackerTool::ExportStateMachineDescription( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->TrackerTool::ExportStateMachineDescriptionToLTS( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToSCXML( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->TrackerTool::ExportStateMachineDescriptionToSCXML( ostr, skipLoops );
+    }
 protected:
   DummyTrackerTool():m_StateMachine(this)
     {
@@ -111,7 +150,35 @@ class DummyTracker : public Tracker
 public:
 
   /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( DummyTracker, Tracker )
+  igstkStandardClassBasicTraitsMacro( DummyTracker, Tracker ) 
+  igstkNewMacro( DummyTracker )
+
+private:
+  typedef ::igstk::StateMachine< Self > StateMachineType;
+  typedef StateMachineType::TMemberFunctionPointer   ActionType; 
+  typedef StateMachineType::StateType                StateType; 
+  typedef StateMachineType::InputType                InputType;
+  typedef StateMachineType::OutputStreamType OutputStreamType;
+  igstkFriendClassMacro( ::igstk::StateMachine< Self > );
+  StateMachineType     m_StateMachine; 
+  typedef ::itk::ReceptorMemberCommand< Self >   ReceptorObserverType;
+  typedef ReceptorObserverType::Pointer          ReceptorObserverPointer;
+
+public:
+  void ExportStateMachineDescription( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->Tracker::ExportStateMachineDescription( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToLTS( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->Tracker::ExportStateMachineDescriptionToLTS( ostr, skipLoops );
+    }
+
+  void ExportStateMachineDescriptionToSCXML( OutputStreamType & ostr, bool skipLoops ) const
+    {
+    this->Tracker::ExportStateMachineDescriptionToSCXML( ostr, skipLoops );
+    }
 
   typedef Superclass::TransformType           TransformType;
   typedef Superclass::ResultType              ResultType;
@@ -143,11 +210,6 @@ protected:
     }
 
   ResultType InternalStopTracking( void )
-    {
-    return SUCCESS;
-    }
-
-  ResultType InternalDeactivateTools( void )
     {
     return SUCCESS;
     }
@@ -219,6 +281,7 @@ void ExportStateMachineDescription(
     excp.SetDescription("Problem opening file");
     throw excp;
     }
+
   instance->ExportStateMachineDescription( dotOutputFile, skipLoops );
   dotOutputFile.close();
 
@@ -296,8 +359,9 @@ typedef ImageSpatialObjectRepresentation< ImageSpatialObjectType >
                                         ImageSpatialObjectRepresentationType;
 
 typedef SpatialObjectReader<3,float>                SpatialObjectReaderType;
-typedef ToolCalibration                             CalibrationType;
-typedef ToolCalibrationReader< CalibrationType >    CalibrationReaderType;
+
+typedef ImageResliceObjectRepresentation< ImageSpatialObjectType >
+                                        ImageResliceRepresentationType;
 
 class ObjectRepresentationSurrogate : public ObjectRepresentation
 {
@@ -369,6 +433,8 @@ int main( int argc, char * argv [] )
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::AuroraTracker, outputDirectory,
                                                                     skipLoops );
+  igstkTestExportStateMachine1( igstk::AuroraTrackerTool, outputDirectory,
+                                                                    skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTracker, outputDirectory,
                                                                     skipLoops );
   igstkTestExportStateMachine1( igstk::PolarisTrackerTool, outputDirectory,
@@ -396,12 +462,6 @@ int main( int argc, char * argv [] )
                                                    outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::SpatialObjectReaderType, outputDirectory,
                                                                     skipLoops );
-  igstkTestExportStateMachine1( igstk::PivotCalibration, outputDirectory,
-                                                                    skipLoops );
-  igstkTestExportStateMachine1( igstk::ToolCalibration, outputDirectory,
-                                                                    skipLoops );
-  igstkTestExportStateMachine1( igstk::PrincipalAxisCalibration,
-                                                   outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration,
                                                    outputDirectory, skipLoops );
 
@@ -411,6 +471,11 @@ int main( int argc, char * argv [] )
 
   igstkTestExportStateMachine1(
     igstk::CoordinateSystemDelegator, outputDirectory, skipLoops );
+
+
+  igstkTestExportStateMachine1( igstk::ReslicerPlaneSpatialObject, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::ImageResliceRepresentationType, outputDirectory, skipLoops );
+  igstkTestExportStateMachine1( igstk::MeshResliceObjectRepresentation, outputDirectory, skipLoops );
 
 #if defined(IGSTK_USE_FLTK)
   // The Widget classes don't use SmartPointer and don't have a
@@ -435,7 +500,15 @@ int main( int argc, char * argv [] )
                                                    outputDirectory, skipLoops );
 #else
   igstkTestExportStateMachine1( igstk::SerialCommunicationForPosix,
-                                                   outputDirectory, skipLoops );
+                                                  outputDirectory, skipLoops );
+#endif
+
+#if defined(IGSTK_USE_MicronTracker)
+  igstkTestExportStateMachine1( igstk::MicronTracker, 
+                                outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
+                                outputDirectory, skipLoops );
 #endif
 
   return EXIT_SUCCESS;
