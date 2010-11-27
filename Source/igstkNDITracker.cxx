@@ -235,8 +235,6 @@ NDITracker::ResultType NDITracker::InternalUpdateStatus()
                                 CommandInterpreterType::NDI_INITIALIZED |
                                 CommandInterpreterType::NDI_ENABLED);
 
-  m_BufferLock->Lock();
-
   typedef PortHandleContainerType::const_iterator  ConstIteratorType;
 
   ConstIteratorType inputItr = m_PortHandleContainer.begin();
@@ -320,14 +318,15 @@ NDITracker::ResultType NDITracker::InternalUpdateStatus()
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
   
+    m_BufferLock->Lock();
     // set the raw transform
     this->SetTrackerToolRawTransform( trackerToolContainer[portId], transform );
     this->SetTrackerToolTransformUpdate( trackerToolContainer[portId], true );
+    m_BufferLock->Unlock();
 
     ++inputItr;
     }
-  m_BufferLock->Unlock();
-
+  
   return SUCCESS;
 }
 
