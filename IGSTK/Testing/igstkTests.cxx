@@ -80,19 +80,19 @@ void RegisterTests()
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
 
   // Tests depend on device 
-#ifdef IGSTK_TEST_AURORA_ATTACHED 
+#ifdef IGSTKSandbox_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
-#elif defined IGSTK_TEST_POLARIS_ATTACHED 
+#elif defined IGSTKSandbox_TEST_POLARIS_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
 #endif
 
-#ifdef IGSTK_TEST_AURORA_ATTACHED
+#ifdef IGSTKSandbox_TEST_AURORA_ATTACHED
   REGISTER_TEST(igstkAuroraTrackerTest);
   REGISTER_TEST(igstkAuroraTrackerTest2);
   REGISTER_TEST(igstkAuroraTrackerToolTest);
 #endif
 
-#ifdef IGSTK_TEST_POLARIS_ATTACHED
+#ifdef IGSTKSandbox_TEST_POLARIS_ATTACHED
   REGISTER_TEST(igstkPolarisTrackerTest);
   REGISTER_TEST(igstkPolarisTrackerTest2);
   REGISTER_TEST(igstkPolarisTrackerTest3);
@@ -100,16 +100,16 @@ void RegisterTests()
   REGISTER_TEST(igstkPolarisTrackerToolTest);
 #endif
 
-#ifdef IGSTK_TEST_FLOCKOFBIRD_ATTACHED
+#ifdef IGSTKSandbox_TEST_FLOCKOFBIRD_ATTACHED
   REGISTER_TEST(igstkAscensionTrackerTest);
 #endif
  
-#ifdef IGSTK_TEST_MicronTracker_ATTACHED
+#ifdef IGSTKSandbox_TEST_MicronTracker_ATTACHED
   REGISTER_TEST(igstkMicronTrackerTest);
   REGISTER_TEST(igstkMicronTrackerToolTest);
 #endif
 
-#ifdef IGSTK_TEST_InfiniTrack_ATTACHED
+#ifdef IGSTKSandbox_TEST_InfiniTrack_ATTACHED
   REGISTER_TEST(igstkInfiniTrackTrackerTest);
   REGISTER_TEST(igstkInfiniTrackTrackerToolTest);
 #endif
@@ -132,7 +132,7 @@ void RegisterTests()
 #endif 
 
   // Tests depend on FLTK
-#ifdef IGSTK_USE_FLTK
+#ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkAxesObjectTest);
   REGISTER_TEST(igstkBoxObjectTest);
   REGISTER_TEST(igstkConeObjectTest);
@@ -176,7 +176,7 @@ void RegisterTests()
 #endif
 
   // Tests depend on Qt
-#ifdef IGSTK_USE_Qt
+#ifdef IGSTKSandbox_USE_Qt
   REGISTER_TEST(igstkQTWidgetTest);
   REGISTER_TEST(igstkQTWidgetTest2);
   REGISTER_TEST(igstkCTImageSpatialObjectReadingAndRepresentationTest3);
@@ -191,16 +191,16 @@ void RegisterTests()
 #endif 
 #endif
 
-#ifdef IGSTK_USE_OpenIGTLink
+#ifdef IGSTKSandbox_USE_OpenIGTLink
   REGISTER_TEST( igstkOpenIGTLinkReceiverTest );
   REGISTER_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest );
   REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
-#ifdef IGSTK_USE_MicronTracker
+#ifdef IGSTKSandbox_TEST_MicronTracker_ATTACHED
   REGISTER_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest );
 #endif  
 #endif
 
-#ifdef IGSTK_USE_VideoImager
+#ifdef IGSTKSandbox_USE_VideoImager
   REGISTER_TEST( igstkVideoImagerTest );
   REGISTER_TEST( igstkVideoImagerToolTest );
   REGISTER_TEST( igstkFrameTest );
