@@ -23,6 +23,8 @@
 
 #include "igstkTracker.h"
 
+#define NON_FLICKERING_CONSTANT 20
+
 namespace igstk
 {
 
@@ -303,10 +305,10 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   // considered valid.  After this time, they expire.  This time
   // is in milliseconds. The default validity time is computed 
   // from the default refresh rate and nonflickering constant
-  const double nonFlickeringConstant = 10;
+  //const double nonFlickeringConstant = 20;
 
   const TimePeriodType DEFAULT_VALIDITY_TIME = 
-                    ( 1000.0 /DEFAULT_REFRESH_RATE) + nonFlickeringConstant;
+                    ( 1000.0 /DEFAULT_REFRESH_RATE) + NON_FLICKERING_CONSTANT;
   m_ValidityTime = DEFAULT_VALIDITY_TIME;
 
   // By default, the reference is not used
@@ -987,8 +989,8 @@ void Tracker::SetFrequencyProcessing( void )
   //Set the validity time of the transforms based on the tracker frequency
   //Add a constant to avoid any flickering effect
 
-  const double nonFlickeringConstant = 10;
-  this->m_ValidityTime = (1000/m_FrequencyToBeSet) + nonFlickeringConstant;
+  //const double nonFlickeringConstant = 20;
+  this->m_ValidityTime = (1000/m_FrequencyToBeSet) + NON_FLICKERING_CONSTANT;
 }
 
 
