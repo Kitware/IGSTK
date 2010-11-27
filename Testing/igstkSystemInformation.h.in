@@ -9,6 +9,8 @@
 #cmakedefine IGSTKSandbox_USE_MicronTracker
 #cmakedefine IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS 
 #cmakedefine IGSTKSandbox_USE_vtkKWImage
+#cmakedefine IGSTKSandbox_USE_OpenIGTLink
+#cmakedefine IGSTKSandbox_USE_VideoImager
 
 #cmakedefine IGSTK_DATA_ROOT "@IGSTK_DATA_ROOT@"
 
