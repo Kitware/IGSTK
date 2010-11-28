@@ -227,7 +227,7 @@ int igstkTrackerTest( int, char * [] )
   std::cout << "Default validity time: " << defaultValidityTime << std::endl;
 
   double trackerFrequency = 1;
-  double validityTimeShouldBe = (1000.0/trackerFrequency) + 10;
+  double validityTimeShouldBe = (1000.0/trackerFrequency) + 20;
 
   tracker->RequestSetFrequency( trackerFrequency );
 
