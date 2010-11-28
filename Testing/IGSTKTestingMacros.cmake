@@ -282,14 +282,14 @@ IF(${IGSTK_TEST_POLARIS_ATTACHED})
   ADD_TEST(igstkPolarisTrackerToolTest ${IGSTK_TESTS} igstkPolarisTrackerToolTest 0)
 ENDIF(${IGSTK_TEST_POLARIS_ATTACHED})
 
-IF(IGSTK_TEST_FLOCKOFBIRD_ATTACHED)
+IF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
     ADD_TEST( igstkFlockOfBirdsTrackerTest2
               ${IGSTK_TESTS}
               igstkAscensionTrackerTest
               ${IGSTK_TEST_OUTPUT_DIR}/igstkAscensionTestLoggerOutput.txt
               ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
-ENDIF(IGSTK_TEST_FLOCKOFBIRD_ATTACHED)
+ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
 
 
 #-----------------------------------------------------------------------------
@@ -591,8 +591,8 @@ IF(${IGSTK_TEST_InfiniTrack_ATTACHED})
               ${IGSTK_TESTS} igstkInfiniTrackTrackerToolTest )
 ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})
 
-IF(IGSTK_USE_OpenIGTLink)
-
+IF(${IGSTK_USE_OpenIGTLink})
+  
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
       igstkTrackerToolObserverToOpenIGTLinkRelayTest
@@ -605,15 +605,15 @@ IF(IGSTK_USE_OpenIGTLink)
       16666 
       )
  
-  IF (IGSTK_TEST_AURORA_ATTACHED)
+  IF (${IGSTK_TEST_AURORA_ATTACHED})
   ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       localhost 16666 1000 ${IGSTK_TEST_AURORA_PORT_NUMBER} 10
       )
-  ENDIF (IGSTK_TEST_AURORA_ATTACHED)
+  ENDIF (${IGSTK_TEST_AURORA_ATTACHED})
   
-  IF(IGSTK_TEST_MicronTracker_ATTACHED)
+  IF(${IGSTK_TEST_MicronTracker_ATTACHED})
     ADD_TEST( igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
       igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest
@@ -621,9 +621,9 @@ IF(IGSTK_USE_OpenIGTLink)
       ${IGSTK_DATA_ROOT}/Input/CalibrationFiles
       ${IGSTK_DATA_ROOT}/Input/MicronTracker.ini
       ${IGSTK_DATA_ROOT}/Input/Markers )
-  ENDIF(IGSTK_TEST_MicronTracker_ATTACHED)
+  ENDIF(${IGSTK_TEST_MicronTracker_ATTACHED})
 
-ENDIF(IGSTK_USE_OpenIGTLink)  
+ENDIF(${IGSTK_USE_OpenIGTLink})  
 
 IF(${IGSTK_USE_Qt})
     ADD_TEST( igstkQTWidgetTest
@@ -724,7 +724,7 @@ IF(${IGSTK_USE_Qt})
 
 ENDIF(${IGSTK_USE_Qt})
 
-IF(IGSTK_USE_VideoImager)
+IF(${IGSTK_USE_VideoImager})
 
   ADD_TEST( igstkVideoImagerTest
       ${IGSTK_TESTS}
@@ -751,7 +751,7 @@ IF(IGSTK_USE_VideoImager)
       igstkVideoFrameRepresentationTest
       )
 
-ENDIF(IGSTK_USE_VideoImager)
+ENDIF(${IGSTK_USE_VideoImager})
  
 
 #-----------------------------------------------------------------------------
@@ -953,7 +953,7 @@ IF(${IGSTK_USE_Qt})
 
 ENDIF(${IGSTK_USE_Qt})
  
-IF(IGSTK_USE_OpenIGTLink)
+IF(${IGSTK_USE_OpenIGTLink})
 
     SET(BasicTests_SRCS
       ${BasicTests_SRCS}
@@ -970,17 +970,17 @@ IF(IGSTK_USE_OpenIGTLink)
       igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
 
-  IF(IGSTK_USE_MicronTracker)
+  IF(${IGSTK_USE_MicronTracker})
      SET(BasicTests_SRCS
       ${BasicTests_SRCS}
       igstkMicronTrackerToolObserverToOpenIGTLinkRelayTest.cxx
       )
-  ENDIF(IGSTK_USE_MicronTracker)
+  ENDIF(${IGSTK_USE_MicronTracker})
 
-ENDIF(IGSTK_USE_OpenIGTLink)  
+ENDIF(${IGSTK_USE_OpenIGTLink})  
 
 
-IF(IGSTK_USE_VideoImager)
+IF(${IGSTK_USE_VideoImager})
     SET(BasicTests_SRCS
       ${BasicTests_SRCS}
       igstkVideoImagerTest.cxx
@@ -1001,7 +1001,7 @@ IF(IGSTK_USE_VideoImager)
       ${BasicTests_SRCS}
       igstkVideoFrameRepresentationTest.cxx
       )
-ENDIF(IGSTK_USE_VideoImager)
+ENDIF(${IGSTK_USE_VideoImager})
  
 IF(${SANDBOX_BUILD})
   FOREACH(SourceFile ${BasicTests_SRCS})
