@@ -599,12 +599,6 @@ IF(${IGSTK_USE_OpenIGTLink})
       localhost 16666 1000 100 10 
       )
  
-  ADD_TEST( igstkOpenIGTLinkReceiverTest
-      ${IGSTK_TESTS}
-      igstkOpenIGTLinkReceiverTest
-      16666 
-      )
- 
   IF (${IGSTK_TEST_AURORA_ATTACHED})
   ADD_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest
       ${IGSTK_TESTS}
@@ -954,11 +948,6 @@ IF(${IGSTK_USE_Qt})
 ENDIF(${IGSTK_USE_Qt})
  
 IF(${IGSTK_USE_OpenIGTLink})
-
-    SET(BasicTests_SRCS
-      ${BasicTests_SRCS}
-      igstkOpenIGTLinkReceiverTest.cxx
-      )
 
     SET(BasicTests_SRCS
       ${BasicTests_SRCS}
