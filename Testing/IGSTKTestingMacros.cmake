@@ -466,9 +466,9 @@ IF(${IGSTK_USE_FLTK})
     ADD_TEST( igstkUltrasoundImageSimulatorTest ${IGSTK_TESTS}
              --compare ${BASELINE}/igstkUltrasoundImageSimulatorTest.png 
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
-             --toleranceIntensity 10
-             --toleranceRadius 5
-             --toleranceNumberOfPixels 20
+             --toleranceIntensity 20
+             --toleranceRadius 10
+             --toleranceNumberOfPixels 40
              igstkUltrasoundImageSimulatorTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
