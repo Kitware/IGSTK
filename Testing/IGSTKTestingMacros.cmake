@@ -468,7 +468,7 @@ IF(${IGSTK_USE_FLTK})
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png 
              --toleranceIntensity 20
              --toleranceRadius 10
-             --toleranceNumberOfPixels 40
+             --toleranceNumberOfPixels 1000
              igstkUltrasoundImageSimulatorTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver
              ${IGSTK_TEST_OUTPUT_DIR}/igstkUltrasoundImageSimulatorTest.png)
@@ -644,8 +644,8 @@ IF(${IGSTK_USE_Qt})
               ${IGSTK_DATA_ROOT}/Baseline/igstkImageResliceObjectRepresentationQtTest.png
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest.png
               --toleranceIntensity 10
-              --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceRadius    10
+              --toleranceNumberOfPixels 1000
               igstkImageResliceObjectRepresentationQtTest
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest.png)
