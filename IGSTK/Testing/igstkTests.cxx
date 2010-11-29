@@ -192,7 +192,6 @@ void RegisterTests()
 #endif
 
 #ifdef IGSTKSandbox_USE_OpenIGTLink
-  REGISTER_TEST( igstkOpenIGTLinkReceiverTest );
   REGISTER_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest );
   REGISTER_TEST( igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest );
 #ifdef IGSTKSandbox_TEST_MicronTracker_ATTACHED
