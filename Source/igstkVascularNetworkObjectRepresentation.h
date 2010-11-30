@@ -109,13 +109,19 @@ private:
   igstkDeclareStateMacro( AttemptingToGetVessel );
 
   VascularNetworkObjectType::ConstPointer m_VascularNetworkObjectToAdd;
- 
+
+// This is a temporary fix. Instead of using these macros, 
+// observers were used locally and CreateActorsForOneVesselProcessing
+// is now evoked directly 
+/* 
   igstkLoadedObjectEventTransductionMacro(
     VesselObjectModified, VesselReceived );
 
   igstkEventTransductionMacro(
     VesselObjectNotAvailable, VesselNotFound );
+*/
 
+  igstk::VesselObject::Pointer m_VesselToBeSet;
 };
 
 

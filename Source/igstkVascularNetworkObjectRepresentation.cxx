@@ -66,7 +66,6 @@ VascularNetworkObjectRepresentation
                            ValidVascularNetworkObject, 
                            ValidVascularNetworkObject,
                            No ); 
-
   igstkSetInitialStateMacro( NullVascularNetworkObject );
 
   m_StateMachine.SetReadyToRun();
@@ -110,7 +109,7 @@ void VascularNetworkObjectRepresentation
 
   // Connect the method that enables the observer in the 
   // transduction macro
-  this->ObserveVesselReceivedInput( m_VascularNetworkObject );
+  //this->ObserveVesselReceivedInput( m_VascularNetworkObject );
 
   this->RequestSetSpatialObject( m_VascularNetworkObject );
 } 
@@ -145,8 +144,23 @@ void VascularNetworkObjectRepresentation::CreateActors()
       const_cast< VascularNetworkObjectType * >( 
         m_VascularNetworkObject.GetPointer() );
 
+    igstkObserverObjectMacro(Vessel,
+    ::igstk::VesselObjectModifiedEvent,
+    ::igstk::VesselObject)
+
+    VesselObserver::Pointer vesselObserver = VesselObserver::New();
+
+    network->AddObserver(
+            igstk::VesselObjectModifiedEvent(),
+            vesselObserver);
+
     network->RequestGetVessel(ntube);
-    // The observer will do the rest...
+    
+    if(vesselObserver->GotVessel())
+      {
+      m_VesselToBeSet = vesselObserver->GetVessel();
+      this->CreateActorsForOneVesselProcessing();
+      }
     }
 
 }
@@ -154,7 +168,7 @@ void VascularNetworkObjectRepresentation::CreateActors()
 /** Create the vtk Actors for one vessel */
 void VascularNetworkObjectRepresentation::CreateActorsForOneVesselProcessing()
 {
-  const VesselObjectType * vessel = m_VesselReceivedInputToBeSet;
+  const VesselObjectType * vessel = m_VesselToBeSet;
 
   if(vessel->GetNumberOfPoints() < 2)
     {
