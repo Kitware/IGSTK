@@ -31,7 +31,7 @@
 namespace VascularNetworkReaderTest
 {
 igstkObserverObjectMacro(VascularNetwork,
-    ::igstk::VascularNetworkObjectModifiedEvent,
+    ::igstk::VascularNetworkReader::VascularNetworkObjectModifiedEvent,
     ::igstk::VascularNetworkObject)
 
 igstkObserverObjectMacro(Vessel,
@@ -162,7 +162,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   vtkLoggerOutput->SetLogger(logger);
 
   // Create an FLTK minimal GUI
-  Fl_Window * form = new Fl_Window(532,532,"Vascular Network View Test");
+  Fl_Window * form = new Fl_Window(513,512,"Vascular Network View Test");
 
   typedef igstk::View3D  View3DType;
   // Create an FLTK minimal GUI
@@ -172,7 +172,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
 
   // instantiate FLTK widget
   FLTKWidgetType * fltkWidget3D =
-                      new FLTKWidgetType( 10,10,280,280,"2D View");
+                      new FLTKWidgetType( 0,0,512,512,"2D View");
   fltkWidget3D->RequestSetView( view3D );
   fltkWidget3D->SetLogger( logger );
 
@@ -196,20 +196,29 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
   // Add the ellipsoid object representation to the view
   view3D->RequestAddObject( vascularNetworkRepresentation );
 
+  igstk::Transform transform;
+  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+
+  network->RequestSetTransformAndParent( transform, view3D );
+
   view3D->RequestResetCamera();
   view3D->SetRefreshRate( 30 );
   view3D->RequestStart();
   Fl::wait(1.0);
   igstk::PulseGenerator::CheckTimeouts();
 
-  for(unsigned int i=0; i<10; i++)
+  for(unsigned int i=0; i<50; i++)
     {
+    Fl::wait( 0.05 );
     igstk::PulseGenerator::CheckTimeouts();
     Fl::check();
     }
 
   //Request refreshing stop to take a screenshot
   view3D->RequestStop();
+  Fl::wait( 0.05 );
+  igstk::PulseGenerator::CheckTimeouts();
+  Fl::check();       // trigger FLTK redraws
 
   /* Save screenshots in a file */
   std::string filename = argv[3];

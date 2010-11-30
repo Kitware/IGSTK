@@ -149,7 +149,7 @@ IF(IGSTKSandbox_DATA_ROOT)
 #        igstkObliqueImageSpatialObjectRepresentationTest.cxx)
 
     ADD_TEST( igstkVascularNetworkReaderTest ${IGSTKSandbox_TESTS} 
-          --compare ${BASELINE}/igstkVascularNetworkReaderTest.png 
+          --compare ${IGSTKSandbox_BASELINE_DIR}/igstkVascularNetworkReaderTest.png 
           ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkVascularNetworkReaderTest.png 
           --toleranceIntensity 10
           --toleranceRadius 5
