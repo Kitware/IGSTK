@@ -365,6 +365,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
     directoryName = argv[3];
 
+    reader = ReaderType::New();                     // To avoid vtkImageImport update extent mismatch error
     reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
     reader->RequestReadImage();   // Request to read the image from the files
     reader->RequestGetImage();    // Request to send the image as an event.
