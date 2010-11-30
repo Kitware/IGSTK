@@ -42,6 +42,8 @@ TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
   this->m_Socket = igtl::ClientSocket::New(); 
   this->m_TransformMessage = igtl::TransformMessage::New();
   this->m_TransformMessage->SetDeviceName("Tracker");
+
+  m_FramesPerSecond = 30;
 }
 
 TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
