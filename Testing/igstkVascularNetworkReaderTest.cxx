@@ -172,7 +172,7 @@ int igstkVascularNetworkReaderTest( int argc, char * argv [] )
 
   // instantiate FLTK widget
   FLTKWidgetType * fltkWidget3D =
-                      new FLTKWidgetType( 0,0,512,512,"2D View");
+                      new FLTKWidgetType( 0,0,512,512,"3D View");
   fltkWidget3D->RequestSetView( view3D );
   fltkWidget3D->SetLogger( logger );
 
