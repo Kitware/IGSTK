@@ -162,10 +162,12 @@ IF (IGSTK_DATA_ROOT)
   ADD_TEST( igstkUSImageReaderTest ${IGSTK_TESTS} igstkUSImageReaderTest 
        ${IGSTK_DATA_ROOT}/Input/USLiver
        ${IGSTK_DATA_ROOT}/Input/MRLiver)
-
+       
+IF (ITK_PRE4_VERSION)
   ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver)
+ENDIF(ITK_PRE4_VERSION)
 
   ADD_TEST( igstkAuroraTrackerSimulatedTest
               ${IGSTK_TESTS}
