@@ -144,10 +144,6 @@ void VascularNetworkObjectRepresentation::CreateActors()
       const_cast< VascularNetworkObjectType * >( 
         m_VascularNetworkObject.GetPointer() );
 
-    igstkObserverObjectMacro(Vessel,
-    ::igstk::VesselObjectModifiedEvent,
-    ::igstk::VesselObject)
-
     VesselObserver::Pointer vesselObserver = VesselObserver::New();
 
     network->AddObserver(

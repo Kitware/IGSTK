@@ -121,6 +121,10 @@ private:
     VesselObjectNotAvailable, VesselNotFound );
 */
 
+  igstkObserverObjectMacro(Vessel,
+    ::igstk::VesselObjectModifiedEvent,
+    ::igstk::VesselObject)
+
   igstk::VesselObject::Pointer m_VesselToBeSet;
 };
 
