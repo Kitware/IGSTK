@@ -43,7 +43,6 @@ TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
   this->m_TransformMessage = igtl::TransformMessage::New();
   this->m_TransformMessage->SetDeviceName("Tracker");
 
-  m_FramesPerSecond = 30;
 }
 
 TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
@@ -54,8 +53,6 @@ TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
 
   this->m_Matrix = NULL;
 
-  this->m_FramesPerSecond = 1.0;
-
   this->m_Socket->CloseSocket();
 }
 
@@ -64,13 +61,6 @@ void
 TrackerToolObserverToOpenIGTLinkRelay::RequestSetPort( int port )
 {
   this->m_Port = port;
-}
-
-
-void
-TrackerToolObserverToOpenIGTLinkRelay::RequestSetFramesPerSecond( double fps )
-{
-  this->m_FramesPerSecond = fps;
 }
 
 
@@ -136,8 +126,6 @@ TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink(
     this->m_TransformMessage->SetMatrix(matrix);
     this->m_TransformMessage->Pack();
 
-    int interval = (int) (1000.0 / this->m_FramesPerSecond);
-    igtl::Sleep(interval); // wait
     this->m_Socket->Send(this->m_TransformMessage->GetPackPointer(), 
                                        this->m_TransformMessage->GetPackSize());
     }

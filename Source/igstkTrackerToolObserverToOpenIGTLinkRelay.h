@@ -55,8 +55,6 @@ public:
 
   void RequestSetTrackerTool( const TrackerTool * tracker );
 
-  void RequestSetFramesPerSecond( double fps  );
-
   void RequestStart();
 
 protected:
@@ -90,8 +88,6 @@ private:
   int                         m_Port;
 
   std::string                 m_HostName;
-
-  double m_FramesPerSecond;
 
   igtl::ClientSocket::Pointer m_Socket;
 

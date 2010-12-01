@@ -85,7 +85,6 @@ int igstkAuroraTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv 
   toolObserver->RequestSetTrackerTool( trackerTool );
   toolObserver->RequestSetHostName( argv[1] );
   toolObserver->RequestSetPort( atoi( argv[2] ) );
-  toolObserver->RequestSetFramesPerSecond( frequency );
   toolObserver->RequestStart();
 
   tracker->RequestStartTracking();

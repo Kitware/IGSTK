@@ -134,7 +134,6 @@ ITK_THREAD_RETURN_TYPE ObserverThreadFunction(void* pInfoStruct)
   tracker->RequestClose();
   
   //purely for code coverage. 
-  toolObserver->RequestSetFramesPerSecond( 10.0 );
   toolObserver->Print( std::cout ); 
   
   return EXIT_SUCCESS;
