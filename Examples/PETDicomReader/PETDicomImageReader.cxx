@@ -19,7 +19,11 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#ifdef ITK_PRE4_VERSION
 #include "itkPETDicomImageReader.h"
+#else
+#include "itkPETDicomImageReader2.h"
+#endif
 
 int main( int argc, char* argv[] )
 {
@@ -32,7 +36,13 @@ int main( int argc, char* argv[] )
   
   typedef float PixelType;
   typedef itk::Image< PixelType, 3>                  ImageType;  
+
+#ifdef ITK_PRE4_VERSION
   typedef itk::PETDicomImageReader<ImageType>        ReaderType;
+#else
+  typedef itk::PETDicomImageReader2<ImageType>        ReaderType;
+#endif
+
   ReaderType::Pointer   reader = ReaderType::New();
 
   std::cout << "Reading the DICOM series : " << argv[1] <<std::endl;

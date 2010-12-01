@@ -34,6 +34,7 @@ ENDIF(IGSTKSandbox_USE_MicronTracker)
 INCLUDE_DIRECTORIES(
   ${PETCTNeedleBiopsy_SOURCE_DIR}
   ${PETCTNeedleBiopsy_BINARY_DIR}
+  ${PETCTNeedleBiopsy_SOURCE_DIR}/../PETDicomReader
   )
 
 FLTK_WRAP_UI(PETCTNeedleBiopsy ${PETCTNeedleBiopsy_GUI_SRCS})

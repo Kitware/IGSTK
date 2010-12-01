@@ -19,9 +19,9 @@ SUBDIRS(
   )
 
 # ITK v4.0 uses gdcm 2.x, this piece of code will not compile with the new ITK
-IF (ITK_PRE4_VERSION)  
+#IF (ITK_PRE4_VERSION)  // PETDicomReader2 is used internally
 SUBDIRS( PETDicomReader )
-ENDIF (ITK_PRE4_VERSION)  
+#ENDIF (ITK_PRE4_VERSION)  
   
 IF( IGSTKSandbox_USE_MicronTracker )
   SUBDIRS(
