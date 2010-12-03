@@ -8,7 +8,7 @@
 <EndOfFileNewLine>1</EndOfFileNewLine>
 <Tabs>1</Tabs>
 <Spaces>3</Spaces>
-<Comments>/**, *, */,true</Comments>
+<Comments>/**,*,*/,true</Comments>
 <Header>"@IGSTK_SOURCE_DIR@/Utilities/KWStyle/Headers",false,true</Header>
 <Indent>SPACE,2,true,true</Indent>
 <Namespace>igstk</Namespace>
