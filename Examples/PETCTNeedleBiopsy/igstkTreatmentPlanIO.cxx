@@ -127,7 +127,7 @@ int TreatmentPlanIO::RequestWrite()
     planFile << p[0] << "\t" << p[1] << "\t" << p[2] << "\n";
 
     planFile << "# Fiducial points\n"; // Fifth line, description
-    for ( unsigned int i=0; i<m_TreatmentPlan->m_FiducialPoints.size(); i++)
+    for ( int i=0; i<m_TreatmentPlan->m_FiducialPoints.size(); i++)
       {
       p = m_TreatmentPlan->m_FiducialPoints[i];
       planFile << p[0] << "\t" << p[1] << "\t" << p[2] << "\n";

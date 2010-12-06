@@ -19,8 +19,15 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "PETCTNeedleBiopsyGUI.h"
 
+#ifdef ITK_PRE4_VERSION
+#include "itkPETDicomImageReader.h"
+#else
+#include "itkPETDicomImageReader2.h"
+#endif
+
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
+#include "igstkImageSliceRepresentation.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkLandmark3DRegistration.h"
@@ -62,8 +69,20 @@ public:
   typedef ImageReaderType::ImageSpatialObjectType     ImageSpatialObjectType;
   typedef ImageSpatialObjectType::IndexType           IndexType;
 
+  /** typedef for PETImageReaderType */
+  typedef float PixelType;
+  typedef itk::Image< PixelType, 3>                   PETImageType;  
+
+#ifdef ITK_PRE4_VERSION
+  typedef itk::PETDicomImageReader<PETImageType>         PETImageReaderType;
+#else
+  typedef itk::PETDicomImageReader2<PETImageType>        PETImageReaderType;
+#endif
+
   /** typedef for ImageRepresentationType */
   typedef igstk::CTImageSpatialObjectRepresentation   ImageRepresentationType;
+  typedef igstk::ImageSliceRepresentation<ImageSpatialObjectType>   
+                                                    ObliqueRepresentationType;
 
   /** typedef for RegistrationType */
   typedef igstk::Landmark3DRegistration               RegistrationType;
@@ -71,7 +90,9 @@ public:
                                                    LandmarkPointContainerType;  
 
   /** Public request methods from the GUI */
-  int  RequestLoadImage();
+  int  RequestLoadCTImage();
+  int  RequestLoadPETCTImage();
+  int  RequestLoadPETImage();
   void ChangeSelectedTPlanPoint();
   void RequestConnectToTracker();
   void RequestDisconnetTracker();
@@ -98,22 +119,26 @@ public:
 private:
 
   PETCTNeedleBiopsy(const Self&); // purposely not implemented
-  void operator=(const Self&); // purposely not implemented
+  void operator=(const Self&);    // purposely not implemented
   
   /** DICOM image reader */
   ImageReaderType::Pointer                              m_ImageReader;
   std::string                                           m_ImageDir;
   std::string                                           m_PlanFilename;
   igstk::TreatmentPlan                                * m_Plan;
+  ImageSpatialObjectType::PointType                     m_ImageCenter;
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
+  ImageSpatialObjectType::Pointer                       m_PETCTImageSpatialObject;
+  ImageSpatialObjectType::Pointer                       m_PETImageSpatialObject;
 
   /** Define a initial world coordinate system */
   igstk::AxesObject::Pointer                            m_WorldReference;
 
   /** Slice representations of the image in View2D and View3D */
   std::vector< ImageRepresentationType::Pointer >       m_ImageRepresentation;
+  std::vector<ObliqueRepresentationType::Pointer>       m_ObliqueRepresentation;
 
   /** Landmark registration and its landmark points container */
   RegistrationType::Pointer                       m_LandmarkRegistration;
@@ -141,28 +166,31 @@ private:
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
   EllipsoidType::Pointer                          m_NeedleTip;
-  EllipsoidRepresentationType::Pointer            m_NeedleTipRepresentation;
+  std::vector<EllipsoidRepresentationType::Pointer>  m_NeedleTipRepresentation;
 
   /** Objects for path planning and fiducial selection */
   EllipsoidType::Pointer                          m_TargetPoint;
-  EllipsoidRepresentationType::Pointer            m_TargetRepresentation;
-  EllipsoidType::Pointer                          m_EntryPoint;
-  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
+  std::vector<EllipsoidRepresentationType::Pointer>     m_TargetRepresentation;
+
+  //EllipsoidType::Pointer                          m_EntryPoint;
+  //EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
   EllipsoidType::Pointer                          m_FiducialPoint;
-  EllipsoidRepresentationType::Pointer            m_FiducialRepresentation;  
+  std::vector<EllipsoidRepresentationType::Pointer>    m_FiducialRepresentation;  
   
   /** Tube object represents the planned path */
-  typedef igstk::TubeObject                       PathType;
-  typedef igstk::TubeObjectRepresentation         PathRepresentationType;
-  typedef igstk::TubeObject::PointType            TubePointType;
-  PathType::Pointer                               m_Path;
-  std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
+  //typedef igstk::TubeObject                       PathType;
+  //typedef igstk::TubeObjectRepresentation         PathRepresentationType;
+  //typedef igstk::TubeObject::PointType            TubePointType;
+  //PathType::Pointer                               m_Path;
+  //std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
 
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;
   typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
   CylinderType::Pointer                           m_Needle;
-  CylinderRepresentationType::Pointer             m_NeedleRepresentation;
+  std::vector<CylinderRepresentationType::Pointer>      m_NeedleRepresentation;
+  CylinderType::Pointer                           m_VirtualTip;
+  std::vector<CylinderRepresentationType::Pointer>      m_VirtualTipRepresentation;
 
   /** Annotation is used for displaying 2D texts on View */
   igstk::Annotation2D::Pointer                    m_Annotation;
@@ -206,10 +234,13 @@ private:
   void UpdateFiducialPoint();
   void UpdatePath();  
   void ResliceImage( IndexType index ); 
+  void ObliqueResliceImage( igstk::Transform transform, double virtualTip ); 
+  void ResetSliders();
 
   /** Callback functions for picking and reslicing image events. */
   void Picking( const itk::EventObject & event );
   void ResliceImage( const itk::EventObject & event );
+  void UpdateVirtualTip( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
   void Tracking( const itk::EventObject & event ); 
   void NullAction(const itk::EventObject & event ){};

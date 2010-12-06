@@ -82,6 +82,10 @@ public:
     return m_TrackerToolList;
     }
 
+  std::vector< std::string > GetNonReferenceToolNames()
+    {
+    return m_ToolNames;
+    }
   int HasReferenceTool()
     {
     return m_HasReferenceTool;
@@ -113,6 +117,7 @@ private:
 
   Tracker::Pointer                      m_Tracker;
   std::vector< TrackerTool::Pointer >   m_TrackerToolList;
+  std::vector< std::string >            m_ToolNames;
   bool                                  m_HasReferenceTool;
   TrackerTool::Pointer                  m_ReferenceTool;
 

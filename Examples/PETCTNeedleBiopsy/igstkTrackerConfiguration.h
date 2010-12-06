@@ -104,12 +104,14 @@ private:
 class MicronTrackerToolConfiguration
 {
 public:
+  std::string        m_ToolName;
   std::string        m_MarkerName;
   bool               m_IsReference;
   igstk::Transform   m_CalibrationTransform;
 
   MicronTrackerToolConfiguration()
     {
+    m_ToolName    = "";
     m_MarkerName  = "";
     m_IsReference = 0;
     m_CalibrationTransform.SetToIdentity(
@@ -121,6 +123,7 @@ public:
 class NDITrackerToolConfiguration
 {
 public:
+  std::string        m_ToolName;
   bool               m_WiredTool;
   bool               m_Is5DOF;
   bool               m_IsReference;
@@ -132,6 +135,7 @@ public:
 
   NDITrackerToolConfiguration()
     {
+    m_ToolName     = "";
     m_WiredTool    = 1;
     m_Is5DOF       = 0;
     m_IsReference  = 0;

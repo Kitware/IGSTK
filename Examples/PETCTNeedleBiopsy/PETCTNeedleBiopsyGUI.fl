@@ -11,66 +11,53 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
   Function {PETCTNeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Needle Biopsy Demo Application}
-      callback {Quit();}
-      xywh {466 94 930 690} type Double box PLASTIC_UP_BOX resizable
+      label {IGSTK: Laparoscopy Demo Application}
+      callback {Quit();} open
+      xywh {746 99 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
       Fl_Group ControlGroup {open
         xywh {0 0 165 690} box DOWN_BOX
       } {
-        Fl_Group {} {open
-          xywh {20 35 125 135} box BORDER_BOX labeltype NO_LABEL align 16
+        Fl_Group {} {
+          label {@2->} open
+          xywh {24 236 121 94} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25 align 17
         } {
-          Fl_Button {} {
-            label Load
-            callback {RequestLoadImage();}
-            xywh {45 56 64 20} align 16
+          Fl_Button LoadPETBtn {
+            label {Load PET}
+            callback {RequestLoadPETImage();}
+            xywh {40 275 90 25} labelfont 1 align 16
+          }
+        }
+        Fl_Group {} {open
+          xywh {22 32 130 189} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+        } {
+          Fl_Choice TrackerList {open
+            xywh {47 119 80 20} down_box BORDER_BOX labeltype NO_LABEL hide
+          } {}
+          Fl_Button LoadPETCTBtn {
+            label {Load PETCT}
+            callback {RequestLoadPETCTImage();}
+            xywh {42 56 90 25} labelfont 1 align 16
           }
           Fl_Choice TPlanPointList {
             callback {ChangeSelectedTPlanPoint();} open
-            xywh {34 108 100 20} down_box BORDER_BOX align 2
+            xywh {42 180 90 25} down_box BORDER_BOX align 2
           } {}
-        }
-        Fl_Group {} {
-          label {@2->} open selected
-          xywh {20 218 130 180} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
-        } {
-          Fl_Menu_Button ConnectToTrackerBtn {
-            label Connect
-            callback {RequestConnectToTracker();} open
-            xywh {45 240 80 20} align 20
-          } {
-            MenuItem {} {
-              label Polaris
-              xywh {0 0 30 20} divider
-            }
-            MenuItem {} {
-              label Aurora
-              xywh {5 5 30 20} divider
-            }
-            MenuItem {} {
-              label Micron
-              xywh {5 5 30 20}
-            }
-          }
-          Fl_Choice TrackerList {open
-            xywh {45 283 80 20} down_box BORDER_BOX labeltype NO_LABEL
-          } {}
-          Fl_Button {} {
-            label Disconnect
-            callback {RequestDisconnetTracker();}
-            xywh {47 355 75 20} align 16
+          Fl_Button LoadCTBtn {
+            label {Load CT}
+            callback {RequestLoadCTImage();}
+            xywh {40 110 90 25} labelfont 1 align 16
           }
         }
         Fl_Group {} {
           label {@2->} open
-          xywh {20 454 130 135} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+          xywh {20 362 130 227} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Choice TrackerToolList {
             label Tool
             callback {ChangeActiveTrackerTool();} open
-            xywh {48 546 75 20} down_box BORDER_BOX align 1
+            xywh {40 546 90 25} down_box BORDER_BOX align 1
           } {}
           Fl_Light_Button TrackingBtn {
             label Tracking
@@ -82,7 +69,30 @@ else
 {
   RequestStopTracking();
 }}
-            xywh {45 475 76 20}
+            xywh {40 470 90 25} labelfont 1
+          }
+          Fl_Menu_Button ConnectToTrackerBtn {
+            label Tracker
+            callback {RequestConnectToTracker();} open
+            xywh {40 399 90 25} labelfont 1 align 20
+          } {
+            MenuItem {} {
+              label Polaris selected
+              xywh {5 5 30 20} deactivate divider
+            }
+            MenuItem {} {
+              label Aurora
+              xywh {10 10 30 20} divider
+            }
+            MenuItem {} {
+              label Micron
+              xywh {10 10 30 20} deactivate
+            }
+          }
+          Fl_Button {} {
+            label Disconnect
+            callback {RequestDisconnetTracker();}
+            xywh {40 433 90 25} align 16 hide
           }
         }
         Fl_Box {} {
@@ -98,8 +108,8 @@ else
     code {mainWindow->show();
 hasQuitted = false;} {}
     Fl_Window RegistrationWindow {
-      label Registration open
-      xywh {547 306 225 138} type Double visible
+      label Registration
+      xywh {547 306 225 138} type Double hide
     } {
       Fl_Button {} {
         label {Touch fiducial and click here}
@@ -122,7 +132,10 @@ ChangeSelectedTPlanPoint();} open
     }
   }
   Function {~PETCTNeedleBiopsyGUI()} {open return_type virtual
-  } {}
+  } {
+    code {//delete mainWindow;
+//delete RegistrationWindow;} {}
+  }
   decl {bool hasQuitted;} {}
   Function {Quit()} {return_type void
   } {
@@ -141,7 +154,7 @@ else
   } {
     code {return this->hasQuitted;} {}
   }
-  Function {RequestLoadImage()} {return_type {virtual int}
+  Function {RequestLoadCTImage()} {open return_type {virtual int}
   } {
     code {return 0;} {}
   }
@@ -161,4 +174,12 @@ else
   } {}
   Function {RequestRegistration()} {open return_type {virtual void}
   } {}
+  Function {RequestLoadPETCTImage()} {open return_type {virtual int}
+  } {
+    code {return 0;} {}
+  }
+  Function {RequestLoadPETImage()} {open return_type {virtual int}
+  } {
+    code {return 0;} {}
+  }
 } 

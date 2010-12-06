@@ -98,9 +98,8 @@ int TrackerConfiguration::CheckAuroraValidity()
 
     // check if port is used, only one reference tool, SROM file exists 
     // To be implemented
-    (void) conf;  //Get rid of unused variable warning in GCC
+    
   }
-  (void) ReferenceToolcount; //Get rid of unused variable warning in GCC
   return 1;
 }
 
