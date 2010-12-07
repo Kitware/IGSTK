@@ -608,7 +608,7 @@ ImageSliceRepresentation < TImageSpatialObject >
 {
   
   m_ImageReslice->SetInput ( m_ImageData );
-  m_ReslicedImageData = m_ImageReslice->GetOutput();
+  //m_ReslicedImageData = m_ImageReslice->GetOutput();
   m_MapColors->SetInput( m_ImageReslice->GetOutput() );
   m_Actor->SetInput( m_MapColors->GetOutput() );
   m_Actor->InterpolateOn();
