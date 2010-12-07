@@ -95,11 +95,12 @@ int TrackerConfiguration::CheckAuroraValidity()
   {
     NDITrackerToolConfiguration * conf = 
                            m_NDITrackerConfiguration->m_TrackerToolList[i];
-
+    (void) conf;
     // check if port is used, only one reference tool, SROM file exists 
     // To be implemented
     
   }
+  (void) ReferenceToolcount;
   return 1;
 }
 

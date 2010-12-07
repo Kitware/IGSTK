@@ -134,6 +134,9 @@ ImageSliceRepresentation < TImageSpatialObject >
       m_AxisZ[1] = 0;
       m_AxisZ[2] = 0;
     break;
+    case Perpendicular:
+    case HybridPerpendicular:
+    break;
     }
   
   //ADDCODE

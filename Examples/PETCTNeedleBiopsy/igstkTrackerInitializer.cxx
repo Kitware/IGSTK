@@ -106,7 +106,7 @@ int TrackerInitializer::InitializePolarisTracker()
 
   m_TrackerToolList.clear();
   m_ToolNames.clear();
-  for( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++ )
+  for( unsigned int i=0; i< trackerConfig->m_TrackerToolList.size(); i++ )
     {
     PolarisTrackerTool::Pointer tool = PolarisTrackerTool::New();
     NDITrackerToolConfiguration * toolConfig =
@@ -181,7 +181,7 @@ int TrackerInitializer::InitializeAuroraTracker()
 
   m_TrackerToolList.clear();
   m_ToolNames.clear();
-  for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
+  for ( unsigned int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
     {
     AuroraTrackerTool::Pointer tool = AuroraTrackerTool::New();
     NDITrackerToolConfiguration * toolConfig =
@@ -256,7 +256,7 @@ int TrackerInitializer::InitializeMicronTracker()
 
   m_TrackerToolList.clear();
   m_ToolNames.clear();
-  for ( int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
+  for ( unsigned int i=0; i< trackerConfig->m_TrackerToolList.size(); i++)
     {
     MicronTrackerTool::Pointer tool = MicronTrackerTool::New();
     MicronTrackerToolConfiguration * toolConfig = 

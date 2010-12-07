@@ -619,7 +619,7 @@ void PETCTNeedleBiopsy::ReadTreatmentPlan()
 
   m_TrackerLandmarksContainer.clear();
   char buf[10];
-  for( int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
+  for( unsigned int i = 0; i < m_Plan->m_FiducialPoints.size(); i++ )
     {
     sprintf( buf, "Fiducial%i", i+1 );
     TPlanPointList->add( buf );
@@ -813,7 +813,7 @@ void PETCTNeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
       FiducialNumber->clear();
       m_TrackerLandmarksContainer.clear();
       char buf[8];
-      for ( int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
+      for ( unsigned int i=0; i<m_Plan->m_FiducialPoints.size(); i++)
         {
           sprintf( buf, "%d", i+1 );
           FiducialNumber->add(buf);
@@ -845,7 +845,7 @@ void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
   m_TrackerToolList.clear();
   int n = 0;
   std::string s;
-  for ( int i=0; i<m_TrackerInitializerList.size(); i++)
+  for ( unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
       char buf[10];
       sprintf(buf, "%d", i+1);
@@ -858,7 +858,7 @@ void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
                       m_TrackerInitializerList[i]->GetNonReferenceToolList();
       std::vector< std::string > toolNames = 
                       m_TrackerInitializerList[i]->GetNonReferenceToolNames();
-      for ( int j=0; j< toolList.size(); j++)
+      for ( unsigned int j=0; j< toolList.size(); j++)
         {
           //char buf[10];
           //sprintf(buf,"%d", ++n);
@@ -880,7 +880,7 @@ void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
 void PETCTNeedleBiopsy::RequestDisconnetTracker()
 {
   RequestStopTracking();
-  int n = TrackerList->value();
+  unsigned int n = TrackerList->value();
   if ( n < m_TrackerInitializerList.size() )
     {
     m_TrackerInitializerList[n]->StopAndCloseTracker();
@@ -981,7 +981,7 @@ void PETCTNeedleBiopsy::SetTrackerFiducialPoint()
 void PETCTNeedleBiopsy::RequestRegistration()
 {
   m_LandmarkRegistration->RequestResetRegistration();
-  for( int i=0; i< m_TrackerLandmarksContainer.size(); i++)
+  for( unsigned int i=0; i< m_TrackerLandmarksContainer.size(); i++)
     {
     m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
                                                m_Plan->m_FiducialPoints[i] );

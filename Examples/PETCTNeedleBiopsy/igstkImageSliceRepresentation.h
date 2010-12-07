@@ -59,7 +59,7 @@ public:
     OffAxial = 3,
     OffSagittal = 4,
     Perpendicular = 5,
-    HybridPerpendicular = 5,
+    HybridPerpendicular = 6,
    };
 
   /** Available surgeon positions. */
