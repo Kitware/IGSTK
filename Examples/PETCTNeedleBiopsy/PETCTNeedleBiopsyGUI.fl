@@ -33,24 +33,24 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           xywh {22 32 130 189} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Choice TrackerList {open
-            xywh {47 119 80 20} down_box BORDER_BOX labeltype NO_LABEL hide
+            xywh {40 119 80 20} down_box BORDER_BOX labeltype NO_LABEL hide
           } {}
           Fl_Button LoadPETCTBtn {
             label {Load PETCT}
             callback {RequestLoadCTImage(1);}
-            xywh {40 85 90 25} labelfont 1 align 16 deactivate
+            xywh {40 82 90 25} labelfont 1 align 16 deactivate
           }
           Fl_Choice TPlanPointList {
             callback {ChangeSelectedTPlanPoint();} open
-            xywh {42 180 90 25} down_box BORDER_BOX align 2
+            xywh {40 150 90 25} down_box BORDER_BOX align 2
           } {}
           Fl_Button LoadCTBtn {
             label {Load CT}
             callback {RequestLoadCTImage(0);}
-            xywh {40 45 90 25} labelfont 1 align 16
+            xywh {40 42 90 25} labelfont 1 align 16
           }
           Fl_Choice CTImageList {open
-            xywh {40 150 90 25} down_box BORDER_BOX align 2 deactivate
+            xywh {40 120 90 25} down_box BORDER_BOX align 2 deactivate
           } {
             MenuItem {} {
               label CT
@@ -59,9 +59,14 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
             }
             MenuItem {} {
               label PETCT
-              callback {ChangeSelectedCTImage(1);} selected
+              callback {ChangeSelectedCTImage(1);}
               xywh {5 5 30 20}
             }
+          }
+          Fl_Button CT2CTRegistrationBtn {
+            label Registration
+            callback {RequestCT2CTRegistration();} selected
+            xywh {40 185 90 25} labelfont 1 align 16 deactivate
           }
         }
         Fl_Group {} {
@@ -197,5 +202,7 @@ else
     code {return 0;} {}
   }
   Function {ChangeSelectedCTImage(int)} {open return_type {virtual void}
+  } {}
+  Function {RequestCT2CTRegistration()} {open return_type {virtual void}
   } {}
 } 

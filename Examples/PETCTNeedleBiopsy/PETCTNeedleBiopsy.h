@@ -92,6 +92,7 @@ public:
   /** Public request methods from the GUI */
   int  RequestLoadCTImage( int ct );
   void ChangeSelectedCTImage ( int ct );
+  void RequestCT2CTRegistration();
   //int  RequestLoadPETCTImage();
   int  RequestLoadPETImage();
   void ChangeSelectedCTImage();

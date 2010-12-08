@@ -308,6 +308,7 @@ int PETCTNeedleBiopsy::RequestLoadCTImage(int ct)
         CTImageList->value(1);
         m_PETCTPlan = m_Plan;
         m_PETCTPlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
+        CT2CTRegistrationBtn->activate();
         }
       return 1;
       }
@@ -507,15 +508,64 @@ void PETCTNeedleBiopsy::ChangeSelectedCTImage(int ct)
     m_ImageSpatialObject = m_CTImageSpatialObject;
     m_Plan               = m_CTPlan;
     this->ConnectImageRepresentation();
-    ChangeSelectedTPlanPoint();
+    this->ChangeSelectedTPlanPoint();
     }
   else
     {
     m_ImageSpatialObject = m_PETCTImageSpatialObject;
     m_Plan               = m_PETCTPlan;
     this->ConnectImageRepresentation();
-    ChangeSelectedTPlanPoint();
+    this->ChangeSelectedTPlanPoint();
     }
+}
+
+void PETCTNeedleBiopsy::RequestCT2CTRegistration()
+{
+ m_LandmarkRegistration->RequestResetRegistration();
+  for( unsigned int i=0; i< m_CTPlan->m_FiducialPoints.size(); i++)
+    {
+    m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
+                                               m_CTPlan->m_FiducialPoints[i] );
+    m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( 
+                                            m_PETCTPlan->m_FiducialPoints[i] );
+    }
+
+  m_LandmarkRegistration->RequestComputeTransform();
+
+  igstk::TransformObserver::Pointer lrtcb = igstk::TransformObserver::New();
+  lrtcb->ObserveTransformEventsFrom( m_LandmarkRegistration );
+  lrtcb->Clear();
+
+  m_LandmarkRegistration->RequestGetTransformFromTrackerToImage();
+
+  if( lrtcb->GotTransform() )
+    {
+      RegistrationErrorObserver::Pointer lRmscb =  
+                                            RegistrationErrorObserver::New();
+      m_LandmarkRegistration->AddObserver( igstk::DoubleTypeEvent(), lRmscb );
+      m_LandmarkRegistration->RequestGetRMSError();
+      if( lRmscb->GotRegistrationError() )
+      {
+        std::cout << "\nRegistration Error" << 
+                                  lRmscb->GetRegistrationError() << "\n";
+      }
+
+    igstk::Transform transform = lrtcb->GetTransform();
+    std::cout << transform << "\n";
+    
+    m_PETCTImageSpatialObject->RequestDetachFromParent();
+    m_PETCTImageSpatialObject->RequestSetTransformAndParent(transform, m_CTImageSpatialObject);
+        
+    LoadCTBtn->deactivate();
+    LoadPETCTBtn->deactivate();
+    TPlanPointList->value(1);
+    ConnectToTrackerBtn->activate();
+    }
+  else
+  {
+    fl_message("CT to CT registration failed!");
+  }
+
 }
 void PETCTNeedleBiopsy::ResetSliders()
 {
