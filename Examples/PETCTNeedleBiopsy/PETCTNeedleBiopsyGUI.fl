@@ -21,16 +21,16 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
       } {
         Fl_Group {} {
           label {@2->} open
-          xywh {24 236 121 94} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25 align 17
+          xywh {20 330 130 83} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Button LoadPETBtn {
             label {Load PET}
             callback {RequestLoadPETImage();}
-            xywh {40 275 90 25} labelfont 1 align 16
+            xywh {40 339 90 25} labelfont 1 align 16
           }
         }
-        Fl_Group {} {open
-          xywh {22 32 130 189} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+        Fl_Group {} {open selected
+          xywh {20 32 130 229} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Choice TrackerList {open
             xywh {40 119 80 20} down_box BORDER_BOX labeltype NO_LABEL hide
@@ -42,7 +42,7 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           }
           Fl_Choice TPlanPointList {
             callback {ChangeSelectedTPlanPoint();} open
-            xywh {40 150 90 25} down_box BORDER_BOX align 2
+            xywh {40 150 90 25} down_box BORDER_BOX align 2 deactivate
           } {}
           Fl_Button LoadCTBtn {
             label {Load CT}
@@ -65,13 +65,18 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           }
           Fl_Button CT2CTRegistrationBtn {
             label Registration
-            callback {RequestCT2CTRegistration();} selected
+            callback {RequestCT2CTRegistration();}
             xywh {40 185 90 25} labelfont 1 align 16 deactivate
+          }
+          Fl_Light_Button DisplayModeBtn {
+            label {Single CT}
+            callback {RequestChangeDisplayMode();}
+            xywh {40 224 90 25} labelfont 1 deactivate
           }
         }
         Fl_Group {} {
           label {@2->} open
-          xywh {20 362 130 227} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+          xywh {20 443 130 146} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Choice TrackerToolList {
             label Tool
@@ -88,12 +93,12 @@ else
 {
   RequestStopTracking();
 }}
-            xywh {40 470 90 25} labelfont 1
+            xywh {40 499 90 25} labelfont 1
           }
           Fl_Menu_Button ConnectToTrackerBtn {
             label Tracker
             callback {RequestConnectToTracker();} open
-            xywh {40 399 90 25} labelfont 1 align 20
+            xywh {40 458 90 25} labelfont 1 align 20
           } {
             MenuItem {} {
               label Polaris
@@ -111,7 +116,7 @@ else
           Fl_Button {} {
             label Disconnect
             callback {RequestDisconnetTracker();}
-            xywh {40 433 90 25} align 16 hide
+            xywh {40 443 90 15} align 16 hide
           }
         }
         Fl_Box {} {
@@ -204,5 +209,7 @@ else
   Function {ChangeSelectedCTImage(int)} {open return_type {virtual void}
   } {}
   Function {RequestCT2CTRegistration()} {open return_type {virtual void}
+  } {}
+  Function {RequestChangeDisplayMode()} {open return_type {virtual void}
   } {}
 } 

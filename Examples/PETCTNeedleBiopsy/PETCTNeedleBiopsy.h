@@ -25,6 +25,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkPETDicomImageReader2.h"
 #endif
 
+#include "igstkTransformObserver.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkImageSliceRepresentation.h"
@@ -68,7 +69,7 @@ public:
   typedef igstk::CTImageReader                        ImageReaderType;
   typedef ImageReaderType::ImageSpatialObjectType     ImageSpatialObjectType;
   typedef ImageSpatialObjectType::IndexType           IndexType;
-
+   
   /** typedef for PETImageReaderType */
   typedef float PixelType;
   typedef itk::Image< PixelType, 3>                   PETImageType;  
@@ -93,6 +94,7 @@ public:
   int  RequestLoadCTImage( int ct );
   void ChangeSelectedCTImage ( int ct );
   void RequestCT2CTRegistration();
+  void RequestChangeDisplayMode();
   //int  RequestLoadPETCTImage();
   int  RequestLoadPETImage();
   void ChangeSelectedCTImage();
@@ -137,15 +139,20 @@ private:
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
+  ImageSpatialObjectType::Pointer                       m_OverlayImageSpatialObject;
   ImageSpatialObjectType::Pointer                       m_CTImageSpatialObject;
   ImageSpatialObjectType::Pointer                       m_PETCTImageSpatialObject;
   //ImageSpatialObjectType::Pointer                       m_PETImageSpatialObject;
+  igstk::Transform                                      m_CT2CTTransform;
 
   /** Define a initial world coordinate system */
   igstk::AxesObject::Pointer                            m_WorldReference;
+  igstk::AxesObject::Pointer                            m_ResliceReference;
+  igstk::TransformObserver::Pointer                     m_ResliceReferenceObserver;
 
   /** Slice representations of the image in View2D and View3D */
   std::vector< ImageRepresentationType::Pointer >       m_ImageRepresentation;
+  std::vector< ImageRepresentationType::Pointer >       m_OverlayImageRepresentation;
   //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
   //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
   std::vector<ObliqueRepresentationType::Pointer>       m_ObliqueRepresentation;
@@ -241,7 +248,8 @@ private:
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation();
-  void ConnectPETCTImageRepresentation();
+  void AddCT2CTOverlay();
+  void RemoveCT2CTOverlay();
   void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
   void UpdatePath();  

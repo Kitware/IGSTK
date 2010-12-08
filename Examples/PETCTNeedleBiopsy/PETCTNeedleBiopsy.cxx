@@ -22,7 +22,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkEvents.h"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Directory.hxx"
-#include "igstkTransformObserver.h"
 
 #include "PolarisTrackerConfigurationGUI.h"
 #include "AuroraTrackerConfigurationGUI.h"
@@ -78,9 +77,13 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
+  m_ResliceReference      = igstk::AxesObject::New();
   m_TrackerInitializerList.clear();
   m_Plan                  = new igstk::TreatmentPlan;
 
+  m_ResliceReferenceObserver = igstk::TransformObserver::New();
+  m_ResliceReferenceObserver->ObserveTransformEventsFrom( m_ResliceReference );
+  
   /** Setting up spatial objects and their representations */
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
@@ -209,7 +212,14 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     ImageRepresentationType::Pointer rep = ImageRepresentationType::New();
     m_ImageRepresentation.push_back( rep );
     }
-
+    
+  m_OverlayImageRepresentation.clear();
+  for (unsigned int i=0; i<3; i++)
+    {
+    ImageRepresentationType::Pointer rep = ImageRepresentationType::New();
+    m_OverlayImageRepresentation.push_back( rep );
+    }
+    
   /** Create image oblique slice representations  */
   m_ObliqueRepresentation.clear();
   for (unsigned int i=0; i<3; i++)
@@ -297,6 +307,7 @@ int PETCTNeedleBiopsy::RequestLoadCTImage(int ct)
         {
         m_CTImageSpatialObject = m_CTImageObserver->GetCTImage();
         LoadPETCTBtn->activate();
+        TPlanPointList->activate();
         CTImageList->value(0);
         m_CTPlan = m_Plan;
         m_CTPlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
@@ -462,6 +473,8 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation()
 
   m_ImageSpatialObject->RequestSetTransformAndParent(
     transform, m_WorldReference );
+  m_ResliceReference->RequestSetTransformAndParent(
+    transform, m_ImageSpatialObject );
 
   //m_EntryPoint->RequestSetTransformAndParent( transform, m_WorldReference );
   m_TargetPoint->RequestSetTransformAndParent( transform, m_WorldReference );
@@ -550,23 +563,106 @@ void PETCTNeedleBiopsy::RequestCT2CTRegistration()
                                   lRmscb->GetRegistrationError() << "\n";
       }
 
-    igstk::Transform transform = lrtcb->GetTransform();
-    std::cout << transform << "\n";
+    m_CT2CTTransform = lrtcb->GetTransform();
+    std::cout << m_CT2CTTransform << "\n";
     
     m_PETCTImageSpatialObject->RequestDetachFromParent();
-    m_PETCTImageSpatialObject->RequestSetTransformAndParent(transform, m_CTImageSpatialObject);
+    m_PETCTImageSpatialObject->RequestSetTransformAndParent(m_CT2CTTransform, m_CTImageSpatialObject);
         
     LoadCTBtn->deactivate();
     LoadPETCTBtn->deactivate();
     TPlanPointList->value(1);
     ConnectToTrackerBtn->activate();
+    DisplayModeBtn->activate();
+
+    DisplayModeBtn->value(1);
+    DisplayModeBtn->label("Fused");
+    this->RequestChangeDisplayMode();
     }
   else
   {
     fl_message("CT to CT registration failed!");
   }
+}
+
+void PETCTNeedleBiopsy::RequestChangeDisplayMode()
+{
+  if(DisplayModeBtn->value() == 0)
+    {
+    DisplayModeBtn->label("Single CT");
+
+    this->RemoveCT2CTOverlay();
+
+    CTImageList->value(0);
+    this->ChangeSelectedCTImage(0);
+
+    LoadCTBtn->activate();
+    LoadPETCTBtn->activate();
+    TPlanPointList->activate();
+    CTImageList->activate();
+    CT2CTRegistrationBtn->activate();
+
+    }
+  else
+    {
+    DisplayModeBtn->label("Overlay");
+    m_PETCTImageSpatialObject->RequestDetachFromParent();
+    m_PETCTImageSpatialObject->RequestSetTransformAndParent(m_CT2CTTransform, m_CTImageSpatialObject);
+    m_OverlayImageSpatialObject = m_PETCTImageSpatialObject;
+    
+    CTImageList->value(0);
+    this->ChangeSelectedCTImage(0);
+       
+    this->AddCT2CTOverlay();
+
+    LoadCTBtn->deactivate();
+    LoadPETCTBtn->deactivate();
+    TPlanPointList->deactivate();
+    CTImageList->deactivate();
+    CT2CTRegistrationBtn->deactivate();
+    }
+}
+
+void PETCTNeedleBiopsy::AddCT2CTOverlay()
+{
+  // Add actors, change opacity, change coordinate system, connect reslicing
+
+   for( int i=0; i<3; i++)
+    {
+    m_OverlayImageRepresentation[i]->RequestSetImageSpatialObject(
+      m_OverlayImageSpatialObject );
+    m_ImageRepresentation[i]->SetOpacity(0.5);
+    m_OverlayImageRepresentation[i]->SetOpacity(0.5);
+    }
+
+  m_OverlayImageRepresentation[0]->RequestSetOrientation(
+    ImageRepresentationType::Axial );
+  m_OverlayImageRepresentation[1]->RequestSetOrientation(
+    ImageRepresentationType::Sagittal );
+  m_OverlayImageRepresentation[2]->RequestSetOrientation(
+    ImageRepresentationType::Coronal );
+
+  for ( int i=0; i<3; i++)
+    {
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_OverlayImageRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_OverlayImageRepresentation[i] );
+    }
 
 }
+
+void PETCTNeedleBiopsy::RemoveCT2CTOverlay()
+{
+ for( int i=0; i<3; i++)
+    {
+    m_ImageRepresentation[i]->SetOpacity(1);
+    }
+
+  for ( int i=0; i<3; i++)
+    {
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_OverlayImageRepresentation[i] );
+    }
+}
+
 void PETCTNeedleBiopsy::ResetSliders()
 {
   /** 
@@ -1126,6 +1222,28 @@ void PETCTNeedleBiopsy::ResliceImage ( IndexType index )
   ViewerGroup->m_AxialSlider->value( index[2] );
   ViewerGroup->m_SagittalSlider->value( index[0] );
   ViewerGroup->m_CoronalSlider->value( index[1] );
+
+  if(DisplayModeBtn->value()==1) // Display overlay
+    {
+    
+    ImageSpatialObjectType::PointType point; 
+    m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point);
+    m_ResliceReference->RequestUpdateTransformToParent(PointToTransform(point));
+    m_ResliceReferenceObserver->Clear();
+    m_ResliceReference->RequestComputeTransformTo( m_OverlayImageSpatialObject );
+    
+    if ( m_ResliceReferenceObserver->GotTransform() )
+      {
+      point = TransformToPoint(m_ResliceReferenceObserver->GetTransform());
+      if( m_OverlayImageSpatialObject->IsInside( point ) )
+        {
+        m_OverlayImageSpatialObject->TransformPhysicalPointToIndex( point, index);
+        m_OverlayImageRepresentation[0]->RequestSetSliceNumber( index[2] );
+        m_OverlayImageRepresentation[1]->RequestSetSliceNumber( index[0] );
+        m_OverlayImageRepresentation[2]->RequestSetSliceNumber( index[1] );
+        }
+      } 
+    }
 
   this->ViewerGroup->redraw();
   Fl::check();
