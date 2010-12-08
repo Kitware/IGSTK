@@ -37,8 +37,8 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           } {}
           Fl_Button LoadPETCTBtn {
             label {Load PETCT}
-            callback {RequestLoadPETCTImage();}
-            xywh {42 56 90 25} labelfont 1 align 16
+            callback {RequestLoadCTImage(1);}
+            xywh {40 85 90 25} labelfont 1 align 16 deactivate
           }
           Fl_Choice TPlanPointList {
             callback {ChangeSelectedTPlanPoint();} open
@@ -46,8 +46,22 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           } {}
           Fl_Button LoadCTBtn {
             label {Load CT}
-            callback {RequestLoadCTImage();}
-            xywh {40 110 90 25} labelfont 1 align 16
+            callback {RequestLoadCTImage(0);}
+            xywh {40 45 90 25} labelfont 1 align 16
+          }
+          Fl_Choice CTImageList {open
+            xywh {40 150 90 25} down_box BORDER_BOX align 2 deactivate
+          } {
+            MenuItem {} {
+              label CT
+              callback {ChangeSelectedCTImage(0);}
+              xywh {0 0 30 20}
+            }
+            MenuItem {} {
+              label PETCT
+              callback {ChangeSelectedCTImage(1);} selected
+              xywh {5 5 30 20}
+            }
           }
         }
         Fl_Group {} {
@@ -77,7 +91,7 @@ else
             xywh {40 399 90 25} labelfont 1 align 20
           } {
             MenuItem {} {
-              label Polaris selected
+              label Polaris
               xywh {5 5 30 20} deactivate divider
             }
             MenuItem {} {
@@ -131,7 +145,7 @@ ChangeSelectedTPlanPoint();} open
       } {}
     }
   }
-  Function {~PETCTNeedleBiopsyGUI()} {open return_type virtual
+  Function {~PETCTNeedleBiopsyGUI()} {return_type virtual
   } {
     code {//delete mainWindow;
 //delete RegistrationWindow;} {}
@@ -154,7 +168,7 @@ else
   } {
     code {return this->hasQuitted;} {}
   }
-  Function {RequestLoadCTImage()} {open return_type {virtual int}
+  Function {RequestLoadCTImage(int)} {open return_type {virtual int}
   } {
     code {return 0;} {}
   }
@@ -174,12 +188,14 @@ else
   } {}
   Function {RequestRegistration()} {open return_type {virtual void}
   } {}
-  Function {RequestLoadPETCTImage()} {open return_type {virtual int}
+  Function {RequestLoadPETCTImage()} {return_type {virtual int}
   } {
     code {return 0;} {}
   }
-  Function {RequestLoadPETImage()} {open return_type {virtual int}
+  Function {RequestLoadPETImage()} {return_type {virtual int}
   } {
     code {return 0;} {}
   }
+  Function {ChangeSelectedCTImage(int)} {open return_type {virtual void}
+  } {}
 } 

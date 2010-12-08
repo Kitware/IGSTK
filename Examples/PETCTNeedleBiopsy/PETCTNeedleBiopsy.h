@@ -90,9 +90,11 @@ public:
                                                    LandmarkPointContainerType;  
 
   /** Public request methods from the GUI */
-  int  RequestLoadCTImage();
-  int  RequestLoadPETCTImage();
+  int  RequestLoadCTImage( int ct );
+  void ChangeSelectedCTImage ( int ct );
+  //int  RequestLoadPETCTImage();
   int  RequestLoadPETImage();
+  void ChangeSelectedCTImage();
   void ChangeSelectedTPlanPoint();
   void RequestConnectToTracker();
   void RequestDisconnetTracker();
@@ -126,19 +128,27 @@ private:
   std::string                                           m_ImageDir;
   std::string                                           m_PlanFilename;
   igstk::TreatmentPlan                                * m_Plan;
+  std::string                                           m_PETCTPlanFilename;
+  igstk::TreatmentPlan                                * m_PETCTPlan;
+  std::string                                           m_CTPlanFilename;
+  igstk::TreatmentPlan                                * m_CTPlan;
   ImageSpatialObjectType::PointType                     m_ImageCenter;
 
   /** Pointer to the CTImageSpatialObject */
   ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
+  ImageSpatialObjectType::Pointer                       m_CTImageSpatialObject;
   ImageSpatialObjectType::Pointer                       m_PETCTImageSpatialObject;
-  ImageSpatialObjectType::Pointer                       m_PETImageSpatialObject;
+  //ImageSpatialObjectType::Pointer                       m_PETImageSpatialObject;
 
   /** Define a initial world coordinate system */
   igstk::AxesObject::Pointer                            m_WorldReference;
 
   /** Slice representations of the image in View2D and View3D */
   std::vector< ImageRepresentationType::Pointer >       m_ImageRepresentation;
+  //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
+  //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
   std::vector<ObliqueRepresentationType::Pointer>       m_ObliqueRepresentation;
+
 
   /** Landmark registration and its landmark points container */
   RegistrationType::Pointer                       m_LandmarkRegistration;
@@ -230,6 +240,7 @@ private:
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation();
+  void ConnectPETCTImageRepresentation();
   void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
   void UpdatePath();  

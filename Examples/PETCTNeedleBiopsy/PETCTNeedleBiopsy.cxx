@@ -257,10 +257,10 @@ PETCTNeedleBiopsy::~PETCTNeedleBiopsy()
 *        igstkTreatmentPlanIO
 *  -----------------------------------------------------------------
 */
-int PETCTNeedleBiopsy::RequestLoadCTImage()
+int PETCTNeedleBiopsy::RequestLoadCTImage(int ct)
 {
   m_ImageReader           = ImageReaderType::New();
-  const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
+  const char * directoryname = fl_dir_chooser("CT volume directory","");
   if ( directoryname != NULL )
     {
     igstkLogMacro( DEBUG,
@@ -293,58 +293,22 @@ int PETCTNeedleBiopsy::RequestLoadCTImage()
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       this->ConnectImageRepresentation();
       this->ReadTreatmentPlan();
-      return 1;
-      }
-    else
-      {
-      igstkLogMacro(          DEBUG, "Reading image failure...\n" )
-      return 0;
-      }
-    }
-  else
-    {
-    igstkLogMacro(          DEBUG, "No directory is selected\n" )
-    return 0;
-    }
-
-}
-
-int PETCTNeedleBiopsy::RequestLoadPETCTImage()
-{
-  m_ImageReader           = ImageReaderType::New();
-  const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
-  if ( directoryname != NULL )
-    {
-    igstkLogMacro( DEBUG,
-      "Set ImageReader directory: " << directoryname << "\n" )
-    m_ImageDir = directoryname;
-    m_ImageReader->RequestSetDirectory( directoryname );
-
-    igstkLogMacro( DEBUG, "ImageReader loading images... \n" )
-    m_ImageReader->RequestReadImage();
-
-
-    /** 
-    * IGSTK uses event for inter-components communication.
-    * Event/observer model is used to replace the normal Get() method.
-    * CTImageObserver here is defined by Macro in header file:
-    * igstkObserverObjectMacro( CTImage,
-    *                           igstk::CTImageReader::ImageModifiedEvent,
-    *                           igstk::CTImageSpatialObject);
-    * Refer to igstkMacros.h for more detail about this macro.
-    */
-    CTImageObserver::Pointer  m_CTImageObserver = CTImageObserver::New();
-    m_ImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
-                                                      m_CTImageObserver);
-
-    m_ImageReader->RequestGetImage(); // This will invoke the event
-
-    if(m_CTImageObserver->GotCTImage())
-      {
-      igstkLogMacro(          DEBUG, "Image loaded...\n" )
-      m_PETCTImageSpatialObject = m_CTImageObserver->GetCTImage();
-      this->ConnectImageRepresentation();
-      this->ReadTreatmentPlan();
+      if(ct ==0)
+        {
+        m_CTImageSpatialObject = m_CTImageObserver->GetCTImage();
+        LoadPETCTBtn->activate();
+        CTImageList->value(0);
+        m_CTPlan = m_Plan;
+        m_CTPlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
+        }
+      else
+        {
+        m_PETCTImageSpatialObject = m_CTImageObserver->GetCTImage();
+        CTImageList->activate();
+        CTImageList->value(1);
+        m_PETCTPlan = m_Plan;
+        m_PETCTPlanFilename = m_ImageDir + "_TreatmentPlan.igstk";
+        }
       return 1;
       }
     else
@@ -364,7 +328,7 @@ int PETCTNeedleBiopsy::RequestLoadPETCTImage()
 int PETCTNeedleBiopsy::RequestLoadPETImage()
 {
   m_ImageReader           = ImageReaderType::New();
-  const char * directoryname = fl_dir_chooser("DICOM Volume directory","");
+  const char * directoryname = fl_dir_chooser("PET volume directory","");
   if ( directoryname != NULL )
     {
     igstkLogMacro( DEBUG,
@@ -394,7 +358,7 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
     if(m_CTImageObserver->GotCTImage())
       {
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
-      m_PETImageSpatialObject = m_CTImageObserver->GetCTImage();
+      //m_PETImageSpatialObject = m_CTImageObserver->GetCTImage();
       this->ConnectImageRepresentation();
       this->ReadTreatmentPlan();
       return 1;
@@ -534,9 +498,25 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation()
   ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(),
     m_ViewResliceObserver );
 
-  ConnectToTrackerBtn->activate();
 }
 
+void PETCTNeedleBiopsy::ChangeSelectedCTImage(int ct)
+{
+  if(ct ==0)
+    {
+    m_ImageSpatialObject = m_CTImageSpatialObject;
+    m_Plan               = m_CTPlan;
+    this->ConnectImageRepresentation();
+    ChangeSelectedTPlanPoint();
+    }
+  else
+    {
+    m_ImageSpatialObject = m_PETCTImageSpatialObject;
+    m_Plan               = m_PETCTPlan;
+    this->ConnectImageRepresentation();
+    ChangeSelectedTPlanPoint();
+    }
+}
 void PETCTNeedleBiopsy::ResetSliders()
 {
   /** 
@@ -652,7 +632,16 @@ void PETCTNeedleBiopsy::ReadTreatmentPlan()
 void PETCTNeedleBiopsy::WriteTreatmentPlan()
 {
   igstk::TreatmentPlanIO * writer = new igstk::TreatmentPlanIO;
-  writer->SetFileName( m_PlanFilename );
+  if (CTImageList->value()== 0)
+    {
+    writer->SetFileName( m_CTPlanFilename );
+    m_CTPlan = m_Plan;
+    }
+  else
+    {
+    writer->SetFileName( m_PETCTPlanFilename );
+    m_PETCTPlan = m_Plan;
+    }
   writer->SetTreatmentPlan( m_Plan );
   writer->RequestWrite();
 }
@@ -843,7 +832,7 @@ void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
   TrackerList->clear();
   TrackerToolList->clear();
   m_TrackerToolList.clear();
-  int n = 0;
+  //int n = 0;
   std::string s;
   for ( unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
