@@ -135,12 +135,12 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     m_TargetRepresentation.push_back(targetRepresentation);
   }
 
-  //m_EntryPoint                  = EllipsoidType::New();
-  //m_EntryRepresentation         = EllipsoidRepresentationType::New();
-  //m_EntryPoint->SetRadius( 6, 6, 6 );
-  //m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
-  //m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
-  //m_EntryRepresentation->SetOpacity( 0.6 );
+  m_EntryPoint                  = EllipsoidType::New();
+  m_EntryRepresentation         = EllipsoidRepresentationType::New();
+  m_EntryPoint->SetRadius( 6, 6, 6 );
+  m_EntryRepresentation->RequestSetEllipsoidObject( m_EntryPoint );
+  m_EntryRepresentation->SetColor( 0.0, 0.0, 1.0);
+  m_EntryRepresentation->SetOpacity( 0.6 );
 
   m_FiducialPoint                 = EllipsoidType::New();
   m_FiducialPoint->SetRadius( 6, 6, 6 );
@@ -154,25 +154,22 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     m_FiducialRepresentation.push_back(fiducialRepresentation);
   }
 
+  m_Path                       = PathType::New();
+  TubePointType point;
+  point.SetPosition( 0, 0, 0);
+  point.SetRadius( 2 );
+  m_Path->AddPoint( point );
+  m_Path->AddPoint( point );
 
-
-
-  //m_Path                       = PathType::New();
-  //TubePointType point;
-  //point.SetPosition( 0, 0, 0);
-  //point.SetRadius( 2 );
-  //m_Path->AddPoint( point );
-  //m_Path->AddPoint( point );
-
-  //m_PathRepresentation.clear();
-  //for( int i=0; i<4; i++ )
-  //  {
-  //  PathRepresentationType::Pointer rep  = PathRepresentationType::New();
-  //  rep->RequestSetTubeObject( m_Path );
-  //  rep->SetColor( 0.0, 1.0, 0.0);
-  //  rep->SetOpacity( 0.4 );
-  //  m_PathRepresentation.push_back( rep );
-  //  }
+  m_PathRepresentation.clear();
+  for( int i=0; i<4; i++ )
+   {
+   PathRepresentationType::Pointer rep  = PathRepresentationType::New();
+   rep->RequestSetTubeObject( m_Path );
+   rep->SetColor( 0.0, 1.0, 0.0);
+   rep->SetOpacity( 0.4 );
+   m_PathRepresentation.push_back( rep );
+   }
 
   /** Creating observers and their call back functions */
 
@@ -476,10 +473,10 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation()
   m_ResliceReference->RequestSetTransformAndParent(
     transform, m_ImageSpatialObject );
 
-  //m_EntryPoint->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_EntryPoint->RequestSetTransformAndParent( transform, m_WorldReference );
   m_TargetPoint->RequestSetTransformAndParent( transform, m_WorldReference );
   m_FiducialPoint->RequestSetTransformAndParent( transform, m_WorldReference );
-  //m_Path->RequestSetTransformAndParent( transform, m_WorldReference );
+  m_Path->RequestSetTransformAndParent( transform, m_WorldReference );
 
   m_Needle->RequestSetTransformAndParent( transform, m_WorldReference );
   m_NeedleTip->RequestSetTransformAndParent( transform, m_WorldReference );
@@ -1279,14 +1276,14 @@ void PETCTNeedleBiopsy::Picking( const itk::EventObject & event)
         m_FiducialPoint->RequestSetTransformAndParent( 
           transform , m_WorldReference );
         m_Plan->m_EntryPoint = point;
-        //this->UpdatePath();
+        if (CTImageList->value() == 0) { this->UpdatePath(); }
         }
       else if ( choice == 1 )
         {
         m_TargetPoint->RequestSetTransformAndParent( 
           transform, m_WorldReference );
         m_Plan->m_TargetPoint = point;
-        //this->UpdatePath();
+        if (CTImageList->value() == 0) { this->UpdatePath(); }
         }
       else
         {
@@ -1325,31 +1322,31 @@ void PETCTNeedleBiopsy::Picking( const itk::EventObject & event)
 */
 void PETCTNeedleBiopsy::UpdatePath()
 {
-//   m_Path->Clear();
-// 
-//   TubePointType point;
-//   igstk::Transform::VectorType v;
-// 
-//   v = ( PointToTransform( m_Plan->m_EntryPoint) ).GetTranslation();
-//   point.SetPosition( v[0], v[1], v[2]);
-//   point.SetRadius( 2 );
-//   m_Path->AddPoint( point );
-// 
-//   v = ( PointToTransform( m_Plan->m_TargetPoint) ).GetTranslation();
-//   point.SetPosition( v[0], v[1], v[2]);
-//   point.SetRadius( 2.1 );
-//   m_Path->AddPoint( point );
-// 
-// 
-//   for (unsigned int i=0; i<4; i++)
-//     {
-//     ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
-//     m_PathRepresentation[i]->RequestSetTubeObject( NULL );
-//     m_PathRepresentation[i]->RequestSetTubeObject( m_Path );
-//     m_PathRepresentation[i]->SetColor( 0.0, 1.0, 0.0 );
-//     m_PathRepresentation[i]->SetOpacity( 0.5 );
-//     ViewerGroup->m_Views[i]->RequestAddObject( m_PathRepresentation[i] );
-//     }
+  m_Path->Clear();
+
+  TubePointType point;
+  igstk::Transform::VectorType v;
+
+  v = ( PointToTransform( m_Plan->m_EntryPoint) ).GetTranslation();
+  point.SetPosition( v[0], v[1], v[2]);
+  point.SetRadius( 2 );
+  m_Path->AddPoint( point );
+
+  v = ( PointToTransform( m_Plan->m_TargetPoint) ).GetTranslation();
+  point.SetPosition( v[0], v[1], v[2]);
+  point.SetRadius( 2.1 );
+  m_Path->AddPoint( point );
+
+
+  for (unsigned int i=0; i<4; i++)
+    {
+    ViewerGroup->m_Views[i]->RequestRemoveObject( m_PathRepresentation[i] );
+    m_PathRepresentation[i]->RequestSetTubeObject( NULL );
+    m_PathRepresentation[i]->RequestSetTubeObject( m_Path );
+    m_PathRepresentation[i]->SetColor( 0.0, 1.0, 0.0 );
+    m_PathRepresentation[i]->SetOpacity( 0.5 );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_PathRepresentation[i] );
+    }
 
 }
 

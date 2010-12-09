@@ -190,17 +190,17 @@ private:
   EllipsoidType::Pointer                          m_TargetPoint;
   std::vector<EllipsoidRepresentationType::Pointer>     m_TargetRepresentation;
 
-  //EllipsoidType::Pointer                          m_EntryPoint;
-  //EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
+  EllipsoidType::Pointer                          m_EntryPoint;
+  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
   EllipsoidType::Pointer                          m_FiducialPoint;
   std::vector<EllipsoidRepresentationType::Pointer>    m_FiducialRepresentation;  
   
   /** Tube object represents the planned path */
-  //typedef igstk::TubeObject                       PathType;
-  //typedef igstk::TubeObjectRepresentation         PathRepresentationType;
-  //typedef igstk::TubeObject::PointType            TubePointType;
-  //PathType::Pointer                               m_Path;
-  //std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
+  typedef igstk::TubeObject                       PathType;
+  typedef igstk::TubeObjectRepresentation         PathRepresentationType;
+  typedef igstk::TubeObject::PointType            TubePointType;
+  PathType::Pointer                               m_Path;
+  std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
 
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;
