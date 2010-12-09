@@ -95,6 +95,7 @@ public:
   void ChangeSelectedCTImage ( int ct );
   void RequestCT2CTRegistration();
   void RequestChangeDisplayMode();
+  void RequestChangeTransparency();
   //int  RequestLoadPETCTImage();
   int  RequestLoadPETImage();
   void ChangeSelectedCTImage();

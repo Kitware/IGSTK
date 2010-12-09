@@ -644,7 +644,6 @@ void PETCTNeedleBiopsy::AddCT2CTOverlay()
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_OverlayImageRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_OverlayImageRepresentation[i] );
     }
-
 }
 
 void PETCTNeedleBiopsy::RemoveCT2CTOverlay()
@@ -657,6 +656,15 @@ void PETCTNeedleBiopsy::RemoveCT2CTOverlay()
   for ( int i=0; i<3; i++)
     {
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_OverlayImageRepresentation[i] );
+    }
+}
+
+void PETCTNeedleBiopsy::RequestChangeTransparency()
+{
+  for( unsigned int i = 0; i<3; i++)
+    {
+    m_ImageRepresentation[i]->SetOpacity(1- transparencySlider->value());
+    m_OverlayImageRepresentation[i]->SetOpacity(transparencySlider->value());
     }
 }
 
