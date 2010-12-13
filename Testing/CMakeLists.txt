@@ -106,7 +106,9 @@ ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGener
    ${IGSTK_DATA_ROOT}/Input/E000192 )
 
 ADD_TEST( igstkPETImageReaderTest ${IGSTKSandbox_TESTS} igstkPETImageReaderTest
-   ${IGSTK_DATA_ROOT}/Input/E000192 )
+   ${IGSTKSandbox_DATA_ROOT}/PET
+   ${IGSTK_DATA_ROOT}/Input/MRLiver
+)
 
 ADD_TEST( igstkPETImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectTest)
 

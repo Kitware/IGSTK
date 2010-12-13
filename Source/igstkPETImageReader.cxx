@@ -28,7 +28,7 @@ PETImageReader::PETImageReader():m_StateMachine(this)
 /** Check if PET dicom is being read */
 bool PETImageReader::CheckModalityType( DICOMInformationType modality )
 {
-  if( modality != "PET" )
+  if( modality != "PT" )
     {
     return false;
     }
