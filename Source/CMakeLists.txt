@@ -395,6 +395,10 @@ SET(IGSTKSandbox_HEADS
   igstkVesselObjectRepresentation.h
 
   igstkMeshClippingObjectRepresentation.h
+
+  igstkPETImageReader.h
+  igstkPETImageSpatialObject.h
+  igstkPETImageSpatialObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -517,6 +521,10 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObjectRepresentation.cxx
   
   igstkMeshClippingObjectRepresentation.cxx
+
+  igstkPETImageReader.cxx
+  igstkPETImageSpatialObject.cxx
+  igstkPETImageSpatialObjectRepresentation.cxx
 
 )
 

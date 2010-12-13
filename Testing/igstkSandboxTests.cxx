@@ -35,6 +35,8 @@ void RegisterTests()
   REGISTER_TEST(igstkDICOMGenericImageReaderTest);
   REGISTER_TEST(igstkVascularNetworkObjectTest);
   REGISTER_TEST(igstkVesselObjectTest);
+  REGISTER_TEST(igstkPETImageReaderTest);
+  REGISTER_TEST(igstkPETImageSpatialObjectTest);
 
 #ifdef IGSTKSandbox_USE_FLTK
   REGISTER_TEST(igstkVascularNetworkReaderTest);

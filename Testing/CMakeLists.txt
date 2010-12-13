@@ -98,10 +98,17 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.cxx
 
 
+  igstkPETImageReaderTest.cxx
+  igstkPETImageSpatialObjectTest.cxx
 )
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+ADD_TEST( igstkPETImageReaderTest ${IGSTKSandbox_TESTS} igstkPETImageReaderTest
+   ${IGSTK_DATA_ROOT}/Input/E000192 )
+
+ADD_TEST( igstkPETImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectTest)
 
 ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
 
