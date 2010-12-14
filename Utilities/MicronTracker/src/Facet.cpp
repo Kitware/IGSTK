@@ -128,7 +128,7 @@ bool Facet::identify(MCamera* cam, vector<Vector*> vectorSet, double positionTol
 
 /****************************/
 /** */
-bool Facet::validateTemplate(double positionToleranceMM, string outCompletionString)
+bool Facet::validateTemplate(double positionToleranceMM, string )
 {
   int mtCode;
   mtCode = Facet_ValidateTemplateVectors(this->m_handle);
