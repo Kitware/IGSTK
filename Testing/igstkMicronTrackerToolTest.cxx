@@ -31,7 +31,7 @@
 
 #include "igstkMicronTrackerTool.h"
 
-int igstkMicronTrackerToolTest( int argc, char * argv[]  )
+int igstkMicronTrackerToolTest( int , char * []  )
 {
   igstk::RealTimeClock::Initialize();
 

@@ -26,7 +26,7 @@ namespace TransductionMacroTest
 }
 
 
-int igstkTransductionMacroTest( int argc, char* argv[] )
+int igstkTransductionMacroTest( int , char* [] )
 {
 
  

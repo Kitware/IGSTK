@@ -23,7 +23,7 @@
 
 #include "igstkView2D.h"
 
-int igstkCoordinateSystemDelegatorTest(int argc, char* argv[])
+int igstkCoordinateSystemDelegatorTest(int , char* [])
 {
   const int depth = 10;
   const int numIters = 100000;

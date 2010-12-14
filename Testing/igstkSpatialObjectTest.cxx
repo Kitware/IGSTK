@@ -169,15 +169,15 @@ protected:
     { return SUCCESS; }
 
   virtual ResultType VerifyTrackerToolInformation(
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     { return SUCCESS; }
 
   virtual ResultType RemoveTrackerToolFromInternalDataContainers(
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     { return SUCCESS; }
 
   virtual ResultType AddTrackerToolToInternalDataContainers(
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     { return SUCCESS; }
 
 private:

@@ -118,7 +118,7 @@ private:
 };
 
 
-int igstkLandmark3DRegistrationTest( int argc, char * argv[] )
+int igstkLandmark3DRegistrationTest( int , char * [] )
 {
   igstk::RealTimeClock::Initialize();
   std::cout << "Testing igstk::Landmark3DRegistration" << std::endl;

@@ -55,7 +55,7 @@ igstk::Transform GetRandomTransform()
 }
 } // namespace
 
-int igstkSpatialObjectCoordinateSystemTest3(int argc, char* argv[])
+int igstkSpatialObjectCoordinateSystemTest3(int , char*[] )
 {
   const int depth = 10;
   const int numIters = 100000;

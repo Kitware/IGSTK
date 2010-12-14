@@ -43,11 +43,11 @@ public:
  
   typedef igstk::DICOMModalityEvent DICOMModalityEventType;
   
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     if( DICOMModalityEventType().CheckEvent( &event ) )
       {
@@ -75,10 +75,10 @@ public:
  
   typedef igstk::DICOMPatientNameEvent DICOMPatientNameEventType;
   
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     const DICOMPatientNameEventType * patientNameEvent = 
           dynamic_cast<const DICOMPatientNameEventType*> (&event);

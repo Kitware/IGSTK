@@ -31,7 +31,7 @@ igstkObserverObjectMacro(CTImage,
     ::igstk::CTImageReader::ImageModifiedEvent,::igstk::CTImageSpatialObject)
 }
 
-int igstkCTImageSpatialObjectRepresentationTest( int argc, char * argv [] )
+int igstkCTImageSpatialObjectRepresentationTest( int, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 

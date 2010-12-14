@@ -29,7 +29,7 @@
 #include "igstkLogger.h"
 #include "itkStdStreamLogOutput.h"
 
-int igstkObjectRepresentationRemovalTest( int argc, char* argv[] )
+int igstkObjectRepresentationRemovalTest( int , char* [] )
 {
   typedef igstk::Object::LoggerType             LoggerType;
   typedef itk::StdStreamLogOutput               LogOutputType;

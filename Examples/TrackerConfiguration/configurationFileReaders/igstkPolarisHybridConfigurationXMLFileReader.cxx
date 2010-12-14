@@ -102,7 +102,7 @@ PolarisHybridConfigurationXMLFileReader::ProcessControlBoxPort()
            "Error in control box port tag data, possibly non numeric values." );
     }
   controlBoxPort--;
-  if( controlBoxPort<0 || controlBoxPort> PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER )
+  if( controlBoxPort> PolarisHybridTrackerConfiguration::MAXIMAL_PORT_NUMBER )
     {
     throw FileFormatException("Invalid value given for control box port."); 
     }

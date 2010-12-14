@@ -24,7 +24,7 @@
  * This program writes an xml file with the given transformation data.
  *
  */
-int main(int argc, char *argv[])
+int main(int , char *[])
 {
   std::string OUTPUT_FILE_NAME("example.xml");
   igstk::PrecomputedTransformData::Pointer transformationData = 

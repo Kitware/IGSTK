@@ -79,20 +79,20 @@ protected:
     }
 
   ResultType 
-  VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+  VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }
 
   ResultType 
-  AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+  AddTrackerToolToInternalDataContainers( const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }
 
   ResultType 
   RemoveTrackerToolFromInternalDataContainers
-  ( const TrackerToolType * trackerTool )
+  ( const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }
@@ -199,7 +199,7 @@ public:
     m_Payload.Clear();
     }
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     this->ClearPayload();
     if( EventType().CheckEvent( &event ) )
@@ -250,7 +250,7 @@ protected:
 }
 
 
-int igstkSpatialObjectCoordinateSystemTest(int argc, char* argv[])
+int igstkSpatialObjectCoordinateSystemTest(int , char* [])
 {
   typedef igstk::EllipsoidObject              EllipsoidObjectType;
   typedef igstk::EllipsoidObject::Pointer     EllipsoidObjectPointer;

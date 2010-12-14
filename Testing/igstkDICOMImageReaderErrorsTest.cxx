@@ -37,11 +37,11 @@ public:
   typedef itk::SmartPointer<Self>                               Pointer;
   typedef itk::Command                                          Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Error event received b/c of a directory that does not have" 
               << " enough number of files "<<std::endl;
@@ -67,11 +67,11 @@ public:
   typedef itk::SmartPointer<Self>                           Pointer;
   typedef itk::Command                                      Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Error Event received for a non-Existing directory "<<std::endl;
     m_EventReceived = true;
@@ -96,10 +96,10 @@ public:
   typedef itk::SmartPointer<Self>                     Pointer;
   typedef itk::Command                                Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr << "Error Event received for empty string directory name "
               << std::endl;
@@ -127,10 +127,10 @@ public:
   typedef itk::SmartPointer<Self>                           Pointer;
   typedef itk::Command                                      Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Error Event received since the directory name specified " << 
                "is not a directory"<<std::endl;
@@ -163,10 +163,10 @@ public:
   typedef igstk::DICOMImageSeriesFileNamesGeneratingErrorEvent \
                  DICOMImageSeriesFileNamesGeneratingErrorEventType;
     
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     if(DICOMImageSeriesFileNamesGeneratingErrorEventType().CheckEvent(&event))
       {
@@ -204,10 +204,10 @@ public:
 
   typedef igstk::DICOMImageReadingErrorEvent   DICOMImageReadingErrorEventType;
     
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     if( DICOMImageReadingErrorEventType().CheckEvent( &event ) )
       {

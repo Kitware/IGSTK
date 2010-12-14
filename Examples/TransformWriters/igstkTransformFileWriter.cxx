@@ -405,8 +405,8 @@ TransformFileWriter::ReportWriteFailureProcessing()
 
 
 void  
-TransformFileWriter::PrintSelf( std::ostream& os, 
-                                itk::Indent indent ) const
+TransformFileWriter::PrintSelf( std::ostream& itkNotUsed(os), 
+                                itk::Indent itkNotUsed(indent) ) const
 {
 }
 

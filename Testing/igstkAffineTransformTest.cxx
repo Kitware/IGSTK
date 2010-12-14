@@ -9,7 +9,7 @@
 #include "igstkAffineTransform.h"
 #include "igstkPulseGenerator.h"
 
-int igstkAffineTransformTest( int argc, char * argv [] )
+int igstkAffineTransformTest( int , char * [] )
 {
 
   igstk::RealTimeClock::Initialize();

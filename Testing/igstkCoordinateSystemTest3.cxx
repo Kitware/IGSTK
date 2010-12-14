@@ -22,7 +22,7 @@
 #include "itkTimeProbe.h"
 
 
-int igstkCoordinateSystemTest3(int argc, char* argv[])
+int igstkCoordinateSystemTest3(int , char* [])
 {
   const int depth = 10;
   const int numIters = 100000;

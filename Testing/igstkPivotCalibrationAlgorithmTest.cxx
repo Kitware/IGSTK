@@ -18,7 +18,7 @@ void Execute(const itk::Object *caller, const itk::EventObject & event)
   this->Execute(constCaller, event);
 }
 
-void Execute(itk::Object *caller, const itk::EventObject & event)
+void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
 {
   std::cout<<"Invalid method request, cannot invoke this method in current ";
   std::cout<<"object state."<<std::endl;
@@ -64,7 +64,7 @@ public:
     this->Execute(constCaller, event);
   }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
   {
     const EventType *evt = dynamic_cast< const EventType * > (&event);
     if(evt) 
@@ -122,7 +122,7 @@ public:
     this->Execute(constCaller, event);
   }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
   {
     if( dynamic_cast< const igstk::PivotCalibrationAlgorithm::CalibrationSuccessEvent * > (&event) ) 
     {
@@ -815,7 +815,7 @@ static double pivotCalibrationDegenerateDataSet[NUMBER_OF_DEGENERATE_TRANSFORMAT
  *     Check that we get the same results as in the previous step.
  *  4. Reset and run with degenerate set of transformations, check that the 
  *     algorithm fails. */
-int igstkPivotCalibrationAlgorithmTest( int argv, char * argc[] )
+int igstkPivotCalibrationAlgorithmTest( int, char * [] )
 {
   std::vector< igstk::Transform > transformations;
   igstk::Transform::VectorType translation;
