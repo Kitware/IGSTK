@@ -60,7 +60,7 @@ igstk::Transform GetRandomTransform()
 }
 }
 
-int igstkCoordinateSystemTest2(int argc, char* argv[])
+int igstkCoordinateSystemTest2(int , char* [] )
 {
 
   typedef igstk::Object::LoggerType           LoggerType;

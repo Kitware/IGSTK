@@ -74,7 +74,7 @@ CircularSimulatedTracker::InternalClose( void )
 
 CircularSimulatedTracker::ResultType
 CircularSimulatedTracker::VerifyTrackerToolInformation(
-  TrackerToolType * trackerTool )
+  TrackerToolType * itkNotUsed(trackerTool) )
 {
   return SUCCESS;
 }
@@ -147,7 +147,7 @@ CircularSimulatedTracker::InternalThreadedUpdateStatus( void )
 CircularSimulatedTracker::ResultType
 CircularSimulatedTracker
 ::RemoveTrackerToolFromInternalDataContainers
-( const TrackerToolType * trackerTool )
+( const TrackerToolType * itkNotUsed(trackerTool) )
 {
   return FAILURE;
 }

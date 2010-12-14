@@ -61,7 +61,7 @@ SimulatedTracker::ResultType SimulatedTracker::InternalClose( void )
 
 SimulatedTracker::ResultType 
 SimulatedTracker
-::VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
 {
   return SUCCESS;
 }
@@ -81,7 +81,7 @@ SimulatedTracker::InternalThreadedUpdateStatus( void )
 SimulatedTracker::ResultType 
 SimulatedTracker
 ::RemoveTrackerToolFromInternalDataContainers
-( const TrackerToolType * trackerTool )
+( const TrackerToolType * itkNotUsed(trackerTool) )
 {
   return FAILURE;
 }
@@ -89,7 +89,7 @@ SimulatedTracker
 SimulatedTracker::ResultType 
 SimulatedTracker
 ::AddTrackerToolToInternalDataContainers
-( const TrackerToolType * trackerTool )
+( const TrackerToolType * itkNotUsed(trackerTool) )
 {
   return FAILURE;
 }

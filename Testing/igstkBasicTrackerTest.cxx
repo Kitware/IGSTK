@@ -228,7 +228,7 @@ protected:
     }
 
   Tracker::ResultType VerifyTrackerToolInformation( 
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     {
     static bool success = false;
     if( !success )
@@ -240,7 +240,7 @@ protected:
     }
 
   Tracker::ResultType RemoveTrackerToolFromInternalDataContainers( 
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     {
     static bool success = false;
     if( !success )
@@ -252,7 +252,7 @@ protected:
     }
 
   Tracker::ResultType AddTrackerToolToInternalDataContainers( 
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     {
     static bool success = false;
     if( !success )

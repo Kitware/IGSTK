@@ -172,7 +172,7 @@ void MicronTracker::CreateErrorCodeList()
 std::string
 MicronTracker::GetErrorDescription( unsigned int code )
 {
-  if ( code >= 0 && code <= 55 )
+  if ( code <= 55 )
     {
     return MicronTracker::m_ErrorCodeContainer[code];
     }

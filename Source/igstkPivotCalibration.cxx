@@ -381,8 +381,8 @@ PivotCalibration::ComputeCalibrationProcessing()
 
 
 void 
-PivotCalibration::AcquireTransformsAndCalibrate(itk::Object *caller, 
-                                                const itk::EventObject & event)
+PivotCalibration::AcquireTransformsAndCalibrate(itk::Object * itkNotUsed(caller), 
+                                                const itk::EventObject & itkNotUsed(event))
 {  
   //got all the transformations we need for calibration
   if( this->m_Transforms.size() == this->m_RequiredNumberOfTransformations )
@@ -521,7 +521,7 @@ PivotCalibration::ErrorObserver::ErrorObserver() : m_ErrorOccured(false)
 }
 
 void 
-PivotCalibration::ErrorObserver::Execute(const itk::Object *caller, 
+PivotCalibration::ErrorObserver::Execute(const itk::Object * itkNotUsed(caller), 
                           const itk::EventObject & event) throw (std::exception)
 {
   std::map<std::string,std::string>::iterator it;

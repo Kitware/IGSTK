@@ -54,7 +54,7 @@ public:
     Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(object), const itk::EventObject & event)
     {
     std::cout << event.GetEventName() << std::endl;
     }

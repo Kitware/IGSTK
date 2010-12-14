@@ -1790,7 +1790,7 @@ void NDICommandInterpreter::HelperForPHINF(const char* cp, const char* crp)
   This information can be later extracted through one of the ndiGetPHRQHandle()
   functions.
 */
-void NDICommandInterpreter::HelperForPHRQ(const char* cp, const char* crp)
+void NDICommandInterpreter::HelperForPHRQ(const char* itkNotUsed(cp), const char* crp)
 {
   char* dp;
   int j;
@@ -1813,7 +1813,7 @@ void NDICommandInterpreter::HelperForPHRQ(const char* cp, const char* crp)
   This information can be later extracted through one of the ndiGetPHSRxx()
   functions.
 */
-void NDICommandInterpreter::HelperForPHSR(const char* cp, const char* crp)
+void NDICommandInterpreter::HelperForPHSR(const char* itkNotUsed(cp), const char* crp)
 {
   char* dp;
   int j;
@@ -2300,7 +2300,7 @@ void NDICommandInterpreter::HelperForIRCHK(const char* cp, const char* crp)
 /*---------------------------------------------------------------------
   Adjust the host to match a COMM command.
 */
-void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* crp)
+void NDICommandInterpreter::HelperForCOMM(const char* cp, const char* itkNotUsed(crp))
 {
   int errcode = NDI_BAD_COMM;
 

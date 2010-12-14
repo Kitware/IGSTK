@@ -220,20 +220,20 @@ protected:
     }
 
   ResultType
-  VerifyTrackerToolInformation( const TrackerToolType * trackerTool )
+  VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }
 
   ResultType
-  AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
+  AddTrackerToolToInternalDataContainers( const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }
 
   ResultType
   RemoveTrackerToolFromInternalDataContainers(
-    const TrackerToolType * trackerTool )
+    const TrackerToolType * itkNotUsed(trackerTool) )
     {
     return SUCCESS;
     }

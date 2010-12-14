@@ -69,7 +69,7 @@ SerialCommunicationForPosix::InternalOpenPort( void )
   unsigned int portNumber = this->GetPortNumber();
   const char *device = "";  
 
-  if (portNumber >= 0 && portNumber < 8)
+  if ( portNumber < 8 )
     {
     const char *deviceNames[] = { IGSTK_SERIAL_PORT_0,
                                   IGSTK_SERIAL_PORT_1,
@@ -219,7 +219,7 @@ SerialCommunicationForPosix::InternalUpdateParameters( void )
 #endif
 
   // turn off hardware handshake if requested
-  if (handshake == HandshakeOff);
+  if (handshake == HandshakeOff)
     {
 #ifdef sgi
     t.c_cflag &= ~CNEW_RTSCTS;

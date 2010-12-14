@@ -41,10 +41,10 @@ public:
   typedef itk::Command                        Superclass;
   itkNewMacro(Self);
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Error in transform computation"<<std::endl;
     }
@@ -61,10 +61,10 @@ public:
   typedef itk::SmartPointer<Self>                      Pointer;
   typedef itk::Command                                 Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Invalid input request!!"<<std::endl;
     }
@@ -84,10 +84,10 @@ public:
 
   typedef igstk::DoubleTypeEvent DoubleTypeEventType;
 
-  void Execute( const itk::Object *caller, const itk::EventObject & event )
+  void Execute( const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
     }
-  void Execute( itk::Object *caller, const itk::EventObject & event )
+  void Execute( itk::Object * itkNotUsed(caller), const itk::EventObject & event )
     {
     std::cout<< " DoubleTypeEvent is thrown" << std::endl;
     const DoubleTypeEventType * errorEvent =
@@ -118,7 +118,7 @@ private:
 };
 
 
-int igstkLandmark3DRegistrationTest( int argv, char * argc[] )
+int igstkLandmark3DRegistrationTest( int argc, char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
   std::cout << "Testing igstk::Landmark3DRegistration" << std::endl;

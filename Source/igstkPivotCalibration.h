@@ -156,7 +156,7 @@ private:
   void GetTransformProcessing();
   void GetPivotPointProcessing();
   void GetRMSEProcessing();
-  void EmptyCallBack(itk::Object *caller, const itk::EventObject & event){};
+  void EmptyCallBack(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event)){};
 
   /**settings for using member function as callback**/
   typedef itk::MemberCommand<PivotCalibration> TransformAcquiredCommand;
