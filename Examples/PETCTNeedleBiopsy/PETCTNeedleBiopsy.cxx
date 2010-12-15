@@ -632,6 +632,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
     CTImageList->value(0);
     this->ChangeSelectedCTImage(0);
 
+    LoadPETBtn->deactivate();
     LoadCTBtn->activate();
     LoadPETCTBtn->activate();
     TPlanPointList->activate();
