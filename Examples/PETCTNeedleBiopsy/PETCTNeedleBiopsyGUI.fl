@@ -25,8 +25,8 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
         } {
           Fl_Button LoadPETBtn {
             label {Load PET}
-            callback {RequestLoadPETImage();}
-            xywh {40 325 90 25} labelfont 1 align 16
+            callback {RequestLoadPETImage();} selected
+            xywh {40 325 90 25} labelfont 1 align 16 deactivate
           }
           Fl_Button {} {
             label {Diplay Ctrl}
@@ -197,7 +197,7 @@ ChangeSelectedTPlanPoint();} open
       }
       Fl_Value_Slider BGWindow {
         label {BGWindow:}
-        callback {RequestChangeWindowLevel();} selected
+        callback {RequestChangeWindowLevel();}
         xywh {13 21 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 50 textsize 14
       }
       Fl_Value_Slider BGLevel {

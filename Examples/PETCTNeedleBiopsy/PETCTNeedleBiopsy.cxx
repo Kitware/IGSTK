@@ -383,6 +383,7 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
       m_PETImageSpatialObject->RequestSetTransformAndParent( m_CT2CTTransform, m_CTImageSpatialObject );
       this->ConnectImageRepresentation( 1 );
       this->ReadTreatmentPlan();
+      DisplayModeBtn->deactivate();
       return 1;
       }
     else
@@ -647,6 +648,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
 
     this->ConnectImageRepresentation(0);
 
+    LoadPETBtn->activate();
     LoadCTBtn->deactivate();
     LoadPETCTBtn->deactivate();
     TPlanPointList->deactivate();
