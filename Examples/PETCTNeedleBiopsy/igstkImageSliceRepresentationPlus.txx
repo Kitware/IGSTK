@@ -74,9 +74,9 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 
   // Set default values for window and level
   m_BGImageMapper = vtkImageMapToColors::New();
-  m_BGImageMapper->SetOutputFormatToRGBA();
+  //m_BGImageMapper->SetOutputFormatToRGBA();
   m_BGImageMapper->SetOutputFormatToLuminance();
-  m_BGImageMapper->PassAlphaToOutputOn();
+  //m_BGImageMapper->PassAlphaToOutputOn();
   //m_BGImageLUT = vtkWindowLevelLookupTable::New();
   vtkWindowLevelLookupTable * lut = vtkWindowLevelLookupTable::New();
   lut->SetLevel( 0 );
@@ -87,10 +87,14 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 
   m_FGImageMapper = vtkImageMapToColors::New();
   m_FGImageMapper->SetOutputFormatToRGBA();
-  m_FGImageMapper->SetOutputFormatToLuminance();
-  m_FGImageMapper->PassAlphaToOutputOn();
-  m_FGImageLUT = vtkWindowLevelLookupTable::New();
-  m_FGImageLUT = lut;
+  //m_FGImageMapper->SetOutputFormatToLuminance();
+  //m_FGImageMapper->PassAlphaToOutputOn();
+  vtkWindowLevelLookupTable * lut2 = vtkWindowLevelLookupTable::New();
+  lut2->SetLevel( 0 );
+  lut2->SetWindow( 1000 );
+  lut2->SetMinimumTableValue(0,0,0,0);
+  lut2->SetMaximumTableValue(1,0,0,1);
+  m_FGImageLUT = lut2;
   m_FGImageMapper->SetLookupTable( m_FGImageLUT );
 
   // Image reslice
@@ -262,7 +266,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 template < class TBGImageSO,  class TFGImageSO  >
 void
 ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
-::SetBGImageLUT( vtkImageMapToColors * lut )
+::SetBGImageLUT( vtkLookupTable * lut )
 {
   m_BGImageLUT = lut;
   m_BGImageMapper->SetLookupTable( m_BGImageLUT );
@@ -271,7 +275,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 template < class TBGImageSO,  class TFGImageSO  >
 void
 ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
-::SetFGImageLUT( vtkImageMapToColors * lut )
+::SetFGImageLUT( vtkLookupTable * lut )
 {
   m_FGImageLUT = lut;
   m_FGImageMapper->SetLookupTable( m_FGImageLUT );

@@ -469,6 +469,7 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation(int pet)
       if (m_PETImageSpatialObject) 
         {
         m_CTPETImageRepresentation[i]->SetBGOpacity(0.5); // This should be called after added to view
+        //m_CTPETImageRepresentation[i]->SetFGImageLUT(0.5)
         }
       else
         {
@@ -661,6 +662,35 @@ void PETCTNeedleBiopsy::RequestChangeTransparency()
     {
     m_CTCTImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
     m_CTPETImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
+    }
+}
+
+void PETCTNeedleBiopsy::RequestChangeWindowLevel()
+{
+  double fgWindow, fgLevel, bgWindow, bgLevel;
+  fgWindow = this->FGWindow->value() * this->FGWindowScale->value();
+  fgLevel = this->FGLevel->value() * this->FGLevelScale->value();
+  bgWindow = this->BGWindow->value() * this->BGWindowScale->value();
+  bgLevel = this->BGLevel->value() * this->BGLevelScale->value();
+
+  for( unsigned int i = 0; i<3; i++)
+    {
+    vtkWindowLevelLookupTable * fgLUT = vtkWindowLevelLookupTable::New();
+    fgLUT->SetWindow(fgWindow);
+    fgLUT->SetLevel(fgLevel);
+    fgLUT->SetMinimumTableValue(0,0,0,0);
+    fgLUT->SetMaximumTableValue(1,0,0,1);
+    fgLUT->Build();
+    m_CTCTImageRepresentation[i]->SetFGImageLUT(fgLUT);
+    m_CTPETImageRepresentation[i]->SetFGImageLUT(fgLUT);
+    
+    vtkWindowLevelLookupTable * bgLUT = vtkWindowLevelLookupTable::New();
+    bgLUT->SetWindow(bgWindow);
+    bgLUT->SetLevel(bgLevel);
+    bgLUT->Build();
+    m_CTCTImageRepresentation[i]->SetBGImageLUT(bgLUT);
+    m_CTPETImageRepresentation[i]->SetBGImageLUT(bgLUT);
+    
     }
 }
 

@@ -6,7 +6,7 @@ decl {\#include <FL/fl_ask.H>} {}
 
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
 
-class PETCTNeedleBiopsyGUI {open selected : {public igstk::Object}
+class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
 } {
   Function {PETCTNeedleBiopsyGUI()} {open
   } {
@@ -16,7 +16,7 @@ class PETCTNeedleBiopsyGUI {open selected : {public igstk::Object}
       xywh {746 99 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
-      Fl_Group ControlGroup {open
+      Fl_Group ControlGroup {
         xywh {0 0 165 690} box DOWN_BOX
       } {
         Fl_Group {} {
@@ -159,21 +159,61 @@ ChangeSelectedTPlanPoint();} open
         xywh {98 10 65 25} down_box BORDER_BOX
       } {}
     }
-    Fl_Window OverlayDisplayControlWindow {
+    Fl_Window OverlayDisplayControlWindow {open
       xywh {643 331 429 248} type Double visible
     } {
       Fl_Slider transparencySlider {
         label {Transparency:}
         callback {RequestChangeTransparency();}
-        xywh {90 25 250 15} type {Horz Knob} labeltype ENGRAVED_LABEL align 1 step 0.01 value 0.5
+        xywh {90 95 250 20} type {Horz Knob} labeltype ENGRAVED_LABEL align 1 step 0.01 value 0.5
       }
       Fl_Text_Display {} {
         label Background
-        xywh {20 40 50 15} box NO_BOX labeltype ENGRAVED_LABEL
+        xywh {20 110 50 15} box NO_BOX labeltype ENGRAVED_LABEL
       }
       Fl_Text_Display {} {
         label Foreground
-        xywh {360 40 50 10} box NO_BOX labeltype ENGRAVED_LABEL
+        xywh {360 110 50 10} box NO_BOX labeltype ENGRAVED_LABEL
+      }
+      Fl_Value_Slider FGWindow {
+        label {FGWindow:}
+        callback {RequestChangeWindowLevel();}
+        xywh {11 132 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 50 textsize 14
+      }
+      Fl_Value_Slider FGLevel {
+        label {FGLevel:}
+        callback {RequestChangeWindowLevel();}
+        xywh {11 169 333 20} type {Horz Knob} align 1 minimum -100 maximum 100 step 1 textsize 14
+      }
+      Fl_Value_Input FGWindowScale {
+        label {X }
+        callback {RequestChangeWindowLevel();}
+        xywh {367 131 31 20} value 10
+      }
+      Fl_Value_Input FGLevelScale {
+        label {X }
+        callback {RequestChangeWindowLevel();}
+        xywh {366 168 31 20} value 10
+      }
+      Fl_Value_Slider BGWindow {
+        label {BGWindow:}
+        callback {RequestChangeWindowLevel();} selected
+        xywh {13 21 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 50 textsize 14
+      }
+      Fl_Value_Slider BGLevel {
+        label {BGLevel:}
+        callback {RequestChangeWindowLevel();}
+        xywh {13 58 333 20} type {Horz Knob} align 1 minimum -100 maximum 100 step 1 textsize 14
+      }
+      Fl_Value_Input BGWindowScale {
+        label {X }
+        callback {RequestChangeWindowLevel();}
+        xywh {369 20 31 20} value 10
+      }
+      Fl_Value_Input BGLevelScale {
+        label {X }
+        callback {RequestChangeWindowLevel();}
+        xywh {368 57 31 20} value 10
       }
     }
   }
@@ -235,5 +275,7 @@ else
   Function {RequestChangeDisplayMode()} {open return_type {virtual void}
   } {}
   Function {RequestChangeTransparency()} {open return_type {virtual void}
+  } {}
+  Function {RequestChangeWindowLevel()} {open return_type {virtual void}
   } {}
 } 

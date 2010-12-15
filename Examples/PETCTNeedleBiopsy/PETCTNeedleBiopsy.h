@@ -46,6 +46,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkTrackerInitializer.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 
+#include "vtkWindowLevelLookupTable.h"
+
 /** \class PETCTNeedleBiopsy
 * 
 * \brief Implementation class for PETCTNeedleBiopsyGUI.
@@ -89,6 +91,7 @@ public:
   void RequestCT2CTRegistration();
   void RequestChangeDisplayMode();
   void RequestChangeTransparency();
+  void RequestChangeWindowLevel();
   //int  RequestLoadPETCTImage();
   int  RequestLoadPETImage();
   void ChangeSelectedCTImage();
@@ -148,6 +151,7 @@ private:
   /** Slice representations of the image in View2D and View3D */
   std::vector< CTCTRepresentationType::Pointer >       m_CTCTImageRepresentation;
   std::vector< CTPETRepresentationType::Pointer >      m_CTPETImageRepresentation;
+  vtkWindowLevelLookupTable *                          m_LUT;
 
 
 

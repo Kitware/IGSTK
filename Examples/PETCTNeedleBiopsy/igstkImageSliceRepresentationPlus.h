@@ -117,9 +117,9 @@ public:
   void SetSliceSize(double size);
 
   void SetBGImageMapper(vtkImageMapToColors * mapper); 
-  void SetBGImageLUT(vtkImageMapToColors * lut); 
+  void SetBGImageLUT(vtkLookupTable * lut); 
   void SetFGImageMapper(vtkImageMapToColors * mapper); 
-  void SetFGImageLUT(vtkImageMapToColors * lut); 
+  void SetFGImageLUT(vtkLookupTable * lut); 
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
