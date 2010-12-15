@@ -615,12 +615,12 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
       vtkMatrix4x4 * reslice = vtkMatrix4x4::New();
       m_TransformObserver->GetTransform().ExportTransform(* reslice);
       vtkMatrix4x4::Multiply4x4(reslice, m_ResliceAxes, reslice);
-      m_FGImageReslice->SetResliceAxes( reslice );
+      m_FGImageReslice->SetResliceAxes( reslice ); // Reslice FGImage in its local coordinate system
       m_FGImageReslice->SetOutputOrigin( -m_SizeX/2, -m_SizeY/2, 0 );
       m_FGImageReslice->SetOutputExtent( 1, int(m_SizeX+0.5),
                                    1, int(m_SizeY+0.5),
                                    0, 0 );
-      m_FGActor->SetUserMatrix(m_ResliceAxes);
+      m_FGActor->SetUserMatrix(m_ResliceAxes);  // Place all resliced image at the same position in BGImage space
       }
     }
 

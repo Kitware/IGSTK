@@ -62,7 +62,7 @@ public:
     OffSagittal = 4,
     Perpendicular = 5,        //6DOF tool
     OffPerpendicular = 6,     //5DOF tool, need surgeon position information
-    HybridPerpendicular = 7,  //Targetomg view, need entry and targe points
+    HybridPerpendicular = 7,  //Targeting view, need setup path
    };
 
   /** Available surgeon positions. */
