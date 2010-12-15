@@ -240,7 +240,7 @@ private:
   /** Internal functions */
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
-  void ConnectImageRepresentation();
+  void ConnectImageRepresentation( int pet);
   void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
   void UpdatePath();  

@@ -173,15 +173,6 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
 
   /** Creating observers and their call back functions */
 
-  /** This observes picking event from view */
-  m_ViewPickerObserver = LoadedObserverType::New();
-  m_ViewPickerObserver->SetCallbackFunction( this, &PETCTNeedleBiopsy::Picking );
-
-  /** This observes reslicing events from FourQuadrantView class */
-  m_ViewResliceObserver = LoadedObserverType::New();
-  m_ViewResliceObserver->SetCallbackFunction( this,
-                                                &PETCTNeedleBiopsy::ResliceImage);
-
   /** 
    *  This observer catches the tracker configuration sent out by
    *  TrackerConfiguration GUI
@@ -218,18 +209,37 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     }
     
   /** Create image oblique slice representations  */
-  // m_CTPETImageRepresentation.clear();
-  // for (unsigned int i=0; i<3; i++)
-  // {
-    // CTPETRepresentationType::Pointer rep = CTPETRepresentationType::New();
-    // rep->SetBGOpacity(1);
-    // m_CTPETImageRepresentation.push_back( rep );
-  // }
-  
+  m_CTPETImageRepresentation.clear();
+  for (unsigned int i=0; i<3; i++)
+    {
+    CTPETRepresentationType::Pointer rep = CTPETRepresentationType::New();
+    rep->SetBGOpacity(1);
+    m_CTPETImageRepresentation.push_back( rep );
+    }  
   
   m_ImageCenter[0] = 0;
   m_ImageCenter[1] = 0;
   m_ImageCenter[2] = 0;
+
+  /** This observes picking event from view */
+  m_ViewPickerObserver = LoadedObserverType::New();
+  m_ViewPickerObserver->SetCallbackFunction( this, NULL );
+
+  /** This observes reslicing events from FourQuadrantView class */
+  m_ViewResliceObserver = LoadedObserverType::New();
+  m_ViewResliceObserver->SetCallbackFunction( this, NULL);
+
+  /** Adding observer for picking event */
+  for ( int i=0; i<3; i++)
+    {
+    ViewerGroup->m_Views[i]->AddObserver(
+      igstk::CoordinateSystemTransformToEvent(),
+      m_ViewPickerObserver );
+    }
+
+  /** Adding observer for slider bar reslicing event*/
+  ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(),
+    m_ViewResliceObserver );
 }
 
 
@@ -299,7 +309,7 @@ int PETCTNeedleBiopsy::RequestLoadCTImage(int ct)
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
       m_ImageSpatialObject = m_CTImageObserver->GetCTImage();
       m_FGImageSpatialObject = NULL;
-      this->ConnectImageRepresentation();
+      this->ConnectImageRepresentation( 0 );
       this->ReadTreatmentPlan();
       if(ct ==0)
         {
@@ -359,17 +369,19 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
     *                           igstk::CTImageSpatialObject);
     * Refer to igstkMacros.h for more detail about this macro.
     */
-    CTImageObserver::Pointer  m_CTImageObserver = CTImageObserver::New();
-    m_CTImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
-                                                      m_CTImageObserver);
+    PETImageObserver::Pointer  m_PETImageObserver = PETImageObserver::New();
+    m_PETImageReader->AddObserver(igstk::PETImageReader::ImageModifiedEvent(),
+                                                      m_PETImageObserver);
 
-    m_CTImageReader->RequestGetImage(); // This will invoke the event
+    m_PETImageReader->RequestGetImage(); // This will invoke the event
 
-    if(m_CTImageObserver->GotCTImage())
+    if(m_PETImageObserver->GotPETImage())
       {
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
-      //m_PETImageSpatialObject = m_CTImageObserver->GetCTImage();
-      this->ConnectImageRepresentation();
+      m_PETImageSpatialObject = m_PETImageObserver->GetPETImage();
+      m_PETImageSpatialObject->RequestDetachFromParent();
+      m_PETImageSpatialObject->RequestSetTransformAndParent( m_CT2CTTransform, m_CTImageSpatialObject );
+      this->ConnectImageRepresentation( 1 );
       this->ReadTreatmentPlan();
       return 1;
       }
@@ -390,7 +402,7 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
 *  This method should be invoked only when the Image has been loaded
 *  -----------------------------------------------------------------
 */
-void PETCTNeedleBiopsy::ConnectImageRepresentation()
+void PETCTNeedleBiopsy::ConnectImageRepresentation(int pet)
 {
   /** Setting up annotation and added to four views  */
   m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
@@ -404,31 +416,64 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation()
   * the desired slice orientation for each representations, and then 
   * add them to the views
   */
-  for( int i=0; i<3; i++)
-    {
-    m_CTCTImageRepresentation[i]->RequestSetBGImageSO( m_ImageSpatialObject );
-    m_CTCTImageRepresentation[i]->RequestSetFGImageSO( m_FGImageSpatialObject );
-    }
-
-  m_CTCTImageRepresentation[0]->SetOrientation(
-    CTCTRepresentationType::Axial );
-  m_CTCTImageRepresentation[1]->SetOrientation(
-    CTCTRepresentationType::Sagittal );
-  m_CTCTImageRepresentation[2]->SetOrientation(
-    CTCTRepresentationType::Coronal );
-
-
-  for ( int i=0; i<3; i++)
-    {
-    ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTCTImageRepresentation[i] );
-    ViewerGroup->m_Views[i]->RequestAddObject( m_CTCTImageRepresentation[i] );
-    if (m_FGImageSpatialObject) 
+  if(!pet)
+  {
+    for( int i=0; i<3; i++)
       {
-      m_CTCTImageRepresentation[i]->SetBGOpacity(0.5); // This should be called after added to view
+      m_CTCTImageRepresentation[i]->RequestSetBGImageSO( m_ImageSpatialObject );
+      m_CTCTImageRepresentation[i]->RequestSetFGImageSO( m_FGImageSpatialObject );
       }
-    else
+
+    m_CTCTImageRepresentation[0]->SetOrientation(
+      CTCTRepresentationType::Axial );
+    m_CTCTImageRepresentation[1]->SetOrientation(
+      CTCTRepresentationType::Sagittal );
+    m_CTCTImageRepresentation[2]->SetOrientation(
+      CTCTRepresentationType::Coronal );
+    
+    for ( int i=0; i<3; i++)
       {
-      m_CTCTImageRepresentation[i]->SetBGOpacity(1.0);
+      ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTCTImageRepresentation[i] );
+      ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTPETImageRepresentation[i] );
+      ViewerGroup->m_Views[i]->RequestAddObject( m_CTCTImageRepresentation[i] );
+      if (m_FGImageSpatialObject) 
+        {
+        m_CTCTImageRepresentation[i]->SetBGOpacity(0.5); // This should be called after added to view
+        }
+      else
+        {
+        m_CTCTImageRepresentation[i]->SetBGOpacity(1.0);
+        }
+      }
+    }
+  else
+    {
+    for( int i=0; i<3; i++)
+      {
+      m_CTPETImageRepresentation[i]->RequestSetBGImageSO( m_CTImageSpatialObject );
+      m_CTPETImageRepresentation[i]->RequestSetFGImageSO( m_PETImageSpatialObject );
+      }
+
+    m_CTPETImageRepresentation[0]->SetOrientation(
+      CTPETRepresentationType::Axial );
+    m_CTPETImageRepresentation[1]->SetOrientation(
+      CTPETRepresentationType::Sagittal );
+    m_CTPETImageRepresentation[2]->SetOrientation(
+      CTPETRepresentationType::Coronal );
+    
+    for ( int i=0; i<3; i++)
+      {
+      ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTCTImageRepresentation[i] );
+      ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTPETImageRepresentation[i] );
+      ViewerGroup->m_Views[i]->RequestAddObject( m_CTPETImageRepresentation[i] );
+      if (m_PETImageSpatialObject) 
+        {
+        m_CTPETImageRepresentation[i]->SetBGOpacity(0.5); // This should be called after added to view
+        }
+      else
+        {
+        m_CTPETImageRepresentation[i]->SetBGOpacity(1.0);
+        }
       }
     }
 
@@ -497,19 +542,9 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation()
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
     }
 
-
-  /** Adding observer for picking event */
-  for ( int i=0; i<3; i++)
-    {
-    ViewerGroup->m_Views[i]->AddObserver(
-      igstk::CoordinateSystemTransformToEvent(),
-      m_ViewPickerObserver );
-    }
-
-  /** Adding observer for slider bar reslicing event*/
-  ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(),
-    m_ViewResliceObserver );
-
+  m_ViewPickerObserver->SetCallbackFunction( this, &PETCTNeedleBiopsy::Picking );
+  m_ViewResliceObserver->SetCallbackFunction( this,
+                                                &PETCTNeedleBiopsy::ResliceImage);
 }
 
 void PETCTNeedleBiopsy::ChangeSelectedCTImage(int ct)
@@ -518,14 +553,14 @@ void PETCTNeedleBiopsy::ChangeSelectedCTImage(int ct)
     {
     m_ImageSpatialObject = m_CTImageSpatialObject;
     m_Plan               = m_CTPlan;
-    this->ConnectImageRepresentation();
+    this->ConnectImageRepresentation(0);
     this->ChangeSelectedTPlanPoint();
     }
   else
     {
     m_ImageSpatialObject = m_PETCTImageSpatialObject;
     m_Plan               = m_PETCTPlan;
-    this->ConnectImageRepresentation();
+    this->ConnectImageRepresentation(0);
     this->ChangeSelectedTPlanPoint();
     }
 }
@@ -609,7 +644,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
     m_ImageSpatialObject = m_CTImageSpatialObject;
     m_FGImageSpatialObject = m_PETCTImageSpatialObject;
 
-    this->ConnectImageRepresentation();
+    this->ConnectImageRepresentation(0);
 
     LoadCTBtn->deactivate();
     LoadPETCTBtn->deactivate();
@@ -625,6 +660,7 @@ void PETCTNeedleBiopsy::RequestChangeTransparency()
   for( unsigned int i = 0; i<3; i++)
     {
     m_CTCTImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
+    m_CTPETImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
     }
 }
 
@@ -1180,6 +1216,8 @@ void PETCTNeedleBiopsy::ResliceImage ( IndexType index )
     {
     m_CTCTImageRepresentation[i]->SetResliceTransform( t );
     m_CTCTImageRepresentation[i]->RequestReslice( );
+    m_CTPETImageRepresentation[i]->SetResliceTransform( t );
+    m_CTPETImageRepresentation[i]->RequestReslice( );
     }
 
   this->ViewerGroup->redraw();
