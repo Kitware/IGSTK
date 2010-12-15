@@ -73,7 +73,7 @@ public:
   /** typedef for PETImageReaderType */
   typedef igstk::PETImageReader                         PETImageReaderType;
   typedef PETImageReaderType::ImageSpatialObjectType    PETImageSOType;
-
+  
   /** typedef for ImageRepresentationType */
   typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, CTImageSOType>   
                                                     CTCTRepresentationType;
@@ -105,11 +105,11 @@ public:
   void SetTrackerFiducialPoint();
 
   /** Define observers for event communication */
-  igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
-                                                 igstk::CTImageSpatialObject);
-  igstkObserverObjectMacro( PETImage,igstk::PETImageReader::ImageModifiedEvent,
-                                                 igstk::PETImageSpatialObject);
-                                                 
+  igstkObserverObjectMacro( CTImage,CTImageReaderType::ImageModifiedEvent,
+                                                 CTImageSOType);
+  igstkObserverObjectMacro( PETImage,PETImageReaderType::ImageModifiedEvent,
+                                                 PETImageSOType);
+                                                                                                
   igstkObserverMacro( Registration, igstk::CoordinateSystemTransformToEvent,
     igstk::CoordinateSystemTransformToResult );
 
@@ -145,8 +145,6 @@ private:
 
   /** Define a initial world coordinate system */
   igstk::AxesObject::Pointer                            m_WorldReference;
-  igstk::AxesObject::Pointer                            m_ResliceReference;
-  igstk::TransformObserver::Pointer                     m_ResliceReferenceObserver;
 
   /** Slice representations of the image in View2D and View3D */
   std::vector< CTCTRepresentationType::Pointer >       m_CTCTImageRepresentation;

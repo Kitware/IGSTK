@@ -77,13 +77,9 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_LandmarkRegistration  = RegistrationType::New();
   m_Annotation            = igstk::Annotation2D::New();
   m_WorldReference        = igstk::AxesObject::New();
-  m_ResliceReference      = igstk::AxesObject::New();
   m_TrackerInitializerList.clear();
   m_Plan                  = new igstk::TreatmentPlan;
 
-  m_ResliceReferenceObserver = igstk::TransformObserver::New();
-  m_ResliceReferenceObserver->ObserveTransformEventsFrom( m_ResliceReference );
-  
   /** Setting up spatial objects and their representations */
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
@@ -201,19 +197,11 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     m_CTCTImageRepresentation.push_back( rep );
     }
 
-  m_CTPETImageRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
-    {
-    CTPETRepresentationType::Pointer rep = CTPETRepresentationType::New();
-    m_CTPETImageRepresentation.push_back( rep );
-    }
-    
   /** Create image oblique slice representations  */
   m_CTPETImageRepresentation.clear();
   for (unsigned int i=0; i<3; i++)
     {
     CTPETRepresentationType::Pointer rep = CTPETRepresentationType::New();
-    rep->SetBGOpacity(1);
     m_CTPETImageRepresentation.push_back( rep );
     }  
   
@@ -299,7 +287,7 @@ int PETCTNeedleBiopsy::RequestLoadCTImage(int ct)
     * Refer to igstkMacros.h for more detail about this macro.
     */
     CTImageObserver::Pointer  m_CTImageObserver = CTImageObserver::New();
-    m_CTImageReader->AddObserver(igstk::CTImageReader::ImageModifiedEvent(),
+    m_CTImageReader->AddObserver(CTImageReaderType::ImageModifiedEvent(),
                                                       m_CTImageObserver);
 
     m_CTImageReader->RequestGetImage(); // This will invoke the event
@@ -370,7 +358,7 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
     * Refer to igstkMacros.h for more detail about this macro.
     */
     PETImageObserver::Pointer  m_PETImageObserver = PETImageObserver::New();
-    m_PETImageReader->AddObserver(igstk::PETImageReader::ImageModifiedEvent(),
+    m_PETImageReader->AddObserver(PETImageReaderType::ImageModifiedEvent(),
                                                       m_PETImageObserver);
 
     m_PETImageReader->RequestGetImage(); // This will invoke the event
@@ -379,11 +367,18 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
       {
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
       m_PETImageSpatialObject = m_PETImageObserver->GetPETImage();
+      m_ImageSpatialObject = m_CTImageSpatialObject;      
       m_PETImageSpatialObject->RequestDetachFromParent();
       m_PETImageSpatialObject->RequestSetTransformAndParent( m_CT2CTTransform, m_CTImageSpatialObject );
       this->ConnectImageRepresentation( 1 );
-      this->ReadTreatmentPlan();
+      //this->ReadTreatmentPlan();
+      CTImageList->value(0);
       DisplayModeBtn->deactivate();
+      TPlanPointList->clear();
+      TPlanPointList->add( "Entry" );
+      TPlanPointList->add( "Target" );
+      TPlanPointList->value( 0 );
+      TPlanPointList->activate();
       return 1;
       }
     else
@@ -451,7 +446,7 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation(int pet)
     {
     for( int i=0; i<3; i++)
       {
-      m_CTPETImageRepresentation[i]->RequestSetBGImageSO( m_CTImageSpatialObject );
+      m_CTPETImageRepresentation[i]->RequestSetBGImageSO( m_ImageSpatialObject );
       m_CTPETImageRepresentation[i]->RequestSetFGImageSO( m_PETImageSpatialObject );
       }
 
@@ -518,8 +513,6 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation(int pet)
 
   m_ImageSpatialObject->RequestSetTransformAndParent(
     transform, m_WorldReference );
-  m_ResliceReference->RequestSetTransformAndParent(
-    transform, m_ImageSpatialObject );
 
   m_EntryPoint->RequestSetTransformAndParent( transform, m_WorldReference );
   m_TargetPoint->RequestSetTransformAndParent( transform, m_WorldReference );
