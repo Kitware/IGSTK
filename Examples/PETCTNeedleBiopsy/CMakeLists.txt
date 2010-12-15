@@ -29,6 +29,8 @@ SET(PETCTNeedleBiopsy_SRCS
   igstkPolarisTrackerConfigurationIO.cxx
   igstkImageSliceRepresentation.h
   igstkImageSliceRepresentation.txx
+  igstkImageSliceRepresentationPlus.h
+  igstkImageSliceRepresentationPlus.txx
   )
   
 IF(IGSTKSandbox_USE_MicronTracker)

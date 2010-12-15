@@ -19,16 +19,14 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "PETCTNeedleBiopsyGUI.h"
 
-#ifdef ITK_PRE4_VERSION
-#include "itkPETDicomImageReader.h"
-#else
-#include "itkPETDicomImageReader2.h"
-#endif
+#include "igstkPETImageReader.h"
+#include "igstkPETImageSpatialObject.h"
 
 #include "igstkTransformObserver.h"
 #include "igstkCTImageReader.h"
 #include "igstkCTImageSpatialObjectRepresentation.h"
 #include "igstkImageSliceRepresentation.h"
+#include "igstkImageSliceRepresentationPlus.h"
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 #include "igstkLandmark3DRegistration.h"
@@ -65,25 +63,20 @@ public:
   
   igstkLoggerMacro();
 
-  /** typedef for ImageReaderType */
-  typedef igstk::CTImageReader                        ImageReaderType;
-  typedef ImageReaderType::ImageSpatialObjectType     ImageSpatialObjectType;
-  typedef ImageSpatialObjectType::IndexType           IndexType;
+  /** typedef for CTImageReaderType */
+  typedef igstk::CTImageReader                          CTImageReaderType;
+  typedef CTImageReaderType::ImageSpatialObjectType     CTImageSOType;
+  typedef CTImageSOType::IndexType                      IndexType;
    
   /** typedef for PETImageReaderType */
-  typedef float PixelType;
-  typedef itk::Image< PixelType, 3>                   PETImageType;  
-
-#ifdef ITK_PRE4_VERSION
-  typedef itk::PETDicomImageReader<PETImageType>         PETImageReaderType;
-#else
-  typedef itk::PETDicomImageReader2<PETImageType>        PETImageReaderType;
-#endif
+  typedef igstk::PETImageReader                         PETImageReaderType;
+  typedef PETImageReaderType::ImageSpatialObjectType    PETImageSOType;
 
   /** typedef for ImageRepresentationType */
-  typedef igstk::CTImageSpatialObjectRepresentation   ImageRepresentationType;
-  typedef igstk::ImageSliceRepresentation<ImageSpatialObjectType>   
-                                                    ObliqueRepresentationType;
+  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, CTImageSOType>   
+                                                    CTCTRepresentationType;
+  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, PETImageSOType>   
+                                                    CTPETRepresentationType;
 
   /** typedef for RegistrationType */
   typedef igstk::Landmark3DRegistration               RegistrationType;
@@ -111,14 +104,14 @@ public:
   /** Define observers for event communication */
   igstkObserverObjectMacro( CTImage,igstk::CTImageReader::ImageModifiedEvent,
                                                  igstk::CTImageSpatialObject);
-
+  igstkObserverObjectMacro( PETImage,igstk::PETImageReader::ImageModifiedEvent,
+                                                 igstk::PETImageSpatialObject);
+                                                 
   igstkObserverMacro( Registration, igstk::CoordinateSystemTransformToEvent,
     igstk::CoordinateSystemTransformToResult );
 
   igstkObserverMacro( RegistrationError, igstk::DoubleTypeEvent, double );
 
-  igstkObserverMacro( SliceBounds, igstk::IntegerBoundsEvent, 
-                                  igstk::EventHelperType::IntegerBoundsType );
   PETCTNeedleBiopsy();
   virtual ~PETCTNeedleBiopsy();
 
@@ -128,7 +121,8 @@ private:
   void operator=(const Self&);    // purposely not implemented
   
   /** DICOM image reader */
-  ImageReaderType::Pointer                              m_ImageReader;
+  CTImageReaderType::Pointer                            m_CTImageReader;
+  PETImageReaderType::Pointer                           m_PETImageReader;
   std::string                                           m_ImageDir;
   std::string                                           m_PlanFilename;
   igstk::TreatmentPlan                                * m_Plan;
@@ -136,14 +130,14 @@ private:
   igstk::TreatmentPlan                                * m_PETCTPlan;
   std::string                                           m_CTPlanFilename;
   igstk::TreatmentPlan                                * m_CTPlan;
-  ImageSpatialObjectType::PointType                     m_ImageCenter;
+  CTImageSOType::PointType                              m_ImageCenter;
 
   /** Pointer to the CTImageSpatialObject */
-  ImageSpatialObjectType::Pointer                       m_ImageSpatialObject;
-  ImageSpatialObjectType::Pointer                       m_OverlayImageSpatialObject;
-  ImageSpatialObjectType::Pointer                       m_CTImageSpatialObject;
-  ImageSpatialObjectType::Pointer                       m_PETCTImageSpatialObject;
-  //ImageSpatialObjectType::Pointer                       m_PETImageSpatialObject;
+  CTImageSOType::Pointer                                m_ImageSpatialObject;    //Temp holder
+  CTImageSOType::Pointer                                m_CTImageSpatialObject;
+  CTImageSOType::Pointer                                m_PETCTImageSpatialObject;
+  CTImageSOType::Pointer                                m_FGImageSpatialObject;  //Temp holder
+  PETImageSOType::Pointer                               m_PETImageSpatialObject;
   igstk::Transform                                      m_CT2CTTransform;
 
   /** Define a initial world coordinate system */
@@ -152,11 +146,9 @@ private:
   igstk::TransformObserver::Pointer                     m_ResliceReferenceObserver;
 
   /** Slice representations of the image in View2D and View3D */
-  std::vector< ImageRepresentationType::Pointer >       m_ImageRepresentation;
-  std::vector< ImageRepresentationType::Pointer >       m_OverlayImageRepresentation;
-  //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
-  //std::vector< ImageRepresentationType::Pointer >       m_PETCTImageRepresentation;
-  std::vector<ObliqueRepresentationType::Pointer>       m_ObliqueRepresentation;
+  std::vector< CTCTRepresentationType::Pointer >       m_CTCTImageRepresentation;
+  std::vector< CTPETRepresentationType::Pointer >      m_CTPETImageRepresentation;
+
 
 
   /** Landmark registration and its landmark points container */
@@ -220,7 +212,7 @@ private:
   /** Utility functions, conversion between points and transform */
   inline 
   igstk::Transform 
-  PointToTransform( ImageSpatialObjectType::PointType point)
+  PointToTransform( CTImageSOType::PointType point)
   {
     igstk::Transform transform;
     igstk::Transform::VectorType translation;
@@ -234,10 +226,10 @@ private:
   }
 
   inline 
-  ImageSpatialObjectType::PointType 
+  CTImageSOType::PointType 
   TransformToPoint( igstk::Transform transform)
   {
-    ImageSpatialObjectType::PointType point;
+    CTImageSOType::PointType point;
     for (unsigned int i=0; i<3; i++)
       {
       point[i] = transform.GetTranslation()[i];
@@ -249,8 +241,6 @@ private:
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation();
-  void AddCT2CTOverlay();
-  void RemoveCT2CTOverlay();
   void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
   void UpdatePath();  
