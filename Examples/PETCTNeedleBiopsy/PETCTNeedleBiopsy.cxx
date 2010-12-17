@@ -32,7 +32,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkPlane.h"
 
 #define VIEW_3D_REFRESH_RATE 30
-#define VIEW_STATIC_REFRESH_RATE 15
+#define VIEW_STATIC_REFRESH_RATE 10
+
+int counter = 0 ;
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -955,6 +957,7 @@ void PETCTNeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
                                    ( GUIType::ConfigurationEvent *) & event;
 
     igstk::TrackerConfiguration  tc = confEvent->Get();
+    tc.m_NDITrackerConfiguration->m_Frequency = 10;
 
     m_TrackerInitializer = new igstk::TrackerInitializer;
     m_TrackerInitializer->SetTrackerConfiguration( & tc );
@@ -1560,6 +1563,7 @@ void PETCTNeedleBiopsy::RequestStopTracking()
   ViewerGroup->m_Views[i]->RequestResetCamera();
   ViewerGroup->m_Views[i]->SetCameraFocalPoint(m_ImageCenter[0],m_ImageCenter[1],m_ImageCenter[2]);
   ViewerGroup->m_Views[i]->SetCameraZoomFactor(2.0);
+  //ViewerGroup->m_Views[i]->SetCameraClippingRange( 0, 1000 );
   }
 
   m_ViewPickerObserver->SetCallbackFunction( this, &PETCTNeedleBiopsy::Picking );
@@ -1580,6 +1584,7 @@ void PETCTNeedleBiopsy::RequestStopTracking()
 
 void PETCTNeedleBiopsy::ObliqueResliceImage(igstk::Transform transform, double virtualTip)
 {
+ 
   vtkCamera * camera;
   for (unsigned int i = 0; i<4; i++)
   {
@@ -1607,12 +1612,14 @@ void PETCTNeedleBiopsy::ObliqueResliceImage(igstk::Transform transform, double v
     translation[i] = pp[i];
     }
 
-  igstk::Transform transform;
-  transform.SetTranslation( translation, 0.0, igstk::TimeStamp::GetLongestPossibleTime());
-  m_TargetProjection->RequestUpdateTransformToParent( transform );
+  igstk::Transform t;
+  t.SetTranslation( translation, 0.0, igstk::TimeStamp::GetLongestPossibleTime());
+  m_TargetProjection->RequestUpdateTransformToParent( t );
 
   this->ViewerGroup->redraw();
   Fl::check();
+  
+  std::cout << "tracker update:" << counter++ << "\n";
 }
 
 void PETCTNeedleBiopsy::UpdateVirtualTip( const itk::EventObject & event )

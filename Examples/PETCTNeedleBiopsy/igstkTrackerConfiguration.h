@@ -87,6 +87,9 @@ public:
 
   virtual ~TrackerConfiguration();
 
+  MicronTrackerConfiguration * m_MicronTrackerConfiguration;
+  NDITrackerConfiguration    * m_NDITrackerConfiguration;
+
 private:
   int CheckPolarisValidity();
   int CheckAuroraValidity();
@@ -94,9 +97,6 @@ private:
 
   TrackerType                  m_TrackerType;
   std::string                  m_ValidityErrorMessage;
-
-  MicronTrackerConfiguration * m_MicronTrackerConfiguration;
-  NDITrackerConfiguration    * m_NDITrackerConfiguration;
 
 };
 
