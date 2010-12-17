@@ -30,8 +30,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkSceneGraph.h"
 #include "igstkSceneGraphUI.h"
 
-#define VIEW_3D_REFRESH_RATE 15
-#define VIEW_STATIC_REFRESH_RATE 10
+#define VIEW_3D_REFRESH_RATE 30
+#define VIEW_STATIC_REFRESH_RATE 15
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -1412,9 +1412,6 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::Axial);  
   igstk::Transform::VectorType path;
   path =  m_CTPlan->m_TargetPoint - m_CTPlan->m_EntryPoint;
-  std::cout<< "###################################" << std::endl;
-  std::cout<< path << std::endl;
-  std::cout<< "###################################" << std::endl;
   m_CTPETImageRepresentation[3]->SetPathVector( path );
   // ViewerGroup->m_Views[3]->RequestRemoveObject( m_CTPETImageRepresentation[3] );
   ViewerGroup->m_Views[3]->RequestAddObject( m_CTPETImageRepresentation[3] );  
@@ -1432,7 +1429,8 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   
   for (unsigned int i=0; i<4; i++)
     {
-    m_CTPETImageRepresentation[i]->SetPrincipalAxes(pAxes);    
+    m_CTPETImageRepresentation[i]->SetPrincipalAxes(pAxes);
+    m_CTPETImageRepresentation[i]->SetSliceSize(300);
     }
   
   ViewerGroup->m_Sliders[0]->minimum( 0 );

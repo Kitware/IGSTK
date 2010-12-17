@@ -48,9 +48,9 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_CalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
   m_ResliceTransform.SetToIdentity( 1000 );
 
-  m_SliceSize      = 250;
-  m_SizeX          = 250;
-  m_SizeY          = 250;
+  m_SliceSize      = 500;
+  m_SizeX          = 500;
+  m_SizeY          = 500;
   m_CameraDistance = 1000;
   m_BGOpacity      = 1.0;
   m_VirtualTip     = 0.0;
@@ -612,6 +612,8 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 {
   igstkLogMacro( DEBUG,
            "igstk::ImageSliceRepresentationPlus::ResliceProcessing called...\n");
+  
+  double sizeX, sizeY;
 
   if( ( m_Orientation == Axial) ||
       ( m_Orientation == Sagittal) ||
@@ -620,17 +622,20 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
     )
     {
     this->ComputeOrthogonalResliceAxes();
+    sizeX = m_SizeX;
+    sizeY = m_SizeY;
     }
     else
     {
     this->ComputeOffOrthogonalResliceAxes();
+    sizeX = sizeY = m_SliceSize;
     }
 
   //m_BGImageReslice->SetInput ( m_BGImageData );
   m_BGImageReslice->SetResliceAxes( m_ResliceAxes );
-  m_BGImageReslice->SetOutputOrigin( -m_SizeX/2, -m_SizeY/2, 0 );
-  m_BGImageReslice->SetOutputExtent( 1, int(m_SizeX+0.5),
-                                   1, int(m_SizeY+0.5),
+  m_BGImageReslice->SetOutputOrigin( -sizeX/2, -sizeY/2, 0 );
+  m_BGImageReslice->SetOutputExtent( 1, int(sizeX+0.5),
+                                   1, int(sizeY+0.5),
                                    0, 0 );
   m_BGActor->SetUserMatrix(m_ResliceAxes);
 
@@ -644,9 +649,9 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
       m_TransformObserver->GetTransform().ExportTransform(* reslice);
       vtkMatrix4x4::Multiply4x4(reslice, m_ResliceAxes, reslice);
       m_FGImageReslice->SetResliceAxes( reslice ); // Reslice FGImage in its local coordinate system
-      m_FGImageReslice->SetOutputOrigin( -m_SizeX/2, -m_SizeY/2, 0 );
-      m_FGImageReslice->SetOutputExtent( 1, int(m_SizeX+0.5),
-                                   1, int(m_SizeY+0.5),
+      m_FGImageReslice->SetOutputOrigin( -sizeX/2, -sizeY/2, 0 );
+      m_FGImageReslice->SetOutputExtent( 1, int(sizeX+0.5),
+                                   1, int(sizeY+0.5),
                                    0, 0 );
       m_FGActor->SetUserMatrix(m_ResliceAxes);  // Place all resliced image at the same position in BGImage space
       }
@@ -731,8 +736,6 @@ void
 ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 ::SetSliceSize( double size )
 {
-  m_SizeX = size;
-  m_SizeY = size;
   m_SliceSize = size;
 }
 
