@@ -97,8 +97,8 @@ public:
   void ChangeSelectedCTImage();
   void ChangeSelectedTPlanPoint();
   void RequestConnectToTracker();
-  void RequestDisconnetTracker();
-  void ChangeActiveTrackerTool();
+  //void RequestDisconnetTracker();
+  //void ChangeActiveTrackerTool();
   void RequestRegistration();
   void RequestStartTracking();
   void RequestStopTracking();
@@ -173,6 +173,7 @@ private:
   LoadedObserverType::Pointer               m_ViewResliceObserver;
   LoadedObserverType::Pointer               m_TrackerConfigurationObserver;
   LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
+  igstk::TransformObserver::Pointer         m_TransformObserver;
 
   /** Ellipsoid spatial object, used to represent 
    *  the landmark point, tip of the probe. */
@@ -243,7 +244,7 @@ private:
   void ReadTreatmentPlan();
   void WriteTreatmentPlan();
   void ConnectImageRepresentation( int pet);
-  void UpdateTrackerAndTrackerToolList();
+  //void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
   void UpdatePath();  
   void ResliceImage( IndexType index ); 

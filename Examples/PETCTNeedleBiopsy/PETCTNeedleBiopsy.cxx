@@ -84,7 +84,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_NeedleTip                   = EllipsoidType::New();
   m_NeedleTip->SetRadius( 5, 5, 5 );
   m_NeedleTipRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
     {
     EllipsoidRepresentationType::Pointer  tipRepresentation     = EllipsoidRepresentationType::New();
     tipRepresentation->RequestSetEllipsoidObject( m_NeedleTip );
@@ -103,7 +103,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
 
   m_NeedleRepresentation.clear();
   m_VirtualTipRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     CylinderRepresentationType::Pointer  needleRepresentation      = CylinderRepresentationType::New();
     needleRepresentation->RequestSetCylinderObject( m_Needle );
@@ -122,7 +122,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->SetRadius( 6, 6, 6 ); 
   m_TargetRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     EllipsoidRepresentationType::Pointer  targetRepresentation        = EllipsoidRepresentationType::New();
     targetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
@@ -141,7 +141,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_FiducialPoint                 = EllipsoidType::New();
   m_FiducialPoint->SetRadius( 6, 6, 6 );
   m_FiducialRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
   {
     EllipsoidRepresentationType::Pointer  fiducialRepresentation        = EllipsoidRepresentationType::New();
     fiducialRepresentation->RequestSetEllipsoidObject( m_FiducialPoint );
@@ -191,7 +191,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
 
   /** Create image slice representations  */
   m_CTCTImageRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
     {
     CTCTRepresentationType::Pointer rep = CTCTRepresentationType::New();
     m_CTCTImageRepresentation.push_back( rep );
@@ -199,7 +199,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
 
   /** Create image oblique slice representations  */
   m_CTPETImageRepresentation.clear();
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
     {
     CTPETRepresentationType::Pointer rep = CTPETRepresentationType::New();
     m_CTPETImageRepresentation.push_back( rep );
@@ -228,6 +228,8 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   /** Adding observer for slider bar reslicing event*/
   ViewerGroup->AddObserver( igstk::QuadrantViews::ReslicingEvent(),
     m_ViewResliceObserver );
+    
+  m_TransformObserver = igstk::TransformObserver::New();
 }
 
 
@@ -367,7 +369,11 @@ int PETCTNeedleBiopsy::RequestLoadPETImage()
       {
       igstkLogMacro(          DEBUG, "Image loaded...\n" )
       m_PETImageSpatialObject = m_PETImageObserver->GetPETImage();
-      m_ImageSpatialObject = m_CTImageSpatialObject;      
+      m_ImageSpatialObject = m_CTImageSpatialObject;
+      m_CTImageSpatialObject->RequestDetachFromParent();
+      igstk::Transform transform;
+      transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+      m_CTImageSpatialObject->RequestSetTransformAndParent( transform, m_WorldReference );
       m_PETImageSpatialObject->RequestDetachFromParent();
       m_PETImageSpatialObject->RequestSetTransformAndParent( m_CT2CTTransform, m_CTImageSpatialObject );
       this->ConnectImageRepresentation( 1 );
@@ -505,7 +511,7 @@ void PETCTNeedleBiopsy::ConnectImageRepresentation(int pet)
   */
   igstk::Transform transform;
   transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-  for( int i=0; i<3; i++)
+  for( int i=0; i<4; i++)
     {
     ViewerGroup->m_Views[i]->RequestSetTransformAndParent(
       transform, m_WorldReference );
@@ -617,7 +623,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
 {
   if(DisplayModeBtn->value() == 0)
     {
-    DisplayModeBtn->label("Single CT");
+    DisplayModeBtn->label("Overlay");
 
     m_ImageSpatialObject = m_CTImageSpatialObject;
     m_FGImageSpatialObject = NULL;
@@ -635,7 +641,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
     }
   else
     {
-    DisplayModeBtn->label("Overlay");
+    DisplayModeBtn->label("Single CT");
 
     m_ImageSpatialObject = m_CTImageSpatialObject;
     m_FGImageSpatialObject = m_PETCTImageSpatialObject;
@@ -654,7 +660,7 @@ void PETCTNeedleBiopsy::RequestChangeDisplayMode()
 
 void PETCTNeedleBiopsy::RequestChangeTransparency()
 {
-  for( unsigned int i = 0; i<3; i++)
+  for( unsigned int i = 0; i<4; i++)
     {
     m_CTCTImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
     m_CTPETImageRepresentation[i]->SetBGOpacity(1- transparencySlider->value());
@@ -669,7 +675,7 @@ void PETCTNeedleBiopsy::RequestChangeWindowLevel()
   bgWindow = this->BGWindow->value() * this->BGWindowScale->value();
   bgLevel = this->BGLevel->value() * this->BGLevelScale->value();
 
-  for( unsigned int i = 0; i<3; i++)
+  for( unsigned int i = 0; i<4; i++)
     {
     vtkWindowLevelLookupTable * fgLUT = vtkWindowLevelLookupTable::New();
     fgLUT->SetWindow(fgWindow);
@@ -880,7 +886,7 @@ void PETCTNeedleBiopsy::ChangeSelectedTPlanPoint()
 */
 void PETCTNeedleBiopsy::RequestConnectToTracker()
 {
-  RequestStopTracking();
+  //RequestStopTracking();
 
   switch( ConnectToTrackerBtn->value() )
     {
@@ -991,12 +997,13 @@ void PETCTNeedleBiopsy::RequestInitializeTracker(const itk::EventObject & event)
 *  in the GUI list as well as internal pointer list.
 *---------------------------------------------------------------------
 */
+/*
 void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
 {
   TrackerList->clear();
   TrackerToolList->clear();
   m_TrackerToolList.clear();
-  //int n = 0;
+  int n = 0;
   std::string s;
   for ( unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
     {
@@ -1013,40 +1020,36 @@ void PETCTNeedleBiopsy::UpdateTrackerAndTrackerToolList()
                       m_TrackerInitializerList[i]->GetNonReferenceToolNames();
       for ( unsigned int j=0; j< toolList.size(); j++)
         {
-          //char buf[10];
-          //sprintf(buf,"%d", ++n);
-          //s = "Tool ";
-          //s = s + buf + " [" + 
-          //        m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
-          TrackerToolList->add( toolNames[j].c_str() );
+          char buf[10];
+          sprintf(buf,"%d", ++n);
+          s = "Tool ";
+          s = s + buf + " [" + 
+                  m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
+          TrackerToolList->add( s.c_str() );
           m_TrackerToolList.push_back( toolList[j] );
         }
     }
 
 }
+*/
 
 /** -----------------------------------------------------------------
 *  Disconnect a tracker. After disconnecting it, set the active tool
 *  to the first available tool
 *---------------------------------------------------------------------
 */
+/*
 void PETCTNeedleBiopsy::RequestDisconnetTracker()
 {
   RequestStopTracking();
-  unsigned int n = TrackerList->value();
+  unsigned int n = 0;
   if ( n < m_TrackerInitializerList.size() )
     {
     m_TrackerInitializerList[n]->StopAndCloseTracker();
     m_TrackerInitializerList.erase( m_TrackerInitializerList.begin() + n );
-    UpdateTrackerAndTrackerToolList();
-    if (m_TrackerInitializerList.size()>0)
-      {
-        TrackerList->value(0);
-        TrackerToolList->value(0);
-        ChangeActiveTrackerTool();
-      }
     }
 }
+*/
 
 /** -----------------------------------------------------------------
 *  Hot switch the active tool, the one that drives the reslicing and
@@ -1061,6 +1064,7 @@ void PETCTNeedleBiopsy::RequestDisconnetTracker()
 *           and restart the tracking again
 *---------------------------------------------------------------------
 */
+/*
 void PETCTNeedleBiopsy::ChangeActiveTrackerTool()
 {
   RequestStopTracking();
@@ -1086,6 +1090,7 @@ void PETCTNeedleBiopsy::ChangeActiveTrackerTool()
     }
   RequestStartTracking();
 }
+*/
 
 /** -----------------------------------------------------------------
 *  Call back functions for registration window. Every time user clicks
@@ -1098,14 +1103,13 @@ void PETCTNeedleBiopsy::ChangeActiveTrackerTool()
 void PETCTNeedleBiopsy::SetTrackerFiducialPoint()
 {
   // The first none-reference tool is used for registration
-  igstk::TrackerTool::Pointer tool = 
-                           m_TrackerInitializer->GetNonReferenceToolList()[0];
+  m_ActiveTool = m_TrackerInitializer->GetNonReferenceToolList()[0];
 
   typedef igstk::TransformObserver ObserverType;
   ObserverType::Pointer transformObserver = ObserverType::New();
-  transformObserver->ObserveTransformEventsFrom( tool );
+  transformObserver->ObserveTransformEventsFrom( m_ActiveTool );
   transformObserver->Clear();
-  tool->RequestComputeTransformTo( m_WorldReference );
+  m_ActiveTool->RequestComputeTransformTo( m_WorldReference );
   if ( transformObserver->GotTransform() )
     {
     int n = FiducialNumber->value();
@@ -1137,7 +1141,7 @@ void PETCTNeedleBiopsy::RequestRegistration()
   for( unsigned int i=0; i< m_TrackerLandmarksContainer.size(); i++)
     {
     m_LandmarkRegistration->RequestAddImageLandmarkPoint( 
-                                               m_Plan->m_FiducialPoints[i] );
+                                               m_CTPlan->m_FiducialPoints[i] );
     m_LandmarkRegistration->RequestAddTrackerLandmarkPoint( 
                                             m_TrackerLandmarksContainer[i] );
     }
@@ -1187,11 +1191,12 @@ void PETCTNeedleBiopsy::RequestRegistration()
      * on the gui as available. Otherwise it will be disconnected
      */
     m_TrackerInitializerList.push_back( m_TrackerInitializer );
-    UpdateTrackerAndTrackerToolList();
-    TrackerList->value(m_TrackerInitializerList.size()-1);
-    TrackerToolList->value(m_TrackerToolList.size()-1);
-    ChangeActiveTrackerTool();
-    RequestStartTracking();
+    //UpdateTrackerAndTrackerToolList();
+    //TrackerList->value(m_TrackerInitializerList.size()-1);
+    //TrackerToolList->value(m_TrackerToolList.size()-1);
+    //ChangeActiveTrackerTool();
+    this->RequestStartTracking();
+    //m_ActiveTool = m_TrackerInitializer->GetNonReferenceToolList()[0];
     LoadCTBtn->deactivate();
     TPlanPointList->value(1);
     TPlanPointList->deactivate();
@@ -1367,25 +1372,13 @@ void PETCTNeedleBiopsy::Tracking(const itk::EventObject & event )
 {
   if ( igstk::TrackerToolTransformUpdateEvent().CheckEvent( &event ) )
   {
-    typedef igstk::TransformObserver ObserverType;
-    ObserverType::Pointer transformObserver = ObserverType::New();
-    transformObserver->ObserveTransformEventsFrom( m_ActiveTool );
-    transformObserver->Clear();
+    m_TransformObserver->ObserveTransformEventsFrom( m_ActiveTool );
+    m_TransformObserver->Clear();
     m_ActiveTool->RequestComputeTransformTo( m_WorldReference );
-    if ( transformObserver->GotTransform() )
+    if ( m_TransformObserver->GotTransform() )
       {
-      igstk::Transform transform = transformObserver->GetTransform();
+      igstk::Transform transform = m_TransformObserver->GetTransform();
       this->ObliqueResliceImage(transform, ViewerGroup->m_AxialSlider->value());
-//       CTImageSOType::PointType point = TransformToPoint( transform );
-// 
-//       if( m_ImageSpatialObject->IsInside( point ) )
-//       { 
-//         CTImageSOType::IndexType index;
-//         m_ImageSpatialObject->TransformPhysicalPointToIndex( point, index);
-//         
-//         // Doing oblique reslicing
-//         //ResliceImage( index );        
-//         }
       }
   }
 }
@@ -1398,58 +1391,69 @@ void PETCTNeedleBiopsy::Tracking(const itk::EventObject & event )
 */
 void PETCTNeedleBiopsy::RequestStartTracking()
 {
-  for( int i=0; i<3; i++)
-  {
-    m_CTPETImageRepresentation[i]->RequestSetBGImageSO(m_ImageSpatialObject );
-  }
+  m_ActiveTool->RemoveAllObservers();
+  m_ActiveTool->AddObserver(
+  igstk::TrackerToolTransformUpdateEvent(), m_TrackerToolUpdateObserver);
+  
+  igstk::Transform transform;
+  transform.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
+  m_Needle->RequestDetachFromParent();
+  m_NeedleTip->RequestDetachFromParent();
+  m_Needle->RequestSetTransformAndParent( transform, m_ActiveTool);
+  m_NeedleTip->RequestSetTransformAndParent( transform, m_ActiveTool);
+  m_VirtualTip->RequestUpdateTransformToParent(transform);
 
-  // FIXME
+  m_CTPETImageRepresentation[3]->RequestSetBGImageSO( m_ImageSpatialObject );
+  m_CTPETImageRepresentation[3]->RequestSetFGImageSO( m_PETImageSpatialObject );
+  m_CTPETImageRepresentation[3]->SetBGOpacity(0.5);
+  //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::OffPerpendicular);
+  //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::HybridPerpendicular);  
+  m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::Axial);  
+  igstk::Transform::VectorType path;
+  path =  m_CTPlan->m_TargetPoint - m_CTPlan->m_EntryPoint; 
+  m_CTPETImageRepresentation[3]->SetPathVector( path );
+  // ViewerGroup->m_Views[3]->RequestRemoveObject( m_CTPETImageRepresentation[3] );
+  ViewerGroup->m_Views[3]->RequestAddObject( m_CTPETImageRepresentation[3] );  
+  
   m_CTPETImageRepresentation[0]->SetOrientation( 
-    CTPETRepresentationType::Perpendicular);
+    CTPETRepresentationType::Axial);
   m_CTPETImageRepresentation[1]->SetOrientation( 
     CTPETRepresentationType::OffSagittal);
   m_CTPETImageRepresentation[2]->SetOrientation( 
     CTPETRepresentationType::OffAxial);
 
-//   igstk::Transform identity;
-//   identity.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-// 
-//   for( int i=0; i<3; i++)
-//   {
-//     ViewerGroup->m_Views[i]->RequestDetachFromParent();
-//     ViewerGroup->m_Views[i]->RequestSetTransformAndParent( identity, m_ImageSpatialObject );
-//   }
-
-  // Switch to oblique reslicing
-  // change the slider bar from index to offset
+  igstk::Transform::VectorType pAxes;
+  pAxes.Fill(0);
+  pAxes[2] = -1;
+  
+  for (unsigned int i=0; i<4; i++)
+    {
+    m_CTPETImageRepresentation[i]->SetPrincipalAxes(pAxes);    
+    }
+  
   ViewerGroup->m_Sliders[0]->minimum( 0 );
   ViewerGroup->m_Sliders[0]->maximum( 200 );
   ViewerGroup->m_Sliders[0]->value( 0 );
   ViewerGroup->m_Sliders[1]->deactivate();
   ViewerGroup->m_Sliders[2]->deactivate();
-  
-  igstk::Transform t;
-  t.SetToIdentity(igstk::TimeStamp::GetLongestPossibleTime());
-  m_VirtualTip->RequestUpdateTransformToParent(t);
 
   m_Annotation->RequestSetAnnotationText(0, ".");
   m_Annotation->RequestSetAnnotationText(2, ".");
 
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
   {
-    ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTCTImageRepresentation[i] );
-    //ViewerGroup->m_Views[i]->RequestRemoveObject( m_TargetRepresentation[i] );
+    //ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTPETImageRepresentation[i] );
+    //ViewerGroup->m_Views[i]->RequestAddObject( m_CTPETImageRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_FiducialRepresentation[i] );
-    ViewerGroup->m_Views[i]->RequestAddObject( m_CTPETImageRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_VirtualTipRepresentation[i] );
-    vtkCamera * camera = m_CTPETImageRepresentation[i]->GetCamera();
-    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
-    ViewerGroup->m_Views[i]->RequestResetCamera();
-    ViewerGroup->m_Views[i]->SetCameraZoomFactor(1.5);
+    //vtkCamera * camera = m_CTPETImageRepresentation[i]->RequestReslice();
+    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    //ViewerGroup->m_Views[i]->RequestResetCamera();
+    //ViewerGroup->m_Views[i]->SetCameraZoomFactor(1.5);
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_3D_REFRESH_RATE );
-    //ViewerGroup->m_Views[i]->RequestStart();
+    ViewerGroup->m_Views[i]->RequestStart();
     ViewerGroup->m_Displays[i]->RequestDisableInteractions();
   }
 
@@ -1485,10 +1489,13 @@ void PETCTNeedleBiopsy::RequestStartTracking()
 void PETCTNeedleBiopsy::RequestStopTracking()
 {
 
-  for( int i=0; i<3; i++)
-  {
-    m_CTPETImageRepresentation[i]->RequestSetBGImageSO( NULL );
-  }
+  m_CTPETImageRepresentation[0]->SetOrientation( 
+    CTPETRepresentationType::Axial);
+  m_CTPETImageRepresentation[1]->SetOrientation( 
+    CTPETRepresentationType::Sagittal);
+  m_CTPETImageRepresentation[2]->SetOrientation( 
+    CTPETRepresentationType::Coronal);
+
   //To do: add fiducial representation
   for (unsigned int i=0; i<m_TrackerInitializerList.size(); i++)
   {
@@ -1497,26 +1504,21 @@ void PETCTNeedleBiopsy::RequestStopTracking()
 
   m_Annotation->RequestSetAnnotationText( 2, "Georgetown ISIS Center" );
 
-  for (unsigned int i=0; i<3; i++)
-  {
-    ViewerGroup->m_Views[i]->RequestRemoveObject( m_CTPETImageRepresentation[i] );
+  for (unsigned int i=0; i<4; i++)
+  {    
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_NeedleRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestRemoveObject( m_VirtualTipRepresentation[i] );
-    ViewerGroup->m_Views[i]->RequestAddObject( m_CTCTImageRepresentation[i] );
-    //ViewerGroup->m_Views[i]->RequestAddObject( m_TargetRepresentation[i] );
-    //ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
-    
+    ViewerGroup->m_Views[i]->RequestAddObject( m_TargetRepresentation[i] );
+    ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
   }
+  ViewerGroup->m_Views[3]->RequestRemoveObject( m_CTPETImageRepresentation[3] );
 
   // Switch to orthogonal reslicing
   // change the slider bar from offset to index
-  if(m_ImageSpatialObject)
-    {
-     this->ResetSliders();
-    }
+  this->ResetSliders();
 
   itksys::SystemTools::Delay( 500 );
 
@@ -1524,7 +1526,7 @@ void PETCTNeedleBiopsy::RequestStopTracking()
   ViewerGroup->m_DisplayCoronal->RequestSetOrientation( igstk::View2D::Coronal);
   ViewerGroup->m_DisplaySagittal->RequestSetOrientation( igstk::View2D::Sagittal);
 
-  for (unsigned int i=0; i<3; i++)
+  for (unsigned int i=0; i<4; i++)
   {
   ViewerGroup->m_Views[i]->RequestResetCamera();
   ViewerGroup->m_Views[i]->SetCameraFocalPoint(m_ImageCenter[0],m_ImageCenter[1],m_ImageCenter[2]);
@@ -1548,16 +1550,15 @@ void PETCTNeedleBiopsy::RequestStopTracking()
 void PETCTNeedleBiopsy::ObliqueResliceImage(igstk::Transform transform, double virtualTip)
 {
   // Updating the Axial reslice display
-  for (unsigned int i = 0; i<3; i++)
+  for (unsigned int i = 0; i<4; i++)
   {
-    m_CTPETImageRepresentation[i]->SetResliceTransform( transform );  //FIXME
-    m_CTPETImageRepresentation[i]->SetVirtualTip( virtualTip ); //FIXME
-    m_CTPETImageRepresentation[i]->RequestReslice();
-    //vtkCamera * camera;
-    //camera = m_CTPETImageRepresentation[i]->RequestReslice();
-    //camera->Zoom( this->CameraZoom->value() );
-    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
-    //ViewerGroup->m_Views[i]->RequestResetCamera();
+    m_CTPETImageRepresentation[i]->SetResliceTransform( transform );  
+    m_CTPETImageRepresentation[i]->SetVirtualTip( virtualTip );
+    ViewerGroup->m_Views[i]->RequestResetCamera();
+    vtkCamera * camera = m_CTPETImageRepresentation[i]->RequestReslice();
+    camera->Zoom( this->CameraZoom->value() );    
+    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    //ViewerGroup->m_Views[i]->SetCameraZoomFactor( this->CameraZoom->value() );
   }
 
   this->ViewerGroup->redraw();

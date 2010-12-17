@@ -12,34 +12,31 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
   } {
     Fl_Window mainWindow {
       label {IGSTK: Laparoscopy Demo Application}
-      callback {Quit();} open
+      callback {Quit();}
       xywh {746 99 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
     } {
-      Fl_Group ControlGroup {
+      Fl_Group ControlGroup {open
         xywh {0 0 165 690} box DOWN_BOX
       } {
         Fl_Group {} {
           label {@2->} open
-          xywh {20 316 130 83} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+          xywh {20 316 130 100} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
           Fl_Button LoadPETBtn {
             label {Load PET}
-            callback {RequestLoadPETImage();} selected
+            callback {RequestLoadPETImage();}
             xywh {40 325 90 25} labelfont 1 align 16 deactivate
           }
           Fl_Button {} {
             label {Diplay Ctrl}
             callback {OverlayDisplayControlWindow->show();}
-            xywh {40 361 90 25} labelfont 1 align 16
+            xywh {40 377 90 25} labelfont 1 align 16
           }
         }
-        Fl_Group {} {
+        Fl_Group {} {open
           xywh {20 32 130 229} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
-          Fl_Choice TrackerList {open
-            xywh {40 119 80 20} down_box BORDER_BOX labeltype NO_LABEL hide
-          } {}
           Fl_Button LoadPETCTBtn {
             label {Load PETCT}
             callback {RequestLoadCTImage(1);}
@@ -80,14 +77,9 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
           }
         }
         Fl_Group {} {
-          label {@2->}
-          xywh {20 443 130 146} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
+          label {@2->} open
+          xywh {20 484 130 110} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
-          Fl_Choice TrackerToolList {
-            label Tool
-            callback {ChangeActiveTrackerTool();} open
-            xywh {40 546 90 25} down_box BORDER_BOX align 1
-          } {}
           Fl_Light_Button TrackingBtn {
             label Tracking
             callback {if(o->value())
@@ -98,12 +90,12 @@ else
 {
   RequestStopTracking();
 }}
-            xywh {40 499 90 25} labelfont 1
+            xywh {40 549 90 25} labelfont 1 deactivate
           }
           Fl_Menu_Button ConnectToTrackerBtn {
             label Tracker
-            callback {RequestConnectToTracker();} open
-            xywh {40 458 90 25} labelfont 1 align 20
+            callback {RequestConnectToTracker();}
+            xywh {40 496 90 25} labelfont 1 align 20
           } {
             MenuItem {} {
               label Polaris
@@ -117,11 +109,6 @@ else
               label Micron
               xywh {10 10 30 20} deactivate
             }
-          }
-          Fl_Button {} {
-            label Disconnect
-            callback {RequestDisconnetTracker();}
-            xywh {40 443 90 15} align 16 hide
           }
         }
         Fl_Box {} {
@@ -160,7 +147,7 @@ ChangeSelectedTPlanPoint();} open
       } {}
     }
     Fl_Window OverlayDisplayControlWindow {open
-      xywh {643 331 429 248} type Double visible
+      xywh {643 331 429 248} type Double hide
     } {
       Fl_Slider transparencySlider {
         label {Transparency:}
@@ -215,6 +202,10 @@ ChangeSelectedTPlanPoint();} open
         callback {RequestChangeWindowLevel();}
         xywh {368 57 31 20} value 10
       }
+      Fl_Value_Slider CameraZoom {
+        label {Camera Zoom:} selected
+        xywh {12 203 333 20} type {Horz Knob} align 1 minimum 2 maximum 10 step 0.1 value 2 textsize 14
+      }
     }
   }
   Function {~PETCTNeedleBiopsyGUI()} {return_type virtual
@@ -247,10 +238,6 @@ else
   Function {ChangeSelectedTPlanPoint()} {open return_type {virtual void}
   } {}
   Function {RequestConnectToTracker()} {open return_type {virtual void}
-  } {}
-  Function {RequestDisconnetTracker()} {open return_type {virtual void}
-  } {}
-  Function {ChangeActiveTrackerTool()} {open return_type {virtual void}
   } {}
   Function {RequestStartTracking()} {open return_type {virtual void}
   } {}

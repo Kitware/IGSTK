@@ -48,7 +48,7 @@ else
 {
   ReferenceToolGroup->deactivate();
 }}
-        xywh {30 291 25 25} down_box ROUND_DOWN_BOX
+        xywh {30 291 25 25} down_box ROUND_DOWN_BOX value 1
       }
       Fl_Group TrackerToolGroup {
         label {Tracker Tool} open
@@ -89,7 +89,7 @@ if( fileName )
           }
         }
         Fl_Round_Button SwitchZAxes {
-          label {Flip Z axis?} selected
+          label {Flip Z axis?}
           xywh {55 244 25 25} down_box ROUND_DOWN_BOX
         }
         Fl_Group {} {open
@@ -154,14 +154,15 @@ for ( int i=0; i<2; i++ )
 }
 
 
-SerialPort->value(0);
+SerialPort->value(2);
 TrackerToolPort->value(0);
 ReferenceToolPort->value(1);
 TrackerToolChannel->value(0);
 
 OffsetX->value( 0.0 );
 OffsetY->value( 0.0 );
-OffsetZ->value( 0.0 );} {}
+OffsetZ->value( 0.0 );} {selected
+    }
   }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {

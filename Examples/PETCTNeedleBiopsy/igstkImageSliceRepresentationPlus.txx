@@ -45,15 +45,15 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   this->RequestSetSpatialObject( m_BGImageSO );
 
   m_Transform.SetToIdentity( 1000 );
-  m_CalibrationTransform.SetToIdentity( 1000 );
+  m_CalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
   m_ResliceTransform.SetToIdentity( 1000 );
 
   m_SliceSize      = 250;
   m_CameraDistance = 1000;
   m_BGOpacity      = 1.0;
   m_VirtualTip     = 0.0;
-  m_NeedleVector.Fill(0.0);
-  m_PathVector.Fill(0.0);
+  m_NeedleVector.Fill(1);
+  m_PathVector.Fill(1);
 
   // Create classes for displaying images
   m_BGActor = vtkImageActor::New();
@@ -67,6 +67,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_ResliceAxes = vtkMatrix4x4::New();
   m_ResliceAxes->Identity();
   m_Camera      = vtkCamera::New();
+  m_Camera->ParallelProjectionOn();
 
   // Observer for vtkImageData
   m_VTKImageObserver  = VTKImageObserver::New();
@@ -291,7 +292,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_Transform = igstk::Transform::TransformCompose(m_ResliceTransform, m_CalibrationTransform);
   m_ResliceCenter = m_Transform.GetTranslation();
   m_NeedleVector = m_Transform.GetRotation().Transform(m_PrincipalAxes);
-  m_NeedleVector += m_Transform.GetTranslation();
+  m_ResliceCenter += m_NeedleVector * m_VirtualTip;
 }
 
 template < class TBGImageSO,  class TFGImageSO  >
@@ -303,7 +304,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_Transform = igstk::Transform::TransformCompose(m_ResliceTransform, m_CalibrationTransform);
   m_ResliceCenter = m_Transform.GetTranslation();
   m_NeedleVector = m_Transform.GetRotation().Transform(m_PrincipalAxes);
-  m_NeedleVector += m_Transform.GetTranslation();
+  m_ResliceCenter += m_NeedleVector * m_VirtualTip;
 }
 
 template < class TBGImageSO,  class TFGImageSO  >
@@ -314,7 +315,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_PrincipalAxes = pAxes;
   m_ResliceCenter = m_Transform.GetTranslation();
   m_NeedleVector = m_Transform.GetRotation().Transform(m_PrincipalAxes);
-  m_NeedleVector += m_Transform.GetTranslation();
+  m_ResliceCenter += m_NeedleVector * m_VirtualTip;
 }
 
 template < class TBGImageSO,  class TFGImageSO  >
@@ -339,48 +340,55 @@ void
 ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 ::ComputeOrthogonalResliceAxes( )
 {
-  itk::Vector< double, 3 >       vx, vy, vz, vn;
+  itk::Vector< double, 3 >       vx, vy, vn;
+  vx.Fill(0);
+  vy.Fill(0);
+  vn.Fill(0);
+
   vtkMatrix4x4 * t = vtkMatrix4x4::New();
   igstk::Transform::VectorType center;
   center = m_ImageCenter;
 
   m_Transform.ExportTransform( * t );
   
-  if(( m_Orientation == Axial) || (m_Orientation == Perpendicular) )
+  if( m_Orientation == Axial )
     {  
-    for ( int i = 0; i < 3; i++ )
-      {
-      vx[i] = t->GetElement(i, 0); // +X
-      vy[i] = t->GetElement(i, 1); // +Y
-      vn[i] = t->GetElement(i, 2); // +Z
-      }
+    vx[0] = 1; //+X
+    vy[1] = 1; //+Y
+    vn[2] = 1; //+Z
     center[2] = m_ResliceCenter[2];
     m_SizeX = m_Size[0];
     m_SizeY = m_Size[1];
     }
   else if( m_Orientation == Sagittal)
     {
-     for ( int i = 0; i < 3; i++ )
-      {
-      vx[i] = - t->GetElement(i, 1); // -Y
-      vy[i] = t->GetElement(i, 2);   // +Z
-      vn[i] = - t->GetElement(i, 0); // -X
-      }
+    vx[1] = -1; //-Y
+    vy[2] =  1; //+Z
+    vn[0] = -1; //-X
     center[0] = m_ResliceCenter[0];
     m_SizeX = m_Size[1];
     m_SizeY = m_Size[2];
     }
   else if( m_Orientation == Coronal)
     {
-    for ( int i = 0; i < 3; i++ )
-      {
-      vx[i] = t->GetElement(i, 0);   // +X
-      vy[i] = t->GetElement(i, 2);   // +Z
-      vn[i] = - t->GetElement(i, 1); // -Y
-      }
+    vx[0] =  1; //+X
+    vy[2] =  1; //+Z
+    vn[1] = -1; //-Y
     center[1] = m_ResliceCenter[1];
     m_SizeX = m_Size[0];
     m_SizeY = m_Size[2];
+    }
+  else if(m_Orientation == Perpendicular )
+    {  
+    for ( int i = 0; i < 3; i++ )
+      {
+      vx[i] = t->GetElement(i, 0); // +X
+      vy[i] = t->GetElement(i, 1); // +Y
+      vn[i] = t->GetElement(i, 2); // +Z
+      center[i] = m_ResliceCenter[i];
+      }    
+    m_SizeX = m_Size[0];
+    m_SizeY = m_Size[1];
     }
  
   t->Delete();
@@ -397,6 +405,24 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
     m_ResliceAxes->SetElement(i, 3, center[i]);
     }
 
+  //Setting up the camera position
+  double focalPoint[3];
+  double position[3];
+  for ( int i = 0; i<3; i++ )
+    {
+    focalPoint[i] = center[i];
+    position[i] = center[i];
+    }
+
+  for ( int i = 0; i<3; i++ )
+    {
+    position[i] -= m_CameraDistance * vn[i];
+    }
+
+  m_Camera->SetViewUp( -vy[0], -vy[1], -vy[2] );
+  m_Camera->SetFocalPoint( focalPoint );
+  m_Camera->SetPosition( position );
+  m_Camera->SetClippingRange(0.0, 1000);
 }
 
 template < class TBGImageSO,  class TFGImageSO  >
@@ -571,9 +597,8 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 
   m_Camera->SetViewUp( -vy[0], -vy[1], -vy[2] );
   m_Camera->SetFocalPoint( focalPoint );
-  //m_Camera->SetParallelScale( 0.8 );
-  //m_Camera->SetZoomFactor( 2 );
   m_Camera->SetPosition( position );
+  m_Camera->SetClippingRange(0.0, 1000);
 
 }
 
