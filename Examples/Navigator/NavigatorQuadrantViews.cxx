@@ -249,7 +249,7 @@ int NavigatorQuadrantViews::handle(int event)
   };
 }
 
-int NavigatorQuadrantViews::handle_key(int event, KeyboardCommandType &keyCommand) 
+int NavigatorQuadrantViews::handle_key(int itkNotUsed(event), KeyboardCommandType &keyCommand) 
 {
     KeyPressedEvent kpEvent;
     kpEvent.Set( keyCommand );
@@ -258,7 +258,7 @@ int NavigatorQuadrantViews::handle_key(int event, KeyboardCommandType &keyComman
     return 1;
 }
 
-int NavigatorQuadrantViews::handle_mouse(int event, MouseCommandType &mouseCommand) 
+int NavigatorQuadrantViews::handle_mouse(int itkNotUsed(event), MouseCommandType &mouseCommand) 
 {
     MousePressedEvent mpEvent;
     mpEvent.Set( mouseCommand );

@@ -284,7 +284,7 @@ PivotCalibrationFLTKWidgetExample::SaveCalibration()
 
 
 void 
-PivotCalibrationFLTKWidgetExample::OnCalibrationSuccessFailureEvent( itk::Object *caller, 
+PivotCalibrationFLTKWidgetExample::OnCalibrationSuccessFailureEvent( itk::Object * itkNotUsed(caller), 
                               const itk::EventObject & event )
 {
   if( dynamic_cast< const igstk::PivotCalibration::CalibrationSuccessEvent * > 
@@ -301,8 +301,8 @@ PivotCalibrationFLTKWidgetExample::OnCalibrationSuccessFailureEvent( itk::Object
 
 
 void 
-PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent( itk::Object *caller, 
-                                                        const itk::EventObject & event )
+PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent( itk::Object * itkNotUsed(caller), 
+                                                        const itk::EventObject & itkNotUsed(event) )
 {
   fl_alert("%s\n", "Failed writing calibration data to file." );
   fl_beep( FL_BEEP_ERROR );
@@ -311,7 +311,7 @@ PivotCalibrationFLTKWidgetExample::OnWriteFailureEvent( itk::Object *caller,
 
 void
 PivotCalibrationFLTKWidgetExample::TrackingErrorObserver::Execute(
-  itk::Object *caller,
+  itk::Object * itkNotUsed(caller),
   const itk::EventObject & event )
 {
   std::map<std::string,std::string>::iterator it;

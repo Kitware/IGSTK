@@ -50,11 +50,11 @@ public:
   typedef itk::Command                 Superclass;
   itkNewMacro(Self);
   
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     }
   
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     const AxialSliceBoundsEvent * axialEvent = 
           dynamic_cast< const AxialSliceBoundsEvent * >( &event );
@@ -130,7 +130,7 @@ private:
 
 }
 
-int igstkImageSpatialObjectRepresentationTest( int argc , char * argv [] )
+int igstkImageSpatialObjectRepresentationTest( int , char * argv[] )
 {
   igstk::RealTimeClock::Initialize();
 

@@ -53,7 +53,7 @@ public:
     Execute( (const itk::Object *)caller, event);
     }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(object), const itk::EventObject & event)
     {
     // don't print "CompletedEvent", only print interesting events
     if (!igstk::CompletedEvent().CheckEvent(&event) &&

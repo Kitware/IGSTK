@@ -76,7 +76,7 @@ public:
     m_End = end;
     }
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
@@ -97,7 +97,7 @@ public:
     m_PulseCounter = 0;
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     if( ::igstk::RefreshEvent().CheckEvent( &event ) )
       {
@@ -145,7 +145,7 @@ public:
     this->m_TransformExpired = false;
     }
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr << "Execute( const * ) should not be called" << std::endl;
     }
@@ -159,7 +159,7 @@ public:
     this->Reset();
     }
 
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     if( ::igstk::TransformExpiredErrorEvent().CheckEvent( &event ) )
       {

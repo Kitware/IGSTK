@@ -33,7 +33,7 @@
 #include "igstkMeshObjectRepresentation.h"
 #include "igstkSpatialObjectTestHelper.h"
 
-int igstkMeshObjectTest( int argc, char * argv [] )
+int igstkMeshObjectTest( int , char *[] )
 {
 
   typedef igstk::MeshObject                ObjectType;

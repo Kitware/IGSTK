@@ -32,7 +32,7 @@
 #include "igstkMouseTrackerTool.h"
 
 
-int igstkMouseTrackerToolTest( int argc, char * argv[]  )
+int igstkMouseTrackerToolTest( int , char *[]  )
 {
   igstk::RealTimeClock::Initialize();
 

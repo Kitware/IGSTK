@@ -3709,7 +3709,7 @@ void Navigator::DisableOrthogonalPlanes()
 
 }
 
-void Navigator::ToolAvailableCallback(const itk::EventObject & event )
+void Navigator::ToolAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_TrackingSemaphore->color(FL_GREEN);
   m_TrackingSemaphore->label("tracking");
@@ -3717,7 +3717,7 @@ void Navigator::ToolAvailableCallback(const itk::EventObject & event )
   Fl::check();
 }
 
-void Navigator::ToolNotAvailableCallback(const itk::EventObject & event )
+void Navigator::ToolNotAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_TrackingSemaphore->color(FL_RED);
   m_TrackingSemaphore->label("not visible");
@@ -3725,7 +3725,7 @@ void Navigator::ToolNotAvailableCallback(const itk::EventObject & event )
   Fl::check();
 }
 
-void Navigator::ReferenceAvailableCallback(const itk::EventObject & event )
+void Navigator::ReferenceAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_ReferenceSemaphore->color(FL_GREEN);
   m_ReferenceSemaphore->label("tracking");
@@ -3733,7 +3733,7 @@ void Navigator::ReferenceAvailableCallback(const itk::EventObject & event )
   Fl::check();
 }
 
-void Navigator::ReferenceNotAvailableCallback(const itk::EventObject & event )
+void Navigator::ReferenceNotAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_ReferenceSemaphore->color(FL_RED);
   m_ReferenceSemaphore->label("not visible");
@@ -3754,7 +3754,7 @@ void Navigator::TrackerControllerObserver::Execute( const itk::Object *caller,
 }
   
 void 
-Navigator::TrackerControllerObserver::Execute( itk::Object *caller, 
+Navigator::TrackerControllerObserver::Execute( itk::Object * itkNotUsed(caller), 
                                                 const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =
