@@ -49,7 +49,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkWindowLevelLookupTable.h"
 
 /** \class PETCTNeedleBiopsy
-* 
+*
 * \brief Implementation class for PETCTNeedleBiopsyGUI.
 *
 * This class implements the main application.
@@ -62,28 +62,28 @@ public:
 
   /** Typedefs */
   igstkStandardClassBasicTraitsMacro( PETCTNeedleBiopsy, PETCTNeedleBiopsyGUI );
-  
+
   igstkLoggerMacro();
 
   /** typedef for CTImageReaderType */
   typedef igstk::CTImageReader                          CTImageReaderType;
   typedef CTImageReaderType::ImageSpatialObjectType     CTImageSOType;
   typedef CTImageSOType::IndexType                      IndexType;
-   
+
   /** typedef for PETImageReaderType */
   typedef igstk::PETImageReader                         PETImageReaderType;
   typedef PETImageReaderType::ImageSpatialObjectType    PETImageSOType;
-  
+
   /** typedef for ImageRepresentationType */
-  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, CTImageSOType>   
+  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, CTImageSOType>
                                                     CTCTRepresentationType;
-  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, PETImageSOType>   
+  typedef igstk::ImageSliceRepresentationPlus<CTImageSOType, PETImageSOType>
                                                     CTPETRepresentationType;
 
   /** typedef for RegistrationType */
   typedef igstk::Landmark3DRegistration               RegistrationType;
-  typedef RegistrationType::LandmarkPointContainerType  
-                                                   LandmarkPointContainerType;  
+  typedef RegistrationType::LandmarkPointContainerType
+                                                   LandmarkPointContainerType;
 
   /** Public request methods from the GUI */
   int  RequestLoadCTImage( int ct );
@@ -109,7 +109,7 @@ public:
                                                  CTImageSOType);
   igstkObserverObjectMacro( PETImage,PETImageReaderType::ImageModifiedEvent,
                                                  PETImageSOType);
-                                                                                                
+
   igstkObserverMacro( Registration, igstk::CoordinateSystemTransformToEvent,
     igstk::CoordinateSystemTransformToResult );
 
@@ -122,7 +122,7 @@ private:
 
   PETCTNeedleBiopsy(const Self&); // purposely not implemented
   void operator=(const Self&);    // purposely not implemented
-  
+
   /** DICOM image reader */
   CTImageReaderType::Pointer                            m_CTImageReader;
   PETImageReaderType::Pointer                           m_PETImageReader;
@@ -165,8 +165,8 @@ private:
   std::vector< igstk::TrackerInitializer * >      m_TrackerInitializerList;
   std::vector< igstk::TrackerTool::Pointer >      m_TrackerToolList;
   igstk::TrackerTool::Pointer                     m_ActiveTool;
-  
-  /** Observer type for loaded event, 
+
+  /** Observer type for loaded event,
    *  the callback can be set to a member function. */
   typedef itk::ReceptorMemberCommand < Self > LoadedObserverType;
   LoadedObserverType::Pointer               m_ViewPickerObserver;
@@ -175,32 +175,35 @@ private:
   LoadedObserverType::Pointer               m_TrackerToolUpdateObserver;
   igstk::TransformObserver::Pointer         m_TransformObserver;
 
-  /** Ellipsoid spatial object, used to represent 
+  /** Ellipsoid spatial object, used to represent
    *  the landmark point, tip of the probe. */
   typedef igstk::EllipsoidObject                  EllipsoidType;
   typedef igstk::EllipsoidObjectRepresentation    EllipsoidRepresentationType;
   EllipsoidType::Pointer                          m_NeedleTip;
   std::vector<EllipsoidRepresentationType::Pointer>  m_NeedleTipRepresentation;
+  EllipsoidType::Pointer                          m_NeedleHub;
+  EllipsoidRepresentationType::Pointer            m_NeedleHubRepresentation;
 
   /** Objects for path planning and fiducial selection */
   EllipsoidType::Pointer                          m_TargetPoint;
+  EllipsoidType::Pointer                          m_TargetProjection;
   std::vector<EllipsoidRepresentationType::Pointer>     m_TargetRepresentation;
 
   EllipsoidType::Pointer                          m_EntryPoint;
-  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;  
+  EllipsoidRepresentationType::Pointer            m_EntryRepresentation;
   EllipsoidType::Pointer                          m_FiducialPoint;
-  std::vector<EllipsoidRepresentationType::Pointer>    m_FiducialRepresentation;  
-  
+  std::vector<EllipsoidRepresentationType::Pointer>    m_FiducialRepresentation;
+
   /** Tube object represents the planned path */
   typedef igstk::TubeObject                       PathType;
   typedef igstk::TubeObjectRepresentation         PathRepresentationType;
   typedef igstk::TubeObject::PointType            TubePointType;
   PathType::Pointer                               m_Path;
-  std::vector< PathRepresentationType::Pointer >  m_PathRepresentation; 
+  std::vector< PathRepresentationType::Pointer >  m_PathRepresentation;
 
   /** Cylinder spatial object, used to represent the probe */
   typedef igstk::CylinderObject                   CylinderType;
-  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;  
+  typedef igstk::CylinderObjectRepresentation     CylinderRepresentationType;
   CylinderType::Pointer                           m_Needle;
   std::vector<CylinderRepresentationType::Pointer>      m_NeedleRepresentation;
   CylinderType::Pointer                           m_VirtualTip;
@@ -213,8 +216,8 @@ private:
   std::ofstream                                   m_LogFile;
 
   /** Utility functions, conversion between points and transform */
-  inline 
-  igstk::Transform 
+  inline
+  igstk::Transform
   PointToTransform( CTImageSOType::PointType point)
   {
     igstk::Transform transform;
@@ -223,13 +226,13 @@ private:
       {
       translation[i] = point[i];
       }
-    transform.SetTranslation( translation, 0.1, 
+    transform.SetTranslation( translation, 0.1,
                                 igstk::TimeStamp::GetLongestPossibleTime() );
     return transform;
   }
 
-  inline 
-  CTImageSOType::PointType 
+  inline
+  CTImageSOType::PointType
   TransformToPoint( igstk::Transform transform)
   {
     CTImageSOType::PointType point;
@@ -246,9 +249,9 @@ private:
   void ConnectImageRepresentation( int pet);
   //void UpdateTrackerAndTrackerToolList();
   void UpdateFiducialPoint();
-  void UpdatePath();  
-  void ResliceImage( IndexType index ); 
-  void ObliqueResliceImage( igstk::Transform transform, double virtualTip ); 
+  void UpdatePath();
+  void ResliceImage( IndexType index );
+  void ObliqueResliceImage( igstk::Transform transform, double virtualTip );
   void ResetSliders();
 
   /** Callback functions for picking and reslicing image events. */
@@ -256,7 +259,7 @@ private:
   void ResliceImage( const itk::EventObject & event );
   void UpdateVirtualTip( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
-  void Tracking( const itk::EventObject & event ); 
+  void Tracking( const itk::EventObject & event );
   void NullAction(const itk::EventObject & event ){};
 
 };
