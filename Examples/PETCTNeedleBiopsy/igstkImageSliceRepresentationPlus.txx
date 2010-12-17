@@ -33,7 +33,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 ::ImageSliceRepresentationPlus():m_StateMachine(this)
 {
   m_Orientation = Axial;
-  m_SurgeonPosition  =PatientLeft;
+  m_SurgeonPosition  = PatientLeft;
 
   this->SetPositionLocking(true);
 
@@ -49,6 +49,8 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_ResliceTransform.SetToIdentity( 1000 );
 
   m_SliceSize      = 250;
+  m_SizeX          = 250;
+  m_SizeY          = 250;
   m_CameraDistance = 1000;
   m_BGOpacity      = 1.0;
   m_VirtualTip     = 0.0;
@@ -431,7 +433,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 ::ComputeOffOrthogonalResliceAxes( )
 {
   itk::Vector< double, 3 >       vx, vy, vn, v;
-  vtkMatrix4x4 * t = vtkMatrix4x4::New();;
+  vtkMatrix4x4 * t = vtkMatrix4x4::New();
   m_Transform.ExportTransform( * t );
  
     if( m_Orientation == OffAxial)
@@ -523,6 +525,7 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
     else
       {
       vn = m_PathVector;
+      vn.Normalize();
       }
 
     if ( fabs(vx*vn) < 1e-9 )

@@ -1406,11 +1406,15 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   m_CTPETImageRepresentation[3]->RequestSetBGImageSO( m_ImageSpatialObject );
   m_CTPETImageRepresentation[3]->RequestSetFGImageSO( m_PETImageSpatialObject );
   m_CTPETImageRepresentation[3]->SetBGOpacity(0.5);
+  m_CTPETImageRepresentation[3]->SetSliceSize(300);
   //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::OffPerpendicular);
-  //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::HybridPerpendicular);  
-  m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::Axial);  
+  m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::HybridPerpendicular);  
+  //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::Axial);  
   igstk::Transform::VectorType path;
-  path =  m_CTPlan->m_TargetPoint - m_CTPlan->m_EntryPoint; 
+  path =  m_CTPlan->m_TargetPoint - m_CTPlan->m_EntryPoint;
+  std::cout<< "###################################" << std::endl;
+  std::cout<< path << std::endl;
+  std::cout<< "###################################" << std::endl;
   m_CTPETImageRepresentation[3]->SetPathVector( path );
   // ViewerGroup->m_Views[3]->RequestRemoveObject( m_CTPETImageRepresentation[3] );
   ViewerGroup->m_Views[3]->RequestAddObject( m_CTPETImageRepresentation[3] );  
