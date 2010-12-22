@@ -103,7 +103,7 @@ TrackerToolObserverToOpenIGTLinkRelay::RequestStart()
 
 void
 TrackerToolObserverToOpenIGTLinkRelay::ResendTransformThroughOpenIGTLink( 
-                          itk::Object * caller, const itk::EventObject & event )
+                          itk::Object * itkNotUsed(caller), const itk::EventObject & event )
 {
   const CoordinateSystemTransformToEvent * transformEvent =
     dynamic_cast< const CoordinateSystemTransformToEvent * >( &event );
