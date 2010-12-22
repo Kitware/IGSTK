@@ -92,7 +92,7 @@ int igstkTrackerToolObserverToOpenIGTLinkRelayTest( int argc, char * argv [] )
 }
 
 /** Thread function for tracking */
-ITK_THREAD_RETURN_TYPE ObserverThreadFunction(void* pInfoStruct)
+ITK_THREAD_RETURN_TYPE ObserverThreadFunction(void* itkNotUsed(pInfoStruct))
 {
    
   typedef igstk::CircularSimulatedTracker               TrackerType;
@@ -140,7 +140,7 @@ ITK_THREAD_RETURN_TYPE ObserverThreadFunction(void* pInfoStruct)
 }
 
 /** Thread function for tracking */
-ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* pInfoStruct)
+ITK_THREAD_RETURN_TYPE ReceiverThreadFunction(void* itkNotUsed(pInfoStruct))
 {
   //------------------------------------------------------------
   // Parse Arguments
