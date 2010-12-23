@@ -39,7 +39,7 @@ namespace igstk
  */
 
 class PETImageSpatialObject : 
-      public ImageSpatialObject< signed short, 3 >
+      public ImageSpatialObject< float, 3 >
 {
 
 public:
@@ -47,7 +47,7 @@ public:
   /** Type of the superclass. 
    *  This must be declared first because the StandardClassTraitsMacro
    *  will otherwise get confused with the commas of the template */
-  typedef ImageSpatialObject< signed short, 3>     SuperclassType;
+  typedef ImageSpatialObject< float, 3>     SuperclassType;
   
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( PETImageSpatialObject, SuperclassType )
