@@ -159,6 +159,13 @@ void PETDicomImageReader2<TImageType>::ConvertDICOMDataToMetaImage()
     }
 }
 
+template < class TImageType >
+TImageType * 
+PETDicomImageReader2<TImageType>::GetOutput()
+{
+  return m_ImageSeriesReader->GetOutput();
+} 
+
 /*
 SOME NOTES on SUV and parameters of interest:
 

@@ -52,7 +52,7 @@ public:
   typedef itk::ImageSeriesReader< ImageType >    ImageSeriesReaderType;
   typedef itk::ImageFileWriter< ImageType >      ImageWriterType;
 
- 
+  TImageType * GetOutput(); 
 
 public:
 
