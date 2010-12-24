@@ -23,7 +23,9 @@
 #include "itkImage.h"
 #include "itkLabelStatisticsImageFilter.h"
 #include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 #include "itkNumericTraits.h"
+#include "itkImageRegionIteratorWithIndex.h"
 
 #include "vnl/vnl_math.h"
 
@@ -35,11 +37,11 @@
 
 int main(int argc, char* argv [] )
 {
-  if( argc < 2 )
+  if( argc < 3 )
   {
     std::cerr << "Missing Arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " inputImage " << std::endl;
+    std::cerr << argv[0] << " inputImage suvImage " << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -74,6 +76,8 @@ int main(int argc, char* argv [] )
   std::cout << "Series time \t" << reader->GetSeriesTime() << std::endl;
   std::cout << "Philips SUV factor \t" << reader->GetPhilipsSUVFactor() << std::endl;
   std::cout << "Calibration factor \t" << reader->GetCalibrationFactor() << std::endl;
+  std::cout << "Injected Dose \t" << reader->GetInjectedDose() << std::endl;
+  std::cout << "Patient weight\t" << reader->GetPatientWeight() << std::endl;
 
 
   //Generate a label image. Image as big as the input PET image and with all pixels having
@@ -136,6 +140,68 @@ int main(int argc, char* argv [] )
     std::cout << "Index = " << *itr << std::endl;
     ++itr;
     }
+
+  // Create SUV image 
+  ImageType::Pointer suvImage = ImageType::New();
+
+  ImageType::RegionType regionSUV;
+  regionSUV.SetSize(reader->GetOutput()->GetLargestPossibleRegion().GetSize());
+  regionSUV.SetIndex(reader->GetOutput()->GetLargestPossibleRegion().GetIndex());
+  suvImage->SetRegions( regionSUV );
+  suvImage->SetOrigin(reader->GetOutput()->GetOrigin());
+  suvImage->SetSpacing(reader->GetOutput()->GetSpacing());
+  suvImage->Allocate();
+  suvImage->FillBuffer( 0.0 );
+
+  //SUV value is computed as follows
+  // SUV  = concentration/(injected_dose * body_weight )
+
+  typedef itk::ImageRegionIteratorWithIndex< ImageType > IteratorType;
+
+  IteratorType outputIt( suvImage, suvImage->GetRequestedRegion() );
+  IteratorType inputIt( reader->GetOutput(), reader->GetOutput()->GetRequestedRegion() );
+
+  double suv;
+  inputIt.GoToBegin();
+  outputIt.GoToBegin();
+
+  double injected_dose = reader->GetInjectedDose();
+  double body_weight = reader->GetPatientWeight();
+
+  if( injected_dose <= 0.0 ) 
+    {
+    injected_dose = 1.0;
+    }
+  
+  if( body_weight <= 0.0 )
+    {
+    body_weight = 1.0;
+    }
+
+  while( !outputIt.IsAtEnd() )
+    {
+    suv =  (inputIt.Get())/(injected_dose * body_weight);
+    outputIt.Set( suv );
+    ++inputIt;
+    ++outputIt;
+    }
+  // Software Guide : EndCodeSnippet
+
+  typedef itk::ImageFileWriter< ImageType > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( argv[2] );
+  writer->SetInput(suvImage);
+  try
+    {
+    writer->Update();
+    }
+  catch ( itk::ExceptionObject &err)
+    {
+    std::cout << "ExceptionObject caught !" << std::endl;
+    std::cout << err << std::endl;
+    return -1;
+}
+
   return EXIT_SUCCESS;
 }
 
