@@ -18,3 +18,6 @@ TARGET_LINK_LIBRARIES(IdentifyPETImageVolme ITKIO)
 
 ADD_EXECUTABLE(PETDicomImageSUVComputation PETDicomImageSUVComputation.cxx )
 TARGET_LINK_LIBRARIES(PETDicomImageSUVComputation ITKIO ITKBasicFilters ITKStatistics)
+
+ADD_EXECUTABLE(DicomSeriesParsing DicomSeriesParsing.cxx )
+TARGET_LINK_LIBRARIES(DicomSeriesParsing ITKIO )
