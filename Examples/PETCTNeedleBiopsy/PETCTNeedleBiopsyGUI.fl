@@ -11,7 +11,7 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
   Function {PETCTNeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: Laparoscopy Demo Application}
+      label {IGSTK: PET-CT Needle biopsy Demo Application}
       callback {Quit();}
       xywh {746 99 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
