@@ -21,3 +21,6 @@ TARGET_LINK_LIBRARIES(PETDicomImageSUVComputation ITKIO ITKBasicFilters ITKStati
 
 ADD_EXECUTABLE(DicomSeriesParsing DicomSeriesParsing.cxx )
 TARGET_LINK_LIBRARIES(DicomSeriesParsing ITKIO )
+
+ADD_EXECUTABLE(DicomSeriesReadPrintTagsAndLabels DicomSeriesReadPrintTagsAndLabels.cxx )
+TARGET_LINK_LIBRARIES(DicomSeriesReadPrintTagsAndLabels ITKIO )
