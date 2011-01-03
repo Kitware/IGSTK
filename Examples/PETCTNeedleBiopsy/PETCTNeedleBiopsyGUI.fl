@@ -11,7 +11,7 @@ class PETCTNeedleBiopsyGUI {open : {public igstk::Object}
   Function {PETCTNeedleBiopsyGUI()} {open
   } {
     Fl_Window mainWindow {
-      label {IGSTK: PET-CT Needle biopsy Demo Application}
+      label {IGSTK: PET/CT Guided Needle Biopsy}
       callback {Quit();}
       xywh {746 99 930 690} type Double box PLASTIC_UP_BOX resizable
       code0 {\#include "igstkFLTKWidget.h"} visible
@@ -147,7 +147,7 @@ ChangeSelectedTPlanPoint();} open
       } {}
     }
     Fl_Window OverlayDisplayControlWindow {open
-      xywh {643 331 429 248} type Double hide
+      xywh {643 331 429 248} type Double visible
     } {
       Fl_Slider transparencySlider {
         label {Transparency:}
@@ -164,8 +164,8 @@ ChangeSelectedTPlanPoint();} open
       }
       Fl_Value_Slider FGWindow {
         label {FGWindow:}
-        callback {RequestChangeWindowLevel();}
-        xywh {11 132 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 50 textsize 14
+        callback {RequestChangeWindowLevel();} selected
+        xywh {11 132 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 100 textsize 14
       }
       Fl_Value_Slider FGLevel {
         label {FGLevel:}
@@ -185,7 +185,7 @@ ChangeSelectedTPlanPoint();} open
       Fl_Value_Slider BGWindow {
         label {BGWindow:}
         callback {RequestChangeWindowLevel();}
-        xywh {13 21 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 50 textsize 14
+        xywh {13 21 331 20} type {Horz Knob} align 1 maximum 100 step 1 value 100 textsize 14
       }
       Fl_Value_Slider BGLevel {
         label {BGLevel:}
@@ -203,7 +203,7 @@ ChangeSelectedTPlanPoint();} open
         xywh {368 57 31 20} value 10
       }
       Fl_Value_Slider CameraZoom {
-        label {Camera Zoom:} selected
+        label {Camera Zoom:}
         xywh {12 203 333 20} type {Horz Knob} align 1 minimum 0.1 maximum 5 step 0.1 value 2 textsize 14
       }
     }

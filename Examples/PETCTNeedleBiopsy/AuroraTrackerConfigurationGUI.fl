@@ -18,7 +18,7 @@ class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
         xywh {213 13 75 25} down_box BORDER_BOX
       } {}
       Fl_Group ReferenceToolGroup {open
-        xywh {30 326 355 100} box ENGRAVED_BOX deactivate
+        xywh {30 326 355 100} box ENGRAVED_BOX
       } {
         Fl_Output ReferenceToolSROMFile {
           label {SROM File:}
@@ -89,8 +89,8 @@ if( fileName )
           }
         }
         Fl_Round_Button SwitchZAxes {
-          label {Flip Z axis?}
-          xywh {55 244 25 25} down_box ROUND_DOWN_BOX
+          label {Flip Z axis?} selected
+          xywh {55 244 25 25} down_box ROUND_DOWN_BOX value 1
         }
         Fl_Group {} {open
           xywh {31 74 170 35}
@@ -161,8 +161,7 @@ TrackerToolChannel->value(0);
 
 OffsetX->value( 0.0 );
 OffsetY->value( 0.0 );
-OffsetZ->value( 0.0 );} {selected
-    }
+OffsetZ->value( 0.0 );} {}
   }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {

@@ -23,10 +23,11 @@
 #include "igstkImageSpatialObject.h"
 #include "igstkStateMachine.h"
 
-#include "vtkImageMapToColors.h"
+#include "vtkImageMapToWindowLevelColors.h"
 #include "vtkLookupTable.h"
 #include "vtkImageReslice.h"
 #include "vtkImageActor.h"
+#include "vtkImageBlend.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkCamera.h"
@@ -120,6 +121,14 @@ public:
   void SetBGImageLUT(vtkLookupTable * lut); 
   void SetFGImageMapper(vtkImageMapToColors * mapper); 
   void SetFGImageLUT(vtkLookupTable * lut); 
+  void SetBGWindowLevel(double window, double level)
+    {
+    m_BGImageLUT->SetRange(level-(window/2), level+(window/2));
+    }
+  void SetFGWindowLevel(double window, double level)
+    {
+    m_FGImageLUT->SetRange(level-(window/2), level+(window/2));
+    }
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
@@ -182,11 +191,11 @@ private:
   vtkLookupTable                        * m_BGImageLUT;
   vtkLookupTable                        * m_FGImageLUT;
 
-  vtkImageActor                         * m_BGActor;
-  vtkImageActor                         * m_FGActor;
+  vtkImageActor                         * m_Actor;
 
   vtkCamera                             * m_Camera;
   vtkMatrix4x4                          * m_ResliceAxes;
+  vtkImageBlend                         * m_Blender;
 
   int                                     m_Extent[6];
   int                                     m_Dim[3];
@@ -212,6 +221,7 @@ private:
 
 private:
 
+  virtual bool VerifyTimeStamp() const; 
   /** Inputs to the State Machine */
 
   /** States for the State Machine */

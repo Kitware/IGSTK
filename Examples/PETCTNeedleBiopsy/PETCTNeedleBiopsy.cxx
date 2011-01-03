@@ -31,10 +31,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkSceneGraphUI.h"
 #include "vtkPlane.h"
 
-#define VIEW_3D_REFRESH_RATE 30
+#define VIEW_3D_REFRESH_RATE 10
 #define VIEW_STATIC_REFRESH_RATE 10
-
-int counter = 0 ;
 
 /** -----------------------------------------------------------------
 *     Constructor
@@ -108,7 +106,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_Needle->SetHeight( 200 );
 
   m_VirtualTip                = CylinderType::New();
-  m_VirtualTip->SetRadius(SIZE*0.6);
+  m_VirtualTip->SetRadius(SIZE*0.4);
   m_VirtualTip->SetHeight( 200 );
 
   m_NeedleRepresentation.clear();
@@ -118,7 +116,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     CylinderRepresentationType::Pointer  needleRepresentation      = CylinderRepresentationType::New();
     needleRepresentation->RequestSetCylinderObject( m_Needle );
     needleRepresentation->SetColor(0.0,1.0,0.0);
-    needleRepresentation->SetOpacity(1.0);
+    needleRepresentation->SetOpacity(0.8);
     m_NeedleRepresentation.push_back(needleRepresentation);
 
     CylinderRepresentationType::Pointer  vTipRepresentation        = CylinderRepresentationType::New();
@@ -242,6 +240,7 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     m_ViewResliceObserver );
 
   m_TransformObserver = igstk::TransformObserver::New();
+
 }
 
 
@@ -689,22 +688,11 @@ void PETCTNeedleBiopsy::RequestChangeWindowLevel()
 
   for( unsigned int i = 0; i<4; i++)
     {
-    vtkWindowLevelLookupTable * fgLUT = vtkWindowLevelLookupTable::New();
-    fgLUT->SetWindow(fgWindow);
-    fgLUT->SetLevel(fgLevel);
-    fgLUT->SetMinimumTableValue(0,0,0,0);
-    fgLUT->SetMaximumTableValue(1,0,0,1);
-    fgLUT->Build();
-    m_CTCTImageRepresentation[i]->SetFGImageLUT(fgLUT);
-    m_CTPETImageRepresentation[i]->SetFGImageLUT(fgLUT);
+    m_CTPETImageRepresentation[i]->SetBGWindowLevel(bgWindow, bgLevel);
+    m_CTPETImageRepresentation[i]->SetFGWindowLevel(fgWindow, fgLevel);
 
-    vtkWindowLevelLookupTable * bgLUT = vtkWindowLevelLookupTable::New();
-    bgLUT->SetWindow(bgWindow);
-    bgLUT->SetLevel(bgLevel);
-    bgLUT->Build();
-    m_CTCTImageRepresentation[i]->SetBGImageLUT(bgLUT);
-    m_CTPETImageRepresentation[i]->SetBGImageLUT(bgLUT);
-
+    m_CTCTImageRepresentation[i]->SetBGWindowLevel(bgWindow, bgLevel);
+    m_CTCTImageRepresentation[i]->SetFGWindowLevel(fgWindow, fgLevel);
     }
 }
 
@@ -1309,6 +1297,9 @@ void PETCTNeedleBiopsy::Picking( const itk::EventObject & event)
         m_FiducialPoint->RequestSetTransformAndParent(
           transform, m_WorldReference );
         m_Plan->m_FiducialPoints[ choice-2] = point;
+
+        /** Wirte the updated plan to file */
+        this->WriteTreatmentPlan();
         }
 
       /** Update annotation */
@@ -1317,9 +1308,6 @@ void PETCTNeedleBiopsy::Picking( const itk::EventObject & event)
       m_Annotation->RequestSetAnnotationText(0, buf);
       m_Annotation->RequestSetFontColor(0, 1.0, 0, 0);
       m_Annotation->RequestSetFontSize(0, 12);
-
-      /** Wirte the updated plan to file */
-      this->WriteTreatmentPlan();
 
       /** Reslice image */
       CTImageSOType::IndexType index;
@@ -1425,7 +1413,7 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   m_CTPETImageRepresentation[3]->RequestSetBGImageSO( m_ImageSpatialObject );
   m_CTPETImageRepresentation[3]->RequestSetFGImageSO( m_PETImageSpatialObject );
   m_CTPETImageRepresentation[3]->SetBGOpacity(0.5);
-  m_CTPETImageRepresentation[3]->SetSliceSize(300);
+  m_CTPETImageRepresentation[3]->SetSliceSize(200);
   //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::OffPerpendicular);
   m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::HybridPerpendicular);
   //m_CTPETImageRepresentation[3]->SetOrientation( CTPETRepresentationType::Axial);
@@ -1449,7 +1437,7 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   for (unsigned int i=0; i<4; i++)
     {
     m_CTPETImageRepresentation[i]->SetPrincipalAxes(pAxes);
-    m_CTPETImageRepresentation[i]->SetSliceSize(300);
+    m_CTPETImageRepresentation[i]->SetSliceSize(200);
     }
 
   ViewerGroup->m_Sliders[0]->minimum( 0 );
@@ -1470,10 +1458,13 @@ void PETCTNeedleBiopsy::RequestStartTracking()
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleTipRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_NeedleRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_VirtualTipRepresentation[i] );
-    //vtkCamera * camera = m_CTPETImageRepresentation[i]->RequestReslice();
-    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
-    //ViewerGroup->m_Views[i]->RequestResetCamera();
-    //ViewerGroup->m_Views[i]->SetCameraZoomFactor(1.5);
+    
+    // Coonecting camera
+    ViewerGroup->m_Views[i]->RequestResetCamera();
+    vtkCamera * camera = m_CTPETImageRepresentation[i]->RequestReslice();
+    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    ViewerGroup->m_Views[i]->SetCameraZoomFactor(2.5);
+
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_3D_REFRESH_RATE );
     ViewerGroup->m_Views[i]->RequestStart();
     ViewerGroup->m_Displays[i]->RequestDisableInteractions();
@@ -1541,6 +1532,7 @@ void PETCTNeedleBiopsy::RequestStopTracking()
     ViewerGroup->m_Views[i]->RequestAddObject( m_FiducialRepresentation[i] );
     ViewerGroup->m_Views[i]->RequestAddObject( m_PathRepresentation[i] );
     ViewerGroup->m_Views[i]->SetRefreshRate( VIEW_STATIC_REFRESH_RATE );
+    ViewerGroup->m_Views[i]->RequestStart();
     ViewerGroup->m_Displays[i]->RequestEnableInteractions();
   }
   ViewerGroup->m_Views[3]->RequestRemoveObject( m_CTPETImageRepresentation[3] );
@@ -1590,36 +1582,14 @@ void PETCTNeedleBiopsy::ObliqueResliceImage(igstk::Transform transform, double v
   {
     m_CTPETImageRepresentation[i]->SetResliceTransform( transform );
     m_CTPETImageRepresentation[i]->SetVirtualTip( virtualTip );
-    ViewerGroup->m_Views[i]->RequestResetCamera();
+    //ViewerGroup->m_Views[i]->RequestResetCamera();
     camera = m_CTPETImageRepresentation[i]->RequestReslice();
-    camera->Zoom( this->CameraZoom->value() );
-    ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    //camera->Zoom( this->CameraZoom->value() );
+    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
   }
-
-  double focal[3];
-  double viewNorm[3];
-  double pt[3], pp[3];
-  camera->GetFocalPoint( focal );
-  camera->GetViewPlaneNormal( viewNorm );
-  for (unsigned int i=0; i<3; i++)
-    {
-    pt[i] = m_CTPlan->m_TargetPoint[i];
-    }
-  vtkPlane::ProjectPoint(pt , focal, viewNorm, pp );
-  igstk::Transform::VectorType translation;
-  for (unsigned int i=0; i<3; i++)
-    {
-    translation[i] = pp[i];
-    }
-
-  igstk::Transform t;
-  t.SetTranslation( translation, 0.0, igstk::TimeStamp::GetLongestPossibleTime());
-  m_TargetProjection->RequestUpdateTransformToParent( t );
 
   this->ViewerGroup->redraw();
   Fl::check();
-  
-  std::cout << "tracker update:" << counter++ << "\n";
 }
 
 void PETCTNeedleBiopsy::UpdateVirtualTip( const itk::EventObject & event )

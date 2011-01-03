@@ -46,7 +46,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "igstkTrackerInitializer.h"
 #include "igstkCoordinateSystemTransformToResult.h"
 
+#include "vtkSmartPointer.h"
 #include "vtkWindowLevelLookupTable.h"
+#include "vtkLookupTable.h"
 
 /** \class PETCTNeedleBiopsy
 *

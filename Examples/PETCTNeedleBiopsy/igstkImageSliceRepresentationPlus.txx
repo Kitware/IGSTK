@@ -22,7 +22,7 @@
 
 #include "vtkImageData.h"
 #include "igstkEvents.h"
-#include "vtkWindowLevelLookupTable.h"
+#include "HotMetal.h"
 
 namespace igstk
 {
@@ -58,16 +58,13 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_PathVector.Fill(1);
 
   // Create classes for displaying images
-  m_BGActor = vtkImageActor::New();
-  m_BGActor->SetOpacity( m_BGOpacity );
-  this->AddActor( m_BGActor );
-
-  m_FGActor = vtkImageActor::New();
-  m_FGActor->SetOpacity( 1-m_BGOpacity );
-  this->AddActor( m_FGActor );
+  m_Actor = vtkImageActor::New();
+  m_Actor->SetOpacity( m_BGOpacity );
+  this->AddActor( m_Actor );
 
   m_ResliceAxes = vtkMatrix4x4::New();
   m_ResliceAxes->Identity();
+  m_Blender     = vtkImageBlend::New();
   m_Camera      = vtkCamera::New();
   m_Camera->ParallelProjectionOn();
 
@@ -77,27 +74,28 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
 
   // Set default values for window and level
   m_BGImageMapper = vtkImageMapToColors::New();
-  //m_BGImageMapper->SetOutputFormatToRGBA();
-  m_BGImageMapper->SetOutputFormatToLuminance();
-  //m_BGImageMapper->PassAlphaToOutputOn();
-  //m_BGImageLUT = vtkWindowLevelLookupTable::New();
-  vtkWindowLevelLookupTable * lut = vtkWindowLevelLookupTable::New();
-  lut->SetLevel( 0 );
-  lut->SetWindow( 1000 );
-  lut->Build();
-  m_BGImageLUT = lut;
+  m_BGImageMapper->SetOutputFormatToRGBA();
+  m_BGImageLUT = vtkLookupTable::New();
+  m_BGImageLUT->SetRange(-500, 500); // image intensity range
+  m_BGImageLUT->SetValueRange(0.0, 1.0); // from black to white
+  m_BGImageLUT->SetSaturationRange(0.0, 0.0); // no color saturation
+  m_BGImageLUT->SetRampToLinear();
+  m_BGImageLUT->Build();
   m_BGImageMapper->SetLookupTable( m_BGImageLUT );
 
   m_FGImageMapper = vtkImageMapToColors::New();
   m_FGImageMapper->SetOutputFormatToRGBA();
-  //m_FGImageMapper->SetOutputFormatToLuminance();
-  //m_FGImageMapper->PassAlphaToOutputOn();
-  vtkWindowLevelLookupTable * lut2 = vtkWindowLevelLookupTable::New();
-  lut2->SetLevel( 0 );
-  lut2->SetWindow( 1000 );
-  lut2->SetMinimumTableValue(0,0,0,0);
-  lut2->SetMaximumTableValue(1,0,0,1);
-  m_FGImageLUT = lut2;
+  m_FGImageLUT = vtkLookupTable::New();
+  m_FGImageLUT->SetRange( -500, 500 );
+  m_FGImageLUT->SetNumberOfColors( 256 );
+  m_FGImageLUT->SetRampToLinear();
+  m_FGImageLUT->Build();
+
+  for( int i=0; i<256; i++)
+    {
+    m_FGImageLUT->SetTableValue(i, (double)HotMetal[i]/255.0, (double)HotMetal[256+i]/255.0, (double)HotMetal[256*2+i]/255.0, 1.0 );
+    }
+  //m_FGImageLUT->SetTableValue(0, (double)HotMetal[0]/255.0, (double)HotMetal[256]/255.0, (double)HotMetal[256*2]/255.0, 0 );
   m_FGImageMapper->SetLookupTable( m_FGImageLUT );
 
   // Image reslice
@@ -328,13 +326,14 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_BGOpacity = o;
   if(m_FGImageSO)
     {
-    m_BGActor->SetOpacity( m_BGOpacity );
-    m_FGActor->SetOpacity( 1 - m_BGOpacity );
+    m_Blender->SetOpacity(0, m_BGOpacity);
+    m_Blender->SetOpacity(1, 1-m_BGOpacity);
+    m_Blender->Update();
     }
-  else
-    {
-    m_BGActor->SetOpacity( 1 );
-    }
+ else
+   {
+   m_Actor->SetOpacity(m_BGOpacity);
+   }
 }
 
 template < class TBGImageSO,  class TFGImageSO  >
@@ -637,8 +636,14 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_BGImageReslice->SetOutputExtent( 1, int(sizeX+0.5),
                                    1, int(sizeY+0.5),
                                    0, 0 );
-  m_BGActor->SetUserMatrix(m_ResliceAxes);
-
+  m_Blender->RemoveAllInputs();
+  m_Blender->AddInput( m_BGImageMapper->GetOutput() );
+  m_Blender->AddInput( m_FGImageMapper->GetOutput() );
+  m_Blender->SetOpacity(0, m_BGOpacity);
+  m_Blender->SetOpacity(0, 1-m_BGOpacity);
+  m_Actor->SetInput( m_Blender->GetOutput() );
+  m_Actor->SetUserMatrix(m_ResliceAxes);
+      
   if(m_FGImageSO)
     {
     m_TransformObserver->Clear();
@@ -653,8 +658,12 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
       m_FGImageReslice->SetOutputExtent( 1, int(sizeX+0.5),
                                    1, int(sizeY+0.5),
                                    0, 0 );
-      m_FGActor->SetUserMatrix(m_ResliceAxes);  // Place all resliced image at the same position in BGImage space
       }
+    }
+  else
+    {
+    m_Actor->SetInput( m_BGImageMapper->GetOutput() );
+    m_Actor->SetUserMatrix(m_ResliceAxes);
     }
 
 
@@ -708,11 +717,8 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_BGImageReslice->SetResliceAxes( m_ResliceAxes );
   m_BGImageMapper->SetLookupTable( m_BGImageLUT );
   m_BGImageMapper->SetInput( m_BGImageReslice->GetOutput() );
-  m_BGActor = vtkImageActor::New();
-  m_BGActor->SetInput( m_BGImageMapper->GetOutput() );
-  m_BGActor->SetUserMatrix( m_ResliceAxes );
-  m_BGActor->SetOpacity( m_BGOpacity );
-  this->AddActor( m_BGActor );
+
+  m_Actor = vtkImageActor::New();
 
   if(m_FGImageSO)
     {
@@ -720,14 +726,22 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
     m_FGImageReslice->SetResliceAxes( m_ResliceAxes );
     m_FGImageMapper->SetLookupTable( m_FGImageLUT );
     m_FGImageMapper->SetInput( m_FGImageReslice->GetOutput() );
-    m_FGActor = vtkImageActor::New();
-    m_FGActor->SetInput( m_FGImageMapper->GetOutput() );
-    m_FGActor->SetUserMatrix( m_ResliceAxes );
-    m_FGActor->SetOpacity( 1-m_BGOpacity );
-    this->AddActor( m_FGActor );
+    
+    m_Blender->RemoveAllInputs();
+    m_Blender->AddInput( m_BGImageMapper->GetOutput() );
+    m_Blender->AddInput( m_FGImageMapper->GetOutput() );
+    m_Blender->SetOpacity(0, m_BGOpacity);
+    m_Blender->SetOpacity(0, 1-m_BGOpacity);
+    m_Actor->SetInput( m_Blender->GetOutput() );
+    m_Actor->SetUserMatrix(m_ResliceAxes);
+    }
+  else
+    {
+    m_Actor->SetInput( m_BGImageMapper->GetOutput() );
+    m_Actor->SetUserMatrix(m_ResliceAxes);
     }
 
-  //this->RequestReslice();
+  this->AddActor(m_Actor);
 }
 
 /** Print Self function */
@@ -739,6 +753,13 @@ ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
   m_SliceSize = size;
 }
 
+template < class TBGImageSO,  class TFGImageSO  >
+bool
+ImageSliceRepresentationPlus < TBGImageSO,  TFGImageSO  >
+::VerifyTimeStamp( ) const
+{
+  return true;
+}
 
 } // end namespace igstk
 
