@@ -93,13 +93,14 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     tipRepresentation->SetOpacity(1.0);
     m_NeedleTipRepresentation.push_back(tipRepresentation);
     }
+  m_NeedleTipRepresentation[3]->SetOpacity(0.4);
 
   m_NeedleHub                   = EllipsoidType::New();
   m_NeedleHub->SetRadius( SIZE*2, SIZE*2, SIZE*2 );
   m_NeedleHubRepresentation     = EllipsoidRepresentationType::New();
   m_NeedleHubRepresentation->RequestSetEllipsoidObject( m_NeedleHub );
   m_NeedleHubRepresentation->SetColor(0.0,1.0,0.0);
-  m_NeedleHubRepresentation->SetOpacity(0.7);
+  m_NeedleHubRepresentation->SetOpacity(0.2);
 
   m_Needle                    = CylinderType::New();
   m_Needle->SetRadius( SIZE*0.8 );
@@ -130,9 +131,9 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
   m_TargetPoint                 = EllipsoidType::New();
   m_TargetPoint->SetRadius( SIZE*2, SIZE*2, SIZE*2 );
   m_TargetProjection                 = EllipsoidType::New();
-  m_TargetProjection->SetRadius( SIZE*2, SIZE*2, SIZE*2 );
+  m_TargetProjection->SetRadius( SIZE*0.5, SIZE*0.5, SIZE*0.5 );
   m_TargetRepresentation.clear();
-  for (unsigned int i=0; i<4; i++)
+  for (unsigned int i=0; i<3; i++)
   {
     EllipsoidRepresentationType::Pointer  targetRepresentation        = EllipsoidRepresentationType::New();
     targetRepresentation->RequestSetEllipsoidObject( m_TargetPoint );
@@ -140,6 +141,11 @@ PETCTNeedleBiopsy::PETCTNeedleBiopsy() : m_LogFile()
     targetRepresentation->SetOpacity( 1 );
     m_TargetRepresentation.push_back(targetRepresentation);
   }
+  EllipsoidRepresentationType::Pointer  targetRepresentation        = EllipsoidRepresentationType::New();
+  targetRepresentation->RequestSetEllipsoidObject( m_TargetProjection );
+  targetRepresentation->SetColor( 1.0, 0.0, 0.0);
+  targetRepresentation->SetOpacity( 1 );
+  m_TargetRepresentation.push_back(targetRepresentation);
 
   m_EntryPoint                  = EllipsoidType::New();
   m_EntryRepresentation         = EllipsoidRepresentationType::New();
@@ -1473,7 +1479,6 @@ void PETCTNeedleBiopsy::RequestStartTracking()
   ViewerGroup->m_Views[3]->RequestRemoveObject( m_VirtualTipRepresentation[3] );
   ViewerGroup->m_Views[3]->RequestRemoveObject( m_NeedleRepresentation[3] );
   ViewerGroup->m_Views[3]->RequestAddObject( m_NeedleHubRepresentation );
-  m_TargetRepresentation[3]->RequestSetEllipsoidObject( m_TargetProjection );
   ViewerGroup->m_Views[3]->RequestAddObject( m_TargetRepresentation[3] );
 //   // Output to file
 //   igstk::SceneGraph * sg = igstk::SceneGraph::getInstance();
@@ -1555,7 +1560,6 @@ void PETCTNeedleBiopsy::RequestStopTracking()
   ViewerGroup->m_Views[i]->RequestResetCamera();
   ViewerGroup->m_Views[i]->SetCameraFocalPoint(m_ImageCenter[0],m_ImageCenter[1],m_ImageCenter[2]);
   ViewerGroup->m_Views[i]->SetCameraZoomFactor(2.0);
-  //ViewerGroup->m_Views[i]->SetCameraClippingRange( 0, 1000 );
   }
 
   m_ViewPickerObserver->SetCallbackFunction( this, &PETCTNeedleBiopsy::Picking );
@@ -1581,12 +1585,34 @@ void PETCTNeedleBiopsy::ObliqueResliceImage(igstk::Transform transform, double v
   for (unsigned int i = 0; i<4; i++)
   {
     m_CTPETImageRepresentation[i]->SetResliceTransform( transform );
-    m_CTPETImageRepresentation[i]->SetVirtualTip( virtualTip );
-    //ViewerGroup->m_Views[i]->RequestResetCamera();
+    if ( i != 3)
+      {
+      m_CTPETImageRepresentation[i]->SetVirtualTip( virtualTip );
+      }
+    ViewerGroup->m_Views[i]->RequestResetCamera();
     camera = m_CTPETImageRepresentation[i]->RequestReslice();
-    //camera->Zoom( this->CameraZoom->value() );
-    //ViewerGroup->m_Views[i]->RequestSetActiveCamera( camera );
+    camera->Zoom( this->CameraZoom->value() );
   }
+
+  double focal[3];
+  double viewNorm[3];
+  double pt[3], pp[3];
+  camera->GetFocalPoint( focal );
+  camera->GetViewPlaneNormal( viewNorm );
+  for (unsigned int i=0; i<3; i++)
+    {
+    pt[i] = m_Plan->m_TargetPoint[i];
+    }
+  vtkPlane::ProjectPoint(pt , focal, viewNorm, pp );
+  igstk::Transform::VectorType translation;
+  for (unsigned int i=0; i<3; i++)
+    {
+    translation[i] = pp[i];
+    }
+
+  igstk::Transform t;
+  t.SetTranslation( translation, 0.0, igstk::TimeStamp::GetLongestPossibleTime());
+  m_TargetProjection->RequestUpdateTransformToParent( t );
 
   this->ViewerGroup->redraw();
   Fl::check();
