@@ -304,6 +304,7 @@ private:
                  (*(*it)) << this->m_PositionMessage; 
               }
             // EndCodeSnippet
+            std::cout << this->m_PositionMessage; 
             }
           }
         }
