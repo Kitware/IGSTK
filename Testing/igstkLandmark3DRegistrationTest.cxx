@@ -172,11 +172,12 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
   landmarkRegister->SetLogger( logger );
 
   // Define the 3D rigid body transformation 
-  typedef itk::Rigid3DTransform< double > Rigid3DTransformType;
+  typedef itk::VersorRigid3DTransform< double > Rigid3DTransformType;
 
   Rigid3DTransformType::Pointer rigid3DTransform = Rigid3DTransformType::New();
 
   Rigid3DTransformType::MatrixType mrotation;
+  Rigid3DTransformType::VersorType vrotation;
 
   mrotation.SetIdentity();
 
@@ -191,7 +192,8 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
   mrotation[1][0] = -sinth;
   mrotation[1][1] =  costh;
 
-  rigid3DTransform->SetRotationMatrix( mrotation );
+  vrotation.Set(mrotation);
+  rigid3DTransform->SetRotation( vrotation );
 
   // Apply translation
   Rigid3DTransformType::TranslationType translation;
@@ -424,7 +426,7 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
     std::cout << "Compute transform using collinear point" << std::endl;
     Rigid3DTransformType::Pointer   rigid3DTransform = 
                                                     Rigid3DTransformType::New();
-    rigid3DTransform->SetRotationMatrix( mrotation );
+    rigid3DTransform->SetRotation( vrotation );
     rigid3DTransform->SetTranslation(translation);
 
     // Add 1st landmark
