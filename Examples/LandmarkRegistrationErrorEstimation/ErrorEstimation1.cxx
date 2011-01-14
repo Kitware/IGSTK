@@ -189,12 +189,13 @@ int main( int argv, char * argc[] )
 
 
   // Define the 3D rigid body transformation 
-  typedef itk::Rigid3DTransform< double > Rigid3DTransformType;
+  typedef itk::VersorRigid3DTransform< double > Rigid3DTransformType;
 
   Rigid3DTransformType::Pointer rigid3DTransform = 
                                      Rigid3DTransformType::New();
 
   Rigid3DTransformType::MatrixType mrotation;
+  Rigid3DTransformType::VersorType vrotation;
 
   mrotation.SetIdentity();
 
@@ -209,7 +210,8 @@ int main( int argv, char * argc[] )
   mrotation[1][0] = -sinth;
   mrotation[1][1] =  costh;
 
-  rigid3DTransform->SetRotationMatrix( mrotation );
+  vrotation.Set(mrotation);
+  rigid3DTransform->SetRotation( vrotation );
 
   // Apply translation
 
