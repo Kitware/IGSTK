@@ -602,6 +602,8 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     }
   catch( itk::ExceptionObject & excp )
     {
+    igstkLogMacro( DEBUG, 
+    "igstk::DICOMImageReader - Failed to update image series reader.\n" );
     this->m_ImageReadingErrorInformation = excp.GetDescription();
     this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
     this->m_StateMachine.ProcessInputs();
@@ -635,6 +637,11 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       return; 
       }
     }
+  else
+    {
+    igstkLogMacro( DEBUG, 
+    "igstk::DICOMImageReader - Failed to retreive gantry info.\n" );
+    }
 
   // Check if the dicom image data is being read by the correct DICOM image
   // reader derived class
@@ -653,6 +660,11 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
       return; 
       }
     }
+  else
+    {
+    igstkLogMacro( DEBUG, 
+    "igstk::DICOMImageReader - Failed to retreive modality info.\n" );
+    }
 
   this->m_StateMachine.PushInput( this->m_ImageReadingSuccessInput );
   this->m_StateMachine.ProcessInputs();
@@ -664,6 +676,11 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     { 
     igstkLogMacro( DEBUG, "Patient Name = " << m_PatientName << "\n" );
     }
+  else
+    {
+    igstkLogMacro( DEBUG, 
+    "igstk::DICOMImageReader - Failed to retreive patient name.\n" );
+    }
   
   std::string patientIDTagkey;
   patientIDTagkey = "0010|0020";  
@@ -671,6 +688,11 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
   if( itk::ExposeMetaData<std::string>(dict,patientIDTagkey, m_PatientID ) )
     { 
     igstkLogMacro( DEBUG, "Patient ID = " << m_PatientID << "\n" );
+    }
+  else
+    {
+    igstkLogMacro( DEBUG, 
+    "igstk::DICOMImageReader - Failed to retreive patient ID.\n" );
     }
 
   this->Superclass::ConnectImage();
