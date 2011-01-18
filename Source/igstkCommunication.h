@@ -78,7 +78,7 @@ public:
 
   /** Write method sends the string via communication link. */
   virtual ResultType Write( const char * /* data */,
-                            unsigned int /* numberOfBytes */ ) { return SUCCESS; }
+                         unsigned int /* numberOfBytes */ ) { return SUCCESS; }
 
   /** Read method receives string via communication link. */
   virtual ResultType Read( char * /* data */,

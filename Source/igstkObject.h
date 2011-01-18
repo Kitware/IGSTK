@@ -108,7 +108,7 @@ private:
   // Put this here so we can share typedefs.
   class ObservedObjectTagPairObjectMatchPredicate
     {
-    public:
+  public:
     ObservedObjectTagPairObjectMatchPredicate( const itk::Object* obj )
       : m_TargetObject( obj )
       {
@@ -126,7 +126,7 @@ private:
         }
       }
 
-    private:
+  private:
     const itk::Object* m_TargetObject;
     };
 

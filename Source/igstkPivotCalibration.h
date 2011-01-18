@@ -156,7 +156,8 @@ private:
   void GetTransformProcessing();
   void GetPivotPointProcessing();
   void GetRMSEProcessing();
-  void EmptyCallBack(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event)){};
+  void EmptyCallBack( itk::Object * itkNotUsed(caller), 
+                      const itk::EventObject & itkNotUsed(event)){};
 
   /**settings for using member function as callback**/
   typedef itk::MemberCommand<PivotCalibration> TransformAcquiredCommand;
@@ -173,8 +174,7 @@ private:
 
   class ErrorObserver : public itk::Command
     {
-
-    public:
+  public:
 
     typedef ErrorObserver                    Self;
     typedef ::itk::Command                   Superclass;
@@ -206,18 +206,18 @@ private:
       errorMessage = this->m_ErrorMessage;
       }
 
-    protected:
+  protected:
 
     /**Construct an error observer for all the possible errors that occur in 
      * IGSTK components.*/
     ErrorObserver();
     virtual ~ErrorObserver(){}
 
-    private:
+  private:
 
-    bool m_ErrorOccured;
-    std::string m_ErrorMessage;
-    std::map<std::string,std::string> m_ErrorEvent2ErrorMessage;
+    bool                               m_ErrorOccured;
+    std::string                        m_ErrorMessage;
+    std::map<std::string,std::string>  m_ErrorEvent2ErrorMessage;
 
     //purposely not implemented
     ErrorObserver(const Self&);

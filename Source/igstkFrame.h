@@ -130,7 +130,7 @@ private:
   void SetFrameDimensions( unsigned int, unsigned int, unsigned int);
   void SetImagePtr( void*, TimePeriodType millisecondsToExpiration);
 
-  std::vector< unsigned char > *m_Image;
+  std::vector< unsigned char >* m_Image;
   TimeStamp                     m_TimeStamp;
   void*                         m_ImagePtr;
   unsigned int                  m_Width;

@@ -61,7 +61,7 @@ SimulatedTracker::ResultType SimulatedTracker::InternalClose( void )
 
 SimulatedTracker::ResultType 
 SimulatedTracker
-::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
+::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool))
 {
   return SUCCESS;
 }

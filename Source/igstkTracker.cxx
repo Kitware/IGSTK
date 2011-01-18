@@ -823,7 +823,7 @@ void Tracker::UpdateStatusSuccessProcessing( void )
         
       // if a reference tracker tool has been specified, then if the tracker
       // tool that is being updated is the selected reference tracker tool,
-      // then update the transform that is from the tracker to the the
+      // then update the transform that is from the tracker to the
       // reference tracker tool. Otherwise, update the transform from the
       // tracker tool to the tracker. 
       if( m_ApplyingReferenceTool )

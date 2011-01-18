@@ -130,7 +130,7 @@ CircularSimulatedTracker::InternalUpdateStatus( void )
     MillisecondsToSeconds * ( timeNow - this->m_TimeOfLastUpdate );
 
 
-  this->m_Angle +=
+  this->m_Angle += 
     DegreesToRadians * this->m_AngularSpeed * timeLapseInSeconds;
 
   this->m_TimeOfLastUpdate = timeNow;

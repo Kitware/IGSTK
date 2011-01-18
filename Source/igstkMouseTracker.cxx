@@ -66,7 +66,7 @@ MouseTracker::ResultType MouseTracker::InternalClose( void )
 }
  
 MouseTracker::ResultType MouseTracker
-::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
+::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool))
 {
   return SUCCESS;
 }
@@ -79,7 +79,8 @@ MouseTracker::ResultType MouseTracker
 }
 
 MouseTracker::ResultType MouseTracker
-::AddTrackerToolToInternalDataContainers( const TrackerToolType * itkNotUsed(trackerTool) )
+::AddTrackerToolToInternalDataContainers( const TrackerToolType * 
+                                                 itkNotUsed(trackerTool) )
 {
   return SUCCESS;
 }

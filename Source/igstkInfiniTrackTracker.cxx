@@ -43,16 +43,16 @@ void deviceEnumerator (uint64 u64DeviceSerialNumber, void* pUserData)
 }
 
 /** Constructor */
-InfiniTrackTracker::InfiniTrackTracker (void) 
-                  : m_StateMachine(this)
-                  , m_Handle (NULL)
-                  , m_u64DeviceSerialNumber (0)
-                  , m_BufferLock (NULL)
-                  , m_pvecMarkerPos (NULL)
-                  , m_iProcessed (-1)
-                  , m_iAvailable (-1)
-                  , m_iInAcquisition (-1)
-                  , m_vecTrackerToolID ()
+InfiniTrackTracker::InfiniTrackTracker (void) :
+m_StateMachine(this)
+, m_Handle (NULL)
+, m_u64DeviceSerialNumber (0)
+, m_BufferLock (NULL)
+, m_pvecMarkerPos (NULL)
+, m_iProcessed (-1)
+, m_iAvailable (-1)
+, m_iInAcquisition (-1)
+, m_vecTrackerToolID ()
 {
   this->m_pvecMarkerPos = new std::vector<itkMarkerPos*>[3]; 
 

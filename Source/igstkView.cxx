@@ -430,7 +430,7 @@ void View::ResetCameraProcessing()
 {
   igstkLogMacro( DEBUG, "igstkView::ResetCameraProcessing() called ...\n");
 
-  /** Before resetting the camera, make sure that that object
+  /** Before resetting the camera, make sure that object
    *  representations are up to date. Representations need to be
    *  updated to make sure they are in the right position,
    *  and sized correctly so the reset camera parameters make

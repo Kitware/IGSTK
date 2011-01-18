@@ -42,3 +42,7 @@ igstk.*\Test.*\.cxx Namespace Disable
 igstkPivotCalibrationFLTKWidget.cxx InternalVariables Disable
 igstkPivotCalibrationFLTKWidget.h InternalVariables Disable
 igstkPivotCalibrationAlgorithm.h InternalVariables Disable
+igstkPulseGenerator.h InternalVariables Disable
+igstkCrossHairSpatialObject.h InternalVariables Disable
+igstkInfiniTrackTracker.h InternalVariables Disable
+igstkMultipleOutput.h InternalVariables Disable

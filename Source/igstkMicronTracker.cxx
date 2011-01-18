@@ -615,7 +615,8 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
   for(unsigned int markerNum = 1;
       markerNum <= markersCollectionCount; markerNum++)
     {
-    MTMarker::Marker * marker = new MTMarker::Marker(markersCollection->itemI(markerNum));
+    MTMarker::Marker * marker;
+    marker = new MTMarker::Marker(markersCollection->itemI(markerNum));
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
       //Get postion and pose information

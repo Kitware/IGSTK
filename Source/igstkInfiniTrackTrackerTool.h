@@ -78,7 +78,8 @@ private:
   void operator=(const Self&);       //purposely not implemented
 
   /** Get boolean variable to check if the tracker tool is 
-      configured or not */
+   *  configured or not.
+   */
   virtual bool CheckIfTrackerToolIsConfigured () const;
 
   /** Report invalid marker specified */

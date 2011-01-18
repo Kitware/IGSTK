@@ -370,13 +370,13 @@ void Landmark3DRegistrationErrorEstimator::
     differenceVector[1] = (*pointItr)[1] - this->m_LandmarkCentroid[1];
     differenceVector[2] = (*pointItr)[2] - this->m_LandmarkCentroid[2];
 
-    distanceFromLandmarkPointToPrinciaplAxes1 +=
+    distanceFromLandmarkPointToPrinciaplAxes1 += 
         vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes1,
                                           differenceVector ).GetNorm() );
-    distanceFromLandmarkPointToPrinciaplAxes2 +=
+    distanceFromLandmarkPointToPrinciaplAxes2 += 
         vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes2,
                                           differenceVector ).GetNorm() );
-    distanceFromLandmarkPointToPrinciaplAxes3 +=
+    distanceFromLandmarkPointToPrinciaplAxes3 += 
         vnl_math_sqr( itk::CrossProduct ( normalizedPrincipalAxes3,
                                           differenceVector ).GetNorm() );
     ++pointItr;
@@ -487,7 +487,7 @@ void Landmark3DRegistrationErrorEstimator
 
   for( unsigned int i=0; i<3; i++ )
     {
-    targetRegistrationError +=
+    targetRegistrationError += 
            vnl_math_sqr( distanceFromTargetPointToPrincipalAxes[i] ) /
            vnl_math_sqr( this->m_RMSDistanceFromLandmarkToPrincipalAxes[i] );
     }

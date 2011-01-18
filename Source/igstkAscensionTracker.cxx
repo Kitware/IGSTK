@@ -324,7 +324,7 @@ void AscensionTracker::DisableToolPorts( void )
 /** Verify tracker tool information */
 AscensionTracker::ResultType
 AscensionTracker
-::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
+::VerifyTrackerToolInformation(const TrackerToolType * itkNotUsed(trackerTool))
 {
   igstkLogMacro( DEBUG, 
     "AscensionTracker::VerifyTrackerToolInformation called...\n");

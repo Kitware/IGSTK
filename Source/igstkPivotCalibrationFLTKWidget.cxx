@@ -178,7 +178,7 @@ PivotCalibrationFLTKWidget::RequestComputeCalibration()
 
 void 
 PivotCalibrationFLTKWidget::RequestComputeCalibrationCB( Fl_Button *b, 
-                                                             void * itkNotUsed(v) )
+                                                         void * itkNotUsed(v) )
 { 
   ( ( Self* ) ( b->user_data() ) )->RequestComputeCalibration();
 }
@@ -235,8 +235,9 @@ PivotCalibrationFLTKWidget::RemoveObserver( unsigned long observerID )
 
 
 void 
-PivotCalibrationFLTKWidget::OnInitializationEvent( itk::Object * itkNotUsed(caller), 
-                                                const itk::EventObject & event )
+PivotCalibrationFLTKWidget::OnInitializationEvent( 
+                                             itk::Object * itkNotUsed(caller),
+                                             const itk::EventObject & event )
 {
   if( dynamic_cast< const 
               igstk::PivotCalibration::InitializationSuccessEvent * > (&event) )

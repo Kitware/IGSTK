@@ -175,7 +175,8 @@ bool
 Transform
 ::IsNumericallyEquivalent( const Transform& inputTransform, double tol ) const
 {
-  Transform shouldBeIdentity = TransformCompose( inputTransform, this->GetInverse() );
+  Transform shouldBeIdentity = TransformCompose( inputTransform, 
+                                                 this->GetInverse() );
   bool isEquivalent = shouldBeIdentity.IsIdentity( tol );
   return isEquivalent;
 }

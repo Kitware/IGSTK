@@ -172,7 +172,7 @@ private:
   /** Set the next available object array for acquisition */
   void setNextArrayForAcquisition ();
 
-  /** Set the next object array for the user. True if a new array is available */
+  /** Set the next array for the user. True if a new array is available */
   bool setNextArrayForUser ();
 
   /** Called when the acquisition is finished */

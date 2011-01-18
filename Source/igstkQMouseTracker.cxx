@@ -66,7 +66,8 @@ QMouseTracker::ResultType QMouseTracker::InternalClose( void )
 }
 
 QMouseTracker::ResultType QMouseTracker
-::VerifyTrackerToolInformation( const TrackerToolType * itkNotUsed(trackerTool) )
+::VerifyTrackerToolInformation( const TrackerToolType * 
+                                                     itkNotUsed(trackerTool) )
 {
   igstkLogMacro( DEBUG,
     "QMouseTracker::VerifyTrackerToolInformation called ...\n");
@@ -74,7 +75,8 @@ QMouseTracker::ResultType QMouseTracker
 }
 
 QMouseTracker::ResultType QMouseTracker
-::AddTrackerToolToInternalDataContainers( const TrackerToolType * itkNotUsed(trackerTool) )
+::AddTrackerToolToInternalDataContainers( const TrackerToolType * 
+                                                     itkNotUsed(trackerTool) )
 {
   igstkLogMacro( DEBUG,
     "QMouseTracker::AddTrackerToolToInternalDataContainers called ...\n");
