@@ -43,21 +43,20 @@ ENDIF(NOT IGSTK_NO_LIBRARY_DEPENDS)
 
 # The Binary Directory of ITK
 SET(ITK_DIR "@ITK_DIR@")
-MARK_AS_ADVANCED(ITK_DIR)
 SET(IGSTK_USE_ITK_FILE "@USE_ITK_FILE@")
 
 # The Binary Directory of VTK
 SET(VTK_DIR "@VTK_DIR@")
 SET(IGSTK_USE_VTK_FILE "@USE_VTK_FILE@")
 
-# The Binary Directory of FLTK
-SET(IGSTK_FLTK_DIR "@FLTK_DIR@")
-
 # Qt option
 SET(IGSTK_USE_Qt "@IGSTK_USE_Qt@")
 
 # FLTK option
 SET(IGSTK_USE_FLTK "@IGSTK_USE_FLTK@")
+# The Binary Directory of FLTK
+SET(IGSTK_FLTK_DIR "@FLTK_DIR@")
+SET(FLTK_FLUID_EXECUTABLE "@FLTK_FLUID_EXECUTABLE@")
 
 # MicronTracker option
 SET(IGSTK_USE_MicronTracker "@IGSTK_USE_MicronTracker@")

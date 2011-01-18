@@ -36,6 +36,10 @@ IF(IGSTK_USE_MicronTracker)
    ${MTC_INCLUDE_DIRECTORY} ${IGSTK_SOURCE_DIR}/Utilities/MicronTracker/src) 
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF(IGSTK_USE_SceneGraphVisualization)
+   SET(IGSTK_INCLUDE_DIRS_SOURCE_TREE ${IGSTK_INCLUDE_DIRS_SOURCE_TREE}
+  ${IGSTK_SOURCE_DIR}/Utilities/SceneGraphVisualization)
+ENDIF(IGSTK_USE_SceneGraphVisualization)
 
 #-----------------------------------------------------------------------------
 # Include directories needed for .cxx files in IGSTK.  These include
