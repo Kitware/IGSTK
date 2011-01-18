@@ -598,6 +598,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
 
   try
     {
+    m_ImageSeriesReader->UpdateLargestPossibleRegion();
     m_ImageSeriesReader->Update();
     }
   catch( itk::ExceptionObject & excp )
@@ -605,6 +606,7 @@ void DICOMImageReader<TPixelType>::AttemptReadImageProcessing()
     igstkLogMacro( DEBUG, 
     "igstk::DICOMImageReader - Failed to update image series reader.\n" );
     this->m_ImageReadingErrorInformation = excp.GetDescription();
+    igstkLogMacro( DEBUG,"ITK Exception:"+ m_ImageReadingErrorInformation );
     this->m_StateMachine.PushInput( this->m_ImageReadingErrorInput );
     this->m_StateMachine.ProcessInputs();
     return;
