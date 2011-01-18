@@ -159,6 +159,8 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool->RequestSetSROMFileName( SROMfilename );
   //Configure
   trackerTool->RequestConfigure();
+  trackerTool->GetPartNumber();
+  trackerTool->GetChannelNumber();
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
   //Add observer to listen to transform events 
@@ -175,6 +177,8 @@ int igstkAuroraTrackerSimulatedTest( int argc, char * argv[] )
   trackerTool2->RequestSetChannelNumber( 1 );
   //Configure
   trackerTool2->RequestConfigure();
+  trackerTool2->GetPartNumber();
+  trackerTool2->GetChannelNumber();
   //Attach to the tracker
   trackerTool2->RequestAttachToTracker( tracker );
   ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
