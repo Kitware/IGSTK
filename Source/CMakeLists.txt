@@ -183,7 +183,6 @@ SET(IGSTK_SRCS
   igstkCTImageSpatialObjectRepresentation.cxx
   igstkMRImageSpatialObjectRepresentation.cxx
   igstkLandmark3DRegistration.cxx
-  igstkLandmark3DRegistration2.cxx
   igstkLandmark3DRegistrationErrorEstimator.cxx
   igstkAuroraTracker.cxx
   igstkAuroraTrackerTool.cxx
@@ -526,6 +525,8 @@ SET(IGSTKSandbox_SRCS
   igstkPETImageReader.cxx
   igstkPETImageSpatialObject.cxx
   igstkPETImageSpatialObjectRepresentation.cxx
+
+  igstkLandmark3DRegistration2.cxx
 
 )
 
