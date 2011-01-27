@@ -1233,7 +1233,7 @@ void TrackingVolumeViewer::TrackerControllerObserver::Execute( const itk::Object
 }
   
 void 
-TrackingVolumeViewer::TrackerControllerObserver::Execute( itk::Object *caller, 
+TrackingVolumeViewer::TrackerControllerObserver::Execute( itk::Object * itkNotUsed(caller), 
                                                              const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =

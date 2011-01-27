@@ -2442,7 +2442,7 @@ TrackerController::ErrorObserver::ErrorObserver() : m_ErrorOccured( false )
 
 void 
 TrackerController::ErrorObserver::Execute( 
-  const itk::Object *caller, 
+  const itk::Object * itkNotUsed(caller), 
   const itk::EventObject & event ) throw (std::exception)
 {
   std::map<std::string,std::string>::iterator it;
@@ -2477,7 +2477,7 @@ TrackerController::TrackerUpdateObserver::SetParent( TrackerController *parent )
 
 void
 TrackerController::TrackerUpdateObserver::Execute( 
-  const itk::Object *caller, 
+  const itk::Object * itkNotUsed(caller), 
   const itk::EventObject & event ) throw ( std::exception )
 {
   if( igstk::TrackerUpdateStatusEvent().CheckEvent( &event ) ||

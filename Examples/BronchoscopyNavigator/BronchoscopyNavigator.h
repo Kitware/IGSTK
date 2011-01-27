@@ -557,7 +557,7 @@ private:
   void ReferenceAvailableCallback( const itk::EventObject & event );
   void OffOrthogonalResliceCallback( const itk::EventObject & event );
   void OrthogonalResliceCallback( const itk::EventObject & event );
-  void NullActionCallback(const itk::EventObject & event ){};
+  void NullActionCallback(const itk::EventObject & itkNotUsed(event) ){};
   void OnITKProgressEvent(itk::Object *source, const itk::EventObject &);
 
 };

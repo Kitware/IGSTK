@@ -25,7 +25,7 @@
 #include "itkStdStreamLogOutput.h"
 
 
-int igstkGenericImageSpatialObjectTest( int argc, char* argv[] )
+int igstkGenericImageSpatialObjectTest( int , char* [] )
 {
 
   igstk::RealTimeClock::Initialize();

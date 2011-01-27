@@ -3316,7 +3316,7 @@ void BronchoscopyNavigator::DisableOrthogonalPlanes()
 
 }
 
-void BronchoscopyNavigator::ToolAvailableCallback(const itk::EventObject & event )
+void BronchoscopyNavigator::ToolAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_TrackingSemaphore->color(FL_GREEN);
   m_TrackingSemaphore->label("tracking");
@@ -3324,7 +3324,7 @@ void BronchoscopyNavigator::ToolAvailableCallback(const itk::EventObject & event
   Fl::check();
 }
 
-void BronchoscopyNavigator::ToolNotAvailableCallback(const itk::EventObject & event )
+void BronchoscopyNavigator::ToolNotAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_TrackingSemaphore->color(FL_RED);
   m_TrackingSemaphore->label("not visible");
@@ -3332,7 +3332,7 @@ void BronchoscopyNavigator::ToolNotAvailableCallback(const itk::EventObject & ev
   Fl::check();
 }
 
-void BronchoscopyNavigator::ReferenceAvailableCallback(const itk::EventObject & event )
+void BronchoscopyNavigator::ReferenceAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_ReferenceSemaphore->color(FL_GREEN);
   m_ReferenceSemaphore->label("tracking");
@@ -3340,7 +3340,7 @@ void BronchoscopyNavigator::ReferenceAvailableCallback(const itk::EventObject & 
   Fl::check();
 }
 
-void BronchoscopyNavigator::ReferenceNotAvailableCallback(const itk::EventObject & event )
+void BronchoscopyNavigator::ReferenceNotAvailableCallback(const itk::EventObject & itkNotUsed(event) )
 {
   m_ReferenceSemaphore->color(FL_RED);
   m_ReferenceSemaphore->label("not visible");
@@ -3361,7 +3361,7 @@ void BronchoscopyNavigator::TrackerControllerObserver::Execute( const itk::Objec
 }
 
 void
-BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object *caller,
+BronchoscopyNavigator::TrackerControllerObserver::Execute( itk::Object * itkNotUsed(caller),
                                                              const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =

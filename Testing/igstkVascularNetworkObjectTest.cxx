@@ -66,7 +66,7 @@ public:
     this->Execute( constCaller, event );
     }
 
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
 
     m_Vessel = NULL;

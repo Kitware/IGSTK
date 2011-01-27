@@ -531,8 +531,8 @@ TrackerConfigurationFileReader::GetDataProcessing()
 }
 
 void  
-TrackerConfigurationFileReader::PrintSelf( std::ostream& os, 
-                                     itk::Indent indent ) const
+TrackerConfigurationFileReader::PrintSelf( std::ostream& itkNotUsed(os), 
+                                     itk::Indent itkNotUsed(indent) ) const
 {
 }
 

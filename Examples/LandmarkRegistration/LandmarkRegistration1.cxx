@@ -84,11 +84,11 @@ public:
   typedef itk::SmartPointer<Self>             Pointer;
   typedef itk::Command                        Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
 
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event))
     {
     std::cerr<<"Error in transform computation"<<std::endl;
     }
@@ -107,11 +107,11 @@ public:
   typedef itk::SmartPointer<Self>                      Pointer;
   typedef itk::Command                                 Superclass;
   itkNewMacro(Self);
-  void Execute(const itk::Object *caller, const itk::EventObject & event)
+  void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
 
     }
-  void Execute(itk::Object *caller, const itk::EventObject & event)
+  void Execute(itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
     std::cerr<<"Invalid input request!!"<<std::endl;
     }
@@ -140,11 +140,11 @@ public:
 
   typedef igstk::CoordinateSystemTransformToEvent TransformEventType;
   
-  void Execute( const itk::Object *caller, const itk::EventObject & event )
+  void Execute( const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
     }
  
-  void Execute( itk::Object *caller, const itk::EventObject & event )
+  void Execute( itk::Object * itkNotUsed(caller), const itk::EventObject & event )
     {
     std::cout<< " TransformEvent is thrown" << std::endl;
     const TransformEventType * transformEvent =
@@ -188,7 +188,7 @@ private:
 // EndLatex
 
 // BeginCodeSnippet
-int main( int argv, char * argc[] )
+int main( int , char * [] )
 {
 // EndCodeSnippet
 

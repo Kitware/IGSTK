@@ -523,8 +523,8 @@ TransformFileReader::GetDataProcessing()
 }
 
 void  
-TransformFileReader::PrintSelf( std::ostream& os, 
-                                     itk::Indent indent ) const
+TransformFileReader::PrintSelf( std::ostream& itkNotUsed(os), 
+                                     itk::Indent itkNotUsed(indent) ) const
 {
 }
 

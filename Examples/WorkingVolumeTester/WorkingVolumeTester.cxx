@@ -1233,7 +1233,7 @@ void WorkingVolumeTester::TrackerControllerObserver::Execute( const itk::Object 
 }
   
 void 
-WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object *caller, 
+WorkingVolumeTester::TrackerControllerObserver::Execute( itk::Object * itkNotUsed(caller), 
                                                              const itk::EventObject & event )
 {
   const igstk::TrackerController::InitializeErrorEvent *evt1a =

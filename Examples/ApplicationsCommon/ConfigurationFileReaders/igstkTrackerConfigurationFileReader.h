@@ -134,7 +134,7 @@ public:
       const itk::Object * constCaller = caller;
       this->Execute( constCaller, event );
     }
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
+    void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
     const igstk::TrackerConfigurationFileReader::ReadSuccessEvent *rse = 
       dynamic_cast<const 
@@ -228,7 +228,7 @@ public:
       const itk::Object * constCaller = caller;
       this->Execute( constCaller, event );
     }
-    void Execute(const itk::Object *caller, const itk::EventObject & event)
+    void Execute(const itk::Object * itkNotUsed(caller), const itk::EventObject & event)
     {
       if( dynamic_cast<const 
           igstk::TrackerConfigurationFileReader::ReadSuccessEvent *>( &event) )

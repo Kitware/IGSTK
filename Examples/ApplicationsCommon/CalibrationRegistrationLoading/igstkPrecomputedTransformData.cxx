@@ -218,7 +218,7 @@ PrecomputedTransformData::GetDateProcessing()
 
 void  
 PrecomputedTransformData::PrintSelf( std::ostream& os, 
-                                     itk::Indent indent ) const
+                                     itk::Indent itkNotUsed(indent) ) const
 {
   os<<this->m_TransformationDescription<<"("<<this->m_ComputationDateAndTime;
   os<<"):\n";

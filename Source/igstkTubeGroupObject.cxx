@@ -32,7 +32,7 @@ TubeGroupObject::~TubeGroupObject()
 
 /** Return a pointer to a tube */
 const TubeGroupObject::TubeObjectType * 
-TubeGroupObject::GetTube(unsigned long id) const
+TubeGroupObject::GetTube(unsigned long itkNotUsed(id)) const
 {
 #ifdef USE_SPATIAL_OBJECT_DEPRECATED
   return dynamic_cast<const TubeObject*>(this->GetObject(id));

@@ -342,7 +342,7 @@ GenericImageSpatialObject
 
 bool
 GenericImageSpatialObject
-::IsInside( const PointType & point ) const 
+::IsInside( const PointType & itkNotUsed(point) ) const 
 { 
   //
   // FIXME: Update implementation
@@ -371,7 +371,7 @@ GenericImageSpatialObject
 
 bool
 GenericImageSpatialObject
-::TransformPhysicalPointToIndex ( const PointType & point, 
+::TransformPhysicalPointToIndex ( const PointType & itkNotUsed(point), 
                                         IndexType & index ) const 
 { 
   ContinuousIndexType cindex;
@@ -388,8 +388,8 @@ GenericImageSpatialObject
 
 bool
 GenericImageSpatialObject
-::TransformPhysicalPointToContinuousIndex ( const PointType & point, 
-                                        ContinuousIndexType & index ) const 
+::TransformPhysicalPointToContinuousIndex ( const PointType & itkNotUsed(point), 
+                                        ContinuousIndexType & itkNotUsed(index) ) const 
 { 
   // FIXME: here there should be a switch statement...
   // return m_Image->TransformPhysicalPointToContinuousIndex( point, index);  

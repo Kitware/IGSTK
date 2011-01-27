@@ -66,10 +66,10 @@ public:
   typedef igstk::LandmarkRegistrationErrorEvent 
                          LandmarkRegistrationErrorEventType;
 
-  void Execute( const itk::Object *caller, const itk::EventObject & event )
+  void Execute( const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
     }
-  void Execute( itk::Object *caller, const itk::EventObject & event )
+  void Execute( itk::Object * itkNotUsed(caller), const itk::EventObject & event )
     {
     std::cout<< " LandmarkRegistrationErrorEvent is thrown" << std::endl;
     const LandmarkRegistrationErrorEventType * errorEvent =
@@ -105,10 +105,10 @@ public:
 
   typedef igstk::DoubleTypeEvent DoubleTypeEventType;
 
-  void Execute( const itk::Object *caller, const itk::EventObject & event )
+  void Execute( const itk::Object * itkNotUsed(caller), const itk::EventObject & itkNotUsed(event) )
     {
     }
-  void Execute( itk::Object *caller, const itk::EventObject & event )
+  void Execute( itk::Object * itkNotUsed(caller), const itk::EventObject & event )
     {
     std::cout<< " DoubleTypeEvent is thrown" << std::endl;
     const DoubleTypeEventType * errorEvent =
@@ -139,7 +139,7 @@ private:
 };
 
 
-int main( int argv, char * argc[] )
+int main( int , char * [] )
 {
 
   igstk::RealTimeClock::Initialize();
