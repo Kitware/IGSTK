@@ -106,7 +106,7 @@ namespace igstk
   /** Verify imager tool information. */
   MicronVideoImager::ResultType
   MicronVideoImager
-  ::VerifyVideoImagerToolInformation( const VideoImagerToolType * imagerTool )
+  ::VerifyVideoImagerToolInformation( const VideoImagerToolType * itkNotUsed(imagerTool) )
   {
     igstkLogMacro( DEBUG, "igstk::MicronVideoImager"
         << "::VerifyVideoImagerToolInformation called ...\n");

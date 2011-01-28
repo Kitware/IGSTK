@@ -247,7 +247,7 @@ int BronchoscopyNavigatorQuadrantViews::handle(int event)
   };
 }
 
-int BronchoscopyNavigatorQuadrantViews::handle_key(int event, KeyboardCommandType &keyCommand) 
+int BronchoscopyNavigatorQuadrantViews::handle_key(int itkNotUsed(event), KeyboardCommandType &keyCommand) 
 {
     KeyPressedEvent kpEvent;
     kpEvent.Set( keyCommand );
@@ -256,7 +256,7 @@ int BronchoscopyNavigatorQuadrantViews::handle_key(int event, KeyboardCommandTyp
     return 1;
 }
 
-int BronchoscopyNavigatorQuadrantViews::handle_mouse(int event, MouseCommandType &mouseCommand) 
+int BronchoscopyNavigatorQuadrantViews::handle_mouse(int itkNotUsed(event), MouseCommandType &mouseCommand) 
 {
     MousePressedEvent mpEvent;
     mpEvent.Set( mouseCommand );

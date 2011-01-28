@@ -42,7 +42,7 @@ InterventionalPlanXMLFileReaderBase::StartElement( const char * name,
 
 
 void 
-InterventionalPlanXMLFileReaderBase::EndElement( const char *name )
+InterventionalPlanXMLFileReaderBase::EndElement( const char * itkNotUsed(name) )
 {
   //trim the tag's data string
   size_t startpos = this->m_CurrentTagData.find_first_not_of(" \t\n\r");

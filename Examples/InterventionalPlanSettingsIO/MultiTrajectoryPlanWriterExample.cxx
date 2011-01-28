@@ -2,7 +2,7 @@
 #include "igstkMultiTrajectoryInterventionalPlan.h"
 #include "igstkMultiTrajectoryPlanXMLFileWriter.h"
 
-int main( int argc, char *argv[] )
+int main( int , char *[] )
 {
   igstk::Trajectory::PointType entryPoint, t;
   igstk::Trajectory::DirectionType direction;

@@ -262,7 +262,7 @@ private:
   void UpdateVirtualTip( const itk::EventObject & event );
   void RequestInitializeTracker( const itk::EventObject & event );
   void Tracking( const itk::EventObject & event );
-  void NullAction(const itk::EventObject & event ){};
+  void NullAction(const itk::EventObject & itkNotUsed(event) ){};
 
 };
 

@@ -552,8 +552,8 @@ OpenIGTLinkTrackerConfigurationFileReader::GetDataProcessing()
 }
 
 void  
-OpenIGTLinkTrackerConfigurationFileReader::PrintSelf( std::ostream& os, 
-                                     itk::Indent indent ) const
+OpenIGTLinkTrackerConfigurationFileReader::PrintSelf( std::ostream& itkNotUsed(os), 
+                                     itk::Indent itkNotUsed(indent) ) const
 {
 }
 
