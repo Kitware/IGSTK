@@ -22,7 +22,7 @@ namespace igstk
 
 /** Constructor */
 PETImageSpatialObject
-::PETImageSpatialObject():m_StateMachine((Self *)this)
+::PETImageSpatialObject():m_StateMachine(this)
 {
 
 } 

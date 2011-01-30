@@ -32,6 +32,7 @@ namespace igstk
  *  mechanism.
  *
  *  \sa MRImageSpatialObject
+ *  \sa CTImageSpatialObject
  *  \sa PETImageReader
  *  \sa PETImageSpatialObjectRepresentation
  *
@@ -65,7 +66,7 @@ private:
  
   /** These two methods must be declared and note be implemented
    *  in order to enforce the protocol of smart pointers. */
-  PETImageSpatialObject(const Self&);     //purposely not implemented
+  PETImageSpatialObject(const Self&);    //purposely not implemented
   void operator=(const Self&);           //purposely not implemented
 
 
