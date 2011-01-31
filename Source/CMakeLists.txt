@@ -601,7 +601,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
 ENDIF(IGSTKSandbox_USE_MicronTracker)
 
 IF(IGSTKSandbox_USE_Ascension3DGTracker)
-  SET(EXTRA_LIBS ${EXTRA_LIBS} ATC3DG)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} ${ATC_LIBRARY})
 ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
 
 IF(IGSTKSandbox_USE_NDICertus)

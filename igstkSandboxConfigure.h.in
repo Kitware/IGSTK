@@ -32,6 +32,7 @@ Configure file for IGSTKSandbox
 #cmakedefine IGSTKSandbox_USE_Qt
 #cmakedefine IGSTKSandbox_USE_MicronTracker
 #cmakedefine IGSTKSandbox_USE_Ascension3DGTracker
+#cmakedefine Ascension3DG_MedSafe
 #cmakedefine IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS 
 #cmakedefine IGSTKSandbox_USE_vtkKWImage
 #cmakedefine IGSTKSandbox_USE_OpenIGTLink

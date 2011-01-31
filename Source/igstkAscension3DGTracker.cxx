@@ -21,16 +21,23 @@
 #pragma warning( disable : 4786 )
 #endif
 
+#include "igstkSandboxConfigure.h"
 #include "igstkAscension3DGTracker.h"
 //The ATC3DG.h file is not contained within a namepsace. We will do it here.
 //This will only cover the functions, structures and enumerations. There are
 //many #define statements that are unaffected by the namespace.
 //atc = Ascension Technology Corporation
+#ifdef Ascension3DG_MedSafe
+namespace atc
+{
+#include "ATC3DGm.h"
+};
+#else
 namespace atc
 {
 #include "ATC3DG.h"
 };
-
+#endif
 
 namespace igstk
 {
@@ -451,10 +458,10 @@ Ascension3DGTracker::InternalThreadedUpdateStatus( void )
     // Ascension quaternion: q0, q1, q2, and q3 where q0
     // is the scaler component
     // itk versor: void Set( T x, T y, T z, T w );
-    transform[3] = record[sensorIndex].q[0];
-    transform[4] = record[sensorIndex].q[3];
-    transform[5] = record[sensorIndex].q[2];
-    transform[6] = record[sensorIndex].q[1];
+    transform[3] = record[sensorIndex].q[1];
+    transform[4] = record[sensorIndex].q[2];
+    transform[5] = record[sensorIndex].q[3];
+    transform[6] = record[sensorIndex].q[0];
 
     this->m_ToolTransformBuffer[ inputItr->first ] = transform;
     //The tool will only be considered available if a transmitter is attached
