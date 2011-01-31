@@ -1679,21 +1679,23 @@ void UltrasoundNavigator::ConfigureTrackerProcessing()
       return;
   }
 
-  const unsigned int NUM_TRACKER_TYPES = 6;
+  const unsigned int NUM_TRACKER_TYPES = 7;
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer
-       trackerCofigurationXMLReaders[NUM_TRACKER_TYPES];
-  trackerCofigurationXMLReaders[0] =
+       trackerConfigurationXMLReaders[NUM_TRACKER_TYPES];
+  trackerConfigurationXMLReaders[0] =
        igstk::PolarisVicraConfigurationXMLFileReader::New();
-  trackerCofigurationXMLReaders[1] =
+  trackerConfigurationXMLReaders[1] =
        igstk::PolarisSpectraConfigurationXMLFileReader::New();
-  trackerCofigurationXMLReaders[2] =
+  trackerConfigurationXMLReaders[2] =
        igstk::PolarisHybridConfigurationXMLFileReader::New();
-  trackerCofigurationXMLReaders[3] =
+  trackerConfigurationXMLReaders[3] =
        igstk::AuroraConfigurationXMLFileReader::New();
-  trackerCofigurationXMLReaders[4] =
+  trackerConfigurationXMLReaders[4] =
        igstk::MicronConfigurationXMLFileReader::New();
-  trackerCofigurationXMLReaders[5] =
+  trackerConfigurationXMLReaders[5] =
        igstk::AscensionConfigurationXMLFileReader::New();
+  trackerConfigurationXMLReaders[6] = 
+    igstk::Ascension3DGConfigurationXMLFileReader::New();
 
   igstk::TrackerConfigurationFileReader::Pointer trackerConfigReader =
         igstk::TrackerConfigurationFileReader::New();
@@ -1723,7 +1725,7 @@ void UltrasoundNavigator::ConfigureTrackerProcessing()
   {
    //setting the xml reader always succeeds so I don't
    //observe the success event
-   trackerConfigReader->RequestSetReader( trackerCofigurationXMLReaders[i] );
+   trackerConfigReader->RequestSetReader( trackerConfigurationXMLReaders[i] );
 
    trackerConfigReader->RequestRead();
 
