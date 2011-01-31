@@ -42,6 +42,8 @@ public:
   virtual ~Ascension3DGToolConfiguration();
 
   igstkSetMacro( PortNumber, unsigned int );
+  igstkGetMacro( PortNumber, unsigned int );
+  
   virtual std::string GetToolTypeAsString();
 
 protected:

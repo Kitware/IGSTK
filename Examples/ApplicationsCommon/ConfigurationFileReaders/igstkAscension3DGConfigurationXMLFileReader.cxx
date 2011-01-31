@@ -29,7 +29,6 @@ Ascension3DGConfigurationXMLFileReader::StartElement(
   const char * name, 
   const char **atts )
 {
-  m_CurrentPortNumber = -1;
 
   //let the super class try to analyze the current tag
   Superclass::StartElement( name, atts );

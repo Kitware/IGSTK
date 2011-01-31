@@ -2031,6 +2031,7 @@ Ascension3DGTrackerTool::Pointer TrackerController::InitializeAscension3DGTool(
  
   trackerTool->SetCalibrationTransform( 
     toolConfiguration->GetCalibrationTransform() );
+  trackerTool->RequestSetPortNumber(toolConfiguration->GetPortNumber());
   trackerTool->RequestConfigure();
   return trackerTool;
 }
