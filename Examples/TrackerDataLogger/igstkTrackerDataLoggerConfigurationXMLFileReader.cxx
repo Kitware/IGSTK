@@ -216,7 +216,7 @@ throw ( FileFormatException )
     }
   if( this->m_CurrentOutputFileNames.empty()  && !this->m_CurrentToolIsReference )
     { 
-    throw FileFormatException( "\"send_to\" tag missing for one of the tools." );
+    throw FileFormatException( "\"save_to\" tag missing for one of the tools." );
     }
   LoggerDataType::const_iterator it, end;
   it = this->m_ToolNamesAndOutputFileNames.begin();

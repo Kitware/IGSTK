@@ -20,6 +20,8 @@
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkAuroraConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
+#include "igstkAscensionConfigurationXMLFileReader.h"
+#include "igstkAscension3DGConfigurationXMLFileReader.h"
 
 TrackerDataLogger::TrackerDataLogger( 
 std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
@@ -171,7 +173,7 @@ igstk::TrackerDataLoggerConfigurationFileReader::
 * TrackerDataLogger::GetTrackerConfiguration( 
   std::string &configurationFileName) throw ( ExceptionWithMessage )
 {
-  const unsigned int NUM_TRACKER_TYPES = 5;
+  const unsigned int NUM_TRACKER_TYPES = 7;
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
     trackerConfigurationXMLReaders[NUM_TRACKER_TYPES];
   trackerConfigurationXMLReaders[0] = 
@@ -184,7 +186,10 @@ igstk::TrackerDataLoggerConfigurationFileReader::
     igstk::AuroraConfigurationXMLFileReader::New();
   trackerConfigurationXMLReaders[4] = 
     igstk::MicronConfigurationXMLFileReader::New();
-
+  trackerConfigurationXMLReaders[5] =
+       igstk::AscensionConfigurationXMLFileReader::New();
+  trackerConfigurationXMLReaders[6] = 
+    igstk::Ascension3DGConfigurationXMLFileReader::New();
 
   igstk::TrackerDataLoggerConfigurationFileReader::Pointer trackerConfigReader =
     igstk::TrackerDataLoggerConfigurationFileReader::New();

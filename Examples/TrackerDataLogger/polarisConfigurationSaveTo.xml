@@ -19,9 +19,9 @@
 <!-- name: Unique string by which the developer can later reference-->
 <!--       the tool inside the program.                            -->
 <!-- srom_file: File containing the tool description.              -->
-<!-- send_to: The target host ip and port to which the             -->
+<!-- save_to: The target host ip and port to which the             -->
 <!--          transformations are sent. A tool can have multiple   -->
-<!--          send_to tags, broadcasting the data to multiple      -->
+<!--          save_to tags, broadcasting the data to multiple      -->
 <!--          receivers.                                           -->
 <!-- calibration_file: Optional calibration file. XML file         -->
 <!--                   containing the tool's calibration data      -->
