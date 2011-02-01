@@ -29,7 +29,7 @@ SET( IGSTKSandbox_TEST_FLOCKOFBIRD_PORT_NUMBER 1 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 
 OPTION(IGSTKSandbox_TEST_Ascension3DG_ATTACHED "Ascension3DG is attached to computer" OFF)
-OPTION(IGSTKSandbox_TEST_MicronTracker_ATTACHED "Ascension3DG is attached to computer" OFF)
+OPTION(IGSTKSandbox_TEST_MicronTracker_ATTACHED "MicronTracker is attached to computer" OFF)
 
 #-----------------------------------------------------------------------------
 # Configure the dot tool from graphviz in order to generate the State Machine Diagrams
@@ -174,12 +174,12 @@ IF(IGSTKSandbox_DATA_ROOT)
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-IF( IGSTKSandbox_USE_Ascension3DGTracker )
+IF( IGSTKSandbox_TEST_Ascension3DG_ATTACHED )
   ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest
             ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
   SET(SandboxTests_SRCS ${SandboxTests_SRCS}
         igstkAscension3DGTrackerTest.cxx)
-ENDIF (IGSTKSandbox_USE_Ascension3DGTracker)
+ENDIF (IGSTKSandbox_TEST_Ascension3DG_ATTACHED)
 
 IF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
 
