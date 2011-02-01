@@ -32,12 +32,12 @@ namespace atc
 {
 #include "ATC3DGm.h"
 };
-#else
+#else /* Ascension3DG_MedSafe */
 namespace atc
 {
 #include "ATC3DG.h"
 };
-#endif
+#endif /* Ascension3DG_MedSafe */
 
 namespace igstk
 {

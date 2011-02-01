@@ -182,7 +182,7 @@ private:
   typedef igstk::Ascension3DGTrackerTool       Ascension3DGTrackerToolType;
   typedef Ascension3DGTrackerToolType::Pointer Ascension3DGTrackerToolPointer;
   typedef Ascension3DGTrackerToolType::ConstPointer
-                                     Ascension3DGTrackerToolConstPointer;  
+                                          Ascension3DGTrackerToolConstPointer;  
 
   /** Enable all tool ports that have tools plugged into them.
    * {The reference tool port is enabled as a static tool.} */
@@ -191,26 +191,26 @@ private:
   /** Disable all enabled tool ports. */
   void DisableToolPorts( void );
 
-  /** Check the status code returned from the API call. Invoke an event if necessary.
-   *  Returns the status it was sent. */
+  /** Check the status code returned from the API call. 
+   *  Invoke an event if necessary. Returns the status it was sent. */
   int CheckAPIReturnStatus(int status);
 
   /** Total number of tools detected. */
-  unsigned int   m_NumberOfTools;
+  unsigned int                                     m_NumberOfTools;
 
   enum {TRANSMITTER_OFF = -1};
 
   /** A mutex for multithreaded access to the transform buffer */
-  itk::MutexLock::Pointer  m_BufferLock;
+  itk::MutexLock::Pointer                          m_BufferLock;
   
   typedef std::map< std::string, std::vector < double > >
       TrackerToolTransformContainerType;
   /** A buffer to hold tool transforms */
-  TrackerToolTransformContainerType     m_ToolTransformBuffer;
+  TrackerToolTransformContainerType                m_ToolTransformBuffer;
   
   typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
   /** Error map container */
-  static ErrorCodeContainerType   m_ErrorCodeContainer;
+  static ErrorCodeContainerType                    m_ErrorCodeContainer;
 
   enum ToolAvailabilityStatus {TOOL_UNAVAILABLE, TOOL_AVAILABLE};
   /** Container holding status of the tools. Key is the tool's name. */
@@ -222,15 +222,16 @@ private:
   static std::string ConvertSensorIDToToolName(unsigned short id);
 
   //The tool status from the last update. It would be better if this were in the
-  //Ascension3DGTrackerTool class, but that does not seem workable. The Tracker base
-  //class keeps its container of tracker tools private. It only has a const getter.
-  //From within Ascension3DGTracker, we cannot directly modify TrackerTools or call
-  //non-const TrackerTools member methods. Our only access to the tools is through
-  //the public and protected methods the Tracker base provides.
-  std::vector<bool> m_SensorSaturated;
-  std::vector<bool> m_SensorAttached;
-  std::vector<bool> m_SensorInMotionBox;
-  bool m_TransmitterAttached;
+  //Ascension3DGTrackerTool class, but that does not seem workable. The Tracker
+  //baseclass keeps its container of tracker tools private. It only has a const
+  //getter. From within Ascension3DGTracker, we cannot directly modify 
+  //TrackerTools or call non-const TrackerTools member methods. Our only access
+  //to the tools is through the public and protected methods the Tracker base
+  //provides.
+  std::vector<bool>   m_SensorSaturated;
+  std::vector<bool>   m_SensorAttached;
+  std::vector<bool>   m_SensorInMotionBox;
+  bool                m_TransmitterAttached;
 
   /** Method to invoke the notification event*/
   void InvokeSensorToolEvent(std::string sensorName, int sensorID,
@@ -245,7 +246,7 @@ private:
   void ReportSensorInMotionBoxProcessing();
 
   //used to keep the sensor id as we go through the state machine
-  int m_sensorID;
+  int                 m_sensorID;
 
   //states
   igstkDeclareStateMacro(Idle);
