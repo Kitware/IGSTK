@@ -100,6 +100,7 @@ SET(SandboxTests_SRCS
 
   igstkPETImageReaderTest.cxx
   igstkPETImageSpatialObjectTest.cxx
+  igstkPETImageSpatialObjectRepresentationTest.cxx
 )
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
@@ -111,6 +112,7 @@ ADD_TEST( igstkPETImageReaderTest ${IGSTKSandbox_TESTS} igstkPETImageReaderTest
 )
 
 ADD_TEST( igstkPETImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectTest)
+ADD_TEST( igstkPETImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectRepresentationTest)
 
 ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
 
