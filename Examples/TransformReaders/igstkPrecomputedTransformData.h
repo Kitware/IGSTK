@@ -54,7 +54,9 @@ public:
    *  given data. All of the data is required at this time in a manner similar 
    *  to standard object construction.
    *  NOTE: The temporal validity of the transformation is assumed to be 
-   *        infinite.*/
+   *        infinite.
+   *        The memory occupied by the "transform" will be released when the
+   *        destructor is called, do not release it externally. */
   void RequestInitialize( TransformType *transform,
                           const DateType &date,
                           const std::string &description,

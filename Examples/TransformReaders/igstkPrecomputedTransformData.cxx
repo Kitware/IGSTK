@@ -86,6 +86,7 @@ m_StateMachine( this )
 
 PrecomputedTransformData::~PrecomputedTransformData()
 {
+  delete this->m_Transform;
 }
 
 
