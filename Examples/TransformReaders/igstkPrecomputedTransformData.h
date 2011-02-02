@@ -53,10 +53,12 @@ public:
   /** This method Initializes the transformation information according to the 
    *  given data. All of the data is required at this time in a manner similar 
    *  to standard object construction.
+   *  The method generates two types of eventes: InitializationSuccessEvent,
+   *  InitializationFailureEvent. Initialization fails if the transformation
+   *  pointer is of a type that is not supported or is NULL. 
    *  NOTE: The temporal validity of the transformation is assumed to be 
    *        infinite.
-   *        The memory occupied by the "transform" will be released when the
-   *        destructor is called, do not release it externally. */
+   */
   void RequestInitialize( TransformType *transform,
                           const DateType &date,
                           const std::string &description,
@@ -130,6 +132,14 @@ public:
    *  requested and the data was initialized. */
   igstkLoadedEventMacro( TransformDateTypeEvent, IGSTKEvent,
                          DateType );
+
+    /** This event is generated if the initialization succeeds. */
+  igstkEventMacro( InitializationSuccessEvent, IGSTKEvent );
+
+  /** This event is generated if the initialization fails (e.g. given tool 
+    *  is null). */
+  igstkEventMacro( InitializationFailureEvent, IGSTKEvent );
+
 protected:
 
   PrecomputedTransformData( void );
@@ -142,10 +152,13 @@ private:
 
   /** List of state machine states */
   igstkDeclareStateMacro( Idle );
+  igstkDeclareStateMacro( AttemptingToInitialize );
   igstkDeclareStateMacro( Initialized );
   
   /** List of state machine inputs */
   igstkDeclareInputMacro( Initialize );
+  igstkDeclareInputMacro( Failed  );
+  igstkDeclareInputMacro( Succeeded  );
   igstkDeclareInputMacro( GetTransform  );
   igstkDeclareInputMacro( GetEstimationError  );
   igstkDeclareInputMacro( GetDescription  );
@@ -155,6 +168,8 @@ private:
   /**List of state machine actions*/
   void ReportInvalidRequestProcessing();  
   void InitializeProcessing();
+  void ReportInitializationFailureProcessing();
+  void ReportInitializationSuccessProcessing();
   void GetTransformProcessing();
   void GetEstimationErrorProcessing();
   void GetDescriptionProcessing();

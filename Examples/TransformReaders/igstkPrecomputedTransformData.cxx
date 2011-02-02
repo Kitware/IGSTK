@@ -15,19 +15,25 @@
 
 =========================================================================*/
 #include "igstkPrecomputedTransformData.h"
+#include "igstkTransform.h"
+#include "igstkAffineTransform.h"
+#include "igstkPerspectiveTransform.h"
 
 namespace igstk
 { 
 
 PrecomputedTransformData::PrecomputedTransformData() : 
-m_StateMachine( this )
+m_StateMachine( this ), m_Transform( NULL ), m_TmpTransform( NULL ) 
 {
   //define the state machine's states 
   igstkAddStateMacro( Idle );
+  igstkAddStateMacro( AttemptingToInitialize );
   igstkAddStateMacro( Initialized );
 
   //define the state machines inputs
   igstkAddInputMacro( Initialize );
+  igstkAddInputMacro( Failed  );
+  igstkAddInputMacro( Succeeded  );
   igstkAddInputMacro( GetTransform  );
   igstkAddInputMacro( GetEstimationError  );
   igstkAddInputMacro( GetDescription  );
@@ -36,8 +42,16 @@ m_StateMachine( this )
   //define the state machine's transitions
   igstkAddTransitionMacro( Idle,
                            Initialize,
-                           Initialized,
+                           AttemptingToInitialize,
                            Initialize );
+  igstkAddTransitionMacro( Idle,
+                           Failed,
+                           Idle,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Idle,
+                           Succeeded,
+                           Idle,
+                           ReportInvalidRequest );
   igstkAddTransitionMacro( Idle,
                            GetTransform,
                            Idle,
@@ -55,10 +69,47 @@ m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Initialize,
+                           AttemptingToInitialize,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetTransform,
+                           AttemptingToInitialize,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetEstimationError,
+                           AttemptingToInitialize,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetDescription,
+                           AttemptingToInitialize,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           GetDate,
+                           AttemptingToInitialize,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( Initialized,
                            Initialize,
-                           Initialized,
+                           AttemptingToInitialize,
                            Initialize );
+  igstkAddTransitionMacro( Initialized,
+                           Failed,
+                           Initialized,
+                           ReportInvalidRequest );
+  igstkAddTransitionMacro( Initialized,
+                           Succeeded,
+                           Initialized,
+                           ReportInvalidRequest );
   igstkAddTransitionMacro( Initialized,
                            GetTransform,
                            Initialized,
@@ -163,13 +214,61 @@ PrecomputedTransformData::InitializeProcessing()
 {
   igstkLogMacro( DEBUG, "igstk::PrecomputedTransformData::"
                  "InitializeProcessing called...\n" );
-  this->m_Transform = this->m_TmpTransform;
-  this->m_TmpTransform = NULL;
-  this->m_TransformationError = this->m_TmpTransformationError;
-  this->m_TransformationDescription = this->m_TmpTransformationDescription;
-  this->m_TmpTransformationDescription.clear();
-  this->m_ComputationDateAndTime = this->m_TmpComputationDateAndTime;
-  this->m_TmpComputationDateAndTime.clear();
+  
+  if( this->m_TmpTransform != NULL)
+  {
+      //create a copy of the transformation
+   Transform *t;
+   AffineTransform *at;
+   PerspectiveTransform *pt;
+   
+   this->m_Transform = NULL;
+   if( ( t = dynamic_cast<Transform *>(this->m_TmpTransform) ) != NULL )
+     this->m_Transform = new Transform(*t);
+   else if( ( at = dynamic_cast<AffineTransform *>(this->m_TmpTransform) ) != NULL )
+     this->m_Transform = new AffineTransform(*at);
+   else if( ( pt = dynamic_cast<PerspectiveTransform *>(this->m_TmpTransform) ) != NULL )
+     this->m_Transform = new PerspectiveTransform(*pt);
+   if( this->m_Transform != NULL )
+     {
+     this->m_TmpTransform = NULL;
+     this->m_TransformationError = this->m_TmpTransformationError;
+     this->m_TransformationDescription = this->m_TmpTransformationDescription;
+     this->m_TmpTransformationDescription.clear();
+     this->m_ComputationDateAndTime = this->m_TmpComputationDateAndTime;
+     this->m_TmpComputationDateAndTime.clear();
+     igstkPushInputMacro( Succeeded );
+     }
+   else
+     {
+     igstkPushInputMacro( Failed );
+     }
+  }
+  else
+    {
+    igstkPushInputMacro( Failed );
+    }
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+void 
+PrecomputedTransformData::ReportInitializationFailureProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PrecomputedTransformData::"
+                  "ReportInitializationFailureProcessing called...\n");
+  this->InvokeEvent( InitializationFailureEvent() );
+}
+
+
+void 
+PrecomputedTransformData::ReportInitializationSuccessProcessing()
+{
+  igstkLogMacro( DEBUG,
+                  "igstk::PrecomputedTransformData::"
+                  "ReportInitializationSuccessProcessing called...\n");
+  this->InvokeEvent( InitializationSuccessEvent() );
 }
 
 
