@@ -43,6 +43,13 @@ AffineTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
   if( transformObserver->GotTransformRequest() && 
       transformErrorObserver->GotTransformError() )
     {
+       //ten digits after the decimal point should be enough to retain accuracy
+      //in ASCII format
+    const std::streamsize PRECISION = 10;
+    std::streamsize originalPrecision = out.precision( PRECISION );
+    std::ios::fmtflags originalFlags = 
+      out.setf( std::ios::fixed, std::ios::floatfield ); 
+
     igstk::TransformBase *transformData = 
       transformObserver->GetTransformRequest();
     const igstk::AffineTransform *affineTransformation = 
@@ -58,10 +65,10 @@ AffineTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
        <<"\t"<< (*matrix)[1][3]<<"\n";
     out<<"\t"<<(*matrix)[2][0]<<"\t"<<(*matrix)[2][1]<<"\t"<<(*matrix)[2][2]
        <<"\t"<< (*matrix)[2][3]<<"\n";
-    out<<"\t"<<(*matrix)[3][0]<<"\t"<<(*matrix)[3][1]<<"\t"<<(*matrix)[3][2]
-       <<"\t"<< (*matrix)[3][3]<<"\n";
     out<<"\t</transformation>\n\n";
     matrix->Delete();
+    out.precision( originalPrecision );
+    out.setf( originalFlags ); 
     }
 }
 

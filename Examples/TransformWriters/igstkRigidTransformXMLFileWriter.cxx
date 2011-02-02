@@ -43,6 +43,13 @@ RigidTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
   if( transformObserver->GotTransformRequest() && 
       transformErrorObserver->GotTransformError() )
     {
+       //ten digits after the decimal point should be enough to retain accuracy
+      //in ASCII format
+    const std::streamsize PRECISION = 10;
+    std::streamsize originalPrecision = out.precision( PRECISION );
+    std::ios::fmtflags originalFlags = 
+      out.setf( std::ios::fixed, std::ios::floatfield ); 
+
     igstk::TransformBase *transformData = 
       transformObserver->GetTransformRequest();
     const igstk::Transform *rigidTransformation = 
@@ -54,6 +61,8 @@ RigidTransformXMLFileWriter::WriteTransformation( std::ofstream &out )
     out<<"\t"<<r.GetX()<<"\t"<<r.GetY()<<"\t"<<r.GetZ()<<"\t"<< r.GetW()<<"\t";
     out<<t[0]<<"\t"<<t[1]<<"\t"<<t[2]<<"\n";
     out<<"\t</transformation>\n\n";
+    out.precision( originalPrecision );
+    out.setf( originalFlags ); 
     }
 }
 
