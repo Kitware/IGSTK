@@ -56,7 +56,7 @@ IF(IGSTK_USE_FLTK)
 
   FLTK_WRAP_UI(OpenIGTLinkTrackerBroadcastingUI ${OpenIGTLinkTrackerBroadcasting_GUI_SRCS})
   ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcastingUI OpenIGTLinkTrackingBroadcasterMainFLTK.cxx ${SRCS} ${HDRS} ${OpenIGTLinkTrackerBroadcastingUI_FLTK_UI_SRCS})  
-  TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcastingUI TrackerConfiguration OpenIGTLinkConfigurationReaders IGSTK)
+  TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcastingUI TrackerConfiguration TransformReaders OpenIGTLinkConfigurationReaders IGSTK)
   
 ENDIF(IGSTK_USE_FLTK)
 
