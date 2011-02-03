@@ -27,5 +27,6 @@ INCLUDE_DIRECTORIES(
 )
 
 ADD_LIBRARY( TransformReaders ${SRCS} ${HDRS})
+TARGET_LINK_LIBRARIES(TransformReaders IGSTK)
 ADD_EXECUTABLE(TransformReaderExample TransformReaderExample.cxx) 
-TARGET_LINK_LIBRARIES(TransformReaderExample TransformReaders IGSTK)
+TARGET_LINK_LIBRARIES(TransformReaderExample TransformReaders)
