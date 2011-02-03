@@ -21,7 +21,7 @@ ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
 )
 
 ADD_LIBRARY( TransformWriters ${SRCS} ${HDRS})
-TARGET_LINK_LIBRARIES(TransformWriters  TransformReaders IGSTK)
+TARGET_LINK_LIBRARIES(TransformWriters  TransformReaders IGSTK )
 
 ADD_EXECUTABLE(TransformWriterExample TransformWriterExample.cxx) 
-TARGET_LINK_LIBRARIES(TransformWriterExample TransformWriters IGSTK)
+TARGET_LINK_LIBRARIES(TransformWriterExample TransformWriters )

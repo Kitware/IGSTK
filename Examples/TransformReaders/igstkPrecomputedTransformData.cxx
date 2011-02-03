@@ -23,7 +23,7 @@ namespace igstk
 { 
 
 PrecomputedTransformData::PrecomputedTransformData() : 
-m_StateMachine( this ), m_Transform( NULL ), m_TmpTransform( NULL ) 
+m_StateMachine( this ), m_TmpTransform( NULL ), m_Transform( NULL ) 
 {
   //define the state machine's states 
   igstkAddStateMacro( Idle );
