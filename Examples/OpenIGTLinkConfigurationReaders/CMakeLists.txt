@@ -27,6 +27,5 @@ SET(OpenIGTLinkConfigurationReaders_SRCS
 )
 
 ADD_LIBRARY(OpenIGTLinkConfigurationReaders ${OpenIGTLinkConfigurationReaders_SRCS} )
-TARGET_LINK_LIBRARIES(OpenIGTLinkConfigurationReaders TrackerConfiguration TransformReaders IGSTK)
 
 

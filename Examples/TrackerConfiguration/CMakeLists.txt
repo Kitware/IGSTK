@@ -53,7 +53,7 @@ INCLUDE_DIRECTORIES(
 )
 
 ADD_LIBRARY(TrackerConfiguration ${SRCS} ${HDRS})
-TARGET_LINK_LIBRARIES(TrackerConfiguration IGSTK)
 
 ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx)
-TARGET_LINK_LIBRARIES(TrackerConfigurationExample TrackerConfiguration TransformReaders IGSTK)
+TARGET_LINK_LIBRARIES(TrackerConfigurationExample TrackerConfiguration TransformReaders IGSTK )
+

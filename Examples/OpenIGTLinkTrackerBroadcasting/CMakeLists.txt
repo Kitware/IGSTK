@@ -61,5 +61,5 @@ IF(IGSTK_USE_FLTK)
 ENDIF(IGSTK_USE_FLTK)
 
 ADD_EXECUTABLE(OpenIGTLinkTrackerBroadcasting OpenIGTLinkTrackingBroadcasterMainCommandLine.cxx ${SRCS} ${HDRS})
-TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcasting TrackerConfiguration OpenIGTLinkConfigurationReaders IGSTK)
+TARGET_LINK_LIBRARIES(OpenIGTLinkTrackerBroadcasting TrackerConfiguration TransformReaders OpenIGTLinkConfigurationReaders IGSTK)
 
