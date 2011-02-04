@@ -21,7 +21,7 @@
 #pragma warning( disable : 4786 )
 #endif
 
-#include "igstkSandboxConfigure.h"
+#include "igstkConfigure.h"
 #include "igstkAscension3DGTracker.h"
 //The ATC3DG.h file is not contained within a namepsace. We will do it here.
 //This will only cover the functions, structures and enumerations. There are

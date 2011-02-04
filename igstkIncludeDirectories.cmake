@@ -41,6 +41,11 @@ IF(IGSTK_USE_SceneGraphVisualization)
   ${IGSTK_SOURCE_DIR}/Utilities/SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
 
+IF(IGSTK_USE_Ascension3DGTracker)
+  SET(IGSTK_INCLUDE_DIRS_SOURCE_TREE ${IGSTK_INCLUDE_DIRS_SOURCE_TREE}
+   ${ATC_INCLUDE_DIRECTORY} ) 
+ENDIF(IGSTK_USE_Ascension3DGTracker)
+
 #-----------------------------------------------------------------------------
 # Include directories needed for .cxx files in IGSTK.  These include
 # directories will NOT be available to user projects.

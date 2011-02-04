@@ -114,7 +114,9 @@ void RegisterTests()
   REGISTER_TEST(igstkInfiniTrackTrackerToolTest);
 #endif
 
+
 #ifdef IGSTK_TEST_Ascension3DGTracker_ATTACHED
+  REGISTER_TEST(igstkAscension3DGTrackerToolTest);
   REGISTER_TEST(igstkAscension3DGTrackerTest);
 #endif
 

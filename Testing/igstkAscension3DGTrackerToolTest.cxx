@@ -58,17 +58,20 @@ int igstkAscension3DGTrackerToolTest( int , char * []  )
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
   trackerTool->SetLogger( logger );
-  for (unsigned int i = 0; i< 8; i++)
+  for (unsigned int i = 1; i< 8; i++)
     {
+    std::cout << "Set port number:" << i << std::endl;
     trackerTool->RequestSetPortNumber( i );
-    trackerTool->RequestConfigure();
-    if ( trackerTool->GetPortNumber() != i )
+    unsigned int j = trackerTool->GetPortNumber();
+    std::cout << "Get port number:" << j << std::endl;
+    if ( j != i )
       {
-      std::cout << "Incorrect port number returned" << std::endl;
+      std::cout << "Incorrect port number returned\n" << std::endl;
       return EXIT_FAILURE;
       }
     }
 
+  trackerTool->RequestConfigure();
   std::cout << trackerTool << std::endl;
 
   return EXIT_SUCCESS;

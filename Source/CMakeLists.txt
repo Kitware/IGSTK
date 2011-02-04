@@ -427,6 +427,10 @@ IF(IGSTK_USE_OpenCV)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
 ENDIF(IGSTK_USE_OpenCV)
 
+IF(IGSTK_USE_Ascension3DGTracker)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} ${ATC_LIBRARY})
+ENDIF(IGSTK_USE_Ascension3DGTracker)
+
 
 # Adding the IGSTK library
 

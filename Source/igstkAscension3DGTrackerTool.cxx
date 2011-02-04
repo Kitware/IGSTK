@@ -58,7 +58,7 @@ Ascension3DGTrackerTool::Ascension3DGTrackerTool():m_StateMachine(this)
   igstkAddTransitionMacro( PortNumberSpecified,
       ValidPortNumber,
       PortNumberSpecified,
-      ReportInvalidRequest );
+      SetPortNumber );
 
   igstkAddTransitionMacro( PortNumberSpecified,
       InValidPortNumber,
