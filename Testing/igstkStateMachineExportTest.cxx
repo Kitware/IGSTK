@@ -72,6 +72,10 @@
 #include "igstkView3D.h"
 #include "igstkCoordinateSystemDelegator.h"
 
+#include "igstkPETImageReader.h"
+#include "igstkPETImageSpatialObject.h"
+#include "igstkPETImageSpatialObjectRepresentation.h"
+
 #include "igstkReslicerPlaneSpatialObject.h"
 #include "igstkImageResliceObjectRepresentation.h"
 #include "igstkMeshResliceObjectRepresentation.h"
@@ -471,6 +475,13 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::MR3DImageToUS3DImageRegistration,
                                                    outputDirectory, skipLoops );
 
+  igstkTestExportStateMachine1( igstk::PETImageReader, outputDirectory,
+                                                                    skipLoops );
+  igstkTestExportStateMachine1( igstk::PETImageSpatialObject, outputDirectory,
+                                                                   skipLoops );
+  igstkTestExportStateMachine1( igstk::PETImageSpatialObjectRepresentation, outputDirectory,
+                                                                    skipLoops );
+ 
   igstkTestExportStateMachine1( igstk::View, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View2D, outputDirectory, skipLoops );
   igstkTestExportStateMachine1( igstk::View3D, outputDirectory, skipLoops );

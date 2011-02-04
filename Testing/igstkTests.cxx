@@ -79,6 +79,9 @@ void RegisterTests()
 
   REGISTER_TEST(igstkPivotCalibrationAlgorithmTest);
 
+  REGISTER_TEST(igstkPETImageSpatialObjectTest);
+  REGISTER_TEST(igstkPETImageSpatialObjectRepresentationTest);
+
   // Tests depend on device 
 #ifdef IGSTK_TEST_AURORA_ATTACHED 
   REGISTER_TEST(igstkNDICommandInterpreterTest);
@@ -135,6 +138,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
+  REGISTER_TEST(igstkPETImageReaderTest);
 #endif 
 
   // Tests depend on FLTK

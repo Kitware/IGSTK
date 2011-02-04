@@ -151,6 +151,9 @@ ADD_TEST(igstkVTKLoggerOutputTest ${IGSTK_TESTS} igstkVTKLoggerOutputTest)
 
 ADD_TEST( igstkPivotCalibrationAlgorithmTest ${IGSTK_TESTS} igstkPivotCalibrationAlgorithmTest)
 
+ADD_TEST( igstkPETImageSpatialObjectTest ${IGSTK_TESTS} igstkPETImageSpatialObjectTest)
+ADD_TEST( igstkPETImageSpatialObjectRepresentationTest ${IGSTK_TESTS} igstkPETImageSpatialObjectRepresentationTest)
+
 #-----------------------------------------------------------------------------
 # Simulation test
 
@@ -227,6 +230,13 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
           igstkReslicerPlaneSpatialObjectTest
           ${IGSTK_DATA_ROOT}/Input/E000192
         )
+
+  ADD_TEST( igstkPETImageReaderTest ${IGSTK_TESTS} igstkPETImageReaderTest
+   ${IGSTK_DATA_ROOT}/PET
+   ${IGSTK_DATA_ROOT}/Input/MRLiver
+)
+
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
@@ -813,6 +823,10 @@ SET(BasicTests_SRCS
   igstkReslicerPlaneSpatialObjectTest.cxx
 
   igstkPivotCalibrationAlgorithmTest.cxx
+  
+  igstkPETImageSpatialObjectTest.cxx
+  igstkPETImageSpatialObjectRepresentationTest.cxx
+  
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
@@ -871,6 +885,7 @@ IF(IGSTK_DATA_ROOT)
     igstkNDICommandInterpreterStressTest.cxx   
     igstkPolarisTrackerSimulatedTest.cxx 
     igstkSerialCommunicationSimulatorTest.cxx
+    igstkPETImageReaderTest.cxx
   )  
 ENDIF(IGSTK_DATA_ROOT)
 
