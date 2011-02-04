@@ -176,13 +176,6 @@ IF(IGSTKSandbox_DATA_ROOT)
   ENDIF (IGSTKSandbox_USE_FLTK)
 ENDIF(IGSTKSandbox_DATA_ROOT)
 
-IF( IGSTKSandbox_TEST_Ascension3DG_ATTACHED )
-  ADD_TEST( igstkAscension3DGTrackerTest ${IGSTKSandbox_TESTS} igstkAscension3DGTrackerTest
-            ${IGSTKSandbox_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
-  SET(SandboxTests_SRCS ${SandboxTests_SRCS}
-        igstkAscension3DGTrackerTest.cxx)
-ENDIF (IGSTKSandbox_TEST_Ascension3DG_ATTACHED)
-
 IF( IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING )
 
   # Add your supervised tracker new tests here
@@ -265,5 +258,7 @@ IGSTKTesting(igstkLatestTests
              IGSTKSandbox_USE_OpenIGTLink
              IGSTKSandbox_USE_VideoImager
              IGSTKSandbox_USE_InfiniTrack
+             IGSTKSandbox_USE_Ascension3DGTracker
+             IGSTKSandbox_TEST_Ascension3DG_ATTACHED
              )
 
