@@ -119,6 +119,10 @@ SET(IGSTK_HEADS
   igstkPivotCalibrationAlgorithm.h
 
   igstkPivotCalibration.h
+
+  igstkPETImageReader.h
+  igstkPETImageSpatialObject.h
+  igstkPETImageSpatialObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -269,6 +273,11 @@ SET(IGSTK_SRCS
   igstkPivotCalibrationAlgorithm.cxx
 
   igstkPivotCalibration.cxx
+
+  igstkPETImageReader.cxx
+  igstkPETImageSpatialObject.cxx
+  igstkPETImageSpatialObjectRepresentation.cxx
+
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -414,9 +423,6 @@ SET(IGSTKSandbox_HEADS
 
   igstkMeshClippingObjectRepresentation.h
 
-  igstkPETImageReader.h
-  igstkPETImageSpatialObject.h
-  igstkPETImageSpatialObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -531,10 +537,6 @@ SET(IGSTKSandbox_SRCS
   igstkVesselObjectRepresentation.cxx
   
   igstkMeshClippingObjectRepresentation.cxx
-
-  igstkPETImageReader.cxx
-  igstkPETImageSpatialObject.cxx
-  igstkPETImageSpatialObjectRepresentation.cxx
 
   igstkLandmark3DRegistration2.cxx
 

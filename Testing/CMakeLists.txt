@@ -98,21 +98,10 @@ SET(SandboxTests_SRCS
   igstkDefaultWidget.cxx
 
 
-  igstkPETImageReaderTest.cxx
-  igstkPETImageSpatialObjectTest.cxx
-  igstkPETImageSpatialObjectRepresentationTest.cxx
 )
 
 ADD_TEST( igstkDICOMGenericImageReaderTest ${IGSTKSandbox_TESTS} igstkDICOMGenericImageReaderTest
    ${IGSTK_DATA_ROOT}/Input/E000192 )
-
-ADD_TEST( igstkPETImageReaderTest ${IGSTKSandbox_TESTS} igstkPETImageReaderTest
-   ${IGSTKSandbox_DATA_ROOT}/PET
-   ${IGSTK_DATA_ROOT}/Input/MRLiver
-)
-
-ADD_TEST( igstkPETImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectTest)
-ADD_TEST( igstkPETImageSpatialObjectRepresentationTest ${IGSTKSandbox_TESTS} igstkPETImageSpatialObjectRepresentationTest)
 
 ADD_TEST( igstkGenericImageSpatialObjectTest ${IGSTKSandbox_TESTS} igstkGenericImageSpatialObjectTest)
 
