@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Example of settings for NDI's Polaris vicra:                  -->    
+<!-- The tags are:                                                 -->
+<!-- tracking_system: Root element, encompassing all of the data.  -->
+<!--                  Must have the attribute 'type' set to        -->
+<!--                  "polaris vicra".                             -->  
+<!-- refresh_rate: Get data from the tracker at this rate.         --> 
+<!-- serial_communication: Encompass all the communication         -->
+<!--                       settings:                               -->
+<!--  com_port, baud_rate, data_bits, parity, stop_bits,           -->
+<!--  hand_shake                                                   --> 
+<!--  The com_port value should be set to COM-1 as it appears in   -->
+<!--  the computer settings (IGSTK starts counting at zero).       -->
+<!-- tool: Has optional attribute 'usage' if set to "reference"    -->
+<!--       this tool will be used as a dynamic reference frame.    -->
+<!--       All transformation will be reported relative to this    -->
+<!--       reference frame.                                        -->
+<!-- name: Unique string by which the developer can later reference-->
+<!--       the tool inside the program.                            -->
+<!-- srom_file: File containing the tool description.              -->
+<!-- save_to: The target host ip and port to which the             -->
+<!--          transformations are sent. A tool can have multiple   -->
+<!--          save_to tags, broadcasting the data to multiple      -->
+<!--          receivers.                                           -->
+<!-- calibration_file: Optional calibration file. XML file         -->
+<!--                   containing the tool's calibration data      -->
+<!--                                                               -->
+
+
+
+ 
+
+<tracking_system type = "polaris hybrid">
+              <!--acquire data from the tracker at this rate-->
+    <refresh_rate> 20 </refresh_rate>
+              <!--serial communication settings-->
+    <serial_communication> 
+      <com_port>0</com_port>
+      <baud_rate>115200</baud_rate> 
+      <data_bits>8</data_bits>
+      <parity>N</parity> 
+      <stop_bits>1</stop_bits> 
+      <hand_shake>0</hand_shake> 
+    </serial_communication>
+
+             <!--use this tool as a dynamic reference frame, the tool's-->
+             <!--transformations will not be sent                      -->
+    <tool>
+      <name>reference frame</name> 
+      <srom_file>/home/michel/tools/IGSTK_ALL/Sandbox/Testing/Data/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom</srom_file>      
+      <save_to>/home/michel/tools/IGSTK_ALL/outputFileA.txt</save_to>
+    </tool>
+
+</tracking_system>
+
+

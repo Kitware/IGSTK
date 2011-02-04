@@ -1,0 +1,134 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+decl {\#include <FL/fl_draw.H>} {} 
+
+decl {\#include "igstkTrackerDataLogger.h"} {public
+} 
+
+class TrackerDataLoggerGUI {open
+} {
+  Function {TrackerDataLoggerGUI()} {open
+  } {
+    Fl_Window m_Window1 {
+      label {TimeStamp and Transform Logger}
+      callback {this->Quit();}
+      private xywh {164 198 514 89} type Double visible
+    } {
+      Fl_Output configurationFileTextField {
+        label {Configuration File:}
+        tooltip {xml configuration file} xywh {168 7 268 25} box PLASTIC_DOWN_BOX
+      }
+      Fl_Button {} {
+        label {...}
+        callback {char *fileName = fl_file_chooser("Load Configuration File", "XML Files(*.xml,*.XML)",NULL,0);
+if(fileName!=NULL) //file name is copied to the text field
+  this->configurationFileTextField->value(fileName);}
+        private tooltip {open a file browser} xywh {442 7 51 25} box PLASTIC_UP_BOX
+      }
+      Fl_Button {} {
+        label Next
+        callback {std::string configurationFileName(this->configurationFileTextField->value());
+if( configurationFileName.empty() )
+{
+ ReportError( std::string( "Please select XML configuration file." ) ); 
+}
+
+else {
+               //load the settings from the xml configuration file
+               //and establish all the communication channels
+  try {
+    fl_cursor(FL_CURSOR_WAIT);
+    this->m_Logger = new TrackerDataLogger( configurationFileName );
+    this->m_Window1->hide();
+    this->m_Window2->show();
+    fl_cursor(FL_CURSOR_DEFAULT);
+  }
+  catch( std::exception &e )
+  {    
+    ReportError( std::string( e.what() ) ); 
+  }
+}}
+        private xywh {443 47 56 25} box PLASTIC_UP_BOX
+      }
+      Fl_Box {} {
+        image {IGSTK-thumbnail.gif} xywh {10 35 100 50}
+      }
+    }
+    Fl_Window m_Window2 {
+      label {OpenIGTLink Transform Broadcasting}
+      callback {this->Quit();}
+      private xywh {341 38 549 111} type Double box PLASTIC_UP_BOX color 7 selection_color 7 visible
+    } {
+      Fl_Button m_StopTrackingButton {
+        label {Stop Tracking}
+        callback {this->m_Logger->StopTracking();
+this->m_StopTrackingButton->deactivate();
+this->m_StartTrackingButton->activate();}
+        private tooltip {stop the tracking process} xywh {264 14 122 35} box PLASTIC_UP_BOX color 7 deactivate
+      }
+      Fl_Button m_StartTrackingButton {
+        label {Start Tracking}
+        callback {this->m_Logger->StartTracking();
+this->m_StopTrackingButton->activate();
+this->m_StartTrackingButton->deactivate();}
+        private tooltip {start the tracking process} xywh {118 14 122 35} box PLASTIC_UP_BOX color 7
+      }
+      Fl_Button {} {
+        label Quit
+        callback {this->Quit();}
+        private xywh {399 14 122 35} box PLASTIC_UP_BOX color 7
+      }
+      Fl_Box {} {
+        image {IGSTK-thumbnail.gif} xywh {10 50 100 50}
+      }
+    }
+    code {this->m_Logger = NULL;
+this->hasQuitted = false;} {}
+  }
+  Function {Show()} {return_type {virtual void}
+  } {
+    code {this->m_Window1->show();} {}
+  }
+  Function {Quit()} {return_type void
+  } {
+    code {int i = fl_choice("Are you sure you want to quit?", NULL,"Yes","No"); 
+if ( i == 1 )
+  {
+  
+  if( this->m_Logger != NULL )
+    {
+    //the stop tracking button is active iff we are currently tracking
+    if( this->m_StopTrackingButton->active() )
+      this->m_Logger->StopTracking();
+    delete this->m_Logger;
+    }
+    
+  m_Window2->hide();
+  this->hasQuitted = true;
+  exit( EXIT_SUCCESS );
+  
+  }
+else
+  {
+  return;
+  }} {}
+  }
+  Function {ReportError(const std::string &errorMessage)} {private return_type void
+  } {
+    code {fl_alert("%s", errorMessage.c_str());
+fl_beep(FL_BEEP_ERROR);} {}
+  }
+  decl {TrackerDataLogger *m_Logger;} {public
+  }
+  decl {bool hasQuitted;} {}
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {~TrackerDataLoggerGUI()} {open selected return_type virtual
+  } {}
+} 

@@ -7,6 +7,7 @@ SUBDIRS(
  TransformWriters
  TrackerConfiguration
  Tools
+ TrackerDataLogger
 )
 
 
