@@ -232,7 +232,7 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
         )
 
   ADD_TEST( igstkPETImageReaderTest ${IGSTK_TESTS} igstkPETImageReaderTest
-   ${IGSTK_DATA_ROOT}/PET
+   ${IGSTK_DATA_ROOT}/Input/PET
    ${IGSTK_DATA_ROOT}/Input/MRLiver
 )
 
