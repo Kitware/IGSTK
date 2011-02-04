@@ -150,8 +150,10 @@ int main(int , char** )
   // Create the ellipsoid 
   // BeginCodeSnippet
   igstk::EllipsoidObject::Pointer ellipsoid = igstk::EllipsoidObject::New();
-  ellipsoid->RequestSetCoordinateSystemName("MouseCursor"); 
   // EndCodeSnippet
+  #ifdef IGSTK_USE_SceneGraphVisualization
+  ellipsoid->RequestSetCoordinateSystemName("MouseCursor"); 
+  #endif
   // 
   // BeginLatex
   // The ellipsoid radius can be set to one in all dimensions ( X, Y, and Z ) 
@@ -261,8 +263,12 @@ int main(int , char** )
                       igstk::TimeStamp::GetLongestPossibleTime() );
   ellipsoid->RequestSetTransformAndParent( identityTransform, trackerTool );
 
-  // Attach a viewer to the tracker 
+  #ifdef IGSTK_USE_SceneGraphVisualization
   m_GUI->View->RequestSetCoordinateSystemName("View");
+  #endif
+  
+  // BeginCodeSnippet
+  // Attach a viewer to the tracker 
   m_GUI->View->RequestSetTransformAndParent( identityTransform, tracker );
 
   m_GUI->SetTracker( tracker );
