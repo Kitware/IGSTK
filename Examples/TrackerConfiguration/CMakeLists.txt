@@ -12,6 +12,7 @@ SET(SRCS
     igstkAuroraTrackerConfiguration.cxx
     igstkMicronTrackerConfiguration.cxx
     igstkAscensionTrackerConfiguration.cxx
+    igstkAscension3DGTrackerConfiguration.cxx
     igstkPolarisTrackerConfiguration.cxx
     igstkTrackerController.cxx
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
@@ -23,6 +24,7 @@ SET(SRCS
     configurationFileReaders/igstkAuroraConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkMicronConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
+    configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
 )
 SET(HDRS
@@ -30,6 +32,7 @@ SET(HDRS
     igstkAuroraTrackerConfiguration.h
     igstkMicronTrackerConfiguration.h
     igstkAscensionTrackerConfiguration.h
+    igstkAscension3DGTrackerConfiguration.h
     igstkPolarisTrackerConfiguration.h
     igstkTrackerController.h
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
@@ -41,6 +44,7 @@ SET(HDRS
     configurationFileReaders/igstkAuroraConfigurationXMLFileReader.h
     configurationFileReaders/igstkMicronConfigurationXMLFileReader.h
     configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
+    configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.h
     configurationFileReaders/igstkTrackerConfigurationFileReader.h
 )
 #
