@@ -607,11 +607,11 @@ IF(${IGSTK_TEST_InfiniTrack_ATTACHED})
 ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})
 
            
-IF( IGSTK_TEST_Ascension3DGTracker_ATTACHED )
+IF( ${IGSTK_TEST_Ascension3DGTracker_ATTACHED} )
   ADD_TEST( igstkAscension3DGTrackerToolTest ${IGSTK_TESTS} igstkAscension3DGTrackerToolTest )
   ADD_TEST( igstkAscension3DGTrackerTest ${IGSTK_TESTS} igstkAscension3DGTrackerTest
             ${IGSTK_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
-ENDIF (IGSTK_TEST_Ascension3DGTracker_ATTACHED)
+ENDIF (${IGSTK_TEST_Ascension3DGTracker_ATTACHED})
 
 
 IF(${IGSTK_USE_OpenIGTLink})
