@@ -114,6 +114,10 @@ void RegisterTests()
   REGISTER_TEST(igstkInfiniTrackTrackerToolTest);
 #endif
 
+#ifdef IGSTKSandbox_TEST_Ascension3DG_ATTACHED
+  REGISTER_TEST(igstkAscension3DGTrackerTest);
+  REGISTER_TEST(igstkAscension3DGTrackerToolTest);
+#endif
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
