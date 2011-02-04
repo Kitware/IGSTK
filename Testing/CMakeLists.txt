@@ -14,6 +14,7 @@ SET( IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER 0 CACHE STRING
      "Serial port number (0, 1, 2, 3)" )
 
 OPTION(IGSTK_TEST_MicronTracker_ATTACHED "MicronTracker is attached to computer" OFF)
+OPTION(IGSTK_TEST_Ascension3DGTracker_ATTACHED "Ascension3DGTracker is attached to computer" OFF)
 
 INCLUDE_DIRECTORIES (
   ${IGSTK_SOURCE_DIR}
@@ -51,5 +52,7 @@ IGSTKTesting(igstkTests
              IGSTK_USE_OpenIGTLink
              IGSTK_USE_VideoImager
              IGSTK_TEST_InfiniTrack_ATTACHED
+             IGSTK_USE_Ascension3DGTracker
+             IGSTK_TEST_Ascension3DGTracker_ATTACHED
              )
 

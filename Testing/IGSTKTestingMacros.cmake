@@ -22,6 +22,7 @@
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
 # IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
+# 
  
 
 
@@ -47,6 +48,8 @@ MACRO(IGSTKTesting
       IGSTK_USE_OpenIGTLink
       IGSTK_USE_VideoImager
       IGSTK_TEST_InfiniTrack_ATTACHED
+      IGSTK_USE_Ascension3DGTracker
+      IGSTK_TEST_Ascension3DGTracker_ATTACHED
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -593,6 +596,13 @@ IF(${IGSTK_TEST_InfiniTrack_ATTACHED})
               ${IGSTK_TESTS} igstkInfiniTrackTrackerToolTest )
 ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})
 
+
+IF( IGSTK_TEST_Ascension3DGTracker_ATTACHED )
+  ADD_TEST( igstkAscension3DGTrackerTest ${IGSTK_TESTS} igstkAscension3DGTrackerTest
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
+ENDIF (IGSTK_TEST_Ascension3DGTracker_ATTACHED)
+
+
 IF(${IGSTK_USE_OpenIGTLink})
   
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
@@ -926,6 +936,15 @@ IF(${IGSTK_TEST_InfiniTrack_ATTACHED})
     igstkInfiniTrackTrackerTest.cxx
     igstkInfiniTrackTrackerToolTest.cxx)
 ENDIF(${IGSTK_TEST_InfiniTrack_ATTACHED})  
+
+IF(${IGSTK_USE_Ascension3DGTracker})  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkAscension3DGTrackerTest.cxx
+    igstkAscension3DGTrackerToolTest.cxx
+    )
+ENDIF(${IGSTK_USE_Ascension3DGTracker})  
+
 
 IF(${IGSTK_USE_Qt})  
   SET(BasicTests_SRCS

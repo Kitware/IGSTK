@@ -146,6 +146,15 @@ IF(IGSTK_USE_InfiniTrack)
      )
 ENDIF(IGSTK_USE_InfiniTrack)
 
+IF(IGSTK_USE_Ascension3DGTracker)
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkAscension3DGTracker.h
+      igstkAscension3DGTrackerTool.h
+     )
+ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -325,6 +334,14 @@ IF(IGSTK_USE_InfiniTrack)
  
      )
 ENDIF(IGSTK_USE_InfiniTrack)
+
+IF(IGSTK_USE_Ascension3DGTracker)
+  Set(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkAscension3DGTracker.cxx
+      igstkAscension3DGTrackerTool.cxx
+     )
+ENDIF(IGSTK_USE_Ascension3DGTracker)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS

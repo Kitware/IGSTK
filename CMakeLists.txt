@@ -223,6 +223,39 @@ IF(IGSTK_USE_InfiniTrack)
 
 ENDIF(IGSTK_USE_InfiniTrack)
 
+# Connect Ascension 3DG tracker
+OPTION(IGSTK_USE_Ascension3DGTracker "Connect Ascension 3D Guidance Tracker" OFF)
+IF(IGSTK_USE_Ascension3DGTracker)
+  OPTION(Ascension3DG_MedSafe "Use MedSafe version of the tracker" OFF)
+  IF(Ascension3DG_MedSafe) # Use MedSafe version
+    FIND_PATH(ATC_INCLUDE_DIRECTORY ATC3DGm.h
+    "C:/Program Files/Ascension/3D Guidance medSAFE (Rev F)/3D Guidance API"
+    DOC "Directory where the ATC3DGm.h file is located")
+    INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
+
+    FIND_LIBRARY( ATC_LIBRARY 
+      NAMES ATC3DGm ATC3DGm.dll
+      PATHS "C:/Program Files/Ascension/3D Guidance medSAFE (Rev F)/3D Guidance API"
+      DOC "Full path to the ATC3DG.dll file"
+      )
+  ELSE(Ascension3DG_MedSafe) # Use non MedSafe version
+    FIND_PATH(ATC_INCLUDE_DIRECTORY ATC3DG.h
+    "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
+    DOC "Directory where the ATC3DG.h file is located")
+    INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
+
+    FIND_LIBRARY( ATC_LIBRARY 
+      NAMES ATC3DG ATC3DG.dll
+      PATHS "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
+      DOC "Full path to the ATC3DG.dll file"
+      )
+  ENDIF(Ascension3DG_MedSafe)
+  
+  GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
+  LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
+ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+
 #
 # Use OpenIGTLink protocol
 #

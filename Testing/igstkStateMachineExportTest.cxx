@@ -81,6 +81,12 @@
 #include "igstkMicronTrackerTool.h"
 #endif
 
+#if defined(IGSTK_USE_Ascension3DGTracker)
+#include "igstkAscension3DGTracker.h"
+#include "igstkAscension3DGTrackerTool.h"
+#endif
+
+
 #if defined(IGSTK_USE_FLTK)
 #include "igstkFLTKWidget.h"
 #endif
@@ -510,6 +516,15 @@ int main( int argc, char * argv [] )
   igstkTestExportStateMachine1( igstk::MicronTrackerTool, 
                                 outputDirectory, skipLoops );
 #endif
+
+#if defined(IGSTK_USE_Ascension3DGTracker)
+  igstkTestExportStateMachine1( igstk::Ascension3DGTracker, 
+                                outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1( igstk::Ascension3DGTracker, 
+                                outputDirectory, skipLoops );
+#endif
+
 
   return EXIT_SUCCESS;
 }
