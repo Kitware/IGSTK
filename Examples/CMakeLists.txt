@@ -13,7 +13,6 @@ SUBDIRS(
   ApplicationsCommon
   AscensionTracker
   PolarisTracker
-  TrackerDataLogger
   InterventionalPlanSettings
   InterventionalPlanSettingsIO
   )
