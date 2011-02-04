@@ -119,6 +119,10 @@ SET(IGSTK_HEADS
   igstkPivotCalibrationAlgorithm.h
 
   igstkPivotCalibration.h
+
+  igstkPETImageReader.h
+  igstkPETImageSpatialObject.h
+  igstkPETImageSpatialObjectRepresentation.h
 )
 
 IF(IGSTKSandbox_USE_FLTK)
@@ -269,6 +273,11 @@ SET(IGSTK_SRCS
   igstkPivotCalibrationAlgorithm.cxx
 
   igstkPivotCalibration.cxx
+
+  igstkPETImageReader.cxx
+  igstkPETImageSpatialObject.cxx
+  igstkPETImageSpatialObjectRepresentation.cxx
+
 )
 
 IF(IGSTKSandbox_USE_FLTK)
