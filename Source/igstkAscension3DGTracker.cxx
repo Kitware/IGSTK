@@ -461,7 +461,7 @@ Ascension3DGTracker::InternalThreadedUpdateStatus( void )
     transform[3] = record[sensorIndex].q[1];
     transform[4] = record[sensorIndex].q[2];
     transform[5] = record[sensorIndex].q[3];
-    transform[6] = record[sensorIndex].q[0];
+    transform[6] = -record[sensorIndex].q[0];
 
     this->m_ToolTransformBuffer[ inputItr->first ] = transform;
     //The tool will only be considered available if a transmitter is attached
