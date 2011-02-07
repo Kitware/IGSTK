@@ -424,7 +424,9 @@ ImageResliceObjectRepresentation < TImageSpatialObject >
       return false;
       }
     else
+      {
       return true;
+      }
     }
   else
     {

@@ -23,40 +23,41 @@
 
 namespace igstk
 {
+/** Structure holding the Ascension 3DG error type*/
+struct Ascension3DGEventErrorType {
+  /** String describing the error, as returned from the Ascension tracker.*/
+  EventHelperType::StringType ErrorString;
 
-  /** Structure holding the Ascension 3DG error type*/
-  struct Ascension3DGEventErrorType
-  {
-    /** String describing the error, as returned from the Ascension tracker.*/
-    EventHelperType::StringType ErrorString;
-    /** Error code returned from the tracker. See the ATC3DG.h file.*/
-    int AscensionErrorCode;
+  /** Error code returned from the tracker. See the ATC3DG.h file.*/
+  int AscensionErrorCode;
+};
+
+/** Structure holding a notification event. These can be used to monitor 
+*the state of the tracker.*/
+
+struct Ascension3DGToolEventStruct {
+  enum ToolEvents{
+  TOOL_DISCONNECTED,  /**a tool that was connected has been disconnected*/
+  TOOL_CONNECTED,  /**a tool that was disconnected has been reconnected*/
+  TOOL_SATURATED,  /**a sensor is too close to the transmitter and has saturated*/
+  TOOL_OUT_OF_SATURATION,  /**a sensor that was saturated is no longer saturated*/
+  TOOL_OUT_OF_MOTION_BOX,  /**a sensor that was within the motion box is now out*/
+  TOOL_IN_MOTION_BOX,  /**a sensor that was out of the motion box is now back in*/
+  TRANSMITTER_DETACHED,  /**a transmitter that was attached has been disconnected*/
+  TRANSMITTER_ATTACHED,  /**a transmitter that was diconnected was attached*/
   };
 
-  /** Structure holding a notification event. These can be used to monitor the
-    * state of the tracker.*/
-  struct Ascension3DGToolEventStruct
-  {
-    enum ToolEvents{
-      TOOL_DISCONNECTED,  /**a tool that was connected has been disconnected*/
-      TOOL_CONNECTED,  /**a tool that was disconnected has been reconnected*/
-      TOOL_SATURATED,  /**a sensor is too close to the transmitter and has saturated*/
-      TOOL_OUT_OF_SATURATION,  /**a sensor that was saturated is no longer saturated*/
-      TOOL_OUT_OF_MOTION_BOX,  /**a sensor that was within the motion box is now out*/
-      TOOL_IN_MOTION_BOX,  /**a sensor that was out of the motion box is now back in*/
-      TRANSMITTER_DETACHED,  /**a transmitter that was attached has been disconnected*/
-      TRANSMITTER_ATTACHED,  /**a transmitter that was diconnected was attached*/
-    };
+  Ascension3DGToolEventStruct(){};
 
-    Ascension3DGToolEventStruct(){};
+  /** a text descriptor of the tool the notificatrion is for*/
+  EventHelperType::StringType ToolIdentifier;
 
-    /** a text descriptor of the tool the notificatrion is for*/
-    EventHelperType::StringType ToolIdentifier;
-    /**the id number of the tool the notification is for*/
-    int toolID;
+  /**the id number of the tool the notification is for*/
+  int toolID;
+
     /**the type of notification*/
-    ToolEvents EventType;
-  };
+  ToolEvents EventType;
+};
 
   igstkLoadedEventMacro( Ascension3DGErrorEvent, IGSTKErrorEvent, 
     Ascension3DGEventErrorType);
@@ -267,5 +268,3 @@ private:
 }
 
 #endif //__igstk_Ascension3DGTracker_h_
-
-

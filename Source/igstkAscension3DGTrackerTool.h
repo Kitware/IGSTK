@@ -93,5 +93,3 @@ private:
 
 
 #endif  // __igstk_Ascension3DGTrackerTool_h_
-
-

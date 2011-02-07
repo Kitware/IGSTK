@@ -31,12 +31,12 @@
 namespace atc
 {
 #include "ATC3DGm.h"
-};
+}
 #else /* Ascension3DG_MedSafe */
 namespace atc
 {
 #include "ATC3DG.h"
-};
+}
 #endif /* Ascension3DG_MedSafe */
 
 namespace igstk
@@ -262,17 +262,17 @@ Ascension3DGTracker::InternalStartTracking( void )
   int i=0;
   bool found = false;
   while((i < boardConfig.numberTransmitters) && (found == false))
-  {
+    {
     //get the transmitter configuration
     atc::TRANSMITTER_CONFIGURATION transConfig;
     this->CheckAPIReturnStatus(GetTransmitterConfiguration(i,&transConfig));
     if(transConfig.attached)
-    {
+      {
       selectID = i;
       found = true;
-    }
+      }
     ++i;
-  }
+    }
 
   //if no magnetic transmitters were attached, selectID will still be TRANSMITTER_OFF
   this->CheckAPIReturnStatus(atc::SetSystemParameter(atc::SELECT_TRANSMITTER,
@@ -469,65 +469,66 @@ Ascension3DGTracker::InternalThreadedUpdateStatus( void )
     //is not saturated.
     if((!transmitterAttached) || (!transmitterRunning) || (!attached) ||
       (!inMotionBox) || saturated)
-    {
+      {
       this->m_ToolStatusContainer[ inputItr->first ] = TOOL_UNAVAILABLE;
-    }
+      }
     else
-    {
+      {
       this->m_ToolStatusContainer[ inputItr->first ] = TOOL_AVAILABLE;
-    }
+      }
 
     //Invoke events based on what the sensor status is now and what it was last time.
     //Need to compare to what it was last time so we do not send multiple events for
     //the same occurance.
+
     if(saturated && (!this->m_SensorSaturated[sensorID]))
-    {
+      {
       //sensor just became saturated
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
-        Ascension3DGToolEventStruct::TOOL_SATURATED);      
-    }
+        Ascension3DGToolEventStruct::TOOL_SATURATED);
+      }
     else if((!saturated) && this->m_SensorSaturated[sensorID])
-    {
+      {
       //sensor just came out of saturation
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TOOL_OUT_OF_SATURATION);
-    }
+      }
     if((!attached) && this->m_SensorAttached[sensorID])
-    {
+      {
       //sensor just became disconnected
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TOOL_DISCONNECTED);
-    }
+      }
     else if(attached && (!this->m_SensorAttached[sensorID]))
-    {
+      {
       //sensor just became attached
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TOOL_CONNECTED);
-    }
+      }
     if((!inMotionBox) && (this->m_SensorInMotionBox[sensorID]))
-    {
+      {
       //sensor just moved out of the motion box
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TOOL_OUT_OF_MOTION_BOX);
-    }
+      } 
     else if(inMotionBox && (!this->m_SensorInMotionBox[sensorID]))
-    {
+      {
       //sensor just moved back into the motion box
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TOOL_IN_MOTION_BOX);
-    }
+      }
     if((!transmitterAttached) && this->m_TransmitterAttached)
-    {
+      {
       //transmitter was just detached
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TRANSMITTER_DETACHED);
-    }
+      }
     else if(transmitterAttached && (!this->m_TransmitterAttached))
-    {
+      {
       //transmitter was just attached
       this->InvokeSensorToolEvent(inputItr->first, sensorID,
         Ascension3DGToolEventStruct::TRANSMITTER_ATTACHED);
-    }
+      }
     //assign the current states to the member variables
     this->m_SensorSaturated[sensorID] = saturated;
     this->m_SensorAttached[sensorID] = attached;
@@ -744,12 +745,12 @@ void Ascension3DGTracker::ReportSensorInMotionBoxProcessing()
 {
   //If the sensorID is valid, call the function that invokes the tool event.
   if(m_sensorID >= 0 && m_sensorID < m_SensorInMotionBox.size())
-  {
+    {
     InvokeSensorToolEvent(ConvertSensorIDToToolName(m_sensorID), m_sensorID, 
       (this->m_SensorInMotionBox[m_sensorID] ?
       Ascension3DGToolEventStruct::TOOL_IN_MOTION_BOX :
     Ascension3DGToolEventStruct::TOOL_OUT_OF_MOTION_BOX));
-  }
+    }
 }
 
 } // end of namespace igstk
