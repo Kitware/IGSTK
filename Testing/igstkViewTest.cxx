@@ -232,6 +232,7 @@ int igstkViewTest( int, char * [] )
 
       // Test the 3D view
       View3DType::Pointer view3D = View3DType::New();
+      view3D->RequestSaveScreenShot("igstkViewTestScreenshotIdle.invalid"); // code coverage
 
       // Use a surrogate Widget to initialize the view
       igstk::DefaultWidget dummyWidget2(300,300);
@@ -241,6 +242,8 @@ int igstkViewTest( int, char * [] )
 
       bEnd = false;
       bResize = false;
+
+      view3D->RequestSaveScreenShot("igstkViewTestScreenshotIdle.png"); // code coverage
 
       viewObserver2->SetView( view3D );
       viewObserver2->SetEndFlag( &bEnd );
@@ -254,6 +257,8 @@ int igstkViewTest( int, char * [] )
       view3D->SetCameraPosition( 5.0, 2.0, 1.0 ); // Looking from a diagonal
       view3D->SetCameraFocalPoint( 0.0, 0.0, 0.0 );   // Looking at the origin
       view3D->SetCameraViewUp( 0.0, 0.0, 1.0 ); // Z axis up
+      view3D->SetCameraZoomFactor( 1 );
+
       // Exercise GetNameOfClass() method
       std::cout << view3D->View3DType::Superclass::GetNameOfClass()
                 << std::endl;
@@ -265,6 +270,9 @@ int igstkViewTest( int, char * [] )
       view3D->RequestSetTransformAndParent( transform, worldReference );
 
       // Add the ellipsoid and cylinder representations to the view
+      view3D->RequestAddObject( NULL );          // code coverage
+      view3D->RequestAddAnnotation2D( NULL );    // code coverage
+      view3D->RequestRemoveObject( NULL );       // code coverage
       view3D->RequestAddObject( AxesRepresentation );
       view3D->RequestAddObject( ellipsoidRepresentation );
       view3D->RequestAddObject( cylinderRepresentation );
@@ -281,6 +289,7 @@ int igstkViewTest( int, char * [] )
 
       // Exercise the screenshot option with a valid filename
       view3D->RequestSaveScreenShot("igstkViewTestScreenshot2.png");
+      view3D->RequestSaveScreenShot("ScreenShot.invalid");
 
       } // end of view3D scope
 #endif
