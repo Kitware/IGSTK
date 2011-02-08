@@ -207,11 +207,17 @@ int igstkQTWidgetTest( int argc, char * argv[])
 
     QTWidgetType * qtWidget2D = new QTWidgetType();
     qtWidget2D->SetLogger( logger );
+    qtWidget2D->RequestDisableInteractions();// code coverage
+    qtWidget2D->RequestEnableInteractions(); // code coverage
+    qtWidget2D->GetRenderWindowInteractor(); // code coverage
+    qtWidget2D->RequestSetView( NULL );      // code coverage
     qtWidget2D->RequestSetView( view2D );
-
+    qtWidget2D->GetRenderWindowInteractor(); // code coverage
+    
     //coverage stuff
     qtWidget2D->RequestDisableInteractions();
     qtWidget2D->RequestEnableInteractions();
+    std::cout << qtWidget2D << std::endl;
     QTestEventList events;
     QPoint qp(1,1); 
     events.addMousePress(Qt::LeftButton);

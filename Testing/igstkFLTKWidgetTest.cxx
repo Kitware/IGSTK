@@ -211,10 +211,25 @@ int igstkFLTKWidgetTest( int, char * [] )
 
     // instantiate FLTK widgets
     WidgetType * widget2D = new WidgetType( 10,10,280,280,"2D View");
+    widget2D->RequestEnableInteractions(); //code coverage
+    widget2D->RequestDisableInteractions();//code coverage
+    widget2D->GetRenderWindowInteractor(); //code coverage
+    widget2D->RequestSetView( NULL );      //code coverage
     widget2D->RequestSetView( view2D );
+    widget2D->GetRenderWindowInteractor(); //code coverage
+    widget2D->RequestDisableInteractions();//code coverage
+    widget2D->RequestEnableInteractions(); //code coverage
+    
 
     WidgetType * widget3D = new WidgetType( 310,10,280,280,"3D View");
+    widget3D->RequestEnableInteractions(); //code coverage
+    widget3D->RequestDisableInteractions();//code coverage
+    widget3D->GetRenderWindowInteractor(); //code coverage
+    widget3D->RequestSetView( NULL );      //code coverage
     widget3D->RequestSetView( view3D );
+    widget3D->GetRenderWindowInteractor(); //code coverage
+    widget3D->RequestDisableInteractions();//code coverage
+    widget3D->RequestEnableInteractions(); //code coverage
 
     form->end();
     form->show();
