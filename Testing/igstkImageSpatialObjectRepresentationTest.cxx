@@ -206,6 +206,8 @@ int igstkImageSpatialObjectRepresentationTest( int , char * argv[] )
                                                 ImageSpatialObjectType::New();
   representation->RequestSetImageSpatialObject( imageSpatialObject );
 
+  imageSpatialObject->RequestGetImageExtent();// code coverage
+
   // Exercise the TypeMacro() which defines the GetNameOfClass()
   std::string name = representation->GetNameOfClass();
 
@@ -252,7 +254,7 @@ int igstkImageSpatialObjectRepresentationTest( int , char * argv[] )
   representation->AddObserver( igstk::SagittalSliceBoundsEvent(), observer );
 
   imageSpatialObject = ctImageObserver->GetCTImage();
-
+  imageSpatialObject->RequestGetImageExtent(); // code coverage
   imageSpatialObject->SetLogger( logger );
 
   igstk::Transform  transform;
