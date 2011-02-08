@@ -509,7 +509,6 @@
    fun:TclCompEvalObj
    fun:TclObjInterpProc
    fun:TclEvalObjvInternal
-   fun:TclExecuteByteCode
    fun:TclCompEvalObj
    fun:Tcl_EvalObjEx
    fun:NamespaceEvalCmd
