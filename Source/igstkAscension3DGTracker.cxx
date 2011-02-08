@@ -477,10 +477,9 @@ Ascension3DGTracker::InternalThreadedUpdateStatus( void )
       this->m_ToolStatusContainer[ inputItr->first ] = TOOL_AVAILABLE;
       }
 
-    //Invoke events based on what the sensor status is now and what it was last time.
-    //Need to compare to what it was last time so we do not send multiple events for
-    //the same occurance.
-
+    /*Invoke events based on what the sensor status is now and what it was last time.
+    *Need to compare to what it was last time so we do not send multiple events for
+    */the same occurance.
     if(saturated && (!this->m_SensorSaturated[sensorID]))
       {
       //sensor just became saturated

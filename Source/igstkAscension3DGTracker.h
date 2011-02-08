@@ -33,8 +33,8 @@ struct Ascension3DGEventErrorType {
 };
 
 /** Structure holding a notification event. These can be used to monitor 
-*the state of the tracker.*/
-
+ * the state of the tracker.
+ */
 struct Ascension3DGToolEventStruct {
   enum ToolEvents{
   TOOL_DISCONNECTED,  /**a tool that was connected has been disconnected*/
