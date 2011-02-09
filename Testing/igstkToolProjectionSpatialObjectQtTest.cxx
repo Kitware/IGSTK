@@ -361,14 +361,14 @@ int igstkToolProjectionSpatialObjectQtTest( int argc , char * argv [] )
   ToolProjectionType::Pointer toolProjection = ToolProjectionType::New();
   toolProjection->SetSize(150);
   toolProjection->RequestSetTransformAndParent( identity, worldReference );
-  toolProjection->PrintSelf();
+  toolProjection->Print(std::cout);
 
   ToolProjectionRepresentationType::Pointer 
             toolProjectionRepresentation = ToolProjectionRepresentationType::New();
   toolProjectionRepresentation->RequestSetToolProjectionObject( toolProjection );
   toolProjectionRepresentation->RequestSetReslicePlaneSpatialObject( reslicerPlaneSpatialObject );
   toolProjectionRepresentation->SetColor( 1,1,0 );
-  toolProjectionRepresentation->PrintSelf();
+  toolProjectionRepresentation->Print(std::cout);
 
   // important: we do not set the view as child of the reslicer plane yet 
   //view2D->RequestDetachFromParent();
