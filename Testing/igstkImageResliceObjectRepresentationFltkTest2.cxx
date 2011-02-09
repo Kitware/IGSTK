@@ -232,6 +232,13 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   //imageResliceRepresentation->SetLogger( logger );
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
+
+  // code coverage
+  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
+
+  imageResliceRepresentation->SetTextureInterpolate(0);
+
+  imageResliceRepresentation->SetResliceInterpolate(0);
   
   // a variable to hold image index
   ImageSpatialObjectType::IndexType index;

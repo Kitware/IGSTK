@@ -229,6 +229,12 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
+  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
+
+  imageResliceRepresentation->SetTextureInterpolate(0);
+
+  imageResliceRepresentation->SetResliceInterpolate(0);
+
  // build a tool spatial object using a cylinder object
   typedef igstk::CylinderObject                           ToolSpatialObjectType;
   ToolSpatialObjectType::Pointer toolSpatialObject = ToolSpatialObjectType::New();  

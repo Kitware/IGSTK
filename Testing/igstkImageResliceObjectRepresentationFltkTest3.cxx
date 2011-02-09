@@ -285,6 +285,13 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   imageResliceRepresentation->SetWindowLevel( 1559, -244 );
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
   
+  // code coverage
+  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
+
+  imageResliceRepresentation->SetTextureInterpolate(0);
+
+  imageResliceRepresentation->SetResliceInterpolate(0);
+
   igstk::Transform toolTransform;
   igstk::Transform::VectorType    translation;
   igstk::Transform::VersorType    rotation;

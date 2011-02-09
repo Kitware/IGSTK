@@ -42,9 +42,6 @@
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
 
-#include "igstkToolProjectionSpatialObject.h"
-#include "igstkToolProjectionObjectRepresentation.h"
-
 
 namespace MeshResliceObjectRepresentationQtTest
 {
