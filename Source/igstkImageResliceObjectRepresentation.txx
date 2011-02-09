@@ -520,9 +520,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ColorMap->SetLookupTable(m_LookupTable);
   m_ColorMap->SetInput(m_ImageData);
 
-  int interpolate = m_ResliceInterpolate;
-
-  this->SetResliceInterpolate(interpolate);
+  this->SetResliceInterpolate(m_ResliceInterpolate);
 
   m_ImageReslicer->SetInput(m_ColorMap->GetOutput());
 
@@ -685,9 +683,41 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
   m_FrameColor[0] = r;
   m_FrameColor[1] = g;
   m_FrameColor[2] = b;
-
 }
 
+template < class TImageSpatialObject >
+void ImageResliceObjectRepresentation< TImageSpatialObject >
+::SetRestrictPlaneToVolume(int value)
+{
+  if ( m_RestrictPlaneToVolume == value )
+    {
+    return;
+    }
+    
+  m_RestrictPlaneToVolume = value;
+
+  this->UpdatePlane();
+}
+  
+template < class TImageSpatialObject >
+void ImageResliceObjectRepresentation< TImageSpatialObject >
+::SetTextureInterpolate(int value)
+{
+  if ( m_TextureInterpolate == value )
+    {
+    return;
+    }
+    
+  if (!m_Texture)
+    {
+    return;
+    }
+    
+  m_TextureInterpolate = value;
+
+  m_Texture->SetInterpolate(m_TextureInterpolate);
+}
+  
 /** Get the red color component */
 template < class TImageSpatialObject >
 ObjectRepresentation::ColorScalarType
@@ -998,24 +1028,25 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
 
 template < class TImageSpatialObject >
 void ImageResliceObjectRepresentation< TImageSpatialObject >
-::SetResliceInterpolate(int i)
+::SetResliceInterpolate(int value)
 {
-  if ( m_ResliceInterpolate == i )
+  if ( m_ResliceInterpolate == value )
     {
     return;
     }
-  m_ResliceInterpolate = i;
+    
+  m_ResliceInterpolate = value;
 
   if ( !m_ImageReslicer )
     {
     return;
     }
   
-  if ( i == VTK_NEAREST_RESLICE )
+  if ( value == VTK_NEAREST_RESLICE )
     {
     m_ImageReslicer->SetInterpolationModeToNearestNeighbor();
     }
-  else if ( i == VTK_LINEAR_RESLICE)
+  else if ( value == VTK_LINEAR_RESLICE)
     {
     m_ImageReslicer->SetInterpolationModeToLinear();
     }
@@ -1023,6 +1054,7 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
     {
     m_ImageReslicer->SetInterpolationModeToCubic();
     }
+    
   m_Texture->SetInterpolate(m_TextureInterpolate);
 }
 

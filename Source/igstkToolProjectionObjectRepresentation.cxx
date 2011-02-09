@@ -209,6 +209,10 @@ void ToolProjectionObjectRepresentation
 ::PrintSelf( std::ostream& os, itk::Indent indent ) const
 {
   Superclass::PrintSelf(os, indent);
+  os << "m_ReslicePlaneSpatialObject = " << m_ReslicePlaneSpatialObject << std::endl;
+  os << "m_LineSource = " << m_LineSource << std::endl;
+  os << "m_LineProperty = " << m_LineProperty << std::endl;
+  os << "m_LineWidth = " << m_LineWidth << std::endl;
 }
 
 /** Update the visual representation in response to changes in the geometric

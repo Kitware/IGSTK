@@ -86,11 +86,23 @@ public:
   void RequestSetImageSpatialObject( const ImageSpatialObjectType * 
                                                  ImageSpatialObject );
 
-  /** Set the Window Level for the representation */
+  /** Set the window level of the resliced image plane */
   void SetWindowLevel( double window, double level );
 
-  /** Set the color */
+  /** Set the color of the frame around the resliced image plane */
   void SetFrameColor(ColorScalarType r, ColorScalarType g, ColorScalarType b);
+
+  /** Restrict the resulting resliced image to the image volume */
+  void SetRestrictPlaneToVolume(int value);
+
+  /** Set the texture interpolation type internally used in vtkTexture*/
+  void SetTextureInterpolate(int value);
+
+  /** Set the reslice interpolation type internally used in
+   * vtkImageReslice. VTK_NEAREST_RESLICE 0 (default)
+   * VTK_LINEAR_RESLICE   1, VTK_CUBIC_RESLICE   2
+   * */
+  void SetResliceInterpolate(int value);
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
@@ -128,7 +140,7 @@ private:
   ImageSpatialObjectConstPointer         m_ImageSpatialObject;
   ImageSpatialObjectConstPointer         m_ImageSpatialObjectToAdd;
 
-  /** Variables for maanging reslice plane spatial object */
+  /** Variables for managing reslice plane spatial object */
   ReslicerPlanePointerType               m_ReslicePlaneSpatialObjectToBeSet;
   ReslicerPlanePointerType               m_ReslicePlaneSpatialObject;
     
@@ -188,9 +200,6 @@ private:
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
-
-  /** Sets reslice interpolation type */
-  void SetResliceInterpolate(int i);
 
   /** Builds the plane geometry */
   void UpdatePlane();
