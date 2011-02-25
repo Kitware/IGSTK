@@ -44,25 +44,25 @@ required. Please verify configuration")
 ENDIF(NOT IGSTK_SOURCE_DIR)
 
 #
-# Use OpenCV protocol 
+# Use OpenCV protocol
 #
 OPTION(IGSTKSandbox_USE_OpenCV "Use the OpenCV library" OFF)
 IF(IGSTKSandbox_USE_OpenCV)
   #
-  #  FIND OpenCV 
+  #  FIND OpenCV
   #
   SET ( OpenCV_ROOT_DIR "C:/workspace/opencv/bin" CACHE LOCATION "where was OpenCV built")
-  
+
   FIND_PACKAGE( OpenCV REQUIRED )
   #MESSAGE( STATUS "my sources: ${OpenCV_INCLUDE_DIR}")
- 
+
 ENDIF(IGSTKSandbox_USE_OpenCV)
 
 
 # Disable MSVC 8 warnings
 IF(WIN32)
   OPTION(DISABLE_MSVC8_DEPRECATED_WARNINGS "Disable Visual Studio 8 deprecated warnings" OFF)
-  MARK_AS_ADVANCED(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
+  MARK_AS_ADVANCED(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)
   IF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
     ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
   ENDIF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
@@ -95,6 +95,14 @@ IF (USE_VTK_FILE)
 ELSE (USE_VTK_FILE)
   MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
 ENDIF (USE_VTK_FILE)
+
+#
+# FIND LSQRRecipes, used in US calibration
+#
+#find_package(LSQRRecipes)
+#if(LSQRRecipes_FOUND)
+#  include(${LSQRRecipes_USE_FILE})
+#endif()
 
 #
 #
@@ -164,8 +172,8 @@ IF(IGSTKSandbox_USE_MicronTracker)
   INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
   INCLUDE_DIRECTORIES( ${IGSTKSandbox_SOURCE_DIR}/Utilities/MicronTracker/src )
 
-  FIND_LIBRARY( MTC_LIBRARY 
-    NAMES MTC MTC.dll 
+  FIND_LIBRARY( MTC_LIBRARY
+    NAMES MTC MTC.dll
     PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
     DOC "Full path to the MTC.dll file"
     )
@@ -176,7 +184,7 @@ IF(IGSTKSandbox_USE_MicronTracker)
       MESSAGE( FATAL_ERROR " Your MTC version is
   ${MTCMajorVersion}.${MTCMinorVersion}. Version 3.6.1 or later should be used")
     ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
-    
+
     GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
     LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
   ENDIF(MTC_INCLUDE_DIRECTORY)
@@ -192,7 +200,7 @@ IF(IGSTKSandbox_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DGm.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY 
+    FIND_LIBRARY( ATC_LIBRARY
       NAMES ATC3DGm ATC3DGm.dll
       PATHS "C:/Program Files/Ascension/3D Guidance medSAFE (Rev F)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
@@ -203,13 +211,13 @@ IF(IGSTKSandbox_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DG.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY 
+    FIND_LIBRARY( ATC_LIBRARY
       NAMES ATC3DG ATC3DG.dll
       PATHS "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
       )
   ENDIF(Ascension3DG_MedSafe)
-  
+
   GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTKSandbox_USE_Ascension3DGTracker)
@@ -231,12 +239,12 @@ OPTION(IGSTKSandbox_SEND_TRANSFORMS_TO_SOCKETS "Setup classes for sending Tracke
 OPTION(IGSTKSandbox_BUILD_SUPERVISED_TRACKER_TESTING "Build human supervised tests for Trackers" OFF)
 
 #
-# Use OpenIGTLink protocol 
+# Use OpenIGTLink protocol
 #
 OPTION(IGSTKSandbox_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)
 IF(IGSTKSandbox_USE_OpenIGTLink)
   #
-  #  FIND OpenIGTLink 
+  #  FIND OpenIGTLink
   #
   FIND_PACKAGE(OpenIGTLink)
   IF (OpenIGTLink_USE_FILE)
@@ -256,13 +264,13 @@ IF(IGSTK_USE_SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
 
 #
-# Use unicap library 
+# Use unicap library
 #
 OPTION(IGSTKSandbox_USE_unicap "Use the unicap library" OFF)
 
 
 #
-# Use CompressedDV 
+# Use CompressedDV
 #
 OPTION(IGSTKSandbox_USE_CompressedDV "Use compressed DV" OFF)
 
@@ -366,7 +374,7 @@ MARK_AS_ADVANCED(IGSTKSandbox_USE_KWSTYLE)
 
 IF(IGSTKSandbox_USE_KWSTYLE)
   FIND_PROGRAM(KWSTYLE_EXECUTABLE
-  NAMES KWStyle 
+  NAMES KWStyle
   PATHS
   /usr/local/bin
   )
@@ -383,9 +391,9 @@ IF(IGSTKSandbox_USE_KWSTYLE)
 
   SET(KWSTYLE_ARGUMENTS -xml ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTK.kws.xml -o
 ${IGSTKSandbox_SOURCE_DIR}/Utilities/KWStyle/IGSTKOverwrite.txt -v -D
-${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt  
+${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt
   )
- 
+
   IF(KWSTYLE_USE_VIM_FORMAT)
     SET(KWSTYLE_ARGUMENTS -vim ${KWSTYLE_ARGUMENTS})
   ENDIF(KWSTYLE_USE_VIM_FORMAT)
@@ -402,5 +410,3 @@ ${IGSTKSandbox_BINARY_DIR}/Utilities/KWStyle/IGSTKFiles.txt
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTKSandbox_BINARY_DIR}/KWStyleReport.txt)
 ENDIF(IGSTKSandbox_USE_KWSTYLE)
-
-
