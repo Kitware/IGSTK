@@ -3,6 +3,7 @@ SET(IGSTK_LATEST_FILES  ${IGSTKSandbox_BINARY_DIR}/SourceLatest )
 MAKE_DIRECTORY( ${IGSTK_LATEST_FILES} )
 
 INCLUDE_DIRECTORIES(
+#  ${IGSTKSandbox_SOURCE_DIR}/USCalibration
   ${IGSTKSandbox_SOURCE_DIR}/IGSTK/Source
   ${IGSTKSandbox_SOURCE_DIR}/Source
   ${IGSTKSandbox_BINARY_DIR}
@@ -390,6 +391,14 @@ SOURCE_GROUP(IGSTKModified FILES ${IGSTKModifiedFiles})
 
 # The header files
 SET(IGSTKSandbox_HEADS
+#  USCalibration/igstkUSCalibrationAlgorithm.h
+#  USCalibration/igstkUSCalibrationAlgorithm.txx
+#  USCalibration/igstkUSCalibrationCrosswirePhantomAlgorithm.h
+#  USCalibration/igstkUSCalibrationPlanePhantomAlgorithm.h
+#  USCalibration/igstkUSCalibrationPointerAlgorithm.h
+
+#  This is a copy of the file from IGSTK/Examples/TransformReaders
+#  USCalibration/igstkPrecomputedTransformData.h
 
 # Video grabber support
   igstkVideoFrameSpatialObject.h
@@ -426,7 +435,7 @@ SET(IGSTKSandbox_HEADS
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-ENDIF(IGSTKSandbox_USE_FLTK)      
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF (IGSTKSandbox_USE_OpenIGTLink)
   SET(IGSTKSandbox_HEADS
@@ -467,7 +476,7 @@ IF( WIN32 )
       igstkWebCameraTracker.h
       igstkWebCameraTrackerTool.h
      )
-    
+
       IF(IGSTKSandbox_USE_OpenCV)
          SET(IGSTKSandbox_SRCS
              ${IGSTKSandbox_SRCS}
@@ -504,6 +513,13 @@ ENDIF(IGSTKSandbox_USE_NDICertus)
 # The implementation files
 SET(IGSTKSandbox_SRCS
 
+#  USCalibration/igstkUSCalibrationCrosswirePhantomAlgorithm.cxx
+#  USCalibration/igstkUSCalibrationPlanePhantomAlgorithm.cxx
+#  USCalibration/igstkUSCalibrationPointerAlgorithm.cxx
+#  USCalibration/igstkUSCalibrationPointerAlgorithm.cxx
+
+#  This is a copy of the file from IGSTK/Examples/TransformReaders
+#  USCalibration/igstkPrecomputedTransformData.cxx
 
 # Video grabber support
   igstkVideoFrameSpatialObject.txx
@@ -535,7 +551,7 @@ SET(IGSTKSandbox_SRCS
   igstkVascularNetworkReader.cxx
   igstkVesselObject.cxx
   igstkVesselObjectRepresentation.cxx
-  
+
   igstkMeshClippingObjectRepresentation.cxx
 
   igstkLandmark3DRegistration2.cxx
@@ -543,7 +559,7 @@ SET(IGSTKSandbox_SRCS
 )
 
 IF(IGSTKSandbox_USE_FLTK)
-ENDIF(IGSTKSandbox_USE_FLTK)      
+ENDIF(IGSTKSandbox_USE_FLTK)
 
 IF( WIN32 )
   SET(IGSTKSandbox_SRCS
@@ -551,14 +567,14 @@ IF( WIN32 )
       igstkWebCameraTracker.cxx
       igstkWebCameraTrackerTool.cxx
      )
-             
+
       IF(IGSTKSandbox_USE_OpenCV)
         SET(IGSTKSandbox_SRCS
             ${IGSTKSandbox_SRCS}
             igstkWebcamWinVideoImager.cxx
             igstkWebcamWinVideoImagerTool.cxx
             )
-      ENDIF(IGSTKSandbox_USE_OpenCV)        
+      ENDIF(IGSTKSandbox_USE_OpenCV)
 ENDIF( WIN32 )
 
 IF(IGSTKSandbox_USE_vtkKWImage)
