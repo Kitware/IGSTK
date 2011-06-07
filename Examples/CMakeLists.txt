@@ -92,3 +92,9 @@ IF (IGSTKSandbox_USE_Qt)
      SUBDIRS(VideograbbingAndTrackingUsingQTWidget)
    ENDIF(APPLE)
 ENDIF (IGSTKSandbox_USE_Qt)
+
+IF (IGSTKSandbox_USE_OpenCV)
+      SUBDIRS( KalmanFiltering
+             )
+ENDIF (IGSTKSandbox_USE_OpenCV)
+
