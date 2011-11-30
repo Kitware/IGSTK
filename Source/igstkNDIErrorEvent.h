@@ -67,7 +67,7 @@ public:
     return new Self; }
 
   /** Get the error code */
-  const unsigned int GetErrorCode() const {
+  unsigned int GetErrorCode() const {
     return m_ErrorCode; }
 
 private:
