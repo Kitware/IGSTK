@@ -316,7 +316,7 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   typedef MRImageSpatialObject::ImageType     MovingImageType;
  
   // Transform Type
-  typedef itk::VersorRigid3DTransform< double > TransformType;
+  typedef itk::VersorRigid3DTransform< double > VersorRigidTransformType;
 
   // Optimizer Type
   typedef itk::RegularStepGradientDescentOptimizer       OptimizerType;
@@ -338,7 +338,10 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
 
 
   MetricType::Pointer         metric        = MetricType::New();
-  TransformType::Pointer      transform     = TransformType::New();
+
+  VersorRigidTransformType::Pointer    transform   = 
+                                VersorRigidTransformType::New();
+
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
   FixedImageType::Pointer     fixedImage    = FixedImageType::New();  
   MovingImageType::Pointer    movingImage   = MovingImageType::New();  

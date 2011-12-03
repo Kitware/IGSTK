@@ -109,7 +109,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
               << std::endl;
     }
 
-  CTImagePointer ctImage = ctImageObserver->GetCTImage();  
+  CTImagePointer ctImagePointer = ctImageObserver->GetCTImage();  
 
   typedef igstk::CTImageSpatialObjectRepresentation RepresentationType;
 
@@ -117,7 +117,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
           
   representation->SetLogger( logger );
 
-  representation->RequestSetImageSpatialObject( ctImage );
+  representation->RequestSetImageSpatialObject( ctImagePointer );
                         
 
   representation->RequestSetOrientation( RepresentationType::Axial );
@@ -208,7 +208,7 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
     return EXIT_FAILURE;
     }
 
-  ctImage = ctImageObserver->GetCTImage();
+  CTImagePointer ctImage = ctImageObserver->GetCTImage();
 
   ctImage->SetLogger( logger );
 
@@ -298,28 +298,28 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
    *  Testing the ITK image to VTK image filter pipeline */
   if (1)
     {
-    igstk::CTImageReader::Pointer reader = igstk::CTImageReader::New();
-    igstk::CTImageSpatialObjectRepresentation::Pointer representation 
+    igstk::CTImageReader::Pointer reader2 = igstk::CTImageReader::New();
+    igstk::CTImageSpatialObjectRepresentation::Pointer representation2 
                           = igstk::CTImageSpatialObjectRepresentation::New();
-    igstk::CTImageReader::DirectoryNameType directoryName;
+    igstk::CTImageReader::DirectoryNameType directoryName2;
 
     // Add an observer that will receive the image as an event.
-    reader->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
+    reader2->AddObserver(::igstk::CTImageReader::ImageModifiedEvent(),
                         ctImageObserver);
 
     std::cout << "Reading the first DICOM series : " << argv[1] <<std::endl;
-    directoryName = argv[1];
+    directoryName2 = argv[1];
 
-    reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
-    reader->RequestReadImage();   // Request to read the image from the files
-    reader->RequestGetImage();    // Request to send the image as an event.
+    reader2->RequestSetDirectory( directoryName2 );  // Set the DICOM directory
+    reader2->RequestReadImage();   // Request to read the image from the files
+    reader2->RequestGetImage();    // Request to send the image as an event.
 
     if( ctImageObserver->GotCTImage() )
       {
         
-      CTImagePointer ctImage = ctImageObserver->GetCTImage();
+      CTImagePointer ctImage2 = ctImageObserver->GetCTImage();
 
-      if( ctImage->IsEmpty() )
+      if( ctImage2->IsEmpty() )
         {
         std::cerr << "The image was expected to be Non-Empty,but it was empty."
                   << std::endl;
@@ -342,20 +342,20 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
 
     ctImage->SetLogger( logger );
 
-    igstk::Transform transform;
-    transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
-    ctImage->RequestSetTransformAndParent( transform, worldReference );
+    igstk::Transform transform2;
+    transform2.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+    ctImage->RequestSetTransformAndParent( transform2, worldReference );
 
-    representation->RequestSetImageSpatialObject( ctImage );
+    representation2->RequestSetImageSpatialObject( ctImage );
 
-    representation->RequestSetOrientation( RepresentationType::Axial );
+    representation2->RequestSetOrientation( RepresentationType::Axial );
 
-    view2D->RequestAddObject( representation );
+    view2D->RequestAddObject( representation2 );
     view2D->RequestSetOrientation( igstk::View2D::Axial );
 
     for(unsigned int i=0; i<10; i++)
       {
-      representation->RequestSetSliceNumber( i );
+      representation2->RequestSetSliceNumber( i );
       Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();
@@ -363,19 +363,19 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
       }
 
     std::cout << "Reading the second DICOM series : " << argv[3] <<std::endl;
-    directoryName = argv[3];
+    directoryName2 = argv[3];
 
-    reader = ReaderType::New();                     // To avoid vtkImageImport update extent mismatch error
-    reader->RequestSetDirectory( directoryName );  // Set the DICOM directory
-    reader->RequestReadImage();   // Request to read the image from the files
-    reader->RequestGetImage();    // Request to send the image as an event.
+    reader2 = ReaderType::New();                     // To avoid vtkImageImport update extent mismatch error
+    reader2->RequestSetDirectory( directoryName2 );  // Set the DICOM directory
+    reader2->RequestReadImage();   // Request to read the image from the files
+    reader2->RequestGetImage();    // Request to send the image as an event.
 
     if( ctImageObserver->GotCTImage() )
       {
         
-      CTImagePointer ctImage = ctImageObserver->GetCTImage();
+      CTImagePointer ctImage2 = ctImageObserver->GetCTImage();
 
-      if( ctImage->IsEmpty() )
+      if( ctImage2->IsEmpty() )
         {
         std::cerr << "The image was expected to be Non-Empty,but it was empty."
                   << std::endl;
@@ -395,14 +395,14 @@ int igstkCTImageSpatialObjectReadingAndRepresentationTest(
       }
 
 
-    representation->RequestSetImageSpatialObject( 
+    representation2->RequestSetImageSpatialObject( 
                                        ctImageObserver->GetCTImage() );
 
-    representation->RequestSetOrientation( RepresentationType::Axial );
+    representation2->RequestSetOrientation( RepresentationType::Axial );
 
     for(unsigned int i=0; i<10; i++)
       {
-      representation->RequestSetSliceNumber( i );
+      representation2->RequestSetSliceNumber( i );
       Fl::wait( 0.05 );
       igstk::PulseGenerator::CheckTimeouts();
       Fl::check();

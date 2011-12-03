@@ -156,9 +156,6 @@ int igstkSerialCommunicationSimulatorTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  TransformType             transitions;
-  VectorType                position;
-
   for(unsigned int i=0; i<10; i++)
     {
     igstk::PulseGenerator::CheckTimeouts();

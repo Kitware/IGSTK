@@ -82,9 +82,9 @@ AuroraTracker::ResultType AuroraTracker
   
   // free ports that are waiting to be freed
   commandInterpreter->PHSR(CommandInterpreterType::NDI_STALE_HANDLES);
-  unsigned int ntools = commandInterpreter->GetPHSRNumberOfHandles();
+  unsigned int numberOfHandles = commandInterpreter->GetPHSRNumberOfHandles();
   unsigned int tool;
-  for (tool = 0; tool < ntools; tool++)
+  for (tool = 0; tool < numberOfHandles; tool++)
     {
     const int ph = commandInterpreter->GetPHSRHandle(tool);
     commandInterpreter->PHF(ph);
@@ -162,11 +162,11 @@ AuroraTracker::ResultType AuroraTracker
         }
       }
 
-  if( foundTool )
+    if( foundTool )
       {
       break;
       }
-  }
+    }
 
   // No new port handle found, we will exit with failure here
   // But if we have found a spliter in previous operation, meaning there will
@@ -247,8 +247,8 @@ AuroraTracker::ResultType AuroraTracker
       return FAILURE;
       }
 
-    unsigned int ntools = commandInterpreter->GetPHSRNumberOfHandles();
-    for( unsigned int toolNumber = 0; toolNumber < ntools; toolNumber++ )
+    unsigned int numberOfTools = commandInterpreter->GetPHSRNumberOfHandles();
+    for( unsigned int toolNumber = 0; toolNumber < numberOfTools; toolNumber++ )
     {
       ph2 = commandInterpreter->GetPHSRHandle( toolNumber );
       
