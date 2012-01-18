@@ -158,7 +158,13 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
-
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_HEADS
+	  ${IGSTK_HEADS}
+	  igstkNDICertusTracker.h
+	  igstkNDICertusTrackerTool.h
+	  )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -302,6 +308,7 @@ SET(IGSTK_SRCS
   igstkPETImageReader.cxx
   igstkPETImageSpatialObject.cxx
   igstkPETImageSpatialObjectRepresentation.cxx
+
 )
 
 IF(IGSTK_USE_FLTK)
@@ -350,6 +357,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
       igstkAscension3DGTrackerTool.cxx
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkNDICertusTracker.cxx
+      igstkNDICertusTrackerTool.cxx
+     )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS

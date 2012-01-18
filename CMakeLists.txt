@@ -227,6 +227,11 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+# Connect NDI Certus Tracker
+OPTION(IGSTK_USE_NDICertus "Connect NDI Certus Tracker" OFF)
+IF(IGSTK_USE_NDICertus)
+  INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus )
+ENDIF(IGSTK_USE_NDICertus)
 
 #
 # Use OpenIGTLink protocol
