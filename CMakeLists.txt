@@ -227,6 +227,17 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+#
+# Atracsys Easytrack500
+#
+OPTION(IGSTKSandbox_USE_AtracsysEasyTrack500 "Atracsys EasyTrack500 Tracker" OFF)
+
+IF( IGSTKSandbox_USE_AtracsysEasyTrack500 )
+  SET(ETK_INCLUDE_DIR CACHE PATH "")
+  SET(ETK_LIBRARY_DIR CACHE PATH "" )
+  INCLUDE_DIRECTORIES( ${ETK_INCLUDE_DIR} )
+  LINK_DIRECTORIES( ${ETK_LIBRARY_DIR} )
+ENDIF( IGSTKSandbox_USE_AtracsysEasyTrack500 )
 
 #
 # Use OpenIGTLink protocol
