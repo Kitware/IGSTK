@@ -227,6 +227,15 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+IF(IGSTK_USE_AXIOS3D_CAMBARB2)
+  SET(IGSTKSandbox_SRCS
+  ${IGSTKSandbox_SRCS}
+  igstkAxios3DTracker.cxx
+  igstkAxios3DTrackerTool.cxx
+  )
+
+  SET(EXTRA_LIBS ${EXTRA_LIBS} Metrology_DLLImport )
+ENDIF(IGSTK_USE_AXIOS3D_CAMBARB2)
 
 #
 # Use OpenIGTLink protocol
