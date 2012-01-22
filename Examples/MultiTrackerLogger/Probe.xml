@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- all units are mm -->
+<!-- Format version -->
+<locatordefinitions version="1" >
+	<locator id="PROBE">
+		<parameter>
+			<min_targets>3</min_targets>
+			<matching_threshold>2.18687</matching_threshold>
+		</parameter>
+		<targets>
+			<target id="1">
+				<position>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+				</position>
+			</target>
+			<target id="2">
+				<position>
+					<x>49.7086</x>
+					<y>-5.55112e-017</y>
+					<z>0</z>
+				</position>
+			</target>
+			<target id="3">
+				<position>
+					<x>88.4881</x>
+					<y>31.5891</y>
+					<z>8.88178e-016</z>
+				</position>
+			</target>
+			<target id="4">
+				<position>
+					<x>87.4456</x>
+					<y>-32.7573</y>
+					<z>1.50221</z>
+				</position>
+			</target>
+		</targets>
+	</locator>
+</locatordefinitions>
