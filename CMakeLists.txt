@@ -227,6 +227,10 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+#
+# NDI POLARIS CLASSIC
+#
+OPTION(IGSTKSandbox_USE_POLARIS_CLASSIC "NDI Polaris Classic Tracker" OFF)
 
 #
 # Use OpenIGTLink protocol

@@ -158,7 +158,13 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
-
+IF(IGSTKSandbox_USE_POLARIS_CLASSIC)
+    SET(IGSTKSandbox_HEADS
+    ${IGSTKSandbox_HEADS}
+    igstkNDICommandInterpreterClassic.h
+    igstkPolarisClassicTracker.h
+    )
+ENDIF(IGSTKSandbox_USE_POLARIS_CLASSIC)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -350,6 +356,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
       igstkAscension3DGTrackerTool.cxx
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+IF(IGSTK_USE_POLARIS_CLASSIC)
+    SET(IGSTKSandbox_SRCS
+    ${IGSTKSandbox_SRCS}
+    igstkNDICommandInterpreterClassic.cxx
+    igstkPolarisClassicTracker.cxx
+    )
+ENDIF(IGSTK_USE_POLARIS_CLASSIC)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS
