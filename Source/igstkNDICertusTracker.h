@@ -177,9 +177,6 @@ private:
   /** Name of ini files */
   std::string m_strIniFileName;
 
-  /** Load ini file */
-  //bool LoadRigiBodyCfgFile();// REMOVED since it was integrated with the trackerController/trackerConfiguration architecture
-
   /** Reset the system variables */
   bool ResetSystemVariables();
 
@@ -197,22 +194,6 @@ private:
                                 TrackerToolTransformContainerType;
 
   TrackerToolTransformContainerType     m_ToolTransformBuffer;
-
-////  Alberto 03-12-09  /////////////////////////////////////////////////////////////
-// WORK IN PROGRESS in order to retrieve single marker data as well 
-
-/** A buffer to hold  a single tool's marker data *//*
-  typedef std::map< int, std::vector < double > >
-                                oneToolMarkerBufferType;
-
-  
-  /** A buffer to hold marker data for every tool *//*
-  typedef std::map< std::string, oneToolMarkerBufferType >
-                                TrackerToolMarkerDataContainerType;
-
-  TrackerToolMarkerDataContainerType     m_ToolMarkerDataBuffer;
-  */
-/////////////////////////////////////////////////////////////////////////////////
 
   /** Error map container */
   typedef std::map< unsigned int, std::string>  ErrorCodeContainerType;
