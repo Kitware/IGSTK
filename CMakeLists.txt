@@ -228,10 +228,10 @@ IF(IGSTK_USE_Ascension3DGTracker)
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
 # Connect NDI Certus Tracker
-OPTION(IGSTK_USE_NDICertus "Connect NDI Certus Tracker" OFF)
-IF(IGSTK_USE_NDICertus)
+OPTION(IGSTK_USE_NDICertusTracker "Connect NDI Certus Tracker" OFF)
+IF(IGSTK_USE_NDICertusTracker)
   INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus )
-ENDIF(IGSTK_USE_NDICertus)
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 #
 # Use OpenIGTLink protocol

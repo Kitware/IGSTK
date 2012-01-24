@@ -65,7 +65,7 @@ typedef struct RotationStruct
     float   roll;           /* rotation about the object's z-axis */
     float   pitch;          /* rotation about the object's y-axis */
     float   yaw;            /* rotation about the object's x-axis */
-} rotation;
+} RotationAngleType;
 
 typedef struct Position3dStruct
 {
@@ -76,7 +76,7 @@ typedef struct Position3dStruct
 
 typedef struct TransformationStruct
 {
-    rotation   rotation;
+    RotationAngleType   rotation;
     Position3d translation;
 } transformation;
 

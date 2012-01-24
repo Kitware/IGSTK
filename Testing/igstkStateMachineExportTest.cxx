@@ -90,6 +90,12 @@
 #include "igstkAscension3DGTrackerTool.h"
 #endif
 
+#if defined(IGSTK_USE_NDICertusTracker)
+#include "igstkNDICertusTracker.h"
+#include "igstkNDICertusTrackerTool.h"
+#endif
+
+
 
 #if defined(IGSTK_USE_FLTK)
 #include "igstkFLTKWidget.h"
@@ -536,6 +542,13 @@ int main( int argc, char * argv [] )
                                 outputDirectory, skipLoops );
 #endif
 
+#if defined(IGSTK_USE_NDICertusTracker)
+  igstkTestExportStateMachine1( igstk::NDICertusTracker, 
+                                outputDirectory, skipLoops );
+
+  igstkTestExportStateMachine1( igstk::NDICertusTrackerTool, 
+                                outputDirectory, skipLoops );
+#endif
 
   return EXIT_SUCCESS;
 }

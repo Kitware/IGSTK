@@ -43,6 +43,8 @@ Modified:
 /*
  * Define NDI_DECL1 and NDI_DECL2 for accessing the 32-bit DLL.
  */
+
+/**
 #ifdef __BORLANDC__
 #define NDI_DECL1       __declspec( dllimport )
 #define NDI_DECL2       __stdcall
@@ -59,6 +61,20 @@ Modified:
 #else
 #error unknown compiler
 #endif
+**/
+
+#if (defined(_WIN32) || defined(WIN32))
+  #define NDI_DECL1       __declspec( dllimport )
+  #define NDI_DECL2       __stdcall
+  #define inp             _inp
+  #define outp            _outp
+#else
+  #define NDI_DECL1      
+  #define NDI_DECL2    
+  #define inp         
+  #define outp        
+#endif
+
 
 #define HOSTDEFINED
 

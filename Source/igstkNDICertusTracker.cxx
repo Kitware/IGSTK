@@ -176,7 +176,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
   //--- (end) Load the system of processors.
   
   // Wait one second
-  ::Sleep( 1000 );
+  igstk::PulseGenerator::Sleep(1000);
 
   //----------------------------------------
   /*
@@ -217,7 +217,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
   //--- (end) Update the setup from file  (if exist)
   
   // Wait one second
-  ::Sleep( 1000 );
+  igstk::PulseGenerator::Sleep(1000);
 
   //----------------------------------------
   // 6.  Get Status   
@@ -266,7 +266,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
   //--- (end) Load rigid bodies
 
   // Wait up one second
-  ::Sleep( 1000 );
+  igstk::PulseGenerator::Sleep(1000);
 
   //---------------------------------------- 
   //  Check Status   
@@ -352,8 +352,9 @@ NDICertusTracker::ResultType NDICertusTracker::InternalStartTracking( void )
     {
       return FAILURE;
     } /* if */
-  ::Sleep( 1000 );
-  
+
+  igstk::PulseGenerator::Sleep(1000);
+
   return SUCCESS;
 }
 
@@ -368,7 +369,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalStopTracking( void )
     return FAILURE;
   } /* if */
 
-  ::Sleep( 1000 );
+  igstk::PulseGenerator::Sleep(1000);
 
   return SUCCESS;
 }

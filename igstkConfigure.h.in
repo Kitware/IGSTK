@@ -41,3 +41,4 @@
 #cmakedefine IGSTK_USE_InfiniTrack
 #cmakedefine IGSTK_USE_Ascension3DGTracker
 #cmakedefine Ascension3DG_MedSafe
+#cmakedefine IGSTK_USE_NDICertusTracker
