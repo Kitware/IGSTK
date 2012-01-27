@@ -44,10 +44,7 @@ int igstkNDICertusTrackerToolTest( int argc, char * argv[] )
   if( argc < 2 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
-                            << "Type( 0 for Wireless, 1 for Wired ) \t"
-                            << "Port Number\t"
-                            << "[SROM file]\t"
-                            << "[tool Id]\t" << std::endl;
+                            << "[RIG filename]" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -64,64 +61,24 @@ int igstkNDICertusTrackerToolTest( int argc, char * argv[] )
   vtkLoggerOutput->SetLogger(logger);  // redirect messages from 
                                        // VTK OutputWindow -> logger
 
-  typedef igstk::NDICertusTool      TrackerToolType;
+  typedef igstk::NDICertusTrackerTool      TrackerToolType;
   typedef TrackerToolType::TransformType TransformType;
     
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
   trackerTool->SetLogger( logger );
  
-  // Select tracker tool to be wired or wireless
-  if ( argv[0] ) 
-    {
-    trackerTool->RequestSelectWirelessTrackerTool();
-    }
-  else
-    {
-    trackerTool->RequestSelectWiredTrackerTool();
-    }
 
-  //try setting invalid port number ( the maximum is 11 )
-  unsigned int invalidPortNumber = 255;
-  trackerTool->RequestSetPortNumber( invalidPortNumber );
+    // Set the RIG filename if specified 
+    std::string rigidBodyFilename = argv[1];
+    trackerTool->RequestSetRigidBodyName( rigidBodyFilename );
 
-  // Set the port number 
-  std::istringstream inputstream( argv[1] );
+	// set invalid SROM filename for testing
+    std::string invalidRigidBodyFilename = "";
+    trackerTool->RequestSetRigidBodyName( invalidRigidBodyFilename );
+
+
   
-  unsigned int portNumber; 
-
-  inputstream >> portNumber;
-
-  trackerTool->RequestSetPortNumber( portNumber );
-
-
-  // Set the SROM filename if specified 
-  if ( argc >= 3 )
-    {
-    std::string sromFile = argv[2];
-    trackerTool->RequestSetSROMFileName( sromFile );
-    }
-  else
-    {
-    // set invalid SROM filename for testing
-    std::string invalidSROMFile = "";
-    trackerTool->RequestSetSROMFileName( invalidSROMFile );
-    }
-
-  // set a tool part number if specified
-  if ( argc >= 4 )
-    {
-    std::string  partNumber = argv[3];
-    trackerTool->RequestSetPartNumber( partNumber );
-    }
-  else
-    {
-    std::string invalidPartNumber = "";
-    trackerTool->RequestSetPartNumber( invalidPartNumber );
-
-    std::string validPartNumber = "NDI-112-11";
-    trackerTool->RequestSetPartNumber( validPartNumber );
-    }
 
   trackerTool->RequestConfigure();
 
