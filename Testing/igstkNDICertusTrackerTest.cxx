@@ -78,22 +78,24 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
-                            << "Wireless_SROM_filename "
-                            << "Port_Number"
+                            << "Rig_filename "
+							<< "Setup_filename"
                             << std::endl;
     return EXIT_FAILURE;
     }
 
-
+  std::string rigidBodyFile = argv[2];
+  
+  std::string CertusSetupFile = argv[3];
+  
   igstk::NDICertusTrackerTool::Pointer tool = igstk::NDICertusTrackerTool::New();
 
-  igstk::SerialCommunication::Pointer 
-                     serialComm = igstk::SerialCommunication::New();
-
+  
   NDICertusTrackerTestCommand::Pointer 
                                 my_command = NDICertusTrackerTestCommand::New();
 
   std::string filename = argv[1];
+    
   std::cout << "Logger output saved here:\n";
   std::cout << filename << "\n"; 
 
@@ -105,25 +107,7 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
   logger->AddLogOutput( logOutput );
   logger->SetPriorityLevel( itk::Logger::DEBUG);
 
-  serialComm->AddObserver( itk::AnyEvent(), my_command);
-
-  serialComm->SetLogger( logger );
-
-  typedef igstk::SerialCommunication::PortNumberType PortNumberType; 
-  unsigned int portNumberIntegerValue = atoi(argv[3]);
-  PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue); 
-  serialComm->SetPortNumber( polarisPortNumber );
-  serialComm->SetParity( igstk::SerialCommunication::NoParity );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
-  serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
-  serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
-  serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
-
-  serialComm->SetCaptureFileName( "RecordedStreamByNDICertusTrackerTest.txt" );
-  serialComm->SetCapture( true );
-
-  serialComm->OpenCommunication();
-
+  //Instantiate the tracker
   igstk::NDICertusTracker::Pointer  tracker;
 
   tracker = igstk::NDICertusTracker::New();
@@ -132,8 +116,16 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
 
   tracker->SetLogger( logger );
 
-  std::cout << "SetCommunication()" << std::endl;
-  tracker->SetCommunication( serialComm );
+  //Set the ini file for the certus system
+  tracker->SetIniFileName(CertusSetupFile.c_str());
+
+  //Set the number of rigid bodies (tools)
+  tracker->rigidBodyStatus.lnRigidBodies = 1;
+
+  //Configure the rigid body - this is much easier using igstk::TrackerController and igstk::TrackerConfiguration classes
+  tracker->rigidBodyDescrArray[0].lnStartMarker = 1;
+  tracker->rigidBodyDescrArray[0].lnNumberOfMarkers = 4;
+  strcpy(tracker->rigidBodyDescrArray[0].szName, rigidBodyFile.c_str());
 
   std::cout << "RequestOpen()" << std::endl;
   tracker->RequestOpen();
@@ -146,36 +138,17 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
   trackerTool->SetLogger( logger );
   //Add observer to listen to events throw by the tracker tool
   trackerTool->AddObserver( itk::AnyEvent(), my_command);
-  //Select wired tracker tool
-  trackerTool->RequestSelectWiredTrackerTool();
-  //Set the port number to zero
-  trackerTool->RequestSetPortNumber( 0 );
+  
   //Configure
+  trackerTool->RequestSetRigidBodyName(rigidBodyFile.c_str());
   trackerTool->RequestConfigure();
+
   //Attach to the tracker
   trackerTool->RequestAttachToTracker( tracker );
- //Add observer to listen to transform events 
+ 
+  //Add observer to listen to transform events 
   ObserverType::Pointer coordSystemAObserver = ObserverType::New();
   coordSystemAObserver->ObserveTransformEventsFrom( trackerTool );
-
-  // instantiate and attach wireless tracker tool
-  std::cout << "Instantiate second tracker tool: " << std::endl;
-  TrackerToolType::Pointer trackerTool2 = TrackerToolType::New();
-  trackerTool2->SetLogger( logger );
-  //Add observer to listen to events throw by the tracker tool
-  trackerTool2->AddObserver( itk::AnyEvent(), my_command);
-  //Select wireless tracker tool
-  trackerTool2->RequestSelectWirelessTrackerTool();
-  //Set the SROM file 
-  std::string romFile = argv[2];
-  std::cout << "SROM file: " << romFile << std::endl;
-  trackerTool2->RequestSetSROMFileName( romFile );
-  //Configure
-  trackerTool2->RequestConfigure();
-  //Attach to the tracker
-  trackerTool2->RequestAttachToTracker( tracker );
- ObserverType::Pointer coordSystemAObserver2 = ObserverType::New();
-  coordSystemAObserver2->ObserveTransformEventsFrom( trackerTool2 );
 
   // instantiate and attempt to attach aurora tracker tool. This attempt
   // will fail since one is not allowed to attach aurora tracker tool to a 
@@ -224,32 +197,13 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
         }
       }
 
-    coordSystemAObserver2->Clear();
-    trackerTool2->RequestGetTransformToParent();
-    if (coordSystemAObserver2->GotTransform())
-      {
-      transform = coordSystemAObserver2->GetTransform();
-      if ( transform.IsValidNow() ) 
-        {
-        position = transform.GetTranslation();
-        std::cout << "Trackertool2:" 
-                << trackerTool2->GetTrackerToolIdentifier() 
-                << "\t\t  Position = (" << position[0]
-                << "," << position[1] << "," << position[2]
-                << ")" << std::endl;
-        }
-      }
     }
   
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
-  //Remove one of the tracker tools and restart tracking
-  std::cout << "Detach the tracker tool from the tracker" << std::endl;
-  trackerTool2->RequestDetachFromTracker( );
 
   // restart tracking
-
   tracker->RequestStartTracking();
 
   for(unsigned int i=0; i<100; i++)
@@ -282,8 +236,6 @@ int igstkNDICertusTrackerTest( int argc, char * argv[] )
   std::cout << "RequestClose()" << std::endl;
   tracker->RequestClose();
 
-  std::cout << "CloseCommunication()" << std::endl;
-  serialComm->CloseCommunication();
 
   return EXIT_SUCCESS;
 }

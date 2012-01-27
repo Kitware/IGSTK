@@ -34,7 +34,9 @@
 #include "igstkAscension3DGTracker.h"
 #endif
 
-
+#ifdef IGSTK_USE_NDICertusTracker
+#include "igstkNDICertusTracker.h"
+#endif
 
 namespace igstk
 { 
@@ -1369,11 +1371,20 @@ TrackerController::TrackerInitializeProcessing()
       igstkPushInputMacro( Ascension3DGInitialize );
       }
    #endif
- 
+   
+    #ifdef IGSTK_USE_NDICertusTracker
+	else if( dynamic_cast<CertusTrackerConfiguration *>
+      ( this->m_TmpTrackerConfiguration ) )
+      {
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( CertusInitialize );
+      }
+    #endif
+
     else
       {
       this->m_ErrorMessage = 
-    "Unrecognized tracker type (Possibly IGSTK_USE_MicronTracker flag is off).";
+    "Unrecognized tracker type (Possibly IGSTK_USE_MicronTracker or IGSTK_USE_NDICertusTracker flag are off).";
       igstkPushInputMacro( Failed );
       }
     }
@@ -2232,6 +2243,137 @@ void TrackerController::Ascension3DGInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 #endif
 }
+
+#ifdef IGSTK_USE_NDICertusTracker
+
+NDICertusTrackerTool::Pointer
+TrackerController::InitializeCertusTool(
+  const CertusToolConfiguration *toolConfiguration )
+{
+  NDICertusTrackerTool::Pointer trackerTool = NDICertusTrackerTool::New();
+  trackerTool->RequestSetRigidBodyName(toolConfiguration->GetRigidBodyName());
+  trackerTool->RequestConfigure();
+  return trackerTool;
+}
+#endif
+
+void TrackerController::CertusInitializeProcessing()
+{
+
+#ifdef IGSTK_USE_NDICertusTracker
+
+	//create tracker
+  igstk::NDICertusTracker::Pointer tracker = igstk::NDICertusTracker::New();
+  this->m_Tracker = tracker; 
+                 //don't need to observe this for errors because the 
+                 //configuration class ensures that the frequency is valid
+  tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
+
+  CertusTrackerConfiguration *trackerConfiguration =
+    dynamic_cast<CertusTrackerConfiguration *>( this->m_TrackerConfiguration );
+  
+  
+  tracker->SetIniFileName(trackerConfiguration->GetSetupFile());
+
+  tracker->rigidBodyStatus.lnRigidBodies = atoi(trackerConfiguration->GetNumberOfRigidBodies().c_str());
+
+  std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+  
+  int i=0;
+  std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+  std::map<std::string, TrackerToolConfiguration *>::const_iterator   toolConfigEnd = toolConfigurations.end();
+  CertusToolConfiguration * currentToolConfig;
+  for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<CertusToolConfiguration *>(it->second);
+	  tracker->rigidBodyDescrArray[i].lnStartMarker = atoi(currentToolConfig->GetStartMarker().c_str());
+	  tracker->rigidBodyDescrArray[i].lnNumberOfMarkers = atoi(currentToolConfig->GetNumberOfMarkers().c_str());
+	  strcpy(tracker->rigidBodyDescrArray[i].szName, currentToolConfig->GetRigidBodyName().c_str());
+	  i++;
+  }
+
+  unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+
+  tracker->RequestOpen( );
+  tracker->RemoveObserver(observerID);
+  
+  if( this->m_ErrorObserver->ErrorOccured() )
+    {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    igstkPushInputMacro( Failed );
+    }
+  else   //attach the tools and start communication 
+    {
+    ToolAttachErrorObserver::Pointer attachErrorObserver = 
+      ToolAttachErrorObserver::New();
+    std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+                          //attach tools
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+      toolConfigEnd = toolConfigurations.end();
+    TrackerTool::Pointer trackerTool;
+    CertusToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<CertusToolConfiguration *>(it->second);
+
+      trackerTool = InitializeCertusTool( currentToolConfig );
+      this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        trackerTool ) );
+
+      unsigned long observerID = trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );
+      trackerTool->RequestAttachToTracker( tracker );
+      trackerTool->RemoveObserver( observerID ); 
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      }
+                      //add the reference if we have one
+    TrackerToolConfiguration* referenceToolConfiguration = 
+      this->m_TrackerConfiguration->m_ReferenceTool;
+    if( referenceToolConfiguration )
+      {
+      currentToolConfig = 
+        static_cast<CertusToolConfiguration *>( referenceToolConfiguration );
+
+      trackerTool = InitializeCertusTool( currentToolConfig );   
+      this->m_ReferenceTool = trackerTool;
+
+      trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );      
+      trackerTool->RequestAttachToTracker( tracker );
+
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+        tracker->RequestSetReferenceTool( trackerTool );
+      }
+    igstkPushInputMacro( Succeeded );
+    }
+  this->m_StateMachine.ProcessInputs();
+#else
+  igstkPushInputMacro( Failed );
+  this->m_StateMachine.ProcessInputs();
+#endif
+}
+
 
 void 
 TrackerController::GetToolsProcessing()

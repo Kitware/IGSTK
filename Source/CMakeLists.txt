@@ -446,6 +446,10 @@ IF(IGSTK_USE_SceneGraphVisualization)
   SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
 
+IF(IGSTK_USE_NDICertusTracker)
+  SET(EXTRA_LIBS ${EXTRA_LIBS} NDItb.lib)
+ENDIF(IGSTK_USE_NDICertusTracker)
+
 IF(IGSTK_USE_OpenCV)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
 ENDIF(IGSTK_USE_OpenCV)
