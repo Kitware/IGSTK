@@ -158,13 +158,13 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
-IF(IGSTKSandbox_USE_AXIOS3D_CAMBARB2)
-  SET(IGSTKSandbox_HEADS
-  ${IGSTKSandbox_HEADS}
+IF(IGSTK_USE_AXIOS3D_CAMBARB2)
+  SET(IGSTK_HEADS
+  ${IGSTK_HEADS}
   igstkAxios3DTracker.h
   igstkAxios3DTrackerTool.h
 )
-ENDIF(IGSTKSandbox_USE_AXIOS3D_CAMBARB2)
+ENDIF(IGSTK_USE_AXIOS3D_CAMBARB2)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -358,8 +358,8 @@ IF(IGSTK_USE_Ascension3DGTracker)
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
 IF(IGSTK_USE_AXIOS3D_CAMBARB2)
-  SET(IGSTKSandbox_SRCS
-  ${IGSTKSandbox_SRCS}
+  SET(IGSTK_SRCS
+  ${IGSTK_SRCS}
   igstkAxios3DTracker.cxx
   igstkAxios3DTrackerTool.cxx
   )

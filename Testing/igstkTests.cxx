@@ -139,6 +139,7 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
   REGISTER_TEST(igstkPETImageReaderTest);
+  REGISTER_TEST(igstkAxios3DTrackerSimulatedTest);
 #endif 
 
   // Tests depend on FLTK

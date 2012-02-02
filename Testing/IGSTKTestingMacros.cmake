@@ -50,6 +50,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_InfiniTrack_ATTACHED
       IGSTK_USE_Ascension3DGTracker
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
+      IGSTK_USE_AXIOS3D
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -236,6 +237,14 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
    ${IGSTK_DATA_ROOT}/Input/MRLiver
 )
 
+  IF(${IGSTK_USE_AXIOS3D})
+    ADD_TEST( igstkAxios3DTrackerSimulatedTest ${IGSTK_TESTS}
+          igstkAxios3DTrackerSimulatedTest
+          ${IGSTK_DATA_ROOT}/AXIOS3DsimulationData/Locators.xml
+          ${IGSTK_DATA_ROOT}/AXIOS3DsimulationData
+          ${IGSTK_TEST_OUTPUT_DIR}/igstkAxios3DTrackerSimulatedTestLoggerOutput.txt
+    )
+  ENDIF(${IGSTK_USE_AXIOS3D})
 
 ENDIF(IGSTK_DATA_ROOT)
 
@@ -886,7 +895,14 @@ IF(IGSTK_DATA_ROOT)
     igstkPolarisTrackerSimulatedTest.cxx 
     igstkSerialCommunicationSimulatorTest.cxx
     igstkPETImageReaderTest.cxx
-  )  
+  )
+
+  IF(${IGSTK_USE_AXIOS3D})
+    SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkAxios3DTrackerSimulatedTest.cxx)
+  ENDIF(${IGSTK_USE_AXIOS3D})
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
