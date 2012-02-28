@@ -6,6 +6,10 @@ IF( IGSTK_USE_MicronTracker )
     SUBDIRS( MicronTracker )
 ENDIF( IGSTK_USE_MicronTracker )
 
+IF( IGSTK_USE_ArucoTracker )
+  SUBDIRS( Aruco )
+ENDIF( IGSTK_USE_ArucoTracker )
+
 SUBDIRS( SceneGraphVisualization )
 
 
