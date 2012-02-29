@@ -22,6 +22,7 @@
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
 # IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
+# IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED(boolean) : Option for Atracsys easyTrack500 attached
 # 
  
 
@@ -50,6 +51,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_InfiniTrack_ATTACHED
       IGSTK_USE_Ascension3DGTracker
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
+      IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -613,6 +615,10 @@ IF( ${IGSTK_TEST_Ascension3DGTracker_ATTACHED} )
             ${IGSTK_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
 ENDIF (${IGSTK_TEST_Ascension3DGTracker_ATTACHED})
 
+IF( ${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED} )
+  ADD_TEST( igstkAtracsysEasyTrackTrackerTest ${IGSTK_TESTS} igstkAtracsysEasyTrackTrackerTest
+            ${IGSTK_TEST_OUTPUT_DIR}/igstkAtracsysEasyTrackTrackerTestLogOutput.txt  )
+ENDIF (${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
 
 IF(${IGSTK_USE_OpenIGTLink})
   
@@ -826,7 +832,7 @@ SET(BasicTests_SRCS
   
   igstkPETImageSpatialObjectTest.cxx
   igstkPETImageSpatialObjectRepresentationTest.cxx
-  
+
   )  
 #-----------------------------------------------------------------------------
 # Testing source file depend on external device
@@ -864,6 +870,13 @@ IF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
     igstkAscensionTrackerTest.cxx
   )
 ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
+
+IF(${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
+  SET(BasicTests_SRCS ${BasicTests_SRCS}
+    igstkAtracsysEasyTrackTrackerTest.cxx
+  )
+ENDIF(${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
+
 
 #-----------------------------------------------------------------------------
 # Testing source file need data input

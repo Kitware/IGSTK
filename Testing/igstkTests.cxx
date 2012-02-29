@@ -123,6 +123,10 @@ void RegisterTests()
   REGISTER_TEST(igstkAscension3DGTrackerTest);
 #endif
 
+#ifdef IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
+  REGISTER_TEST(igstkAtracsysEasyTrackTrackerTest);
+#endif
+
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
