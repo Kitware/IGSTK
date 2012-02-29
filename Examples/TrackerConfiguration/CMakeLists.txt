@@ -14,6 +14,7 @@ SET(SRCS
     igstkAscensionTrackerConfiguration.cxx
     igstkAscension3DGTrackerConfiguration.cxx
     igstkPolarisTrackerConfiguration.cxx
+	  igstkCertusTrackerConfiguration.cxx
     igstkTrackerController.cxx
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
     configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.cxx
@@ -26,6 +27,7 @@ SET(SRCS
     configurationFileReaders/igstkAscensionConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
+	  configurationFileReaders/igstkCertusConfigurationXMLFileReader.cxx
 )
 SET(HDRS
     igstkTrackerConfiguration.h
@@ -34,6 +36,7 @@ SET(HDRS
     igstkAscensionTrackerConfiguration.h
     igstkAscension3DGTrackerConfiguration.h
     igstkPolarisTrackerConfiguration.h
+	  igstkCertusTrackerConfiguration.h
     igstkTrackerController.h
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
     configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
@@ -46,6 +49,7 @@ SET(HDRS
     configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
     configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.h
     configurationFileReaders/igstkTrackerConfigurationFileReader.h
+	  configurationFileReaders/igstkCertusConfigurationXMLFileReader.h
 )
 #
 #The directories containing all of the header files

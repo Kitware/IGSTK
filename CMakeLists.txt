@@ -235,9 +235,9 @@ IF(IGSTK_USE_NDICertusTracker)
   INCLUDE_DIRECTORIES( ${NDICERTUS_INCLUDE_DIRECTORY} )
   
   FIND_LIBRARY( CERTUS_LIBRARY
-    NAMES NDItb NDItb.lib
+    NAMES  NDItb NDItb.lib oapi oapi.lib
     PATHS "C:/NDIoapi/ndlib/msvc"
-    DOC "Full path to the NDItb.lib file"
+    DOC "Full path to the NDItb.lib (Linux) of oapi.lib (Windows) file"
     )
 	
   GET_FILENAME_COMPONENT( CERTUS_LIBRARY_DIRS ${CERTUS_LIBRARY} PATH )
