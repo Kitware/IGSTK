@@ -12,6 +12,8 @@
 #cmakedefine IGSTK_USE_Ascension3DGTracker
 #cmakedefine IGSTK_TEST_Ascension3DGTracker_ATTACHED
 
+#cmakedefine IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
+
 #cmakedefine IGSTK_USE_Qt
 
 #cmakedefine IGSTK_USE_OpenIGTLink
