@@ -176,7 +176,7 @@ void CameraParameters::resize(cv::Size size)throw(cv::Exception)
  *
  *
  */
-void CameraParameters::readFromXMLFile(string filePath)throw(cv::Exception)
+bool CameraParameters::readFromXMLFile(string filePath)throw(cv::Exception)
 {
     cv::FileStorage fs(filePath, cv::FileStorage::READ);
     int w=-1,h=-1;
@@ -187,14 +187,22 @@ void CameraParameters::readFromXMLFile(string filePath)throw(cv::Exception)
     fs["distortion_coefficients"] >> MDist;
     fs["camera_matrix"] >> MCamera;
 
-    if (MCamera.cols==0 || MCamera.rows==0)throw cv::Exception(9007,"File :"+filePath+" does not contains valid camera matrix","CameraParameters::readFromXML",__FILE__,__LINE__);
-    if (w==-1 || h==0)throw cv::Exception(9007,"File :"+filePath+" does not contains valid camera dimensions","CameraParameters::readFromXML",__FILE__,__LINE__);
+    if (MCamera.cols==0 || MCamera.rows==0)
+      //throw cv::Exception(9007,"File :"+filePath+" does not contains valid camera matrix","CameraParameters::readFromXML",__FILE__,__LINE__);
+      return false;
+
+    if (w==-1 || h==0)
+      //throw cv::Exception(9007,"File :"+filePath+" does not contains valid camera dimensions","CameraParameters::readFromXML",__FILE__,__LINE__);
+      return false;
 
     if (MCamera.type()!=CV_32FC1) MCamera.convertTo(CameraMatrix,CV_32FC1);
     else CameraMatrix=MCamera;
 
-    if (MDist.total()<4) throw cv::Exception(9007,"File :"+filePath+" does not contains valid distortion_coefficients","CameraParameters::readFromXML",__FILE__,__LINE__);
-    //convert to 32 and get the 4 first elements only
+    if (MDist.total()<4)
+      //throw cv::Exception(9007,"File :"+filePath+" does not contains valid distortion_coefficients","CameraParameters::readFromXML",__FILE__,__LINE__);
+      return false;
+
+      //convert to 32 and get the 4 first elements only
     cv::Mat mdist32;
     MDist.convertTo(mdist32,CV_32FC1);
     Distorsion.create(1,4,CV_32FC1);

@@ -122,8 +122,6 @@ void Marker::glGetModelViewMatrix(   double modelview_matrix[16])throw(cv::Excep
 
 }
 
-
-
 /****
  *
  */
@@ -215,8 +213,6 @@ void Marker::OgreGetPoseParameters(double position[3], double orientation[4]) th
 
 }
 
-
-
 void Marker::draw(Mat &in, Scalar color, int lineWidth ,bool writeId)const
 {
     if (size()!=4) return;
@@ -250,6 +246,7 @@ void Marker::calculateExtrinsics(float markerSize,const CameraParameters &CP)thr
     if (!CP.isValid()) throw cv::Exception(9004,"!CP.isValid(): invalid camera parameters. It is not possible to calculate extrinsics","calculateExtrinsics",__FILE__,__LINE__);
     calculateExtrinsics( markerSize,CP.CameraMatrix,CP.Distorsion);
 }
+
 void print(cv::Point3f p,string cad){
  cout<<cad<<" "<<p.x<<" "<<p.y<< " "<<p.z<<endl;
 }
@@ -290,10 +287,9 @@ void Marker::calculateExtrinsics(float markerSizeMeters,cv::Mat  camMatrix,cv::M
     raux.convertTo(Rvec,CV_32F);
     taux.convertTo(Tvec ,CV_32F);
     //rotate the X axis so that Y is perpendicular to the marker plane
-    rotateXAxis(Rvec);
+    //rotateXAxis(Rvec);
     ssize=markerSizeMeters;
 }
-
 
 /**
 */
@@ -314,8 +310,6 @@ void Marker::rotateXAxis(Mat &rotation)
     //finally, the the rodrigues back
     Rodrigues(R,rotation);
 }
-
-
 
 /**
  */
@@ -356,6 +350,4 @@ float Marker::getPerimeter()const
     sum+=norm( (*this)[i]-(*this)[(i+1)%4]);
   return sum;
 }
-
-
 }

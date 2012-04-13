@@ -26,9 +26,6 @@
 #pragma warning( disable : 4996 )
 #endif
 
-#include "cv.h"
-#include "highgui.h"
-
 #include "aruco.h"
 
 #include "igstkTracker.h"
@@ -53,7 +50,12 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro(ArucoTracker, Tracker)
 
-  void SetCameraParametersFromXMLFile(std::string file);
+  bool SetCameraParametersFromXMLFile(std::string file);
+
+  igstkSetMacro(ShowVideoStream, bool);
+  igstkGetMacro(ShowVideoStream, bool);
+
+  void CaptureAndShowVideoFrame(unsigned int delay);
 
 protected:
 
@@ -123,6 +125,7 @@ private:
   aruco::MarkerDetector   m_MDetector;
   double                  m_ThreshParam1;
   double                  m_ThreshParam2;
+  bool                    m_ShowVideoStream;
 
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;
