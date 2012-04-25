@@ -14,7 +14,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
+  
 // this file defines the igstkTests for the test driver
 // and all it expects is that you have a function called RegisterTests
 #if defined(_MSC_VER)
@@ -139,6 +139,12 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
   REGISTER_TEST(igstkPETImageReaderTest);
+  
+#ifdef IGSTK_USE_ArucoTracker
+  REGISTER_TEST(igstkArucoTrackerSimulatedTest);
+  REGISTER_TEST(igstkArucoTrackerToolTest);
+#endif
+  
 #endif 
 
   // Tests depend on FLTK

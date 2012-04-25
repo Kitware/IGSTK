@@ -55,6 +55,9 @@ public:
   igstkSetMacro(ShowVideoStream, bool);
   igstkGetMacro(ShowVideoStream, bool);
 
+  igstkSetMacro(SimulationVideo, std::string);
+  igstkGetMacro(SimulationVideo, std::string);
+
   void CaptureAndShowVideoFrame(unsigned int delay);
 
 protected:
@@ -126,6 +129,7 @@ private:
   double                  m_ThreshParam1;
   double                  m_ThreshParam2;
   bool                    m_ShowVideoStream;
+  std::string             m_SimulationVideo;
 
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;

@@ -47,6 +47,7 @@ m_StateMachine( this )
 {
   m_BufferLock = itk::MutexLock::New();
   m_ShowVideoStream = false;
+  m_SimulationVideo = "";
 }
 
 /** Desctructor */
@@ -70,10 +71,16 @@ ArucoTracker::ResultType ArucoTracker::InternalOpen ( void )
 {
   igstkLogMacro( DEBUG, "igstk::ArucoTracker::InternalOpen called ...\n" )
 
-  this->m_VideoCapturer.open( 0 );
+  if(!m_SimulationVideo.empty())
+  {
+     this->m_VideoCapturer.open(m_SimulationVideo);
+  }
+  else 
+    this->m_VideoCapturer.open( 0 );
+
   if ( !this->m_VideoCapturer.isOpened() )
   {
-  return FAILURE;
+    return FAILURE;
   }
 
   //read first image to get the dimensions
@@ -277,6 +284,8 @@ ArucoTracker::InternalThreadedUpdateStatus( void )
   }
   catch( std::exception &ex )
   {
+    igstkLogMacro( CRITICAL,
+      "igstk::ArucoTracker::InternalThreadedUpdateStatus Exception:" << ex.what() )
     return FAILURE;
   }
 
@@ -358,8 +367,8 @@ ArucoTracker::ValidateSpecifiedFrequency( double frequencyInHz )
     {
       return FAILURE;
     }
-  return SUCCESS;
   }
+  return SUCCESS;
 }
 
 /**----------------------------------------------------------------------------
