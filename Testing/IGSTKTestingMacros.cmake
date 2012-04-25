@@ -244,6 +244,9 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
           ${IGSTK_DATA_ROOT}/AXIOS3DsimulationData
           ${IGSTK_TEST_OUTPUT_DIR}/igstkAxios3DTrackerSimulatedTestLoggerOutput.txt
     )
+	ADD_TEST( igstkAxios3DTrackerToolTest ${IGSTK_TESTS}
+          igstkAxios3DTrackerToolTest
+    )
   ENDIF(${IGSTK_USE_AXIOS3D})
 
 ENDIF(IGSTK_DATA_ROOT)
@@ -900,7 +903,8 @@ IF(IGSTK_DATA_ROOT)
   IF(${IGSTK_USE_AXIOS3D})
     SET(BasicTests_SRCS
     ${BasicTests_SRCS}
-    igstkAxios3DTrackerSimulatedTest.cxx)
+    igstkAxios3DTrackerSimulatedTest.cxx
+	igstkAxios3DTrackerToolTest.cxx)
   ENDIF(${IGSTK_USE_AXIOS3D})
 
 ENDIF(IGSTK_DATA_ROOT)
