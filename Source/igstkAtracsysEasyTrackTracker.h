@@ -26,7 +26,15 @@
 namespace igstk {
 
 /** \class AtracsysEasyTrackTracker
-*/
+ *
+ * \brief Provides support for the easyTrack 500 tracker (Atracsys, Switzerland).
+ *
+ * This class provides an interface to the easyTrack 500 optical
+ * tracking system.
+ *
+ * \ingroup Tracker
+ *
+ */
 
 class AtracsysEasyTrackTracker : public Tracker
 {

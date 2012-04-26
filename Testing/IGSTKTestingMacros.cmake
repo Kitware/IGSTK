@@ -618,6 +618,8 @@ ENDIF (${IGSTK_TEST_Ascension3DGTracker_ATTACHED})
 IF( ${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED} )
   ADD_TEST( igstkAtracsysEasyTrackTrackerTest ${IGSTK_TESTS} igstkAtracsysEasyTrackTrackerTest
             ${IGSTK_TEST_OUTPUT_DIR}/igstkAtracsysEasyTrackTrackerTestLogOutput.txt  )
+  ADD_TEST( igstkAtracsysEasyTrackTrackerToolTest ${IGSTK_TESTS} igstkAtracsysEasyTrackTrackerToolTest
+            )
 ENDIF (${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
 
 IF(${IGSTK_USE_OpenIGTLink})
@@ -874,6 +876,7 @@ ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
 IF(${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
   SET(BasicTests_SRCS ${BasicTests_SRCS}
     igstkAtracsysEasyTrackTrackerTest.cxx
+	igstkAtracsysEasyTrackTrackerToolTest.cxx
   )
 ENDIF(${IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED})
 

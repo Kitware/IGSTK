@@ -125,6 +125,7 @@ void RegisterTests()
 
 #ifdef IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
   REGISTER_TEST(igstkAtracsysEasyTrackTrackerTest);
+  REGISTER_TEST(igstkAtracsysEasyTrackTrackerToolTest);
 #endif
 
   // Tests depend on data
