@@ -42,8 +42,6 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro( PolarisClassicTracker, Tracker )
 public:
-  /** sets the GUI object */
-  void setGUI(void* gui);
 
   /** communication type */
   typedef igstk::SerialCommunication     CommunicationType;
