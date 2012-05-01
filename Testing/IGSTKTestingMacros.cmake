@@ -197,6 +197,13 @@ ${IGSTK_TEST_POLARIS_PORT_NUMBER})
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom 
               ${IGSTK_TEST_POLARIS_PORT_NUMBER})
+
+  ADD_TEST( igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisClassicTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/polaris_classic_stream.txt
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER})
  
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
 igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}  
@@ -886,6 +893,7 @@ IF(IGSTK_DATA_ROOT)
     igstkPolarisTrackerSimulatedTest.cxx 
     igstkSerialCommunicationSimulatorTest.cxx
     igstkPETImageReaderTest.cxx
+    igstkPolarisClassicTrackerSimulatedTest.cxx
   )  
 ENDIF(IGSTK_DATA_ROOT)
 
