@@ -21,7 +21,6 @@ namespace igstk
 
 SceneGraphNode::SceneGraphNode(void)
 {  
-  m_ParentTransform = igstk::Transform::Transform();
   m_XC1 = 0;
   m_YC1 = 0;
   m_IsCurrentTransform = false;
