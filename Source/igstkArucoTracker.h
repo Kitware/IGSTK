@@ -50,7 +50,7 @@ public:
   /** Macro with standard traits declarations. */
   igstkStandardClassTraitsMacro(ArucoTracker, Tracker)
 
-  bool SetCameraParametersFromXMLFile(std::string file);
+  bool SetCameraParametersFromYAMLFile(std::string file);
 
   igstkSetMacro(ShowVideoStream, bool);
   igstkGetMacro(ShowVideoStream, bool);

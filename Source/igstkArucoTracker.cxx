@@ -55,10 +55,10 @@ ArucoTracker::~ArucoTracker ( void )
 {
 }
 
-bool ArucoTracker::SetCameraParametersFromXMLFile(std::string file)
+bool ArucoTracker::SetCameraParametersFromYAMLFile(std::string file)
 {
-  igstkLogMacro( DEBUG, "igstk::ArucoTracker::SetCameraParametersFromXMLFile called ...\n" )
-  return this->m_CameraParameters.readFromXMLFile( file );
+  igstkLogMacro( DEBUG, "igstk::ArucoTracker::SetCameraParametersFromYAMLFile called ...\n" )
+  return this->m_CameraParameters.readFromYAMLFile( file );
 }
 
 /**----------------------------------------------------------------------------

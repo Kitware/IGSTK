@@ -113,7 +113,7 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
 
   tracker->AddObserver( itk::AnyEvent(), my_command);
 
-  tracker->SetCameraParametersFromXMLFile(cameraCalibrationFile);
+  tracker->SetCameraParametersFromYAMLFile(cameraCalibrationFile);
   
   tracker->SetSimulationVideo(simulationFile);
 

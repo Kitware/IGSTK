@@ -83,7 +83,7 @@ public:
 
     /**Reads from a YAML file generated with the opencv2.2 calibration utility
      */
-    bool readFromXMLFile(string filePath);
+    bool readFromYAMLFile(string filePath);
 
     /**Adjust the parameters to the size of the image indicated
      */
