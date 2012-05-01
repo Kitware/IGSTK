@@ -131,6 +131,26 @@ public:
         return str;
     }
 
+   /**
+    * \brief Creates an ar marker with the id specified using a modified version of the hamming code.
+    *
+    * There are a total of 5 rows of 5 cols. Each row encodes a total of 2 bits, so there are 2^10 bits:(0-1023).
+    *
+    * The least significative bytes are first (from left-up to to right-bottom)
+    *
+    * Example: the id = 110 (decimal) is be represented in binary as : 00 01 10 11 10.
+    *
+    * Then, it will generate the following marker:
+    *
+    * -# 1st row encodes 00: 1 0 0 0 0 : hex 0x10
+    * -# 2nd row encodes 01: 1 0 1 1 1 : hex 0x17
+    * -# 3nd row encodes 10: 0 1 0 0 1 : hex 0x09
+    * -# 4th row encodes 11: 0 1 1 1 0 : hex 0x0e
+    * -# 5th row encodes 10: 0 1 0 0 1 : hex 0x09
+    *
+    * Note that : The first bit, is the inverse of the hamming parity. This avoids the 0 0 0 0 0 to be valid
+    */
+    static cv::Mat createMarkerImage(int id,int size) throw (cv::Exception);
 
 private:
   void rotateXAxis(cv::Mat &rotation);

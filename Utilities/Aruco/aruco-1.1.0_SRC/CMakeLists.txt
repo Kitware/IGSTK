@@ -32,7 +32,7 @@ set(ARUCO_SRCS
 )
 
 add_library(aruco ${ARUCO_HDRS} ${ARUCO_SRCS})
-
+add_executable(aruco_create_marker aruco_create_marker.cpp)
 
 set_target_properties(aruco PROPERTIES
                       VERSION ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}
@@ -40,3 +40,4 @@ set_target_properties(aruco PROPERTIES
 )
 
 target_link_libraries(aruco ${OpenCV_LIBS})
+target_link_libraries(aruco_create_marker aruco ${OpenCV_LIBS})

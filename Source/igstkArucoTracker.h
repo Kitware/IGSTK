@@ -38,7 +38,6 @@ namespace igstk {
 /** \class ArucoTracker
  *  \brief Provides support for the ArUco monocular video camera tracker.
  *
- *
  *  \ingroup Tracker
  */
 
@@ -52,13 +51,12 @@ public:
 
   bool SetCameraParametersFromYAMLFile(std::string file);
 
-  igstkSetMacro(ShowVideoStream, bool);
-  igstkGetMacro(ShowVideoStream, bool);
-
   igstkSetMacro(SimulationVideo, std::string);
   igstkGetMacro(SimulationVideo, std::string);
 
-  void CaptureAndShowVideoFrame(unsigned int delay);
+  void SetMarkerSize(unsigned int size);
+
+  cv::Mat ArucoTracker::GetCurrentVideoFrame();
 
 protected:
 
@@ -122,14 +120,13 @@ private:
 
   cv::VideoCapture        m_VideoCapturer;
   cv::Mat                 m_InputImage;
-  cv::Mat                 m_InputImageCopy;
   aruco::CameraParameters m_CameraParameters;
   vector<aruco::Marker>   m_Markers;
   aruco::MarkerDetector   m_MDetector;
-  double                  m_ThreshParam1;
-  double                  m_ThreshParam2;
-  bool                    m_ShowVideoStream;
   std::string             m_SimulationVideo;
+  bool                    m_CameraCalibrationFileSet;
+  bool                    m_MarkerSizeSet;
+  unsigned int            m_MarkerSize;
 
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;

@@ -350,4 +350,26 @@ float Marker::getPerimeter()const
     sum+=norm( (*this)[i]-(*this)[(i+1)%4]);
   return sum;
 }
+
+/**
+*/
+Mat Marker::createMarkerImage(int id,int size) throw (cv::Exception)
+{
+    if (id>=1024) throw cv::Exception(9004,"id>=1024","createMarker",__FILE__,__LINE__);
+    Mat marker(size,size, CV_8UC1);
+    marker.setTo(Scalar(0));
+    //for each line, create
+    int swidth=size/7;
+    int ids[4]={0x10,0x17,0x09,0x0e};
+    for (int y=0;y<5;y++) {
+        int index=(id>>2*(4-y)) & 0x0003;
+        int val=ids[index];
+        for (int x=0;x<5;x++) {
+            Mat roi=marker(Rect((x+1)* swidth,(y+1)* swidth,swidth,swidth));
+            if ( ( val>>(4-x) ) & 0x0001 ) roi.setTo(Scalar(255));
+            else roi.setTo(Scalar(0));
+        }
+    }
+    return marker;
+}
 }

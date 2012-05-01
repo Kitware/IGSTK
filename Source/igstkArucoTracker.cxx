@@ -35,9 +35,6 @@
 #include "iostream"
 #include "fstream"
 
-#define MARKER_SIZE 50
-//#define DEBUG_MODE 1
-
 namespace igstk
 {
 
@@ -46,7 +43,8 @@ ArucoTracker::ArucoTracker ( void ) :
 m_StateMachine( this )
 {
   m_BufferLock = itk::MutexLock::New();
-  m_ShowVideoStream = false;
+  m_CameraCalibrationFileSet = false;
+  m_MarkerSizeSet = false;
   m_SimulationVideo = "";
 }
 
@@ -58,7 +56,13 @@ ArucoTracker::~ArucoTracker ( void )
 bool ArucoTracker::SetCameraParametersFromYAMLFile(std::string file)
 {
   igstkLogMacro( DEBUG, "igstk::ArucoTracker::SetCameraParametersFromYAMLFile called ...\n" )
-  return this->m_CameraParameters.readFromYAMLFile( file );
+
+  bool success = this->m_CameraParameters.readFromYAMLFile( file );
+
+  if(success)
+    m_CameraCalibrationFileSet=true;
+
+  return success;
 }
 
 /**----------------------------------------------------------------------------
@@ -70,6 +74,12 @@ bool ArucoTracker::SetCameraParametersFromYAMLFile(std::string file)
 ArucoTracker::ResultType ArucoTracker::InternalOpen ( void )
 {
   igstkLogMacro( DEBUG, "igstk::ArucoTracker::InternalOpen called ...\n" )
+
+  if( !m_CameraCalibrationFileSet)
+    return FAILURE;
+
+  if( !m_MarkerSizeSet)
+    return FAILURE;
 
   if(!m_SimulationVideo.empty())
   {
@@ -184,18 +194,19 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
     // get rotation vector (rotation axis, rotation angle) from the marker
     // and transform it to matrix representation
     cv::Mat R(3,3,CV_32F);
-    Rodrigues(this->m_Markers[i].Rvec, R);
+    cv::Rodrigues(this->m_Markers[i].Rvec, R);
 
     igstk::Transform::VersorType::MatrixType matrix;
-    matrix.GetVnlMatrix().put(0,0,R.at<float>(0,0));
-    matrix.GetVnlMatrix().put(0,1,R.at<float>(0,1));
-    matrix.GetVnlMatrix().put(0,2,R.at<float>(0,2));
-    matrix.GetVnlMatrix().put(1,0,R.at<float>(1,0));
-    matrix.GetVnlMatrix().put(1,1,R.at<float>(1,1));
-    matrix.GetVnlMatrix().put(1,2,R.at<float>(1,2));
-    matrix.GetVnlMatrix().put(2,0,R.at<float>(2,0));
-    matrix.GetVnlMatrix().put(2,1,R.at<float>(2,1));
-    matrix.GetVnlMatrix().put(2,2,R.at<float>(2,2));
+
+    matrix[0][0]=R.at<float>(0,0);
+    matrix[0][1]=R.at<float>(0,1);
+    matrix[0][2]=R.at<float>(0,2);
+    matrix[1][0]=R.at<float>(1,0);
+    matrix[1][1]=R.at<float>(1,1);
+    matrix[1][2]=R.at<float>(1,2);
+    matrix[2][0]=R.at<float>(2,0);
+    matrix[2][1]=R.at<float>(2,1);
+    matrix[2][2]=R.at<float>(2,2);
 
     rotation.Set(matrix);
 
@@ -210,7 +221,6 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
 
     long lTime = this->GetValidityTime ();
 
-    transform.SetToIdentity( this->GetValidityTime() );
     transform.SetTranslationAndRotation( translation,
                        rotation,
                        errorValue,
@@ -264,23 +274,8 @@ ArucoTracker::InternalThreadedUpdateStatus( void )
     this->m_MDetector.detect( this->m_InputImage,
                               this->m_Markers,
                               this->m_CameraParameters,
-                              MARKER_SIZE );
+                              m_MarkerSize );
     this->m_BufferLock->Unlock();
-
-#ifdef DEBUG_MODE
-    {
-      cv::Mat inputImage;
-      //print marker info and draw the markers and axis objects in image
-      m_InputImage.copyTo(inputImage);
-      for(unsigned int i=0;i<m_Markers.size();i++)
-      {
-      m_Markers[i].draw(inputImage,cv::Scalar(0,0,255),2);
-      aruco::CvDrawingUtils::draw3dAxis(inputImage,m_Markers[i],m_CameraParameters);
-      }
-      cv::imshow("video",inputImage);
-    }
-#endif //DEBUG_MODE
-
   }
   catch( std::exception &ex )
   {
@@ -292,18 +287,32 @@ ArucoTracker::InternalThreadedUpdateStatus( void )
   return SUCCESS;
 }
 
-void ArucoTracker::CaptureAndShowVideoFrame(unsigned int delay)
+/**
+ * Set marker sixe in mm.
+ */
+void ArucoTracker::SetMarkerSize(unsigned int size)
+{
+  if(size > 0)
+  {
+    m_MarkerSize = size;
+    m_MarkerSizeSet=true;
+  }
+  else
+  {
+    m_MarkerSizeSet=false;
+  }
+}
+
+/**
+ * Grab current image from video stream. The current video
+ * frame is independent of the image stream used for tracking.
+ */
+cv::Mat ArucoTracker::GetCurrentVideoFrame()
 {
   cv::Mat tmpImage;
   this->m_VideoCapturer.grab();
   this->m_VideoCapturer.retrieve( tmpImage );
-
-  cv::Mat inputImage;
-  //print marker info and draw the markers and axis objects in image
-  tmpImage.copyTo(inputImage);
-  cv::imshow("video",inputImage);
-  cv::waitKey(delay);
-  cv::destroyWindow("video");
+  return tmpImage;
 }
 
 /**----------------------------------------------------------------------------
@@ -335,8 +344,25 @@ ArucoTracker::VerifyTrackerToolInformation (
 
   if ( trackerTool == NULL )
   {
-  igstkLogMacro( CRITICAL, "TrackerTool is not defined" )
-  return FAILURE;
+    igstkLogMacro( CRITICAL, "TrackerTool is not defined" )
+    return FAILURE;
+  }
+
+  TrackerToolsContainerType trackerToolContainer = GetTrackerToolContainer();
+
+  TrackerToolsContainerType::iterator inputItr = trackerToolContainer.begin();
+  TrackerToolsContainerType::iterator inputEnd = trackerToolContainer.end();
+
+  // check if marker name already set
+  while( inputItr != inputEnd )
+  {
+    // if new tool marker name is already in the tool container
+    // return failure
+    if(std::strcmp(trackerTool->GetTrackerToolIdentifier().c_str(),
+                   (inputItr->first).c_str()) == 0)
+    return FAILURE;
+
+    ++inputItr;
   }
 
   return SUCCESS;
