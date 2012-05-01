@@ -228,11 +228,6 @@ IF(IGSTK_USE_Ascension3DGTracker)
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
 #
-# NDI POLARIS CLASSIC
-#
-OPTION(IGSTK_USE_POLARIS_CLASSIC "NDI Polaris Classic Tracker" OFF)
-
-#
 # Use OpenIGTLink protocol
 #
 OPTION(IGSTK_USE_OpenIGTLink "Use the OpenIGTLink protocol" OFF)

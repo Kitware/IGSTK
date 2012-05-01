@@ -21,7 +21,7 @@
 #include "igstkSerialCommunication.h"
 #include "igstkNDICommandInterpreterClassic.h"
 #include "igstkTrackerTool.h"
-#include "igstkTracker.h"
+#include "igstkNDITracker.h"
 #include "igstkPolarisTrackerTool.h"
 
 namespace igstk
@@ -36,7 +36,7 @@ namespace igstk
   * \ingroup Tracker
   *PolarisClassicTracker
   */
-class PolarisClassicTracker : public Tracker
+class PolarisClassicTracker : public NDITracker
 {
 public:
   /** Macro with standard traits declarations. */
