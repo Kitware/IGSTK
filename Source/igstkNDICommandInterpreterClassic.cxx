@@ -931,7 +931,6 @@ int NDICommandInterpreterClassic::GetGXTransform(
 int NDICommandInterpreterClassic::GetGXPortStatus(int port) const
 {
   const char* dp;
-  int i;
   int result = 0;
 
   if (m_GXHandleStatus[port] != NDI_DISABLED)
@@ -979,14 +978,13 @@ int NDICommandInterpreterClassic::GetGXToolInfo(int port) const
 int NDICommandInterpreterClassic::GetGXMarkerInfo(int port, int marker) const
 {
   const char* dp;
-  int i;
   int result = 0;
 
   if (marker >= 0 && marker < 20)
     {
-    if (m_GXHandleStatus[i] != NDI_DISABLED)
+    if (m_GXHandleStatus[port] != NDI_DISABLED)
       {
-      dp = &m_GXInformation[i][2+marker];
+      dp = &m_GXInformation[port][2+marker];
       result = this->HexadecimalStringToInt(dp, 1);
       }
     }
@@ -1326,8 +1324,8 @@ void NDICommandInterpreterClassic::HelperForGX(const char* cp, const char* crp)
 {
   unsigned int mode = NDI_XFORMS_AND_STATUS; /* the default reply mode 0x0001*/
   char* dp;
-  int i, j, n;
-  int port, nhandles, nstray, status;
+  int i, j;
+  int port, nhandles;
 
   /* if the GX command had a reply mode, read it */
   if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
