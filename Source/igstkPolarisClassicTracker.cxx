@@ -84,9 +84,6 @@ PolarisClassicTracker::ResultType PolarisClassicTracker
     return FAILURE;
     }
 
-  bool wirelessTool = polarisTrackerTool->IsToolWirelessType();
-  bool SROMFileSpecified  = polarisTrackerTool->IsSROMFileNameSpecified();
-
   CommandInterpreterType::Pointer commandInterpreter =
     this->GetCommandInterpreter();
 
@@ -536,7 +533,6 @@ PolarisClassicTracker
       const int absent = (tstatus != CommandInterpreterType::NDI_VALID);
       const int status = m_CommandInterpreter->GetGXPortStatus(ph-1);
 
-      int port=ph-1;
       if (!absent)
       {
         for( unsigned int i = 0; i < 8; i++ )
