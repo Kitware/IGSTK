@@ -688,8 +688,8 @@ const char* NDICommandInterpreterClassic::Command(const char* command)
       }
 
     /* change m_Tracking  if either TSTOP or INIT is sent  */
-    if (cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0) ||
-        cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0))
+    if ((cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0)) ||
+        (cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0)) )
       {
       m_Tracking = 0;
       m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
@@ -1464,11 +1464,6 @@ void NDICommandInterpreterClassic::HelperFor3D(const char* cp, const char* crp)
   {
     *dp++ = *crp++;
   }
-
-  double transform[3];
-  transform[0] = this->SignedStringToInt(&m_3DTransforms[0],  9)*0.0001;
-    transform[1] = this->SignedStringToInt(&m_3DTransforms[9],  9)*0.0001;
-    transform[2] = this->SignedStringToInt(&m_3DTransforms[18], 9)*0.0001;
 }
 
 /*---------------------------------------------------------------------
