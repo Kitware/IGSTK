@@ -37,6 +37,31 @@ namespace igstk {
 
 /** \class ArucoTracker
  *  \brief Provides support for the ArUco monocular video camera tracker.
+ *  The ArucoTracker can track square shaped markers using a conventional,
+ *  webcam.
+ *  Prerequisites & Setup:
+ *
+ *  Marker
+ *  The trackable markers can be printed on paper. In order to generate markers
+ *  use the application "aruco_create_marker". Make sure that printed markers
+ *  have the desired size in mm. Set the desired marker size in the
+ *  ArucoTracker using:
+ *  e.g. SetMarkerSize( 50 ); // marker with 50 mm side length
+ *
+ *  Camera Calibration
+ *  Prior to usage a camera calibration task has to be performed in OpenCV. The
+ *  result of the calibration process has to be stored in YAML format. The yml
+ *  file should contain the intrinsic camera paramters. This file has to be
+ *  loaded to the ArucoTracker.
+ *  e.g. SetCameraParametersFromYAMLFile("camera.yml");
+ *
+ *  The ArucoTracker can also be used for testing purposes without any webcam.
+ *  For this a video of the marker can be recorded as AVI and set to the
+ *  ArucoTracker using:
+ *  e.g. SetSimulationVideo("recordedMarkerVideo.avi");
+ *
+ *  All the settings above has to be done before calling
+ *  RequestOpen();
  *
  *  \ingroup Tracker
  */
