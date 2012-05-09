@@ -22,7 +22,7 @@
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
 # IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
-# 
+# IGSTK_USE_ArucoTracker : Run ArucoTracker tests
  
 
 
@@ -50,6 +50,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_InfiniTrack_ATTACHED
       IGSTK_USE_Ascension3DGTracker
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
+      IGSTK_USE_ArucoTracker
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -182,6 +183,20 @@ ENDIF(ITK_PRE4_VERSION)
               ${IGSTK_DATA_ROOT}/Input/aurora_stream_multichan_11_11_2005.txt
               ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom
               ${IGSTK_TEST_AURORA_PORT_NUMBER} )
+
+IF(${IGSTK_USE_ArucoTracker})
+  ADD_TEST( igstkArucoTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkArucoTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/ArucoSimulationVideo.avi
+			  ${IGSTK_DATA_ROOT}/Input/ArucoCalibrationFile.yml
+              )
+  ADD_TEST( igstkArucoTrackerToolTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerToolTest
+              )
+ENDIF(${IGSTK_USE_ArucoTracker})
 
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterSimulatedTest ${IGSTK_TEST_OUTPUT_DIR}
@@ -620,7 +635,6 @@ IF( ${IGSTK_TEST_Ascension3DGTracker_ATTACHED} )
             ${IGSTK_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
 ENDIF (${IGSTK_TEST_Ascension3DGTracker_ATTACHED})
 
-
 IF(${IGSTK_USE_OpenIGTLink})
   
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
@@ -894,7 +908,15 @@ IF(IGSTK_DATA_ROOT)
     igstkSerialCommunicationSimulatorTest.cxx
     igstkPETImageReaderTest.cxx
     igstkPolarisClassicTrackerSimulatedTest.cxx
-  )  
+  ) 
+  
+  IF(${IGSTK_USE_ArucoTracker})
+    SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+	  igstkArucoTrackerSimulatedTest.cxx
+	  igstkArucoTrackerToolTest.cxx)
+  ENDIF(${IGSTK_USE_ArucoTracker})
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------

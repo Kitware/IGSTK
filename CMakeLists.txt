@@ -168,6 +168,7 @@ IF(IGSTK_USE_MicronTracker)
     LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
   ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTK_USE_MicronTracker)
+
 # Connect InfiniTrack
 OPTION(IGSTK_USE_InfiniTrack "Connect InfiniTrack " OFF)
 
@@ -253,6 +254,15 @@ IF(IGSTK_USE_OpenCV)
   FIND_PACKAGE( OpenCV REQUIRED )
 ENDIF(IGSTK_USE_OpenCV)
 
+# Use ArucoTracker
+OPTION(IGSTK_USE_ArucoTracker "Connect ArucoTracker" OFF)
+IF( IGSTK_USE_ArucoTracker )
+  IF(NOT IGSTK_USE_OpenCV)
+    MESSAGE( FATAL_ERROR "In order to use ArucoTracker, OpenCV is required. Turn the IGSTK_USE_OpenCV flag to on.")
+  ELSE(NOT IGSTK_USE_OpenCV)
+    INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/Aruco/aruco-1.1.0_SRC )
+  ENDIF(NOT IGSTK_USE_OpenCV)
+ENDIF( IGSTK_USE_ArucoTracker )
 
 #
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree

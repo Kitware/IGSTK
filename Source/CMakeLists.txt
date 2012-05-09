@@ -145,6 +145,14 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF( IGSTK_USE_ArucoTracker )
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkArucoTracker.h
+      igstkArucoTrackerTool.h
+      )
+ENDIF( IGSTK_USE_ArucoTracker )
+
 IF(IGSTK_USE_InfiniTrack)
   SET(IGSTK_HEADS
       ${IGSTK_HEADS}
@@ -338,6 +346,14 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF( IGSTK_USE_ArucoTracker )
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkArucoTracker.cxx
+      igstkArucoTrackerTool.cxx
+      )
+ENDIF( IGSTK_USE_ArucoTracker )
+
 IF(IGSTK_USE_InfiniTrack)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
@@ -422,6 +438,11 @@ ENDIF(IGSTK_USE_Qt)
 IF(IGSTK_USE_MicronTracker)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
 ENDIF(IGSTK_USE_MicronTracker)
+
+IF( IGSTK_USE_ArucoTracker )
+  SET(EXTRA_LIBS ${EXTRA_LIBS} aruco)
+ENDIF( IGSTK_USE_ArucoTracker )
+
 
 IF(IGSTK_USE_InfiniTrack)
   SET(EXTRA_LIBS ${EXTRA_LIBS}  v9ITK )
