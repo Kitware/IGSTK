@@ -166,7 +166,6 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
 {
   igstkLogMacro( DEBUG,
          "igstk::ArucoTracker::InternalUpdateStatus called ...\n" )
-
   TrackerToolsContainerType trackerToolContainer = GetTrackerToolContainer();
 
   TrackerToolsContainerType::iterator inputItr = trackerToolContainer.begin();
@@ -219,16 +218,15 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
     typedef TransformType::ErrorType  ErrorType;
     ErrorType errorValue = 0;
 
-    long lTime = this->GetValidityTime ();
+    long lTime = this->GetValidityTime();
 
     transform.SetTranslationAndRotation( translation,
                        rotation,
                        errorValue,
-                       this->GetValidityTime() );
+                       lTime );
     char id[5];
     sprintf(id, "%d", m_Markers[i].id);
-
-    if(trackerToolContainer.count(id)>0)
+    if(trackerToolContainer.find(id) != trackerToolContainer.end())
     {
       // set the raw transform
       this->SetTrackerToolRawTransform( trackerToolContainer [id], transform );
@@ -288,7 +286,7 @@ ArucoTracker::InternalThreadedUpdateStatus( void )
 }
 
 /**
- * Set marker sixe in mm.
+ * Set marker size in mm.
  */
 void ArucoTracker::SetMarkerSize(unsigned int size)
 {

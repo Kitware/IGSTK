@@ -71,7 +71,7 @@ Marker::Marker(const  std::vector<cv::Point2f> &corners,int _id):std::vector<cv:
 /**
  *
 */
-void Marker::glGetModelViewMatrix(   double modelview_matrix[16])throw(cv::Exception)
+void Marker::glGetModelViewMatrix(   double modelview_matrix[16])
 {
     //check if paremeters are valid
     bool invalid=false;
@@ -125,7 +125,7 @@ void Marker::glGetModelViewMatrix(   double modelview_matrix[16])throw(cv::Excep
 /****
  *
  */
-void Marker::OgreGetPoseParameters(double position[3], double orientation[4]) throw(cv::Exception)
+void Marker::OgreGetPoseParameters(double position[3], double orientation[4])
 {
 
     //check if paremeters are valid
@@ -227,21 +227,24 @@ void Marker::draw(Mat &in, Scalar color, int lineWidth ,bool writeId)const
         char cad[100];
         sprintf(cad,"id=%d",id);
         //determine the centroid
-        Point cent(0,0);
+        Point2f centF(0,0);
         for (int i=0;i<4;i++)
         {
-            cent.x+=(*this)[i].x;
-            cent.y+=(*this)[i].y;
+            centF.x+=(*this)[i].x;
+            centF.y+=(*this)[i].y;
         }
-        cent.x/=4.;
-        cent.y/=4.;
-        putText(in,cad, cent,FONT_HERSHEY_SIMPLEX, 0.5,  Scalar(255-color[0],255-color[1],255-color[2],255),2);
+        centF.x/=4.;
+        centF.y/=4.;
+		Point centI;
+		centI.x = static_cast<int>(centF.x + 0.5);
+		centI.y = static_cast<int>(centF.y + 0.5);
+        putText(in,cad, centI,FONT_HERSHEY_SIMPLEX, 0.5,  Scalar(255-color[0],255-color[1],255-color[2],255),2);
     }
 }
 
 /**
  */
-void Marker::calculateExtrinsics(float markerSize,const CameraParameters &CP)throw(cv::Exception)
+void Marker::calculateExtrinsics(float markerSize,const CameraParameters &CP)
 {
     if (!CP.isValid()) throw cv::Exception(9004,"!CP.isValid(): invalid camera parameters. It is not possible to calculate extrinsics","calculateExtrinsics",__FILE__,__LINE__);
     calculateExtrinsics( markerSize,CP.CameraMatrix,CP.Distorsion);
@@ -252,13 +255,13 @@ void print(cv::Point3f p,string cad){
 }
 /**
  */
-void Marker::calculateExtrinsics(float markerSizeMeters,cv::Mat  camMatrix,cv::Mat distCoeff )throw(cv::Exception)
+void Marker::calculateExtrinsics(float markerSizeMeters,cv::Mat  camMatrix,cv::Mat distCoeff )
 {
     if (!isValid()) throw cv::Exception(9004,"!isValid(): invalid marker. It is not possible to calculate extrinsics","calculateExtrinsics",__FILE__,__LINE__);
     if (markerSizeMeters<=0)throw cv::Exception(9004,"markerSize<=0: invalid markerSize","calculateExtrinsics",__FILE__,__LINE__);
     if ( camMatrix.rows==0 || camMatrix.cols==0) throw cv::Exception(9004,"CameraMatrix is empty","calculateExtrinsics",__FILE__,__LINE__);
 
-     double halfSize=markerSizeMeters/2.;
+    float halfSize=markerSizeMeters/2.0F;
     cv::Mat ObjPoints(4,3,CV_32FC1);
     ObjPoints.at<float>(1,0)=-halfSize;
     ObjPoints.at<float>(1,1)=halfSize;
@@ -286,30 +289,12 @@ void Marker::calculateExtrinsics(float markerSizeMeters,cv::Mat  camMatrix,cv::M
     cv::solvePnP(ObjPoints, ImagePoints, camMatrix, distCoeff,raux,taux);
     raux.convertTo(Rvec,CV_32F);
     taux.convertTo(Tvec ,CV_32F);
-    //rotate the X axis so that Y is perpendicular to the marker plane
-    //rotateXAxis(Rvec);
     ssize=markerSizeMeters;
 }
 
 /**
 */
 
-void Marker::rotateXAxis(Mat &rotation)
-{
-    cv::Mat R(3,3,CV_32F);
-    Rodrigues(rotation, R);
-    //create a rotation matrix for x axis
-    cv::Mat RX=cv::Mat::eye(3,3,CV_32F);
-    float angleRad=M_PI/2;
-    RX.at<float>(1,1)=cos(angleRad);
-    RX.at<float>(1,2)=-sin(angleRad);
-    RX.at<float>(2,1)=sin(angleRad);
-    RX.at<float>(2,2)=cos(angleRad);
-    //now multiply
-    R=R*RX;
-    //finally, the the rodrigues back
-    Rodrigues(R,rotation);
-}
 
 /**
  */
@@ -337,7 +322,7 @@ float Marker::getArea()const
     cv::Point2f v21=(*this)[1]-(*this)[2];
     cv::Point2f v23=(*this)[3]-(*this)[2];
     float area2=fabs(v21.x*v23.y - v21.y*v23.x);
-    return (area2+area1)/2.;
+    return (area2+area1)/2.0F;
 
 }
 /**
@@ -347,13 +332,13 @@ float Marker::getPerimeter()const
   assert(size()==4);
   float sum=0;
   for(int i=0;i<4;i++)
-    sum+=norm( (*this)[i]-(*this)[(i+1)%4]);
+    sum+= static_cast<float>(norm( (*this)[i]-(*this)[(i+1)%4]));
   return sum;
 }
 
 /**
 */
-Mat Marker::createMarkerImage(int id,int size) throw (cv::Exception)
+Mat Marker::createMarkerImage(int id,int size)
 {
     if (id>=1024) throw cv::Exception(9004,"id>=1024","createMarker",__FILE__,__LINE__);
     Mat marker(size,size, CV_8UC1);

@@ -41,7 +41,7 @@ namespace aruco {
  ************************************/
 /**
 */
-Mat FiducidalMarkers::createMarkerImage(int id,int size) throw (cv::Exception)
+Mat FiducidalMarkers::createMarkerImage(int id,int size)
 {
     Mat marker(size,size, CV_8UC1);
     marker.setTo(Scalar(0));
@@ -64,7 +64,7 @@ Mat FiducidalMarkers::createMarkerImage(int id,int size) throw (cv::Exception)
     return marker;
 }
 
-cv::Mat FiducidalMarkers::getMarkerMat(int id) throw (cv::Exception)
+cv::Mat FiducidalMarkers::getMarkerMat(int id)
 {
     Mat marker(5,5, CV_8UC1);
     marker.setTo(Scalar(0));
@@ -134,7 +134,7 @@ int FiducidalMarkers::hammDistMarker(Mat  bits)
 
     for (int y=0;y<5;y++)
     {
-        int minSum=1e5;
+        int minSum= static_cast<int>(1e5);
         //hamming distance to each possible word
         for (int p=0;p<4;p++)
         {
@@ -271,7 +271,7 @@ bool FiducidalMarkers::correctHammMarker(Mat &bits)
 
     for (int y=0;y<5;y++)
     {
-        int minSum=1e5;
+        int minSum=static_cast<int>(1e5);
         //hamming distance to each possible word
         for (int p=0;p<4;p++)
         {

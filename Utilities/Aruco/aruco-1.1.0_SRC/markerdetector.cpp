@@ -131,7 +131,7 @@ void MarkerDetector::detect(const  cv::Mat &input,vector<Marker> &detectedMarker
             cv::pyrDown(reduced,tmp);
             reduced=tmp;
         }
-        int red_den=pow(2.0f,pyrdown_level);
+        float red_den=pow(2.0f,pyrdown_level);
         imgToBeThresHolded=reduced;
         ThresParam1/=float(red_den);
         ThresParam2/=float(red_den);
@@ -145,7 +145,7 @@ void MarkerDetector::detect(const  cv::Mat &input,vector<Marker> &detectedMarker
     //if the image has been downsampled, then calcualte the location of the corners in the original image
     if (pyrdown_level!=0) {
         float red_den=pow(2.0f,pyrdown_level);
-        float offInc=((pyrdown_level/2.)-0.5);
+        float offInc=((pyrdown_level/2.0F)-0.5F);
         for (unsigned int i=0;i<MarkerCanditates.size();i++)
             for (int c=0;c<4;c++) {
                 MarkerCanditates[i][c].x=MarkerCanditates[i][c].x*red_den+offInc;
@@ -271,7 +271,7 @@ void  MarkerDetector::detectRectangles(const cv::Mat &thres,vector<std::vector<c
                         MarkerCanditates.push_back(Marker());
                         for (int i=0;i<4;i++)
                         {
-                            MarkerCanditates.back().push_back( Point2f(approxCurve[i].x,approxCurve[i].y));
+                            MarkerCanditates.back().push_back( Point2f(static_cast<float>(approxCurve[i].x),static_cast<float>(approxCurve[i].y)));
                         }
                     }
                 }
@@ -351,7 +351,7 @@ void MarkerDetector::thresHold(int method,const Mat &grey,Mat &out,double param1
         if ( param1<3) param1=3;
         else if ( ((int)param1)%2 !=1 ) param1=(int) (param1+1);
 
-        cv::adaptiveThreshold(grey,out,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,param1,param2);
+        cv::adaptiveThreshold(grey,out,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,static_cast<int>(param1),param2);
         break;
     case CANNY:
     {
@@ -374,7 +374,7 @@ void MarkerDetector::thresHold(int method,const Mat &grey,Mat &out,double param1
  *
  *
  ************************************/
-void MarkerDetector::warp(Mat &in,Mat &out,Size size, vector<Point2f> points)throw (cv::Exception)
+void MarkerDetector::warp(Mat &in,Mat &out,Size size, vector<Point2f> points)
 {
 
     if (points.size()!=4)    throw cv::Exception(9001,"point.size()!=4","MarkerDetector::warp",__FILE__,__LINE__);
@@ -382,9 +382,9 @@ void MarkerDetector::warp(Mat &in,Mat &out,Size size, vector<Point2f> points)thr
     Point2f  pointsRes[4],pointsIn[4];
     for (int i=0;i<4;i++) pointsIn[i]=points[i];
     pointsRes[0]=(Point2f(0,0));
-    pointsRes[1]= Point2f(size.width-1,0);
-    pointsRes[2]= Point2f(size.width-1,size.height-1);
-    pointsRes[3]= Point2f(0,size.height-1);
+    pointsRes[1]= Point2f(size.width-1.0F,0.0F);
+    pointsRes[2]= Point2f(size.width-1.0F,size.height-1.0F);
+    pointsRes[3]= Point2f(0.0F,size.height-1.0F);
     Mat M=getPerspectiveTransform(pointsRes,pointsIn);
     cv::warpPerspective(in, out,  M, size,cv::INTER_NEAREST+cv::WARP_INVERSE_MAP);
 }
@@ -412,7 +412,7 @@ int MarkerDetector:: perimeter(vector<Point2f> &a)
     int sum=0;
     for (unsigned int i=0;i<a.size();i++) {
         int i2=(i+1)%a.size();
-        sum+= sqrt ( (a[i].x-a[i2].x)*(a[i].x-a[i2].x)+(a[i].y-a[i2].y)*(a[i].y-a[i2].y) ) ;
+        sum+= static_cast<int>(sqrt ( (a[i].x-a[i2].x)*(a[i].x-a[i2].x)+(a[i].y-a[i2].y)*(a[i].y-a[i2].y) )) ;
     }
     return sum;
 }
@@ -422,6 +422,8 @@ int MarkerDetector:: perimeter(vector<Point2f> &a)
  *
  *
  */
+
+/*
 void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<cv::Point2f> &  Corners,int blockSize)
 {
     int halfSize=blockSize/2;
@@ -431,14 +433,14 @@ void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<
         cv::Point2f max(Corners[i].x+halfSize,Corners[i].y+halfSize);
         if (min.x>=0  &&  min.y>=0 && max.x<grey.cols && max.y<grey.rows) {
             cv::Mat response;
-            cv::Mat subImage(grey,cv::Rect(Corners[i].x-halfSize,Corners[i].y-halfSize,blockSize ,blockSize ));
+            cv::Mat subImage(grey,cv::Rect(static_cast<int>(Corners[i].x)-halfSize,static_cast<int>(Corners[i].y)-halfSize,blockSize ,blockSize ));
             vector<Point2f> corners2;
             goodFeaturesToTrack(subImage, corners2, 10, 0.001, halfSize);
-            float minD=9999;
+            double minD=9999;
             int bIdx=-1;
-            cv::Point2f Center(halfSize,halfSize);
+            cv::Point2f Center(static_cast<float>(halfSize),static_cast<float>(halfSize));
             for (size_t j=0;j<corners2.size();j++) {
-                float dist=cv::norm(corners2[j]-Center);
+                double dist=cv::norm(corners2[j]-Center);
                 if (dist<minD) {
                     minD=dist;
                     bIdx=j;
@@ -447,7 +449,7 @@ void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<
         }
     }
 }
-
+*/
 
 /************************************
  *
