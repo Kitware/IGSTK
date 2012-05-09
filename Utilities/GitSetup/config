@@ -1,0 +1,9 @@
+[hooks]
+	url = http://igstk.org/IGSTK.git
+[ssh]
+	host = igstk.org
+	key = id_git_igstk
+	request-url = https://www.kitware.com/Admin/SendPassword.cgi
+[stage]
+	url = git://igstk.org/stage/IGSTK.git
+	pushurl = git@igstk.org:stage/IGSTK.git

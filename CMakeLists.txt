@@ -228,7 +228,6 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
-
 #
 # Use OpenIGTLink protocol
 #
@@ -482,6 +481,12 @@ IF(IGSTK_USE_KWSTYLE)
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTK_BINARY_DIR}/KWStyleReport.txt)
 ENDIF(IGSTK_USE_KWSTYLE)
+
+# Microsoft Visual Studio 10 needs additional flag in order to compile in
+# 64 Bit mode
+IF(CMAKE_GENERATOR STREQUAL "Visual Studio 10 Win64")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+ENDIF(CMAKE_GENERATOR STREQUAL "Visual Studio 10 Win64")
 
 IF( WIN32 )
   SET( IGSTK_SERIAL_PORT_0 "COM1:" CACHE STRING "First serial port device name (Default COM1)")

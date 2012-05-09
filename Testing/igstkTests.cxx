@@ -135,6 +135,7 @@ void RegisterTests()
   REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
   REGISTER_TEST(igstkNDICommandInterpreterStressTest);
   REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
+  REGISTER_TEST(igstkPolarisClassicTrackerSimulatedTest);
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);

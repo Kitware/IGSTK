@@ -111,6 +111,9 @@ SET(IGSTK_HEADS
   igstkPETImageReader.h
   igstkPETImageSpatialObject.h
   igstkPETImageSpatialObjectRepresentation.h
+
+  igstkNDICommandInterpreterClassic.h
+  igstkPolarisClassicTracker.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -165,8 +168,6 @@ IF(IGSTK_USE_Ascension3DGTracker)
       igstkAscension3DGTrackerTool.h
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
-
-
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -310,6 +311,9 @@ SET(IGSTK_SRCS
   igstkPETImageReader.cxx
   igstkPETImageSpatialObject.cxx
   igstkPETImageSpatialObjectRepresentation.cxx
+
+  igstkNDICommandInterpreterClassic.cxx
+  igstkPolarisClassicTracker.cxx
 )
 
 IF(IGSTK_USE_FLTK)
