@@ -114,13 +114,15 @@ void Axios3DTrackerTool::ReportInvalidMarkerNameSpecifiedProcessing ()
     "igstk::Axios3DTrackerTool::ReportInvalidMarkerNameSpecifiedProcessing \
     called ...\n");
 
-  igstkLogMacro( CRITICAL, "Invalid marker specified ");
+  this->InvokeEvent(InvalidMarkerNameErrorEvent());
 }
 
 /** Report any invalid request to the tool */
 void Axios3DTrackerTool::ReportInvalidRequestProcessing ()
 {
   igstkLogMacro (WARNING, "ReportInvalidRequestProcessing() called ...\n");
+
+  this->InvokeEvent(InvalidRequestErrorEvent());
 }
 
 /** Set the marker processing */

@@ -31,6 +31,9 @@
 namespace igstk
 {
 
+igstkEventMacro( Axios3DTrackerToolErrorEvent, TrackerToolErrorEvent);
+igstkEventMacro( InvalidMarkerNameErrorEvent, Axios3DTrackerToolErrorEvent);
+
 class igstkAxios3DTracker;
 
 /** \class Axios3DTrackerTool

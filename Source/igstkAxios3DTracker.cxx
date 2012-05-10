@@ -56,11 +56,11 @@ namespace igstk
 
 /** Constructor */
 Axios3DTracker::Axios3DTracker (void) :
-m_StateMachine(this), metrology_systems(0), metrology(0)
-,bTracking(false)
+m_StateMachine(this), m_MetrologySystems(0), m_Metrology(0)
+,m_Tracking(false)
 {
   m_BufferLock = itk::MutexLock::New();
-  metro_lib::MetroUtils::AddReceiver(&mwr);
+  metro_lib::MetroUtils::AddReceiver(&m_Mwr);
 
   CreateObject();
 }
@@ -91,12 +91,11 @@ Axios3DTracker::ResultType Axios3DTracker
   }
   catch(metro_lib::MetroError & e)
   {
-    std::cerr << HandleMetroError(e) << std::endl;
     igstkLogMacro(WARNING, HandleMetroError(e));
     return FAILURE;
   }
 
-  igstkLogMacro(INFO, mwr.GetText());
+  igstkLogMacro(INFO, m_Mwr.GetText());
   return SUCCESS;
 }
 
@@ -123,7 +122,7 @@ Axios3DTracker::ResultType Axios3DTracker::DeleteLocators()
     return FAILURE;
   }
 
-  igstkLogMacro(INFO, mwr.GetText());
+  igstkLogMacro(INFO, m_Mwr.GetText());
   return SUCCESS;
 }
 
@@ -145,7 +144,7 @@ Axios3DTracker::ResultType Axios3DTracker::Lock()
 
   std::stringstream str;
 
-  if (metrology == NULL)
+  if (m_Metrology == NULL)
   {
     igstkLogMacro( CRITICAL, "Metrology is not defined" );
     return FAILURE;
@@ -155,7 +154,9 @@ Axios3DTracker::ResultType Axios3DTracker::Lock()
   {
     igstkLogMacro(INFO, "Lock: " );
 
-    str<< metrology->Lock();
+    str<< m_Metrology->Lock();
+    // give the device time to capture images from each camera and
+    // store them for further processing (i.e. pose estimation)
     Sleep(10);
     igstkLogMacro(INFO,  "Ok" << "\n" );
 
@@ -165,7 +166,7 @@ Axios3DTracker::ResultType Axios3DTracker::Lock()
     str  << HandleMetroError(e);
   }
 
-  str << mwr.GetText();
+  str << m_Mwr.GetText();
 
   return SUCCESS;
 }
@@ -307,7 +308,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasurePoints(bool extended_protocol)
   // without lock it's not possible to measure points and locators
   s << Lock();
 
-  if (metrology == NULL)
+  if (m_Metrology == NULL)
   {
     igstkLogMacro( CRITICAL, "Metrology is not defined" )
     return FAILURE;
@@ -317,7 +318,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasurePoints(bool extended_protocol)
   {
     igstkLogMacro( INFO, "MeasurePoints:" );
 
-    metro_lib::PointResultList pts = metrology->MeasurePoints();
+    metro_lib::PointResultList pts = m_Metrology->MeasurePoints();
 
     unsigned size = pts.Size();
     igstkLogMacro( INFO, "Size: " << size << " " );
@@ -429,7 +430,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasurePoints(bool extended_protocol)
     return FAILURE;
   }
 
-  igstkLogMacro( INFO, mwr.GetText() );
+  igstkLogMacro( INFO, m_Mwr.GetText() );
   return SUCCESS;
 }
 
@@ -455,7 +456,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasureLocator
   // without lock it's not possible to measure points and locators
   s << Lock();
 
-  if (metrology == NULL)
+  if (m_Metrology == NULL)
   {
     igstkLogMacro(CRITICAL, "Metrology not defined")
     return FAILURE;
@@ -468,7 +469,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasureLocator
       igstkLogMacro( INFO, "\n ---- Locator Measurement ---- "<<loc_id<<"\n" );
     }
 
-    metro_lib::LocatorResult loc_res = metrology->MeasureLocator(
+    metro_lib::LocatorResult loc_res = m_Metrology->MeasureLocator(
                                                             loc_id.c_str()  );
 
     bool visible = loc_res.IsVisible();
@@ -692,7 +693,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasureLocator
      }
 
     LocatorResult lockResult(transform, visible);
-    LocatorResultsContainer[loc_id.c_str()] = lockResult;
+    m_LocatorResultsContainer[loc_id.c_str()] = lockResult;
   }
   catch(metro_lib::MetroError & e)
   {
@@ -700,7 +701,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasureLocator
     return FAILURE;
   }
 
-  igstkLogMacro( INFO, mwr.GetText() );
+  igstkLogMacro( INFO, m_Mwr.GetText() );
   return SUCCESS;
 }
 
@@ -742,15 +743,15 @@ Axios3DTracker::ResultType Axios3DTracker::CreateObject()
 
    std::stringstream str;
 
-  if (metrology_systems)
+  if (m_MetrologySystems)
   {
     return SUCCESS;
   }
 
-  // an exception may occur here, when the metrology-DLL could not be found!
+  // an exception may occur here, when the m_Metrology-DLL could not be found!
   try
   {
-    metrology_systems = new metro_lib::MetrologySystems();
+    m_MetrologySystems = new metro_lib::MetrologySystems();
     igstkLogMacro(INFO, "Object created!\n" );
   }
   catch(metro_lib::MetroError & e)
@@ -766,7 +767,7 @@ Axios3DTracker::ResultType Axios3DTracker::CreateObject()
     return FAILURE;
   }
 
-  igstkLogMacro(INFO, mwr.GetText() );
+  igstkLogMacro(INFO, m_Mwr.GetText() );
   return SUCCESS;
 }
 
@@ -787,22 +788,22 @@ Axios3DTracker::ResultType Axios3DTracker::InternalOpen (void)
 
     try
     {
-      if (metrology)
+      if (m_Metrology)
       {
-        delete metrology;
-        metrology = 0;
+        delete m_Metrology;
+        m_Metrology = 0;
       }
 
       igstkLogMacro(INFO, "Initialization Virtual\n" );
-      metrology = new metro_lib::Metrology
+      m_Metrology = new metro_lib::Metrology
       (
-        metrology_systems->InitVirtualSystem
+        m_MetrologySystems->InitVirtualSystem
         (
-          path, 1
+          m_Path, 1
         )
       );
 
-      metro_lib::MeasurementSystemInfo msi = metrology->GetSystemInfo();
+      metro_lib::MeasurementSystemInfo msi = m_Metrology->GetSystemInfo();
 
       igstkLogMacro( INFO, "SystemName: " << msi.GetSystemName() );
       igstkLogMacro( INFO, " - SerialNumber: " <<  msi.GetSerialNumber() );
@@ -818,32 +819,32 @@ Axios3DTracker::ResultType Axios3DTracker::InternalOpen (void)
 
       if(e.HasErrors())
       {
-        if (metrology)
+        if (m_Metrology)
         {
-          delete metrology;
-          metrology = 0;
+          delete m_Metrology;
+          m_Metrology = 0;
         }
       }
       igstkLogMacro( INFO, HandleMetroError(e) );
     }
 
-      igstkLogMacro( INFO, mwr.GetText() );
+      igstkLogMacro( INFO, m_Mwr.GetText() );
   }
   else
   {
 
     try
     {
-      if (metrology)
+      if (m_Metrology)
       {
-        delete metrology;
-        metrology = 0;
+        delete m_Metrology;
+        m_Metrology = 0;
       }
 
       igstkLogMacro( INFO, "Initialization " );
 
       metro_lib::MeasurementSystemInfoList msil
-        = metrology_systems->FindMeasurementSystems();
+        = m_MetrologySystems->FindMeasurementSystems();
 
       unsigned int size = msil.Size();
 
@@ -882,9 +883,9 @@ Axios3DTracker::ResultType Axios3DTracker::InternalOpen (void)
           return FAILURE;
         }
 
-        metrology = new metro_lib::Metrology
+        m_Metrology = new metro_lib::Metrology
         (
-          metrology_systems->InitSystem(msil.GetElement(index))
+          m_MetrologySystems->InitSystem(msil.GetElement(index))
         );
 
         }
@@ -898,7 +899,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalOpen (void)
       igstkLogMacro( INFO, HandleMetroError(e) );
     }
 
-    igstkLogMacro( INFO, mwr.GetText() );
+    igstkLogMacro( INFO, m_Mwr.GetText() );
   }
 
   return SUCCESS;
@@ -916,7 +917,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalClose( void )
 
   try
   {
-    if(metrology == NULL)
+    if(m_Metrology == NULL)
     {
       igstkLogMacro(CRITICAL, "Metrology is not defined")
       return FAILURE;
@@ -924,9 +925,9 @@ Axios3DTracker::ResultType Axios3DTracker::InternalClose( void )
 
     igstkLogMacro( INFO, "Closing Systems\n" );
 
-    metrology->Delete();
-    delete metrology;
-    metrology = 0;
+    m_Metrology->Delete();
+    delete m_Metrology;
+    m_Metrology = 0;
     }
   catch(metro_lib::MetroError & e)
     {
@@ -934,7 +935,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalClose( void )
     return FAILURE;
     }
 
-  igstkLogMacro( INFO, mwr.GetText() );
+  igstkLogMacro( INFO, m_Mwr.GetText() );
 
   return SUCCESS;
 }
@@ -949,7 +950,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalReset( void )
 {
   igstkLogMacro(DEBUG, "igstk::Axios3DTracker::InternalReset called ...\n")
 
-  if (metrology == NULL)
+  if (m_Metrology == NULL)
   {
     igstkLogMacro(CRITICAL, "Metrology is not defined")
     return FAILURE;
@@ -959,8 +960,8 @@ Axios3DTracker::ResultType Axios3DTracker::InternalReset( void )
     {
     igstkLogMacro( INFO, "ReInit:\n" );
 
-    metrology->ReInit();
-    igstkLogMacro( INFO, mwr.GetText() );
+    m_Metrology->ReInit();
+    igstkLogMacro( INFO, m_Mwr.GetText() );
     }
   catch(metro_lib::MetroError & e)
     {
@@ -968,7 +969,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalReset( void )
     return FAILURE;
     }
 
-  igstkLogMacro( INFO,  mwr.GetText() );
+  igstkLogMacro( INFO,  m_Mwr.GetText() );
 
   return SUCCESS;
 }
@@ -984,15 +985,15 @@ Axios3DTracker::ResultType Axios3DTracker::InternalStartTracking( void )
   igstkLogMacro(DEBUG,
          "igstk::Axios3DTracker::InternalStartTracking called ...\n")
 
-  if (bTracking)
+  if (m_Tracking)
     {
     return SUCCESS;
     }
 
-  loaded_locators = GetLocatorNames();
-  std::cout << "loaded locators count: " << loaded_locators.size() << std::endl;
+  m_LoadedLocators = GetLocatorNames();
+  std::cout << "loaded locators count: " << m_LoadedLocators.size() << std::endl;
 
-  bTracking = true;
+  m_Tracking = true;
 
   return SUCCESS;
 }
@@ -1008,7 +1009,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalStopTracking( void )
   igstkLogMacro(DEBUG,
       "igstk::Axios3DTracker::InternalStopTracking called ...\n")
 
-    bTracking = false;
+    m_Tracking = false;
 
   return SUCCESS;
 }
@@ -1028,19 +1029,19 @@ Axios3DTracker::ResultType Axios3DTracker::InternalUpdateStatus( void )
 
   TrackerToolsContainerType trackerToolContainer = GetTrackerToolContainer();
   try{
-    std::list<std::string>::const_iterator it = loaded_locators.begin();
-    for (; it!= loaded_locators.end(); ++it)
+    std::list<std::string>::const_iterator it = m_LoadedLocators.begin();
+    for (; it!= m_LoadedLocators.end(); ++it)
       {
-      LocatorResult lockResult = LocatorResultsContainer[*(it)];
+      LocatorResult lockResult = m_LocatorResultsContainer[*(it)];
 
-      if(lockResult.isVisible && trackerToolContainer[*(it)])
+      if(lockResult.m_IsVisible && trackerToolContainer[*(it)])
         {
         // report to the tracker tool that the tracker is Visible
       this->ReportTrackingToolVisible(trackerToolContainer[*(it)]);
 
         // set the raw transform
         this->SetTrackerToolRawTransform(
-                          trackerToolContainer [*(it)], lockResult.transform );
+                          trackerToolContainer [*(it)], lockResult.m_Transform );
 
         this->SetTrackerToolTransformUpdate(
                                           trackerToolContainer [*(it)], true );
@@ -1070,10 +1071,10 @@ Axios3DTracker::InternalThreadedUpdateStatus( void )
   igstkLogMacro(DEBUG,
     "igstk::Axios3DTracker::InternalThreadedUpdateStatus called ...\n")
 
-  std::list<std::string>::const_iterator it = loaded_locators.begin();
+  std::list<std::string>::const_iterator it = m_LoadedLocators.begin();
   this->m_BufferLock->Lock();
 
-  for (; it!= loaded_locators.end(); ++it)
+  for (; it!= m_LoadedLocators.end(); ++it)
     {
     MeasureLocator(*(it),false);
     }
@@ -1131,6 +1132,12 @@ Axios3DTracker::ValidateSpecifiedFrequency( double frequencyInHz )
   igstkLogMacro(DEBUG,
    "igstk::Axios3DTracker::ValidateSpecifiedFrequency called ...\n")
 
+  // manufacturer info: 90 images per second
+  const double MAXIMUM_FREQUENCY = 90;
+  if ( frequencyInHz < 0.0 || frequencyInHz > MAXIMUM_FREQUENCY )
+    {
+    return FAILURE;
+    }
   return SUCCESS;
 }
 
@@ -1148,7 +1155,9 @@ Axios3DTracker::RemoveTrackerToolFromInternalDataContainers(
   igstkLogMacro(DEBUG,
    "igstk::Axios3DTracker::RemoveTrackerToolFromInternalDataContainers \
    called ...\n")
-
+  // purposely not implemented
+  // adding/removing locators (rigid-bodoies) is handled by
+  // this->RequestLoadLocatorsXML(...)
   return SUCCESS;
 }
 
@@ -1165,7 +1174,9 @@ Axios3DTracker::AddTrackerToolToInternalDataContainers (
   igstkLogMacro(DEBUG,
   "igstk::Axios3DTracker::AddTrackerToolToInternalDataContainers \
    called ...\n")
-
+  // purposely not implemented
+  // adding/removing new locators (rigid-bodoies) is handled by
+  // this->RequestLoadLocatorsXML(...)
   return SUCCESS;
 }
 

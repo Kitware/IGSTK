@@ -183,21 +183,21 @@ private:
   virtual ResultType Axios3DTracker::CreateObject();
 
   /** Interface to Measuring System */
-  metro_lib::MetrologySystems * metrology_systems;
-  metro_lib::Metrology * metrology;
+  metro_lib::MetrologySystems * m_MetrologySystems;
+  metro_lib::Metrology * m_Metrology;
 
   /** for Warning_handling */
-  MetroWarningReceiver mwr;
+  MetroWarningReceiver m_Mwr;
 
   /** Start/Stop Tracking */
-  bool bTracking;
+  bool m_Tracking;
 
   /** locks the measurement data access */
   virtual ResultType Lock();
 
   /** locator administration */
   std::list<std::string> GetLocatorNames();
-  std::list<std::string> loaded_locators;
+  std::list<std::string> m_LoadedLocators;
 
   /** measurement functions */
   virtual ResultType MeasurePoints(bool extended_protocol = true);
@@ -210,14 +210,14 @@ private:
   std::string GetLoadedLocators();
 
   /** Initialises a virtual measurement */
-  const char * path;
-  unsigned config;
+  const char * m_Path;
+  unsigned m_Config;
 
   /** The Axios3DTrack handle */
   void* m_Handle;
 
   /** The serial number */
-  unsigned long long m_u64DeviceSerialNumber;
+  unsigned long long m_U64DeviceSerialNumber;
 
   /** A mutex for multithreaded access to the buffer arrays */
   itk::MutexLock::Pointer  m_BufferLock;
@@ -242,15 +242,15 @@ public:
     return m_VirtualMode;
     }
 
-  /** To set path for pictures in virtual_mode */
+  /** To set m_Path for pictures in virtual_mode */
 public:
   void setPath(char *p)
     {
-    path = p;
+    m_Path = p;
     }
   const char getPath()
     {
-    return *path;
+    return *m_Path;
     }
 
   /** \class LocatorResult
@@ -262,15 +262,15 @@ public:
 
     LocatorResult(TransformType t,bool v)
       {
-      transform = t;
-      isVisible = v;
+      m_Transform = t;
+      m_IsVisible = v;
       }
-    TransformType transform;
-    bool isVisible;
+    TransformType m_Transform;
+    bool m_IsVisible;
     };
 
   /** Container holding LocatorResult of the tools */
-  std::map< std::string, LocatorResult> LocatorResultsContainer;
+  std::map< std::string, LocatorResult> m_LocatorResultsContainer;
 
 }; // end of class Axios3DTracker
 
