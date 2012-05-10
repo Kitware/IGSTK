@@ -8,6 +8,7 @@ SUBDIRS(
  TrackerConfiguration
  Tools
  TrackerDataLogger
+ MultiTrackerLogger
 )
 
 

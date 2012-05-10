@@ -174,7 +174,7 @@ int main( int argc, char **argv )
   }
 
   // init igstk
-  std::cout << "init igstk\n"; std::cout.flush();
+  std::cout << "init igstk\n" << std::endl;
   igstk::RealTimeClock::Initialize();
 
   // create world reference
@@ -223,9 +223,9 @@ int main( int argc, char **argv )
   // with the objects we've received from the tracker initializer.
   // EndLatex
   // BeginCodeSnippet
-  std::cout << "start tracking\n"; std::cout.flush();
+  std::cout << "start tracking\n" << std::endl;
   tracker->RequestStartTracking();
-  std::cout << "start tracking done\n";  std::cout.flush();
+  std::cout << "start tracking done\n" <<  std::endl;
   // EndCodeSnippet
 
   //Add observer to listen to transform events
@@ -238,11 +238,7 @@ int main( int argc, char **argv )
   // get the samples
   for(unsigned int i=0; i<sampleCount; i++)
     {
-    #ifdef WIN32
-  Sleep(200);
-  #else
-    usleep(200000);
-  #endif
+    igstk::PulseGenerator::Sleep( 200 );
     igstk::PulseGenerator::CheckTimeouts();
 
     igstk::Transform transform;

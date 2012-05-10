@@ -55,13 +55,13 @@ public:
   static std::list<std::string> GetAvailableTrackerTypes() {
     m_TrackerTypes.clear();
     // register the available tracker types
-#ifdef IGDT_USE_EASYTRACK
+#ifdef USE_EASYTRACK
     m_TrackerTypes.push_back( "EasyTrack500" );
 #endif
-#ifdef IGDT_USE_OLDPOLARIS
-    m_TrackerTypes.push_back( "OldPolaris" );
+#ifdef USE_POLARISCLASSIC
+    m_TrackerTypes.push_back( "PolarisClassic" );
 #endif
-#ifdef IGDT_USE_AXIOS3D
+#ifdef USE_AXIOS3D
     m_TrackerTypes.push_back( "Axios3D" );
 #endif
     return m_TrackerTypes;
@@ -70,6 +70,8 @@ public:
   static TrackerInitializer *CreateTrackerInitializer( std::string type );
 protected:
   static std::list<std::string> m_TrackerTypes;
+  static const unsigned int m_Tool = 0;
+  static const unsigned int m_DRF = 1;
 };
 // EndCodeSnippet
 
@@ -81,7 +83,7 @@ protected:
 // EndLatex
 
 // BeginCodeSnippet
-#ifdef IGDT_USE_EASYTRACK
+#ifdef USE_EASYTRACK
 #include "igstkAtracsysEasyTrack.h"
 #include "igstkAtracsysEasyTrackTool.h"
 
@@ -99,16 +101,15 @@ public:
   igstk::TrackerTool::Pointer CreateTrackerTool( int id )
     {
     switch( id ){
-      case 0:
+      case m_Tool:
         {
         igstk::AtracsysEasyTrackTool::Pointer tool =
                                             igstk::AtracsysEasyTrackTool::New();
-        //std::cout << "portsetbef"; std::cout.flush();
+        // pointer tool attached to port 0
         tool->RequestSetPortNumber(0);
-        //std::cout << "portsetaft"; std::cout.flush();
         return tool.GetPointer();
         }
-      case 1:
+      case m_DRF:
         {
         igstk::AtracsysEasyTrackTool::Pointer tool =
                                             igstk::AtracsysEasyTrackTool::New();
@@ -131,16 +132,16 @@ public:
 // EndLatex
 
 // BeginCodeSnippet
-#ifdef IGDT_USE_OLDPOLARIS
+#ifdef USE_POLARISCLASSIC
 #include "igstkSerialCommunication.h"
 #include "igstkPolarisClassicTracker.h"
 #include "igstkPolarisTrackerTool.h"
 
-class OldPolarisInitializer : public TrackerInitializer
+class PolarisClassicInitializer : public TrackerInitializer
 {
 public:
-  OldPolarisInitializer() : TrackerInitializer() {}
-  ~OldPolarisInitializer() {}
+  PolarisClassicInitializer() : TrackerInitializer() {}
+  ~PolarisClassicInitializer() {}
 
   igstk::Tracker::Pointer CreateTracker()
   {
@@ -189,15 +190,16 @@ public:
   igstk::TrackerTool::Pointer CreateTrackerTool( int id )
     {
     switch( id ){
-      case 0:
+      case m_Tool:
         {
         igstk::PolarisTrackerTool::Pointer tool =
                                           igstk::PolarisTrackerTool::New();
         tool->RequestSelectWiredTrackerTool();
+        // default port number is 0
         tool->RequestSetPortNumber(0);
         return tool.GetPointer();
         }
-      case 1:
+      case m_DRF:
         {
         igstk::PolarisTrackerTool::Pointer tool =
                                            igstk::PolarisTrackerTool::New();
@@ -218,7 +220,7 @@ public:
 // EndLatex
 
 // BeginCodeSnippet
-#ifdef IGDT_USE_AXIOS3D
+#ifdef USE_AXIOS3D
 #include "igstkAxios3DTracker.h"
 #include "igstkAxios3DTrackerTool.h"
 
@@ -231,8 +233,10 @@ public:
   igstk::Tracker::Pointer CreateTracker()
     {
     igstk::Axios3DTracker::Pointer tracker = igstk::Axios3DTracker::New();
-    tracker->RequestLoadLocatorsXML("C:/workspace/IGDTTrackerLogger/DRF.xml");
-    tracker->RequestLoadLocatorsXML("C:/workspace/IGDTTrackerLogger/Probe.xml");
+    // place locator configuration files into the same directory as the
+    // MultiTrackerLogger executable
+    tracker->RequestLoadLocatorsXML("DRF.xml");
+    tracker->RequestLoadLocatorsXML("Probe.xml");
     tracker->setVirtualMode(false);
 
     return tracker.GetPointer();
@@ -241,19 +245,18 @@ public:
   igstk::TrackerTool::Pointer CreateTrackerTool( int id )
     {
     switch( id ){
-      case 0:
+      case m_Tool:
         {
         igstk::Axios3DTrackerTool::Pointer tool =
                                               igstk::Axios3DTrackerTool::New();
-        //tool->RequestSetMarkerName("DRF");
-        tool->RequestSetMarkerName("PROBE");
+        tool->RequestSetMarkerName("Probe");
         return tool.GetPointer();
         }
-      case 1:
+      case m_DRF:
         {
         igstk::Axios3DTrackerTool::Pointer tool =
                                               igstk::Axios3DTrackerTool::New();
-        //tool->RequestSetMarkerName("PROBE");
+        tool->RequestSetMarkerName("DRF");
         return tool.GetPointer();
         }
       }
@@ -274,17 +277,17 @@ public:
 TrackerInitializer *TrackerInitializer::CreateTrackerInitializer(
                                                           std::string type )
 {
-#ifdef IGDT_USE_EASYTRACK
+#ifdef USE_EASYTRACK
   if( type == "EasyTrack500" ){
     return new EasyTrackInitializer();
     }
 #endif
-#ifdef IGDT_USE_OLDPOLARIS
-  if( type == "OldPolaris" ){
-    return new OldPolarisInitializer();
+#ifdef USE_POLARISCLASSIC
+  if( type == "PolarisClassic" ){
+    return new PolarisClassicInitializer();
     }
 #endif
-#ifdef IGDT_USE_AXIOS3D
+#ifdef USE_AXIOS3D
   if( type == "Axios3D" ){
     return new Axios3DInitializer();
     }
