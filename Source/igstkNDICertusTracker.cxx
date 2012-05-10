@@ -77,7 +77,6 @@ bool NDICertusTracker::ResetSystemVariables( void )
   igstkLogMacro( DEBUG, "igstk::NDICertusTracker::Initialize called ...\n");
 
     // Reset of the CERTUS variables
-  nMarkersToActivate            = 0;
   Status.dtSettings.nMarkers        = 0;
   Status.dtSettings.fFrameFrequency    = 0;
   Status.dtSettings.fMarkerFrequency    = 0;
@@ -118,15 +117,15 @@ void NDICertusTracker::CreateErrorCodeList()
   ErrorCodeContainerType & ecc = m_ErrorCodeContainer;
 }
 
-//TO BE VERIFIED
 std::string NDICertusTracker::GetErrorDescription( )
 {
+  // optional extension: forward error message from device using the NDI API
   /*
-  if( OptotrakGetErrorString( (char*)strErrorName.c_str(), MAX_ERROR_STRING_LENGTH + 1 ) == 0 )
+  if( OptotrakGetErrorString( (char*)strErrorName.c_str(),
+                          MAX_ERROR_STRING_LENGTH + 1 ) == 0 )
   {
     return strErrorName;
   }
-
   */
 
   return "NO ERROR";
@@ -148,9 +147,6 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
    * 6) Get Setup                 (OptotrackGetStatus)  
    * 7) Load rigid bodies            (RigidBodyAddFromFile)
    */
-
-  int uFlags;
-
 
    //-------------------------------
    // 1. Determine system configuration
@@ -234,12 +230,12 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
             &Status.dtSettings.fVoltage,
             &Status.dtSettings.fCollectionTime,
             &Status.dtSettings.fPreTriggerTime,
-            &uFlags) )
+            &m_NFlags) )
   {
   igstkLogMacro( CRITICAL, "Error Get Status");
   return FAILURE;
   }
-  Status.dtSettings.uFlags = uFlags;
+  Status.dtSettings.uFlags = m_NFlags;
   //--- (end) Get Setup 
   
   //----------------------------------------
@@ -284,7 +280,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
             &Status.dtSettings.fVoltage,
             &Status.dtSettings.fCollectionTime,
             &Status.dtSettings.fPreTriggerTime,
-            &uFlags) )
+            &m_NFlags) )
   {
     igstkLogMacro( CRITICAL, "Error Get Status");
     return FAILURE;
@@ -309,7 +305,7 @@ NDICertusTracker
   igstkLogMacro( DEBUG,
     "igstk::NDICertusTracker::VerifyTrackerToolInformation called ...\n");
 
-  // Verify that the template file for the rigidBody is found
+  // check if trackertool object is generated
   typedef igstk::NDICertusTrackerTool              NDICertusTrackerToolType;
 
   TrackerToolType * trackerToolNonConst =
@@ -348,11 +344,12 @@ NDICertusTracker::ResultType NDICertusTracker::InternalStartTracking( void )
 {
   igstkLogMacro( DEBUG,
     "igstk::NDICertusTracker::InternalStartTracking called ...\n");
-   if( OptotrakActivateMarkers() ) // Attiva i Markers
+   if( OptotrakActivateMarkers() ) // activate markers
     {
       return FAILURE;
     } /* if */
 
+  // give the device time to activate the markers
   igstk::PulseGenerator::Sleep(1000);
 
   return SUCCESS;
@@ -369,6 +366,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalStopTracking( void )
     return FAILURE;
   } /* if */
 
+  // give the device time to deactivate the markers
   igstk::PulseGenerator::Sleep(1000);
 
   return SUCCESS;
@@ -400,17 +398,9 @@ NDICertusTracker::ResultType NDICertusTracker::InternalUpdateStatus()
   m_BufferLock->Lock();
 
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
-  
-  //typedef TrackerToolMarkerDataContainerType::const_iterator MarkerConstItr;
-
 
   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
   InputConstIterator inputEnd = this->m_ToolTransformBuffer.end();
-
-
-  //MarkerConstItr inputMarkerItr = this->m_ToolMarkerDataBuffer.begin();
-  //MarkerConstItr inputMarkerEnd = this->m_ToolMarkerDataBuffer.end();
-
 
   TrackerToolsContainerType trackerToolContainer =
     this->GetTrackerToolContainer();
@@ -493,7 +483,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalThreadedUpdateStatus( voi
   m_BufferLock->Lock();
   
   // Get Rigid Body Transform
-  if (DataGetLatestTransforms( &uFrameNumber, &uElements, &uFlags, &RigidBodyData ) )
+  if (DataGetLatestTransforms( &m_UFrameNumber, &m_UElements, &m_UFlags, &RigidBodyData ) )
   {
     igstkLogMacro( CRITICAL, "Error getting rigid body transforms");
     
@@ -501,7 +491,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalThreadedUpdateStatus( voi
     return FAILURE;
   }
 
-  for(int uRigidCnt = 0; uRigidCnt < uElements; ++uRigidCnt )
+  for(int uRigidCnt = 0; uRigidCnt < m_UElements; ++uRigidCnt )
   {
       std::vector < double > transform;
 
@@ -516,7 +506,6 @@ NDICertusTracker::ResultType NDICertusTracker::InternalThreadedUpdateStatus( voi
     if( (RigidBodyData.pRigidData[uRigidCnt].flags != OPTOTRAK_UNDETERMINED_FLAG) && (RigidBodyData.pRigidData[uRigidCnt].flags != OPTOTRAK_RIGID_ERR_MKR_SPREAD) 
     &&( RigidBodyData.pRigidData[uRigidCnt].transformation.quaternion.translation.x>(-10000000) ) ) // This is terrible I know, but OPTOTRAK_UNDETERMINED_FLAG does not seem to work properly; basically when a tool is not visible Certus system returns a very negative constant...
     {
-
       double translation[3];
       //the first three are translation
       translation[0] = RigidBodyData.pRigidData[uRigidCnt].transformation.quaternion.translation.x;
@@ -634,15 +623,9 @@ void NDICertusTracker::PrintSelf( std::ostream& os, itk::Indent indent ) const
           
 }
 
-int NDICertusTracker::SetCoordinateFrame(int rigidBodyID, int mode)
+int NDICertusTracker::SetCoordinateFrame(int rigidBodyID, int flag)
 {
-  // FIXME
-  //Compilation Error, undeclared identifier, 'flag'
-  // Patrick, Jan 25, 2010
-
-  int flag = 0; //temp fix
   return(RigidBodyChangeFOR(rigidBodyID,flag));
 }
-
         
 } // end of namespace igstk

@@ -104,19 +104,10 @@ public:
   struct  OptotrakRigidStatusStruct    rigidBodyStatus;
   struct  OptotrakRigidDescrStruct    rigidBodyDescrArray[MAX_RIGID_BODIES];
   
-  RigidBodyDataType              RigidBodyData;
+  RigidBodyDataType               RigidBodyData;
 
-  int i, nIterations,
-  nCurDevice,
-  nCurMarker,
-  nDevices,
-  nMarkersToActivate;
-  
-  unsigned int
-  uFlags,
-  uElements,
-  uFrameNumber;
-
+  unsigned int                    m_UFlags, m_UElements, m_UFrameNumber;
+  int                             m_NFlags;
 protected:
 
   NDICertusTracker(void);
