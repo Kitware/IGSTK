@@ -55,6 +55,7 @@ public:
   static std::list<std::string> GetAvailableTrackerTypes() {
     m_TrackerTypes.clear();
     // register the available tracker types
+
 #ifdef USE_EASYTRACK
     m_TrackerTypes.push_back( "EasyTrack500" );
 #endif
