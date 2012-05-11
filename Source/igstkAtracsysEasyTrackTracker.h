@@ -84,10 +84,6 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const;
 
-  /** Create an associative container that maps error code to error
-    * descritpion */
-  static void Createm_ErrorCodeList();
-
   /** Get Error description  */
   static std::string GetErrorDescription(  );
 
@@ -100,7 +96,7 @@ protected:
                                      TrackerToolType * trackerTool );
 
 private:
-  void reportError();
+  void ReportError();
 
   // struct holding PnP marker properties
   struct PnpMarker

@@ -58,9 +58,6 @@ m_StateMachine(this)
   // transformations from thread that is communicating
   // with the tracker to the main thread.
   m_BufferLock = itk::MutexLock::New();
-
-  // Set TrackerPulseGenerator frequency
-  RequestSetFrequency( 30 );
 }
 
 /** Destructor */
@@ -99,7 +96,7 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalOpen( voi
     }
 
   if(m_HasError){
-    reportError();
+    ReportError();
     return FAILURE;
     }
 
@@ -115,6 +112,8 @@ AtracsysEasyTrackTracker
   igstkLogMacro( DEBUG,
     "igstk::AtracsysEasyTrackTracker::VerifyTrackerToolInformation called ...\n");
 
+  // purposely not impelmented because the EasyTrack 500 is an active optical
+  // system and tracker tools are set through port numbers
   return SUCCESS;
 }
 
@@ -155,7 +154,7 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalStartTrac
 
   // check error
   if(m_HasError){
-    reportError();
+    ReportError();
     return FAILURE;
     }
 
@@ -180,7 +179,7 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalStopTrack
 
   // check error
   if(m_HasError){
-    reportError();
+    ReportError();
     return FAILURE;
     }
 
@@ -271,9 +270,9 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalUpdateSta
     rotation.Set(m);
 
     // report error value
-    // Get error value from the tracker. TODO
     typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = (inputItr->second)[12];
+    const int transformationError = 12;
+    ErrorType errorValue = (inputItr->second)[transformationError];
 
     transform.SetToIdentity(this->GetValidityTime());
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
@@ -314,7 +313,8 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker
   // unlock the buffer
   m_BufferLock->Unlock();
 
-  usleep(1);
+  // release the scheduler to update
+  igstk::PulseGenerator::Sleep(1);
 
   return SUCCESS;
 }
@@ -461,7 +461,7 @@ void AtracsysEasyTrackTracker::ObjectMarkerCallback( unsigned uMarkerID,
     }
 }
 
-void AtracsysEasyTrackTracker::reportError()
+void AtracsysEasyTrackTracker::ReportError()
 {
   printf("AtracsysEasyTrackTracker error: (%u): %s", m_ErrorCode, m_ErrorString );
 }
