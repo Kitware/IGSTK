@@ -422,8 +422,6 @@ int MarkerDetector:: perimeter(vector<Point2f> &a)
  *
  *
  */
-
-/*
 void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<cv::Point2f> &  Corners,int blockSize)
 {
     int halfSize=blockSize/2;
@@ -449,7 +447,7 @@ void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<
         }
     }
 }
-*/
+
 
 /************************************
  *
