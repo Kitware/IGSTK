@@ -123,13 +123,17 @@ void RegisterTests()
   REGISTER_TEST(igstkAscension3DGTrackerTest);
 #endif
 
+#ifdef IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
+  REGISTER_TEST(igstkAtracsysEasyTrackTrackerTest);
+  REGISTER_TEST(igstkAtracsysEasyTrackTrackerToolTest);
+#endif
+
 #ifdef IGSTK_TEST_NDICertusTracker_ATTACHED
   REGISTER_TEST(igstkNDICertusTrackerToolTest);
   REGISTER_TEST(igstkNDICertusTrackerTest);
 #endif
 
-
-  // Tests depend on data
+// Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
   REGISTER_TEST(igstkCTImageReaderTest);

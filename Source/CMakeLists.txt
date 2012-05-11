@@ -169,6 +169,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+IF(IGSTK_USE_AtracsysEasyTrack500)
+    SET(IGSTK_HEADS
+    ${IGSTK_HEADS}
+    igstkAtracsysEasyTrackTracker.h
+    igstkAtracsysEasyTrackTrackerTool.h
+    )
+ENDIF(IGSTK_USE_AtracsysEasyTrack500)
+
 IF(IGSTK_USE_AXIOS3D)
   SET(IGSTK_HEADS
   ${IGSTK_HEADS}
@@ -386,6 +394,16 @@ IF(IGSTK_USE_Ascension3DGTracker)
       igstkAscension3DGTrackerTool.cxx
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+IF(IGSTK_USE_AtracsysEasyTrack500)
+    SET(IGSTK_SRCS
+    ${IGSTK_SRCS}
+    igstkAtracsysEasyTrackTracker.cxx
+    igstkAtracsysEasyTrackTrackerTool.cxx
+    )
+
+    SET( EXTRA_LIBS ${EXTRA_LIBS} atracsysTrackingLib usb-1.0 )
+ENDIF(IGSTK_USE_AtracsysEasyTrack500)
 
 IF(IGSTK_USE_AXIOS3D)
   SET(IGSTK_SRCS
