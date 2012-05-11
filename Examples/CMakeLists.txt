@@ -8,6 +8,7 @@ SUBDIRS(
  TrackerConfiguration
  Tools
  TrackerDataLogger
+ MultiTrackerLogger
 )
 
 
@@ -42,6 +43,13 @@ IF (IGSTK_USE_OpenIGTLink)
     SUBDIRS(  OpenIGTLinkConfigurationReaders )
 ENDIF (IGSTK_USE_OpenIGTLink)
 
+IF ( IGSTKSandbox_USE_AtracsysEasyTrack500 )
+  SUBDIRS( MultiTrackerLogger )
+ELSEIF ( IGSTKSandbox_USE_AXIOS3D_CAMBARB2 )
+  SUBDIRS( MultiTrackerLogger )
+ELSEIF ( IGSTKSandbox_USE_POLARIS_CLASSIC )
+  SUBDIRS( MultiTrackerLogger )
+ENDIF()
 
 IF(IGSTK_USE_VideoImager)
  IF( WIN32 )
