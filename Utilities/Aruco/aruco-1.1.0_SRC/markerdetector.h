@@ -258,7 +258,6 @@ private:
 //                         double b1, double b2, double b3 );
 //
 
-    //detection of the
     void findBestCornerInRegion_harris(const cv::Mat  & grey,vector<cv::Point2f> &  Corners,int blockSize);
 
     /**Given a vector vinout with elements and a boolean vector indicating the lements from it to remove,
