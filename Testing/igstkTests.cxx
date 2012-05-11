@@ -14,7 +14,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
+  
 // this file defines the igstkTests for the test driver
 // and all it expects is that you have a function called RegisterTests
 #if defined(_MSC_VER)
@@ -123,6 +123,12 @@ void RegisterTests()
   REGISTER_TEST(igstkAscension3DGTrackerTest);
 #endif
 
+#ifdef IGSTK_TEST_NDICertusTracker_ATTACHED
+  REGISTER_TEST(igstkNDICertusTrackerToolTest);
+  REGISTER_TEST(igstkNDICertusTrackerTest);
+#endif
+
+
   // Tests depend on data
 #ifdef IGSTK_DATA_ROOT
   REGISTER_TEST(igstkAuroraTrackerSimulatedTest);
@@ -135,12 +141,22 @@ void RegisterTests()
   REGISTER_TEST(igstkNDICommandInterpreterSimulatedTest);
   REGISTER_TEST(igstkNDICommandInterpreterStressTest);
   REGISTER_TEST(igstkPolarisTrackerSimulatedTest);
+  REGISTER_TEST(igstkPolarisClassicTrackerSimulatedTest);
   REGISTER_TEST(igstkSerialCommunicationSimulatorTest);
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
   REGISTER_TEST(igstkPETImageReaderTest);
+
+#ifdef IGSTK_USE_AXIOS3D
   REGISTER_TEST(igstkAxios3DTrackerSimulatedTest);
   REGISTER_TEST(igstkAxios3DTrackerToolTest);
+#endif 
+  
+#ifdef IGSTK_USE_ArucoTracker
+  REGISTER_TEST(igstkArucoTrackerSimulatedTest);
+  REGISTER_TEST(igstkArucoTrackerToolTest);
+#endif
+  
 #endif 
 
   // Tests depend on FLTK
