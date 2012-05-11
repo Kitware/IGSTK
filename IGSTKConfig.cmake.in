@@ -64,4 +64,6 @@ SET(IGSTK_USE_MicronTracker "@IGSTK_USE_MicronTracker@")
 # InfinitTrack option
 SET(IGSTK_USE_InfiniTrack "@IGSTK_USE_InfiniTrack@")
 
+# NDICertus Tracker option
+SET(IGSTK_USE_NDICertusTracker "@IGSTK_USE_NDICertusTracker@")
 

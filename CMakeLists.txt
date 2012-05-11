@@ -228,6 +228,23 @@ IF(IGSTK_USE_Ascension3DGTracker)
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+# Connect NDI Certus Tracker
+OPTION(IGSTK_USE_NDICertusTracker "Connect NDI Certus Tracker" OFF)
+IF(IGSTK_USE_NDICertusTracker)
+  #INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus ) replaced by the following
+  FIND_PATH(NDICERTUS_INCLUDE_DIRECTORY certus_aux.c)
+  INCLUDE_DIRECTORIES( ${NDICERTUS_INCLUDE_DIRECTORY} )
+  
+  FIND_LIBRARY( CERTUS_LIBRARY
+    NAMES  NDItb NDItb.lib oapi oapi.lib
+    PATHS "C:/NDIoapi/ndlib/msvc"
+    DOC "Full path to the NDItb.lib (Linux) of oapi.lib (Windows) file"
+    )
+	
+  GET_FILENAME_COMPONENT( CERTUS_LIBRARY_DIRS ${CERTUS_LIBRARY} PATH )
+  LINK_DIRECTORIES( ${CERTUS_LIBRARY_DIRS} )
+ENDIF(IGSTK_USE_NDICertusTracker)
+
 #
 # Use OpenIGTLink protocol
 #

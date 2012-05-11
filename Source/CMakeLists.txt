@@ -169,6 +169,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_HEADS
+	  ${IGSTK_HEADS}
+	  igstkNDICertusTracker.h
+	  igstkNDICertusTrackerTool.h
+	  )
+ENDIF(IGSTK_USE_NDICertusTracker)
+
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
       ${IGSTK_HEADS}
@@ -371,6 +379,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkNDICertusTracker.cxx
+      igstkNDICertusTrackerTool.cxx
+     )
+ENDIF(IGSTK_USE_NDICertusTracker)
+
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS
       ${IGSTK_SRCS}
@@ -455,6 +471,14 @@ ENDIF(IGSTK_USE_OpenIGTLink)
 IF(IGSTK_USE_SceneGraphVisualization)
   SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+IF(IGSTK_USE_NDICertusTracker)
+  IF( WIN32 )
+    SET(EXTRA_LIBS ${EXTRA_LIBS} oapi.lib)
+  ELSE( WIN32 )
+    SET(EXTRA_LIBS ${EXTRA_LIBS} NDItb.lib)
+  ENDIF( WIN32 )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenCV)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})

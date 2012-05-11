@@ -45,6 +45,7 @@
 #include "igstkPolarisSpectraConfigurationXMLFileReader.h"
 #include "igstkPolarisHybridConfigurationXMLFileReader.h"
 #include "igstkAuroraConfigurationXMLFileReader.h"
+#include "igstkCertusConfigurationXMLFileReader.h"
 #include "igstkMicronConfigurationXMLFileReader.h"
 #include "igstkAscensionConfigurationXMLFileReader.h"
 #include "igstkAscension3DGConfigurationXMLFileReader.h"
@@ -86,7 +87,7 @@ int main( int argc, char *argv[] )
 //
 // EndLatex
 // BeginCodeSnippet
-  const unsigned int NUM_TRACKER_TYPES = 7;
+  const unsigned int NUM_TRACKER_TYPES = 8;
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
     trackerConfigurationXMLReaders[NUM_TRACKER_TYPES];
   trackerConfigurationXMLReaders[0] = 
@@ -103,6 +104,11 @@ int main( int argc, char *argv[] )
        igstk::AscensionConfigurationXMLFileReader::New();
   trackerConfigurationXMLReaders[6] = 
     igstk::Ascension3DGConfigurationXMLFileReader::New();
+  trackerConfigurationXMLReaders[7] = 
+    igstk::CertusConfigurationXMLFileReader::New();
+
+
+
 // EndCodeSnippet
 
 // BeginLatex

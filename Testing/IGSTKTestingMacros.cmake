@@ -22,9 +22,12 @@
 # IGSTK_USE_OpenIGTLink : Use OpenIGTLink  
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
 # IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
+# IGSTK_USE_Ascension3DGTracker
+# IGSTK_TEST_Ascension3DGTracker_ATTACHED
+# IGSTK_USE_NDICertusTracker
+# IGSTK_TEST_NDICertusTracker_ATTACHED
 # IGSTK_USE_ArucoTracker : Run ArucoTracker tests
  
-
 
 MACRO(IGSTKTesting 
       EXECUTABLE_NAME 
@@ -50,6 +53,8 @@ MACRO(IGSTKTesting
       IGSTK_TEST_InfiniTrack_ATTACHED
       IGSTK_USE_Ascension3DGTracker
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
+      IGSTK_USE_NDICertusTracker
+      IGSTK_TEST_NDICertusTracker_ATTACHED
       IGSTK_USE_ArucoTracker
     )
 
@@ -327,6 +332,15 @@ IF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
               ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
 ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
+
+IF(${IGSTK_TEST_NDICertusTracker_ATTACHED})
+  ADD_TEST(igstkNDICertusTrackerTest ${IGSTK_TESTS} igstkNDICertusTrackerTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
+          )
+ENDIF(${IGSTK_TEST_NDICertusTracker_ATTACHED})
+
 
 
 #-----------------------------------------------------------------------------
@@ -990,6 +1004,15 @@ IF(${IGSTK_USE_Ascension3DGTracker})
     igstkAscension3DGTrackerToolTest.cxx
     )
 ENDIF(${IGSTK_USE_Ascension3DGTracker})  
+
+IF(${IGSTK_USE_NDICertusTracker})  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkNDICertusTrackerTest.cxx
+    igstkNDICertusTrackerToolTest.cxx
+    )
+ENDIF(${IGSTK_USE_NDICertusTracker})  
+
 
 
 IF(${IGSTK_USE_Qt})  
