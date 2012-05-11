@@ -23,6 +23,8 @@
 
 #cmakedefine IGSTK_USE_OpenCV
 
+#cmakedefine IGSTK_USE_ArucoTracker
+
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT
 #  undef IGSTK_DATA_ROOT

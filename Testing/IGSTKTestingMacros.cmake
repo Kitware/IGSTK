@@ -26,8 +26,8 @@
 # IGSTK_TEST_Ascension3DGTracker_ATTACHED
 # IGSTK_USE_NDICertusTracker
 # IGSTK_TEST_NDICertusTracker_ATTACHED
+# IGSTK_USE_ArucoTracker : Run ArucoTracker tests
  
-
 
 MACRO(IGSTKTesting 
       EXECUTABLE_NAME 
@@ -55,6 +55,7 @@ MACRO(IGSTKTesting
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
       IGSTK_USE_NDICertusTracker
       IGSTK_TEST_NDICertusTracker_ATTACHED
+      IGSTK_USE_ArucoTracker
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -188,6 +189,20 @@ ENDIF(ITK_PRE4_VERSION)
               ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom
               ${IGSTK_TEST_AURORA_PORT_NUMBER} )
 
+IF(${IGSTK_USE_ArucoTracker})
+  ADD_TEST( igstkArucoTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkArucoTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/ArucoSimulationVideo.avi
+			  ${IGSTK_DATA_ROOT}/Input/ArucoCalibrationFile.yml
+              )
+  ADD_TEST( igstkArucoTrackerToolTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerToolTest
+              )
+ENDIF(${IGSTK_USE_ArucoTracker})
+
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterSimulatedTest ${IGSTK_TEST_OUTPUT_DIR}
 ${IGSTK_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
@@ -201,6 +216,13 @@ ${IGSTK_TEST_POLARIS_PORT_NUMBER})
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom 
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER})
+
+  ADD_TEST( igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisClassicTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/polaris_classic_stream.txt
               ${IGSTK_TEST_POLARIS_PORT_NUMBER})
  
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
@@ -627,7 +649,6 @@ IF( ${IGSTK_TEST_Ascension3DGTracker_ATTACHED} )
             ${IGSTK_TEST_OUTPUT_DIR}/igstkAscension3DGTrackerTestLogOutput.txt  )
 ENDIF (${IGSTK_TEST_Ascension3DGTracker_ATTACHED})
 
-
 IF(${IGSTK_USE_OpenIGTLink})
   
   ADD_TEST( igstkTrackerToolObserverToOpenIGTLinkRelayTest
@@ -900,7 +921,16 @@ IF(IGSTK_DATA_ROOT)
     igstkPolarisTrackerSimulatedTest.cxx 
     igstkSerialCommunicationSimulatorTest.cxx
     igstkPETImageReaderTest.cxx
-  )  
+    igstkPolarisClassicTrackerSimulatedTest.cxx
+  ) 
+  
+  IF(${IGSTK_USE_ArucoTracker})
+    SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+	  igstkArucoTrackerSimulatedTest.cxx
+	  igstkArucoTrackerToolTest.cxx)
+  ENDIF(${IGSTK_USE_ArucoTracker})
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
