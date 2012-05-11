@@ -169,6 +169,14 @@ IF(IGSTK_USE_Ascension3DGTracker)
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
 
+IF(IGSTK_USE_AXIOS3D)
+  SET(IGSTK_HEADS
+  ${IGSTK_HEADS}
+  igstkAxios3DTracker.h
+  igstkAxios3DTrackerTool.h
+  )
+ENDIF(IGSTK_USE_AXIOS3D)
+
 IF(IGSTK_USE_NDICertusTracker)
   SET(IGSTK_HEADS
 	  ${IGSTK_HEADS}
@@ -378,6 +386,16 @@ IF(IGSTK_USE_Ascension3DGTracker)
       igstkAscension3DGTrackerTool.cxx
      )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
+
+IF(IGSTK_USE_AXIOS3D)
+  SET(IGSTK_SRCS
+  ${IGSTK_SRCS}
+  igstkAxios3DTracker.cxx
+  igstkAxios3DTrackerTool.cxx
+  )
+
+  SET(EXTRA_LIBS ${EXTRA_LIBS} Metrology_DLLImport )
+ENDIF(IGSTK_USE_AXIOS3D)
 
 IF(IGSTK_USE_NDICertusTracker)
   SET(IGSTK_SRCS

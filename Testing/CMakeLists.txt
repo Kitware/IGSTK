@@ -55,6 +55,7 @@ IGSTKTesting(igstkTests
              IGSTK_TEST_InfiniTrack_ATTACHED
              IGSTK_USE_Ascension3DGTracker
              IGSTK_TEST_Ascension3DGTracker_ATTACHED
+             IGSTK_USE_AXIOS3D
              IGSTK_USE_NDICertusTracker
              IGSTK_TEST_NDICertusTracker_ATTACHED
 			       IGSTK_USE_ArucoTracker

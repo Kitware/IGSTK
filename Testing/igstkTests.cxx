@@ -146,6 +146,11 @@ void RegisterTests()
   REGISTER_TEST(igstkSpatialObjectReaderTest);
   REGISTER_TEST(igstkTubeReaderTest);
   REGISTER_TEST(igstkPETImageReaderTest);
+
+#ifdef IGSTK_USE_AXIOS3D
+  REGISTER_TEST(igstkAxios3DTrackerSimulatedTest);
+  REGISTER_TEST(igstkAxios3DTrackerToolTest);
+#endif 
   
 #ifdef IGSTK_USE_ArucoTracker
   REGISTER_TEST(igstkArucoTrackerSimulatedTest);
