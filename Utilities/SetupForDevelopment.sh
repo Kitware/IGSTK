@@ -18,11 +18,15 @@
 #==========================================================================*/
 
 cd "${BASH_SOURCE%/*}/.." &&
-Utilities/Scripts/SetupUser.sh && echo &&
-Utilities/Scripts/SetupSubmodules.sh && echo &&
-Utilities/Scripts/SetupHooks.sh && echo &&
-Utilities/Scripts/SetupGitAliases.sh && echo &&
-Utilities/Scripts/SetupTopicStage.sh && echo &&
-(Utilities/Scripts/SetupPush.sh ||
- echo 'Failed to setup push access.  Run this again to retry.') && echo &&
-Utilities/Scripts/GitTips.sh
+Utilities/GitSetup/setup-user && echo &&
+Utilities/GitSetup/SetupSubmodules.sh && echo &&
+Utilities/GitSetup/setup-hooks && echo &&
+Utilities/GitSetup/SetupGitAliases.sh && echo &&
+Utilities/GitSetup/setup-stage && echo &&
+(Utilities/GitSetup/setup-ssh ||
+ echo 'Failed to setup SSH.  Run this again to retry.') && echo &&
+Utilities/GitSetup/tips
+
+# Rebase master by default
+git config rebase.stat true
+git config branch.master.rebase true

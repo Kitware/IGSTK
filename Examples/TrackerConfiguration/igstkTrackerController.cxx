@@ -34,7 +34,9 @@
 #include "igstkAscension3DGTracker.h"
 #endif
 
-
+#ifdef IGSTK_USE_NDICertusTracker
+#include "igstkNDICertusTracker.h"
+#endif
 
 namespace igstk
 { 
@@ -56,6 +58,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializePolarisVicra );
   igstkAddStateMacro( AttemptingToInitializePolarisHybrid );
   igstkAddStateMacro( AttemptingToInitializeAurora );
+  igstkAddStateMacro( AttemptingToInitializeCertus );
   igstkAddStateMacro( AttemptingToInitializeMicron );
   igstkAddStateMacro( AttemptingToInitializeAscension3DG );
   igstkAddStateMacro( AttemptingToInitializeAscension );  
@@ -72,6 +75,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( AuroraInitialize );
   igstkAddInputMacro( AscensionInitialize );
   igstkAddInputMacro( MicronInitialize );
+  igstkAddInputMacro( CertusInitialize );
   igstkAddInputMacro( Ascension3DGInitialize );
   igstkAddInputMacro( StartTracking );
   igstkAddInputMacro( StopTracking );
@@ -104,6 +108,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Idle,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( Idle,
+                           CertusInitialize,
                            Idle,
                            ReportInvalidRequest );
 
@@ -204,6 +213,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
+                           CertusInitialize,
+                           AttemptingToInitializeCertus,
+                           CertusInitialize );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
                            Ascension3DGInitialize,
                            AttemptingToInitializeAscension3DG,
                            Ascension3DGInitialize );
@@ -294,6 +308,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
 
+   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           CertusInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            MicronInitialize,
                            Idle,
@@ -372,6 +391,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           CertusInitialize,
                            Idle,
                            ReportInvalidRequest );
 
@@ -458,6 +482,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           CertusInitialize,
                            Idle,
                            ReportInvalidRequest );
 
@@ -552,6 +581,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            AuroraInitialize,
                            Idle,
                            ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           CertusInitialize,
+                           Idle,
+                           ReportInvalidRequest );
   
   igstkAddTransitionMacro( AttemptingToInitializeAscension,
                            MicronInitialize,
@@ -635,6 +669,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           CertusInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            AscensionInitialize,
                            Idle,
                            ReportInvalidRequest );
@@ -683,6 +722,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest);
+
 //transitions from AttemptingToInitializeAscension3DG state
   igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
                            Failed,
@@ -711,6 +751,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
                            AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           CertusInitialize,
                            Idle,
                            ReportInvalidRequest );
 
@@ -768,7 +813,99 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            SetChildSpatialObject,
                            Idle,
                            ReportInvalidRequest);
- 
+
+  //transitions from AttemptingToInitializeCertus state
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           CertusInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+    
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
+  
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+  
   //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
                            GetTools,
@@ -831,6 +968,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( Initialized,
+                           CertusInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Initialized,
                            AscensionInitialize,
                            Initialized,
                            ReportInvalidRequest );
@@ -883,6 +1025,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            AuroraInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           CertusInitialize,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
@@ -964,6 +1111,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Tracking,
                            AuroraInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           CertusInitialize,
                            Tracking,
                            ReportInvalidRequest );
 
@@ -1059,6 +1211,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
+                           CertusInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
                            AscensionInitialize,
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
@@ -1142,6 +1299,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
  
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            AuroraInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           CertusInitialize,
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
@@ -1369,11 +1531,20 @@ TrackerController::TrackerInitializeProcessing()
       igstkPushInputMacro( Ascension3DGInitialize );
       }
    #endif
- 
+   
+    #ifdef IGSTK_USE_NDICertusTracker
+	else if( dynamic_cast<CertusTrackerConfiguration *>
+      ( this->m_TmpTrackerConfiguration ) )
+      {
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( CertusInitialize );
+      }
+    #endif
+
     else
       {
       this->m_ErrorMessage = 
-    "Unrecognized tracker type (Possibly IGSTK_USE_MicronTracker flag is off).";
+    "Unrecognized tracker type (Possibly IGSTK_USE_MicronTracker or IGSTK_USE_NDICertusTracker flag are off).";
       igstkPushInputMacro( Failed );
       }
     }
@@ -2232,6 +2403,139 @@ void TrackerController::Ascension3DGInitializeProcessing()
   this->m_StateMachine.ProcessInputs();
 #endif
 }
+
+#ifdef IGSTK_USE_NDICertusTracker
+
+NDICertusTrackerTool::Pointer
+TrackerController::InitializeCertusTool(
+  const CertusToolConfiguration *toolConfiguration )
+{
+  NDICertusTrackerTool::Pointer trackerTool = NDICertusTrackerTool::New();
+  trackerTool->RequestSetRigidBodyName(toolConfiguration->GetRigidBodyName());
+  trackerTool->RequestConfigure();
+  return trackerTool;
+}
+#endif
+
+void TrackerController::CertusInitializeProcessing()
+{
+
+#ifdef IGSTK_USE_NDICertusTracker
+
+	//create tracker
+  igstk::NDICertusTracker::Pointer tracker = igstk::NDICertusTracker::New();
+  this->m_Tracker = tracker; 
+                 //don't need to observe this for errors because the 
+                 //configuration class ensures that the frequency is valid
+  tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
+
+  CertusTrackerConfiguration *trackerConfiguration =
+    dynamic_cast<CertusTrackerConfiguration *>( this->m_TrackerConfiguration );
+  
+  
+  tracker->SetIniFileName(trackerConfiguration->GetSetupFile());
+
+  //tracker->SetCfgFileName(trackerConfiguration->GetRigidCfgFile());
+
+  tracker->rigidBodyStatus.lnRigidBodies = atoi(trackerConfiguration->GetNumberOfRigidBodies().c_str());
+
+  std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+  
+  int i=0;
+  std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+  std::map<std::string, TrackerToolConfiguration *>::const_iterator   toolConfigEnd = toolConfigurations.end();
+  CertusToolConfiguration * currentToolConfig;
+  for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<CertusToolConfiguration *>(it->second);
+	  tracker->rigidBodyDescrArray[i].lnStartMarker = atoi(currentToolConfig->GetStartMarker().c_str());
+	  tracker->rigidBodyDescrArray[i].lnNumberOfMarkers = atoi(currentToolConfig->GetNumberOfMarkers().c_str());
+	  strcpy(tracker->rigidBodyDescrArray[i].szName, currentToolConfig->GetRigidBodyName().c_str());
+	  i++;
+  }
+
+  unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+
+  tracker->RequestOpen( );
+  tracker->RemoveObserver(observerID);
+  
+  if( this->m_ErrorObserver->ErrorOccured() )
+    {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    igstkPushInputMacro( Failed );
+    }
+  else   //attach the tools and start communication 
+    {
+    ToolAttachErrorObserver::Pointer attachErrorObserver = 
+      ToolAttachErrorObserver::New();
+    std::map<std::string, TrackerToolConfiguration *> toolConfigurations = 
+        this->m_TrackerConfiguration->m_TrackerToolList;
+                          //attach tools
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator 
+      toolConfigEnd = toolConfigurations.end();
+    TrackerTool::Pointer trackerTool;
+    CertusToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<CertusToolConfiguration *>(it->second);
+
+      trackerTool = InitializeCertusTool( currentToolConfig );
+      this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first, 
+                                                        trackerTool ) );
+
+      unsigned long observerID = trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );
+      trackerTool->RequestAttachToTracker( tracker );
+      trackerTool->RemoveObserver( observerID ); 
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      }
+                      //add the reference if we have one
+    TrackerToolConfiguration* referenceToolConfiguration = 
+      this->m_TrackerConfiguration->m_ReferenceTool;
+    if( referenceToolConfiguration )
+      {
+      currentToolConfig = 
+        static_cast<CertusToolConfiguration *>( referenceToolConfiguration );
+
+      trackerTool = InitializeCertusTool( currentToolConfig );   
+      this->m_ReferenceTool = trackerTool;
+
+      trackerTool->AddObserver( 
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );      
+      trackerTool->RequestAttachToTracker( tracker );
+
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        this->m_ErrorMessage = "Failed to connect tool to tracker.";
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+        tracker->RequestSetReferenceTool( trackerTool );
+      }
+    igstkPushInputMacro( Succeeded );
+    }
+  this->m_StateMachine.ProcessInputs();
+#else
+  igstkPushInputMacro( Failed );
+  this->m_StateMachine.ProcessInputs();
+#endif
+}
+
 
 void 
 TrackerController::GetToolsProcessing()

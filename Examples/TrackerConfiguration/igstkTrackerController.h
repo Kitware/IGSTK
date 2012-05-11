@@ -49,6 +49,11 @@
 #include "igstkAscension3DGTrackerTool.h"
 #endif
 
+#ifdef IGSTK_USE_NDICertusTracker
+#include "igstkCertusTrackerConfiguration.h"
+#include "igstkNDICertusTrackerTool.h"
+#endif
+
 
 
 namespace igstk
@@ -205,6 +210,7 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializeAscension );
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
   igstkDeclareStateMacro( AttemptingToInitializeAscension3DG );
+  igstkDeclareStateMacro( AttemptingToInitializeCertus );
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( AttemptingToStartTracking );
   igstkDeclareStateMacro( Tracking );
@@ -219,6 +225,7 @@ private:
   igstkDeclareInputMacro( AscensionInitialize );
   igstkDeclareInputMacro( MicronInitialize );  
   igstkDeclareInputMacro( Ascension3DGInitialize );  
+  igstkDeclareInputMacro( CertusInitialize );
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Failed  );
@@ -239,6 +246,7 @@ private:
   void AscensionInitializeProcessing();
   void MicronInitializeProcessing();
   void Ascension3DGInitializeProcessing();
+  void CertusInitializeProcessing();
   void StartTrackingProcessing();
   void StopTrackingProcessing();
   void CloseCommunicationProcessing();
@@ -287,6 +295,10 @@ private:
   AscensionTrackerTool::Pointer InitializeAscensionTool(
     const AscensionToolConfiguration *toolConfiguration );
 
+#ifdef IGSTK_USE_NDICertusTracker
+  NDICertusTrackerTool::Pointer InitializeCertusTool(
+	const CertusToolConfiguration *toolConfiguration );
+#endif
 
   /**
    * \class Observer for the TrackerToolAttachmentToTrackerErrorEvent.

@@ -23,9 +23,13 @@
 # IGSTK_USE_VideoImager : Run VideoImager Tests 
 # IGSTK_TEST_InfiniTrack_ATTACHED : Us InfiniTrack tests
 # IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED(boolean) : Option for Atracsys easyTrack500 attached
-# 
+# IGSTK_USE_Ascension3DGTracker
+# IGSTK_TEST_Ascension3DGTracker_ATTACHED
+# IGSTK_USE_AXIOS3D
+# IGSTK_USE_NDICertusTracker
+# IGSTK_TEST_NDICertusTracker_ATTACHED
+# IGSTK_USE_ArucoTracker : Run ArucoTracker tests
  
-
 
 MACRO(IGSTKTesting 
       EXECUTABLE_NAME 
@@ -52,6 +56,10 @@ MACRO(IGSTKTesting
       IGSTK_USE_Ascension3DGTracker
       IGSTK_TEST_Ascension3DGTracker_ATTACHED
       IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
+      IGSTK_USE_AXIOS3D
+      IGSTK_USE_NDICertusTracker
+      IGSTK_TEST_NDICertusTracker_ATTACHED
+      IGSTK_USE_ArucoTracker
     )
 
 SET(IGSTK_TESTS "${CXX_TEST_PATH}/${EXECUTABLE_NAME}")
@@ -185,6 +193,20 @@ ENDIF(ITK_PRE4_VERSION)
               ${IGSTK_DATA_ROOT}/Input/aurora_multichan.rom
               ${IGSTK_TEST_AURORA_PORT_NUMBER} )
 
+IF(${IGSTK_USE_ArucoTracker})
+  ADD_TEST( igstkArucoTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkArucoTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/ArucoSimulationVideo.avi
+			  ${IGSTK_DATA_ROOT}/Input/ArucoCalibrationFile.yml
+              )
+  ADD_TEST( igstkArucoTrackerToolTest
+              ${IGSTK_TESTS}
+              igstkArucoTrackerToolTest
+              )
+ENDIF(${IGSTK_USE_ArucoTracker})
+
   ADD_TEST(igstkNDICommandInterpreterSimulatedTest ${IGSTK_TESTS}
 igstkNDICommandInterpreterSimulatedTest ${IGSTK_TEST_OUTPUT_DIR}
 ${IGSTK_TEST_POLARIS_PORT_NUMBER} ${IGSTK_DATA_ROOT})
@@ -198,6 +220,13 @@ ${IGSTK_TEST_POLARIS_PORT_NUMBER})
               ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerSimulatedTestLoggerOutput.txt
               ${IGSTK_DATA_ROOT}/polaris_stream_11_05_2005.txt
               ${IGSTK_DATA_ROOT}/ta2p0003-3-120.rom 
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER})
+
+  ADD_TEST( igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TESTS}
+              igstkPolarisClassicTrackerSimulatedTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisClassicTrackerSimulatedTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/polaris_classic_stream.txt
               ${IGSTK_TEST_POLARIS_PORT_NUMBER})
  
   ADD_TEST(igstkSerialCommunicationSimulatorTest ${IGSTK_TESTS}
@@ -238,6 +267,17 @@ igstkSerialCommunicationSimulatorTest ${IGSTK_TEST_OUTPUT_DIR}
    ${IGSTK_DATA_ROOT}/Input/MRLiver
 )
 
+  IF(${IGSTK_USE_AXIOS3D})
+    ADD_TEST( igstkAxios3DTrackerSimulatedTest ${IGSTK_TESTS}
+          igstkAxios3DTrackerSimulatedTest
+          ${IGSTK_DATA_ROOT}/AXIOS3DsimulationData/Locators.xml
+          ${IGSTK_DATA_ROOT}/AXIOS3DsimulationData
+          ${IGSTK_TEST_OUTPUT_DIR}/igstkAxios3DTrackerSimulatedTestLoggerOutput.txt
+    )
+	ADD_TEST( igstkAxios3DTrackerToolTest ${IGSTK_TESTS}
+          igstkAxios3DTrackerToolTest
+    )
+  ENDIF(${IGSTK_USE_AXIOS3D})
 
 ENDIF(IGSTK_DATA_ROOT)
 
@@ -307,6 +347,15 @@ IF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
               ${IGSTK_TEST_FLOCKOFBIRD_PORT_NUMBER}
               )
 ENDIF(${IGSTK_TEST_FLOCKOFBIRD_ATTACHED})
+
+IF(${IGSTK_TEST_NDICertusTracker_ATTACHED})
+  ADD_TEST(igstkNDICertusTrackerTest ${IGSTK_TESTS} igstkNDICertusTrackerTest
+              ${IGSTK_TEST_OUTPUT_DIR}/igstkPolarisTrackerTestLoggerOutput.txt
+              ${IGSTK_DATA_ROOT}/Input/Passive_4Marker_Planar_Rigid_Body_8700302.rom
+              ${IGSTK_TEST_POLARIS_PORT_NUMBER}
+          )
+ENDIF(${IGSTK_TEST_NDICertusTracker_ATTACHED})
+
 
 
 #-----------------------------------------------------------------------------
@@ -902,7 +951,23 @@ IF(IGSTK_DATA_ROOT)
     igstkPolarisTrackerSimulatedTest.cxx 
     igstkSerialCommunicationSimulatorTest.cxx
     igstkPETImageReaderTest.cxx
-  )  
+    igstkPolarisClassicTrackerSimulatedTest.cxx
+  )
+
+  IF(${IGSTK_USE_AXIOS3D})
+    SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkAxios3DTrackerSimulatedTest.cxx
+	igstkAxios3DTrackerToolTest.cxx)
+  ENDIF(${IGSTK_USE_AXIOS3D})
+  
+  IF(${IGSTK_USE_ArucoTracker})
+    SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+	  igstkArucoTrackerSimulatedTest.cxx
+	  igstkArucoTrackerToolTest.cxx)
+  ENDIF(${IGSTK_USE_ArucoTracker})
+
 ENDIF(IGSTK_DATA_ROOT)
 
 #-----------------------------------------------------------------------------
@@ -976,6 +1041,15 @@ IF(${IGSTK_USE_Ascension3DGTracker})
     igstkAscension3DGTrackerToolTest.cxx
     )
 ENDIF(${IGSTK_USE_Ascension3DGTracker})  
+
+IF(${IGSTK_USE_NDICertusTracker})  
+  SET(BasicTests_SRCS
+    ${BasicTests_SRCS}
+    igstkNDICertusTrackerTest.cxx
+    igstkNDICertusTrackerToolTest.cxx
+    )
+ENDIF(${IGSTK_USE_NDICertusTracker})  
+
 
 
 IF(${IGSTK_USE_Qt})  

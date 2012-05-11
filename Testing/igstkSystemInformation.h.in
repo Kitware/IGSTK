@@ -13,6 +13,8 @@
 #cmakedefine IGSTK_TEST_Ascension3DGTracker_ATTACHED
 
 #cmakedefine IGSTK_TEST_AtracsysEasyTrack500Tracker_ATTACHED
+#cmakedefine IGSTK_USE_NDICertusTracker
+#cmakedefine IGSTK_TEST_NDICertusTracker_ATTACHED
 
 #cmakedefine IGSTK_USE_Qt
 
@@ -21,6 +23,8 @@
 #cmakedefine IGSTK_USE_VideoImager
 
 #cmakedefine IGSTK_USE_OpenCV
+
+#cmakedefine IGSTK_USE_ArucoTracker
 
 #cmakedefine IGSTK_DATA_ROOT
 #ifdef IGSTK_DATA_ROOT

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- all units are mm -->
+<!-- Format version -->
+<locatordefinitions version="1" >
+	<locator id="DRF">
+		<parameter>
+			<min_targets>3</min_targets>
+			<matching_threshold>3.23869</matching_threshold>
+		</parameter>
+		<targets>
+			<target id="1">
+				<position>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+				</position>
+			</target>
+			<target id="2">
+				<position>
+					<x>61.606</x>
+					<y>-8.32667e-016</y>
+					<z>-8.88178e-016</z>
+				</position>
+			</target>
+			<target id="3">
+				<position>
+					<x>104.747</x>
+					<y>57.4713</y>
+					<z>0</z>
+				</position>
+			</target>
+			<target id="4">
+				<position>
+					<x>101.888</x>
+					<y>-62.6984</y>
+					<z>0.677777</z>
+				</position>
+			</target>
+		</targets>
+	</locator>
+</locatordefinitions>

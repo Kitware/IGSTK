@@ -168,6 +168,7 @@ IF(IGSTK_USE_MicronTracker)
     LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
   ENDIF(MTC_INCLUDE_DIRECTORY)
 ENDIF(IGSTK_USE_MicronTracker)
+
 # Connect InfiniTrack
 OPTION(IGSTK_USE_InfiniTrack "Connect InfiniTrack " OFF)
 
@@ -239,6 +240,35 @@ IF( IGSTK_USE_AtracsysEasyTrack500 )
   LINK_DIRECTORIES( ${ETK_LIBRARY_DIR} )
 ENDIF( IGSTK_USE_AtracsysEasyTrack500 )
 
+# FIND AXIOS3D CAMBAR B2
+#
+IF(WIN32)
+  OPTION(IGSTK_USE_AXIOS3D "Use Axios3D Cambar B2 Tracker" OFF)
+  IF(IGSTK_USE_AXIOS3D)
+    SET(Axios3D_INCLUDE_DIR CACHE PATH "")
+    SET(Axios3D_LIBRARY_DIR CACHE PATH "" )
+    INCLUDE_DIRECTORIES( ${Axios3D_INCLUDE_DIR} )
+    LINK_DIRECTORIES( ${Axios3D_LIBRARY_DIR} )
+  ENDIF(IGSTK_USE_AXIOS3D)
+ENDIF(WIN32)
+
+# Connect NDI Certus Tracker
+OPTION(IGSTK_USE_NDICertusTracker "Connect NDI Certus Tracker" OFF)
+IF(IGSTK_USE_NDICertusTracker)
+  #INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus ) replaced by the following
+  FIND_PATH(NDICERTUS_INCLUDE_DIRECTORY certus_aux.c)
+  INCLUDE_DIRECTORIES( ${NDICERTUS_INCLUDE_DIRECTORY} )
+  
+  FIND_LIBRARY( CERTUS_LIBRARY
+    NAMES  NDItb NDItb.lib oapi oapi.lib
+    PATHS "C:/NDIoapi/ndlib/msvc"
+    DOC "Full path to the NDItb.lib (Linux) of oapi.lib (Windows) file"
+    )
+	
+  GET_FILENAME_COMPONENT( CERTUS_LIBRARY_DIRS ${CERTUS_LIBRARY} PATH )
+  LINK_DIRECTORIES( ${CERTUS_LIBRARY_DIRS} )
+ENDIF(IGSTK_USE_NDICertusTracker)
+
 #
 # Use OpenIGTLink protocol
 #
@@ -265,6 +295,15 @@ IF(IGSTK_USE_OpenCV)
   FIND_PACKAGE( OpenCV REQUIRED )
 ENDIF(IGSTK_USE_OpenCV)
 
+# Use ArucoTracker
+OPTION(IGSTK_USE_ArucoTracker "Connect ArucoTracker" OFF)
+IF( IGSTK_USE_ArucoTracker )
+  IF(NOT IGSTK_USE_OpenCV)
+    MESSAGE( FATAL_ERROR "In order to use ArucoTracker, OpenCV is required. Turn the IGSTK_USE_OpenCV flag to on.")
+  ELSE(NOT IGSTK_USE_OpenCV)
+    INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/Aruco/aruco-1.1.0_SRC )
+  ENDIF(NOT IGSTK_USE_OpenCV)
+ENDIF( IGSTK_USE_ArucoTracker )
 
 #
 # This option enables the scene graph observer to collect relavant events to constuct the scene graph tree
@@ -483,6 +522,12 @@ IF(IGSTK_USE_KWSTYLE)
     )
   ADD_CUSTOM_TARGET(StyleCheck DEPENDS ${IGSTK_BINARY_DIR}/KWStyleReport.txt)
 ENDIF(IGSTK_USE_KWSTYLE)
+
+# Microsoft Visual Studio 10 needs additional flag in order to compile in
+# 64 Bit mode
+IF(CMAKE_GENERATOR STREQUAL "Visual Studio 10 Win64")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+ENDIF(CMAKE_GENERATOR STREQUAL "Visual Studio 10 Win64")
 
 IF( WIN32 )
   SET( IGSTK_SERIAL_PORT_0 "COM1:" CACHE STRING "First serial port device name (Default COM1)")

@@ -111,6 +111,9 @@ SET(IGSTK_HEADS
   igstkPETImageReader.h
   igstkPETImageSpatialObject.h
   igstkPETImageSpatialObjectRepresentation.h
+
+  igstkNDICommandInterpreterClassic.h
+  igstkPolarisClassicTracker.h
 )
 
 IF(IGSTK_USE_FLTK)
@@ -142,6 +145,14 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF( IGSTK_USE_ArucoTracker )
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkArucoTracker.h
+      igstkArucoTrackerTool.h
+      )
+ENDIF( IGSTK_USE_ArucoTracker )
+
 IF(IGSTK_USE_InfiniTrack)
   SET(IGSTK_HEADS
       ${IGSTK_HEADS}
@@ -165,6 +176,22 @@ IF(IGSTK_USE_AtracsysEasyTrack500)
     igstkAtracsysEasyTrackTrackerTool.h
     )
 ENDIF(IGSTK_USE_AtracsysEasyTrack500)
+
+IF(IGSTK_USE_AXIOS3D)
+  SET(IGSTK_HEADS
+  ${IGSTK_HEADS}
+  igstkAxios3DTracker.h
+  igstkAxios3DTrackerTool.h
+  )
+ENDIF(IGSTK_USE_AXIOS3D)
+
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_HEADS
+	  ${IGSTK_HEADS}
+	  igstkNDICertusTracker.h
+	  igstkNDICertusTrackerTool.h
+	  )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_HEADS
@@ -308,6 +335,9 @@ SET(IGSTK_SRCS
   igstkPETImageReader.cxx
   igstkPETImageSpatialObject.cxx
   igstkPETImageSpatialObjectRepresentation.cxx
+
+  igstkNDICommandInterpreterClassic.cxx
+  igstkPolarisClassicTracker.cxx
 )
 
 IF(IGSTK_USE_FLTK)
@@ -340,6 +370,14 @@ IF(IGSTK_USE_MicronTracker)
      )
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF( IGSTK_USE_ArucoTracker )
+  SET(IGSTK_HEADS
+      ${IGSTK_HEADS}
+      igstkArucoTracker.cxx
+      igstkArucoTrackerTool.cxx
+      )
+ENDIF( IGSTK_USE_ArucoTracker )
+
 IF(IGSTK_USE_InfiniTrack)
   SET(IGSTK_SRCS
       ${IGSTK_SRCS}
@@ -366,6 +404,24 @@ IF(IGSTK_USE_AtracsysEasyTrack500)
 
     SET( EXTRA_LIBS ${EXTRA_LIBS} atracsysTrackingLib usb-1.0 )
 ENDIF(IGSTK_USE_AtracsysEasyTrack500)
+
+IF(IGSTK_USE_AXIOS3D)
+  SET(IGSTK_SRCS
+  ${IGSTK_SRCS}
+  igstkAxios3DTracker.cxx
+  igstkAxios3DTrackerTool.cxx
+  )
+
+  SET(EXTRA_LIBS ${EXTRA_LIBS} Metrology_DLLImport )
+ENDIF(IGSTK_USE_AXIOS3D)
+
+IF(IGSTK_USE_NDICertusTracker)
+  SET(IGSTK_SRCS
+      ${IGSTK_SRCS}
+      igstkNDICertusTracker.cxx
+      igstkNDICertusTrackerTool.cxx
+     )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenIGTLink)
     SET(IGSTK_SRCS
@@ -435,6 +491,11 @@ IF(IGSTK_USE_MicronTracker)
   SET(EXTRA_LIBS ${EXTRA_LIBS} igstkMTCu)
 ENDIF(IGSTK_USE_MicronTracker)
 
+IF( IGSTK_USE_ArucoTracker )
+  SET(EXTRA_LIBS ${EXTRA_LIBS} aruco)
+ENDIF( IGSTK_USE_ArucoTracker )
+
+
 IF(IGSTK_USE_InfiniTrack)
   SET(EXTRA_LIBS ${EXTRA_LIBS}  v9ITK )
 ENDIF(IGSTK_USE_InfiniTrack)
@@ -446,6 +507,14 @@ ENDIF(IGSTK_USE_OpenIGTLink)
 IF(IGSTK_USE_SceneGraphVisualization)
   SET(EXTRA_LIBS ${EXTRA_LIBS} SceneGraphVisualization)
 ENDIF(IGSTK_USE_SceneGraphVisualization)
+
+IF(IGSTK_USE_NDICertusTracker)
+  IF( WIN32 )
+    SET(EXTRA_LIBS ${EXTRA_LIBS} oapi.lib)
+  ELSE( WIN32 )
+    SET(EXTRA_LIBS ${EXTRA_LIBS} NDItb.lib)
+  ENDIF( WIN32 )
+ENDIF(IGSTK_USE_NDICertusTracker)
 
 IF(IGSTK_USE_OpenCV)
   SET(EXTRA_LIBS ${EXTRA_LIBS} ${OpenCV_LIBS})
