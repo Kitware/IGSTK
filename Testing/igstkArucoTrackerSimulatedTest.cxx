@@ -73,13 +73,12 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
   typedef itk::StdStreamLogOutput       LogOutputType;
   typedef igstk::TransformObserver      ObserverType;
 
-  if( argc < 5 )
+  if( argc < 4 )
     {
     std::cerr << " Usage: " << argv[0] << "\t" 
                             << "Logger_Output_filename "
                             << "Simulation_filename "
                             << "Camera_Calibration_file "
-                            << "PositionLogFile "
                             << std::endl;
     return EXIT_FAILURE;
     }
@@ -157,9 +156,6 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  std::ofstream positionLogFile;
-  positionLogFile.open(argv[4]);
-
   for(unsigned int i=0; i<50; i++)
   {
     igstk::PulseGenerator::Sleep( 10 );
@@ -183,11 +179,6 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
               << "," << position[1] << "," << position[2]
               << ")" << std::endl;
         std::ostringstream message;
-        message << trackerTool->GetTrackerToolIdentifier()
-              << "\t  Position = (" << position[0]
-              << "," << position[1] << "," << position[2]
-              << ")" << std::endl;;
-        positionLogFile << message.str();
 
         // check position of marker
         if( (position[0] - meanPosition[0]) > threshold ||
@@ -200,8 +191,6 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
     }
   }
   
-  positionLogFile.close();
-
   std::cout << "RequestStopTracking()" << std::endl;
   tracker->RequestStopTracking();
 
