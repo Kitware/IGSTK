@@ -60,7 +60,7 @@ public:
   void SetSize(unsigned int size);
 
   /** GetSize method returns the size of data */
-  unsigned int GetSize() const;
+  size_t GetSize() const;
 
   /** Get a data container (returns constant) */
   const ContainerType& GetData() const { return this->m_Data; }
@@ -107,7 +107,7 @@ public:
   
   /** Encode method encodes binary data to ASCII string in std::string. */
   static void Encode( std::string& output, const unsigned char *data, 
-                                                          unsigned int size );
+                                                          size_t size );
 
   /** Decode method decodes encoded ASCII string to binary data */
   bool Decode( const std::string& asciiString );

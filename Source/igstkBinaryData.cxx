@@ -55,7 +55,7 @@ void BinaryData
 }
 
 /** GetSize method returns the size of data */
-unsigned int BinaryData
+size_t BinaryData
 ::GetSize() const
 {
   return this->m_Data.size();
@@ -77,7 +77,7 @@ void BinaryData
 void BinaryData
 ::CopyTo(unsigned char* output) const
 {
-  const unsigned int size = this->m_Data.size();
+  const size_t size = this->m_Data.size();
   for( unsigned int i = 0; i < size; ++i )
     {
     output[i] = this->m_Data[i];
@@ -107,9 +107,9 @@ bool BinaryData
 ::operator<( const BinaryData & inputBinaryData ) const
 {
   unsigned int i;
-  unsigned int size_left = this->m_Data.size();
-  unsigned int size_right = inputBinaryData.m_Data.size();
-  unsigned int size_min = (size_left < size_right)? size_left : size_right;
+  size_t size_left = this->m_Data.size();
+  size_t size_right = inputBinaryData.m_Data.size();
+  size_t size_min = (size_left < size_right)? size_left : size_right;
 
   for( i = 0; i < size_min; ++i )
     {
@@ -189,7 +189,7 @@ BinaryData::operator std::string() const
 
 /** Encode method encodes binary data to ASCII string in std::string. */
 void BinaryData::Encode( std::string& output, const unsigned char *data, 
-                         unsigned int size )
+                         size_t size )
 {
   unsigned int i;
   std::ostringstream os;
