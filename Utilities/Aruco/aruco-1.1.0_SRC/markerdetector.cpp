@@ -435,7 +435,7 @@ void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<
             vector<Point2f> corners2;
             goodFeaturesToTrack(subImage, corners2, 10, 0.001, halfSize);
             double minD=9999;
-            int bIdx=-1;
+            size_t bIdx=-1;
             cv::Point2f Center(static_cast<float>(halfSize),static_cast<float>(halfSize));
             for (size_t j=0;j<corners2.size();j++) {
                 double dist=cv::norm(corners2[j]-Center);
