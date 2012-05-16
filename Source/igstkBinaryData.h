@@ -57,10 +57,10 @@ public:
   virtual ~BinaryData();
 
   /** SetSize method resizes/allocates memory */
-  void SetSize(unsigned int size);
+  void SetSize(size_t size);
 
   /** GetSize method returns the size of data */
-  unsigned int GetSize() const;
+  size_t GetSize() const;
 
   /** Get a data container (returns constant) */
   const ContainerType& GetData() const { return this->m_Data; }
@@ -69,7 +69,7 @@ public:
   ContainerType& GetData() { return this->m_Data; }
 
   /** Copy data from an array */
-  void CopyFrom(unsigned char* inputBegin, unsigned int inputLength);
+  void CopyFrom(unsigned char* inputBegin, size_t inputLength);
 
   /** Copy data into an array */
   void CopyTo(unsigned char* output) const;
@@ -78,7 +78,7 @@ public:
   void Append(unsigned char byte);
   
   /** Append data from an array */
-  void Append(const unsigned char* inputBegin, unsigned int inputLength);
+  void Append(const unsigned char* inputBegin, size_t inputLength);
 
   /** Assign the values of one BinaryData to another */
   const BinaryData & operator=( const BinaryData & inputBinaryData );
@@ -107,7 +107,7 @@ public:
   
   /** Encode method encodes binary data to ASCII string in std::string. */
   static void Encode( std::string& output, const unsigned char *data, 
-                                                          unsigned int size );
+                                                          size_t size );
 
   /** Decode method decodes encoded ASCII string to binary data */
   bool Decode( const std::string& asciiString );
