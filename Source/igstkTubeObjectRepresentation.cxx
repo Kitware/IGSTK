@@ -227,7 +227,6 @@ void TubeObjectRepresentation::CreateActors()
   vPData->SetLines(vCA);
   vPData->SetPoints(vPoints);
   vtkFloatingPointType range[2];
-  bool use_scalars = false;
   float min_scalar, max_scalar;
   vScalars->GetRange(range);
   min_scalar = range[0];
@@ -241,7 +240,6 @@ void TubeObjectRepresentation::CreateActors()
     max_scalar = min_scalar;
     }
   
-  use_scalars = true;
   vPData->GetPointData()->SetScalars(vScalars);
   vPData->GetPointData()->SetVectors(vVectors); 
 

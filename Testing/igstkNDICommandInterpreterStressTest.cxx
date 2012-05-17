@@ -148,8 +148,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   std::cout << interpreter << std::endl;
   //---------------------------------
   // send some commands to the device
-  int i, j, n, a, ph;
-  unsigned int l;
+  int i, j, n, ph;
   double vals[8] = { 0, };
   int portHandles[256];
   int numberOfHandles;
@@ -201,11 +200,11 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
 
   std::cout << "Calling SSTAT" << std::endl;
   interpreter->SSTAT(CommandInterpreterType::NDI_CONTROL);
-  a = interpreter->GetSSTATControl();
+  interpreter->GetSSTATControl();
   interpreter->SSTAT(CommandInterpreterType::NDI_SENSORS);
-  a = interpreter->GetSSTATSensors();
+  interpreter->GetSSTATSensors();
   interpreter->SSTAT(CommandInterpreterType::NDI_TIU);
-  a = interpreter->GetSSTATTIU();
+  interpreter->GetSSTATTIU();
 
   // -- diagnostic commands, POLARIS only --
   std::cout << "Calling DSTART" << std::endl;
@@ -219,7 +218,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     {
     std::cout << interpreter->ErrorString(errorCode) << std::endl;
     }
-  a = interpreter->GetIRCHKDetected();
+  interpreter->GetIRCHKDetected();
   std::cout << "Calling IRCHK" << std::endl;
   interpreter->IRCHK(CommandInterpreterType::NDI_SOURCES);
   if (errorCode != CommandInterpreterType::NDI_OKAY)
@@ -278,7 +277,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   for (i = 0; i < numberOfHandles; i++)
     {
     portHandles[i] = interpreter->GetPHSRHandle(i);
-    a = interpreter->GetPHSRInformation(i);
+    interpreter->GetPHSRInformation(i);
     }
 
   for (i = 0; i < numberOfHandles; i++)
@@ -295,7 +294,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   for (i = 0; i < numberOfHandles; i++)
     {
     portHandles[i] = interpreter->GetPHSRHandle(i);
-    a = interpreter->GetPHSRInformation(i);
+    interpreter->GetPHSRInformation(i);
     }
 
   for (i = 0; i < numberOfHandles; i++)
@@ -313,12 +312,12 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION |
                        CommandInterpreterType::NDI_GPIO_STATUS);
-    a = interpreter->GetPHINFPortStatus();
+    interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
-    a = interpreter->GetPHINFAccessories();
+    interpreter->GetPHINFAccessories();
     interpreter->GetPHINFPortLocation(portLocation);
-    a = interpreter->GetPHINFGPIOStatus();
+    interpreter->GetPHINFGPIOStatus();
 
     // check if this is a wired tool
     if (portLocation[9] == '0')
@@ -327,8 +326,8 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
       interpreter->PHINF(ph,
                          CommandInterpreterType::NDI_TESTING |
                          CommandInterpreterType::NDI_MARKER_TYPE);
-      a = interpreter->GetPHINFMarkerType();
-      a = interpreter->GetPHINFCurrentTest();
+      interpreter->GetPHINFMarkerType();
+      interpreter->GetPHINFCurrentTest();
       }
 
     // enable tool according to type
@@ -359,14 +358,14 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     {
     std::cout << "Calling TX" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
-    a = interpreter->GetTXSystemStatus();
+    interpreter->GetTXSystemStatus();
 
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
-      a = interpreter->GetTXTransform(ph, vals);
-      a = interpreter->GetTXPortStatus(ph);
-      l = interpreter->GetTXFrame(ph);
+      interpreter->GetTXTransform(ph, vals);
+      interpreter->GetTXPortStatus(ph);
+      interpreter->GetTXFrame(ph);
       }
     }
 
@@ -376,14 +375,14 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     {
     std::cout << "Calling TX wth NDI_PASSIVE_STRAY" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_PASSIVE_STRAY);
-    a = interpreter->GetTXSystemStatus();
+    interpreter->GetTXSystemStatus();
 
     for (i = 0; i < numberOfHandles; i++)
       {
       ph = portHandles[i];
-      a = interpreter->GetTXTransform(ph, vals);
-      a = interpreter->GetTXPortStatus(ph);
-      l = interpreter->GetTXFrame(ph);
+      interpreter->GetTXTransform(ph, vals);
+      interpreter->GetTXPortStatus(ph);
+      interpreter->GetTXFrame(ph);
       }
 
     n = interpreter->GetTXNumberOfPassiveStrays();
@@ -391,7 +390,7 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     for (i = 0; i < n; i++)
       {
       double coord[3];
-      a = interpreter->GetTXPassiveStray(i, coord);
+      interpreter->GetTXPassiveStray(i, coord);
       std::cout << interpreter->GetTXPassiveStrayOutOfVolume(i) << ":";
       std::cout << "(" << coord[0] << "," << coord[1] << "," << coord[2]
                 << "), ";
@@ -405,16 +404,16 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
     std::cout << "Calling TX with NDI_SINGLE_STRAY" << std::endl;
     interpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS |
                     CommandInterpreterType::NDI_SINGLE_STRAY);
-    a = interpreter->GetTXSystemStatus();
+    interpreter->GetTXSystemStatus();
 
     for (i = 0; i < numberOfHandles; i++)
       {
       double coord[3];
       ph = portHandles[i];
-      a = interpreter->GetTXSingleStray(ph, coord);
-      a = interpreter->GetTXTransform(ph, vals);
-      a = interpreter->GetTXPortStatus(ph);
-      l = interpreter->GetTXFrame(ph);
+      interpreter->GetTXSingleStray(ph, coord);
+      interpreter->GetTXTransform(ph, vals);
+      interpreter->GetTXPortStatus(ph);
+      interpreter->GetTXFrame(ph);
       }
     }
 
@@ -426,14 +425,14 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
   for (i = 0; i < numberOfHandles; i++)
     {
     ph = portHandles[i];
-    a = interpreter->GetTXTransform(ph, vals);
-    a = interpreter->GetTXPortStatus(ph);
-    l = interpreter->GetTXFrame(ph);
-    a = interpreter->GetTXPortStatus(ph);
-    a = interpreter->GetTXToolInfo(ph);
+    interpreter->GetTXTransform(ph, vals);
+    interpreter->GetTXPortStatus(ph);
+    interpreter->GetTXFrame(ph);
+    interpreter->GetTXPortStatus(ph);
+    interpreter->GetTXToolInfo(ph);
     for (j = 0; j < 20; j++)
       {
-      a = interpreter->GetTXMarkerInfo(ph, j);
+      interpreter->GetTXMarkerInfo(ph, j);
       }
     }
 
@@ -456,10 +455,10 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
                        CommandInterpreterType::NDI_ACCESSORIES |
                        CommandInterpreterType::NDI_PORT_LOCATION);
     
-    a = interpreter->GetPHINFPortStatus();
+    interpreter->GetPHINFPortStatus();
     interpreter->GetPHINFToolInfo(toolInformation);
     interpreter->GetPHINFPartNumber(toolPartNumber);
-    a = interpreter->GetPHINFAccessories();
+    interpreter->GetPHINFAccessories();
     interpreter->GetPHINFPortLocation(portLocation);
 
     // check if this is a wired tool
@@ -469,8 +468,8 @@ int igstkNDICommandInterpreterStressTest( int argc, char * argv[] )
       interpreter->PHINF(ph,
                          CommandInterpreterType::NDI_TESTING |
                          CommandInterpreterType::NDI_MARKER_TYPE);
-      a = interpreter->GetPHINFMarkerType();
-      a = interpreter->GetPHINFCurrentTest();
+      interpreter->GetPHINFMarkerType();
+      interpreter->GetPHINFCurrentTest();
       std::cout << "Calling PSOUT" << std::endl;
       interpreter->PSOUT(ph,
                          CommandInterpreterType::NDI_GPIO_OFF,

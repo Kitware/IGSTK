@@ -539,7 +539,6 @@ bool SceneGraph
 SceneGraphNode* SceneGraph
 ::LocateSceneGraphNodeWithName(const char * name)
 {
-  bool nodeFound = false;
   SceneGraphNode* node = NULL;
   for(std::list<SceneGraphNode*>::const_iterator i = 
     m_RootNodes.begin(); i != m_RootNodes.end(); ++i)
@@ -547,7 +546,6 @@ SceneGraphNode* SceneGraph
     node = LocateSceneGraphNodeInRootNode((*i), name);
     if(node != NULL)
     {
-      nodeFound = true;
       break;
     }
   }

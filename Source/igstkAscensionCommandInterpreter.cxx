@@ -1318,7 +1318,6 @@ void AscensionCommandInterpreter::SendRaw(const char *text,
 void AscensionCommandInterpreter::ReceiveRaw(char *reply,
                                                 unsigned int len)
 {
-  int error = 0;
   unsigned int n = len;
   unsigned int i = 0;
 
@@ -1341,13 +1340,11 @@ void AscensionCommandInterpreter::ReceiveRaw(char *reply,
     {  /* check for phase errors */
     if (!(reply[0] & 0x80))
       {
-      error = FB_PHASE_ERROR;
       }
     for (i = 1; i < len; i++)
       {
       if (reply[i] & 0x80)
         {
-        error = FB_PHASE_ERROR;
         memmove(reply,&reply[i],len-i);
         m_PhaseErrorLeftoverBytes = len-i;
         break;

@@ -611,14 +611,11 @@ CoordinateSystem
 
   CoordinateSystemConstPointer aTemp; 
   CoordinateSystemConstPointer bTemp;
-  CoordinateSystemConstPointer aTempPrev = NULL;
-  CoordinateSystemConstPointer bTempPrev = NULL;
 
   for(bTemp = bSmart;
       bTemp != NULL;
       bTemp = bTemp->m_Parent)
     {
-    aTempPrev = NULL;
     for(aTemp = aSmart; 
         aTemp != NULL;
         aTemp = aTemp->m_Parent)
@@ -637,8 +634,6 @@ CoordinateSystem
         this->m_LowestCommonAncestor = NULL;
         return;
         }
-      aTempPrev = aTemp;
-      bTempPrev = bTemp;
       }
     }
 

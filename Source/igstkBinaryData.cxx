@@ -49,7 +49,7 @@ BinaryData
 
 /** SetSize method resizes/allocates memory */
 void BinaryData
-::SetSize(unsigned int size)
+::SetSize(size_t size)
 {
   this->m_Data.resize(size);
 }
@@ -63,7 +63,7 @@ size_t BinaryData
 
 /** Copy data from an array */
 void BinaryData
-::CopyFrom(unsigned char* inputBegin, unsigned int inputLength)
+::CopyFrom(unsigned char* inputBegin, size_t inputLength)
 {
   this->SetSize(inputLength);
   unsigned int i;
@@ -292,7 +292,7 @@ void BinaryData::Append(unsigned char byte)
 
 /** Append data from an array */
 void BinaryData::Append(const unsigned char* inputBegin,
-                        unsigned int inputLength)
+                        size_t inputLength)
 {
   m_Data.insert(m_Data.end(), inputBegin, &inputBegin[inputLength]);
 }
