@@ -28,18 +28,10 @@ ENDIF(IGSTK_WITH_LIBRARY_VERSION)
 # Build with shared libraries
 OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF)
 
-# Add the testing directories
-OPTION(IGSTK_BUILD_TESTING "Test the project" ON)
-
-IF(IGSTK_BUILD_TESTING)
-  ENABLE_TESTING()
-  INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
-ENDIF(IGSTK_BUILD_TESTING)
+ENABLE_TESTING()
+INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
-
-# Determine if this is development or stable version
-OPTION(IGSTK_DEVELOPMENT_VERSION "Set IGSTK version to development" ON)
 
 #
 #  FIND ITK
@@ -131,15 +123,15 @@ ENDIF(IGSTK_USE_Qt)
 SUBDIRS(Source)
 
 # Add the testing directories
-IF(IGSTK_BUILD_TESTING)
+IF(BUILD_TESTING)
    SUBDIRS(Testing)
-ENDIF(IGSTK_BUILD_TESTING)
+ENDIF(BUILD_TESTING)
 
 # Add the examples directories
-OPTION(IGSTK_BUILD_EXAMPLES "Examples of the project" ON)
-IF(IGSTK_BUILD_EXAMPLES)
+OPTION(BUILD_EXAMPLES "Examples of the project" ON)
+IF(BUILD_EXAMPLES)
    SUBDIRS(Examples)
-ENDIF(IGSTK_BUILD_EXAMPLES)
+ENDIF(BUILD_EXAMPLES)
 
 # Connect MicronTracker
 OPTION(IGSTK_USE_MicronTracker "Connect MicronTracker" OFF)
