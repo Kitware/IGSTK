@@ -540,3 +540,5 @@ ELSE (WIN32 )
   SET( IGSTK_SERIAL_PORT_6 "/dev/ttyS6" CACHE STRING "Seventh serial port device name  (Default /dev/ttyS6)")
   SET( IGSTK_SERIAL_PORT_7 "/dev/ttyS7" CACHE STRING "Eighth serial port device name  (Default /dev/ttyS7)")
 ENDIF ( WIN32 )
+#----------------------------------------------------------------------------
+configure_file(CMake/CTestCustom.cmake.in CTestCustom.cmake @ONLY)
