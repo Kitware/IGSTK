@@ -347,12 +347,12 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   {
   index[0] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-  const double *data = point.GetVnlVector().data_block();
-  std::cout << data[0] << " " << data[1] << " " << data[2] << " sagittal slice # " << i << std::endl;
+  const double *data2 = point.GetVnlVector().data_block();
+  std::cout << data2[0] << " " << data2[1] << " " << data2[2] << " sagittal slice # " << i << std::endl;
 
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
+  translation[0] = data2[0];
+  translation[1] = data2[1];
+  translation[2] = data2[2];
 
   toolTransform.SetTranslation(
                       translation,
@@ -376,12 +376,12 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
   {
   index[1] = static_cast<IndexValueType>(i);
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
-  const double *data = point.GetVnlVector().data_block();
-  std::cout << data[0] << " " << data[1] << " " << data[2] << " coronal slice # " << i << std::endl;
+  const double *data3 = point.GetVnlVector().data_block();
+  std::cout << data3[0] << " " << data3[1] << " " << data3[2] << " coronal slice # " << i << std::endl;
 
-  translation[0] = data[0];
-  translation[1] = data[1];
-  translation[2] = data[2];
+  translation[0] = data3[0];
+  translation[1] = data3[1];
+  translation[2] = data3[2];
 
   toolTransform.SetTranslation(
                       translation,

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0110
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -10,7 +10,7 @@ class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfiguration
   } {
     Fl_Window TrackerConfigurationWindow {
       label {Polaris Tracker Configuration} open
-      xywh {792 122 418 475} type Double
+      xywh {508 113 418 475} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
@@ -37,7 +37,7 @@ if( fileName )
           label {Port:}
           xywh {322 351 45 25} down_box BORDER_BOX deactivate
         } {}
-        Fl_Group {} {open
+        Fl_Group DRFradioGroup {open
           xywh {50 342 170 35}
         } {
           Fl_Round_Button WiredReferenceTool {
@@ -45,7 +45,7 @@ if( fileName )
             callback {ReferenceToolPort->activate();}
             xywh {65 357 64 15} type Radio down_box ROUND_DOWN_BOX
           }
-          Fl_Round_Button {} {
+          Fl_Round_Button radioWirelessDRF {
             label Wireless
             callback {ReferenceToolPort->deactivate();}
             xywh {135 357 85 15} type Radio down_box ROUND_DOWN_BOX value 1
@@ -103,10 +103,10 @@ if( fileName )
           }
         }
         Fl_Round_Button SwitchZAxes {
-          label {Fip Z axis?} selected
+          label {Fip Z axis?}
           xywh {55 244 25 25} down_box ROUND_DOWN_BOX
         }
-        Fl_Group {} {open
+        Fl_Group toolRadioGroup {open
           xywh {40 74 170 35}
         } {
           Fl_Round_Button WiredTrackerTool {
@@ -114,7 +114,7 @@ if( fileName )
             callback {TrackerToolPort->activate();}
             xywh {55 89 64 15} type Radio down_box ROUND_DOWN_BOX
           }
-          Fl_Round_Button {} {
+          Fl_Round_Button radioWireless {
             label Wireless
             callback {TrackerToolPort->deactivate();}
             xywh {125 89 85 15} type Radio down_box ROUND_DOWN_BOX value 1
@@ -266,9 +266,9 @@ if(UseReferenceTool->value())
     refTool->m_SROMFile = ReferenceToolSROMFile->value();
     }
   
-  igstk::Transform toolCalibrationTransform;
-  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
-  refTool->m_CalibrationTransform = toolCalibrationTransform;
+  igstk::Transform toolCalibrationTransform2;
+  toolCalibrationTransform2.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform2;
   
   refTool->m_IsReference = 1;
   conf->m_TrackerToolList.push_back( refTool );
@@ -276,6 +276,7 @@ if(UseReferenceTool->value())
 }
 
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Polaris );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
+    }
   }
 } 

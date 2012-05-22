@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0110
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -197,8 +197,7 @@ if( dir->Load(conf->m_TemplatesDirectory.c_str()) )
 
 TrackerToolMarker->value(toolIndex);
 ReferenceToolMarker->value(refIndex);
-}} {selected
-    }
+}} {}
   }
   Function {GetGUISetting()} {open return_type {virtual void}
   } {
@@ -244,9 +243,9 @@ if(UseReferenceTool->value())
   igstk::MicronTrackerToolConfiguration * refTool = new igstk::MicronTrackerToolConfiguration; 
   refTool->m_MarkerName = ReferenceToolMarker->text();
   
-  igstk::Transform toolCalibrationTransform;
-  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
-  refTool->m_CalibrationTransform = toolCalibrationTransform;
+  igstk::Transform toolCalibrationTransform2;
+  toolCalibrationTransform2.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform2;
    
   refTool->m_IsReference = 1;
   conf->m_TrackerToolList.push_back( refTool );
@@ -258,6 +257,7 @@ m_TrackerConfiguration.SetMicronTrackerConfiguration( conf );
 igstk::MicronTrackerConfigurationIO * writer = new igstk::MicronTrackerConfigurationIO;
 writer->SetFileName( "Micron.ini" );
 writer->SetMicronTrackerConfiguration( conf );
-writer->RequestWrite();} {}
+writer->RequestWrite();} {selected
+    }
   }
 } 

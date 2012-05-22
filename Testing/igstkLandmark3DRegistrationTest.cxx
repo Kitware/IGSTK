@@ -424,17 +424,17 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
   // Test the transform computation with collinear points
     {
     std::cout << "Compute transform using collinear point" << std::endl;
-    Rigid3DTransformType::Pointer   rigid3DTransform = 
+    Rigid3DTransformType::Pointer   rigidTransform =
                                                     Rigid3DTransformType::New();
-    rigid3DTransform->SetRotation( vrotation );
-    rigid3DTransform->SetTranslation(translation);
+    rigidTransform->SetRotation( vrotation );
+    rigidTransform->SetTranslation(translation);
 
     // Add 1st landmark
     fixedPoint[0] =  25.0;
     fixedPoint[1] =  11.0;
     fixedPoint[2] =  15.0;
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-    movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+    movingPoint = rigidTransform->TransformPoint(fixedPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
     // Add 2nd landmark
@@ -442,7 +442,7 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
     fixedPoint[1] =  11.0;
     fixedPoint[2] =  15.0;
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-    movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+    movingPoint = rigidTransform->TransformPoint(fixedPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
 
     // Add 3d landmark
@@ -450,7 +450,7 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
     fixedPoint[1] =  11.0;
     fixedPoint[2] =  15.0;
     landmarkRegister->RequestAddImageLandmarkPoint(fixedPoint);
-    movingPoint = rigid3DTransform->TransformPoint(fixedPoint);
+    movingPoint = rigidTransform->TransformPoint(fixedPoint);
     landmarkRegister->RequestAddTrackerLandmarkPoint(movingPoint);
       
     landmarkRegister->Print(std::cout);
@@ -460,7 +460,7 @@ int igstkLandmark3DRegistrationTest( int , char * [] )
 
     landmarkRegister->AddObserver( ComputationFailureEvent(), ecb2 );
       
-    // Calculate transform
+    // Calculate rigidTransform
     landmarkRegister->RequestComputeTransform();
     }
   return EXIT_SUCCESS;

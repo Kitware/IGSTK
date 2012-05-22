@@ -190,9 +190,9 @@ int main(int , char** )
   cylinder->SetHeight(3);
 
   // Add the position of the cylinder with respect to the View.
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );  
-  cylinder->RequestSetTransformAndParent( transform, m_GUI->View );
+  igstk::Transform transformCylinder;
+  transformCylinder.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  cylinder->RequestSetTransformAndParent( transformCylinder, m_GUI->View );
 
   igstk::CylinderObjectRepresentation::Pointer 
           cylinderRepresentation = igstk::CylinderObjectRepresentation::New();

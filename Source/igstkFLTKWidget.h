@@ -90,7 +90,7 @@ public:
 
   friend class ViewProxy< FLTKWidget >;
 
-  FLTKWidget( int x, int y, int w, int h, const char *l="");
+  FLTKWidget( int xPos, int yPos, int width, int height, const char *l="");
   virtual ~FLTKWidget( void );
 
 protected:
@@ -99,7 +99,7 @@ protected:
   void flush(void);
   void draw( void );
   void hide( void );
-  void resize( int x, int y, int w, int h );
+  void resize( int xPos, int yPos, int width, int height );
   virtual int  handle( int event );
    
 private:

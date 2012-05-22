@@ -37,8 +37,8 @@ namespace igstk
 {
 
 /** Constructor */
-FLTKWidget::FLTKWidget( int x, int y, int w, int h, const char *l ) :
-Fl_Gl_Window( x, y, w, h, l ), m_StateMachine(this), m_ProxyView(this)
+FLTKWidget::FLTKWidget( int xPos, int yPos, int width, int height, const char *l ) :
+Fl_Gl_Window( xPos, yPos, width, height, l ), m_StateMachine(this), m_ProxyView(this)
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::Constructor() called ...\n");
 
@@ -277,18 +277,18 @@ void FLTKWidget::hide()
 }
 
 /** Resize function */
-void FLTKWidget::resize( int x, int y, int w, int h )
+void FLTKWidget::resize( int xPos, int yPos, int width, int height )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::resize() called ...\n");
 
   // make sure VTK knows about the new situation
   if ( ! this->m_View.IsNull() )
     {
-    this->m_ProxyView.SetRenderWindowSize( this->m_View, w, h );
+    this->m_ProxyView.SetRenderWindowSize( this->m_View, width, height );
     }
 
   // resize the FLTK window by calling ancestor method
-  Fl_Gl_Window::resize( x, y, w, h );
+  Fl_Gl_Window::resize( xPos, yPos, width, height );
 }
 
 

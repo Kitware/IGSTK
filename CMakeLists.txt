@@ -307,11 +307,7 @@ ENDIF(IGSTK_USE_SceneGraphVisualization)
 
 #-----------------------------------------------------------------------------
 # IGSTK build video imager classes
-OPTION(IGSTK_USE_VideoImager "Build video imager classes are under review and not fully tested yet" OFF)
-
-IF(IGSTK_USE_VideoImager)
-  MESSAGE("Warning: Video imager classes are under review and not fully tested yet")
-ENDIF(IGSTK_USE_VideoImager)
+OPTION(IGSTK_USE_VideoImager "Enable video support" OFF)
 
 #-----------------------------------------------------------------------------
 # Configure the default IGSTK_DATA_ROOT for the location of IGSTK Data.

@@ -65,10 +65,10 @@ int MicronTrackerConfigurationIO::RequestRead()
         {
         std::getline( planFile, line ); // 11 line, description, starts with #
         std::getline( planFile, line ); // 12 line, marker name
-        MicronTrackerToolConfiguration * tool = new MicronTrackerToolConfiguration;
-        tool->m_MarkerName = line;
-        tool->m_IsReference = 1;
-        m_MicronTrackerConfiguration->m_TrackerToolList.push_back(tool);
+        MicronTrackerToolConfiguration * micronTool = new MicronTrackerToolConfiguration;
+        micronTool->m_MarkerName = line;
+        micronTool->m_IsReference = 1;
+        m_MicronTrackerConfiguration->m_TrackerToolList.push_back(micronTool);
         }
       }
     else

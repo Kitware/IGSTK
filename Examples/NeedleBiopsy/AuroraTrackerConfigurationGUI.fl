@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0110
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -10,7 +10,7 @@ class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
   } {
     Fl_Window TrackerConfigurationWindow {
       label {Aurora Tracker Configuration} open
-      xywh {827 104 418 475} type Double
+      xywh {674 154 418 475} type Double
       code0 {\#include "igstkTrackerConfigurationGUIBase.h"} visible
     } {
       Fl_Choice SerialPort {
@@ -24,7 +24,7 @@ class AuroraTrackerConfigurationGUI {open : {public igstk::TrackerConfigurationG
           label {SROM File:}
           xywh {110 391 230 25}
         }
-        Fl_Button {} {
+        Fl_Button chooseFile {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
 if( fileName )
@@ -58,7 +58,7 @@ else
           label {SROM File:}
           xywh {115 119 230 25}
         }
-        Fl_Button {} {
+        Fl_Button chooseFileSROM {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
 if( fileName )
@@ -71,7 +71,7 @@ if( fileName )
           label {Port:}
           xywh {225 85 45 25} down_box BORDER_BOX
         } {}
-        Fl_Group {} {
+        Fl_Group TipOffsetGroup {
           label {Tool Tip Offset}
           xywh {30 168 355 70} box ENGRAVED_BOX
         } {
@@ -89,7 +89,7 @@ if( fileName )
           }
         }
         Fl_Round_Button SwitchZAxes {
-          label {Flip Z axis?} selected
+          label {Flip Z axis?}
           xywh {55 244 25 25} down_box ROUND_DOWN_BOX
         }
         Fl_Group {} {open
@@ -100,7 +100,7 @@ if( fileName )
             callback {TrackerToolChannel->deactivate();}
             xywh {37 89 64 15} type Radio down_box ROUND_DOWN_BOX
           }
-          Fl_Round_Button {} {
+          Fl_Round_Button Is5DOFTrackerTool {
             label 5DOF
             callback {TrackerToolChannel->activate();}
             xywh {103 89 85 15} type Radio down_box ROUND_DOWN_BOX value 1
@@ -111,7 +111,7 @@ if( fileName )
           xywh {335 85 45 25} down_box BORDER_BOX
         } {}
       }
-      Fl_Button {} {
+      Fl_Button Conform {
         label Confirm
         callback {GetGUISetting();
 RequestGetConfiguration();
@@ -259,15 +259,16 @@ if(UseReferenceTool->value())
     refTool->m_SROMFile = ReferenceToolSROMFile->value();
     }
   
-  igstk::Transform toolCalibrationTransform;
-  toolCalibrationTransform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
-  refTool->m_CalibrationTransform = toolCalibrationTransform;
+  igstk::Transform toolCalibrationTransform2;
+  toolCalibrationTransform2.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime());
+  refTool->m_CalibrationTransform = toolCalibrationTransform2;
    
   refTool->m_IsReference = 1;
   conf->m_TrackerToolList.push_back( refTool );
 }
 
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Aurora );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
+    }
   }
 } 

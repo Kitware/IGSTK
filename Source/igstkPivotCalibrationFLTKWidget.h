@@ -84,9 +84,9 @@ public:
    *  given width, w, and height, h. An optional label argument for the widget
    *  can also be given.
    */
-  PivotCalibrationFLTKWidget( int x, int y, 
-                              int w, int h, 
-                              const char *label="" );
+  PivotCalibrationFLTKWidget( int xPos, int yPos,
+                              int width, int height,
+                              const char *l="" );
   /** Destructor for the widget. */
   virtual ~PivotCalibrationFLTKWidget( void );
 

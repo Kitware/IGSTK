@@ -91,11 +91,11 @@ m_SceneGraphUI->DrawSceneGraph(m_SceneGraph);
 fl_alert("%s", "SceneGraphVisualization is turned off in CMake configuration");
 \#endif} {}
   }
-  Function {ExportSceneGraph( std::string fileName)} {open return_type {virtual void}
+  Function {ExportSceneGraph( std::string filename)} {open return_type {virtual void}
   } {
     code {\#ifdef IGSTK_USE_SceneGraphVisualization
 igstk::SceneGraph *m_SceneGraph = igstk::SceneGraph::getInstance();  
-m_SceneGraph->ExportSceneGraphToDot(fileName);
+m_SceneGraph->ExportSceneGraphToDot(filename);
 \#else
 fl_alert("%s", "SceneGraphVisualization is turned off in CMake configuration");
 \#endif} {}

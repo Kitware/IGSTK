@@ -47,31 +47,31 @@ const double PivotCalibrationFLTKWidget::OUTPUT_W_SCALE = 0.8125;
 const double PivotCalibrationFLTKWidget::OUTPUT_H_SCALE = 0.582;
 
 
-PivotCalibrationFLTKWidget::PivotCalibrationFLTKWidget( int x, int y, 
-                                                        int w, int h,
-                                                        const char *label ) :
-Fl_Group( x, y, w, h, label )
+PivotCalibrationFLTKWidget::PivotCalibrationFLTKWidget( int xPos, int yPos,
+                                                        int width, int height,
+                                                        const char *l ) :
+Fl_Group( xPos, yPos, width, height, l )
 {
   //setup the UI
   this->m_toolDescription = new Fl_Output( 
-    static_cast<int>(x+TOOL_DESCRIPTION_X_SCALE*w+0.5),
-    static_cast<int>(y+TOOL_DESCRIPTION_Y_SCALE*h+0.5),
-    static_cast<int>(TOOL_DESCRIPTION_W_SCALE*w+0.5),
-    static_cast<int>(TOOL_DESCRIPTION_H_SCALE*h+0.5) );
+    static_cast<int>(xPos+TOOL_DESCRIPTION_X_SCALE*width+0.5),
+    static_cast<int>(yPos+TOOL_DESCRIPTION_Y_SCALE*height+0.5),
+    static_cast<int>(TOOL_DESCRIPTION_W_SCALE*width+0.5),
+    static_cast<int>(TOOL_DESCRIPTION_H_SCALE*height+0.5) );
   
-  this->m_progress = new Fl_Progress(static_cast<int>(x+PROGRESS_X_SCALE*w+0.5),
-                                     static_cast<int>(y+PROGRESS_Y_SCALE*h+0.5),
-                                     static_cast<int>(PROGRESS_W_SCALE*w+0.5),
-                                     static_cast<int>(PROGRESS_H_SCALE*h+0.5) );
+  this->m_progress = new Fl_Progress(static_cast<int>(xPos+PROGRESS_X_SCALE*width+0.5),
+                                     static_cast<int>(yPos+PROGRESS_Y_SCALE*height+0.5),
+                                     static_cast<int>(PROGRESS_W_SCALE*width+0.5),
+                                     static_cast<int>(PROGRESS_H_SCALE*height+0.5) );
   this->m_progress->minimum(0.0);
   this->m_progress->maximum(1.0);
   this->m_progress->selection_color(FL_DARK_BLUE);
 
   this->m_calibrateButton = new Fl_Button(
-                                       static_cast<int>(x+BUTTON_X_SCALE*w+0.5),
-                                       static_cast<int>(y+BUTTON_Y_SCALE*h+0.5),
-                                       static_cast<int>(BUTTON_W_SCALE*w+0.5),
-                                       static_cast<int>(BUTTON_H_SCALE*h+0.5),
+                                       static_cast<int>(xPos+BUTTON_X_SCALE*width+0.5),
+                                       static_cast<int>(yPos+BUTTON_Y_SCALE*height+0.5),
+                                       static_cast<int>(BUTTON_W_SCALE*width+0.5),
+                                       static_cast<int>(BUTTON_H_SCALE*height+0.5),
                                            "Calibrate" );
   this->m_calibrateButton->deactivate();
   this->m_calibrateButton->callback( 
@@ -79,10 +79,10 @@ Fl_Group( x, y, w, h, label )
                                       this);
 
   this->m_output = new Fl_Multiline_Output( 
-                                       static_cast<int>(x+OUTPUT_X_SCALE*w+0.5),
-                                       static_cast<int>(y+OUTPUT_Y_SCALE*h+0.5),
-                                       static_cast<int>(OUTPUT_W_SCALE*w+0.5),
-                                       static_cast<int>(OUTPUT_H_SCALE*h+0.5) );
+                                       static_cast<int>(xPos+OUTPUT_X_SCALE*width+0.5),
+                                       static_cast<int>(yPos+OUTPUT_Y_SCALE*height+0.5),
+                                       static_cast<int>(OUTPUT_W_SCALE*width+0.5),
+                                       static_cast<int>(OUTPUT_H_SCALE*height+0.5) );
   end();
 
   m_delay = 0;
@@ -261,10 +261,10 @@ PivotCalibrationFLTKWidget::OnCalibrationEvent( itk::Object *caller,
 {
   std::ostringstream msg;
 
-  if( const PivotCalibration::DataAcquisitionEvent *evt = 
+  if( const PivotCalibration::DataAcquisitionEvent *daevt =
        dynamic_cast< const PivotCalibration::DataAcquisitionEvent * > (&event) )
     {
-    this->m_progress->value( evt->Get() );
+    this->m_progress->value( daevt->Get() );
     Fl::check();
     }
   else if( dynamic_cast< 
