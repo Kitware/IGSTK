@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0110
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -9,11 +9,11 @@ class PivotCalibrationFLTKWidgetExampleUI {open
   Function {PivotCalibrationFLTKWidgetExampleUI()} {open
   } {
     Fl_Window m_mainWindow {
-      label {Pivot Calibration Widget Example}
+      label {Pivot Calibration Widget Example} open
       private xywh {604 74 412 528} type Double align 5 visible
     } {
-      Fl_Group {} {
-        label Settings open
+      Fl_Group settings {
+        label Settings open selected
         private xywh {7 28 396 152} box ENGRAVED_BOX align 5
       } {
         Fl_Choice m_comPortChoice {
@@ -178,7 +178,6 @@ else
   decl {bool hasQuitted;} {}
   Function {~PivotCalibrationFLTKWidgetExampleUI()} {open return_type virtual
   } {
-    code {delete m_mainWindow;} {selected
-    }
+    code {delete m_mainWindow;} {}
   }
 } 

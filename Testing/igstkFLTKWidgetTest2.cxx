@@ -40,13 +40,13 @@ class FLTKWidgetTest2 : public igstk::FLTKWidget
   typedef igstk::FLTKWidget Superclass;
 
 public:
-  void resize( int x, int y, int width, int height )
+  void resize( int xPos, int yPos, int width, int height )
     {
-    Superclass::resize( x, y, width, height ); 
+    Superclass::resize( xPos, yPos, width, height );
     }
 
-  FLTKWidgetTest2( int x, int y, int width, int height, const char * name) 
-       : Superclass( x, y, width, height,name )
+  FLTKWidgetTest2( int xPos, int yPos, int width, int height, const char * name)
+       : Superclass( xPos, yPos, width, height,name )
     {
     } 
 };

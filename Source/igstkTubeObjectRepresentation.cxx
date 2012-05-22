@@ -168,12 +168,12 @@ void TubeObjectRepresentation::CreateActors()
 
   for( unsigned int i=0; i < nPoints; i++ )
     {
-    const TubeObjectType::PointType* pt = m_TubeSpatialObject->GetPoint(i); 
-    vPoints->SetPoint(i, (float)(pt->GetPosition()[0]*spacing[0]), 
-                         (float)(pt->GetPosition()[1]*spacing[1]), 
-                         (float)(pt->GetPosition()[2]*spacing[2]));
-    vScalars->SetTuple1(i,pt->GetRadius()*0.95*spacing[0]);
-    vVectors->SetTuple3(i,pt->GetRadius()*0.95*spacing[0],0,0);
+    const TubeObjectType::PointType* point = m_TubeSpatialObject->GetPoint(i);
+    vPoints->SetPoint(i, (float)(point->GetPosition()[0]*spacing[0]),
+                         (float)(point->GetPosition()[1]*spacing[1]),
+                         (float)(point->GetPosition()[2]*spacing[2]));
+    vScalars->SetTuple1(i,point->GetRadius()*0.95*spacing[0]);
+    vVectors->SetTuple3(i,point->GetRadius()*0.95*spacing[0],0,0);
     }  
 
   pt = m_TubeSpatialObject->GetPoint(nPoints-1); 

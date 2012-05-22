@@ -1458,6 +1458,11 @@ void NDICommandInterpreterClassic::HelperFor3D(const char* cp, const char* crp)
    char* dp;
    dp = m_3DTransforms;
 
+   /* if the 3D command had a reply mode, read it */
+   if ((cp[2] == ':' && cp[7] != '\r') || (cp[2] == ' ' && cp[3] != '\r'))
+     {
+       //purposely not implemented
+     }
   /* read the transform */
   crp += 4;
   for(int j=0; j<27; j++)
@@ -1556,7 +1561,7 @@ void NDICommandInterpreterClassic::HelperForIRCHK(
   Adjust the host to match a COMM command.
 */
 void NDICommandInterpreterClassic::HelperForCOMM(
-                    const char* cp, const char* crp)
+                    const char* cp, const char* itkNotUsed(crp))
 {
   int errcode = NDI_BAD_COMM;
 

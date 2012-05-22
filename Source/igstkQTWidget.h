@@ -84,7 +84,7 @@ public:
   /** Constructor */
 #if QT_VERSION < 0x040000
     //! constructor for Qt 3
-    QTWidget(QWidget* parent = NULL,
+    QTWidget(QWidget* qparent = NULL,
              const char* name = NULL, Qt::WFlags f = 0);
 #else
     //! constructor for Qt 4

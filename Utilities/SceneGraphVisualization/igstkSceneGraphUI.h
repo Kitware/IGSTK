@@ -49,10 +49,10 @@ public:
   /** Constructor which takes x,y position, width, height name and rootNode
   * of a scene graph.
   */
-  Drawer(int x, int y, int w, int h,const char* name=0,
-    igstk::SceneGraphNode* rootNode=0) : Fl_Group(x,y,w,h,name)
+  Drawer(int xPos, int yPos, int width, int height,const char* name=0,
+    igstk::SceneGraphNode* rootNode=0) : Fl_Group(xPos,yPos,width,height,name)
   {
-    xPreset = x;
+    xPreset = xPos;
     rNode = rootNode;
   }
 

@@ -681,10 +681,10 @@ void NeedleBiopsy::UpdateTrackerAndTrackerToolList()
                       m_TrackerInitializerList[i]->GetNonReferenceToolList();
       for ( unsigned int j=0; j< toolList.size(); j++)
         {
-          char buf[10];
-          sprintf(buf,"%d", ++n);
+          char buff[10];
+          sprintf(buff,"%d", ++n);
           s = "Tool ";
-          s = s + buf + " [" + 
+          s = s + buff + " [" +
                   m_TrackerInitializerList[i]->GetTrackerTypeAsString() + "]";
           TrackerToolList->add( s.c_str() );
           m_TrackerToolList.push_back( toolList[j] );

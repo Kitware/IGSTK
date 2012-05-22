@@ -1779,11 +1779,11 @@ TrackerController::PolarisVicraInitializeProcessing()
         this->m_Tools.insert(
           std::pair<std::string, TrackerTool::Pointer>( it->first, 
                                                         currentTool ) );
-        unsigned long observerID = currentTool->AddObserver( 
+        unsigned long observerIDTool = currentTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
-        currentTool->RemoveObserver( observerID ); 
+        currentTool->RemoveObserver( observerIDTool );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -1802,11 +1802,11 @@ TrackerController::PolarisVicraInitializeProcessing()
 
         currentTool = InitializePolarisWirelessTool( currentToolConfig );
         this->m_ReferenceTool = currentTool;
-        unsigned long observerID = currentTool->AddObserver( 
+        unsigned long observerIDRef = currentTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
-        currentTool->RemoveObserver( observerID );
+        currentTool->RemoveObserver( observerIDRef );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -1886,11 +1886,11 @@ TrackerController::PolarisHybridInitializeProcessing()
           std::pair<std::string, TrackerTool::Pointer>( it->first, 
                                                         trackerTool ) );
 
-        unsigned long observerID = trackerTool->AddObserver( 
+        unsigned long observerIDTool = trackerTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         trackerTool->RequestAttachToTracker( tracker );
-        trackerTool->RemoveObserver( observerID ); 
+        trackerTool->RemoveObserver( observerIDTool );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -1917,11 +1917,11 @@ TrackerController::PolarisHybridInitializeProcessing()
           trackerTool = InitializePolarisWiredTool( wiredToolConfig );
           }
         this->m_ReferenceTool = trackerTool;
-        unsigned long observerID = trackerTool->AddObserver( 
+        unsigned long observerIDRef = trackerTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         trackerTool->RequestAttachToTracker( tracker );
-        trackerTool->RemoveObserver( observerID ); 
+        trackerTool->RemoveObserver( observerIDRef );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -2042,11 +2042,11 @@ TrackerController::AscensionInitializeProcessing()
         this->m_Tools.insert(
           std::pair<std::string, TrackerTool::Pointer>( 
             it->first, currentTool ) );
-        unsigned long observerID = currentTool->AddObserver( 
+        unsigned long observerIDTool = currentTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
-        currentTool->RemoveObserver( observerID ); 
+        currentTool->RemoveObserver( observerIDTool );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -2064,11 +2064,11 @@ TrackerController::AscensionInitializeProcessing()
             referenceToolConfiguration );
         currentTool = InitializeAscensionTool( currentToolConfig );
         this->m_ReferenceTool = currentTool;
-        unsigned long observerID = currentTool->AddObserver( 
+        unsigned long observerIDRef = currentTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
-        currentTool->RemoveObserver( observerID ); 
+        currentTool->RemoveObserver( observerIDRef );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );
@@ -2138,11 +2138,11 @@ TrackerController::AuroraInitializeProcessing()
           std::pair<std::string, TrackerTool::Pointer>( it->first, 
                                                         currentTool ) );
         
-        unsigned long observerID = currentTool->AddObserver( 
+        unsigned long observerIDTool = currentTool->AddObserver(
           TrackerToolAttachmentToTrackerErrorEvent(),
           attachErrorObserver );
         currentTool->RequestAttachToTracker( tracker );
-        currentTool->RemoveObserver( observerID ); 
+        currentTool->RemoveObserver( observerIDTool );
         if( attachErrorObserver->GotToolAttachError() )
           {
           igstkPushInputMacro( Failed );

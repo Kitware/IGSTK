@@ -180,8 +180,8 @@ int main( int argc, char **argv )
   // create world reference
   igstk::AxesObject::Pointer worldReference;
   worldReference = igstk::AxesObject::New();
-  igstk::Transform transform;
-  transform.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
+  igstk::Transform transformWorld;
+  transformWorld.SetToIdentity( igstk::TimeStamp::GetLongestPossibleTime() );
 
 // BeginLatex
 // Once we know the identifier of the desired tracker, we can create the device
@@ -199,7 +199,7 @@ int main( int argc, char **argv )
 // EndLatex
 // BeginCodeSnippet
   igstk::Tracker::Pointer tracker = trackerInitializer->CreateTracker();
-  tracker->RequestSetTransformAndParent( transform, worldReference );
+  tracker->RequestSetTransformAndParent( transformWorld, worldReference );
 
   tracker->RequestOpen();
 
@@ -242,7 +242,7 @@ int main( int argc, char **argv )
     igstk::PulseGenerator::CheckTimeouts();
 
     igstk::Transform transform;
-  igstk::Transform::VectorType position;
+    igstk::Transform::VectorType position;
 
     coordSystemAObserver->Clear();
 

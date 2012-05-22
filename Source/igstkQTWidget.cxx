@@ -45,12 +45,12 @@ namespace igstk
 QTWidget::
 #if QT_VERSION < 0x040000
 //! constructor for Qt 3
-QTWidget(QWidget* parent, const char* name, Qt::WFlags f):
-QVTKWidget( parent, name, f ), m_StateMachine(this), m_ProxyView(this)
+QTWidget(QWidget* qparent, const char* name, Qt::WFlags f):
+QVTKWidget( qparent, name, f ), m_StateMachine(this), m_ProxyView(this)
 #else
 //! constructor for Qt 4
-QTWidget(QWidget* parent, Qt::WFlags f):
-QVTKWidget( parent, f ), m_StateMachine(this), m_ProxyView(this)
+QTWidget(QWidget* qparent, Qt::WFlags f):
+QVTKWidget( qparent, f ), m_StateMachine(this), m_ProxyView(this)
 #endif
 { 
   this->m_Logger = NULL;
