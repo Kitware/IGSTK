@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0107
 header_name {.h} 
 code_name {.cxx}
 class OneViewAndTrackingGUI {open
@@ -8,7 +8,7 @@ class OneViewAndTrackingGUI {open
   } {
     Fl_Window mainWindow {
       label {IGSTK: Tracking example} open
-      xywh {497 96 990 695} type Double resizable visible
+      xywh {327 46 990 637} type Double resizable visible
     } {
       Fl_Box Display3D {
         label {Display 3D}
@@ -20,7 +20,7 @@ class OneViewAndTrackingGUI {open
       Fl_Light_Button TrackingButton {
         label Tracking
         callback {if( o->value() ) this->EnableTracking();
-else             this->DisableTracking();}
+else             this->DisableTracking();} selected
         xywh {5 670 85 25} labelsize 11
       }
       Fl_Button QuitButton {
@@ -59,6 +59,6 @@ this->View3D->RequestStart();} {}
     code {return this->hasQuitted;} {}
   }
   decl {bool hasQuitted;} {}
-  decl {igstk::View3D::Pointer   View3D;} {selected public
+  decl {igstk::View3D::Pointer   View3D;} {public
   }
 } 

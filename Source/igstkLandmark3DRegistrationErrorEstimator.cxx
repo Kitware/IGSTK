@@ -238,7 +238,6 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarkPrincipalAxes()
 
   typedef itk::Matrix<double,3,3>                 MatrixType;
   typedef itk::Matrix<double,4,4>                 AugmentedMatrixType;
-  typedef itk::Vector<double,3>                   VectorType;
   typedef itk::Vector<double,4>                   AugmentedVectorType;
 
   MatrixType                                      covarianceMatrix;
@@ -288,8 +287,6 @@ void Landmark3DRegistrationErrorEstimator::ComputeLandmarksCentroid()
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeLandmarksCentroid called...\n");
 
-  typedef itk::Vector< double, 3 >                      VectorType;
-
   PointsContainerConstIterator                          pointItr;
   VectorType                                            landmarkVector;
 
@@ -322,9 +319,7 @@ void Landmark3DRegistrationErrorEstimator::
   igstkLogMacro( DEBUG, "igstk::Landmark3DRegistrationErrorEstimator::"
                  "ComputeRMSDistanceLandmarksFromPrincipalAxes called...\n");
 
-  typedef itk::Vector< double, 3 >                VectorType;
   typedef itk::Matrix< double, 3, 3 >             MatrixType;
-  typedef double                                  DistanceType;
 
   PointsContainerConstIterator                    pointItr;
   VectorType                                      landmarkVector;
@@ -433,9 +428,7 @@ void Landmark3DRegistrationErrorEstimator
   //First, Compute the error parameters
   this->ComputeErrorParameters();
 
-  typedef itk::Vector< double, 3 >                VectorType;
   typedef itk::Matrix< double, 3, 3 >             MatrixType;
-  typedef double                                  DistanceType;
 
   MatrixType                                      principalAxesMatrix;
   VectorType                                      principalAxes1;

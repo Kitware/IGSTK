@@ -107,18 +107,18 @@ public:
 
   /** The "ValidateSpecifiedFrequency" method checks if the specified
    * frequency is valid for the imaging device that is being used. */
-  virtual ResultType ValidateSpecifiedFrequency( double frequencyInHz ){  return SUCCESS; };
+  virtual ResultType ValidateSpecifiedFrequency( double itkNotUsed(frequencyInHz) ){  return SUCCESS; };
 
   /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const{  return; };
+  virtual void PrintSelf( std::ostream& itkNotUsed(os), itk::Indent itkNotUsed(indent) ) const{  return; };
 
   /** Remove imager tool entry from internal containers */
   virtual ResultType RemoveVideoImagerToolFromInternalDataContainers( const
-                                     VideoImagerToolType * imagerTool ){  return SUCCESS; };
+                                     VideoImagerToolType * itkNotUsed(imagerTool) ){  return SUCCESS; };
 
   /** Add imager tool entry to internal containers */
   virtual ResultType AddVideoImagerToolToInternalDataContainers( const
-                                     VideoImagerToolType * imagerTool ){  return SUCCESS; };
+                                     VideoImagerToolType * itkNotUsed(imagerTool) ){  return SUCCESS; };
 
   DummyVideoImager::Pointer DummyVideoImagerPointer;
       //typedef ::itk::SmartPointer< Self >       Pointer;    
@@ -142,7 +142,7 @@ void DummyVideoImagerTool::RequestAttachToVideoImager(DummyVideoImager*  imager 
 }
 }
 
-int igstkFrameTest( int argv, char * argc[] )
+int igstkFrameTest( int itkNotUsed(argv), char * itkNotUsed(argc[]) )
 {
   typedef igstk::FrameTest::DummyVideoImager     VideoImagerType;
   typedef igstk::FrameTest::DummyVideoImagerTool VideoImagerToolType;

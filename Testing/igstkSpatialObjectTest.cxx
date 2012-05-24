@@ -71,7 +71,6 @@ public:
 
     Self::Pointer sibling = Self::New();   // Test with valid pointer
 
-    typedef SpatialObject::SpatialObjectType SpatialObjectType;
     SpatialObjectType::Pointer so = SpatialObjectType::New();
     this->RequestSetInternalSpatialObject( so );   // Test with valid pointer
 
@@ -130,7 +129,6 @@ protected:
     ConstIteratorType inputItr = trackerToolContainer.begin();
     ConstIteratorType inputEnd = trackerToolContainer.end();
 
-    typedef igstk::Transform   TransformType;
     TransformType transform;
 
     while( inputItr != inputEnd )
