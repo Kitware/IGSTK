@@ -1,0 +1,56 @@
+diff --git a/Source/igstkMeshObjectRepresentation.cxx b/Source/igstkMeshObjectRepresentation.cxx
+index 98c5484..a385246 100644
+--- a/Source/igstkMeshObjectRepresentation.cxx
++++ b/Source/igstkMeshObjectRepresentation.cxx
+@@ -24,8 +24,7 @@
+ #include <vtkPoints.h>
+ #include <vtkIdList.h>
+ #include <vtkDataSetMapper.h>
+-#include <vtkPolyData.h>
+-#include <vtkPolyDataNormals.h>
++#include <vtkUnstructuredGrid.h>
+ 
+ namespace igstk
+ { 
+@@ -122,8 +121,7 @@ void MeshObjectRepresentation::CreateActors()
+   // to avoid duplicates we clean the previous actors
+   this->DeleteActors();
+ 
+-  // now using vtkPolyData instead of vtkUnstructuredGrid
+-  vtkPolyData* polyData = vtkPolyData::New();
++  vtkUnstructuredGrid* polyData = vtkUnstructuredGrid::New();
+   vtkPoints* polyPoints = vtkPoints::New();
+ 
+   MeshObjectType::PointsContainerPointer points = m_MeshObject->GetPoints();
+@@ -179,7 +177,7 @@ void MeshObjectRepresentation::CreateActors()
+     pts->Delete();
+     }
+   
+-  vtkPolyDataMapper *pointMapper = vtkPolyDataMapper::New();
++  vtkDataSetMapper *pointMapper = vtkDataSetMapper::New();
+   vtkActor* meshActor = vtkActor::New();
+ 
+   meshActor->GetProperty()->SetColor(this->GetRed(),
+@@ -189,13 +187,7 @@ void MeshObjectRepresentation::CreateActors()
+   meshActor->GetProperty()->SetOpacity(this->GetOpacity());
+     
+   polyData->SetPoints(polyPoints);
+-
+-  // compute the polydata normals
+-  vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+-  normals->SetInputConnection(polyData->GetProducerPort());
+-
+-  // uses the new vtkAlgorithmInput/Output
+-  pointMapper->SetInputConnection(normals->GetOutputPort());
++  pointMapper->SetInput(polyData);
+   meshActor->SetMapper(pointMapper);
+  
+   this->AddActor( meshActor );
+@@ -203,7 +195,6 @@ void MeshObjectRepresentation::CreateActors()
+   polyPoints->Delete();
+   polyData->Delete();
+   pointMapper->Delete();
+-  normals->Delete();
+ }
+ 
+ /** Create a copy of the current object representation */
