@@ -142,7 +142,7 @@ void DummyVideoImagerTool::RequestAttachToVideoImager(DummyVideoImager*  imager 
 }
 }
 
-int igstkFrameTest( int argv, char * argc[] )
+int igstkFrameTest( int , char * [] )
 {
   typedef igstk::FrameTest::DummyVideoImager     VideoImagerType;
   typedef igstk::FrameTest::DummyVideoImagerTool VideoImagerToolType;
