@@ -47,9 +47,9 @@ class HelloWorldGUI {open
         callback {this->ExportSceneGraph(fileName);}
         xywh {185 345 105 25} labelsize 11
       }
-      Fl_Button quit {
+      Fl_Button quitButton {
         label Quit
-        callback {this->Quit()}
+        callback {this->Quit()} selected
         xywh {421 345 90 25}
       }
     }
@@ -78,8 +78,7 @@ this->MainWindow->hide();} {}
 else
   {
   this->m_Tracker->RequestStopTracking();
-  }} {selected
-    }
+  }} {}
   }
   Function {ShowSceneGraph( bool showingSG )} {open return_type {virtual void}
   } {

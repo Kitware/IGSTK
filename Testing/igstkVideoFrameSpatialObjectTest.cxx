@@ -40,7 +40,7 @@
 #include "igstkVideoFrameRepresentation.h"
 #include "igstkSpatialObjectTestHelper.h"
 
-int igstkVideoFrameSpatialObjectTest( int itkNotUsed(argv), char * itkNotUsed(argc[]) )
+int igstkVideoFrameSpatialObjectTest( int argv, char * argc[] )
 {
   typedef igstk::VideoFrameSpatialObject<unsigned char, 3 >      VideoFrameObjectType;
   typedef igstk::VideoFrameRepresentation<VideoFrameObjectType>  VideoFrameRepresentationType;
