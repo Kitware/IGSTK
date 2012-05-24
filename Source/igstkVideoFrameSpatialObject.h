@@ -91,7 +91,7 @@ public:
   igstkGetMacro(NumberOfScalarComponents, unsigned int);
 
   //igstkGetMacro(NumberOfChannels, unsigned int);
-  const unsigned int GetNumberOfChannels() const;
+  unsigned int GetNumberOfChannels() const;
 
   igstkSetMacro(PixelSizeX, double);
   igstkGetMacro(PixelSizeX, double);

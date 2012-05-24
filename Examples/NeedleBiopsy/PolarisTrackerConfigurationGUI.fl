@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0110
+version 1.0107
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_File_Chooser.H>} {} 
@@ -24,7 +24,7 @@ class PolarisTrackerConfigurationGUI {open : {public igstk::TrackerConfiguration
           label {SROM File:}
           xywh {110 391 230 25}
         }
-        Fl_Button {} {
+        Fl_Button fileChooserButton {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
 if( fileName )
@@ -34,7 +34,7 @@ if( fileName )
           xywh {345 391 25 25}
         }
         Fl_Choice ReferenceToolPort {
-          label {Port:}
+          label {Port:} open
           xywh {322 351 45 25} down_box BORDER_BOX deactivate
         } {}
         Fl_Group DRFradioGroup {open
@@ -72,7 +72,7 @@ else
           label {SROM File:}
           xywh {115 119 230 25}
         }
-        Fl_Button {} {
+        Fl_Button fileChooser2 {
           label {...}
           callback {char * fileName = fl_file_chooser("SROM file for tracker tool","*.rom","");
 if( fileName )
@@ -82,11 +82,11 @@ if( fileName )
           xywh {350 119 25 25}
         }
         Fl_Choice TrackerToolPort {
-          label {Port:}
+          label {Port:} open
           xywh {330 84 45 25} down_box BORDER_BOX deactivate
         } {}
-        Fl_Group {} {
-          label {Tool Tip Offset}
+        Fl_Group groupToolTipOffset {
+          label {Tool Tip Offset} open
           xywh {30 168 355 70} box ENGRAVED_BOX
         } {
           Fl_Value_Input OffsetX {
@@ -121,11 +121,11 @@ if( fileName )
           }
         }
       }
-      Fl_Button {} {
+      Fl_Button confirmButton {
         label Confirm
         callback {GetGUISetting();
 RequestGetConfiguration();
-TrackerConfigurationWindow->hide();}
+TrackerConfigurationWindow->hide();} selected
         xywh {315 439 70 25}
       }
     }
@@ -276,7 +276,6 @@ if(UseReferenceTool->value())
 }
 
 m_TrackerConfiguration.SetTrackerType( igstk::TrackerConfiguration::Polaris );
-m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {selected
-    }
+m_TrackerConfiguration.SetNDITrackerConfiguration( conf );} {}
   }
 } 

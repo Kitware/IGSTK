@@ -235,7 +235,7 @@ VideoFrameSpatialObject< TPixelType, TChannels>
 }
 
 template< class TPixelType, unsigned int TChannels >
-const unsigned int
+unsigned int
 VideoFrameSpatialObject< TPixelType, TChannels>
 ::GetNumberOfChannels() const
 {
@@ -363,9 +363,9 @@ VideoFrameSpatialObject< TPixelType, TChannels >
   Self * self = const_cast< Self * >( this );
   self->UpdateImages();
 
-  VTKImageModifiedEvent  m_VtkImageLoadedEvent;
-  m_VtkImageLoadedEvent.Set( m_VTKImage );
-  this->InvokeEvent( m_VtkImageLoadedEvent );
+  VTKImageModifiedEvent  vtkImageLoadedEvent;
+  vtkImageLoadedEvent.Set( m_VTKImage );
+  this->InvokeEvent( vtkImageLoadedEvent );
 }
 
 template< class TPixelType, unsigned int TChannels >

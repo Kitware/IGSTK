@@ -144,7 +144,6 @@ protected:
     ConstIteratorType inputItr = trackerToolContainer.begin();
     ConstIteratorType inputEnd = trackerToolContainer.end();
 
-    typedef igstk::Transform   TransformType;
     TransformType transform;
 
     transform.SetToIdentity( this->GetValidityTime() );

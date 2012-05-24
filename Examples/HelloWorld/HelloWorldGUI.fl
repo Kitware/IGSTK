@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0107
 header_name {.h} 
 code_name {.cxx}
 class HelloWorldGUI {open
@@ -16,7 +16,7 @@ class HelloWorldGUI {open
   Function {HelloWorldGUI()} {open
   } {
     Fl_Window MainWindow {
-      label {IGSTK: HelloWorld Example} open selected
+      label {IGSTK: HelloWorld Example} open
       xywh {619 249 515 375} type Double resizable
       code0 {\#include <FL/fl_ask.H>}
       code1 {\#include "igstkView3D.h"}
@@ -47,7 +47,7 @@ class HelloWorldGUI {open
         callback {this->ExportSceneGraph(fileName);}
         xywh {185 345 105 25} labelsize 11
       }
-      Fl_Button {} {
+      Fl_Button quit {
         label Quit
         callback {this->Quit()}
         xywh {421 345 90 25}
@@ -57,19 +57,19 @@ class HelloWorldGUI {open
 this->View = igstk::View3D::New();
 this->Display->RequestSetView( this->View );} {}
   }
-  Function {Show()} {return_type {virtual void}
+  Function {Show()} {open return_type {virtual void}
   } {
     code {this->quit = false;
 this->MainWindow->show();
 this->View->RequestStart();} {}
   }
-  Function {Quit()} {return_type {virtual void}
+  Function {Quit()} {open return_type {virtual void}
   } {
     code {this->View->RequestStop();
 this->quit = true;
 this->MainWindow->hide();} {}
   }
-  Function {SetTracking( bool tracking )} {return_type {virtual void}
+  Function {SetTracking( bool tracking )} {open return_type {virtual void}
   } {
     code {if( tracking )
   {
@@ -78,7 +78,8 @@ this->MainWindow->hide();} {}
 else
   {
   this->m_Tracker->RequestStopTracking();
-  }} {}
+  }} {selected
+    }
   }
   Function {ShowSceneGraph( bool showingSG )} {open return_type {virtual void}
   } {

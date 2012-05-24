@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0110
+version 1.0107
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/fl_ask.H>} {} 
@@ -22,7 +22,7 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
         Fl_Group top {open
           xywh {20 35 125 135} box BORDER_BOX labeltype NO_LABEL align 16
         } {
-          Fl_Button {} {
+          Fl_Button loadButton {
             label Load
             callback {RequestLoadImage();}
             xywh {45 56 64 20} align 16
@@ -32,7 +32,7 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             xywh {34 108 100 20} down_box BORDER_BOX align 2
           } {}
         }
-        Fl_Group {} {
+        Fl_Group group {
           label {@2->} open
           xywh {20 218 130 180} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
@@ -41,15 +41,15 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
             callback {RequestConnectToTracker();} open
             xywh {45 240 80 20} align 20
           } {
-            MenuItem {} {
+            MenuItem polaris {
               label Polaris
               xywh {0 0 30 20} divider
             }
-            MenuItem {} {
+            MenuItem aurora {
               label Aurora
               xywh {5 5 30 20} divider
             }
-            MenuItem {} {
+            MenuItem micron {
               label Micron
               xywh {5 5 30 20}
             }
@@ -59,11 +59,11 @@ class NeedleBiopsyGUI {open : {public igstk::Object}
           } {}
           Fl_Button disconnect {
             label Disconnect
-            callback {RequestDisconnetTracker();} selected
+            callback {RequestDisconnetTracker();}
             xywh {47 355 75 20} align 16
           }
         }
-        Fl_Group {} {
+        Fl_Group group2 {
           label {@2->} open
           xywh {20 454 130 135} box BORDER_BOX labeltype ENGRAVED_LABEL labelsize 25
         } {
@@ -85,7 +85,7 @@ else
             xywh {45 475 76 20}
           }
         }
-        Fl_Box {} {
+        Fl_Box box {
           image {IGSTK.jpg} xywh {0 614 165 76} align 18
         }
       }
@@ -101,12 +101,12 @@ hasQuitted = false;} {}
       label Registration open
       xywh {656 296 225 138} type Double visible
     } {
-      Fl_Button {} {
+      Fl_Button touchButton {
         label {Touch fiducial and click here}
         callback {SetTrackerFiducialPoint();}
         xywh {17 53 199 40} align 16
       }
-      Fl_Button {} {
+      Fl_Button registrationButton {
         label Registration
         callback {RequestRegistration();
 RegistrationWindow->hide();}
@@ -121,7 +121,7 @@ ChangeSelectedTPlanPoint();} open
       } {}
     }
   }
-  Function {~NeedleBiopsyGUI()} {open return_type virtual
+  Function {~NeedleBiopsyGUI()} {open selected return_type virtual
   } {}
   decl {bool hasQuitted;} {}
   Function {Quit()} {return_type void
