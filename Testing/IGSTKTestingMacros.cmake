@@ -3,6 +3,9 @@
 # This macro is used to add tests to IGSTK CVS. This macro is useful
 # to run the same set of tests also in the Sandbox. The macro is invoked
 # in the CMake list file in the Testing subdirectory.
+#
+# We want our tests to have maximal sensitivity while not generating a
+# false positive. This can only be achieved using a per test threshold.
 # 
 # Optional arguments:
 # EXECUTABLE_NAME(string): test executable name
@@ -412,7 +415,7 @@ IF(${IGSTK_USE_FLTK})
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
               --toleranceIntensity 10
               --toleranceRadius    5
-              --toleranceNumberOfPixels 5
+              --toleranceNumberOfPixels 30
               igstkCoordinateSystemObjectWithViewTest
                         ${IGSTK_TEST_OUTPUT_DIR}/igstkCoordinateSystemTestScreenshot1.png
               )
