@@ -351,10 +351,6 @@ SET(IGSTK_LIBRARY_PATH ${LIBRARY_OUTPUT_PATH})
 CONFIGURE_FILE(${IGSTK_SOURCE_DIR}/UseIGSTK.cmake.in
                ${IGSTK_BINARY_DIR}/UseIGSTK.cmake COPYONLY IMMEDIATE)
 
-# Save the compiler settings so another project can import them.
-INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
-CMAKE_EXPORT_BUILD_SETTINGS(${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake)
-
 #-----------------------------------------------------------------------------
 # Installation vars.
 # IGSTK_INSTALL_BIN_DIR          - binary dir (executables)
