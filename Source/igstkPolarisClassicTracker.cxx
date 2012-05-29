@@ -124,14 +124,16 @@ PolarisClassicTracker::ResultType PolarisClassicTracker
     // use tool type information to figure out mode for enabling
     int mode = CommandInterpreterType::NDI_DYNAMIC;
 
-    char toolKind = identity[0];
-    if (atoi(&toolKind) == CommandInterpreterType::NDI_TYPE_BUTTON)
+    char toolKindString[1] = {identity[0]};
+    int toolKindInt = 0;
+    sscanf(toolKindString, "%d", &toolKindInt);
+    if (toolKindInt == CommandInterpreterType::NDI_TYPE_BUTTON)
       {
       mode = CommandInterpreterType::NDI_BUTTON_BOX;
       }
 
     //NDI_TYPE_REFERENCE   = 0x01
-    if (atoi(&toolKind) == CommandInterpreterType::NDI_TYPE_REFERENCE)
+    if (toolKindInt == CommandInterpreterType::NDI_TYPE_REFERENCE)
       {
       mode = CommandInterpreterType::NDI_STATIC;
       }

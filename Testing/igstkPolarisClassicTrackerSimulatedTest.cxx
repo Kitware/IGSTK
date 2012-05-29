@@ -114,7 +114,7 @@ int igstkPolarisClassicTrackerSimulatedTest( int argc, char * argv[] )
   PortNumberType  polarisPortNumber = PortNumberType(portNumberIntegerValue);
   serialComm->SetPortNumber( polarisPortNumber );
   serialComm->SetParity( igstk::SerialCommunication::NoParity );
-  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate9600 );
+  serialComm->SetBaudRate( igstk::SerialCommunication::BaudRate115200 );
   serialComm->SetDataBits( igstk::SerialCommunication::DataBits8 );
   serialComm->SetStopBits( igstk::SerialCommunication::StopBits1 );
   serialComm->SetHardwareHandshake( igstk::SerialCommunication::HandshakeOff );
@@ -180,8 +180,9 @@ int igstkPolarisClassicTrackerSimulatedTest( int argc, char * argv[] )
   typedef ::itk::Vector<double, 3>    VectorType;
   typedef ::itk::Versor<double>       VersorType;
 
-  for(unsigned int i=0; i<30; i++)
+  for(unsigned int i=0; i<1000; i++)
     {
+	igstk::PulseGenerator::Sleep(10);
     igstk::PulseGenerator::CheckTimeouts();
 
     TransformType             transform;
