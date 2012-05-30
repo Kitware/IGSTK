@@ -441,7 +441,7 @@ IF(${IGSTK_USE_FLTK})
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png 
        --toleranceIntensity 10
        --toleranceRadius 5
-       --toleranceNumberOfPixels 5
+       --toleranceNumberOfPixels 25
        igstkImageSpatialObjectRepresentationTest2
        ${IGSTK_DATA_ROOT}/Input/E000192
        ${IGSTK_TEST_OUTPUT_DIR}/igstkImageSpatialObjectRepresentationTest2.png)
