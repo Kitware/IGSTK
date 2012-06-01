@@ -102,7 +102,8 @@ info "Finding submodule repos..." &&
 GIT_ALTERNATE_OBJECT_DIRECTORIES=$(
 sep='' && git ls-tree -r $commit | grep '^160000 ' |
 while read _ _ _ path; do
-  echo -n "$sep$(cd "$path" && git rev-parse --git-dir)/objects" &&
+  dir=$(cd "$path" && cd "$(git rev-parse --git-dir)/objects" && pwd) &&
+  echo -n "$sep$dir" &&
   sep=':' || exit $?
 done) &&
 export GIT_ALTERNATE_OBJECT_DIRECTORIES || exit $?
