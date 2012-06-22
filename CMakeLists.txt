@@ -29,7 +29,6 @@ ENDIF(IGSTK_WITH_LIBRARY_VERSION)
 OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF)
 
 ENABLE_TESTING()
-option( BUILD_TESTING "Build the tests." OFF )
 INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
 
 SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
@@ -49,7 +48,7 @@ IF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
 ELSE( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
   SET(ITK_PRE4_VERSION 0)
 ENDIF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
-
+   
 #
 # FIND VTK
 #
@@ -124,8 +123,9 @@ ENDIF(IGSTK_USE_Qt)
 SUBDIRS(Source)
 
 # Add the testing directories
-add_subdirectory(Testing)
-
+IF(BUILD_TESTING)
+   SUBDIRS(Testing)
+ENDIF(BUILD_TESTING)
 
 # Add the examples directories
 OPTION(BUILD_EXAMPLES "Examples of the project" ON)
@@ -198,7 +198,7 @@ IF(IGSTK_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DGm.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY
+    FIND_LIBRARY( ATC_LIBRARY 
       NAMES ATC3DGm ATC3DGm.dll
       PATHS "C:/Program Files/Ascension/3D Guidance medSAFE (Rev F)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
@@ -209,13 +209,13 @@ IF(IGSTK_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DG.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY
+    FIND_LIBRARY( ATC_LIBRARY 
       NAMES ATC3DG ATC3DG.dll
       PATHS "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
       )
   ENDIF(Ascension3DG_MedSafe)
-
+  
   GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
@@ -250,7 +250,7 @@ IF(IGSTK_USE_NDICertusTracker)
   #INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus ) replaced by the following
   FIND_PATH(NDICERTUS_INCLUDE_DIRECTORY certus_aux.c)
   INCLUDE_DIRECTORIES( ${NDICERTUS_INCLUDE_DIRECTORY} )
-
+  
   FIND_LIBRARY( CERTUS_LIBRARY
     NAMES  NDItb NDItb.lib oapi oapi.lib
     PATHS "C:/NDIoapi/ndlib/msvc"
