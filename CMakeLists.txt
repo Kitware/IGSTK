@@ -247,9 +247,8 @@ ENDIF(WIN32)
 # Connect NDI Certus Tracker
 OPTION(IGSTK_USE_NDICertusTracker "Connect NDI Certus Tracker" OFF)
 IF(IGSTK_USE_NDICertusTracker)
-  #INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus ) replaced by the following
-  FIND_PATH(NDICERTUS_INCLUDE_DIRECTORY certus_aux.c)
-  INCLUDE_DIRECTORIES( ${NDICERTUS_INCLUDE_DIRECTORY} )
+  # The headers defined in this directory must match the NDI API library
+  INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus )
   
   FIND_LIBRARY( CERTUS_LIBRARY
     NAMES  NDItb NDItb.lib oapi oapi.lib
