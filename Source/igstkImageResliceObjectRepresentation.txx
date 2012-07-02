@@ -42,11 +42,12 @@
 #include <vtkImageMapToColors.h>
 #include <vtkCutter.h>
 
+#include <vtkJPEGWriter.h>
+
 namespace igstk
 {
 
 /** Constructor */
-
 template < class TImageSpatialObject >
 ImageResliceObjectRepresentation< TImageSpatialObject >
 ::ImageResliceObjectRepresentation():m_StateMachine(this)
@@ -67,9 +68,6 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_Cutter = NULL;
   m_ImageData = NULL;
 
-  //m_Edges->Delete();
-  //m_EdgesTuber->Delete();
-
   // Create classes for displaying images
   m_ImageActor = vtkActor::New();
 
@@ -78,18 +76,8 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_PlaneProperty->SetAmbientColor(1.0,1.0,1.0);
   m_PlaneProperty->SetOpacity(1);
 
- // m_ImageActor->SetProperty( m_PlaneProperty );
-
   this->AddActor( m_ImageActor );
  
-  // for dubugging purpose
-  //m_SphereActor = vtkActor::New();
-  //this->AddActor( m_SphereActor );
-
-  // for dubugging purpose
-  //m_EdgesActor = vtkActor::New();
-  //this->AddActor( m_EdgesActor );
-
   m_RestrictPlaneToVolume    = 0;  
   m_TextureInterpolate       = 0;
   m_ResliceInterpolate       = VTK_NEAREST_RESLICE;
@@ -152,9 +140,6 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_Cutter->SetInput(m_Box);
   m_Cutter->SetCutFunction(m_Plane);
 
-  //m_Edges->SetInput(m_Cutter->GetOutput());
-  //m_EdgesTuber->SetInput(m_Edges->GetOutput());
-
   m_Level = 0;
   m_Window = 0;
 
@@ -207,7 +192,6 @@ template < class TImageSpatialObject >
 ImageResliceObjectRepresentation< TImageSpatialObject >
 ::~ImageResliceObjectRepresentation()  
 {
-
   this->DeleteActors();
 
   //m_EdgesProperty->Delete();
@@ -271,9 +255,6 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
     m_Cutter = NULL;
     }
 
-  //m_Edges->Delete();
-  //m_EdgesTuber->Delete();
-
   if ( m_ImageData )
     {
     m_ImageData = NULL;
@@ -294,9 +275,6 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   this->Superclass::DeleteActors();
   
   m_ImageActor = NULL;
-  //m_SphereActor = NULL;
-  //m_EdgesActor = NULL;
-
 }
  
 /** Set the Image Spatial Object 
@@ -387,6 +365,62 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
                                                 m_ReslicerPlaneNormalObserver );
 
   m_ReslicePlaneSpatialObject->RequestComputeReslicingPlane();
+
+  typedef igstk::ReslicerPlaneSpatialObject::OrientationType OrientationType;
+  OrientationType orientation
+                        = m_ReslicePlaneSpatialObject->GetOrientationType();
+  switch(orientation)
+  {
+    case ReslicerPlaneType::Axial:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
+        break;
+      }
+    case ReslicerPlaneType::OffAxial:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
+        break;
+      }
+    case ReslicerPlaneType::Coronal:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
+        break;
+      }
+    case ReslicerPlaneType::OffCoronal:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
+        break;
+      }
+    case ReslicerPlaneType::Sagittal:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
+        break;
+      }
+    case ReslicerPlaneType::OffSagittal:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[0],m_zbounds[1]);
+        break;
+      }
+    case ReslicerPlaneType::PlaneOrientationWithXAxesNormal:
+    case ReslicerPlaneType::PlaneOrientationWithYAxesNormal:
+    case ReslicerPlaneType::PlaneOrientationWithZAxesNormal:
+      {
+        m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
+        m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
+        break;
+      }
+    default:
+      {
+        std::cerr << "Invalid orientation" << std::endl;
+        break;
+      }
+  }
 }
 
 /** Verify time stamp of the attached tool*/
@@ -420,7 +454,6 @@ ImageResliceObjectRepresentation < TImageSpatialObject >
 
     if (diff > 450 )
       {
-      //std::cout << diff << std::endl;
       return false;
       }
     else
@@ -570,8 +603,6 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_Cutter->SetInput(m_Box);
 
   m_PlaneSource->SetOrigin(m_xbounds[0],m_ybounds[0],m_zbounds[0]);
-  m_PlaneSource->SetPoint1(m_xbounds[1],m_ybounds[0],m_zbounds[0]);
-  m_PlaneSource->SetPoint2(m_xbounds[0],m_ybounds[1],m_zbounds[0]);
 
   m_Plane->SetOrigin( m_PlaneSource->GetCenter() );
   m_Plane->SetNormal( m_PlaneSource->GetNormal() );
@@ -653,14 +684,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   // get the center of the bounding box around the contour
   double* cutc = outputPd->GetCenter();
 
-  double newcenter[3];
-  // project it back onto the reslicing plane
-  m_Plane->ProjectPoint(cutc, m_Plane->GetOrigin(), 
-                                               m_Plane->GetNormal(), newcenter);
-
-  //m_Sphere->SetCenter(newcenter[0], newcenter[1], newcenter[2] );
-  
-  m_PlaneSource->SetCenter( newcenter[0], newcenter[1], newcenter[2] );
+  m_PlaneSource->SetCenter( cutc[0], cutc[1], cutc[2] );
   m_PlaneSource->SetNormal( reslicerPlaneNormal[0],
                             reslicerPlaneNormal[1],
                             reslicerPlaneNormal[2] );
@@ -755,15 +779,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   this->DeleteActors();
 
   m_ImageActor = vtkActor::New();
- // m_ImageActor->SetProperty(m_PlaneProperty);
   this->AddActor( m_ImageActor );  
-
-  // for dubugging purpose
-  //m_SphereActor = vtkActor::New();  
-  //m_EdgesActor = vtkActor::New();
-  //this->AddActor( m_EdgesActor );
-  //this->AddActor( m_SphereActor );
-
 
   igstkPushInputMacro( ConnectVTKPipeline );
   m_StateMachine.ProcessInputs(); 
@@ -802,13 +818,12 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
   m_Texture->SetQualityTo32Bit();
   m_Texture->MapColorScalarsThroughLookupTableOff();
   m_Texture->SetInterpolate(m_TextureInterpolate);
-  m_Texture->RepeatOff();
+  //m_Texture->RepeatOff();
 
   m_ImageActor->SetMapper(texturePlaneMapper);
   m_ImageActor->SetTexture(m_Texture);
   
   m_ImageActor->PickableOff();
-  // m_ImageActor->SetProperty(m_PlaneProperty);
   
   texturePlaneMapper->Delete();
 }
@@ -1023,7 +1038,6 @@ void ImageResliceObjectRepresentation< TImageSpatialObject >
   m_ImageReslicer->SetOutputSpacing(outputSpacingX, outputSpacingY, 1);
   m_ImageReslicer->SetOutputOrigin(0.5*outputSpacingX, 0.5*outputSpacingY, 0);
   m_ImageReslicer->SetOutputExtent(0, extentX-1, 0, extentY-1, 0, 0);
-
 }
 
 template < class TImageSpatialObject >
