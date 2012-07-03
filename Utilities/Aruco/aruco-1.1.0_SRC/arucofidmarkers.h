@@ -78,7 +78,6 @@ private:
     static  cv::Mat rotate(cv::Mat  in);
     static  int hammDistMarker(cv::Mat  bits);
     static  int analyzeMarkerImage(cv::Mat &grey,int &nRotations);
-    static  bool correctHammMarker(cv::Mat &bits);
 };
 
 }

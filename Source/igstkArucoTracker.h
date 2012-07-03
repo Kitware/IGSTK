@@ -81,7 +81,7 @@ public:
 
   void SetMarkerSize(unsigned int size);
 
-  cv::Mat ArucoTracker::GetCurrentVideoFrame();
+  cv::Mat GetCurrentVideoFrame();
 
 protected:
 

@@ -184,7 +184,7 @@ public:
     /**
      * Thesholds the passed image with the specified method.
      */
-    void thresHold(int method,const cv::Mat &grey,cv::Mat &thresImg,double param1,double param2);
+    void thresHold(int method,const cv::Mat &greyImg,cv::Mat &thresImg,double param1,double param2);
     /**
     * Detection of candidates to be markers, i.e., rectangles.
     * This function returns in candidates all the rectangles found in a thresolded image
