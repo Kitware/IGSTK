@@ -239,55 +239,6 @@ int FiducidalMarkers::analyzeMarkerImage(Mat &grey,int &nRotations)
     }
 }
 
-
-/************************************
- *
- *
- *
- *
- ************************************/
-bool FiducidalMarkers::correctHammMarker(Mat &bits)
-{
-    //detect this lines with errors
-    bool errors[4];
-    int ids[4][5]=
-    {
-        {
-            0,0,0,0,0
-        }
-        ,
-        {
-            0,0,1,1,1
-        }
-        ,
-        {
-            1,1,0,0,1
-        }
-        ,
-        {
-            1, 1, 1, 1, 0
-        }
-    };
-
-    for (int y=0;y<5;y++)
-    {
-        int minSum=static_cast<int>(1e5);
-        //hamming distance to each possible word
-        for (int p=0;p<4;p++)
-        {
-            int sum=0;
-            //now, count
-            for (int x=0;x<5;x++)
-                sum+=  bits.at<uchar>(y,x) == ids[p][x]?0:1;
-            if (minSum>sum) minSum=sum;
-        }
-        if (minSum!=0) errors[y]=true;
-        else errors[y]=false;
-    }
-
-    return true;
-}
-
 /************************************
  *
  *

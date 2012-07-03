@@ -410,6 +410,11 @@ ArucoTracker::RemoveTrackerToolFromInternalDataContainers(
    "igstk::ArucoTracker::RemoveTrackerToolFromInternalDataContainers \
    called ...\n" )
 
+   if ( trackerTool == NULL )
+    {
+      return FAILURE;
+    }
+
   return SUCCESS;
 }
 
@@ -426,6 +431,11 @@ ArucoTracker::AddTrackerToolToInternalDataContainers (
   igstkLogMacro( DEBUG,
   "igstk::ArucoTracker::AddTrackerToolToInternalDataContainers \
    called ...\n" )
+
+   if ( trackerTool == NULL )
+    {
+      return FAILURE;
+    }
 
   return SUCCESS;
 }

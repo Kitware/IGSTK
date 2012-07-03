@@ -221,14 +221,14 @@ void MarkerDetector::detect(const  cv::Mat &input,vector<Marker> &detectedMarker
  *
  *
  ************************************/
-void  MarkerDetector::detectRectangles(const cv::Mat &thres,vector<std::vector<cv::Point2f> > &MarkerCanditates)
+void  MarkerDetector::detectRectangles(const cv::Mat &thresImg,vector<std::vector<cv::Point2f> > &MarkerCanditates)
 {
     //pass a copy to findContours because the function modifies it
 
     std::vector<std::vector<cv::Point> > contours2;
     std::vector<cv::Vec4i> hierarchy2;
 
-    thres.copyTo(thres2);
+    thresImg.copyTo(thres2);
     cv::findContours( thres2 , contours2, hierarchy2,CV_RETR_TREE, CV_CHAIN_APPROX_NONE );
     vector<Point>  approxCurve;
     ///for each contour, analyze if it is a paralelepiped likely to be the marker
@@ -237,7 +237,7 @@ void  MarkerDetector::detectRectangles(const cv::Mat &thres,vector<std::vector<c
 
 
         //check it is a possible element by first checking is has enough points
-        if (contours2[i].size()>(unsigned int)(thres.cols /15))
+        if (contours2[i].size()>(unsigned int)(thresImg.cols /15))
         {
             //approximate to a poligon
             approxPolyDP(  Mat  (contours2[i]),approxCurve , double(contours2[i].size())*0.05 , true);
@@ -269,9 +269,9 @@ void  MarkerDetector::detectRectangles(const cv::Mat &thres,vector<std::vector<c
                         //add the points
                         // 	      cout<<"ADDED"<<endl;
                         MarkerCanditates.push_back(Marker());
-                        for (int i=0;i<4;i++)
+                        for (int j=0;j<4;j++)
                         {
-                            MarkerCanditates.back().push_back( Point2f(static_cast<float>(approxCurve[i].x),static_cast<float>(approxCurve[i].y)));
+                            MarkerCanditates.back().push_back( Point2f(static_cast<float>(approxCurve[j].x),static_cast<float>(approxCurve[j].y)));
                         }
                     }
                 }
@@ -337,21 +337,21 @@ void  MarkerDetector::detectRectangles(const cv::Mat &thres,vector<std::vector<c
  *
  *
  ************************************/
-void MarkerDetector::thresHold(int method,const Mat &grey,Mat &out,double param1,double param2)
+void MarkerDetector::thresHold(int method,const Mat &greyImg,Mat &out,double param1,double param2)
 {
 
-    if (grey.type()!=CV_8UC1)     throw cv::Exception(9001,"grey.type()!=CV_8UC1","MarkerDetector::thresHold",__FILE__,__LINE__);
+    if (greyImg.type()!=CV_8UC1)     throw cv::Exception(9001,"greyImg.type()!=CV_8UC1","MarkerDetector::thresHold",__FILE__,__LINE__);
     switch (method)
     {
     case FIXED_THRES:
-        cv::threshold(grey, out, param1,255, CV_THRESH_BINARY_INV );
+        cv::threshold(greyImg, out, param1,255, CV_THRESH_BINARY_INV );
         break;
     case ADPT_THRES://currently, this is the best method
 //ensure that _thresParam1%2==1
         if ( param1<3) param1=3;
         else if ( ((int)param1)%2 !=1 ) param1=(int) (param1+1);
 
-        cv::adaptiveThreshold(grey,out,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,static_cast<int>(param1),param2);
+        cv::adaptiveThreshold(greyImg,out,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,static_cast<int>(param1),param2);
         break;
     case CANNY:
     {
@@ -359,7 +359,7 @@ void MarkerDetector::thresHold(int method,const Mat &grey,Mat &out,double param1
         //However, some times there are small holes in the marker contour that makes
         //the contour detector not to find it properly
         //if there is a missing pixel
-        cv::Canny(grey, out, 10, 220);
+        cv::Canny(greyImg, out, 10, 220);
         //I've tried a closing but it add many more points that some
         //times makes this even worse
 // 			  Mat aux;
@@ -435,13 +435,11 @@ void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<
             vector<Point2f> corners2;
             goodFeaturesToTrack(subImage, corners2, 10, 0.001, halfSize);
             double minD=9999;
-            size_t bIdx=-1;
             cv::Point2f Center(static_cast<float>(halfSize),static_cast<float>(halfSize));
             for (size_t j=0;j<corners2.size();j++) {
                 double dist=cv::norm(corners2[j]-Center);
                 if (dist<minD) {
                     minD=dist;
-                    bIdx=j;
                 }
             }
         }
