@@ -195,6 +195,7 @@ TrackerTool::RequestAttachToTracker( Tracker * tracker )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::RequestAttachToTracker called...\n");
 
+
   this->m_TrackerToAttachTo = tracker;
   igstkPushInputMacro( AttachToolToTracker );
   this->m_StateMachine.ProcessInputs();
@@ -252,7 +253,17 @@ void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  this->m_TrackerToAttachTo->RequestAttachTool( this );
+  if(this->m_TrackerToAttachTo == NULL)
+    {
+      igstkPushInputMacro( AttachmentToTrackerFailure );
+    }
+  else
+    {
+      this->m_TrackerToAttachTo->RequestAttachTool( this );
+      igstkPushInputMacro( AttachmentToTrackerSuccess );
+    }
+
+  this->m_StateMachine.ProcessInputs();
 }
 
 /** Push AttachmentToTrackerSuccess input to the tracker tool*/ 

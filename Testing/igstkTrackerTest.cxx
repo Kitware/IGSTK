@@ -27,6 +27,45 @@
 #include "igstkTracker.h"
 #include "igstkTrackerTool.h"
 
+#define igstkEventOccurredMacro( name, EventType ) \
+  class name##EventOccurredObserver : public ::itk::Command \
+  { \
+  public: \
+    typedef  name##EventOccurredObserver  Self; \
+    typedef  ::itk::Command               Superclass;\
+    typedef  ::itk::SmartPointer<Self>    Pointer;\
+    itkNewMacro( Self );\
+  public:\
+    void Execute(itk::Object *caller, const itk::EventObject & event)\
+      {\
+      const itk::Object * constCaller = caller;\
+      this->Execute( constCaller, event );\
+      }\
+    void Execute(const itk::Object *caller, const itk::EventObject & event)\
+      {\
+      if( EventType().CheckEvent( &event ) )\
+        {\
+          m_EventOccurred = true;\
+        }\
+      }\
+    bool EventOccured() const\
+      {\
+      return m_EventOccurred;\
+      }\
+    void Reset() \
+      {\
+      m_EventOccurred = false; \
+      }\
+  protected:\
+    name##EventOccurredObserver() \
+      {\
+      m_EventOccurred = false;\
+      }\
+    ~name##EventOccurredObserver() {}\
+  private:\
+    bool m_EventOccurred;\
+  };
+
 namespace igstk
 {
 
@@ -210,6 +249,9 @@ void DummyTrackerTool::RequestAttachToTracker( DummyTracker *  tracker )
 
 }
 
+igstkEventOccurredMacro( FailedToAttachTrackerTool,
+                         igstk::TrackerToolAttachmentToTrackerErrorEvent )
+
 int igstkTrackerTest( int, char * [] )
 {
   igstk::RealTimeClock::Initialize();
@@ -218,7 +260,26 @@ int igstkTrackerTest( int, char * [] )
   typedef igstk::TrackerTest::DummyTrackerTool  TrackerToolType;
   typedef TrackerToolType::TransformType        TransformType;
 
-  TrackerType::Pointer tracker = TrackerType::New();
+  FailedToAttachTrackerToolEventOccurredObserver::Pointer failedToAttachObserver =
+    FailedToAttachTrackerToolEventOccurredObserver::New();
+
+  TrackerType::Pointer tracker;
+
+  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
+
+  trackerTool->AddObserver( igstk::TrackerToolAttachmentToTrackerErrorEvent(),
+                            failedToAttachObserver );
+  trackerTool->RequestConfigure();
+  trackerTool->RequestAttachToTracker( tracker );
+
+  if( !failedToAttachObserver->EventOccured() )
+  {
+    std::cerr << "Expected to fail the attachment of " <<
+                 "tracker tool on NULL tracker" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  tracker = TrackerType::New();
 
   tracker->RequestOpen();
 
@@ -241,9 +302,6 @@ int igstkTrackerTest( int, char * [] )
 
   tracker->RequestSetFrequency( 30 );
 
-  TrackerToolType::Pointer trackerTool = TrackerToolType::New();
-
-  trackerTool->RequestConfigure();
   trackerTool->RequestAttachToTracker( tracker );
 
   tracker->RequestStartTracking();
@@ -252,5 +310,5 @@ int igstkTrackerTest( int, char * [] )
 
   std::cout << tracker << std::endl;
 
-  return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
