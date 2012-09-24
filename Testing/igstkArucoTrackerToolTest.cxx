@@ -37,7 +37,7 @@ int igstkArucoTrackerToolTest( int, char * [] )
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
 
   //Set marker type
-  trackerTool->RequestSetMarkerName("102");
+  trackerTool->RequestSetMarkerName(102);
 
   trackerTool->RequestConfigure();
 

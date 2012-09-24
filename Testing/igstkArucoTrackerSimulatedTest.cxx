@@ -140,7 +140,7 @@ int igstkArucoTrackerSimulatedTest( int argc, char * argv[] )
   TrackerToolType::Pointer trackerTool = TrackerToolType::New();
   trackerTool->SetLogger( logger );
   //Set marker type
-  trackerTool->RequestSetMarkerName("102");
+  trackerTool->RequestSetMarkerName(102);
   //Configure
   trackerTool->RequestConfigure();
   //Attach to the tracker

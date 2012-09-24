@@ -179,62 +179,70 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
   }
 
   this->m_BufferLock->Lock();
-  for( unsigned int i=0; i < this->m_Markers.size(); i++ )
+
+  // iterate over initialized tracker tools and update
+  inputItr = trackerToolContainer.begin();
+  while( inputItr != inputEnd )
   {
-    // create the transform
-    TransformType transform;
-
-    typedef TransformType::VectorType TranslationType;
-    TranslationType translation;
-
-    typedef TransformType::VersorType RotationType;
-    RotationType rotation;
-
-    // get rotation vector (rotation axis, rotation angle) from the marker
-    // and transform it to matrix representation
-    cv::Mat R(3,3,CV_32F);
-    cv::Rodrigues(this->m_Markers[i].Rvec, R);
-
-    igstk::Transform::VersorType::MatrixType matrix;
-
-    matrix[0][0]=R.at<float>(0,0);
-    matrix[0][1]=R.at<float>(0,1);
-    matrix[0][2]=R.at<float>(0,2);
-    matrix[1][0]=R.at<float>(1,0);
-    matrix[1][1]=R.at<float>(1,1);
-    matrix[1][2]=R.at<float>(1,2);
-    matrix[2][0]=R.at<float>(2,0);
-    matrix[2][1]=R.at<float>(2,1);
-    matrix[2][2]=R.at<float>(2,2);
-
-    rotation.Set(matrix);
-
-    translation[0] = this->m_Markers[i].Tvec.at<float>( 0, 0 );
-    translation[1] = this->m_Markers[i].Tvec.at<float>( 1, 0 );
-    translation[2] = this->m_Markers[i].Tvec.at<float>( 2, 0 );
-
-    // report error value
-    // Get error value from the tracker.
-    typedef TransformType::ErrorType  ErrorType;
-    ErrorType errorValue = 0;
-
-    long lTime = this->GetValidityTime();
-
-    transform.SetTranslationAndRotation( translation,
-                       rotation,
-                       errorValue,
-                       lTime );
-    char id[5];
-    sprintf(id, "%d", m_Markers[i].id);
-    if(trackerToolContainer.find(id) != trackerToolContainer.end())
+    for( unsigned int i=0; i < this->m_Markers.size(); i++ )
     {
-      // set the raw transform
-      this->SetTrackerToolRawTransform( trackerToolContainer [id], transform );
-      this->SetTrackerToolTransformUpdate( trackerToolContainer [id], true );
-      // report to the tracker tool that the tracker is Visible
-      this->ReportTrackingToolVisible(trackerToolContainer[id]);
+      std::string toolStringID = inputItr->first;
+      if( m_Markers[i].id == atoi(toolStringID.c_str()) )
+      {
+        // create the transform
+        TransformType transform;
+
+        typedef TransformType::VectorType TranslationType;
+        TranslationType translation;
+
+        typedef TransformType::VersorType RotationType;
+        RotationType rotation;
+
+        // get rotation vector (rotation axis, rotation angle) from the marker
+        // and transform it to matrix representation
+        cv::Mat R(3,3,CV_32F);
+        cv::Rodrigues(this->m_Markers[i].Rvec, R);
+
+        igstk::Transform::VersorType::MatrixType matrix;
+
+        matrix[0][0]=R.at<float>(0,0);
+        matrix[0][1]=R.at<float>(0,1);
+        matrix[0][2]=R.at<float>(0,2);
+        matrix[1][0]=R.at<float>(1,0);
+        matrix[1][1]=R.at<float>(1,1);
+        matrix[1][2]=R.at<float>(1,2);
+        matrix[2][0]=R.at<float>(2,0);
+        matrix[2][1]=R.at<float>(2,1);
+        matrix[2][2]=R.at<float>(2,2);
+
+        rotation.Set(matrix);
+
+        translation[0] = this->m_Markers[i].Tvec.at<float>( 0, 0 );
+        translation[1] = this->m_Markers[i].Tvec.at<float>( 1, 0 );
+        translation[2] = this->m_Markers[i].Tvec.at<float>( 2, 0 );
+
+        // report error value
+        // Get error value from the tracker.
+        typedef TransformType::ErrorType  ErrorType;
+        ErrorType errorValue = 0;
+
+        long lTime = this->GetValidityTime();
+
+        transform.SetTranslationAndRotation( translation,
+                           rotation,
+                           errorValue,
+                           lTime );
+
+        // set the raw transform
+        this->SetTrackerToolRawTransform( trackerToolContainer [toolStringID], transform );
+        this->SetTrackerToolTransformUpdate( trackerToolContainer [toolStringID], true );
+        // report to the tracker tool that the tracker is Visible
+        this->ReportTrackingToolVisible(trackerToolContainer[toolStringID]);
+      }
     }
+    ++inputItr;
   }
+
   this->m_BufferLock->Unlock ();
 
   inputItr = trackerToolContainer.begin();

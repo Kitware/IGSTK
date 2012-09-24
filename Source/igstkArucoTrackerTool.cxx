@@ -78,19 +78,19 @@ ArucoTrackerTool::~ArucoTrackerTool()
 
 /** Set tracker tool marker name */
 void ArucoTrackerTool::RequestSetMarkerName (
-   const std::string & markerName )
+   const unsigned int markerID )
 {
   igstkLogMacro( DEBUG,
    "igstk::ArucoTrackerTool::RequestSetMarkerName called ...\n" );
 
-  if ( markerName == "" )
+  if ( markerID < 0 || markerID > 1023 )
     {
     this->m_StateMachine.PushInput( this->m_InValidMarkerNameInput );
     this->m_StateMachine.ProcessInputs();
     }
   else
     {
-    this->m_MarkerNameToBeSet = markerName;
+    this->m_MarkerIDToBeSet = markerID;
     this->m_StateMachine.PushInput( this->m_ValidMarkerNameInput );
     this->m_StateMachine.ProcessInputs();
     }
@@ -102,7 +102,7 @@ void ArucoTrackerTool::PrintSelf(
 {
   Superclass::PrintSelf( os, indent );
 
-  os << indent << "Marker name : "         << this->m_MarkerName << std::endl;
+  os << indent << "Marker ID : "         << this->m_MarkerID << std::endl;
   os << indent << "TrackerToolConfigured:"
      << this->m_TrackerToolConfigured << std::endl;
 }
@@ -129,11 +129,15 @@ void ArucoTrackerTool::SetMarkerNameProcessing ()
   igstkLogMacro ( DEBUG,
      "igstk::ArucoTrackerTool::SetMarkerNameProcessing called ...\n" );
 
-  this->m_MarkerName = this->m_MarkerNameToBeSet;
+  this->m_MarkerID = this->m_MarkerIDToBeSet;
   this->m_TrackerToolConfigured = true;
 
-  // For ArucoTracker, marker name is used as a unique identifier
-  SetTrackerToolIdentifier ( this->m_MarkerName );
+  // For ArucoTracker, marker ID is used as a unique identifier
+
+  std::stringstream strStream;
+  strStream << m_MarkerID;
+  std::string markerName = strStream.str();
+  SetTrackerToolIdentifier ( markerName );
 }
 
 /** The "CheckIfTrackerToolIsConfigured" method returns true if

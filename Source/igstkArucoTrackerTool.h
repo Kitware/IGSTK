@@ -54,10 +54,10 @@ public:
   igstkStandardClassTraitsMacro ( ArucoTrackerTool, TrackerTool )
 
   /** Get Tracker tool marker name */
-  igstkGetStringMacro ( MarkerName );
+  unsigned int GetMarkerID() { return m_MarkerID; }
 
-  /** Set tracker tool marker name */
-  void RequestSetMarkerName ( const std::string & markerName );
+  /** Set tracker tool marker ID (0-1023) */
+  void RequestSetMarkerName ( const unsigned int markerID );
 
 protected:
 
@@ -97,8 +97,8 @@ private:
   igstkDeclareInputMacro ( InValidMarkerName );
 
   /** The marker */
-  std::string m_MarkerName;
-  std::string m_MarkerNameToBeSet;
+  unsigned int m_MarkerID;
+  unsigned int m_MarkerIDToBeSet;
 
   /** boolean to indicate if the tracker tool is configured */
   bool m_TrackerToolConfigured;
