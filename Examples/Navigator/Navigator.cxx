@@ -2886,7 +2886,6 @@ void Navigator::ConnectImageRepresentation()
 
   // create reslice plane representation for axial view
   m_AxialPlaneRepresentation = ImageRepresentationType::New();
-  m_AxialPlaneRepresentation->SetFrameColor(1,0,0);
   m_AxialPlaneRepresentation->RequestSetImageSpatialObject( 
                                                          m_ImageSpatialObject );
   m_AxialPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 
@@ -2894,7 +2893,6 @@ void Navigator::ConnectImageRepresentation()
 
   // create reslice plane representation for sagittal view
   m_SagittalPlaneRepresentation = ImageRepresentationType::New();
-  m_SagittalPlaneRepresentation->SetFrameColor(0,1,0);
   m_SagittalPlaneRepresentation->RequestSetImageSpatialObject( 
                                                          m_ImageSpatialObject );
   m_SagittalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 
@@ -2902,7 +2900,6 @@ void Navigator::ConnectImageRepresentation()
 
   // create reslice plane representation for coronal view
   m_CoronalPlaneRepresentation = ImageRepresentationType::New();
-  m_CoronalPlaneRepresentation->SetFrameColor(0,0,1);
   m_CoronalPlaneRepresentation->RequestSetImageSpatialObject( 
                                                          m_ImageSpatialObject );
   m_CoronalPlaneRepresentation->RequestSetReslicePlaneSpatialObject( 

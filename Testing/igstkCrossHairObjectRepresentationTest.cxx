@@ -160,7 +160,7 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
     
   view2D->RequestResetCamera();
 
-  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
+  Fl_Window * form = new Fl_Window(512,512,"igstkCrossHairObjectRepresentationTest");
 
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
@@ -197,11 +197,6 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
   crossHairObjectRepresentation->Print( std::cout );
   crossHairObject->Print( std::cout );
 
-  RepresentationType::Pointer crossHairObjectRepresentationCopy=
-     crossHairObjectRepresentation->Copy(); 
-  crossHairObjectRepresentationCopy->SetVisibility(false);
-  crossHairObjectRepresentationCopy->RequestSetCrossHairObject( NULL );
-  
   crossHairObjectRepresentation->GetNameOfClass();
   crossHairObject->GetNameOfClass();
 
@@ -235,7 +230,6 @@ int igstkCrossHairObjectRepresentationTest( int argc, char * argv[] )
 
   // add the cross hair representation to the view
   view2D->RequestAddObject( crossHairObjectRepresentation );
-  view2D->RequestAddObject( crossHairObjectRepresentationCopy ); //coverage
   crossHairObjectRepresentation->SetColor(0,1,0);
   crossHairObjectRepresentation->SetLineWidth(1);
   crossHairObjectRepresentation->SetLineWidth(1); //coverage: same value

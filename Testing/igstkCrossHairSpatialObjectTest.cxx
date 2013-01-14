@@ -164,7 +164,7 @@ int igstkCrossHairSpatialObjectTest( int argc, char * argv[] )
     
   view2D->RequestResetCamera();
 
-  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
+  Fl_Window * form = new Fl_Window(512,512,"igstkCrossHairSpatialObjectTest");
 
   typedef igstk::FLTKWidget      FLTKWidgetType;
 

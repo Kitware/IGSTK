@@ -38,7 +38,7 @@
 #include "igstkEvents.h"
 #include "igstkCylinderObject.h"
 #include "igstkTransform.h"
-#include "igstkView2D.h"
+#include "igstkView3D.h"
 
 #include "igstkMeshReader.h"
 #include "igstkMeshObjectRepresentation.h"
@@ -254,7 +254,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
    toolRepresentation->SetOpacity(1);
    toolRepresentation->SetColor(1, 0, 0);
   
-  typedef igstk::View2D          View2DType;
+  typedef igstk::View3D          View2DType;
   typedef igstk::QTWidget        QTWidgetType;
 
   View2DType::Pointer view2D = View2DType::New();
@@ -333,7 +333,7 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   ReslicerPlaneType::Pointer reslicerPlaneSpatialObject = ReslicerPlaneType::New();
 //  reslicerPlaneSpatialObject->SetLogger( logger );
 
-  // select Orthogonal reslicing mode
+  // select Oblique reslicing mode
   reslicerPlaneSpatialObject->RequestSetReslicingMode( ReslicerPlaneType::Oblique );
 
   // give some valid orientation
@@ -368,7 +368,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   // Start the view
   view2D->RequestStart();
   
-
   // do a loop
   std::cout << "PlaneOrientationWithZAxesNormal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
@@ -548,14 +547,13 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
       igstk::PulseGenerator::CheckTimeouts();
   }
 
-
   // finally, take a screenshot.
   //
-  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
-//  initialize the tool transform in the middle of the image
+  //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
   index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
@@ -579,8 +577,6 @@ int igstkImageResliceObjectRepresentationQtTest3( int argc , char * argv [] )
   QTest::qWait(200);
   view2D->RequestSaveScreenShot( argv[3] );
 
-  // stop the view
-  view2D->RequestStop();
   delete qtWidget2D;
   qtMainWindow->hide();
   delete qtMainWindow;

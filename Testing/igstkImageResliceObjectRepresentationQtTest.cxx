@@ -307,7 +307,7 @@ int igstkImageResliceObjectRepresentationQtTest( int argc , char * argv [] )
 
   std::cout << "Axial view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-//  view2D->RequestSetOrientation( View2DType::Axial ); 
+  view2D->RequestSetOrientation( View2DType::Axial );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 

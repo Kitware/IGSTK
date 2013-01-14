@@ -286,10 +286,6 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
   
   // code coverage
-  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
-
-  imageResliceRepresentation->SetTextureInterpolate(0);
-
   imageResliceRepresentation->SetResliceInterpolate(0);
 
   igstk::Transform toolTransform;
@@ -302,7 +298,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   // a variable to hold world point coords
   ImageSpatialObjectType::PointType point;
 
-//  initialize the tool transform in the middle of the image
+  //  initialize the tool transform in the middle of the image
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
   index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
@@ -555,7 +551,7 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
 
   // finally, take a screenshot.
   //
-  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithZAxesNormal );
+  reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::PlaneOrientationWithYAxesNormal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -578,11 +574,11 @@ int igstkImageResliceObjectRepresentationFltkTest3( int argc , char * argv [] )
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );    
 
   std::cout << "Saving snapshot to: " << argv[3] << std::endl;
+  Fl::wait( 0.01 );
   view2D->RequestStop();
+  Fl::wait( 0.01 );
   view2D->RequestSaveScreenShot( argv[3] );
 
-  // stop the view
-  view2D->RequestStop();
   delete fltkWidget2D;
   form->hide();
   delete form;
