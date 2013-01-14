@@ -198,7 +198,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
     
   view2D->RequestResetCamera();
 
-  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest2");
+  Fl_Window * form = new Fl_Window(512,512,"igstkImageResliceObjectRepresentationFltkTest");
 
   typedef igstk::FLTKWidget      FLTKWidgetType;
 
@@ -228,10 +228,6 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   imageResliceRepresentation->RequestSetImageSpatialObject( NULL );
 
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
-
-  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
-
-  imageResliceRepresentation->SetTextureInterpolate(0);
 
   imageResliceRepresentation->SetResliceInterpolate(0);
 
@@ -317,7 +313,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
 
   std::cout << "Axial view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-//  view2D->RequestSetOrientation( View2DType::Axial ); 
+  view2D->RequestSetOrientation( View2DType::Axial );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -348,7 +344,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   // Change slice orientation to sagittal
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-//  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+  view2D->RequestSetOrientation( View2DType::Sagittal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -377,7 +373,7 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-//  view2D->RequestSetOrientation( View2DType::Coronal ); 
+  view2D->RequestSetOrientation( View2DType::Coronal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -409,16 +405,17 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
   //
   view2D->RequestStop();
 
-//  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
+  view2D->RequestSetOrientation( View2DType::Axial );
+  view2D->RequestResetCamera();
+  view2D->RequestResetCamera();
 
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
   index[1] = static_cast<IndexValueType>(0.5*(imageExtent[2]+imageExtent[3]));
   index[2] = static_cast<IndexValueType>(0.5*(imageExtent[4]+imageExtent[5]));
 
   view2D->RequestStart();
-  view2D->RequestResetCamera();
-
+  for(int i=0;i<5;i++){
   imageSpatialObject->TransformIndexToPhysicalPoint( index, point );
   data = point.GetVnlVector().data_block();
 
@@ -432,6 +429,11 @@ int igstkImageResliceObjectRepresentationFltkTest( int argc , char * argv [] )
                       igstk::TimeStamp::GetZeroValue() );
 
   toolSpatialObject->RequestSetTransformAndParent( toolTransform, worldReference );     
+
+
+    Fl::wait( 0.01 );
+  igstk::PulseGenerator::CheckTimeouts();
+  }
 
   std::cout << "Saving snapshot to: " << argv[2] << std::endl;
   Fl::wait( 0.02 );

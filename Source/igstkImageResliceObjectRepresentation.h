@@ -23,20 +23,12 @@
 #include "igstkStateMachine.h"
 #include "igstkReslicerPlaneSpatialObject.h"
 
-class vtkLookupTable;
 class vtkImageMapToColors;
-class vtkImageReslice;
-class vtkTexture;
-class vtkActor;
 class vtkPlaneSource;
-class vtkOutlineFilter;
 class vtkPlane;
-class vtkPolyData;
-class vtkCutter;
-class vtkSphereSource;
-class vtkProperty;
-class vtkImageMapToColors;
-
+class vtkImageSlice;
+class vtkImageResliceMapper;
+class vtkImageProperty;
 
 namespace igstk
 {
@@ -89,15 +81,6 @@ public:
   /** Set the window level of the resliced image plane */
   void SetWindowLevel( double window, double level );
 
-  /** Set the color of the frame around the resliced image plane */
-  void SetFrameColor(ColorScalarType r, ColorScalarType g, ColorScalarType b);
-
-  /** Restrict the resulting resliced image to the image volume */
-  void SetRestrictPlaneToVolume(int value);
-
-  /** Set the texture interpolation type internally used in vtkTexture*/
-  void SetTextureInterpolate(int value);
-
   /** Set the reslice interpolation type internally used in
    * vtkImageReslice. VTK_NEAREST_RESLICE 0 (default)
    * VTK_LINEAR_RESLICE   1, VTK_CUBIC_RESLICE   2
@@ -106,7 +89,6 @@ public:
 
   /** Print the object information in a stream. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
-
 
 protected:
 
@@ -121,11 +103,6 @@ protected:
 
   /** Create the VTK actors for displaying geometry */
   void CreateActors();
-
-  /** Get each frame color component */
-  ColorScalarType GetFrameRed() const; 
-  ColorScalarType GetFrameGreen() const;
-  ColorScalarType GetFrameBlue() const;
 
   /** Verify time stamp. Use the reslicing tool transform to verify 
   * the time stamp */
@@ -145,27 +122,14 @@ private:
   ReslicerPlanePointerType               m_ReslicePlaneSpatialObject;
     
   /** VTK classes that support display of an image */
-  vtkImageData         *m_ImageData;
-  vtkImageReslice      *m_ImageReslicer;
-  vtkMatrix4x4         *m_ResliceAxes;
-  vtkActor             *m_ImageActor;
-  vtkProperty          *m_PlaneProperty;
-  vtkImageMapToColors  *m_ColorMap;
-  vtkTexture           *m_Texture;
-  vtkLookupTable       *m_LookupTable;
-  vtkPlaneSource       *m_PlaneSource;
-  vtkPlane             *m_Plane;
-  vtkImageData         *m_Box;
-  vtkCutter            *m_Cutter;
-  
-
-  /** Main color of the representation. This should be RGB components, each one
-   * in the range 0.0 to 1.0 */
-  ColorScalarType                         m_FrameColor[3];
+  vtkImageData          *m_ImageData;
+  vtkPlaneSource        *m_PlaneSource;
+  vtkPlane              *m_Plane;
+  vtkImageSlice         *m_ImageSlice;
+  vtkImageResliceMapper *m_ImageResliceMapper;
+  vtkImageProperty      *m_ImageProperty;
 
   int    m_ResliceInterpolate;
-  int    m_TextureInterpolate;
-  int    m_RestrictPlaneToVolume;
 
   /** Variables that store window and level values for 2D image display */
   double                                 m_Level;
@@ -200,9 +164,6 @@ private:
 
   /** Report invalid request */
   void ReportInvalidRequestProcessing( void );
-
-  /** Builds the plane geometry */
-  void UpdatePlane();
 
   /** Internal function to get a vector from point1 to the origin*/
   void GetVector1(double v1[3]);

@@ -199,7 +199,6 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   imageSpatialObject->RequestSetTransformAndParent( identity, worldReference );  
 
   // Set a 2D View
-  // Set a 2D View
   typedef igstk::View2D  View2DType;
   View2DType::Pointer view2D = View2DType::New();
 //  view2D->SetLogger( logger );
@@ -234,10 +233,6 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   imageResliceRepresentation->RequestSetImageSpatialObject( imageSpatialObject );
 
   // code coverage
-  imageResliceRepresentation->SetRestrictPlaneToVolume(0);
-
-  imageResliceRepresentation->SetTextureInterpolate(0);
-
   imageResliceRepresentation->SetResliceInterpolate(0);
   
   // a variable to hold image index
@@ -291,7 +286,7 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
 
   std::cout << "Axial view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
-//  view2D->RequestSetOrientation( View2DType::Axial ); 
+  view2D->RequestSetOrientation( View2DType::Axial );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -313,7 +308,7 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   // Change slice orientation to sagittal
   std::cout << "Sagittal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Sagittal );
-//  view2D->RequestSetOrientation( View2DType::Sagittal ); 
+  view2D->RequestSetOrientation( View2DType::Sagittal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -334,7 +329,7 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   /* Change slice orientation to coronal */
   std::cout << "Coronal view: " << std::endl;
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Coronal );
-//  view2D->RequestSetOrientation( View2DType::Coronal ); 
+  view2D->RequestSetOrientation( View2DType::Coronal );
   view2D->RequestResetCamera();
   view2D->RequestResetCamera();
 
@@ -356,7 +351,7 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   //
   view2D->RequestStop();
 
-//  view2D->RequestSetOrientation( View2DType::Axial );
+  view2D->RequestSetOrientation( View2DType::Axial );
   reslicerPlaneSpatialObject->RequestSetOrientationType( ReslicerPlaneType::Axial );
 
   index[0] = static_cast<IndexValueType>(0.5*(imageExtent[0]+imageExtent[1]));
@@ -378,9 +373,6 @@ int igstkImageResliceObjectRepresentationFltkTest2( int argc , char * argv [] )
   Fl::wait( 0.1 );
   igstk::PulseGenerator::CheckTimeouts();
   view2D->RequestSaveScreenShot( argv[2] );
-  //Fl::wait( 0.1 );
-  //igstk::PulseGenerator::CheckTimeouts();
-  view2D->RequestStop();
 
   delete fltkWidget2D;
   form->hide();
