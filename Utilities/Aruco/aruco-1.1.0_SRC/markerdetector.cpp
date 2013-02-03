@@ -256,11 +256,11 @@ void  MarkerDetector::detectRectangles(const cv::Mat &thresImg,vector<std::vecto
 // 					      drawApproxCurve(input,approxCurve,Scalar(255,0,255));
 // 						//ensure that the   distace between consecutive points is large enough
                     float minDist=1e10;
-                    for (int i=0;i<4;i++)
+                    for (int k=0;k<4;k++)
                     {
-                        float d= std::sqrt((float) (approxCurve[i].x-approxCurve[(i+1)%4].x)*(approxCurve[i].x-approxCurve[(i+1)%4].x) +
-                                           (approxCurve[i].y-approxCurve[(i+1)%4].y)*(approxCurve[i].y-approxCurve[(i+1)%4].y));
-                        // 		norm(Mat(approxCurve[i]),Mat(approxCurve[(i+1)%4]));
+                        float d= std::sqrt((float) (approxCurve[k].x-approxCurve[(k+1)%4].x)*(approxCurve[k].x-approxCurve[(k+1)%4].x) +
+                                           (approxCurve[k].y-approxCurve[(k+1)%4].y)*(approxCurve[k].y-approxCurve[(k+1)%4].y));
+                        // 		norm(Mat(approxCurve[k]),Mat(approxCurve[(k+1)%4]));
                         if (d<minDist) minDist=d;
                     }
                     //check that distance is not very small
@@ -422,16 +422,16 @@ int MarkerDetector:: perimeter(vector<Point2f> &a)
  *
  *
  */
-void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & grey,vector<cv::Point2f> &  Corners,int blockSize)
+void MarkerDetector::findBestCornerInRegion_harris(const cv::Mat  & greyMat,vector<cv::Point2f> &  Corners,int blockSize)
 {
     int halfSize=blockSize/2;
     for (size_t i=0;i<Corners.size();i++) {
         //check that the region is into the image limits
         cv::Point2f min(Corners[i].x-halfSize,Corners[i].y-halfSize);
         cv::Point2f max(Corners[i].x+halfSize,Corners[i].y+halfSize);
-        if (min.x>=0  &&  min.y>=0 && max.x<grey.cols && max.y<grey.rows) {
+        if (min.x>=0  &&  min.y>=0 && max.x<greyMat.cols && max.y<greyMat.rows) {
             cv::Mat response;
-            cv::Mat subImage(grey,cv::Rect(static_cast<int>(Corners[i].x)-halfSize,static_cast<int>(Corners[i].y)-halfSize,blockSize ,blockSize ));
+            cv::Mat subImage(greyMat,cv::Rect(static_cast<int>(Corners[i].x)-halfSize,static_cast<int>(Corners[i].y)-halfSize,blockSize ,blockSize ));
             vector<Point2f> corners2;
             goodFeaturesToTrack(subImage, corners2, 10, 0.001, halfSize);
             double minD=9999;

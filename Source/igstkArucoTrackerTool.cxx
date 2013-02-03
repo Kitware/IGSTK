@@ -83,7 +83,7 @@ void ArucoTrackerTool::RequestSetMarkerName (
   igstkLogMacro( DEBUG,
    "igstk::ArucoTrackerTool::RequestSetMarkerName called ...\n" );
 
-  if ( markerID < 0 || markerID > 1023 )
+  if ( markerID > 1023 )
     {
     this->m_StateMachine.PushInput( this->m_InValidMarkerNameInput );
     this->m_StateMachine.ProcessInputs();
