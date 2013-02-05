@@ -410,7 +410,9 @@ void MR3DImageToUS3DImageRegistration::CalculateRegistrationProcessing()
   registration->SetInitialTransformParameters( initialParameters );
   try
     {
-    registration->StartRegistration();
+	    //registration->StartRegistration();
+	    // ITKv4 update
+	    registration->Update();
     }
   catch( itk::ExceptionObject & excp )
     {

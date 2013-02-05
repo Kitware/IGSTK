@@ -185,7 +185,7 @@ PolarisClassicTracker::CheckError(CommandInterpreterType *interpreter) const
   if (errnum)
     {
     // convert errnum to a hexidecimal string
-    itk::OStringStream os;
+    std::stringstream os;
     os << "0x";
     os.width(2);
     os.fill('0');

@@ -531,7 +531,25 @@ ADD_LIBRARY(IGSTK ${IGSTK_HEADS} ${IGSTK_SRCS})
 
 # Linking with the FLTK, ITK and VTK libraries
 TARGET_LINK_LIBRARIES( IGSTK
-    ITKIO ITKBasicFilters ITKNumerics ITKCommon ITKSpatialObject
+    ITKCommon
+	ITKOptimizers
+    ITKIOMeta
+    ITKIOXML
+    ITKSpatialObjects
+    ITKVTK
+    ITKIOJPEG
+    ITKIOGDCM
+    ITKIOTIFF
+    ITKIOPNG
+    ITKIOLSM
+    ITKIOVTK
+    ITKIOStimulate
+    ITKIOHDF5
+    ITKIOBMP
+    ITKIOBioRad
+    ITKIONIFTI
+    ITKIONRRD
+    ITKIOGIPL
     vtkRendering vtkGraphics vtkHybrid vtkImaging 
     vtkIO vtkFiltering vtkCommon vtksys
     ${EXTRA_LIBS}

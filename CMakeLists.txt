@@ -7,7 +7,7 @@ PROJECT( IGSTK )
 
 # version
 SET(IGSTK_VERSION_MAJOR "5")
-SET(IGSTK_VERSION_MINOR "0")
+SET(IGSTK_VERSION_MINOR "2")
 SET(IGSTK_VERSION_PATCH "0")
 
 SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
@@ -36,36 +36,37 @@ SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 #
 #  FIND ITK
 #
-FIND_PACKAGE(ITK)
-IF (USE_ITK_FILE)
-  INCLUDE (${USE_ITK_FILE})
-ELSE (USE_ITK_FILE)
-  MESSAGE( FATAL_ERROR "This application requires ITK. One of these components is missing. Please verify configuration")
-ENDIF (USE_ITK_FILE)
+find_package(ITK REQUIRED)
+set( ITK_MIN_VERSION 4.2.0 )
 
-IF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
-  SET(ITK_PRE4_VERSION 1)
-ELSE( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
-  SET(ITK_PRE4_VERSION 0)
-ENDIF( ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} VERSION_LESS 4.0 )
-   
+set( ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH} )
+
+if( ${ITK_VERSION} VERSION_LESS ${ITK_MIN_VERSION} )
+  message( FATAL_ERROR "This application requires ITK version ${ITK_MIN_VERSION} or later. Provided version is ${ITK_VERSION}.")
+else()
+  INCLUDE (${USE_ITK_FILE})
+endif()
+
 #
 # FIND VTK
 #
-FIND_PACKAGE(VTK)
-IF (USE_VTK_FILE)
-  INCLUDE (${USE_VTK_FILE})
-ELSE (USE_VTK_FILE)
-  MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
-ENDIF (USE_VTK_FILE)
+find_package(VTK REQUIRED)
+set( VTK_MIN_VERSION 5.10.0 )
 
+set( VTK_VERSION ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}.${VTK_VERSION_PATCH} )
+
+if( ${VTK_VERSION} VERSION_LESS ${VTK_MIN_VERSION} )
+  message( FATAL_ERROR "This application requires VTK version ${VTK_MIN_VERSION} or later. Provided version is ${VTK_VERSION}.")
+else()
+  INCLUDE (${USE_VTK_FILE})
+endif()
 
 #
 # FIND FLTK
 #
 OPTION(IGSTK_USE_FLTK "Use FLTK (The Fast Light Toolkit) for GUI" OFF)
 IF(IGSTK_USE_FLTK)
-  FIND_PACKAGE(FLTK)
+  find_package(FLTK)
   IF (FLTK_FOUND)
     INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
     IF(WIN32)
@@ -107,7 +108,7 @@ build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
     MESSAGE( FATAL_ERROR " VTK built using Qt 3. Please use Qt4" )
  ENDIF( DESIRED_QT_VERSION MATCHES 3)
 
- FIND_PACKAGE(Qt4 REQUIRED)
+ find_package(Qt4 REQUIRED)
 
  IF(QT_USE_FILE)
    INCLUDE(${QT_USE_FILE})
@@ -268,7 +269,7 @@ IF(IGSTK_USE_OpenIGTLink)
   #
   #  FIND OpenIGTLink
   #
-  FIND_PACKAGE(OpenIGTLink)
+  find_package(OpenIGTLink)
   IF (OpenIGTLink_USE_FILE)
     INCLUDE (${OpenIGTLink_USE_FILE})
   ELSE (OpenIGTLink_USE_FILE)
@@ -283,7 +284,7 @@ OPTION(IGSTK_USE_OpenCV "Use the OpenCV library" OFF)
 IF(IGSTK_USE_OpenCV)
   #
   #  FIND OpenCV
-  FIND_PACKAGE( OpenCV REQUIRED )
+  find_package( OpenCV REQUIRED )
 ENDIF(IGSTK_USE_OpenCV)
 
 # Use ArucoTracker
@@ -452,7 +453,7 @@ SUBDIRS(Utilities)
 
 OPTION(BUILD_DOCUMENTATION "Build IGSTK Documentation" OFF)
 IF(BUILD_DOCUMENTATION)
-  FIND_PACKAGE(VTK)
+  find_package(VTK)
   IF (USE_VTK_FILE)
     INCLUDE (${USE_VTK_FILE})
   ELSE (USE_VTK_FILE)
