@@ -9,10 +9,6 @@ set(${PROJECT_NAME}_VERSION_MAJOR "1")
 set(${PROJECT_NAME}_VERSION_MINOR "1")
 set(${PROJECT_NAME}_VERSION_PATCH "0")
 
-
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
 set(ARUCO_HDRS
     aruco.h
     cameraparameters.h

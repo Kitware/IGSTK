@@ -42,6 +42,8 @@ namespace igstk
 ArucoTracker::ArucoTracker ( void ) :
 m_StateMachine( this )
 {
+  this->SetThreadingEnabled( true );
+
   m_BufferLock = itk::MutexLock::New();
   m_CameraCalibrationFileSet = false;
   m_MarkerSizeSet = false;
@@ -189,55 +191,58 @@ ArucoTracker::ResultType ArucoTracker::InternalUpdateStatus( void )
       std::string toolStringID = inputItr->first;
       if( m_Markers[i].id == atoi(toolStringID.c_str()) )
       {
-        // create the transform
-        TransformType transform;
+        try
+        {
+          // create the transform
+          TransformType transform;
 
-        typedef TransformType::VectorType TranslationType;
-        TranslationType translation;
+          typedef TransformType::VectorType TranslationType;
+          TranslationType translation;
 
-        typedef TransformType::VersorType RotationType;
-        RotationType rotation;
+          typedef TransformType::VersorType RotationType;
+          RotationType rotation;
 
-        // get rotation vector (rotation axis, rotation angle) from the marker
-        // and transform it to matrix representation
-        cv::Mat R(3,3,CV_32F);
-        cv::Rodrigues(this->m_Markers[i].Rvec, R);
+          // get rotation vector (rotation axis, rotation angle) from the marker
+          RotationType::VectorType RVect;
 
-        igstk::Transform::VersorType::MatrixType matrix;
+          cv::Mat cvRMat = this->m_Markers[i].Rvec;
+          RVect[0]= cvRMat.at<float>(0,0);
+          RVect[1]= cvRMat.at<float>(1,0);
+          RVect[2]= cvRMat.at<float>(2,0);
 
-        matrix[0][0]=R.at<float>(0,0);
-        matrix[0][1]=R.at<float>(0,1);
-        matrix[0][2]=R.at<float>(0,2);
-        matrix[1][0]=R.at<float>(1,0);
-        matrix[1][1]=R.at<float>(1,1);
-        matrix[1][2]=R.at<float>(1,2);
-        matrix[2][0]=R.at<float>(2,0);
-        matrix[2][1]=R.at<float>(2,1);
-        matrix[2][2]=R.at<float>(2,2);
+          double angle = RVect.GetNorm();
+          RVect.Normalize();
 
-        rotation.Set(matrix);
+          rotation.Set(RVect,angle);
 
-        translation[0] = this->m_Markers[i].Tvec.at<float>( 0, 0 );
-        translation[1] = this->m_Markers[i].Tvec.at<float>( 1, 0 );
-        translation[2] = this->m_Markers[i].Tvec.at<float>( 2, 0 );
+          translation[0] = this->m_Markers[i].Tvec.at<float>( 0, 0 );
+          translation[1] = this->m_Markers[i].Tvec.at<float>( 1, 0 );
+          translation[2] = this->m_Markers[i].Tvec.at<float>( 2, 0 );
 
-        // report error value
-        // Get error value from the tracker.
-        typedef TransformType::ErrorType  ErrorType;
-        ErrorType errorValue = 0;
+          // report error value
+          // Get error value from the tracker.
+          typedef TransformType::ErrorType  ErrorType;
+          ErrorType errorValue = 0;
 
-        long lTime = this->GetValidityTime();
+          long lTime = this->GetValidityTime();
 
-        transform.SetTranslationAndRotation( translation,
-                           rotation,
-                           errorValue,
-                           lTime );
+          transform.SetTranslationAndRotation( translation,
+                             rotation,
+                             errorValue,
+                             lTime );
 
-        // set the raw transform
-        this->SetTrackerToolRawTransform( trackerToolContainer [toolStringID], transform );
-        this->SetTrackerToolTransformUpdate( trackerToolContainer [toolStringID], true );
-        // report to the tracker tool that the tracker is Visible
-        this->ReportTrackingToolVisible(trackerToolContainer[toolStringID]);
+          // set the raw transform
+          this->SetTrackerToolRawTransform( trackerToolContainer [toolStringID], transform );
+          this->SetTrackerToolTransformUpdate( trackerToolContainer [toolStringID], true );
+          // report to the tracker tool that the tracker is Visible
+          this->ReportTrackingToolVisible(trackerToolContainer[toolStringID]);
+        }
+        catch( std::exception &ex )
+        {
+          igstkLogMacro( CRITICAL,
+            "igstk::ArucoTracker::InternalUpdateStatus Exception:" << ex.what() )
+          return FAILURE;
+        }
       }
     }
     ++inputItr;
