@@ -112,7 +112,7 @@ int igstkCoordinateSystemDelegatorTest(int , char* [])
             << " Stops = "
             << probe2.GetNumberOfStops() 
             << " Mean time = "
-            << probe2.GetMeanTime() << std::endl;
+            << probe2.GetMean() << std::endl;
 
   CoordinateSystemDelegator* nullCS = NULL;
   leaf1->RequestSetTransformAndParent( identity, nullCS ); // coverage

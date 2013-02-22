@@ -2967,7 +2967,9 @@ void Navigator::ConnectImageRepresentation()
 
   PointType point;
   m_ImageSpatialObject->TransformIndexToPhysicalPoint( index, point);
-  const double *data = point.Get_vnl_vector().data_block();
+
+  const double *data = NULL;
+  data = point.GetVnlVector().data_block();
   m_CrossHair->RequestSetCursorPosition(data);
 
   // buid the cross hair representations
