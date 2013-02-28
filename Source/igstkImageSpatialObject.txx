@@ -338,14 +338,27 @@ ImageSpatialObject< TPixelType, VDimension >
   typename ImageType::DirectionType    directionCosines;
   directionCosines = m_Image->GetDirection();
 
+  // Due to insufficient precision of the direction cosine representation
+  // in the DICOM tag (0020,0037) with three decimal positions, the direction
+  // cosine matrix may not represent a valid rotation matrix. Therefore, SVD
+  // is used to get the nearest valid rotation matrix.
+
+  // Compute singular value decomposition
+  vnl_svd<double> svd (directionCosines.GetVnlMatrix());
+
+  // Replace singular value matrix with identity
+  svd.W(0,0) = 1;
+  svd.W(1,1) = 1;
+  svd.W(2,2) = 1;
+  typename ImageType::DirectionType    directionCosineRotationMatrix(svd.recompose());
+
   typedef typename ImageType::PointType     OriginType;  
   OriginType origin =  m_Image->GetOrigin();
 
   Transform          transform;
   typename Transform::VersorType                    rotation;
   
-  rotation.Set( directionCosines );
- 
+  rotation.Set( directionCosineRotationMatrix );
 
   typename Transform::VectorType   tranlationToOrigin = 
                  origin - rotation.Transform( origin );
