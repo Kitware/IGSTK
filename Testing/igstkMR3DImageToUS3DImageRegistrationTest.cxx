@@ -135,9 +135,14 @@ int igstkMR3DImageToUS3DImageRegistrationTest( int argc, char * argv[] )
 
   igstk::Transform initialTransform;
   typedef igstk::Transform::VectorType VectorType;
+
+  // Initial transformation is equal to the final transformation
+  // in order to ensure convergence
   VectorType regTranslation;
   regTranslation.Fill(0);
-  regTranslation[0] = 10;
+  regTranslation[0] = 3;
+  regTranslation[1] = 2;
+  regTranslation[2] = 1;
   initialTransform.SetTranslation(regTranslation,100000,0);
 
   //coverage stuff
