@@ -105,7 +105,7 @@ int igstkCoordinateSystemDelegatorTest(int , char* [])
             << " Stops = "
             << probe1.GetNumberOfStops() 
             << " Mean time = "
-            << probe1.GetMeanTime() << std::endl;
+            << probe1.GetMean() << std::endl;
 
   std::cout << "Probe2 [leaf2->RequestComputeTransformTo(leaf1)] : Starts = "
             << probe2.GetNumberOfStarts() 

@@ -182,11 +182,9 @@ IF (IGSTK_DATA_ROOT)
        ${IGSTK_DATA_ROOT}/Input/USLiver
        ${IGSTK_DATA_ROOT}/Input/MRLiver)
        
-IF (ITK_PRE4_VERSION)
   ADD_TEST( igstkMR3DImageToUS3DImageRegistrationTest ${IGSTK_TESTS} 
              igstkMR3DImageToUS3DImageRegistrationTest
              ${IGSTK_DATA_ROOT}/Input/MRLiver)
-ENDIF(ITK_PRE4_VERSION)
 
   ADD_TEST( igstkAuroraTrackerSimulatedTest
               ${IGSTK_TESTS}
@@ -753,7 +751,7 @@ IF(${IGSTK_USE_Qt})
             ${IGSTK_TEST_OUTPUT_DIR}/igstkImageResliceObjectRepresentationQtTest3.png
               --toleranceIntensity 10
               --toleranceRadius    10
-              --toleranceNumberOfPixels 300
+              --toleranceNumberOfPixels 1000
               igstkImageResliceObjectRepresentationQtTest3
               ${IGSTK_DATA_ROOT}/Input/E000192 
               ${IGSTK_DATA_ROOT}/Input/TrackerToolRepresentationMeshes/tool.msh
