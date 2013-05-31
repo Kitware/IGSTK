@@ -27,9 +27,9 @@ class XPoints
 public:
   XPoints();
   ~XPoints();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
 
-  int detectedXPoints(MCamera *cam);
+  mtHandle detectedXPoints(MCamera *cam);
   int countXPoints(MCamera *cam);
   int processFrame(MCamera *cam);
 

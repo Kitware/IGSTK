@@ -14,7 +14,7 @@
 ***************************************************************/
 #include "Xform3D.h"
 
-Xform3D::Xform3D(int h)
+Xform3D::Xform3D(mtHandle h)
 {
   if (h != 0)
     this->m_handle = h;

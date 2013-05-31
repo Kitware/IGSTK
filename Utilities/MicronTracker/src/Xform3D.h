@@ -21,10 +21,10 @@ class Xform3D
 {
 
 public:
-  Xform3D(int h=0);
+  Xform3D(mtHandle h=0);
   ~Xform3D();
 
-  inline int getHandle() {return m_handle;};
+  inline mtHandle getHandle() {return m_handle;};
   Xform3D* concatenate( Xform3D* subsequentXform);
   Xform3D* inverse();
   Xform3D* inBetween(Xform3D* secondXf, double secondFract0To1);
@@ -36,7 +36,7 @@ public:
   void  getQuaternionVector(double *q);
   mtMeasurementHazardCode    getHazardState();
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
 
 };

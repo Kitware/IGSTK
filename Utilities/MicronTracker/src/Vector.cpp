@@ -17,7 +17,7 @@
 
 /****************************/
 /** Constructor */
-Vector::Vector(int handle)
+Vector::Vector(mtHandle handle)
 {
   // If a handle is provided to this class, don't create a new one
   if (handle != 0)
@@ -34,7 +34,7 @@ Vector::~Vector()
   if (this->m_handle != 0 && this->ownedByMe )
     Vector_Free(this->m_handle);
 }
-int Vector::Handle()
+mtHandle Vector::Handle()
 {
   return ( m_handle);
 

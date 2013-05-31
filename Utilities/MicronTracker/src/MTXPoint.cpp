@@ -17,7 +17,7 @@
 
 /****************************/
 /** Constructor */
-MTXPoint::MTXPoint(int h)
+MTXPoint::MTXPoint(mtHandle h)
 {
   // If a handle is provided to this class, don't create a new one
   if (h != 0)
@@ -70,9 +70,8 @@ int MTXPoint::Position2D(double* x0, double* y0, double* x1, double* y1, double*
 /****************************/
 double MTXPoint::Distance()
 {
-  int R;
   double dist;
-  R = XPoint_DistGet(this->m_handle, &dist);
+  XPoint_DistGet(this->m_handle, &dist);
   return dist;
 }
 

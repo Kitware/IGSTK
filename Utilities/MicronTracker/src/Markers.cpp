@@ -44,7 +44,8 @@ int Markers::restoreTemplate( int pHandle, char* nameInP)
 /** Store a Marker template If successful returns 0. Otherwise non-zero value is returned. */
 int Markers::storeTemplate( int idx, int pHandle, char* nameInP)
 {
-  int result, tHandle;
+  int result = -1;
+  mtHandle tHandle = 0;
   result = Markers_TemplateItemGet(idx, &tHandle);
   if (result != mtOK) return result;
   result = Marker_StoreTemplate(tHandle, pHandle, nameInP);
@@ -54,7 +55,7 @@ int Markers::storeTemplate( int idx, int pHandle, char* nameInP)
 
 /****************************/
 /** Add a template to the markers. If successful returns 0. Otherwise non-zero value is returned. */
-int Markers::addTemplate(int markerHandle)
+int Markers::addTemplate(mtHandle markerHandle)
 {
   int result;
   result = Markers_AddTemplate( markerHandle);
@@ -73,12 +74,12 @@ int Markers::clearTemplates()
 
 /****************************/
 /** Return the handle to a collection of identified markers by the most recent processed frame. ?? */
-int Markers::identifiedMarkers(MCamera *cam)
+mtHandle Markers::identifiedMarkers(MCamera *cam)
 {
-  int identifiedHandle = Collection_New();
-  int camHandle;
+  mtHandle identifiedHandle = Collection_New();
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -88,12 +89,12 @@ int Markers::identifiedMarkers(MCamera *cam)
 
 /****************************/
 /** Return the handle to a collection of unidentified vestors by the most recent processed frame. */
-int Markers::unidentifiedVectors(MCamera *cam)
+mtHandle Markers::unidentifiedVectors(MCamera *cam)
 {
-  int unidentifiedHandle = Collection_New();
-  int camHandle;
+  mtHandle unidentifiedHandle = Collection_New();
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -192,9 +193,9 @@ bool Markers::getAutoAdjustCam2CamRegistration()
 
 /****************************/
 /** Returns the handle to the template item with the index number of idx . */
-int Markers::getTemplateItem(int idx)
+mtHandle Markers::getTemplateItem(int idx)
 {
-  int result = 0;
+  mtHandle result = 0;
   Markers_TemplateItemGet( idx, &result);
   return result;
 }
@@ -203,7 +204,7 @@ int Markers::getTemplateItem(int idx)
 /** Returns the name of the template item with the index number of idx. */
 mtCompletionCode Markers::getTemplateItemName(int idx, std::string &templateName)
 {
-  int markerHandle = this->getTemplateItem(idx);
+  mtHandle markerHandle = this->getTemplateItem(idx);
   
   memset((void *)tempString, 0 , sizeof(tempString));
   int b;
@@ -218,7 +219,7 @@ mtCompletionCode Markers::getTemplateItemName(int idx, std::string &templateName
 
 /****************************/
 /** Returns the name of the template item with the handle of handle. */
-mtCompletionCode Markers::getTemplateItemHName(int handle, std::string &templateName)
+mtCompletionCode Markers::getTemplateItemHName(mtHandle handle, std::string &templateName)
 {
   memset((void *)tempString, 0 , sizeof(tempString));
   int b;
@@ -234,7 +235,7 @@ mtCompletionCode Markers::getTemplateItemHName(int handle, std::string &template
 /** */
 int Markers::setTemplateItemName(int idx, char* name)
 {
-  int markerHandle = this->getTemplateItem(idx);
+  mtHandle markerHandle = this->getTemplateItem(idx);
   return Marker_NameSet( markerHandle, name); 
 }
 
@@ -242,9 +243,9 @@ int Markers::setTemplateItemName(int idx, char* name)
 /** Processes the current frame of the default camera. */
 int Markers::processFrame(MCamera *cam)
 {
-  int camHandle;
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }

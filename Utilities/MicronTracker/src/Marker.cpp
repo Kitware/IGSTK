@@ -15,7 +15,7 @@
 
 /****************************/
 /** Constructor */
-MTMarker::Marker::Marker(int h)
+MTMarker::Marker::Marker(mtHandle h)
 {
   // If a handle is provided to this class, don't create a new one
   if (h != 0)
@@ -35,15 +35,15 @@ MTMarker::Marker::~Marker()
 
 /****************************/
 /** Return a handle to the Collection of the identified facets */
-int MTMarker::Marker::identifiedFacets(MCamera *cam)
+mtHandle MTMarker::Marker::identifiedFacets(MCamera *cam)
 {
-  int camHandle;
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
-  int identifiedHandle = Collection_New();
+  mtHandle identifiedHandle = Collection_New();
   Marker_IdentifiedFacetsGet(this->m_handle, camHandle, true, identifiedHandle);
   return identifiedHandle;
 }
@@ -51,9 +51,9 @@ int MTMarker::Marker::identifiedFacets(MCamera *cam)
 
 /****************************/
 /** Return a handle to the Collection of the facets */
-int MTMarker::Marker::getTemplateFacets()
+mtHandle MTMarker::Marker::getTemplateFacets()
 {
-  int templateFacetsColl = 0;
+  mtHandle templateFacetsColl = 0;
   Marker_TemplateFacetsGet(this->m_handle, &templateFacetsColl);
   return templateFacetsColl;
 }
@@ -61,10 +61,10 @@ int MTMarker::Marker::getTemplateFacets()
 /** */
 bool MTMarker::Marker::wasIdentified(MCamera *cam)
 {
-  int camHandle;
+  mtHandle camHandle;
   bool result;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -75,10 +75,10 @@ bool MTMarker::Marker::wasIdentified(MCamera *cam)
 
 /****************************/
 /** */
-Xform3D* MTMarker::Marker::marker2CameraXf(int camHandle)
+Xform3D* MTMarker::Marker::marker2CameraXf(mtHandle camHandle)
 {
   Xform3D* xf = new Xform3D;
-  int identifyingCamHandle;
+  mtHandle identifyingCamHandle = 0;
   int result = Marker_Marker2CameraXfGet(this->m_handle, camHandle, xf->getHandle(), &identifyingCamHandle);
 
   // if the result is ok then return the handle, otherwise return NULL

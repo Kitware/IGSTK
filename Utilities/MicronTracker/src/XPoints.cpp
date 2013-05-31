@@ -34,12 +34,12 @@ XPoints::~XPoints()
 
 /****************************/
 /** Return the handle to a collection of identified xpoints by the most recent processed frame. ?? */
-int XPoints::detectedXPoints(MCamera *cam)
+mtHandle XPoints::detectedXPoints(MCamera *cam)
 {
-  int identifiedHandle = Collection_New();
-  int camHandle;
+  mtHandle identifiedHandle = Collection_New();
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -52,9 +52,9 @@ int XPoints::detectedXPoints(MCamera *cam)
 /** Reutrn the value for the number of detected XPs*/
 int XPoints::countXPoints(MCamera *cam)
 {
-  int camHandle;
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -67,9 +67,9 @@ int XPoints::countXPoints(MCamera *cam)
 /** Processes the current frame of the default camera. */
 int XPoints::processFrame(MCamera *cam)
 {
-  int camHandle;
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }

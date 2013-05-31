@@ -11,7 +11,7 @@
 ***************************************************************/
 #include "Facet.h"
 
-Facet::Facet(int h)
+Facet::Facet(mtHandle h)
 {
   if (h != 0)
     this->m_handle = h;
@@ -35,9 +35,9 @@ Facet::~Facet()
 int Facet::getXpoints( MCamera *cam, double *result2x3x2x2)
  //[LV/SV][L/R/M][base/head][X/Y]
 {
-  int camHandle;
+  mtHandle camHandle;
   if (cam == NULL) {
-    camHandle = NULL;
+    camHandle = mtHandleNull;
   } else {
     camHandle = cam->Handle();
   }
@@ -105,21 +105,21 @@ bool Facet::setVectorsFromSample(vector<Collection*> &sampledVectorSets, string 
 bool Facet::identify(MCamera* cam, vector<Vector*> vectorSet, double positionToleranceMM)
 {
   bool result;
-  int* vectorHandles;
+  mtHandle* vectorHandles;
 
-  vectorHandles = (int *)malloc(vectorSet.size()*sizeof(int));
+  vectorHandles = (mtHandle*)malloc(vectorSet.size()*sizeof(mtHandle));
 
   for(unsigned int i=0; i<vectorSet.size(); i++)
     vectorHandles[i] = vectorSet[i]->Handle();
 
 
-  int camHandle;
+  mtHandle camHandle;
   if(cam == NULL)
     camHandle = 0;
   else
     camHandle = cam->Handle();
 
-  Facet_Identify(this->m_handle, cam->Handle(), vectorHandles, vectorSet.size(),  &result);
+  Facet_Identify(this->m_handle, cam->Handle(), vectorHandles, (int)vectorSet.size(),  &result);
   free(vectorHandles);
   
   (void) positionToleranceMM; //Get rid of unused variable warning
