@@ -134,33 +134,44 @@ IF(BUILD_EXAMPLES)
    SUBDIRS(Examples)
 ENDIF(BUILD_EXAMPLES)
 
-# Connect MicronTracker
-OPTION(IGSTK_USE_MicronTracker "Connect MicronTracker" OFF)
+#
+#User wants to use the Micron tracker. We force the user to
+#manually select the directory containing the Micron tracker header
+#file and the library. This way there is no chance that our
+#automatic selection chooses a 32 bit distribution when the rest of
+#the user code is 64bit. The installer from Claron installs both 32
+#and 64 and if the Cmake code doesn't select the correct version
+#the user will have a tedious debug session until realizing the
+#cause of the problem. We choose to force the user to explicitly
+#set two variables during Cmake configuration vs. several hours of
+#debugging code that has no bugs.
+#
+OPTION(IGSTK_USE_MicronTracker "Enable the use of the Micron tracker" OFF)
 
-IF(IGSTK_USE_MicronTracker)
-  FIND_PATH(MTC_INCLUDE_DIRECTORY MTC.h
-  "C:/Program Files/Claron Technology/MicronTracker/Dist"
-  DOC "Directory where the MTC.h file is located")
-  INCLUDE_DIRECTORIES( ${MTC_INCLUDE_DIRECTORY} )
-  INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/MicronTracker/src )
+if(IGSTK_USE_MicronTracker)
 
-  FIND_LIBRARY( MTC_LIBRARY
-    NAMES MTC MTC.dll
-    PATHS "C:/Program Files/Claron Technology/MicronTracker/Dist"
-    DOC "Full path to the MTC.dll file"
-    )
+  set(MTC_INCLUDE_DIRECTORY "" CACHE PATH "Directory where the MTC.h file is located")
+  if(MTC_INCLUDE_DIRECTORY STREQUAL "")
+    message( FATAL_ERROR "Please set the MTC_INCLUDE_DIRECTORY variable value.")
+  else()
+    include(${IGSTK_SOURCE_DIR}/CMake/ExtractMTCVersion.cmake)
+    if( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
+      message( FATAL_ERROR " Your MTC version is ${MTCMajorVersion}.${MTCMinorVersion}. Version 3.6.1 or later should be used")
+    endif()
+    include_directories( ${MTC_INCLUDE_DIRECTORY} )
+    include_directories( ${IGSTK_SOURCE_DIR}/Utilities/MicronTracker/src )
+  endif()
 
-  IF(MTC_INCLUDE_DIRECTORY)
-   INCLUDE(${IGSTK_SOURCE_DIR}/CMake/ExtractMTCVersion.cmake)
-    IF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
-      MESSAGE( FATAL_ERROR " Your MTC version is
-  ${MTCMajorVersion}.${MTCMinorVersion}. Version 3.6.1 or later should be used")
-    ENDIF( ${MTCMajorVersion}.${MTCMinorVersion} LESS 3.6.1 )
 
-    GET_FILENAME_COMPONENT( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
-    LINK_DIRECTORIES( ${MTC_LIBRARY_DIRS} )
-  ENDIF(MTC_INCLUDE_DIRECTORY)
-ENDIF(IGSTK_USE_MicronTracker)
+  set(MTC_LIBRARY "" CACHE FILEPATH "Full path to the MTC library (e.g. on win MTC.lib, on linux libMTC.a)")
+  if(MTC_LIBRARY STREQUAL "")
+    message( FATAL_ERROR "Please set the MTC_LIBRARY variable value.")
+  else()
+    get_filename_component( MTC_LIBRARY_DIRS ${MTC_LIBRARY} PATH )
+    link_directories( ${MTC_LIBRARY_DIRS} )
+  endif()
+
+endif()
 
 # Connect InfiniTrack
 OPTION(IGSTK_USE_InfiniTrack "Connect InfiniTrack " OFF)
@@ -199,7 +210,7 @@ IF(IGSTK_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DGm.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY 
+    FIND_LIBRARY( ATC_LIBRARY
       NAMES ATC3DGm ATC3DGm.dll
       PATHS "C:/Program Files/Ascension/3D Guidance medSAFE (Rev F)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
@@ -210,13 +221,13 @@ IF(IGSTK_USE_Ascension3DGTracker)
     DOC "Directory where the ATC3DG.h file is located")
     INCLUDE_DIRECTORIES( ${ATC_INCLUDE_DIRECTORY} )
 
-    FIND_LIBRARY( ATC_LIBRARY 
+    FIND_LIBRARY( ATC_LIBRARY
       NAMES ATC3DG ATC3DG.dll
       PATHS "C:/Program Files/Ascension/3D Guidance (Rev D)/3D Guidance API"
       DOC "Full path to the ATC3DG.dll file"
       )
   ENDIF(Ascension3DG_MedSafe)
-  
+
   GET_FILENAME_COMPONENT( ATC_LIBRARY_DIRS ${ATC_LIBRARY} PATH )
   LINK_DIRECTORIES( ${ATC_LIBRARY_DIRS} )
 ENDIF(IGSTK_USE_Ascension3DGTracker)
@@ -250,7 +261,7 @@ OPTION(IGSTK_USE_NDICertusTracker "Connect NDI Certus Tracker" OFF)
 IF(IGSTK_USE_NDICertusTracker)
   # The headers defined in this directory must match the NDI API library
   INCLUDE_DIRECTORIES( ${IGSTK_SOURCE_DIR}/Utilities/NDICertus )
-  
+
   FIND_LIBRARY( CERTUS_LIBRARY
     NAMES  NDItb NDItb.lib oapi oapi.lib
     PATHS "C:/NDIoapi/ndlib/msvc"

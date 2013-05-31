@@ -17,9 +17,9 @@
 class Vector
 {
 public:
-  Vector(int h =0);
+  Vector(mtHandle h =0);
   ~Vector();
-  int Handle();
+  mtHandle Handle();
 
   int getEndPos2x3(double* result);
   int setEndPos2x3(double* newPos2x3);
@@ -28,7 +28,7 @@ public:
 
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
 };
 

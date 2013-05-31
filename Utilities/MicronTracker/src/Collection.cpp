@@ -12,7 +12,7 @@
 #include "Collection.h"
 
 
-MTCollection::Collection::Collection(int h)
+MTCollection::Collection::Collection(mtHandle h)
 {
   // If a handle is already passed to this class, then use that handle and don't create a new one.
   if (h != 0)
@@ -33,7 +33,7 @@ MTCollection::Collection::~Collection()
 
 /****************************/
 /** Add an item to the Collection */
-void MTCollection::Collection::add(int val)
+void MTCollection::Collection::add(mtHandle val)
 {
   Collection_Add(this->m_handle, val, 0);
 }
@@ -55,9 +55,9 @@ int MTCollection::Collection::count()
 
 /****************************/
 /** Returns the integer item  of index  idx in the Collection  */
-int MTCollection::Collection::itemI(int idx)
+mtHandle MTCollection::Collection::itemI(int idx)
 {
-  int intResult = 0;
+  mtHandle intResult = 0;
   double dblResult = 0;
   Collection_Item(this->m_handle, idx, &intResult, &dblResult);
   return intResult;
@@ -67,7 +67,7 @@ int MTCollection::Collection::itemI(int idx)
 /** Returns the integer item  of index  idx in the Collection  */
 double MTCollection::Collection::itemD(int idx)
 {
-  int intResult = 0;
+  mtHandle intResult = 0;
   double dblResult = 0;
   Collection_Item(this->m_handle, idx, &intResult, &dblResult);
   return dblResult;

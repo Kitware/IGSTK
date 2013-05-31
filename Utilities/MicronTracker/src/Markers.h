@@ -27,13 +27,13 @@ class Markers
 public:
   Markers();
   ~Markers();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
 
 
-  int addTemplate(int markerHandle);
+  int addTemplate(mtHandle markerHandle);
   int clearTemplates();
-  int identifiedMarkers(MCamera *cam);
-  int unidentifiedVectors(MCamera *cam);
+  mtHandle identifiedMarkers(MCamera *cam);
+  mtHandle unidentifiedVectors(MCamera *cam);
 
   void setPredictiveFramesInterleave(int level);
   int getPredictiveFramesInterleave();
@@ -46,9 +46,9 @@ public:
 
   int processFrame(MCamera *cam);
   int getTemplateCount();
-  int getTemplateItem(int idx);
+  mtHandle getTemplateItem(int idx);
   mtCompletionCode getTemplateItemName(int idx, std::string &templateName);
-  mtCompletionCode getTemplateItemHName(int handle, std::string &templateName);
+  mtCompletionCode getTemplateItemHName(mtHandle handle, std::string &templateName);
   int setTemplateItemName(int idx, char* name);
   int storeTemplate( int idx, int pHandle, char* nameInP);
   int restoreTemplate(int pHandle, char* nameInP);
@@ -57,7 +57,7 @@ public:
   
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
   char tempString[400];
 

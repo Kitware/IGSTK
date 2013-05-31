@@ -27,19 +27,19 @@ namespace MTMarker
 class Marker
 {
 public:
-  Marker(int h=0);
+  Marker(mtHandle h=0);
   ~Marker();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
 
-  int getTemplateFacets();
+  mtHandle getTemplateFacets();
   int restoreTemplate(int persistenceHandle, const char* name);
   
   char* getName();
   void setName(char* name);
   bool wasIdentified(MCamera *cam);
-  Xform3D* marker2CameraXf(int camHandle);
+  Xform3D* marker2CameraXf(mtHandle camHandle);
   Xform3D* tooltip2MarkerXf();
-  int identifiedFacets (MCamera *cam);
+  mtHandle identifiedFacets (MCamera *cam);
   // void setJitterFilteringFraction(double newVal); // Claudio
    // double getJitterFilteringFraction();
   int addTemplateFacet(Facet* newFacet, Xform3D* facet1ToNewFacetXf);
@@ -47,7 +47,7 @@ public:
   int storeTemplate(Persistence* p, const char* name);
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
   char m_MarkerName[400];
 

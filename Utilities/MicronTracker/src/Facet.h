@@ -25,9 +25,9 @@ using namespace MTCollection;
 class Facet
 {
 public:
-  Facet(int h =0);
+  Facet(mtHandle h =0);
   ~Facet();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
   int getXpoints( MCamera *cam, double *result2x3x2x2); //[LV/SV][L/R/M][base/head][X/Y]
   vector<Vector *> IdentifiedVectors();
   vector<Vector *> TemplateVectors();
@@ -38,7 +38,7 @@ public:
 
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
 };
 

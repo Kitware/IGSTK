@@ -20,9 +20,9 @@ using namespace std;
 class MCamera
 {
 public:
-  MCamera(int handle = 0);
+  MCamera(mtHandle handle = 0);
   ~MCamera();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
   //bool RawBufferValid();
   //unsigned char **RawBufferAddr();
   int getXRes();
@@ -74,10 +74,10 @@ public:
   bool getProjectionOnImage( int image, double XYZ[], double *x, double *y );
 
   bool grabFrame(); // returns true for success
-  int Handle();
+  mtHandle Handle();
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
   unsigned char *limage;
   unsigned char *rimage ;

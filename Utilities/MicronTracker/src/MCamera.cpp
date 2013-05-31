@@ -18,14 +18,14 @@
 
 /****************************/
 /** Constructor */
-MCamera::MCamera(int handle)
+MCamera::MCamera(mtHandle handle)
 {
   // If a handle is provided to this class, don't create a new one
   char *DriverName = NULL;
   if (handle != 0)
     this->m_handle = handle;
   else
-    this->m_handle = Camera_New( DriverName,1965 ); 
+    this->m_handle = Camera_New( DriverName,1965 );
   this->ownedByMe = TRUE;
   limage = NULL;
   rimage = NULL;
@@ -42,7 +42,7 @@ MCamera::~MCamera()
   free(limage);
   free(rimage);
 }
-int MCamera::Handle()
+mtHandle MCamera::Handle()
 {
   return ( m_handle);
 

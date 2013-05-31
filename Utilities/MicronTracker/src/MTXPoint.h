@@ -24,9 +24,9 @@
 class MTXPoint
 {
 public:
-  MTXPoint(int h=0);
+  MTXPoint(mtHandle h=0);
   ~MTXPoint();
-  inline int getHandle(){ return m_handle; };
+  inline mtHandle getHandle(){ return m_handle; };
 
   int getIndex();
   int setIndex(int Index);
@@ -40,7 +40,7 @@ public:
 
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
 
 };

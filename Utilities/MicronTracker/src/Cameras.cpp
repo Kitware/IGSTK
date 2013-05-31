@@ -185,7 +185,7 @@ int Cameras::AttachAvailableCameras()
 
   if (this->m_attachedCamNums <=0) return -1;
 
-  int camHandle;
+  mtHandle camHandle = 0;
   // Populate the array of camera that are already attached
   for (int c=0; c < this->m_attachedCamNums; c++)
   {

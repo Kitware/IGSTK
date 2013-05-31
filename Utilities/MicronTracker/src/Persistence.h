@@ -19,7 +19,7 @@ class Persistence
 public:
   Persistence();
   ~Persistence();
-  inline int getHandle() { return m_handle; };
+  inline mtHandle getHandle() { return m_handle; };
 
   // Set/Get path
   void setPath(const char* path);
@@ -32,7 +32,7 @@ public:
   void saveDouble(const char* name, double val);
 
 private:
-  int m_handle;
+  mtHandle m_handle;
   bool ownedByMe;
 };
 
