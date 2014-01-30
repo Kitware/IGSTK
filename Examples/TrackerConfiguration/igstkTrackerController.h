@@ -24,6 +24,7 @@
 #include "igstkPolarisTrackerConfiguration.h"
 #include "igstkAuroraTrackerConfiguration.h"
 #include "igstkAscensionTrackerConfiguration.h"
+#include "igstkArucoTrackerConfiguration.h"
 
 #include "igstkMacros.h"
 #include "igstkEvents.h"
@@ -36,6 +37,7 @@
 #include "igstkPolarisTrackerTool.h"
 #include "igstkAuroraTrackerTool.h"
 #include "igstkAscensionTrackerTool.h"
+#include "igstkArucoTrackerTool.h"
 
 #include "igstkSpatialObject.h"
 
@@ -64,13 +66,13 @@ namespace igstk
  *  \brief This class encapsulates the startup and shutdown procedures required
  *         for the tracker classes supported by IGSTK.
  *
- *  This class enables the user to intialize a tracker with minimal effort. 
+ *  This class enables the user to initialize a tracker with minimal effort.
  *  Initialization is performed by passing the controller a TrackerConfiguration
  *  object. The controller identifies the specific tracker internally. The
- *  user can then request to intialize the tracker or to tell the tracker 
+ *  user can then request to initialize the tracker or to tell the tracker
  *  controller to shut down a tracker that is running. 
  *
- *  NOTE: This class is usefull only when all tools are connected to the tracker 
+ *  NOTE: This class is useful only when all tools are connected to the tracker
  *        in advance (no swapping tools in and out after initialization).
  */
 class TrackerController : public Object
@@ -93,7 +95,7 @@ public:
  
   /**
    * Initialize a tracker using the given configuration. Communication with the
-   * haredware is established and the tracker is initialized.
+   * hardware is established and the tracker is initialized.
    * NOTE: If a tracker was already initialized using this object it will be 
    *       shut down (stop tracking, close communication, and if using serial
    *       communication that will be closed too).
@@ -130,14 +132,14 @@ public:
   /**
    * Get the container (ToolContainerType) with all the tools.   
    * The method generates a RequestToolsEvent if the tracker was previously 
-   * initialized successfuly, otherwise it generates an 
+   * initialized successfully, otherwise it generates an
    * InvalidRequestErrorEvent.*/
   void RequestGetNonReferenceToolList();
 
   /**
    * Get a specific tracker tool according to its unique name.   
    * The method generates a RequestToolEvent if the tracker was 
-   * previously initialized successfuly and the tool exists, otherwise it 
+   * previously initialized successfully and the tool exists, otherwise it
    * generates a RequestToolErrorEvent if the tool doesn't exist, or
    * InvalidRequestErrorEvent if the tracker wasn't initialized.*/
   void RequestGetTool( const std::string &toolName );
@@ -145,7 +147,7 @@ public:
   /**
    * Get the reference tool it it exists.   
    * The method generates a RequestToolEvent if the tracker was 
-   * previously initialized successfuly, otherwise it generates an 
+   * previously initialized successfully, otherwise it generates an
    * InvalidRequestErrorEvent.
    * Note that when no reference tool is used the payload of the event
    * will be a NULL pointer.*/
@@ -211,6 +213,7 @@ private:
   igstkDeclareStateMacro( AttemptingToInitializeMicron );
   igstkDeclareStateMacro( AttemptingToInitializeAscension3DG );
   igstkDeclareStateMacro( AttemptingToInitializeCertus );
+  igstkDeclareStateMacro( AttemptingToInitializeAruco );
   igstkDeclareStateMacro( Initialized );
   igstkDeclareStateMacro( AttemptingToStartTracking );
   igstkDeclareStateMacro( Tracking );
@@ -226,6 +229,7 @@ private:
   igstkDeclareInputMacro( MicronInitialize );  
   igstkDeclareInputMacro( Ascension3DGInitialize );  
   igstkDeclareInputMacro( CertusInitialize );
+  igstkDeclareInputMacro( ArucoInitialize );
   igstkDeclareInputMacro( StartTracking );
   igstkDeclareInputMacro( StopTracking );
   igstkDeclareInputMacro( Failed  );
@@ -247,6 +251,7 @@ private:
   void MicronInitializeProcessing();
   void Ascension3DGInitializeProcessing();
   void CertusInitializeProcessing();
+  void ArucoInitializeProcessing();
   void StartTrackingProcessing();
   void StopTrackingProcessing();
   void CloseCommunicationProcessing();
@@ -277,6 +282,8 @@ private:
     const PolarisWiredToolConfiguration *toolConfiguration );
   AuroraTrackerTool::Pointer InitializeAuroraTool(
     const AuroraToolConfiguration *toolConfiguration );
+  ArucoTrackerTool::Pointer InitializeArucoTool(
+    const ArucoToolConfiguration *toolConfiguration );
 
 #ifdef IGSTK_USE_MicronTracker
 

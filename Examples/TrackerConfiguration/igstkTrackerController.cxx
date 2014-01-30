@@ -25,6 +25,7 @@
 #include "igstkPolarisTracker.h"
 #include "igstkAuroraTracker.h"
 #include "igstkAscensionTracker.h"
+#include "igstkArucoTracker.h"
 
 #ifdef IGSTK_USE_MicronTracker
 #include "igstkMicronTracker.h"
@@ -60,6 +61,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddStateMacro( AttemptingToInitializeAurora );
   igstkAddStateMacro( AttemptingToInitializeCertus );
   igstkAddStateMacro( AttemptingToInitializeMicron );
+  igstkAddStateMacro( AttemptingToInitializeAruco );
   igstkAddStateMacro( AttemptingToInitializeAscension3DG );
   igstkAddStateMacro( AttemptingToInitializeAscension );  
   igstkAddStateMacro( Initialized );
@@ -75,6 +77,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
   igstkAddInputMacro( AuroraInitialize );
   igstkAddInputMacro( AscensionInitialize );
   igstkAddInputMacro( MicronInitialize );
+  igstkAddInputMacro( ArucoInitialize );
   igstkAddInputMacro( CertusInitialize );
   igstkAddInputMacro( Ascension3DGInitialize );
   igstkAddInputMacro( StartTracking );
@@ -126,6 +129,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
  
+  igstkAddTransitionMacro( Idle,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( Idle,
                            Ascension3DGInitialize,
                            Idle,
@@ -211,6 +219,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            MicronInitialize,
                            AttemptingToInitializeMicron,
                            MicronInitialize );
+
+  igstkAddTransitionMacro( AttemptingToInitialize,
+                           ArucoInitialize,
+                           AttemptingToInitializeAruco,
+                           ArucoInitialize );
 
   igstkAddTransitionMacro( AttemptingToInitialize,
                            CertusInitialize,
@@ -319,6 +332,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
  
   igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializePolarisVicra,
                            Ascension3DGInitialize,
                            Idle,
                            ReportInvalidRequest );
@@ -409,6 +427,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
  
+  igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializePolarisHybrid,
                            Ascension3DGInitialize,
                            Idle,
@@ -501,11 +524,15 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
  
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            Ascension3DGInitialize,
                            Idle,
                            ReportInvalidRequest );
-                           
-    
+
   igstkAddTransitionMacro( AttemptingToInitializeAurora,
                            StartTracking,
                            Idle,
@@ -592,6 +619,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Idle,
                            ReportInvalidRequest );
     
+  igstkAddTransitionMacro( AttemptingToInitializeAscension,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
   igstkAddTransitionMacro( AttemptingToInitializeAscension,
                            Ascension3DGInitialize,
                            Idle,
@@ -684,6 +716,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
     
   igstkAddTransitionMacro( AttemptingToInitializeMicron,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeMicron,
                            StartTracking,
                            Idle,
                            ReportInvalidRequest );
@@ -766,6 +803,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
                            MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAscension3DG,
+                           ArucoInitialize,
                            Idle,
                            ReportInvalidRequest );
 
@@ -861,6 +903,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToInitializeCertus,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeCertus,
                            CertusInitialize,
                            Idle,
                            ReportInvalidRequest );
@@ -906,6 +953,103 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest);
 
   
+  //transitions from AttemptingToInitializeAruco state
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           Failed,
+                           Idle,
+                           ReportInitializationFailure );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           Succeeded,
+                           Initialized,
+                           ReportInitializationSuccess );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           TrackerInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           PolarisVicraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           PolarisHybridInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           AuroraInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           Ascension3DGInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           AscensionInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           MicronInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           ArucoInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           CertusInitialize,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           StartTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           StopTracking,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           CloseCommunication,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           GetTools,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           GetTool,
+                           Idle,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           GetReferenceTool,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           SetParentSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+  igstkAddTransitionMacro( AttemptingToInitializeAruco,
+                           SetChildSpatialObject,
+                           Idle,
+                           ReportInvalidRequest);
+
+
   //transitions from Initialized state
   igstkAddTransitionMacro( Initialized,
                            GetTools,
@@ -982,7 +1126,12 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Initialized,
                            ReportInvalidRequest );
 
- igstkAddTransitionMacro(  Initialized,
+  igstkAddTransitionMacro( Initialized,
+                           ArucoInitialize,
+                           Initialized,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro(  Initialized,
                            Ascension3DGInitialize,
                            Initialized,
                            ReportInvalidRequest );
@@ -1040,6 +1189,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToStartTracking,
                            MicronInitialize,
+                           AttemptingToStartTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStartTracking,
+                           ArucoInitialize,
                            AttemptingToStartTracking,
                            ReportInvalidRequest );
 
@@ -1126,6 +1280,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
   
   igstkAddTransitionMacro( Tracking,
                            MicronInitialize,
+                           Tracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( Tracking,
+                           ArucoInitialize,
                            Tracking,
                            ReportInvalidRequest );
 
@@ -1226,6 +1385,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            ReportInvalidRequest );
 
   igstkAddTransitionMacro( AttemptingToStopTracking,
+                           ArucoInitialize,
+                           AttemptingToStopTracking,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToStopTracking,
                            Ascension3DGInitialize,
                            AttemptingToStopTracking,
                            ReportInvalidRequest );
@@ -1314,6 +1478,11 @@ TrackerController::TrackerController() : m_StateMachine( this )
 
   igstkAddTransitionMacro( AttemptingToCloseCommunication,
                            MicronInitialize,
+                           AttemptingToCloseCommunication,
+                           ReportInvalidRequest );
+
+  igstkAddTransitionMacro( AttemptingToCloseCommunication,
+                           ArucoInitialize,
                            AttemptingToCloseCommunication,
                            ReportInvalidRequest );
 
@@ -1514,6 +1683,12 @@ TrackerController::TrackerInitializeProcessing()
       {
       this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
       igstkPushInputMacro( AscensionInitialize );
+      }
+    else if( dynamic_cast<ArucoTrackerConfiguration *>
+      ( this->m_TmpTrackerConfiguration ) )
+      {
+      this->m_TrackerConfiguration = m_TmpTrackerConfiguration;
+      igstkPushInputMacro( ArucoInitialize );
       }
    #ifdef IGSTK_USE_MicronTracker
     else if( dynamic_cast<MicronTrackerConfiguration *>
@@ -2176,6 +2351,111 @@ TrackerController::AuroraInitializeProcessing()
       igstkPushInputMacro( Succeeded );
       }
     }  
+  this->m_StateMachine.ProcessInputs();
+}
+
+
+ArucoTrackerTool::Pointer TrackerController::InitializeArucoTool(
+    const ArucoToolConfiguration *toolConfiguration )
+{
+  ArucoTrackerTool::Pointer trackerTool = ArucoTrackerTool::New();
+
+  trackerTool->RequestSetMarkerName( toolConfiguration->GetMarkerID() );
+
+  trackerTool->SetCalibrationTransform(
+    toolConfiguration->GetCalibrationTransform() );
+  trackerTool->RequestConfigure();
+  return trackerTool;
+}
+
+
+void TrackerController::ArucoInitializeProcessing()
+{
+                  //create tracker
+  igstk::ArucoTracker::Pointer tracker = igstk::ArucoTracker::New();
+  this->m_Tracker = tracker;
+                 //don't need to observe this for errors because the
+                 //configuration class ensures that the frequency is valid
+  tracker->RequestSetFrequency( this->m_TrackerConfiguration->GetFrequency() );
+
+  ArucoTrackerConfiguration *trackerConfiguration =
+    dynamic_cast<ArucoTrackerConfiguration *>( this->m_TrackerConfiguration );
+
+  tracker->SetCameraParametersFromYAMLFile(
+    trackerConfiguration->GetCameraCalibrationFile() );
+
+  tracker->SetMarkerSize( trackerConfiguration->GetMarkerSize() );
+
+  unsigned long observerID = tracker->AddObserver( IGSTKErrorEvent(),
+                                                   this->m_ErrorObserver );
+  tracker->RequestOpen();
+  tracker->RemoveObserver(observerID);
+
+  if( this->m_ErrorObserver->ErrorOccured() )
+    {
+    this->m_ErrorObserver->GetErrorMessage( this->m_ErrorMessage );
+    this->m_ErrorObserver->ClearError();
+    igstkPushInputMacro( Failed );
+    }
+  else   //attach the tools and start communication
+    {
+    ToolAttachErrorObserver::Pointer attachErrorObserver =
+      ToolAttachErrorObserver::New();
+    std::map<std::string, TrackerToolConfiguration *> toolConfigurations =
+        this->m_TrackerConfiguration->m_TrackerToolList;
+                          //attach tools
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator it;
+    std::map<std::string, TrackerToolConfiguration *>::const_iterator
+      toolConfigEnd = toolConfigurations.end();
+    TrackerTool::Pointer trackerTool;
+    ArucoToolConfiguration * currentToolConfig;
+
+    for(it = toolConfigurations.begin(); it != toolConfigEnd; it++)
+      {
+      currentToolConfig = static_cast<ArucoToolConfiguration *>(it->second);
+
+      trackerTool = InitializeArucoTool( currentToolConfig );
+      this->m_Tools.insert(
+          std::pair<std::string, TrackerTool::Pointer>( it->first,
+                                                        trackerTool ) );
+
+      unsigned long observerID = trackerTool->AddObserver(
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );
+      trackerTool->RequestAttachToTracker( tracker );
+      trackerTool->RemoveObserver( observerID );
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      }
+                      //add the reference if we have one
+    TrackerToolConfiguration* referenceToolConfiguration =
+      this->m_TrackerConfiguration->m_ReferenceTool;
+    if( referenceToolConfiguration )
+      {
+      currentToolConfig =
+        static_cast<ArucoToolConfiguration *>( referenceToolConfiguration );
+
+      trackerTool = InitializeArucoTool( currentToolConfig );
+      this->m_ReferenceTool = trackerTool;
+
+      trackerTool->AddObserver(
+        TrackerToolAttachmentToTrackerErrorEvent(),
+        attachErrorObserver );
+      trackerTool->RequestAttachToTracker( tracker );
+      if( attachErrorObserver->GotToolAttachError() )
+        {
+        igstkPushInputMacro( Failed );
+        this->m_StateMachine.ProcessInputs();
+        return;
+        }
+      tracker->RequestSetReferenceTool( trackerTool );
+      }
+    igstkPushInputMacro( Succeeded );
+    }
   this->m_StateMachine.ProcessInputs();
 }
 

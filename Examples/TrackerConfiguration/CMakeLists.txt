@@ -15,6 +15,7 @@ SET(SRCS
     igstkAscension3DGTrackerConfiguration.cxx
     igstkPolarisTrackerConfiguration.cxx
     igstkCertusTrackerConfiguration.cxx
+    igstkArucoTrackerConfiguration.cxx
     igstkTrackerController.cxx
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.cxx
     configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.cxx
@@ -28,6 +29,7 @@ SET(SRCS
     configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.cxx
     configurationFileReaders/igstkTrackerConfigurationFileReader.cxx
     configurationFileReaders/igstkCertusConfigurationXMLFileReader.cxx
+    configurationFileReaders/igstkArucoConfigurationXMLFileReader.cxx
 )
 SET(HDRS
     igstkTrackerConfiguration.h
@@ -37,6 +39,7 @@ SET(HDRS
     igstkAscension3DGTrackerConfiguration.h
     igstkPolarisTrackerConfiguration.h
     igstkCertusTrackerConfiguration.h
+    igstkArucoTrackerConfiguration.h
     igstkTrackerController.h
     configurationFileReaders/igstkTrackerConfigurationXMLFileReaderBase.h
     configurationFileReaders/igstkSerialCommunicatingTrackerConfigurationXMLFileReader.h
@@ -49,7 +52,8 @@ SET(HDRS
     configurationFileReaders/igstkAscensionConfigurationXMLFileReader.h
     configurationFileReaders/igstkAscension3DGConfigurationXMLFileReader.h
     configurationFileReaders/igstkTrackerConfigurationFileReader.h
-   configurationFileReaders/igstkCertusConfigurationXMLFileReader.h
+    configurationFileReaders/igstkCertusConfigurationXMLFileReader.h
+    configurationFileReaders/igstkArucoConfigurationXMLFileReader.h
 )
 #
 #The directories containing all of the header files
@@ -64,4 +68,3 @@ ADD_LIBRARY(TrackerConfiguration ${SRCS} ${HDRS})
 
 ADD_EXECUTABLE(TrackerConfigurationExample TrackerConfigurationExample.cxx)
 TARGET_LINK_LIBRARIES(TrackerConfigurationExample TrackerConfiguration TransformReaders IGSTK )
-
