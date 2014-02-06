@@ -53,6 +53,7 @@ TrackerDataLoggerConfigurationXMLFileReader::StartElement( const char * name,
         should only appear once." ) );
       }
     this->m_ReadingTrackerConfigurationLogger = true;
+    ProcessTrackingSystemAttributes( atts );
     }
   else if( itksys::SystemTools::Strucmp( name, "tool" ) == 0 )
     {
@@ -185,6 +186,32 @@ const char **atts )
 
 
 void 
+TrackerDataLoggerConfigurationXMLFileReader::ProcessTrackingSystemAttributes(
+  const char **atts ) throw ( FileFormatException )
+{
+  bool timeLimitFound = false;
+
+  //go over all the attribute-value pairs
+  for( int i=0; atts[i] != NULL; i+=2 )
+    {
+    if( itksys::SystemTools::Strucmp( atts[i], "time" ) == 0 )
+      {
+      double timeLimit;
+      std::istringstream instr;
+      instr.str( atts[i+1] );
+      instr>>timeLimit;
+      if( !instr.eof() )
+      {
+      throw FileFormatException(
+        "Error in 'time' attribute, possibly non numeric value" );
+      }
+      this->m_TimeLimit = timeLimit;
+      }
+    }
+}
+
+
+void
 TrackerDataLoggerConfigurationXMLFileReader::ProcessToolOutputFile() 
 throw ( FileFormatException )
 {
@@ -274,6 +301,12 @@ TrackerDataLoggerConfigurationXMLFileReader::
   toolNamesAndOutputFiles.clear();
   toolNamesAndOutputFiles.insert( this->m_ToolNamesAndOutputFileNames.begin(), 
                                   this->m_ToolNamesAndOutputFileNames.end() );
+}
+
+double
+TrackerDataLoggerConfigurationXMLFileReader::GetTimelimit()
+{
+  return this->m_TimeLimit;
 }
 
 } //namespace

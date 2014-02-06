@@ -32,7 +32,7 @@
 
 /**
  * \class TrackerDataLogger
- * \brief This class performs output of tracking data to output file. 
+ * \brief This class performs output of tracking data to file.
  *
  * The class is instantiated with the name of the xml file containing the 
  * tracker. The user can then start and stop the tracking.
@@ -153,8 +153,6 @@ private:
       typedef  ::itk::SmartPointer<Self>           Pointer;
       itkNewMacro( Self );
 
-          //typedef ofstream*                            OfstreamPointer;
-          
     protected:
 // BeginLatex
 // In the \code{ToolUpdatedObserver} constructor  we instantiate a 
@@ -164,9 +162,6 @@ private:
       ToolUpdatedObserver()
       {
       this->m_TransformObserver = igstk::TransformObserver::New();
-// BeginCodeSnippet
-      //this->m_PositionMessage = igtl::PositionMessage::New();
-// EndCodeSnippet
       }
 
       ~ToolUpdatedObserver()
@@ -194,8 +189,6 @@ private:
       this->m_World = world;
       this->m_TransformObserver->ObserveTransformEventsFrom( this->m_Tool );
 
-      this->m_PositionMessage.assign( toolName.c_str() );
-
       std::vector< ofstream* >::iterator it; 
       for (it = this->m_Ofstreams.begin(); it != this->m_Ofstreams.end(); ++it)
         {
@@ -214,7 +207,6 @@ private:
             outputFileNamesIt != outputFileNames.end(); ++outputFileNamesIt)
         {
         ofstream *outputFile = new ofstream ( outputFileNamesIt->c_str() , ios::out );
-        //outputFile.open();
         
         if ( !outputFile->is_open() )
           {
@@ -266,7 +258,6 @@ private:
           if ( this->m_TransformObserver->GotTransform() )
             {
             // BeginCodeSnippet
-            char buffer[100];
             
             double timeStamp = igstk::RealTimeClock::GetTimeStamp();
             if (this->m_Logger->GetInitialTimeStamp() < 0.0)
@@ -277,10 +268,8 @@ private:
             double timeDifference = timeStamp - this->m_Logger->GetInitialTimeStamp();            
             if (this->m_Logger->GetTimeLimit() > 0.0)
               {
-              //std::cerr << " timeDifference " << timeDifference << "\n"; 
               if (timeDifference > this->m_Logger->GetTimeLimit() )
                 {
-                //std::cerr << " want to stop tracking  \n"; 
                 this->m_Logger->StopTracking();
                 this->m_Logger->ExitSuccessfully();
                 }
@@ -290,21 +279,16 @@ private:
               this->m_TransformObserver->GetTransform();
             igstk::Transform::VectorType t = transform.GetTranslation();
             igstk::Transform::VersorType r = transform.GetRotation();
-            sprintf(buffer, "%f  %f %f %f  %f %f %f %f \n", timeDifference , t[0], t[1], t[2],
-                    r.GetX(), r.GetY(), r.GetZ(), r.GetW());
-
-            //std::cerr << buffer;
-            
-            this->m_PositionMessage.assign(buffer); 
 
             std::vector< ofstream * >::iterator it; 
             for (it = this->m_Ofstreams.begin(); it != this->m_Ofstreams.end();
                  ++it)
               {
-                 (*(*it)) << this->m_PositionMessage; 
+                 (*(*it))<<timeDifference<<" "<<t[0]<<" "<<t[1]<<" "<< t[2];
+                 (*(*it))<<" "<<r.GetX()<<" "<<r.GetY()<<" "<<r.GetZ();
+                 (*(*it))<<" "<<r.GetW()<<"\n";
               }
             // EndCodeSnippet
-            std::cout << this->m_PositionMessage; 
             }
           }
         }
@@ -312,8 +296,6 @@ private:
 
 
     private:
-    std::string m_HostName;
-    unsigned int m_PortNumber;  
     //we are interested in the tool location relative to the world's 
     //coordinate system
     igstk::SpatialObject::Pointer m_World;
@@ -323,7 +305,6 @@ private:
 
     //send data to these ofstreams 
     std::vector< ofstream* > m_Ofstreams;
-    std::string m_PositionMessage; 
     };
 
   private:

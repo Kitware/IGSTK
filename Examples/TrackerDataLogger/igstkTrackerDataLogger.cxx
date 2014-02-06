@@ -22,6 +22,7 @@
 #include "igstkMicronConfigurationXMLFileReader.h"
 #include "igstkAscensionConfigurationXMLFileReader.h"
 #include "igstkAscension3DGConfigurationXMLFileReader.h"
+#include "igstkArucoConfigurationXMLFileReader.h"
 
 TrackerDataLogger::TrackerDataLogger( 
 std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
@@ -124,9 +125,8 @@ std::string &trackerXMLConfigurationFileName ) throw ( ExceptionWithMessage )
         } 
       }
     }
-  //Michel Temp
   m_InitialTimeStamp = -1.0; 
-  m_TimeLimit = -1.0; 
+  m_TimeLimit = trackerConfiguration->m_TimeLimit;
 }
 
 
@@ -173,7 +173,7 @@ igstk::TrackerDataLoggerConfigurationFileReader::
 * TrackerDataLogger::GetTrackerConfiguration( 
   std::string &configurationFileName) throw ( ExceptionWithMessage )
 {
-  const unsigned int NUM_TRACKER_TYPES = 7;
+  const unsigned int NUM_TRACKER_TYPES = 8;
   igstk::TrackerConfigurationXMLFileReaderBase::Pointer 
     trackerConfigurationXMLReaders[NUM_TRACKER_TYPES];
   trackerConfigurationXMLReaders[0] = 
@@ -190,6 +190,8 @@ igstk::TrackerDataLoggerConfigurationFileReader::
        igstk::AscensionConfigurationXMLFileReader::New();
   trackerConfigurationXMLReaders[6] = 
     igstk::Ascension3DGConfigurationXMLFileReader::New();
+  trackerConfigurationXMLReaders[7] =
+    igstk::ArucoConfigurationXMLFileReader::New();
 
   igstk::TrackerDataLoggerConfigurationFileReader::Pointer trackerConfigReader =
     igstk::TrackerDataLoggerConfigurationFileReader::New();
@@ -255,6 +257,7 @@ igstk::TrackerDataLoggerConfigurationFileReader::
           ConfigurationDataType *
           result = tco->GetTrackerConfiguration();
 
+        returnedResult->m_TimeLimit = result->m_TimeLimit;
         returnedResult->m_TrackerConfiguration = result->m_TrackerConfiguration;
         returnedResult->m_ToolNamesAndOutputFileNames.insert(
           result->m_ToolNamesAndOutputFileNames.begin(), 

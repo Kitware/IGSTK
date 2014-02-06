@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<!-- Example of settings for NDI's Polaris vicra:                  -->    
+<!-- Example of settings for data logging using NDI's Polaris      -->
+<!-- vicra:                                                        -->
 <!-- The tags are:                                                 -->
-<!-- tracking_system: Root element, encompassing all of the data.  -->
+<!-- tracking_system: Root element, encompassing all of the data   -->
 <!--                  Must have the attribute 'type' set to        -->
-<!--                  "polaris vicra".                             -->  
-<!-- refresh_rate: Get data from the tracker at this rate.         --> 
+<!--                  "polaris vicra" (valid tracking sytem type). -->
+<!--                  Optional attribute 'time'. This is the       -->
+<!--                  length of time in milliseconds during which  -->
+<!--                  data will be gathered. If the attribute is   -->
+<!--                  not given then data gathering continues      -->
+<!--                  indefinitely.                                -->
+<!-- refresh_rate: Get data from the tracker at this rate.         -->
 <!-- serial_communication: Encompass all the communication         -->
 <!--                       settings:                               -->
 <!--  com_port, baud_rate, data_bits, parity, stop_bits,           -->
@@ -27,11 +33,7 @@
 <!--                   containing the tool's calibration data      -->
 <!--                                                               -->
 
-
-
- 
-
-<tracking_system type = "polaris hybrid">
+<tracking_system type = "polaris hybrid" time="30000">
               <!--acquire data from the tracker at this rate-->
     <refresh_rate> 20 </refresh_rate>
               <!--serial communication settings-->
@@ -53,5 +55,4 @@
     </tool>
 
 </tracking_system>
-
 

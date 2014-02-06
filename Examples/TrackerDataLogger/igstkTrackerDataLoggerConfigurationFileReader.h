@@ -31,13 +31,11 @@ namespace igstk
  * 
  *  \brief This class is an IGSTK wrapper for all readers of xml files 
  *         containing a tracker configuration with additional 
- *         data (each tool should send data to the specified host on the
- *         specified port).
+ *         data (each tool should write data to the specified file).
  *
  *         This class is an IGSTK wrapper for all readers of xml files 
  *         containing a tracker configuration with additional 
- *         data (each tool should send data to the specified host on the
- *         specified port).
+ *         data (each tool should write data to the specified file).
  *         The specific type of tracker (Micron, Aurora...) configuration is 
  *         defined by the actual reader given in the RequestSetReader() method.
  *
@@ -60,12 +58,14 @@ public:
        
   /**
    * A container with tracker and the names of open files. Each tool will send 
-   * its tracking data to one or more locations.
+   * its tracking data to one or more locations, and for how long to track
+   * (a negative value means indefinitely).
    */
   struct ConfigurationDataType 
     {
     TrackerConfigurationPointer   m_TrackerConfiguration;
     LoggerDataType                m_ToolNamesAndOutputFileNames;
+    double                        m_TimeLimit;
     };
 
   typedef ConfigurationDataType* ConfigurationDataPointerType;

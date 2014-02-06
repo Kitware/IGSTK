@@ -470,7 +470,7 @@ TrackerDataLoggerConfigurationFileReader::ReadProcessing()
         this->m_LoggerTrackerConfiguration.m_TrackerConfiguration = 
           this->m_XMLFileReader->GetTrackerConfigurationData();
         
-        //we have read the standard igstk tracker congifuration
+        //we have read the standard igstk tracker configuration
         //now read the output file info. 
         TrackerDataLoggerConfigurationXMLFileReader::Pointer
            trackerDataLoggerConfigurationXMLFileReader =
@@ -487,9 +487,11 @@ TrackerDataLoggerConfigurationFileReader::ReadProcessing()
           {
           trackerDataLoggerConfigurationXMLFileReader->GetToolConfigurationData( 
             this->m_LoggerTrackerConfiguration.m_ToolNamesAndOutputFileNames );
+          this->m_LoggerTrackerConfiguration.m_TimeLimit =
+            trackerDataLoggerConfigurationXMLFileReader->GetTimelimit();
           igstkPushInputMacro( Success );
           }
-        }   //we successfuly read the file, it just didn't contain the data, so
+        }   //we successfully read the file, it just didn't contain the data, so
             //data loading is considered a failure
       else
         {

@@ -25,10 +25,10 @@ namespace igstk
 /** \class TrackerDataLoggerConfigurationXMLFileReader
  * 
  *  \brief This class is a reader for xml files containing a 
- *         tracker configuration with open IGT link settings. 
+ *         tracker configuration with settings for the data logger.
  *
  *         This class is a reader for xml files containing a 
- *         tracker configuration with open IGT link settings.
+ *         tracker configuration with settings for the data logger.
  */
 class TrackerDataLoggerConfigurationXMLFileReader : public itk::XMLReaderBase 
 {
@@ -41,7 +41,7 @@ public:
     {
   public:
     /**
-     * Construct an exception with a specifc message.
+     * Construct an exception with a specific message.
      */
     FileFormatException(const std::string &errorMessage) 
       {
@@ -65,7 +65,7 @@ public:
   };
 
   //standard typedefs
-  typedef TrackerDataLoggerConfigurationXMLFileReader                 Self;
+  typedef TrackerDataLoggerConfigurationXMLFileReader     Self;
   typedef itk::XMLReaderBase                              Superclass;
   typedef itk::SmartPointer<Self>                         Pointer;
 
@@ -101,19 +101,29 @@ public:
   typedef std::map<std::string, std::vector<FileNameDataType> > LoggerDataType;
 
   /**
-   * Get the map between tool names and ip ports.
+   * Get the map between tool names and output file names.
    */
   void GetToolConfigurationData( LoggerDataType 
-    &toolNamesAndConnections );
+                                 &toolNamesAndConnections );
     
   bool HaveConfigurationData();
+
+  /**
+   * For how long should we log data. This is not independent from the
+   * transformation acquisition, as we check that
+   * (currentTransformation.time - firstTransformation.time.<timelimit).
+   * If no transformations are acquired because the tool is outside the tracking
+   * volume the application will hang, until a transformation is acquired.
+   */
+  double GetTimelimit();
 
 protected:
           //this is the constructor that is called by the factory to 
          //create a new object
   TrackerDataLoggerConfigurationXMLFileReader() : 
     m_ReadingTrackerConfigurationLogger( false ),
-    m_ReadingToolConfiguration( false )
+    m_ReadingToolConfiguration( false ),
+    m_TimeLimit(-1.0)
     {}
   virtual ~TrackerDataLoggerConfigurationXMLFileReader() {}
 
@@ -121,6 +131,8 @@ protected:
   throw ( FileFormatException );
 
   void ProcessToolAttributes( const char **atts );
+
+  void ProcessTrackingSystemAttributes( const char **atts );
 
   void ProcessToolOutputFile() 
   throw ( FileFormatException );
@@ -137,6 +149,7 @@ protected:
   std::vector<FileNameDataType>   m_CurrentOutputFileNames;
   
   LoggerDataType                  m_ToolNamesAndOutputFileNames;
+  double                          m_TimeLimit;
 
 private:
   TrackerDataLoggerConfigurationXMLFileReader( 
