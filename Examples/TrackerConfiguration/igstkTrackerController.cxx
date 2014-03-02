@@ -1131,7 +1131,7 @@ TrackerController::TrackerController() : m_StateMachine( this )
                            Initialized,
                            ReportInvalidRequest );
 
-  igstkAddTransitionMacro(  Initialized,
+  igstkAddTransitionMacro( Initialized,
                            Ascension3DGInitialize,
                            Initialized,
                            ReportInvalidRequest );

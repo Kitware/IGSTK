@@ -36,7 +36,7 @@ class ArucoConfigurationXMLFileReader :
 public:
 
   //standard typedefs
-  typedef ArucoConfigurationXMLFileReader          Self;
+  typedef ArucoConfigurationXMLFileReader           Self;
   typedef TrackerConfigurationXMLFileReaderBase     Superclass;
   typedef itk::SmartPointer<Self>                   Pointer;
 
@@ -58,7 +58,7 @@ public:
   virtual void EndElement( const char *name );
 
 
-   /**
+  /**
    * Method for checking if the configuration data has been read. When the xml
    * file is empty or doesn't contain the relevant tags the read operation is
    * successful, but we don't have the information we need.

@@ -111,7 +111,7 @@ public:
   /**
    * For how long should we log data. This is not independent from the
    * transformation acquisition, as we check that
-   * (currentTransformation.time - firstTransformation.time.<timelimit).
+   * (currentTransformation.time - firstTransformation.time<timelimit).
    * If no transformations are acquired because the tool is outside the tracking
    * volume the application will hang, until a transformation is acquired.
    */
